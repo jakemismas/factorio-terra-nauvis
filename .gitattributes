@@ -1,0 +1,8 @@
+# LF in the index and on checkout. core.autocrlf is true on this machine, and
+# CRLF breaks bash scripts and byte-compared test fixtures.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.zip binary
+*.dat binary

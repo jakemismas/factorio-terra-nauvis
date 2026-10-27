@@ -1,0 +1,6207 @@
+{
+ "meta": {
+  "report": "R7b geography research for the Earth worldgen mod (Europe, Atlantic, Old World maps)",
+  "date": "2026-10-27",
+  "contract": "Only sources fetched in this session are cited. Coordinates are decimal degrees (WGS84), lat then lon, copied programmatically from the cited source; approximate or derived values say so in their basis field.",
+  "confidence_scale": {
+   "high": "stated directly in a fetched source (or computed from source polygons) and unambiguous",
+   "medium": "single source, representative point rather than true centroid or narrowest point, or sources disagree modestly",
+   "low": "estimated, internally inconsistent, or location UNVERIFIED",
+   "proposal": "design proposal, not a fact"
+  },
+  "citation_url_note": "Every entry has citation_url (string); destroyed_europe.citation_url is a list of its anchor articles. citation_revision pins the exact Wikipedia revision read.",
+  "methods": [
+   "Wikipedia: MediaWiki API (prop=coordinates with coprimary=all, prop=revisions wikitext) on en.wikipedia, plus de, it and es articles",
+   "OpenStreetMap: Overpass API for canal centrelines; Nominatim for two Gibraltar capes",
+   "RESOLVE Ecoregions 2017 shapefile: areas, centroids, bounding boxes and simplified outlines computed locally"
+  ],
+  "resolve_area_check": {
+   "compared": [
+    {
+     "id": "carpathian_montane",
+     "computed_km2": 124971,
+     "stated_km2": 125337,
+     "diff_pct": -0.29
+    },
+    {
+     "id": "dinaric_mixed",
+     "computed_km2": 58169,
+     "stated_km2": 58275,
+     "diff_pct": -0.18
+    },
+    {
+     "id": "scandinavian_taiga",
+     "computed_km2": 2157146,
+     "stated_km2": 2156900,
+     "diff_pct": 0.01
+    },
+    {
+     "id": "hyrcanian",
+     "computed_km2": 55107,
+     "stated_km2": 55000,
+     "diff_pct": 0.19
+    },
+    {
+     "id": "west_siberian_taiga",
+     "computed_km2": 1670549,
+     "stated_km2": 1670283,
+     "diff_pct": 0.02
+    },
+    {
+     "id": "east_siberian_taiga",
+     "computed_km2": 3900137,
+     "stated_km2": 3900000,
+     "diff_pct": 0.0
+    },
+    {
+     "id": "eastern_canadian",
+     "computed_km2": 464108,
+     "stated_km2": 486918,
+     "diff_pct": -4.68
+    },
+    {
+     "id": "appalachian_mixed",
+     "computed_km2": 181370,
+     "stated_km2": 192200,
+     "diff_pct": -5.63
+    },
+    {
+     "id": "borneo_lowland",
+     "computed_km2": 427481,
+     "stated_km2": 428438,
+     "diff_pct": -0.22
+    }
+   ],
+   "within_1_percent": [
+    "carpathian_montane",
+    "dinaric_mixed",
+    "scandinavian_taiga",
+    "hyrcanian",
+    "west_siberian_taiga",
+    "east_siberian_taiga",
+    "borneo_lowland"
+   ],
+   "summary": "computed RESOLVE areas are within 1 percent of the Wikipedia figure for 7 of 9 comparable forest ecoregions",
+   "excluded": "atlantic_forest (biome vs moist-forest subset) and sundarbans (forest vs mangrove plus swamp ecoregions) are not like-for-like"
+  }
+ },
+ "forests": [
+  {
+   "id": "bialowieza",
+   "name": "Białowieża Forest",
+   "tier": "core",
+   "forest_type": "temperate mixed lowland primeval forest",
+   "centroid": {
+    "lat": 52.75,
+    "lon": 23.95,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 3085.8,
+    "area_basis": "infobox area_km2 (whole forest); the World Heritage site is 141,885 ha (1,418.85 km2)",
+    "equivalent_radius_km": 31.3
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Bia%C5%82owie%C5%BCa_Forest",
+   "citation_title": "Białowieża Forest - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1371131919",
+   "confidence": "high",
+   "notes": "Article: one of the last and largest remaining parts of the primeval forest that once stretched across the European Plain; straddles the Poland-Belarus border.",
+   "region": "Europe"
+  },
+  {
+   "id": "black_forest",
+   "name": "Black Forest (Schwarzwald)",
+   "tier": "core",
+   "forest_type": "temperate montane mixed forest (deciduous and fir, spruce higher up)",
+   "centroid": {
+    "lat": 48.25,
+    "lon": 8.05,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 6009,
+    "area_basis": "lead text 'about 6,009 km2' (infobox rounds to 6000)",
+    "length_km": 160,
+    "max_breadth_km": 50,
+    "shape_note": "elongated north-south; model as about 160 x 50 km",
+    "equivalent_radius_km": 43.7
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Black_Forest",
+   "citation_title": "Black Forest - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1375355381",
+   "confidence": "high",
+   "notes": "Article: originally a mixed forest of deciduous trees and firs, with spruce at higher elevations; highest peak Feldberg.",
+   "region": "Europe"
+  },
+  {
+   "id": "ardennes",
+   "name": "Ardennes",
+   "tier": "core",
+   "forest_type": "temperate broadleaf forest upland (composition not verified in fetched text)",
+   "centroid": {
+    "lat": 50.25,
+    "lon": 5.6667,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 11200,
+    "area_basis": "infobox area 11,200 km2 (whole Ardennes region, not only forest cover)",
+    "equivalent_radius_km": 59.7
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Ardennes",
+   "citation_title": "Ardennes - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381190064",
+   "confidence": "medium",
+   "notes": "Area is the region; forest share not stated in the fetched text. Article is categorised under Old-growth forests.",
+   "region": "Europe"
+  },
+  {
+   "id": "bohemian_forest",
+   "name": "Bohemian Forest (Šumava) with the Bavarian Forest",
+   "tier": "core",
+   "forest_type": "temperate montane forest (composition not verified in fetched text)",
+   "centroid": {
+    "lat": 49,
+    "lon": 13.3833,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "length_km": 100,
+    "max_breadth_km": 50,
+    "area_basis": "no area in source; infobox length 100 km, text 'up to 50 km wide'",
+    "approx_area_km2_ellipse": 3927,
+    "equivalent_radius_km": 35.4,
+    "companion_point": {
+     "name": "Bavarian Forest",
+     "lat": 49,
+     "lon": 12.6667,
+     "citation_url": "https://en.wikipedia.org/wiki/Bavarian_Forest"
+    }
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Bohemian_Forest",
+   "citation_title": "Bohemian Forest - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381600263",
+   "confidence": "medium",
+   "notes": "Ellipse area is derived (pi x 50 x 25 km), not stated. Forms the border between the Czech Republic and Germany/Austria.",
+   "region": "Europe"
+  },
+  {
+   "id": "landes",
+   "name": "Landes forest (Forêt des Landes)",
+   "tier": "core",
+   "forest_type": "temperate conifer plantation (maritime pine monoculture)",
+   "centroid": {
+    "lat": 44.18,
+    "lon": -0.5822,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 10000,
+    "area_basis": "infobox and text 'estimated to be around 10,000 km2'",
+    "equivalent_radius_km": 56.4,
+    "companion_point": {
+     "name": "Landes de Gascogne (region)",
+     "lat": 44.09,
+     "lon": -0.917,
+     "citation_url": "https://en.wikipedia.org/wiki/Landes_de_Gascogne",
+     "region_area_km2": 14000
+    }
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Landes_forest",
+   "citation_title": "Landes forest - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1366551506",
+   "confidence": "high",
+   "notes": "Nine-tenths is a maritime pine monoculture; large-scale planting followed the 19 June 1857 law.",
+   "region": "Europe"
+  },
+  {
+   "id": "tuchola",
+   "name": "Tuchola Forest (Bory Tucholskie)",
+   "tier": "core",
+   "forest_type": "temperate conifer forest (spruce and pine)",
+   "centroid": {
+    "lat": 53.6,
+    "lon": 18,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 3200,
+    "area_basis": "text 'With 3,200 km2 of dense spruce and pine forest'",
+    "equivalent_radius_km": 31.9
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Tuchola_Forest",
+   "citation_title": "Tuchola Forest - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1368700220",
+   "confidence": "high",
+   "notes": "Article: one of the biggest forests in Poland; predominantly coniferous.",
+   "region": "Europe"
+  },
+  {
+   "id": "carpathian_montane",
+   "name": "Carpathian montane forests",
+   "tier": "core",
+   "forest_type": "temperate conifer (montane) forest",
+   "centroid": {
+    "lat": 47.971,
+    "lon": 23.246,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 124971,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 199.4,
+    "bbox": {
+     "lat_min": 45.119,
+     "lat_max": 50.195,
+     "lon_min": 17.655,
+     "lon_max": 26.874
+    },
+    "polygon_latlon": [
+     [
+      50.1,
+      21.8
+     ],
+     [
+      48.22,
+      26.34
+     ],
+     [
+      45.31,
+      26.44
+     ],
+     [
+      45.16,
+      22.45
+     ],
+     [
+      45.87,
+      22.75
+     ],
+     [
+      46.04,
+      26.36
+     ],
+     [
+      49.25,
+      21.87
+     ],
+     [
+      48.6,
+      18.63
+     ],
+     [
+      49.31,
+      17.66
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Carpathian montane forests, 120059 km2) simplified with Douglas-Peucker at 56.8 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Carpathian montane forests"
+    ],
+    "resolve_eco_ids": [
+     692
+    ],
+    "area_km2_stated": 125337,
+    "area_stated_source": "Wikipedia infobox and text: 125,337 km2"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Carpathian_montane_conifer_forests",
+   "citation_title": "Carpathian montane conifer forests - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1349202446",
+   "confidence": "high",
+   "notes": "Ecoregion along the Carpathian arc (CZ, PL, SK, UA, RO). Wikipedia article has no coordinate; centroid computed from RESOLVE polygons.",
+   "region": "Europe",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "dinaric_mixed",
+   "name": "Dinaric Mountains mixed forests",
+   "tier": "core",
+   "forest_type": "temperate broadleaf and mixed forest",
+   "centroid": {
+    "lat": 44.081,
+    "lon": 17.349,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 58169,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 136.1,
+    "bbox": {
+     "lat_min": 42.096,
+     "lat_max": 46.45,
+     "lon_min": 13.186,
+     "lon_max": 20.616
+    },
+    "polygon_latlon": [
+     [
+      46.37,
+      14.1
+     ],
+     [
+      44.46,
+      16.11
+     ],
+     [
+      44.81,
+      16.33
+     ],
+     [
+      44.33,
+      18.94
+     ],
+     [
+      43.39,
+      18.76
+     ],
+     [
+      43.72,
+      19.47
+     ],
+     [
+      42.87,
+      20.62
+     ],
+     [
+      42.12,
+      19.84
+     ],
+     [
+      44.5,
+      15.12
+     ],
+     [
+      46.27,
+      13.19
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Dinaric Mountains mixed forests, 56731 km2) simplified with Douglas-Peucker at 36.4 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Dinaric Mountains mixed forests"
+    ],
+    "resolve_eco_ids": [
+     660
+    ],
+    "area_km2_stated": 58275,
+    "area_stated_source": "Wikipedia infobox 58,275 km2; text 58,200 km2"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Dinaric_Mountains_mixed_forests",
+   "citation_title": "Dinaric Mountains mixed forests - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1382010001",
+   "confidence": "high",
+   "notes": "Montane forest of the Dinaric Alps from the Julian Alps to the Drin river.",
+   "region": "Europe",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "scandinavian_taiga",
+   "name": "Scandinavian and Russian taiga",
+   "tier": "core",
+   "forest_type": "boreal (taiga)",
+   "centroid": {
+    "lat": 62.882,
+    "lon": 36.319,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 2157146,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 828.6,
+    "bbox": {
+     "lat_min": 56.353,
+     "lat_max": 69.984,
+     "lon_min": 7.274,
+     "lon_max": 62.547
+    },
+    "polygon_latlon": [
+     [
+      69.61,
+      28.4
+     ],
+     [
+      66.83,
+      40.59
+     ],
+     [
+      67.18,
+      31.7
+     ],
+     [
+      63.79,
+      37.37
+     ],
+     [
+      66.77,
+      62.41
+     ],
+     [
+      60.86,
+      53.89
+     ],
+     [
+      57.88,
+      57.82
+     ],
+     [
+      59.8,
+      22.94
+     ],
+     [
+      66.09,
+      23.9
+     ],
+     [
+      58.21,
+      7.31
+     ],
+     [
+      64.41,
+      10.47
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Scandinavian and Russian taiga, 2191932 km2) simplified with Douglas-Peucker at 271.1 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Scandinavian and Russian taiga"
+    ],
+    "resolve_eco_ids": [
+     717
+    ],
+    "area_km2_stated": 2156900,
+    "area_stated_source": "Wikipedia text 2,156,900 km2 (infobox 2,150,900)"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Scandinavian_and_Russian_taiga",
+   "citation_title": "Scandinavian and Russian taiga - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1369828175",
+   "confidence": "high",
+   "notes": "Largest ecoregion in Europe per the article; Norway, Sweden, Finland and northern European Russia.",
+   "region": "Europe",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "hyrcanian",
+   "name": "Caspian Hyrcanian mixed forests",
+   "tier": "core",
+   "forest_type": "temperate broadleaf and mixed forest",
+   "centroid": {
+    "lat": 37.309,
+    "lon": 51.353,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 55107,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 132.4,
+    "bbox": {
+     "lat_min": 36.021,
+     "lat_max": 39.299,
+     "lon_min": 46.965,
+     "lon_max": 56.653
+    },
+    "polygon_latlon": [
+     [
+      39.21,
+      48.43
+     ],
+     [
+      37.68,
+      49.06
+     ],
+     [
+      36.58,
+      51.89
+     ],
+     [
+      37.78,
+      56.65
+     ],
+     [
+      36.02,
+      53.46
+     ],
+     [
+      36.16,
+      51.28
+     ],
+     [
+      36.92,
+      49.35
+     ],
+     [
+      38.04,
+      48.56
+     ],
+     [
+      37.68,
+      47.96
+     ],
+     [
+      38.63,
+      48.24
+     ],
+     [
+      38.69,
+      47.0
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Caspian Hyrcanian mixed forests, 53238 km2) simplified with Douglas-Peucker at 36.4 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Caspian Hyrcanian mixed forests"
+    ],
+    "resolve_eco_ids": [
+     649
+    ],
+    "area_km2_stated": 55000,
+    "area_stated_source": "Wikipedia text 'about 55,000 km2' (infobox 55,100)"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Hyrcanian_forests",
+   "citation_title": "Hyrcanian forests - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1372555630",
+   "confidence": "high",
+   "notes": "Caspian shore of Iran and Azerbaijan.",
+   "region": "Asia",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "west_siberian_taiga",
+   "name": "West Siberian taiga",
+   "tier": "core",
+   "forest_type": "boreal (taiga)",
+   "centroid": {
+    "lat": 61.329,
+    "lon": 75.059,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 1670549,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 729.2,
+    "bbox": {
+     "lat_min": 54.376,
+     "lat_max": 68.333,
+     "lon_min": 58.975,
+     "lon_max": 93.474
+    },
+    "polygon_latlon": [
+     [
+      57.02,
+      93.47
+     ],
+     [
+      56.04,
+      91.97
+     ],
+     [
+      57.59,
+      84.84
+     ],
+     [
+      56.52,
+      80.56
+     ],
+     [
+      57.41,
+      65.94
+     ],
+     [
+      54.38,
+      58.97
+     ],
+     [
+      64.47,
+      60.14
+     ],
+     [
+      66.74,
+      65.41
+     ],
+     [
+      65.53,
+      75.03
+     ],
+     [
+      66.28,
+      84.64
+     ],
+     [
+      68.33,
+      86.35
+     ],
+     [
+      63.41,
+      87.15
+     ]
+    ],
+    "polygon_basis": "largest polygon part (West Siberian taiga, 1670549 km2) simplified with Douglas-Peucker at 71.1 km; coarse outline only",
+    "resolve_ecoregions": [
+     "West Siberian taiga"
+    ],
+    "resolve_eco_ids": [
+     720
+    ],
+    "area_km2_stated": 1670283,
+    "area_stated_source": "Wikipedia infobox and text 1,670,283 km2"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/West_Siberian_taiga",
+   "citation_title": "West Siberian taiga - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1336294132",
+   "confidence": "high",
+   "notes": "Wikipedia article has no coordinate; centroid from RESOLVE.",
+   "region": "Asia",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "east_siberian_taiga",
+   "name": "East Siberian taiga",
+   "tier": "core",
+   "forest_type": "boreal (taiga)",
+   "centroid": {
+    "lat": 61.693,
+    "lon": 112.429,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 3900137,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 1114.2,
+    "bbox": {
+     "lat_min": 51.337,
+     "lat_max": 71.417,
+     "lon_min": 86.349,
+     "lon_max": 142.575
+    },
+    "polygon_latlon": [
+     [
+      71.25,
+      114.27
+     ],
+     [
+      60.17,
+      142.57
+     ],
+     [
+      52.78,
+      131.91
+     ],
+     [
+      55.91,
+      110.22
+     ],
+     [
+      51.42,
+      104.41
+     ],
+     [
+      53.01,
+      92.96
+     ],
+     [
+      68.33,
+      86.35
+     ],
+     [
+      64.75,
+      97.44
+     ]
+    ],
+    "polygon_basis": "largest polygon part (East Siberian taiga, 4080652 km2) simplified with Douglas-Peucker at 423.5 km; coarse outline only",
+    "resolve_ecoregions": [
+     "East Siberian taiga"
+    ],
+    "resolve_eco_ids": [
+     710
+    ],
+    "area_km2_stated": 3900000,
+    "area_stated_source": "Wikipedia infobox 3,900,000 km2"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/East_Siberian_taiga",
+   "citation_title": "East Siberian taiga - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1323908258",
+   "confidence": "high",
+   "notes": "Probably outside every planned map unless Old World reaches eastern Siberia.",
+   "region": "Asia",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "congolian",
+   "name": "Congolian rainforests",
+   "tier": "core",
+   "forest_type": "tropical rainforest",
+   "centroid": {
+    "lat": 0.649,
+    "lon": 19.362,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 1774462,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 751.6,
+    "bbox": {
+     "lat_min": -5.744,
+     "lat_max": 6.161,
+     "lon_min": 8.994,
+     "lon_max": 30.154
+    },
+    "polygon_latlon": [
+     [
+      5.76,
+      23.28
+     ],
+     [
+      4.29,
+      23.06
+     ],
+     [
+      2.2,
+      30.11
+     ],
+     [
+      -2.08,
+      28.69
+     ],
+     [
+      -1.71,
+      27.17
+     ],
+     [
+      -3.57,
+      28.15
+     ],
+     [
+      -3.41,
+      26.21
+     ],
+     [
+      0.51,
+      25.27
+     ],
+     [
+      3.29,
+      18.83
+     ],
+     [
+      5.14,
+      19.44
+     ],
+     [
+      4.39,
+      21.39
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Northeast Congolian lowland forests, 514588 km2) simplified with Douglas-Peucker at 111.0 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Central Congolian lowland forests",
+     "Eastern Congolian swamp forests",
+     "Western Congolian swamp forests",
+     "Northeast Congolian lowland forests",
+     "Northwest Congolian lowland forests",
+     "Congolian coastal forests"
+    ],
+    "resolve_eco_ids": [
+     3,
+     5,
+     10,
+     24,
+     26,
+     29
+    ],
+    "area_stated": "Wikipedia: 'over 500,000,000 acres' (about 2,023,000 km2 by conversion); Congo Basin article: 300 million ha of forest"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Congolian_rainforests",
+   "citation_title": "Congolian rainforests - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1375427369",
+   "confidence": "medium",
+   "notes": "Union of the six RESOLVE ecoregions the Wikipedia article lists; the article's 'Atlantic Equatorial coastal forests' is taken to be RESOLVE 'Congolian coastal forests' (rename inferred, UNVERIFIED). Stated areas disagree between articles.",
+   "region": "Africa",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    },
+    {
+     "citation_url": "https://en.wikipedia.org/wiki/Congo_Basin",
+     "citation_title": "Congo Basin - Wikipedia"
+    }
+   ]
+  },
+  {
+   "id": "upper_guinean",
+   "name": "Upper Guinean forests",
+   "tier": "core",
+   "forest_type": "tropical moist (seasonal) forest",
+   "centroid": {
+    "lat": 6.955,
+    "lon": -6.867,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 425860,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 368.2,
+    "bbox": {
+     "lat_min": 4.353,
+     "lat_max": 12.172,
+     "lon_min": -13.785,
+     "lon_max": 1.67
+    },
+    "polygon_latlon": [
+     [
+      6.2,
+      -10.56
+     ],
+     [
+      8.17,
+      -13.17
+     ],
+     [
+      8.63,
+      -12.61
+     ],
+     [
+      9.94,
+      -13.7
+     ],
+     [
+      8.65,
+      -11.77
+     ],
+     [
+      9.35,
+      -10.76
+     ],
+     [
+      7.72,
+      -7.69
+     ],
+     [
+      7.42,
+      -8.69
+     ],
+     [
+      7.72,
+      -7.08
+     ],
+     [
+      4.96,
+      -6.07
+     ],
+     [
+      4.37,
+      -7.72
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Western Guinean lowland forests, 206667 km2) simplified with Douglas-Peucker at 56.8 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Western Guinean lowland forests",
+     "Eastern Guinean forests",
+     "Guinean montane forests"
+    ],
+    "resolve_eco_ids": [
+     11,
+     14,
+     30
+    ]
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Upper_Guinean_forests",
+   "citation_title": "Upper Guinean forests - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1306002249",
+   "confidence": "high",
+   "notes": "Union of the three WWF ecoregions the article lists (Western Guinean lowland, Eastern Guinean, Guinean montane); Guinea and Sierra Leone east to Togo. On the Atlantic coast of Africa.",
+   "region": "Africa",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "amazon",
+   "name": "Amazon rainforest",
+   "tier": "core",
+   "forest_type": "tropical rainforest",
+   "centroid": {
+    "lat": -3,
+    "lon": -60,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article secondary coordinate"
+   },
+   "extent": {
+    "area_km2": 5500000,
+    "area_basis": "infobox 5,500,000 km2; text says 6 million km2 of rainforest within a 7 million km2 basin",
+    "equivalent_radius_km": 1323.1,
+    "polygon_note": "no outline computed; Amazon spans dozens of RESOLVE ecoregions"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Amazon_rainforest",
+   "citation_title": "Amazon rainforest - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378382105",
+   "confidence": "medium",
+   "notes": "Coordinate is the article's secondary 'forest' coordinate (-3, -60), a representative point.",
+   "region": "South America"
+  },
+  {
+   "id": "atlantic_forest",
+   "name": "Atlantic Forest (Mata Atlântica)",
+   "tier": "core",
+   "forest_type": "tropical and subtropical moist forest",
+   "centroid": {
+    "lat": -21.909,
+    "lon": -47.688,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 1197478,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 617.4,
+    "bbox": {
+     "lat_min": -33.766,
+     "lat_max": -3.238,
+     "lon_min": -57.294,
+     "lon_max": -34.79
+    },
+    "polygon_latlon": [
+     [
+      -17.88,
+      -48.79
+     ],
+     [
+      -19.73,
+      -50.94
+     ],
+     [
+      -22.37,
+      -48.38
+     ],
+     [
+      -22.16,
+      -51.25
+     ],
+     [
+      -23.66,
+      -49.28
+     ],
+     [
+      -24.5,
+      -53.69
+     ],
+     [
+      -25.72,
+      -52.06
+     ],
+     [
+      -26.93,
+      -54.44
+     ],
+     [
+      -27.37,
+      -51.94
+     ],
+     [
+      -28.1,
+      -55.45
+     ],
+     [
+      -23.43,
+      -57.28
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Alto Paraná Atlantic forests, 376580 km2) simplified with Douglas-Peucker at 173.5 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Alto Paraná Atlantic forests",
+     "Araucaria moist forests",
+     "Atlantic Coast restingas",
+     "Bahia coastal forests",
+     "Bahia interior forests",
+     "Caatinga Enclaves moist forests",
+     "Pernambuco coastal forests",
+     "Pernambuco interior forests",
+     "Serra do Mar coastal forests"
+    ],
+    "resolve_eco_ids": [
+     439,
+     440,
+     441,
+     442,
+     443,
+     445,
+     491,
+     492,
+     500
+    ],
+    "area_km2_stated": 1315460,
+    "area_stated_source": "Wikipedia infobox 1,315,460 km2 (whole biome incl. dry forest, savanna and mangrove ecoregions)"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Atlantic_Forest",
+   "citation_title": "Atlantic Forest - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1370044732",
+   "confidence": "medium",
+   "notes": "Outline and centroid use only the nine moist-broadleaf ecoregions the article lists, so area is smaller than the biome figure. The article's own coordinate (-16.5, -39.25) is a World Heritage reserve, not a centroid.",
+   "region": "South America",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "eastern_canadian",
+   "name": "Eastern Canadian forests",
+   "tier": "alternate",
+   "forest_type": "boreal (taiga)",
+   "centroid": {
+    "lat": 50.476,
+    "lon": -63.606,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 464108,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 384.4,
+    "bbox": {
+     "lat_min": 46.614,
+     "lat_max": 54.575,
+     "lon_min": -74.362,
+     "lon_max": -52.662
+    },
+    "polygon_latlon": [
+     [
+      54.54,
+      -57.67
+     ],
+     [
+      53.73,
+      -60.97
+     ],
+     [
+      54.21,
+      -57.93
+     ],
+     [
+      51.96,
+      -55.89
+     ],
+     [
+      50.19,
+      -60.15
+     ],
+     [
+      50.26,
+      -66.45
+     ],
+     [
+      47.68,
+      -70.12
+     ],
+     [
+      49.5,
+      -74.36
+     ],
+     [
+      52.86,
+      -70.09
+     ],
+     [
+      52.14,
+      -56.97
+     ],
+     [
+      54.01,
+      -57.79
+     ],
+     [
+      53.3,
+      -63.37
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Eastern Canadian forests, 344617 km2) simplified with Douglas-Peucker at 138.8 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Eastern Canadian forests"
+    ],
+    "resolve_eco_ids": [
+     373
+    ],
+    "area_km2_stated": 486918,
+    "area_stated_source": "Wikipedia infobox 486,918 km2"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Eastern_Canadian_Boreal_Forests",
+   "citation_title": "Eastern Canadian Boreal Forests - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378482441",
+   "confidence": "medium",
+   "notes": "RESOLVE name 'Eastern Canadian forests'; computed area about 5 percent below the article figure.",
+   "region": "North America",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "appalachian_mixed",
+   "name": "Appalachian mixed mesophytic forests",
+   "tier": "alternate",
+   "forest_type": "temperate broadleaf forest",
+   "centroid": {
+    "lat": 38.19,
+    "lon": -82.25,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 181370,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 240.3,
+    "bbox": {
+     "lat_min": 33.146,
+     "lat_max": 41.435,
+     "lon_min": -87.833,
+     "lon_max": -77.625
+    },
+    "polygon_latlon": [
+     [
+      41.4,
+      -79.34
+     ],
+     [
+      41.11,
+      -77.62
+     ],
+     [
+      37.66,
+      -80.31
+     ],
+     [
+      36.33,
+      -84.21
+     ],
+     [
+      33.16,
+      -87.4
+     ],
+     [
+      34.45,
+      -87.75
+     ],
+     [
+      34.6,
+      -86.23
+     ],
+     [
+      40.61,
+      -82.31
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Appalachian mixed mesophytic forests, 179160 km2) simplified with Douglas-Peucker at 56.8 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Appalachian mixed mesophytic forests"
+    ],
+    "resolve_eco_ids": [
+     329
+    ],
+    "area_km2_stated": 192200,
+    "area_stated_source": "Wikipedia infobox 192,200 km2"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Appalachian_mixed_mesophytic_forests",
+   "citation_title": "Appalachian mixed mesophytic forests - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362683025",
+   "confidence": "high",
+   "notes": "",
+   "region": "North America",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "borneo_lowland",
+   "name": "Borneo lowland rain forests",
+   "tier": "alternate",
+   "forest_type": "tropical rainforest",
+   "centroid": {
+    "lat": 0.999,
+    "lon": 114.12,
+    "basis": "area-weighted centroid of RESOLVE Ecoregions 2017 polygons, computed in lon/lat space (approximate)"
+   },
+   "extent": {
+    "area_km2": 427481,
+    "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+    "equivalent_radius_km": 368.9,
+    "bbox": {
+     "lat_min": -5.587,
+     "lat_max": 7.362,
+     "lon_min": 107.008,
+     "lon_max": 119.271
+    },
+    "polygon_latlon": [
+     [
+      6.91,
+      116.85
+     ],
+     [
+      5.43,
+      119.21
+     ],
+     [
+      3.42,
+      116.47
+     ],
+     [
+      0.99,
+      119.0
+     ],
+     [
+      -0.18,
+      115.37
+     ],
+     [
+      -0.81,
+      116.89
+     ],
+     [
+      -4.05,
+      114.7
+     ],
+     [
+      -1.24,
+      114.7
+     ],
+     [
+      -2.82,
+      111.55
+     ],
+     [
+      0.81,
+      108.97
+     ],
+     [
+      2.06,
+      109.64
+     ],
+     [
+      0.92,
+      111.42
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Borneo lowland rain forests, 556349 km2) simplified with Douglas-Peucker at 111.0 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Borneo lowland rain forests"
+    ],
+    "resolve_eco_ids": [
+     219
+    ],
+    "area_km2_stated": 428438,
+    "area_stated_source": "Wikipedia text 428,438 km2 (infobox 425,124)"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Borneo_lowland_rain_forests",
+   "citation_title": "Borneo lowland rain forests - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381583657",
+   "confidence": "high",
+   "notes": "",
+   "region": "Asia",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  },
+  {
+   "id": "spessart",
+   "name": "Spessart",
+   "tier": "alternate",
+   "forest_type": "temperate broadleaf (oak and beech) upland forest",
+   "centroid": {
+    "lat": 49.9025,
+    "lon": 9.4286,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 2440,
+    "area_basis": "infobox and text 'around 2,440 square kilometres'",
+    "equivalent_radius_km": 27.9
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Spessart",
+   "citation_title": "Spessart - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1371010718",
+   "confidence": "high",
+   "notes": "Article image caption cites ancient oaks and beeches; area is the upland region.",
+   "region": "Europe"
+  },
+  {
+   "id": "sundarbans",
+   "name": "Sundarbans",
+   "tier": "alternate",
+   "forest_type": "mangrove forest",
+   "centroid": {
+    "lat": 21.75,
+    "lon": 88.75,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 10277,
+    "area_basis": "Wikipedia infobox area_km2 10,277 (the RESOLVE outline and bbox cover the larger mangrove plus freshwater swamp ecoregions)",
+    "equivalent_radius_km": 57.2,
+    "bbox": {
+     "lat_min": 21.519,
+     "lat_max": 23.584,
+     "lon_min": 88.046,
+     "lon_max": 91.569
+    },
+    "polygon_latlon": [
+     [
+      22.5,
+      90.44
+     ],
+     [
+      21.8,
+      90.21
+     ],
+     [
+      22.48,
+      90.0
+     ],
+     [
+      21.83,
+      89.82
+     ],
+     [
+      21.72,
+      89.55
+     ],
+     [
+      22.33,
+      89.62
+     ],
+     [
+      21.71,
+      89.42
+     ],
+     [
+      22.13,
+      89.04
+     ],
+     [
+      21.63,
+      89.09
+     ],
+     [
+      21.56,
+      88.71
+     ],
+     [
+      22.4,
+      88.99
+     ],
+     [
+      22.77,
+      89.85
+     ]
+    ],
+    "polygon_basis": "largest polygon part (Sundarbans mangroves, 15100 km2) simplified with Douglas-Peucker at 29.1 km; coarse outline only",
+    "resolve_ecoregions": [
+     "Sundarbans mangroves",
+     "Sundarbans freshwater swamp forests"
+    ],
+    "resolve_eco_ids": [
+     282,
+     323
+    ],
+    "area_km2_stated": 10277,
+    "area_stated_source": "Wikipedia infobox 10,277 km2 (mangrove forest)"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Sundarbans",
+   "citation_title": "Sundarbans - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1376888173",
+   "confidence": "medium",
+   "notes": "RESOLVE union of the mangrove and freshwater swamp ecoregions (about 35,000 km2) is much larger than the mangrove forest itself; use the article area for the forest.",
+   "region": "Asia",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ]
+  }
+ ],
+ "ranges": [
+  {
+   "id": "alps",
+   "name": "Alps",
+   "region": "Europe",
+   "highest_point": "Mont Blanc",
+   "highest_elevation_m": 4808.73,
+   "stated_length_km": 1200.0,
+   "stated_width_km": 250.0,
+   "polyline_length_km": 1016,
+   "crest_polyline": [
+    {
+     "name": "Colle di Cadibona",
+     "lat": 44.3343,
+     "lon": 8.3491,
+     "citation_url": "https://en.wikipedia.org/wiki/Colle_di_Cadibona",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Col de Tende",
+     "lat": 44.1492,
+     "lon": 7.5619,
+     "citation_url": "https://en.wikipedia.org/wiki/Col_de_Tende",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Monte Viso",
+     "lat": 44.6675,
+     "lon": 7.0917,
+     "citation_url": "https://en.wikipedia.org/wiki/Monte_Viso",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mont Cenis",
+     "lat": 45.2603,
+     "lon": 6.9008,
+     "citation_url": "https://en.wikipedia.org/wiki/Mont_Cenis",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mont Blanc",
+     "lat": 45.8328,
+     "lon": 6.865,
+     "citation_url": "https://en.wikipedia.org/wiki/Mont_Blanc",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Great St Bernard Pass",
+     "lat": 45.8689,
+     "lon": 7.1706,
+     "citation_url": "https://en.wikipedia.org/wiki/Great_St_Bernard_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Monte Rosa",
+     "lat": 45.9369,
+     "lon": 7.8667,
+     "citation_url": "https://en.wikipedia.org/wiki/Monte_Rosa",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Simplon Pass",
+     "lat": 46.2517,
+     "lon": 8.0333,
+     "citation_url": "https://en.wikipedia.org/wiki/Simplon_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Gotthard Pass",
+     "lat": 46.5562,
+     "lon": 8.5678,
+     "citation_url": "https://en.wikipedia.org/wiki/Gotthard_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Piz Bernina",
+     "lat": 46.3822,
+     "lon": 9.9081,
+     "citation_url": "https://en.wikipedia.org/wiki/Piz_Bernina",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Wildspitze",
+     "lat": 46.8853,
+     "lon": 10.8672,
+     "citation_url": "https://en.wikipedia.org/wiki/Wildspitze",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Brenner Pass",
+     "lat": 47.0033,
+     "lon": 11.5075,
+     "citation_url": "https://en.wikipedia.org/wiki/Brenner_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Grossglockner",
+     "lat": 47.0749,
+     "lon": 12.6952,
+     "citation_url": "https://en.wikipedia.org/wiki/Grossglockner",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Hochgolling",
+     "lat": 47.2667,
+     "lon": 13.7617,
+     "citation_url": "https://en.wikipedia.org/wiki/Hochgolling",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Semmering Pass",
+     "lat": 47.6325,
+     "lon": 15.8297,
+     "citation_url": "https://en.wikipedia.org/wiki/Semmering_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Alps",
+   "citation_title": "Alps - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1382042310",
+   "confidence": "medium",
+   "notes": "Arc from the Cadibona pass (Alps-Apennines boundary) to the Semmering; the article says the arch runs from Nice to Trieste and Vienna. The south-east branch to Triglav and the Godovič pass is not drawn."
+  },
+  {
+   "id": "pyrenees",
+   "name": "Pyrenees",
+   "region": "Europe",
+   "highest_point": "Aneto",
+   "highest_elevation_m": 3404.0,
+   "stated_length_km": 491.0,
+   "stated_width_km": null,
+   "polyline_length_km": 448,
+   "crest_polyline": [
+    {
+     "name": "Larrun",
+     "lat": 43.3092,
+     "lon": -1.6356,
+     "citation_url": "https://en.wikipedia.org/wiki/Larrun",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Roncevaux Pass",
+     "lat": 43.0203,
+     "lon": -1.3239,
+     "citation_url": "https://en.wikipedia.org/wiki/Roncevaux_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Pic d'Anie",
+     "lat": 42.945,
+     "lon": -0.7211,
+     "citation_url": "https://en.wikipedia.org/wiki/Pic_d%27Anie",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Somport",
+     "lat": 42.7936,
+     "lon": -0.5458,
+     "citation_url": "https://en.wikipedia.org/wiki/Somport",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Balaïtous",
+     "lat": 42.8386,
+     "lon": -0.29,
+     "citation_url": "https://en.wikipedia.org/wiki/Bala%C3%AFtous",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Vignemale",
+     "lat": 42.7767,
+     "lon": -0.1431,
+     "citation_url": "https://en.wikipedia.org/wiki/Vignemale",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Monte Perdido",
+     "lat": 42.6667,
+     "lon": 0.0333,
+     "citation_url": "https://en.wikipedia.org/wiki/Monte_Perdido",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Aneto",
+     "lat": 42.6322,
+     "lon": 0.6578,
+     "citation_url": "https://en.wikipedia.org/wiki/Aneto",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Pica d'Estats",
+     "lat": 42.6672,
+     "lon": 1.3972,
+     "citation_url": "https://en.wikipedia.org/wiki/Pica_d%27Estats",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Puigmal",
+     "lat": 42.3833,
+     "lon": 2.1167,
+     "citation_url": "https://en.wikipedia.org/wiki/Puigmal",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Col du Perthus",
+     "lat": 42.4639,
+     "lon": 2.8656,
+     "citation_url": "https://en.wikipedia.org/wiki/Col_du_Perthus",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Cap de Creus",
+     "lat": 42.3192,
+     "lon": 3.3219,
+     "citation_url": "https://en.wikipedia.org/wiki/Cap_de_Creus",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Pyrenees",
+   "citation_title": "Pyrenees - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1382052068",
+   "confidence": "medium",
+   "notes": "The article runs the range from the Basque Mountains near the Bay of Biscay to Cap de Creus on the Mediterranean; Larrun (La Rhune) is the researcher's chosen western summit. Aneto is the highest point; whether it sits on the main divide is not verified."
+  },
+  {
+   "id": "carpathians",
+   "name": "Carpathian Mountains",
+   "region": "Europe",
+   "highest_point": "Gerlachovský štít",
+   "highest_elevation_m": 2656.0,
+   "stated_length_km": 1500.0,
+   "stated_width_km": 500.0,
+   "polyline_length_km": 1319,
+   "crest_polyline": [
+    {
+     "name": "Devín Castle",
+     "lat": 48.1736,
+     "lon": 16.9783,
+     "citation_url": "https://en.wikipedia.org/wiki/Dev%C3%ADn_Castle",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Little Carpathians",
+     "lat": 48.4167,
+     "lon": 17.25,
+     "citation_url": "https://en.wikipedia.org/wiki/Little_Carpathians",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Babia Góra",
+     "lat": 49.5833,
+     "lon": 19.5333,
+     "citation_url": "https://en.wikipedia.org/wiki/Babia_G%C3%B3ra",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Gerlachovský štít",
+     "lat": 49.164,
+     "lon": 20.134,
+     "citation_url": "https://en.wikipedia.org/wiki/Gerlachovsk%C3%BD_%C5%A1t%C3%ADt",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Dukla Pass",
+     "lat": 49.418,
+     "lon": 21.696,
+     "citation_url": "https://en.wikipedia.org/wiki/Dukla_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Uzhok Pass",
+     "lat": 49.0028,
+     "lon": 22.8875,
+     "citation_url": "https://en.wikipedia.org/wiki/Uzhok_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Veretskyi Pass",
+     "lat": 48.8271,
+     "lon": 23.1758,
+     "citation_url": "https://en.wikipedia.org/wiki/Veretskyi_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Hoverla",
+     "lat": 48.16,
+     "lon": 24.5003,
+     "citation_url": "https://en.wikipedia.org/wiki/Hoverla",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Rodna Mountains",
+     "lat": 47.538,
+     "lon": 24.6972,
+     "citation_url": "https://en.wikipedia.org/wiki/Rodna_Mountains",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Ceahlău Massif",
+     "lat": 46.955,
+     "lon": 25.9457,
+     "citation_url": "https://en.wikipedia.org/wiki/Ceahl%C4%83u_Massif",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Predeal Pass",
+     "lat": 45.5128,
+     "lon": 25.5722,
+     "citation_url": "https://en.wikipedia.org/wiki/Predeal_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Moldoveanu Peak",
+     "lat": 45.6,
+     "lon": 24.7378,
+     "citation_url": "https://en.wikipedia.org/wiki/Moldoveanu_Peak",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Parângu Mare",
+     "lat": 45.3411,
+     "lon": 23.5406,
+     "citation_url": "https://en.wikipedia.org/wiki/Par%C3%A2ngu_Mare",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Peleaga",
+     "lat": 45.3661,
+     "lon": 22.8944,
+     "citation_url": "https://en.wikipedia.org/wiki/Peleaga",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Iron Gates",
+     "lat": 44.6711,
+     "lon": 22.5297,
+     "citation_url": "https://en.wikipedia.org/wiki/Iron_Gates",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Carpathian_Mountains",
+   "citation_title": "Carpathian Mountains - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378727579",
+   "confidence": "medium",
+   "notes": "Clockwise arc from the Danube at Devín (Bratislava) to the Iron Gates. Gerlachovský štít (highest summit) and the Ceahlău massif are included as landmark summits; whether they lie on the main watershed is not verified."
+  },
+  {
+   "id": "caucasus",
+   "name": "Greater Caucasus",
+   "region": "Europe",
+   "highest_point": "Mount Elbrus",
+   "highest_elevation_m": 5642.0,
+   "stated_length_km": 1200.0,
+   "stated_width_km": null,
+   "polyline_length_km": 1198,
+   "crest_polyline": [
+    {
+     "name": "Taman Peninsula",
+     "lat": 45.2,
+     "lon": 37.2,
+     "citation_url": "https://en.wikipedia.org/wiki/Taman_Peninsula",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Fisht",
+     "lat": 43.9411,
+     "lon": 39.9019,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Fisht",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Dombay-Ulgen",
+     "lat": 43.2436,
+     "lon": 41.7272,
+     "citation_url": "https://en.wikipedia.org/wiki/Dombay-Ulgen",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Elbrus",
+     "lat": 43.355,
+     "lon": 42.4392,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Elbrus",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Shkhara",
+     "lat": 43.0006,
+     "lon": 43.1122,
+     "citation_url": "https://en.wikipedia.org/wiki/Shkhara",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mamison Pass",
+     "lat": 42.7061,
+     "lon": 43.7931,
+     "citation_url": "https://en.wikipedia.org/wiki/Mamison_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Kazbek",
+     "lat": 42.6992,
+     "lon": 44.5183,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Kazbek",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Tebulosmta",
+     "lat": 42.5733,
+     "lon": 45.3175,
+     "citation_url": "https://en.wikipedia.org/wiki/Tebulosmta",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Bazardüzü",
+     "lat": 41.2244,
+     "lon": 47.8583,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Bazard%C3%BCz%C3%BC",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Shahdagh",
+     "lat": 41.2725,
+     "lon": 48.0044,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Shahdagh",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Absheron Peninsula",
+     "lat": 40.4639,
+     "lon": 49.9583,
+     "citation_url": "https://en.wikipedia.org/wiki/Absheron_Peninsula",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Greater_Caucasus",
+   "citation_title": "Greater Caucasus - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1356110174",
+   "confidence": "medium",
+   "notes": "Article: from the Taman Peninsula (Black Sea) to the Absheron Peninsula (Caspian), traditionally split at Mount Elbrus and Mount Kazbek into Western, Central and Eastern Caucasus; both are vertices, but whether each stands on the watershed itself is not verified. Gap of about 210 km between Tebulosmta and Bazardüzü (no fetched summit in between)."
+  },
+  {
+   "id": "scandinavian",
+   "name": "Scandinavian Mountains (Scandes)",
+   "region": "Europe",
+   "highest_point": "Galdhøpiggen",
+   "highest_elevation_m": 2469.0,
+   "stated_length_km": 1700.0,
+   "stated_width_km": 320.0,
+   "polyline_length_km": 1274,
+   "crest_polyline": [
+    {
+     "name": "Hardangervidda",
+     "lat": 60.05,
+     "lon": 7.4167,
+     "citation_url": "https://en.wikipedia.org/wiki/Hardangervidda",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Hardangerjøkulen",
+     "lat": 60.5333,
+     "lon": 7.4167,
+     "citation_url": "https://en.wikipedia.org/wiki/Hardangerj%C3%B8kulen",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Filefjell",
+     "lat": 61.0539,
+     "lon": 8.2144,
+     "citation_url": "https://en.wikipedia.org/wiki/Filefjell",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Galdhøpiggen",
+     "lat": 61.6364,
+     "lon": 8.3125,
+     "citation_url": "https://en.wikipedia.org/wiki/Galdh%C3%B8piggen",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Snøhetta",
+     "lat": 62.3198,
+     "lon": 9.2677,
+     "citation_url": "https://en.wikipedia.org/wiki/Sn%C3%B8hetta",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Storsylen",
+     "lat": 63.0202,
+     "lon": 12.1988,
+     "citation_url": "https://en.wikipedia.org/wiki/Storsylen",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Oksskolten",
+     "lat": 66.0122,
+     "lon": 14.3386,
+     "citation_url": "https://en.wikipedia.org/wiki/Oksskolten",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Sulitjelma",
+     "lat": 67.133,
+     "lon": 16.0766,
+     "citation_url": "https://en.wikipedia.org/wiki/Sulitjelma",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Kebnekaise",
+     "lat": 67.9044,
+     "lon": 18.5283,
+     "citation_url": "https://en.wikipedia.org/wiki/Kebnekaise",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Three-Country Cairn",
+     "lat": 69.06,
+     "lon": 20.5486,
+     "citation_url": "https://en.wikipedia.org/wiki/Three-Country_Cairn",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Halti",
+     "lat": 69.3228,
+     "lon": 21.2789,
+     "citation_url": "https://en.wikipedia.org/wiki/Halti",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Scandinavian_Mountains",
+   "citation_title": "Scandinavian Mountains - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1369620792",
+   "confidence": "medium",
+   "notes": "From the Hardangervidda plateau in southern Norway to Halti in the far north. The range is broad (infobox width 320 km); this line is a spine, not a ridge crest in the Alpine sense."
+  },
+  {
+   "id": "apennines",
+   "name": "Apennine Mountains",
+   "region": "Europe",
+   "highest_point": "Corno Grande",
+   "highest_elevation_m": 2912.0,
+   "stated_length_km": 1200.0,
+   "stated_width_km": 250.0,
+   "polyline_length_km": 1071,
+   "crest_polyline": [
+    {
+     "name": "Colle di Cadibona",
+     "lat": 44.3343,
+     "lon": 8.3491,
+     "citation_url": "https://en.wikipedia.org/wiki/Colle_di_Cadibona",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Bocchetta Pass",
+     "lat": 44.5506,
+     "lon": 8.8878,
+     "citation_url": "https://en.wikipedia.org/wiki/Bocchetta_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Cisa Pass",
+     "lat": 44.4716,
+     "lon": 9.9283,
+     "citation_url": "https://en.wikipedia.org/wiki/Cisa_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Monte Cusna",
+     "lat": 44.2883,
+     "lon": 10.3912,
+     "citation_url": "https://en.wikipedia.org/wiki/Monte_Cusna",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Monte Cimone",
+     "lat": 44.1939,
+     "lon": 10.7014,
+     "citation_url": "https://en.wikipedia.org/wiki/Monte_Cimone",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Futa Pass",
+     "lat": 44.0935,
+     "lon": 11.2782,
+     "citation_url": "https://en.wikipedia.org/wiki/Futa_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Monte Falterona",
+     "lat": 43.8667,
+     "lon": 11.7,
+     "citation_url": "https://en.wikipedia.org/wiki/Monte_Falterona",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Monte Vettore",
+     "lat": 42.8167,
+     "lon": 13.2667,
+     "citation_url": "https://en.wikipedia.org/wiki/Monte_Vettore",
+     "coord_basis": "article secondary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Corno Grande",
+     "lat": 42.4692,
+     "lon": 13.5656,
+     "citation_url": "https://en.wikipedia.org/wiki/Corno_Grande",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Maiella",
+     "lat": 42.0869,
+     "lon": 14.0875,
+     "citation_url": "https://en.wikipedia.org/wiki/Maiella",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Monte Miletto",
+     "lat": 41.4333,
+     "lon": 14.3667,
+     "citation_url": "https://en.wikipedia.org/wiki/Monte_Miletto",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Pollino",
+     "lat": 39.8947,
+     "lon": 16.2175,
+     "citation_url": "https://en.wikipedia.org/wiki/Pollino",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Montalto (Aspromonte)",
+     "lat": 38.1589,
+     "lon": 15.9211,
+     "citation_url": "https://en.wikipedia.org/wiki/Montalto_(Aspromonte)",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Apennine_Mountains",
+   "citation_title": "Apennine Mountains - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380907767",
+   "confidence": "medium",
+   "notes": "From Altare/Cadibona (article: join the Ligurian Alps at Altare) down the peninsula to Aspromonte above the Strait of Messina."
+  },
+  {
+   "id": "balkan",
+   "name": "Balkan Mountains (Stara Planina)",
+   "region": "Europe",
+   "highest_point": "Botev Peak",
+   "highest_elevation_m": 2376.0,
+   "stated_length_km": 557,
+   "stated_width_km": 15.0,
+   "polyline_length_km": 508,
+   "crest_polyline": [
+    {
+     "name": "Vrashka Chuka",
+     "lat": 43.8347,
+     "lon": 22.3692,
+     "citation_url": "https://en.wikipedia.org/wiki/Vrashka_Chuka",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Midžor",
+     "lat": 43.3939,
+     "lon": 22.6817,
+     "citation_url": "https://en.wikipedia.org/wiki/Mid%C5%BEor",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Petrohan Pass",
+     "lat": 43.1225,
+     "lon": 23.1253,
+     "citation_url": "https://en.wikipedia.org/wiki/Petrohan_Pass",
+     "coord_basis": "article secondary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Iskar Gorge",
+     "lat": 43.0433,
+     "lon": 23.3528,
+     "citation_url": "https://en.wikipedia.org/wiki/Iskar_Gorge",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Murgash",
+     "lat": 42.8331,
+     "lon": 23.6685,
+     "citation_url": "https://en.wikipedia.org/wiki/Murgash",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Beklemeto Pass",
+     "lat": 42.7806,
+     "lon": 24.6058,
+     "citation_url": "https://en.wikipedia.org/wiki/Beklemeto_Pass",
+     "coord_basis": "article secondary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Botev Peak",
+     "lat": 42.7175,
+     "lon": 24.9167,
+     "citation_url": "https://en.wikipedia.org/wiki/Botev_Peak",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Shipka Pass",
+     "lat": 42.7667,
+     "lon": 25.3167,
+     "citation_url": "https://en.wikipedia.org/wiki/Shipka_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Kotel Pass",
+     "lat": 42.9175,
+     "lon": 26.4506,
+     "citation_url": "https://en.wikipedia.org/wiki/Kotel_Pass",
+     "coord_basis": "article secondary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Cape Emine",
+     "lat": 42.7014,
+     "lon": 27.8997,
+     "citation_url": "https://en.wikipedia.org/wiki/Cape_Emine",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Balkan_Mountains",
+   "citation_title": "Balkan Mountains - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1374384702",
+   "confidence": "medium",
+   "notes": "Article: conventionally begins at Vrashka Chuka and runs about 560 km to the Black Sea (Cape Emine)."
+  },
+  {
+   "id": "dinaric",
+   "name": "Dinaric Alps",
+   "region": "Europe",
+   "highest_point": "Maja Jezercë",
+   "highest_elevation_m": 2694.0,
+   "stated_length_km": 645.0,
+   "stated_width_km": null,
+   "polyline_length_km": 605,
+   "crest_polyline": [
+    {
+     "name": "Postojna Gate",
+     "lat": 45.7833,
+     "lon": 14.2167,
+     "citation_url": "https://en.wikipedia.org/wiki/Postojna_Gate",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Snežnik (plateau)",
+     "lat": 45.5815,
+     "lon": 14.4315,
+     "citation_url": "https://en.wikipedia.org/wiki/Sne%C5%BEnik_(plateau)",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Risnjak",
+     "lat": 45.4283,
+     "lon": 14.745,
+     "citation_url": "https://en.wikipedia.org/wiki/Risnjak",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Vaganski vrh",
+     "lat": 44.3673,
+     "lon": 15.5046,
+     "citation_url": "https://en.wikipedia.org/wiki/Vaganski_vrh",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Dinara",
+     "lat": 43.9451,
+     "lon": 16.5969,
+     "citation_url": "https://en.wikipedia.org/wiki/Dinara",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Bobotov Kuk",
+     "lat": 43.1281,
+     "lon": 19.0347,
+     "citation_url": "https://en.wikipedia.org/wiki/Bobotov_Kuk",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Jezercë",
+     "lat": 42.442,
+     "lon": 19.8126,
+     "citation_url": "https://en.wikipedia.org/wiki/Jezerc%C3%AB",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Dinaric_Alps",
+   "citation_title": "Dinaric Alps - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1369725014",
+   "confidence": "medium",
+   "notes": "North-west to south-east along the Adriatic hinterland; Maja Jezercë is the range high point. Maglić (Bosnia) had no coordinate in the fetched data."
+  },
+  {
+   "id": "urals",
+   "name": "Ural Mountains",
+   "region": "Europe",
+   "highest_point": "Mount Narodnaya",
+   "highest_elevation_m": 1894.0,
+   "stated_length_km": 2500,
+   "stated_width_km": null,
+   "polyline_length_km": 2413,
+   "crest_polyline": [
+    {
+     "name": "Pay-Khoy Range",
+     "lat": 69.2036,
+     "lon": 62.6078,
+     "citation_url": "https://en.wikipedia.org/wiki/Pay-Khoy_Range",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Payer",
+     "lat": 66.7208,
+     "lon": 64.3917,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Payer",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Narodnaya",
+     "lat": 65.0333,
+     "lon": 60.1167,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Narodnaya",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Telpos-Iz",
+     "lat": 63.9185,
+     "lon": 59.1805,
+     "citation_url": "https://en.wikipedia.org/wiki/Telpos-Iz",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Kosvinsky Kamen",
+     "lat": 59.5167,
+     "lon": 59.05,
+     "citation_url": "https://en.wikipedia.org/wiki/Kosvinsky_Kamen",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Iremel",
+     "lat": 54.515,
+     "lon": 58.84,
+     "citation_url": "https://en.wikipedia.org/wiki/Iremel",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Yamantau",
+     "lat": 54.255,
+     "lon": 58.102,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Yamantau",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mugalzhar",
+     "lat": 48.65,
+     "lon": 58.55,
+     "citation_url": "https://en.wikipedia.org/wiki/Mugalzhar",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Ural_Mountains",
+   "citation_title": "Ural Mountains - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1379225068",
+   "confidence": "medium",
+   "notes": "Article: about 2,500 km from the Kara Sea to the Kazakh steppe, in units from north to south Pay-Khoy, Zapolyarnyy, Pripolyarnyy, Polyarnyy, Severnyy, Sredniy, Yuzhnyy Ural and Mugodzhary; Vaygach Island and Novaya Zemlya continue the chain north. Konstantinov Kamen had no fetched coordinate, so the Pay-Khoy to Payer segment cuts a corner."
+  },
+  {
+   "id": "atlas",
+   "name": "Atlas Mountains (High Atlas, Saharan Atlas, Aurès)",
+   "region": "Africa",
+   "highest_point": "Toubkal",
+   "highest_elevation_m": 4167.0,
+   "stated_length_km": 2500.0,
+   "stated_width_km": null,
+   "polyline_length_km": 2091,
+   "crest_polyline": [
+    {
+     "name": "Agadir",
+     "lat": 30.4214,
+     "lon": -9.5831,
+     "citation_url": "https://en.wikipedia.org/wiki/Agadir",
+     "coord_basis": "article primary coordinate",
+     "confidence": "low",
+     "note": "approximate western end: city coordinate used as a coastal anchor"
+    },
+    {
+     "name": "Toubkal",
+     "lat": 31.0596,
+     "lon": -7.9151,
+     "citation_url": "https://en.wikipedia.org/wiki/Toubkal",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Tizi n'Tichka",
+     "lat": 31.2858,
+     "lon": -7.3808,
+     "citation_url": "https://en.wikipedia.org/wiki/Tizi_n%27Tichka",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "M'Goun",
+     "lat": 31.5083,
+     "lon": -6.4433,
+     "citation_url": "https://en.wikipedia.org/wiki/M%27Goun",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Jbel Ayachi",
+     "lat": 32.4778,
+     "lon": -4.9269,
+     "citation_url": "https://en.wikipedia.org/wiki/Jbel_Ayachi",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Ksour Range",
+     "lat": 32.8667,
+     "lon": 0.4833,
+     "citation_url": "https://en.wikipedia.org/wiki/Ksour_Range",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Amour Range",
+     "lat": 34.05,
+     "lon": 2.0667,
+     "citation_url": "https://en.wikipedia.org/wiki/Amour_Range",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Ouled Naïl Range",
+     "lat": 34.6667,
+     "lon": 3.4,
+     "citation_url": "https://en.wikipedia.org/wiki/Ouled_Na%C3%AFl_Range",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Djebel Chélia",
+     "lat": 35.3183,
+     "lon": 6.6375,
+     "citation_url": "https://en.wikipedia.org/wiki/Djebel_Ch%C3%A9lia",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Jebel ech Chambi",
+     "lat": 35.2067,
+     "lon": 8.6831,
+     "citation_url": "https://en.wikipedia.org/wiki/Jebel_ech_Chambi",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Cape Bon",
+     "lat": 36.75,
+     "lon": 10.75,
+     "citation_url": "https://en.wikipedia.org/wiki/Cape_Bon",
+     "coord_basis": "article primary coordinate",
+     "confidence": "low",
+     "note": "approximate eastern end chosen by the researcher; not stated in the Atlas article"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Atlas_Mountains",
+   "citation_title": "Atlas Mountains - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381073138",
+   "confidence": "medium",
+   "notes": "High Atlas (the article says it rises in the west at the Atlantic) then Saharan Atlas then Aurès, ending at Cap Bon in Tunisia. Agadir (western anchor) and Cap Bon (eastern anchor) are the researcher's choices, approximate. The Tell Atlas, a parallel coastal chain, is not drawn."
+  },
+  {
+   "id": "zagros",
+   "name": "Zagros Mountains",
+   "region": "Asia",
+   "highest_point": "Dena",
+   "highest_elevation_m": 4409.0,
+   "stated_length_km": 1600.0,
+   "stated_width_km": 240.0,
+   "polyline_length_km": 1611,
+   "crest_polyline": [
+    {
+     "name": "Halgurd",
+     "lat": 36.7342,
+     "lon": 44.8625,
+     "citation_url": "https://en.wikipedia.org/wiki/Halgurd",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Kabir Kouh",
+     "lat": 33.2211,
+     "lon": 47.105,
+     "citation_url": "https://en.wikipedia.org/wiki/Kabir_Kouh",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Oshtorankuh",
+     "lat": 33.3403,
+     "lon": 49.3044,
+     "citation_url": "https://en.wikipedia.org/wiki/Oshtorankuh",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Zard-Kuh",
+     "lat": 32.3644,
+     "lon": 50.0775,
+     "citation_url": "https://en.wikipedia.org/wiki/Zard-Kuh",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Dena",
+     "lat": 30.95,
+     "lon": 51.4333,
+     "citation_url": "https://en.wikipedia.org/wiki/Dena",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Persian Gates",
+     "lat": 30.7083,
+     "lon": 51.5986,
+     "citation_url": "https://en.wikipedia.org/wiki/Persian_Gates",
+     "coord_basis": "article secondary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Bandar Abbas",
+     "lat": 27.1961,
+     "lon": 56.2878,
+     "citation_url": "https://en.wikipedia.org/wiki/Bandar_Abbas",
+     "coord_basis": "article primary coordinate",
+     "confidence": "low",
+     "note": "approximate south-east end: city coordinate"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Zagros_Mountains",
+   "citation_title": "Zagros Mountains - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1379510248",
+   "confidence": "medium",
+   "notes": "Article: begins in north-west Iran and continues south-east to the waters of the Persian Gulf (1,600 km). The range has parallel ridges; this line threads named summits only. Bandar Abbas is a coastal anchor for the south-east end, approximate."
+  },
+  {
+   "id": "hindu_kush",
+   "name": "Hindu Kush",
+   "region": "Asia",
+   "highest_point": "Tirich Mir",
+   "highest_elevation_m": 7708.0,
+   "stated_length_km": 800.0,
+   "stated_width_km": null,
+   "polyline_length_km": 691,
+   "crest_polyline": [
+    {
+     "name": "Koh-i-Baba",
+     "lat": 34.6453,
+     "lon": 67.6242,
+     "citation_url": "https://en.wikipedia.org/wiki/Koh-i-Baba",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Salang Pass",
+     "lat": 35.3137,
+     "lon": 69.0371,
+     "citation_url": "https://en.wikipedia.org/wiki/Salang_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Khawak Pass",
+     "lat": 35.6631,
+     "lon": 69.7873,
+     "citation_url": "https://en.wikipedia.org/wiki/Khawak_Pass",
+     "coord_basis": "article secondary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Terich Mir",
+     "lat": 36.2542,
+     "lon": 71.8433,
+     "citation_url": "https://en.wikipedia.org/wiki/Terich_Mir",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Noshaq",
+     "lat": 36.4317,
+     "lon": 71.8283,
+     "citation_url": "https://en.wikipedia.org/wiki/Noshaq",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Wakhjir Pass",
+     "lat": 37.0872,
+     "lon": 74.4842,
+     "citation_url": "https://en.wikipedia.org/wiki/Wakhjir_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Hindu_Kush",
+   "citation_title": "Hindu Kush - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1376768386",
+   "confidence": "medium",
+   "notes": "From the Koh-i-Baba western extension to the Wakhjir pass at the Pamir junction. Lower priority."
+  },
+  {
+   "id": "himalaya",
+   "name": "Himalayas",
+   "region": "Asia",
+   "highest_point": "Mount Everest",
+   "highest_elevation_m": 8848.86,
+   "stated_length_km": 2400.0,
+   "stated_width_km": null,
+   "polyline_length_km": 2312,
+   "crest_polyline": [
+    {
+     "name": "Nanga Parbat",
+     "lat": 35.2375,
+     "lon": 74.5892,
+     "citation_url": "https://en.wikipedia.org/wiki/Nanga_Parbat",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Zoji La",
+     "lat": 34.2789,
+     "lon": 75.4719,
+     "citation_url": "https://en.wikipedia.org/wiki/Zoji_La",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Nanda Devi",
+     "lat": 30.3758,
+     "lon": 79.9708,
+     "citation_url": "https://en.wikipedia.org/wiki/Nanda_Devi",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Dhaulagiri",
+     "lat": 28.6961,
+     "lon": 83.4953,
+     "citation_url": "https://en.wikipedia.org/wiki/Dhaulagiri",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Annapurna",
+     "lat": 28.5961,
+     "lon": 83.8203,
+     "citation_url": "https://en.wikipedia.org/wiki/Annapurna",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Everest",
+     "lat": 27.9883,
+     "lon": 86.9253,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Everest",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Kangchenjunga",
+     "lat": 27.7025,
+     "lon": 88.1467,
+     "citation_url": "https://en.wikipedia.org/wiki/Kangchenjunga",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Jomolhari",
+     "lat": 27.8242,
+     "lon": 89.27,
+     "citation_url": "https://en.wikipedia.org/wiki/Jomolhari",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Gangkhar Puensum",
+     "lat": 28.0483,
+     "lon": 90.4542,
+     "citation_url": "https://en.wikipedia.org/wiki/Gangkhar_Puensum",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Kula Kangri",
+     "lat": 28.2275,
+     "lon": 90.6167,
+     "citation_url": "https://en.wikipedia.org/wiki/Kula_Kangri",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Namcha Barwa",
+     "lat": 29.6292,
+     "lon": 95.0558,
+     "citation_url": "https://en.wikipedia.org/wiki/Namcha_Barwa",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Himalayas",
+   "citation_title": "Himalayas - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1382126049",
+   "confidence": "medium",
+   "notes": "Article: 2,400 km arc between the western anchor Nanga Parbat and the eastern anchor Namcha Barwa. Lower priority."
+  },
+  {
+   "id": "appalachians",
+   "name": "Appalachian Mountains",
+   "region": "North America",
+   "highest_point": "Mount Mitchell",
+   "highest_elevation_m": 2037,
+   "stated_length_km": 3299,
+   "stated_width_km": null,
+   "polyline_length_km": 3032,
+   "crest_polyline": [
+    {
+     "name": "Cheaha Mountain",
+     "lat": 33.4855,
+     "lon": -85.8087,
+     "citation_url": "https://en.wikipedia.org/wiki/Cheaha_Mountain",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Kuwohi",
+     "lat": 35.5628,
+     "lon": -83.4986,
+     "citation_url": "https://en.wikipedia.org/wiki/Kuwohi",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Mitchell",
+     "lat": 35.7648,
+     "lon": -82.2651,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Mitchell",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Rogers",
+     "lat": 36.6598,
+     "lon": -81.5446,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Rogers",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Spruce Mountain (West Virginia)",
+     "lat": 38.6997,
+     "lon": -79.5328,
+     "citation_url": "https://en.wikipedia.org/wiki/Spruce_Mountain_(West_Virginia)",
+     "coord_basis": "article secondary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Delaware Water Gap",
+     "lat": 40.9677,
+     "lon": -75.1199,
+     "citation_url": "https://en.wikipedia.org/wiki/Delaware_Water_Gap",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Greylock",
+     "lat": 42.6373,
+     "lon": -73.166,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Greylock",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Washington",
+     "lat": 44.2705,
+     "lon": -71.3033,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Washington",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Katahdin",
+     "lat": 45.9044,
+     "lon": -68.9213,
+     "citation_url": "https://en.wikipedia.org/wiki/Katahdin",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Jacques-Cartier",
+     "lat": 48.9872,
+     "lon": -65.9486,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Jacques-Cartier",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Long Range Mountains",
+     "lat": 49.325,
+     "lon": -57.8042,
+     "citation_url": "https://en.wikipedia.org/wiki/Long_Range_Mountains",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Appalachian_Mountains",
+   "citation_title": "Appalachian Mountains - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381144668",
+   "confidence": "medium",
+   "notes": "From Cheaha Mountain in the south-west to the Long Range Mountains in the north-east. Clingmans Dome resolves to the renamed article Kuwohi. Lower priority."
+  },
+  {
+   "id": "rockies",
+   "name": "Rocky Mountains",
+   "region": "North America",
+   "highest_point": "Mount Elbert",
+   "highest_elevation_m": 4401,
+   "stated_length_km": 4828,
+   "stated_width_km": null,
+   "polyline_length_km": 2329,
+   "crest_polyline": [
+    {
+     "name": "Mount Robson",
+     "lat": 53.1106,
+     "lon": -119.1564,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Robson",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Yellowhead Pass",
+     "lat": 52.8925,
+     "lon": -118.4639,
+     "citation_url": "https://en.wikipedia.org/wiki/Yellowhead_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Columbia (Canada)",
+     "lat": 52.1472,
+     "lon": -117.4417,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Columbia_(Canada)",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Kicking Horse Pass",
+     "lat": 51.4525,
+     "lon": -116.2858,
+     "citation_url": "https://en.wikipedia.org/wiki/Kicking_Horse_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Triple Divide Peak (Montana)",
+     "lat": 48.5731,
+     "lon": -113.5167,
+     "citation_url": "https://en.wikipedia.org/wiki/Triple_Divide_Peak_(Montana)",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Marias Pass",
+     "lat": 48.3183,
+     "lon": -113.3552,
+     "citation_url": "https://en.wikipedia.org/wiki/Marias_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Lemhi Pass",
+     "lat": 44.9742,
+     "lon": -113.445,
+     "citation_url": "https://en.wikipedia.org/wiki/Lemhi_Pass",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Gannett Peak",
+     "lat": 43.1842,
+     "lon": -109.6542,
+     "citation_url": "https://en.wikipedia.org/wiki/Gannett_Peak",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "South Pass (Wyoming)",
+     "lat": 42.3303,
+     "lon": -108.9738,
+     "citation_url": "https://en.wikipedia.org/wiki/South_Pass_(Wyoming)",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Longs Peak",
+     "lat": 40.255,
+     "lon": -105.6151,
+     "citation_url": "https://en.wikipedia.org/wiki/Longs_Peak",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Mount Elbert",
+     "lat": 39.1178,
+     "lon": -106.4453,
+     "citation_url": "https://en.wikipedia.org/wiki/Mount_Elbert",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Wheeler Peak (New Mexico)",
+     "lat": 36.5569,
+     "lon": -105.4169,
+     "citation_url": "https://en.wikipedia.org/wiki/Wheeler_Peak_(New_Mexico)",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Rocky_Mountains",
+   "citation_title": "Rocky Mountains - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381617468",
+   "confidence": "medium",
+   "notes": "Continental Divide spine from Mount Robson to northern New Mexico. Probably outside the Atlantic map. Lower priority."
+  },
+  {
+   "id": "andes",
+   "name": "Andes",
+   "region": "South America",
+   "highest_point": "Aconcagua",
+   "highest_elevation_m": 6961.0,
+   "stated_length_km": 8900.0,
+   "stated_width_km": 330.0,
+   "polyline_length_km": 7335,
+   "crest_polyline": [
+    {
+     "name": "Pico Bolívar",
+     "lat": 8.5417,
+     "lon": -71.0458,
+     "citation_url": "https://en.wikipedia.org/wiki/Pico_Bol%C3%ADvar",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Nevado del Huila",
+     "lat": 2.93,
+     "lon": -76.03,
+     "citation_url": "https://en.wikipedia.org/wiki/Nevado_del_Huila",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Cotopaxi",
+     "lat": -0.6806,
+     "lon": -78.4378,
+     "citation_url": "https://en.wikipedia.org/wiki/Cotopaxi",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Chimborazo",
+     "lat": -1.4692,
+     "lon": -78.8175,
+     "citation_url": "https://en.wikipedia.org/wiki/Chimborazo",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Huascarán",
+     "lat": -9.1217,
+     "lon": -77.6042,
+     "citation_url": "https://en.wikipedia.org/wiki/Huascar%C3%A1n",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Illimani",
+     "lat": -16.6333,
+     "lon": -67.7908,
+     "citation_url": "https://en.wikipedia.org/wiki/Illimani",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Nevado Sajama",
+     "lat": -18.1081,
+     "lon": -68.8831,
+     "citation_url": "https://en.wikipedia.org/wiki/Nevado_Sajama",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Ojos del Salado",
+     "lat": -27.1097,
+     "lon": -68.5414,
+     "citation_url": "https://en.wikipedia.org/wiki/Ojos_del_Salado",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Aconcagua",
+     "lat": -32.6531,
+     "lon": -70.0117,
+     "citation_url": "https://en.wikipedia.org/wiki/Aconcagua",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Tronador",
+     "lat": -41.1608,
+     "lon": -71.8875,
+     "citation_url": "https://en.wikipedia.org/wiki/Tronador",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Monte San Valentín",
+     "lat": -46.595,
+     "lon": -73.3458,
+     "citation_url": "https://en.wikipedia.org/wiki/Monte_San_Valent%C3%ADn",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    },
+    {
+     "name": "Fitz Roy",
+     "lat": -49.2713,
+     "lon": -73.0432,
+     "citation_url": "https://en.wikipedia.org/wiki/Fitz_Roy",
+     "coord_basis": "article primary coordinate",
+     "confidence": "high"
+    }
+   ],
+   "vertex_method": "Named summits and passes on or near the main divide, chosen by the researcher and ordered along the range; each vertex coordinate is copied from its linked Wikipedia article. Straight segments between vertices are an approximation of the crest.",
+   "citation_url": "https://en.wikipedia.org/wiki/Andes",
+   "citation_title": "Andes - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1379886681",
+   "confidence": "medium",
+   "notes": "From Pico Bolívar in Venezuela to Fitz Roy in Patagonia (infobox length 8,900 km). Illimani and Sajama make a zigzag where the range runs as parallel cordilleras (not verified in fetched text). Lower priority."
+  }
+ ],
+ "passes": [
+  {
+   "id": "brenner",
+   "name": "Brenner Pass",
+   "range_id": "alps",
+   "lat": 47.0033,
+   "lon": 11.5075,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1370,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "One of the most important transit routes between northern and southern Europe (motorway and railway, Innsbruck to Bolzano); Roman roads over it appear on the Tabula Peutingeriana.",
+   "citation_url": "https://en.wikipedia.org/wiki/Brenner_Pass",
+   "citation_title": "Brenner Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362430232",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "gotthard",
+   "name": "Gotthard Pass",
+   "range_id": "alps",
+   "lat": 46.5562,
+   "lon": 8.5678,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2106,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Vital north-south trade route since the Middle Ages; the region north of it became the nucleus of the Swiss Confederacy in the 13th century; three record-length tunnels.",
+   "citation_url": "https://en.wikipedia.org/wiki/Gotthard_Pass",
+   "citation_title": "Gotthard Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362433435",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "simplon",
+   "name": "Simplon Pass",
+   "range_id": "alps",
+   "lat": 46.2517,
+   "lon": 8.0333,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2006,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Gained international significance with Napoleon's Simplon Road (1801 to 1805), built to move artillery between the Rhone valley and Italy.",
+   "citation_url": "https://en.wikipedia.org/wiki/Simplon_Pass",
+   "citation_title": "Simplon Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1365636249",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "great_st_bernard",
+   "name": "Great St Bernard Pass",
+   "range_id": "alps",
+   "lat": 45.8689,
+   "lon": 7.1706,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2469,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Used since the Bronze Age with Roman road traces; Napoleon's army crossed into Italy here in 1800; lowest pass on the ridge between Mont Blanc and Monte Rosa.",
+   "citation_url": "https://en.wikipedia.org/wiki/Great_St_Bernard_Pass",
+   "citation_title": "Great St Bernard Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1373848591",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "mont_cenis",
+   "name": "Mont Cenis (Col du Mont-Cenis)",
+   "range_id": "alps",
+   "lat": 45.2603,
+   "lon": 6.9008,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2085,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Divides the Cottian and Graian Alps; crossed by the Vaudois in 1689 and held by some authors to be Hannibal's pass.",
+   "citation_url": "https://en.wikipedia.org/wiki/Mont_Cenis",
+   "citation_title": "Mont Cenis - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1372174199",
+   "confidence": "high",
+   "notes": "Coordinate is the Mont Cenis article coordinate (massif and pass share an article)."
+  },
+  {
+   "id": "little_st_bernard",
+   "name": "Little St Bernard Pass",
+   "range_id": "alps",
+   "lat": 45.6803,
+   "lon": 6.8839,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2188,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "On the main Alpine watershed between Savoie and the Aosta Valley; a prehistoric stone circle lies on the pass, with World War II fortifications.",
+   "citation_url": "https://en.wikipedia.org/wiki/Little_St_Bernard_Pass",
+   "citation_title": "Little St Bernard Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362434810",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "montgenevre",
+   "name": "Col de Montgenèvre",
+   "range_id": "alps",
+   "lat": 44.9308,
+   "lon": 6.7233,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1860,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Known to the Romans before 118 BC, when Gnaeus Domitius Ahenobarbus began road building; one of the principal crossings of the main range between France and Italy; Napoleon obelisk of 1804.",
+   "citation_url": "https://en.wikipedia.org/wiki/Col_de_Montgen%C3%A8vre",
+   "citation_title": "Col de Montgenèvre - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1372197319",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "col_de_tende",
+   "name": "Col de Tende",
+   "range_id": "alps",
+   "lat": 44.1492,
+   "lon": 7.5619,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1870,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Road said (historian Guizot) to have been opened by Phoenicians and kept up by Greeks and Romans; its 1882 road tunnel is among the oldest long road tunnels.",
+   "citation_url": "https://en.wikipedia.org/wiki/Col_de_Tende",
+   "citation_title": "Col de Tende - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1363759387",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "reschen",
+   "name": "Reschen Pass",
+   "range_id": "alps",
+   "lat": 46.848,
+   "lon": 10.505,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1504,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "A bridle path linked the Inn and Adige valleys even before the Roman era; crosses the main chain of the Alps.",
+   "citation_url": "https://en.wikipedia.org/wiki/Reschen_Pass",
+   "citation_title": "Reschen Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362437014",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "splugen",
+   "name": "Splügen Pass",
+   "range_id": "alps",
+   "lat": 46.5056,
+   "lon": 9.3303,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2114,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "In use in the Roman era; possibly the Cunus Aureus of the Tabula Peutingeriana.",
+   "citation_url": "https://en.wikipedia.org/wiki/Spl%C3%BCgen_Pass",
+   "citation_title": "Splügen Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362437965",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "semmering",
+   "name": "Semmering Pass",
+   "range_id": "alps",
+   "lat": 47.6325,
+   "lon": 15.8297,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 965,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "With the Wechsel Pass, the most important link between Lower Austria and Styria; carries the Semmering Railway.",
+   "citation_url": "https://en.wikipedia.org/wiki/Semmering_Pass",
+   "citation_title": "Semmering Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362437552",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "cadibona",
+   "name": "Colle di Cadibona (Bocchetta di Altare)",
+   "range_id": "alps",
+   "lat": 44.3343,
+   "lon": 8.3491,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 459,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Traditional boundary between the Alps and the Apennines, between Savona and Altare.",
+   "citation_url": "https://en.wikipedia.org/wiki/Colle_di_Cadibona",
+   "citation_title": "Colle di Cadibona - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381612070",
+   "confidence": "high",
+   "notes": "Shared with the Apennines."
+  },
+  {
+   "id": "somport",
+   "name": "Somport",
+   "range_id": "pyrenees",
+   "lat": 42.7936,
+   "lon": -0.5458,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1632,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Latin Summus portus; one of the most popular routes for soldiers, merchants and pilgrims to Santiago on the route from Arles.",
+   "citation_url": "https://en.wikipedia.org/wiki/Somport",
+   "citation_title": "Somport - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362437919",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "roncevaux",
+   "name": "Roncevaux Pass (Roncesvalles)",
+   "range_id": "pyrenees",
+   "lat": 43.0203,
+   "lon": -1.3239,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1057,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Battle of Roncevaux Pass in 778 (Roland and Charlemagne's rearguard); a customary point on the Santiago de Compostela pilgrimage route.",
+   "citation_url": "https://en.wikipedia.org/wiki/Roncevaux_Pass",
+   "citation_title": "Roncevaux Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1371318454",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "le_perthus",
+   "name": "Col du Perthus (Le Perthus)",
+   "range_id": "pyrenees",
+   "lat": 42.4639,
+   "lon": 2.8656,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 290,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Hannibal's army and elephants crossed in 218 BC; the Roman Summum Pyrenaeum, junction of the Via Domitia and the Via Augusta.",
+   "citation_url": "https://en.wikipedia.org/wiki/Col_du_Perthus",
+   "citation_title": "Col du Perthus - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362431957",
+   "confidence": "high",
+   "notes": "Lowest of the listed Pyrenean crossings."
+  },
+  {
+   "id": "puymorens",
+   "name": "Col de Puymorens",
+   "range_id": "pyrenees",
+   "lat": 42.5601,
+   "lon": 1.8101,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1915,
+   "elevation_basis": "lead text 'Its summit is 1,915m'",
+   "why_historic": "Historically crossed the France-Catalonia border until the 1659 Treaty of the Pyrenees; well travelled since the 18th century.",
+   "citation_url": "https://en.wikipedia.org/wiki/Col_de_Puymorens",
+   "citation_title": "Col de Puymorens - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1329056082",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "dukla",
+   "name": "Dukla Pass",
+   "range_id": "carpathians",
+   "lat": 49.418,
+   "lon": 21.696,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 502,
+   "elevation_basis": "lead text '502 m AMSL'",
+   "why_historic": "Lowest pass of the Carpathian main range; strategically significant; bitter battles on the Eastern Fronts of both World Wars.",
+   "citation_url": "https://en.wikipedia.org/wiki/Dukla_Pass",
+   "citation_title": "Dukla Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1277794536",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "verecke",
+   "name": "Verecke Pass (Veretskyi Pass)",
+   "range_id": "carpathians",
+   "lat": 48.8271,
+   "lon": 23.1758,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 841,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Hungarian tribes entered the Carpathian Basin through it in 895; well travelled for more than a millennium.",
+   "citation_url": "https://en.wikipedia.org/wiki/Veretskyi_Pass",
+   "citation_title": "Veretskyi Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1373099266",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "uzhok",
+   "name": "Uzhok Pass",
+   "range_id": "carpathians",
+   "lat": 49.0028,
+   "lon": 22.8875,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 889,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "On the San and Uzh watershed near the Poland-Ukraine border; scene of fierce fighting in World War I.",
+   "citation_url": "https://en.wikipedia.org/wiki/Uzhok_Pass",
+   "citation_title": "Uzhok Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378798067",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "tihuta",
+   "name": "Tihuța Pass (Borgo Pass)",
+   "range_id": "carpathians",
+   "lat": 47.28,
+   "lon": 25.025,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1201,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Links Bistrița (Transylvania) with Vatra Dornei (Bukovina); the 'Borgo Pass' of Bram Stoker's Dracula.",
+   "citation_url": "https://en.wikipedia.org/wiki/Tihu%C8%9Ba_Pass",
+   "citation_title": "Tihuța Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362438539",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "turnu_rosu",
+   "name": "Turnu Roșu Pass (Red Tower Pass)",
+   "range_id": "carpathians",
+   "lat": 45.5425,
+   "lon": 24.2695,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 352,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "The Olt river's passage through the Southern Carpathians, linking Transylvania (Sibiu) and Wallachia (Vâlcea).",
+   "citation_url": "https://en.wikipedia.org/wiki/Turnu_Ro%C8%99u_Pass",
+   "citation_title": "Turnu Roșu Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362438748",
+   "confidence": "high",
+   "notes": "River gorge pass; very low (352 m)."
+  },
+  {
+   "id": "predeal",
+   "name": "Predeal Pass",
+   "range_id": "carpathians",
+   "lat": 45.5128,
+   "lon": 25.5722,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1033,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Separates the Southern from the Eastern Carpathians; the main route between Bucharest and Brașov.",
+   "citation_url": "https://en.wikipedia.org/wiki/Predeal_Pass",
+   "citation_title": "Predeal Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362436675",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "iron_gates",
+   "name": "Iron Gates (Danube gorge)",
+   "range_id": "carpathians",
+   "lat": 44.6711,
+   "lon": 22.5297,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": null,
+   "elevation_basis": "river gorge; no pass elevation",
+   "why_historic": "Danube gorge on the Serbia-Romania border, 134 km in the broad sense; the river route through the Carpathian-Balkan barrier.",
+   "citation_url": "https://en.wikipedia.org/wiki/Iron_Gates",
+   "citation_title": "Iron Gates - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1364863178",
+   "confidence": "high",
+   "notes": "A river passage, not a road pass."
+  },
+  {
+   "id": "darial",
+   "name": "Darial Gorge",
+   "range_id": "caucasus",
+   "lat": 42.7447,
+   "lon": 44.6225,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": null,
+   "elevation_basis": "not stated in fetched text",
+   "why_historic": "Terek gorge at the east foot of Kazbek; fortified in antiquity as the Iberian or Caucasian Gates (Strabo's Porta Caucasica); carries the Georgian Military Road.",
+   "citation_url": "https://en.wikipedia.org/wiki/Darial_Gorge",
+   "citation_title": "Darial Gorge - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1363773697",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "jvari",
+   "name": "Jvari Pass (Georgian Military Road)",
+   "range_id": "caucasus",
+   "lat": 42.5042,
+   "lon": 44.4538,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2379,
+   "elevation_basis": "Georgian Military Road text: maximum altitude 2,379 m at the Jvari Pass, coordinate 42.5042 N 44.4538 E",
+   "why_historic": "Highest point of the Georgian Military Road, the historic route across the Caucasus from Georgia to Russia.",
+   "citation_url": "https://en.wikipedia.org/wiki/Georgian_Military_Road",
+   "citation_title": "Georgian Military Road - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1305752550",
+   "confidence": "high",
+   "notes": "Coordinate is the article's inline coordinate for the pass."
+  },
+  {
+   "id": "mamison",
+   "name": "Mamison Pass",
+   "range_id": "caucasus",
+   "lat": 42.7061,
+   "lon": 43.7931,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2911,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "On the central Greater Caucasus crest; crossed by the Ossetian Military Road (Kutaisi to Alagir).",
+   "citation_url": "https://en.wikipedia.org/wiki/Mamison_Pass",
+   "citation_title": "Mamison Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362435044",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "derbent",
+   "name": "Derbent coastal gateway",
+   "range_id": "caucasus",
+   "lat": 42.0578,
+   "lon": 48.2889,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": null,
+   "elevation_basis": "coastal gateway; no pass elevation",
+   "why_historic": "Occupies the narrow gateway between the Caspian Sea and the Caucasus, linking the Eurasian steppe to the south; the coastal way around the range.",
+   "citation_url": "https://en.wikipedia.org/wiki/Derbent",
+   "citation_title": "Derbent - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380128090",
+   "confidence": "high",
+   "notes": "City coordinate; not a mountain pass."
+  },
+  {
+   "id": "filefjell",
+   "name": "Filefjell (Kongevegen)",
+   "range_id": "scandinavian",
+   "lat": 61.0539,
+   "lon": 8.2144,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": null,
+   "elevation_basis": "infobox 1,920 m is the massif, not the road summit; road summit elevation not in fetched text",
+   "why_historic": "The historical and modern main route between Western and Eastern Norway; the old trail is the Filefjell Kongevegen (King's Road).",
+   "citation_url": "https://en.wikipedia.org/wiki/Filefjell",
+   "citation_title": "Filefjell - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1355659696",
+   "confidence": "medium",
+   "notes": "Coordinate is the area article coordinate."
+  },
+  {
+   "id": "hjerkinn",
+   "name": "Hjerkinn (Dovrefjell crossing)",
+   "range_id": "scandinavian",
+   "lat": 62.2235,
+   "lon": 9.5475,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1017,
+   "elevation_basis": "Hjerkinn Station on the Dovre Line at 1,017 m (village infobox 990 m)",
+   "why_historic": "Where the Dovre Line railway and the E6 cross the Dovrefjell plateau.",
+   "citation_url": "https://en.wikipedia.org/wiki/Hjerkinn",
+   "citation_title": "Hjerkinn - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1376105008",
+   "confidence": "medium",
+   "notes": "Historic role (pilgrim and royal road over Dovrefjell) not verified in fetched text."
+  },
+  {
+   "id": "cisa",
+   "name": "Cisa Pass",
+   "range_id": "apennines",
+   "lat": 44.4716,
+   "lon": 9.9283,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1041,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Divides the Ligurian and Tuscan Apennines between Tuscany and Emilia-Romagna, near the source of the Magra.",
+   "citation_url": "https://en.wikipedia.org/wiki/Cisa_Pass",
+   "citation_title": "Cisa Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362430898",
+   "confidence": "medium",
+   "notes": "Text gives 1,040 m, infobox 1,041 m. Via Francigena link not verified in fetched text."
+  },
+  {
+   "id": "futa",
+   "name": "Futa Pass",
+   "range_id": "apennines",
+   "lat": 44.0935,
+   "lon": 11.2782,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 903,
+   "elevation_basis": "lead text 'at an elevation of 903 m'",
+   "why_historic": "On the Florence-Bologna road; part of the Gothic Line in World War II, with a German military cemetery nearby.",
+   "citation_url": "https://en.wikipedia.org/wiki/Futa_Pass",
+   "citation_title": "Futa Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1345304808",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "shipka",
+   "name": "Shipka Pass",
+   "range_id": "balkan",
+   "lat": 42.7667,
+   "lon": 25.3167,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1190,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Scene of a series of battles in the 1877 to 1878 war (Battle of Shipka Pass); links Gabrovo and Kazanlak.",
+   "citation_url": "https://en.wikipedia.org/wiki/Shipka_Pass",
+   "citation_title": "Shipka Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362437674",
+   "confidence": "high",
+   "notes": "Infobox 1,190 m, lead text 1,150 m (sources disagree)."
+  },
+  {
+   "id": "petrohan",
+   "name": "Petrohan Pass",
+   "range_id": "balkan",
+   "lat": 43.1225,
+   "lon": 23.1253,
+   "coord_basis": "article secondary coordinate",
+   "elevation_m": 1444,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Shortest route between Sofia and north-western Bulgaria; part of Pan-European Corridor IV.",
+   "citation_url": "https://en.wikipedia.org/wiki/Petrohan_Pass",
+   "citation_title": "Petrohan Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1373722435",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "beklemeto",
+   "name": "Beklemeto (Troyan) Pass",
+   "range_id": "balkan",
+   "lat": 42.7806,
+   "lon": 24.6058,
+   "coord_basis": "article secondary coordinate",
+   "elevation_m": 1520,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Main road between Troyan and the Karlovo plain in north-central Bulgaria.",
+   "citation_url": "https://en.wikipedia.org/wiki/Beklemeto_Pass",
+   "citation_title": "Beklemeto Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1373722102",
+   "confidence": "medium",
+   "notes": ""
+  },
+  {
+   "id": "kotel",
+   "name": "Kotel Pass",
+   "range_id": "balkan",
+   "lat": 42.9175,
+   "lon": 26.4506,
+   "coord_basis": "article secondary coordinate",
+   "elevation_m": 650,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "On one of the main routes connecting northern and southern Bulgaria.",
+   "citation_url": "https://en.wikipedia.org/wiki/Kotel_Pass",
+   "citation_title": "Kotel Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1373721895",
+   "confidence": "medium",
+   "notes": ""
+  },
+  {
+   "id": "iskar",
+   "name": "Iskar Gorge",
+   "range_id": "balkan",
+   "lat": 43.0433,
+   "lon": 23.3528,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": null,
+   "elevation_basis": "river gorge; no pass elevation",
+   "why_historic": "The chief pass through the Balkan Mountains; road and railway from Sofia toward Mezdra.",
+   "citation_url": "https://en.wikipedia.org/wiki/Iskar_Gorge",
+   "citation_title": "Iskar Gorge - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1373722328",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "postojna",
+   "name": "Postojna Gate",
+   "range_id": "dinaric",
+   "lat": 45.7833,
+   "lon": 14.2167,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 610,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Section of the Amber Road (Baltic to Adriatic); the Romans fortified it against invasions into Italy (Aquileia to Emona road).",
+   "citation_url": "https://en.wikipedia.org/wiki/Postojna_Gate",
+   "citation_title": "Postojna Gate - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362436652",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "babinov",
+   "name": "Babinov Road (Ural crossing)",
+   "range_id": "urals",
+   "lat": 59.6433,
+   "lon": 56.75,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": null,
+   "elevation_basis": "not stated",
+   "why_historic": "Found by Artemy Babinov in 1597 and cut through the forest a few years later; for a long time the shortest path across the Urals, Solikamsk to Verkhoturye and on to Tobolsk.",
+   "citation_url": "https://en.wikipedia.org/wiki/Babinov_Road",
+   "citation_title": "Babinov Road - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1369991172",
+   "confidence": "low",
+   "notes": "No coordinate for the crest crossing; the point given is the western terminus Solikamsk (eastern terminus Verkhoturye in route_endpoints).",
+   "coord_citation_url": "https://en.wikipedia.org/wiki/Solikamsk",
+   "route_endpoints": [
+    {
+     "name": "Solikamsk",
+     "lat": 59.6433,
+     "lon": 56.75,
+     "citation_url": "https://en.wikipedia.org/wiki/Solikamsk"
+    },
+    {
+     "name": "Verkhoturye",
+     "lat": 58.8667,
+     "lon": 60.8,
+     "citation_url": "https://en.wikipedia.org/wiki/Verkhoturye"
+    }
+   ]
+  },
+  {
+   "id": "tizi_n_tichka",
+   "name": "Tizi n'Tichka",
+   "range_id": "atlas",
+   "lat": 31.2858,
+   "lon": -7.3808,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2205,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Main High Atlas road from Marrakesh to Ouarzazate, a gateway to the Sahara.",
+   "citation_url": "https://en.wikipedia.org/wiki/Tizi_n%27Tichka",
+   "citation_title": "Tizi n'Tichka - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1372640267",
+   "confidence": "high",
+   "notes": "Infobox 2,205 m from a 2022 GPS survey; the summit sign says 2,260 m."
+  },
+  {
+   "id": "persian_gates",
+   "name": "Persian Gates (Tang-e Meyran)",
+   "range_id": "zagros",
+   "lat": 30.7083,
+   "lon": 51.5986,
+   "coord_basis": "article secondary coordinate",
+   "elevation_m": null,
+   "elevation_basis": "not stated in fetched text",
+   "why_historic": "Battle of the Persian Gate, 330 BC: Alexander the Great against the last Achaemenid resistance; controls the link between the coast and central Persia.",
+   "citation_url": "https://en.wikipedia.org/wiki/Persian_Gates",
+   "citation_title": "Persian Gates - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362436370",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "khyber",
+   "name": "Khyber Pass",
+   "range_id": "hindu_kush",
+   "lat": 34.0757,
+   "lon": 71.2039,
+   "coord_basis": "article secondary coordinate",
+   "elevation_m": 1070,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Part of the ancient Silk Road; a vital trade route between Central Asia and the Indian subcontinent and a strategic choke point used by many invasions.",
+   "citation_url": "https://en.wikipedia.org/wiki/Khyber_Pass",
+   "citation_title": "Khyber Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381812879",
+   "confidence": "high",
+   "notes": "Strictly in the Spin Ghar (White Mountains) south of the Hindu Kush proper."
+  },
+  {
+   "id": "salang",
+   "name": "Salang Pass",
+   "range_id": "hindu_kush",
+   "lat": 35.3137,
+   "lon": 69.0371,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 3878,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "The primary economic and logistical lifeline between northern Afghanistan and the rest of the country.",
+   "citation_url": "https://en.wikipedia.org/wiki/Salang_Pass",
+   "citation_title": "Salang Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378842457",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "khawak",
+   "name": "Khawak Pass",
+   "range_id": "hindu_kush",
+   "lat": 35.6631,
+   "lon": 69.7873,
+   "coord_basis": "article secondary coordinate",
+   "elevation_m": 3848,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Route traditionally thought to have been followed by Alexander the Great across the Hindu Kush from the Panjshir valley.",
+   "citation_url": "https://en.wikipedia.org/wiki/Khawak_Pass",
+   "citation_title": "Khawak Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381251462",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "wakhjir",
+   "name": "Wakhjir Pass",
+   "range_id": "hindu_kush",
+   "lat": 37.0872,
+   "lon": 74.4842,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 4923,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "The only potentially navigable pass between Afghanistan and China, at the east end of the Wakhan Corridor.",
+   "citation_url": "https://en.wikipedia.org/wiki/Wakhjir_Pass",
+   "citation_title": "Wakhjir Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380513797",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "bolan",
+   "name": "Bolan Pass",
+   "range_id": "hindu_kush",
+   "lat": 29.4535,
+   "lon": 67.4946,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1793,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Natural gateway through the Toba Kakar range in Balochistan.",
+   "citation_url": "https://en.wikipedia.org/wiki/Bolan_Pass",
+   "citation_title": "Bolan Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362430157",
+   "confidence": "medium",
+   "notes": "Not in the Hindu Kush proper; included as the southern companion of the Khyber."
+  },
+  {
+   "id": "nathu_la",
+   "name": "Nathu La",
+   "range_id": "himalaya",
+   "lat": 27.3868,
+   "lon": 88.831,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 4310,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Described by J. W. Edgar in 1873 as used for trade by Tibetans; used by Younghusband in 1903 to 1904; Sikkim to the Chumbi Valley.",
+   "citation_url": "https://en.wikipedia.org/wiki/Nathu_La",
+   "citation_title": "Nathu La - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1370365926",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "zoji_la",
+   "name": "Zoji La",
+   "range_id": "himalaya",
+   "lat": 34.2789,
+   "lon": 75.4719,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 3580,
+   "elevation_basis": "infobox elevation '3580m'",
+   "why_historic": "Connects the Kashmir Valley with the Dras and Suru valleys (Ladakh).",
+   "citation_url": "https://en.wikipedia.org/wiki/Zoji_La",
+   "citation_title": "Zoji La - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1367192951",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "cumberland_gap",
+   "name": "Cumberland Gap",
+   "range_id": "appalachians",
+   "lat": 36.6041,
+   "lon": -83.6737,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 497,
+   "elevation_basis": "infobox elevation_ft 1631 converted to m",
+   "why_historic": "Famous in American colonial history; frontiersmen led by Daniel Boone opened it to pioneers heading west into Kentucky.",
+   "citation_url": "https://en.wikipedia.org/wiki/Cumberland_Gap",
+   "citation_title": "Cumberland Gap - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1370228280",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "delaware_water_gap",
+   "name": "Delaware Water Gap",
+   "range_id": "appalachians",
+   "lat": 40.9677,
+   "lon": -75.1199,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 102,
+   "elevation_basis": "infobox elevation_ft 335 converted to m",
+   "why_historic": "Where the Delaware River cuts through a large Appalachian ridge.",
+   "citation_url": "https://en.wikipedia.org/wiki/Delaware_Water_Gap",
+   "citation_title": "Delaware Water Gap - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1379351238",
+   "confidence": "medium",
+   "notes": "Geographic gap; historic role not stated in fetched text."
+  },
+  {
+   "id": "south_pass",
+   "name": "South Pass",
+   "range_id": "rockies",
+   "lat": 42.3303,
+   "lon": -108.9738,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2259,
+   "elevation_basis": "infobox elevation_ft 7412 converted to m",
+   "why_historic": "Continental Divide crossing used by the Oregon, California and Mormon Trails.",
+   "citation_url": "https://en.wikipedia.org/wiki/South_Pass_(Wyoming)",
+   "citation_title": "South Pass (Wyoming) - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1370273871",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "lemhi",
+   "name": "Lemhi Pass",
+   "range_id": "rockies",
+   "lat": 44.9742,
+   "lon": -113.445,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 2247,
+   "elevation_basis": "infobox elevation_ft 7373 converted to m",
+   "why_historic": "Meriwether Lewis and three members of the Lewis and Clark Expedition crossed the Continental Divide here on 12 August 1805.",
+   "citation_url": "https://en.wikipedia.org/wiki/Lemhi_Pass",
+   "citation_title": "Lemhi Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1373476371",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "kicking_horse",
+   "name": "Kicking Horse Pass",
+   "range_id": "rockies",
+   "lat": 51.4525,
+   "lon": -116.2858,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1627,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Carries the Canadian Pacific Railway and the Trans-Canada Highway across the Continental Divide.",
+   "citation_url": "https://en.wikipedia.org/wiki/Kicking_Horse_Pass",
+   "citation_title": "Kicking Horse Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362434360",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "yellowhead",
+   "name": "Yellowhead Pass",
+   "range_id": "rockies",
+   "lat": 52.8925,
+   "lon": -118.4639,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1131,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Continental Divide crossing between Jasper and Mount Robson parks, traversed by the Canadian National railway (article image caption).",
+   "citation_url": "https://en.wikipedia.org/wiki/Yellowhead_Pass",
+   "citation_title": "Yellowhead Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378141979",
+   "confidence": "medium",
+   "notes": ""
+  },
+  {
+   "id": "marias",
+   "name": "Marias Pass",
+   "range_id": "rockies",
+   "lat": 48.3183,
+   "lon": -113.3552,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 1589,
+   "elevation_basis": "infobox elevation_ft 5213 converted to m",
+   "why_historic": "Traversed by US Highway 2 and the BNSF Hi-Line; the article calls it the lowest crossing of the Continental Divide (scope of that claim truncated in the extract).",
+   "citation_url": "https://en.wikipedia.org/wiki/Marias_Pass",
+   "citation_title": "Marias Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1372344621",
+   "confidence": "medium",
+   "notes": ""
+  },
+  {
+   "id": "uspallata",
+   "name": "Uspallata Pass (Bermejo, Cumbre)",
+   "range_id": "andes",
+   "lat": -32.8,
+   "lon": -70.0167,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 3830,
+   "elevation_basis": "text 'maximum elevation of about 3,830 m'",
+   "why_historic": "Used in 1817 by San Martín's Army of the Andes to free Chile; route between Mendoza and Santiago.",
+   "citation_url": "https://en.wikipedia.org/wiki/Uspallata_Pass",
+   "citation_title": "Uspallata Pass - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1367477566",
+   "confidence": "high",
+   "notes": ""
+  },
+  {
+   "id": "los_libertadores",
+   "name": "Paso Internacional Los Libertadores (Cristo Redentor)",
+   "range_id": "andes",
+   "lat": -32.8272,
+   "lon": -70.0921,
+   "coord_basis": "article primary coordinate",
+   "elevation_m": 3200,
+   "elevation_basis": "infobox elevation_m",
+   "why_historic": "Main transport route from Santiago into Mendoza Province.",
+   "citation_url": "https://en.wikipedia.org/wiki/Paso_Internacional_Los_Libertadores",
+   "citation_title": "Paso Internacional Los Libertadores - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380918617",
+   "confidence": "high",
+   "notes": "Modern road crossing next to the Uspallata pass."
+  }
+ ],
+ "straits": [
+  {
+   "id": "gibraltar",
+   "name": "Strait of Gibraltar",
+   "must_stay_open": true,
+   "narrowest_point": {
+    "lat": 35.9669,
+    "lon": -5.5173,
+    "basis": "midpoint of the OSM points for Punta de Oliveros (Spain) and Point Cires (Morocco), the endpoints named by es.wikipedia"
+   },
+   "min_width_m": 14200,
+   "width_basis": "en.wikipedia infobox min_width 14.2 km and lead '7.7 nautical miles (14.2 km) at its narrowest point'; es.wikipedia gives 14.4 km between Punta de Oliveros and Punta Cires",
+   "endpoints": [
+    {
+     "name": "Punta de Oliveros (Spain)",
+     "lat": 36.0235,
+     "lon": -5.553,
+     "citation_url": "https://www.openstreetmap.org/node/4585176663"
+    },
+    {
+     "name": "Point Cires (Morocco)",
+     "lat": 35.9103,
+     "lon": -5.4816,
+     "citation_url": "https://www.openstreetmap.org/relation/5883769"
+    }
+   ],
+   "citation_url": "https://en.wikipedia.org/wiki/Strait_of_Gibraltar",
+   "citation_title": "Strait of Gibraltar - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1375073257",
+   "confidence": "medium",
+   "notes": "Width sources disagree (14.2 vs 14.4 km). Article representative coordinate is 35.95, -5.5.",
+   "endpoint_distance_km_computed": 14.13,
+   "endpoint_distance_note": "great-circle distance between the listed endpoint coordinates; these are place or landmark coordinates, not surveyed shore points, so it differs from min_width_m",
+   "additional_citations": [
+    {
+     "citation_url": "https://es.wikipedia.org/wiki/Estrecho_de_Gibraltar",
+     "citation_title": "Estrecho de Gibraltar - Wikipedia, la enciclopedia libre",
+     "citation_revision": "https://es.wikipedia.org/w/index.php?oldid=174908456"
+    },
+    {
+     "citation_url": "https://nominatim.openstreetmap.org/search?q=Punta%20Cires&format=jsonv2&limit=3",
+     "citation_title": "Nominatim search: Punta Cires"
+    },
+    {
+     "citation_url": "https://nominatim.openstreetmap.org/search?q=Punta%20de%20Oliveros&format=jsonv2&limit=3",
+     "citation_title": "Nominatim search: Punta de Oliveros"
+    }
+   ]
+  },
+  {
+   "id": "bosporus",
+   "name": "Bosporus",
+   "must_stay_open": true,
+   "narrowest_point": {
+    "lat": 41.0778,
+    "lon": 29.055,
+    "basis": "midpoint of the Kandilli and Aşiyan neighbourhood coordinates (approximate; neighbourhood centres, not shore points)"
+   },
+   "min_width_m": 700,
+   "width_basis": "text: 'minimum width is 700 m between Kandilli Point and Aşiyan'; infobox min_width 750 m",
+   "endpoints": [
+    {
+     "name": "Kandilli (Asian shore)",
+     "lat": 41.0731,
+     "lon": 29.0578,
+     "citation_url": "https://en.wikipedia.org/wiki/Kandilli,_%C3%9Csk%C3%BCdar"
+    },
+    {
+     "name": "Aşiyan (European shore)",
+     "lat": 41.0825,
+     "lon": 29.0522,
+     "citation_url": "https://en.wikipedia.org/wiki/A%C5%9Fiyan"
+    }
+   ],
+   "citation_url": "https://en.wikipedia.org/wiki/Bosporus",
+   "citation_title": "Bosporus - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381671903",
+   "confidence": "medium",
+   "notes": "Sources inside one article disagree (700 vs 750 m). Length 30 km. Deepest point 110 m between Kandilli and Bebek.",
+   "endpoint_distance_km_computed": 1.15,
+   "endpoint_distance_note": "great-circle distance between the listed endpoint coordinates; these are place or landmark coordinates, not surveyed shore points, so it differs from min_width_m"
+  },
+  {
+   "id": "dardanelles",
+   "name": "Dardanelles",
+   "must_stay_open": true,
+   "narrowest_point": {
+    "lat": 40.1964,
+    "lon": 26.4144,
+    "basis": "Nara Burnu coordinate; the article places the narrowest point at Nara Burnu, abreast Çanakkale"
+   },
+   "min_width_m": 1200,
+   "width_basis": "infobox min_width 1,200 m; text '1.2 to 6 km wide'",
+   "endpoints": [
+    {
+     "name": "Çanakkale (Asian shore)",
+     "lat": 40.1519,
+     "lon": 26.4056,
+     "citation_url": "https://en.wikipedia.org/wiki/%C3%87anakkale"
+    },
+    {
+     "name": "Kilitbahir (European shore)",
+     "lat": 40.1486,
+     "lon": 26.3792,
+     "citation_url": "https://en.wikipedia.org/wiki/Kilid%C3%BClbahir"
+    }
+   ],
+   "citation_url": "https://en.wikipedia.org/wiki/Dardanelles",
+   "citation_title": "Dardanelles - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1373898334",
+   "confidence": "medium",
+   "notes": "Length 61 km. The classic Narrows pair Çanakkale and Kilitbahir is given as endpoints; Nara Burnu lies about 5 km north of Çanakkale.",
+   "endpoint_distance_km_computed": 2.27,
+   "endpoint_distance_note": "great-circle distance between the listed endpoint coordinates; these are place or landmark coordinates, not surveyed shore points, so it differs from min_width_m",
+   "additional_citations": [
+    {
+     "citation_url": "https://en.wikipedia.org/wiki/Nara_Burnu",
+     "citation_title": "Nara Burnu - Wikipedia"
+    }
+   ]
+  },
+  {
+   "id": "dover",
+   "name": "Strait of Dover",
+   "must_stay_open": true,
+   "narrowest_point": {
+    "lat": 51.0072,
+    "lon": 1.4786,
+    "basis": "midpoint of the South Foreland and Cap Gris-Nez article coordinates"
+   },
+   "min_width_m": 33200,
+   "width_basis": "text: shortest distance 20.6 miles (33.2 km) from South Foreland to Cap Gris-Nez; infobox min_width 20.5 miles (33.0 km)",
+   "endpoints": [
+    {
+     "name": "South Foreland (England)",
+     "lat": 51.1436,
+     "lon": 1.3736,
+     "citation_url": "https://en.wikipedia.org/wiki/South_Foreland"
+    },
+    {
+     "name": "Cap Gris-Nez (France)",
+     "lat": 50.8708,
+     "lon": 1.5836,
+     "citation_url": "https://en.wikipedia.org/wiki/Cap_Gris-Nez"
+    }
+   ],
+   "citation_url": "https://en.wikipedia.org/wiki/Strait_of_Dover",
+   "citation_title": "Strait of Dover - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380906517",
+   "confidence": "high",
+   "notes": "Boundary between the English Channel and the North Sea.",
+   "endpoint_distance_km_computed": 33.71,
+   "endpoint_distance_note": "great-circle distance between the listed endpoint coordinates; these are place or landmark coordinates, not surveyed shore points, so it differs from min_width_m"
+  },
+  {
+   "id": "english_channel",
+   "name": "English Channel",
+   "must_stay_open": true,
+   "narrowest_point": {
+    "lat": 50.2,
+    "lon": -2,
+    "basis": "article coordinate (representative point, not the narrows)"
+   },
+   "min_width_m": 34000,
+   "width_basis": "text: width from 240 km at its widest to 34 km at its narrowest in the Strait of Dover; length 560 km; area about 75,000 km2",
+   "endpoints": [],
+   "citation_url": "https://en.wikipedia.org/wiki/English_Channel",
+   "citation_title": "English Channel - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1382043369",
+   "confidence": "high",
+   "notes": "Context entry; the narrows are the Strait of Dover entry. Widest point between Lyme Bay and the Gulf of Saint-Malo."
+  },
+  {
+   "id": "oresund",
+   "name": "Øresund",
+   "must_stay_open": true,
+   "narrowest_point": {
+    "lat": 56.043,
+    "lon": 12.6625,
+    "basis": "midpoint of the Helsingør and Helsingborg town coordinates (approximate)"
+   },
+   "min_width_m": 4000,
+   "width_basis": "infobox min_width 4 km and text: narrowest point between Helsingør (DK) and Helsingborg (SE); width 4 to 28 km; length 118 km",
+   "endpoints": [
+    {
+     "name": "Helsingør (Denmark)",
+     "lat": 56.0361,
+     "lon": 12.6083,
+     "citation_url": "https://en.wikipedia.org/wiki/Helsing%C3%B8r"
+    },
+    {
+     "name": "Helsingborg (Sweden)",
+     "lat": 56.05,
+     "lon": 12.7167,
+     "citation_url": "https://en.wikipedia.org/wiki/Helsingborg"
+    }
+   ],
+   "citation_url": "https://en.wikipedia.org/wiki/%C3%98resund",
+   "citation_title": "Øresund - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1377459662",
+   "confidence": "high",
+   "notes": "Town-centre coordinates are farther apart than the 4 km shore-to-shore width.",
+   "endpoint_distance_km_computed": 6.91,
+   "endpoint_distance_note": "great-circle distance between the listed endpoint coordinates; these are place or landmark coordinates, not surveyed shore points, so it differs from min_width_m"
+  },
+  {
+   "id": "great_belt",
+   "name": "Great Belt",
+   "must_stay_open": true,
+   "narrowest_point": {
+    "lat": 55.333,
+    "lon": 11,
+    "basis": "article coordinate near Sprogø; location of the 16 km minimum is not stated in the source (UNVERIFIED)"
+   },
+   "min_width_m": 16000,
+   "width_basis": "infobox min_width 16 km; text '60 km long and 16 to 32 km wide'",
+   "endpoints": [
+    {
+     "name": "Korsør / Halsskov (Zealand)",
+     "lat": 55.3336,
+     "lon": 11.1397,
+     "citation_url": "https://en.wikipedia.org/wiki/Kors%C3%B8r"
+    },
+    {
+     "name": "Sprogø (mid-strait island)",
+     "lat": 55.3333,
+     "lon": 10.9667,
+     "citation_url": "https://en.wikipedia.org/wiki/Sprog%C3%B8"
+    }
+   ],
+   "citation_url": "https://en.wikipedia.org/wiki/Great_Belt",
+   "citation_title": "Great Belt - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1366016425",
+   "confidence": "medium",
+   "notes": "The fixed link (Halsskov to Sprogø to Funen) is 18 km in total per the Great Belt Bridge article.",
+   "endpoint_note": "reference crossing points on the fixed-link line (Korsør to Sprogø, east channel only), NOT the narrowest pair",
+   "additional_citations": [
+    {
+     "citation_url": "https://en.wikipedia.org/wiki/Great_Belt_Bridge",
+     "citation_title": "Great Belt Bridge - Wikipedia"
+    }
+   ]
+  },
+  {
+   "id": "little_belt",
+   "name": "Little Belt",
+   "must_stay_open": true,
+   "narrowest_point": {
+    "lat": 55.5181,
+    "lon": 9.7294,
+    "basis": "midpoint of the two Little Belt bridge coordinates at Snævringen (The Narrows)"
+   },
+   "min_width_m": 800,
+   "width_basis": "infobox min_width 800 m; text: narrows to about 1 km at Snævringen, where the two Little Belt bridges are",
+   "endpoints": [
+    {
+     "name": "Little Belt Bridge (1935)",
+     "lat": 55.5177,
+     "lon": 9.7097,
+     "citation_url": "https://en.wikipedia.org/wiki/Little_Belt_Bridge"
+    },
+    {
+     "name": "Little Belt Bridge (1970)",
+     "lat": 55.5186,
+     "lon": 9.7492,
+     "citation_url": "https://en.wikipedia.org/wiki/Little_Belt_Bridge_(1970)"
+    }
+   ],
+   "citation_url": "https://en.wikipedia.org/wiki/Little_Belt",
+   "citation_title": "Little Belt - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1377407162",
+   "confidence": "medium",
+   "notes": "Two figures in one article (800 m vs about 1 km). Length about 50 km.",
+   "endpoint_distance_km_computed": 2.49,
+   "endpoint_distance_note": "great-circle distance between the listed endpoint coordinates; these are place or landmark coordinates, not surveyed shore points, so it differs from min_width_m"
+  }
+ ],
+ "isthmuses": [
+  {
+   "id": "corinth",
+   "name": "Isthmus of Corinth",
+   "must_stay_closed": true,
+   "narrowest_point": {
+    "lat": 37.9414,
+    "lon": 22.9878,
+    "basis": "article coordinate (on the canal line)"
+   },
+   "min_width_m": 6300,
+   "width_basis": "infobox width 6.3 km and lead 'The 6.3 km wide Isthmus'",
+   "citation_url": "https://en.wikipedia.org/wiki/Isthmus_of_Corinth",
+   "citation_title": "Isthmus of Corinth - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1362886953",
+   "confidence": "high",
+   "notes": "Crossed by the Corinth Canal (see canals); keep land on both sides of the canal so the isthmus reads as closed except for the cut."
+  },
+  {
+   "id": "suez",
+   "name": "Isthmus of Suez",
+   "must_stay_closed": true,
+   "narrowest_point": {
+    "lat": 30.705,
+    "lon": 32.3442,
+    "basis": "Suez Canal article coordinate used as a representative point; the isthmus article has no coordinate (location of the minimum UNVERIFIED)"
+   },
+   "min_width_m": 125000,
+   "width_basis": "lead: 'the 125 km wide land bridge that lies between the Mediterranean Sea and the Red Sea'",
+   "citation_url": "https://en.wikipedia.org/wiki/Isthmus_of_Suez",
+   "citation_title": "Isthmus of Suez - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1368682071",
+   "confidence": "medium",
+   "notes": "Land bridge between Africa and Asia, crossed by the Suez Canal.",
+   "additional_citations": [
+    {
+     "citation_url": "https://en.wikipedia.org/wiki/Suez_Canal",
+     "citation_title": "Suez Canal - Wikipedia"
+    }
+   ]
+  },
+  {
+   "id": "panama",
+   "name": "Isthmus of Panama",
+   "must_stay_closed": true,
+   "narrowest_point": {
+    "lat": 8.6667,
+    "lon": -80,
+    "basis": "Isthmus of Panama article coordinate (representative point); the location of the narrowest crossing is UNVERIFIED"
+   },
+   "min_width_m": 50000,
+   "width_basis": "Guinness World Records page: 'at its narrowest is 50 km wide'; the Wikipedia article gives no minimum width",
+   "citation_url": "https://en.wikipedia.org/wiki/Isthmus_of_Panama",
+   "citation_title": "Isthmus of Panama - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1377048737",
+   "confidence": "medium",
+   "notes": "A search-result snippet attributed to Britannica names the Gulf of San Blas (Caribbean) to the Chepo River mouth (Pacific) as the shortest crossing, but the Britannica page returned HTTP 403 and was not read, so that location is an unverified lead only.",
+   "additional_citations": [
+    {
+     "citation_url": "https://www.guinnessworldrecords.com/world-records/longest-transcontinental-isthmus-panama",
+     "citation_title": "Longest transcontinental isthmus - Panama | Guinness World Records"
+    }
+   ]
+  }
+ ],
+ "canals": [
+  {
+   "id": "suez",
+   "name": "Suez Canal",
+   "endpoints": {
+    "start": {
+     "name": "Port Said (Mediterranean)",
+     "lat": 31.2625,
+     "lon": 32.3061,
+     "citation_url": "https://en.wikipedia.org/wiki/Port_Said"
+    },
+    "end": {
+     "name": "Suez Port / Port Tewfik (Red Sea)",
+     "lat": 29.95,
+     "lon": 32.55,
+     "citation_url": "https://en.wikipedia.org/wiki/Suez_Port"
+    }
+   },
+   "route_polyline": [
+    [
+     31.27571,
+     32.32633
+    ],
+    [
+     31.22001,
+     32.30432
+    ],
+    [
+     30.70505,
+     32.34401
+    ],
+    [
+     30.56562,
+     32.30395
+    ],
+    [
+     30.36063,
+     32.37292
+    ],
+    [
+     30.20099,
+     32.5654
+    ],
+    [
+     29.97283,
+     32.58684
+    ],
+    [
+     29.93034,
+     32.5607
+    ]
+   ],
+   "route_basis": "OpenStreetMap waterway=canal centreline (main channel, New Suez Canal parallel branch excluded), chained and simplified with Douglas-Peucker at 1.969 km; OSM path length 162.24 km",
+   "route_osm_ways": [
+    "https://www.openstreetmap.org/way/5038117",
+    "https://www.openstreetmap.org/way/925360882"
+   ],
+   "length_km": 193.3,
+   "length_basis": "infobox length_km 193.3; text: northern access channel 22 km + canal 162.25 km + southern access channel 9 km",
+   "width_m": 205,
+   "width_basis": "text: after several enlargements 193.30 km long, 24 m deep and 205 m wide; Ballah Bypass widened from 61 m to 312 m for 35 km (New Suez Canal)",
+   "locks": "none (sea-level canal)",
+   "citation_url": "https://en.wikipedia.org/wiki/Suez_Canal",
+   "citation_title": "Suez Canal - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380827727",
+   "confidence": "high",
+   "notes": "OSM path length 162.24 km matches the stated 162.25 km canal proper, which cross-checks the polyline. Passes Lake Timsah (Ismailia) and the Great Bitter Lake."
+  },
+  {
+   "id": "kiel",
+   "name": "Kiel Canal (Nord-Ostsee-Kanal)",
+   "endpoints": {
+    "start": {
+     "name": "Brunsbüttel (Elbe, North Sea side)",
+     "lat": 53.8964,
+     "lon": 9.1386,
+     "citation_url": "https://en.wikipedia.org/wiki/Brunsb%C3%BCttel"
+    },
+    "end": {
+     "name": "Kiel-Holtenau (Kiel Fjord, Baltic side)",
+     "lat": 54.3736,
+     "lon": 10.1417,
+     "citation_url": "https://en.wikipedia.org/wiki/Holtenau"
+    }
+   },
+   "route_polyline": [
+    [
+     53.88937,
+     9.13653
+    ],
+    [
+     53.98838,
+     9.28512
+    ],
+    [
+     54.14027,
+     9.34224
+    ],
+    [
+     54.21388,
+     9.5841
+    ],
+    [
+     54.28238,
+     9.63961
+    ],
+    [
+     54.35821,
+     9.78246
+    ],
+    [
+     54.34082,
+     9.94224
+    ],
+    [
+     54.36572,
+     10.14463
+    ]
+   ],
+   "route_basis": "OpenStreetMap waterway=canal centreline named Nord-Ostsee-Kanal, chained and simplified with Douglas-Peucker at 1.514 km; OSM path length 97.21 km",
+   "route_osm_ways": [
+    "https://www.openstreetmap.org/way/30417811",
+    "https://www.openstreetmap.org/way/50250427",
+    "https://www.openstreetmap.org/way/59908473",
+    "https://www.openstreetmap.org/way/59908544",
+    "https://www.openstreetmap.org/way/131279454",
+    "https://www.openstreetmap.org/way/144489145",
+    "https://www.openstreetmap.org/way/144489148",
+    "https://www.openstreetmap.org/way/857248328",
+    "https://www.openstreetmap.org/way/1470915265",
+    "https://www.openstreetmap.org/way/1490472671"
+   ],
+   "length_km": 98.26,
+   "length_basis": "en.wikipedia infobox 98.26 km; de.wikipedia table 98,26 km",
+   "width_m": 162,
+   "width_basis": "de.wikipedia table: water-surface width 162 m (eastern section still 102.5 m), bottom width 90 m (eastern 44 m), depth 11 m; structurae lists 66.7 m (1895), 102.5 m (1914), 162.0 m (1966)",
+   "locks": "locks at both ends (Brunsbüttel and Kiel-Holtenau)",
+   "citation_url": "https://en.wikipedia.org/wiki/Kiel_Canal",
+   "citation_title": "Kiel Canal - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1366845500",
+   "additional_citations": [
+    {
+     "citation_url": "https://de.wikipedia.org/wiki/Nord-Ostsee-Kanal",
+     "citation_title": "Nord-Ostsee-Kanal - Wikipedia",
+     "citation_revision": "https://de.wikipedia.org/w/index.php?oldid=270659738"
+    },
+    {
+     "citation_url": "https://structurae.net/en/structures/kiel-canal",
+     "citation_title": "Kiel Canal (Kiel/Kiel, 1895) | Structurae"
+    }
+   ],
+   "confidence": "high",
+   "notes": "en.wikipedia notes the eastern section (Königsförde to Groß-Nordsee first) is being widened from 44 m to 70 m at the bed since 2020."
+  },
+  {
+   "id": "corinth",
+   "name": "Corinth Canal",
+   "endpoints": {
+    "start": {
+     "name": "Poseidonia harbour (Gulf of Corinth, west)",
+     "lat": 37.95178,
+     "lon": 22.95999,
+     "citation_url": "https://www.openstreetmap.org/way/165079335"
+    },
+    "end": {
+     "name": "Isthmia harbour (Saronic Gulf, east)",
+     "lat": 37.91653,
+     "lon": 23.00945,
+     "citation_url": "https://www.openstreetmap.org/way/165079335"
+    }
+   },
+   "route_polyline": [
+    [
+     37.95178,
+     22.95999
+    ],
+    [
+     37.93371,
+     22.98526
+    ],
+    [
+     37.92434,
+     22.99838
+    ],
+    [
+     37.91788,
+     23.00741
+    ],
+    [
+     37.91653,
+     23.00945
+    ]
+   ],
+   "route_basis": "all five nodes of OpenStreetMap way 165079335 (straight cut); endpoint names from the Wikipedia text (harbours of Poseidonia and Isthmia)",
+   "route_osm_ways": [
+    "https://www.openstreetmap.org/way/165079335"
+   ],
+   "length_km": 6.34,
+   "length_basis": "infobox length_km 6.34; text 'It is 6.4 km in length'; OSM way length 5.85 km",
+   "width_m": 24.6,
+   "width_basis": "text: 24.6 m wide at the surface, 21.3 m wide at the bottom, 8 m deep; rock walls up to 90 m above sea level",
+   "locks": "none",
+   "citation_url": "https://en.wikipedia.org/wiki/Corinth_Canal",
+   "citation_title": "Corinth Canal - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1382049433",
+   "confidence": "high",
+   "notes": "Too narrow for most modern ships; at game scale it may be narrower than one tile."
+  },
+  {
+   "id": "panama",
+   "name": "Panama Canal",
+   "endpoints": {
+    "start": {
+     "name": "Atlantic Entrance (Caribbean, Limón Bay near Colón)",
+     "lat": 9.3874,
+     "lon": -79.9186,
+     "citation_url": "https://en.wikipedia.org/wiki/Panama_Canal"
+    },
+    "end": {
+     "name": "Pacific Entrance (Bay of Panama near Balboa)",
+     "lat": 8.8885,
+     "lon": -79.5215,
+     "citation_url": "https://en.wikipedia.org/wiki/Panama_Canal"
+    }
+   },
+   "route_polyline": [
+    [
+     9.3874,
+     -79.9186
+    ],
+    [
+     9.2721,
+     -79.9227
+    ],
+    [
+     9.1783,
+     -79.8667
+    ],
+    [
+     9.159,
+     -79.8136
+    ],
+    [
+     9.1116,
+     -79.7686
+    ],
+    [
+     9.1177,
+     -79.7226
+    ],
+    [
+     9.0474,
+     -79.6502
+    ],
+    [
+     9.017,
+     -79.6128
+    ],
+    [
+     8.9968,
+     -79.5918
+    ],
+    [
+     8.8885,
+     -79.5215
+    ]
+   ],
+   "route_vertex_names": [
+    "Atlantic Entrance",
+    "Gatún Locks",
+    "Bohío Turn",
+    "Frijoles Turn",
+    "Mamei Turn",
+    "Gamboa Reach",
+    "Culebra Reach",
+    "Pedro Miguel Locks",
+    "Miraflores Locks",
+    "Pacific Entrance"
+   ],
+   "route_basis": "10 of the 20 route landmark coordinates embedded in the Panama Canal article (Atlantic Entrance to Pacific Entrance); polyline length 77 km",
+   "length_km": 82,
+   "length_basis": "infobox length_km 82",
+   "width_m": 33.53,
+   "width_basis": "original locks 33.53 m wide; infobox beam_m 49 (current maximum vessel beam, third lane of locks); channel width not stated in the fetched text",
+   "locks": "3 locks up, 3 down per transit (Gatún, Pedro Miguel, Miraflores; plus the 2016 Agua Clara and Cocolí lanes)",
+   "summit_lake": {
+    "name": "Gatun Lake",
+    "lat": 9.2,
+    "lon": -79.9,
+    "citation_url": "https://en.wikipedia.org/wiki/Gatun_Lake"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Panama_Canal",
+   "citation_title": "Panama Canal - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380576550",
+   "confidence": "high",
+   "notes": "A lock canal through Gatun Lake (summit level); a game model needs either a flat water channel or a lock abstraction."
+  }
+ ],
+ "marshes": [
+  {
+   "id": "pripet",
+   "name": "Pripet (Pinsk) Marshes, Polesia",
+   "wetland_type": "forested marsh and fen",
+   "centroid": {
+    "lat": 52,
+    "lon": 27,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "west_east_km": 480,
+    "north_south_km": 225,
+    "extent_basis": "text: extending 300 mi (480 km) west to east and 140 mi (225 km) north to south",
+    "area_km2_stated": 270000,
+    "area_note": "text gives about 104,000 sq mi (270,000 km2), which exceeds the 480 x 225 km box (108,000 km2): internal inconsistency, area UNVERIFIED",
+    "equivalent_radius_km_from_box": 164.3
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Pripet_Marshes",
+   "citation_title": "Pripet Marshes - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381436653",
+   "confidence": "medium",
+   "notes": "Largest wetland area in Europe per the article; southern Belarus and north-west Ukraine, between Brest and Kyiv. Polesia (the wider region) has no coordinate in its article.",
+   "region": "Europe",
+   "tier": "core"
+  },
+  {
+   "id": "danube_delta",
+   "name": "Danube Delta",
+   "wetland_type": "river delta",
+   "centroid": {
+    "lat": 45.2,
+    "lon": 29.5,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 4152,
+    "area_basis": "text: approximate surface area 4,152 km2, of which 3,446 km2 in Romania; World Heritage site 312,440 ha",
+    "equivalent_radius_km": 36.4
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Danube_Delta",
+   "citation_title": "Danube Delta - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1381672833",
+   "confidence": "high",
+   "notes": "Romania and Ukraine (Odesa Oblast); the Razim-Sinoe lagoons add about 1,015 km2.",
+   "region": "Europe",
+   "tier": "core"
+  },
+  {
+   "id": "camargue",
+   "name": "Camargue (Rhône delta)",
+   "wetland_type": "river delta and lagoons",
+   "centroid": {
+    "lat": 43.5333,
+    "lon": 4.5,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 930,
+    "area_basis": "text: area of over 930 km2; regional park 820 km2",
+    "equivalent_radius_km": 17.2
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Camargue",
+   "citation_title": "Camargue - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378206671",
+   "confidence": "high",
+   "notes": "One of western Europe's largest river deltas per the article.",
+   "region": "Europe",
+   "tier": "core"
+  },
+  {
+   "id": "po_delta",
+   "name": "Po Delta",
+   "wetland_type": "river delta",
+   "centroid": {
+    "lat": 44.9525,
+    "lon": 12.4319,
+    "basis": "Po river mouth coordinate (article primary coordinate) used as the delta point; article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 180,
+    "area_basis": "it.wikipedia Delta del Po: surface about 18,000 ha (180 km2) for the river branches and the land between them",
+    "equivalent_radius_km": 7.6
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Po_(river)",
+   "citation_title": "Po (river) - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380321112",
+   "confidence": "medium",
+   "notes": "en.wikipedia (Po river, Po Delta section) names five main branches (Po di Maestra, Po della Pila, Po delle Tolle, Po di Gnocca, Po di Goro) with Comacchio to the south. Wider protected areas (biosphere reserve) are larger; their figure was not verified.",
+   "region": "Europe",
+   "additional_citations": [
+    {
+     "citation_url": "https://it.wikipedia.org/wiki/Delta_del_Po",
+     "citation_title": "Delta del Po - Wikipedia",
+     "citation_revision": "https://it.wikipedia.org/w/index.php?oldid=149538934"
+    }
+   ],
+   "tier": "core"
+  },
+  {
+   "id": "wadden_sea",
+   "name": "Wadden Sea",
+   "wetland_type": "intertidal mudflats",
+   "centroid": {
+    "lat": 54.1798,
+    "lon": 7.7169,
+    "basis": "mean of the five coordinates embedded in the article (no primary coordinate); approximate"
+   },
+   "extent": {
+    "area_km2": 10000,
+    "area_basis": "text: total area of about 10,000 km2 along a coastline of some 500 km",
+    "coast_polyline": [
+     [
+      53.3908,
+      5.6658
+     ],
+     [
+      53.7,
+      7.3333
+     ],
+     [
+      53.9353,
+      8.4728
+     ],
+     [
+      54.4564,
+      8.6464
+     ],
+     [
+      55.4167,
+      8.4664
+     ]
+    ],
+    "coast_polyline_basis": "the article's five embedded coordinates, Netherlands to Denmark, as a thin coastal band"
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Wadden_Sea",
+   "citation_title": "Wadden Sea - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378042566",
+   "confidence": "medium",
+   "notes": "Intertidal flats from the Netherlands through Germany to Denmark; model as a thin band, not a disc.",
+   "region": "Europe",
+   "tier": "core"
+  },
+  {
+   "id": "vasyugan",
+   "name": "Vasyugan Swamp",
+   "wetland_type": "peat bog",
+   "centroid": {
+    "lat": 57.2333,
+    "lon": 76.5,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 53000,
+    "area_basis": "text: occupies 53,000 km2",
+    "equivalent_radius_km": 129.9
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Vasyugan_Swamp",
+   "citation_title": "Vasyugan Swamp - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1360998794",
+   "confidence": "high",
+   "notes": "About 2 percent of the world's peat bogs per the article; south-western Siberia.",
+   "region": "Asia",
+   "tier": "core"
+  },
+  {
+   "id": "sudd",
+   "name": "Sudd",
+   "wetland_type": "papyrus swamp and flooded grassland",
+   "centroid": {
+    "lat": 8,
+    "lon": 31,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 30000,
+    "area_basis": "text: size highly variable, averaging over 30,000 km2; wet season may exceed 130,000 km2; ecoregion infobox 57,000 km2",
+    "equivalent_radius_km": 97.7,
+    "wet_season_area_km2": 130000,
+    "resolve_outline": {
+     "area_km2": 188909,
+     "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+     "equivalent_radius_km": 245.2,
+     "bbox": {
+      "lat_min": 4.78,
+      "lat_max": 9.96,
+      "lon_min": 27.819,
+      "lon_max": 34.467
+     },
+     "polygon_latlon": [
+      [
+       8.23,
+       34.41
+      ],
+      [
+       7.72,
+       33.73
+      ],
+      [
+       7.4,
+       34.06
+      ],
+      [
+       7.7,
+       33.54
+      ],
+      [
+       6.05,
+       33.28
+      ],
+      [
+       4.78,
+       31.66
+      ],
+      [
+       6.49,
+       31.2
+      ],
+      [
+       9.17,
+       27.82
+      ],
+      [
+       9.96,
+       33.6
+      ],
+      [
+       8.47,
+       33.51
+      ]
+     ],
+     "polygon_basis": "largest polygon part (Sudd flooded grasslands, 189207 km2) simplified with Douglas-Peucker at 45.5 km; coarse outline only",
+     "resolve_ecoregions": [
+      "Sudd flooded grasslands"
+     ],
+     "resolve_eco_ids": [
+      74
+     ]
+    }
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Sudd",
+   "citation_title": "Sudd - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1377609567",
+   "confidence": "medium",
+   "notes": "RESOLVE 'Sudd flooded grasslands' polygon (about 189,000 km2) is the outer flood envelope, much larger than the average swamp; use it as a maximum.",
+   "region": "Africa",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ],
+   "tier": "core"
+  },
+  {
+   "id": "okavango",
+   "name": "Okavango Delta",
+   "wetland_type": "inland delta",
+   "centroid": {
+    "lat": -19.4,
+    "lon": 22.9,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 15000,
+    "area_basis": "text: about 11 km3 of water spreads over a 6,000 to 15,000 km2 area each year; World Heritage property 2,023,590 ha; a 37,500 km2 figure in the text is tagged citation needed",
+    "equivalent_radius_km": 69.1,
+    "min_flood_area_km2": 6000
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Okavango_Delta",
+   "citation_title": "Okavango Delta - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378411171",
+   "confidence": "medium",
+   "notes": "Inland delta in Botswana that ends in the Kalahari.",
+   "region": "Africa",
+   "tier": "core"
+  },
+  {
+   "id": "mesopotamian",
+   "name": "Mesopotamian Marshes",
+   "wetland_type": "freshwater and salt marsh",
+   "centroid": {
+    "lat": 31,
+    "lon": 47,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 20000,
+    "area_basis": "text: originally covering 20,000 km2; ecoregion infobox 35,572 km2",
+    "equivalent_radius_km": 79.8,
+    "resolve_outline": {
+     "area_km2": 35601,
+     "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+     "equivalent_radius_km": 106.5,
+     "bbox": {
+      "lat_min": 30.53,
+      "lat_max": 33.133,
+      "lon_min": 44.213,
+      "lon_max": 49.554
+     },
+     "polygon_latlon": [
+      [
+       32.95,
+       45.29
+      ],
+      [
+       32.61,
+       45.52
+      ],
+      [
+       32.78,
+       46.12
+      ],
+      [
+       32.14,
+       47.67
+      ],
+      [
+       31.35,
+       48.18
+      ],
+      [
+       30.59,
+       48.03
+      ],
+      [
+       30.87,
+       46.33
+      ],
+      [
+       31.38,
+       47.08
+      ],
+      [
+       31.98,
+       46.18
+      ],
+      [
+       31.85,
+       45.76
+      ]
+     ],
+     "polygon_basis": "largest polygon part (Tigris-Euphrates alluvial salt marsh, 29604 km2) simplified with Douglas-Peucker at 23.3 km; coarse outline only",
+     "resolve_ecoregions": [
+      "Tigris-Euphrates alluvial salt marsh"
+     ],
+     "resolve_eco_ids": [
+      747
+     ]
+    }
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Mesopotamian_Marshes",
+   "citation_title": "Mesopotamian Marshes - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380481040",
+   "confidence": "medium",
+   "notes": "Iraq and Iran; three major areas; heavily drained in the 1990s (history not detailed here).",
+   "region": "Asia",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ],
+   "tier": "core"
+  },
+  {
+   "id": "everglades",
+   "name": "Everglades",
+   "wetland_type": "sawgrass marsh",
+   "centroid": {
+    "lat": 26,
+    "lon": -80.7,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 20202,
+    "area_basis": "infobox 7,800 sq mi converted; pre-drainage marsh and prairie web 4,000 sq mi (about 10,360 km2)",
+    "equivalent_radius_km": 80.2,
+    "resolve_outline": {
+     "area_km2": 19845,
+     "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+     "equivalent_radius_km": 79.5,
+     "bbox": {
+      "lat_min": 24.689,
+      "lat_max": 27.207,
+      "lon_min": -81.802,
+      "lon_max": -80.031
+     },
+     "polygon_latlon": [
+      [
+       26.66,
+       -80.26
+      ],
+      [
+       26.86,
+       -80.05
+      ],
+      [
+       25.9,
+       -80.12
+      ],
+      [
+       25.35,
+       -80.33
+      ],
+      [
+       25.21,
+       -80.7
+      ],
+      [
+       26.08,
+       -81.77
+      ],
+      [
+       26.51,
+       -81.79
+      ],
+      [
+       26.26,
+       -81.55
+      ],
+      [
+       26.31,
+       -80.97
+      ],
+      [
+       26.85,
+       -81.18
+      ],
+      [
+       27.21,
+       -80.79
+      ]
+     ],
+     "polygon_basis": "largest polygon part (Everglades flooded grasslands, 19701 km2) simplified with Douglas-Peucker at 14.9 km; coarse outline only",
+     "resolve_ecoregions": [
+      "Everglades flooded grasslands"
+     ],
+     "resolve_eco_ids": [
+      581
+     ]
+    }
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Everglades",
+   "citation_title": "Everglades - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1380808142",
+   "confidence": "high",
+   "notes": "Southern third of the Florida peninsula.",
+   "region": "North America",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ],
+   "tier": "core"
+  },
+  {
+   "id": "pantanal",
+   "name": "Pantanal",
+   "wetland_type": "seasonal floodplain",
+   "centroid": {
+    "lat": -17.4,
+    "lon": -57.5,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 170000,
+    "area_basis": "text: estimated between 140,000 and 195,000 km2 (midpoint used); ecoregion infobox 195,000 km2",
+    "equivalent_radius_km": 232.6,
+    "resolve_outline": {
+     "area_km2": 171046,
+     "area_basis": "computed from RESOLVE Ecoregions 2017 polygons (spherical approximation)",
+     "equivalent_radius_km": 233.3,
+     "bbox": {
+      "lat_min": -21.647,
+      "lat_max": -15.01,
+      "lon_min": -61.093,
+      "lon_max": -54.799
+     },
+     "polygon_latlon": [
+      [
+       -16.29,
+       -57.82
+      ],
+      [
+       -16.0,
+       -55.57
+      ],
+      [
+       -16.72,
+       -56.28
+      ],
+      [
+       -17.12,
+       -55.02
+      ],
+      [
+       -17.24,
+       -56.19
+      ],
+      [
+       -18.2,
+       -54.8
+      ],
+      [
+       -21.65,
+       -57.73
+      ],
+      [
+       -18.62,
+       -59.1
+      ],
+      [
+       -19.41,
+       -57.43
+      ],
+      [
+       -17.5,
+       -57.39
+      ],
+      [
+       -16.56,
+       -60.15
+      ]
+     ],
+     "polygon_basis": "largest polygon part (Pantanal, 155033 km2) simplified with Douglas-Peucker at 88.8 km; coarse outline only",
+     "resolve_ecoregions": [
+      "Pantanal"
+     ],
+     "resolve_eco_ids": [
+      584
+     ]
+    }
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Pantanal",
+   "citation_title": "Pantanal - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1372487159",
+   "confidence": "high",
+   "notes": "Brazil, Bolivia and Paraguay.",
+   "region": "South America",
+   "additional_citations": [
+    {
+     "citation_url": "https://storage.googleapis.com/teow2016/Ecoregions2017.zip",
+     "citation_title": "Ecoregions2017.zip (RESOLVE Ecoregions 2017 shapefile, DBF LICENSE field: CC-BY 4.0)"
+    }
+   ],
+   "tier": "core"
+  },
+  {
+   "id": "volga_delta",
+   "name": "Volga Delta",
+   "wetland_type": "river delta",
+   "centroid": {
+    "lat": 46.733,
+    "lon": 47.85,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 27224,
+    "area_basis": "text: today covers 27,224 km2 and is about 160 km across (3,222 km2 in 1880)",
+    "equivalent_radius_km": 93.1
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Volga_Delta",
+   "citation_title": "Volga Delta - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1340436790",
+   "confidence": "high",
+   "notes": "The article attributes the 20th-century growth of the delta to changes in the level of the Caspian Sea.",
+   "region": "Europe",
+   "tier": "core"
+  },
+  {
+   "id": "biebrza",
+   "name": "Biebrza marshes (Biebrza National Park)",
+   "wetland_type": "river valley peatland",
+   "centroid": {
+    "lat": 53.4666,
+    "lon": 22.6613,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 592.23,
+    "area_basis": "infobox and text: total area 592.23 km2",
+    "equivalent_radius_km": 13.7
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Biebrza_National_Park",
+   "citation_title": "Biebrza National Park - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1364821918",
+   "confidence": "high",
+   "notes": "Alternate; north-east Poland, inside the proposed Destroyed Europe zone.",
+   "region": "Europe",
+   "tier": "alternate"
+  },
+  {
+   "id": "donana",
+   "name": "Doñana",
+   "wetland_type": "coastal marsh and dunes",
+   "centroid": {
+    "lat": 37,
+    "lon": -6.5,
+    "basis": "article coordinate used as centroid proxy (not a computed centroid); article primary coordinate"
+   },
+   "extent": {
+    "area_km2": 543,
+    "area_basis": "infobox and text: 543 km2",
+    "equivalent_radius_km": 13.1
+   },
+   "citation_url": "https://en.wikipedia.org/wiki/Do%C3%B1ana_National_Park",
+   "citation_title": "Doñana National Park - Wikipedia",
+   "citation_revision": "https://en.wikipedia.org/w/index.php?oldid=1378523706",
+   "confidence": "high",
+   "notes": "Alternate; Guadalquivir marshes in Andalusia.",
+   "region": "Europe",
+   "tier": "alternate"
+  }
+ ],
+ "destroyed_europe": {
+  "status": "proposal for review (design choice, not a geographic fact)",
+  "polygon": [
+   {
+    "id": "A",
+    "lat": 45.6,
+    "lon": -1.6,
+    "anchor": "offshore W of the Gironde mouth (Pointe de Grave 45.5694,-1.0639)",
+    "design_point": true,
+    "citation_url": "https://en.wikipedia.org/wiki/Pointe_de_Grave"
+   },
+   {
+    "id": "B",
+    "lat": 48.4,
+    "lon": -5.4,
+    "anchor": "offshore W of Ushant (48.4611,-5.0833)",
+    "design_point": true,
+    "citation_url": "https://en.wikipedia.org/wiki/Ushant"
+   },
+   {
+    "id": "C",
+    "lat": 51.0072,
+    "lon": 1.4786,
+    "anchor": "Strait of Dover midline: midpoint of South Foreland and Cap Gris-Nez",
+    "design_point": false,
+    "citation_url": "https://en.wikipedia.org/wiki/Strait_of_Dover"
+   },
+   {
+    "id": "D",
+    "lat": 53.5,
+    "lon": 4.6,
+    "anchor": "North Sea offshore NW of Texel",
+    "design_point": true
+   },
+   {
+    "id": "E",
+    "lat": 53.75,
+    "lon": 8.7,
+    "anchor": "Elbe mouth, set south of Brunsbüttel so the Kiel Canal stays outside",
+    "design_point": true,
+    "citation_url": "https://en.wikipedia.org/wiki/Elbe"
+   },
+   {
+    "id": "F",
+    "lat": 55.3,
+    "lon": 17.0,
+    "anchor": "Baltic offshore N of the Pomeranian coast",
+    "design_point": true
+   },
+   {
+    "id": "G",
+    "lat": 54.45,
+    "lon": 19.6,
+    "anchor": "Vistula Spit at the Poland-Russia border (Vistula Lagoon 54.45,19.75)",
+    "design_point": true,
+    "citation_url": "https://en.wikipedia.org/wiki/Vistula_Lagoon"
+   },
+   {
+    "id": "H",
+    "lat": 54.36,
+    "lon": 23.1,
+    "anchor": "near the Poland-Lithuania-Russia border corner",
+    "design_point": true
+   },
+   {
+    "id": "I",
+    "lat": 52.0766,
+    "lon": 23.6161,
+    "anchor": "Terespol on the Bug (opposite Brest)",
+    "design_point": false,
+    "citation_url": "https://en.wikipedia.org/wiki/Terespol"
+   },
+   {
+    "id": "J",
+    "lat": 49.7833,
+    "lon": 22.7667,
+    "anchor": "Przemyśl, Carpathian foothills",
+    "design_point": false,
+    "citation_url": "https://en.wikipedia.org/wiki/Przemy%C5%9Bl"
+   },
+   {
+    "id": "K",
+    "lat": 49.55,
+    "lon": 17.85,
+    "anchor": "Moravian Gate between the Sudetes and the Carpathians (design point, approximate)",
+    "design_point": true
+   },
+   {
+    "id": "L",
+    "lat": 47.8333,
+    "lon": 16.75,
+    "anchor": "Lake Neusiedl, east of Vienna",
+    "design_point": false,
+    "citation_url": "https://en.wikipedia.org/wiki/Lake_Neusiedl"
+   },
+   {
+    "id": "M",
+    "lat": 47.5833,
+    "lon": 9.4667,
+    "anchor": "Lake Constance",
+    "design_point": false,
+    "citation_url": "https://en.wikipedia.org/wiki/Lake_Constance"
+   },
+   {
+    "id": "N",
+    "lat": 46.45,
+    "lon": 6.55,
+    "anchor": "Lake Geneva",
+    "design_point": false,
+    "citation_url": "https://en.wikipedia.org/wiki/Lake_Geneva"
+   }
+  ],
+  "vertex_count": 14,
+  "polygon_area_km2_including_sea": 1246953,
+  "rationale": [
+   "Every edge sits on a feature catalogued in this report, so the zone boundary reads as terrain rather than an arbitrary line.",
+   "West and north edges run offshore (Bay of Biscay, Channel, North Sea, Baltic): the whole French, Benelux, German and Polish coast from the Gironde to the Vistula Spit is inside, and the sea is unaffected.",
+   "The Channel edge passes through the Strait of Dover midline, so Britain stays outside and the strait stays open water.",
+   "The Elbe-to-Baltic edge keeps Schleswig-Holstein north of Brunsbüttel, the Kiel Canal, Denmark, the Belts and the Øresund outside and intact.",
+   "The eastern edge follows the Bug line (Terespol, opposite Brest), leaving Białowieża Forest and the Pripet Marshes outside as a natural eastern barrier.",
+   "The south-eastern edge follows the northern Carpathian foothills (Przemyśl to the Moravian Gate), so the Carpathian crest and the Dukla, Uzhok and Verecke passes stay outside as entry routes.",
+   "The southern edge follows the north foot of the Alps (Lake Neusiedl, Lake Constance, Lake Geneva): every Alpine pass stays outside.",
+   "The south-western edge runs from Lake Geneva to the Gironde mouth along the northern rim of the Massif Central, leaving Lyon, Aquitaine, the Landes forest, the Pyrenees and Mediterranean France (Camargue) outside."
+  ],
+  "cities_inside": [
+   {
+    "name": "Paris",
+    "lat": 48.8567,
+    "lon": 2.3522,
+    "citation_url": "https://en.wikipedia.org/wiki/Paris"
+   },
+   {
+    "name": "Brussels",
+    "lat": 50.8467,
+    "lon": 4.3525,
+    "citation_url": "https://en.wikipedia.org/wiki/Brussels"
+   },
+   {
+    "name": "Amsterdam",
+    "lat": 52.3728,
+    "lon": 4.8936,
+    "citation_url": "https://en.wikipedia.org/wiki/Amsterdam"
+   },
+   {
+    "name": "Rotterdam",
+    "lat": 51.92,
+    "lon": 4.48,
+    "citation_url": "https://en.wikipedia.org/wiki/Rotterdam"
+   },
+   {
+    "name": "The Hague",
+    "lat": 52.08,
+    "lon": 4.31,
+    "citation_url": "https://en.wikipedia.org/wiki/The_Hague"
+   },
+   {
+    "name": "Utrecht",
+    "lat": 52.0908,
+    "lon": 5.1217,
+    "citation_url": "https://en.wikipedia.org/wiki/Utrecht"
+   },
+   {
+    "name": "Antwerp",
+    "lat": 51.2178,
+    "lon": 4.4003,
+    "citation_url": "https://en.wikipedia.org/wiki/Antwerp"
+   },
+   {
+    "name": "Luxembourg City",
+    "lat": 49.6114,
+    "lon": 6.13,
+    "citation_url": "https://en.wikipedia.org/wiki/Luxembourg_City"
+   },
+   {
+    "name": "Berlin",
+    "lat": 52.52,
+    "lon": 13.405,
+    "citation_url": "https://en.wikipedia.org/wiki/Berlin"
+   },
+   {
+    "name": "Hamburg",
+    "lat": 53.55,
+    "lon": 10,
+    "citation_url": "https://en.wikipedia.org/wiki/Hamburg"
+   },
+   {
+    "name": "Munich",
+    "lat": 48.1375,
+    "lon": 11.575,
+    "citation_url": "https://en.wikipedia.org/wiki/Munich"
+   },
+   {
+    "name": "Frankfurt",
+    "lat": 50.1106,
+    "lon": 8.6822,
+    "citation_url": "https://en.wikipedia.org/wiki/Frankfurt"
+   },
+   {
+    "name": "Cologne",
+    "lat": 50.9364,
+    "lon": 6.9528,
+    "citation_url": "https://en.wikipedia.org/wiki/Cologne"
+   },
+   {
+    "name": "Düsseldorf",
+    "lat": 51.2256,
+    "lon": 6.7767,
+    "citation_url": "https://en.wikipedia.org/wiki/D%C3%BCsseldorf"
+   },
+   {
+    "name": "Essen",
+    "lat": 51.4508,
+    "lon": 7.0131,
+    "citation_url": "https://en.wikipedia.org/wiki/Essen"
+   },
+   {
+    "name": "Dortmund",
+    "lat": 51.5139,
+    "lon": 7.4653,
+    "citation_url": "https://en.wikipedia.org/wiki/Dortmund"
+   },
+   {
+    "name": "Stuttgart",
+    "lat": 48.7775,
+    "lon": 9.18,
+    "citation_url": "https://en.wikipedia.org/wiki/Stuttgart"
+   },
+   {
+    "name": "Dresden",
+    "lat": 51.05,
+    "lon": 13.74,
+    "citation_url": "https://en.wikipedia.org/wiki/Dresden"
+   },
+   {
+    "name": "Leipzig",
+    "lat": 51.34,
+    "lon": 12.375,
+    "citation_url": "https://en.wikipedia.org/wiki/Leipzig"
+   },
+   {
+    "name": "Hanover",
+    "lat": 52.3667,
+    "lon": 9.7167,
+    "citation_url": "https://en.wikipedia.org/wiki/Hanover"
+   },
+   {
+    "name": "Bremen",
+    "lat": 53.0758,
+    "lon": 8.8072,
+    "citation_url": "https://en.wikipedia.org/wiki/Bremen"
+   },
+   {
+    "name": "Nuremberg",
+    "lat": 49.4539,
+    "lon": 11.0775,
+    "citation_url": "https://en.wikipedia.org/wiki/Nuremberg"
+   },
+   {
+    "name": "Magdeburg",
+    "lat": 52.1317,
+    "lon": 11.6392,
+    "citation_url": "https://en.wikipedia.org/wiki/Magdeburg"
+   },
+   {
+    "name": "Erfurt",
+    "lat": 50.9781,
+    "lon": 11.0289,
+    "citation_url": "https://en.wikipedia.org/wiki/Erfurt"
+   },
+   {
+    "name": "Kassel",
+    "lat": 51.3158,
+    "lon": 9.4979,
+    "citation_url": "https://en.wikipedia.org/wiki/Kassel"
+   },
+   {
+    "name": "Mannheim",
+    "lat": 49.4878,
+    "lon": 8.4661,
+    "citation_url": "https://en.wikipedia.org/wiki/Mannheim"
+   },
+   {
+    "name": "Karlsruhe",
+    "lat": 49.0092,
+    "lon": 8.404,
+    "citation_url": "https://en.wikipedia.org/wiki/Karlsruhe"
+   },
+   {
+    "name": "Augsburg",
+    "lat": 48.3689,
+    "lon": 10.8978,
+    "citation_url": "https://en.wikipedia.org/wiki/Augsburg"
+   },
+   {
+    "name": "Regensburg",
+    "lat": 49.0167,
+    "lon": 12.0833,
+    "citation_url": "https://en.wikipedia.org/wiki/Regensburg"
+   },
+   {
+    "name": "Prague",
+    "lat": 50.0875,
+    "lon": 14.4214,
+    "citation_url": "https://en.wikipedia.org/wiki/Prague"
+   },
+   {
+    "name": "Brno",
+    "lat": 49.1925,
+    "lon": 16.6083,
+    "citation_url": "https://en.wikipedia.org/wiki/Brno"
+   },
+   {
+    "name": "Plzeň",
+    "lat": 49.7475,
+    "lon": 13.3775,
+    "citation_url": "https://en.wikipedia.org/wiki/Plze%C5%88"
+   },
+   {
+    "name": "Olomouc",
+    "lat": 49.5939,
+    "lon": 17.2508,
+    "citation_url": "https://en.wikipedia.org/wiki/Olomouc"
+   },
+   {
+    "name": "Ostrava",
+    "lat": 49.8356,
+    "lon": 18.2925,
+    "citation_url": "https://en.wikipedia.org/wiki/Ostrava"
+   },
+   {
+    "name": "Vienna",
+    "lat": 48.2083,
+    "lon": 16.3725,
+    "citation_url": "https://en.wikipedia.org/wiki/Vienna"
+   },
+   {
+    "name": "Linz",
+    "lat": 48.3058,
+    "lon": 14.2864,
+    "citation_url": "https://en.wikipedia.org/wiki/Linz"
+   },
+   {
+    "name": "Salzburg",
+    "lat": 47.8,
+    "lon": 13.045,
+    "citation_url": "https://en.wikipedia.org/wiki/Salzburg"
+   },
+   {
+    "name": "Warsaw",
+    "lat": 52.23,
+    "lon": 21.0111,
+    "citation_url": "https://en.wikipedia.org/wiki/Warsaw"
+   },
+   {
+    "name": "Kraków",
+    "lat": 50.0614,
+    "lon": 19.9372,
+    "citation_url": "https://en.wikipedia.org/wiki/Krak%C3%B3w"
+   },
+   {
+    "name": "Łódź",
+    "lat": 51.7769,
+    "lon": 19.4547,
+    "citation_url": "https://en.wikipedia.org/wiki/%C5%81%C3%B3d%C5%BA"
+   },
+   {
+    "name": "Wrocław",
+    "lat": 51.11,
+    "lon": 17.0325,
+    "citation_url": "https://en.wikipedia.org/wiki/Wroc%C5%82aw"
+   },
+   {
+    "name": "Poznań",
+    "lat": 52.4083,
+    "lon": 16.9336,
+    "citation_url": "https://en.wikipedia.org/wiki/Pozna%C5%84"
+   },
+   {
+    "name": "Gdańsk",
+    "lat": 54.3475,
+    "lon": 18.6453,
+    "citation_url": "https://en.wikipedia.org/wiki/Gda%C5%84sk"
+   },
+   {
+    "name": "Gdynia",
+    "lat": 54.5175,
+    "lon": 18.54,
+    "citation_url": "https://en.wikipedia.org/wiki/Gdynia"
+   },
+   {
+    "name": "Szczecin",
+    "lat": 53.4325,
+    "lon": 14.5481,
+    "citation_url": "https://en.wikipedia.org/wiki/Szczecin"
+   },
+   {
+    "name": "Bydgoszcz",
+    "lat": 53.1219,
+    "lon": 18.0003,
+    "citation_url": "https://en.wikipedia.org/wiki/Bydgoszcz"
+   },
+   {
+    "name": "Toruń",
+    "lat": 53.0222,
+    "lon": 18.6111,
+    "citation_url": "https://en.wikipedia.org/wiki/Toru%C5%84"
+   },
+   {
+    "name": "Lublin",
+    "lat": 51.25,
+    "lon": 22.5667,
+    "citation_url": "https://en.wikipedia.org/wiki/Lublin"
+   },
+   {
+    "name": "Białystok",
+    "lat": 53.1353,
+    "lon": 23.1456,
+    "citation_url": "https://en.wikipedia.org/wiki/Bia%C5%82ystok"
+   },
+   {
+    "name": "Rzeszów",
+    "lat": 50.0333,
+    "lon": 22,
+    "citation_url": "https://en.wikipedia.org/wiki/Rzesz%C3%B3w"
+   },
+   {
+    "name": "Katowice",
+    "lat": 50.2625,
+    "lon": 19.0217,
+    "citation_url": "https://en.wikipedia.org/wiki/Katowice"
+   },
+   {
+    "name": "Suwałki",
+    "lat": 54.0989,
+    "lon": 22.9286,
+    "citation_url": "https://en.wikipedia.org/wiki/Suwa%C5%82ki"
+   },
+   {
+    "name": "Augustów",
+    "lat": 53.8436,
+    "lon": 22.9794,
+    "citation_url": "https://en.wikipedia.org/wiki/August%C3%B3w"
+   },
+   {
+    "name": "Przemyśl",
+    "lat": 49.7833,
+    "lon": 22.7667,
+    "citation_url": "https://en.wikipedia.org/wiki/Przemy%C5%9Bl"
+   },
+   {
+    "name": "Strasbourg",
+    "lat": 48.5833,
+    "lon": 7.7458,
+    "citation_url": "https://en.wikipedia.org/wiki/Strasbourg"
+   },
+   {
+    "name": "Lille",
+    "lat": 50.6278,
+    "lon": 3.0583,
+    "citation_url": "https://en.wikipedia.org/wiki/Lille"
+   },
+   {
+    "name": "Nantes",
+    "lat": 47.2181,
+    "lon": -1.5528,
+    "citation_url": "https://en.wikipedia.org/wiki/Nantes"
+   },
+   {
+    "name": "Rennes",
+    "lat": 48.1147,
+    "lon": -1.6794,
+    "citation_url": "https://en.wikipedia.org/wiki/Rennes"
+   },
+   {
+    "name": "Brest, France",
+    "lat": 48.3906,
+    "lon": -4.4861,
+    "citation_url": "https://en.wikipedia.org/wiki/Brest,_France"
+   },
+   {
+    "name": "Rouen",
+    "lat": 49.4428,
+    "lon": 1.0886,
+    "citation_url": "https://en.wikipedia.org/wiki/Rouen"
+   },
+   {
+    "name": "Le Havre",
+    "lat": 49.49,
+    "lon": 0.1,
+    "citation_url": "https://en.wikipedia.org/wiki/Le_Havre"
+   },
+   {
+    "name": "Caen",
+    "lat": 49.1814,
+    "lon": -0.3636,
+    "citation_url": "https://en.wikipedia.org/wiki/Caen"
+   },
+   {
+    "name": "Cherbourg-en-Cotentin",
+    "lat": 49.639,
+    "lon": -1.625,
+    "citation_url": "https://en.wikipedia.org/wiki/Cherbourg-en-Cotentin"
+   },
+   {
+    "name": "Saint-Malo",
+    "lat": 48.6494,
+    "lon": -2.0261,
+    "citation_url": "https://en.wikipedia.org/wiki/Saint-Malo"
+   },
+   {
+    "name": "Tours",
+    "lat": 47.3936,
+    "lon": 0.6892,
+    "citation_url": "https://en.wikipedia.org/wiki/Tours"
+   },
+   {
+    "name": "Orléans",
+    "lat": 47.9025,
+    "lon": 1.909,
+    "citation_url": "https://en.wikipedia.org/wiki/Orl%C3%A9ans"
+   },
+   {
+    "name": "Le Mans",
+    "lat": 48.0077,
+    "lon": 0.1984,
+    "citation_url": "https://en.wikipedia.org/wiki/Le_Mans"
+   },
+   {
+    "name": "Dijon",
+    "lat": 47.3167,
+    "lon": 5.0167,
+    "citation_url": "https://en.wikipedia.org/wiki/Dijon"
+   },
+   {
+    "name": "Reims",
+    "lat": 49.2628,
+    "lon": 4.0347,
+    "citation_url": "https://en.wikipedia.org/wiki/Reims"
+   },
+   {
+    "name": "Amiens",
+    "lat": 49.892,
+    "lon": 2.299,
+    "citation_url": "https://en.wikipedia.org/wiki/Amiens"
+   },
+   {
+    "name": "Metz",
+    "lat": 49.1203,
+    "lon": 6.1778,
+    "citation_url": "https://en.wikipedia.org/wiki/Metz"
+   },
+   {
+    "name": "Nancy, France",
+    "lat": 48.6936,
+    "lon": 6.1846,
+    "citation_url": "https://en.wikipedia.org/wiki/Nancy,_France"
+   },
+   {
+    "name": "Verdun",
+    "lat": 49.162,
+    "lon": 5.3876,
+    "citation_url": "https://en.wikipedia.org/wiki/Verdun"
+   },
+   {
+    "name": "Mulhouse",
+    "lat": 47.75,
+    "lon": 7.34,
+    "citation_url": "https://en.wikipedia.org/wiki/Mulhouse"
+   },
+   {
+    "name": "Basel",
+    "lat": 47.5581,
+    "lon": 7.5878,
+    "citation_url": "https://en.wikipedia.org/wiki/Basel"
+   },
+   {
+    "name": "Zürich",
+    "lat": 47.3744,
+    "lon": 8.5411,
+    "citation_url": "https://en.wikipedia.org/wiki/Zurich"
+   },
+   {
+    "name": "Bern",
+    "lat": 46.9481,
+    "lon": 7.4475,
+    "citation_url": "https://en.wikipedia.org/wiki/Bern"
+   },
+   {
+    "name": "La Rochelle",
+    "lat": 46.16,
+    "lon": -1.15,
+    "citation_url": "https://en.wikipedia.org/wiki/La_Rochelle"
+   },
+   {
+    "name": "Calais",
+    "lat": 50.9481,
+    "lon": 1.8564,
+    "citation_url": "https://en.wikipedia.org/wiki/Calais"
+   },
+   {
+    "name": "Lübeck",
+    "lat": 53.8697,
+    "lon": 10.6864,
+    "citation_url": "https://en.wikipedia.org/wiki/L%C3%BCbeck"
+   },
+   {
+    "name": "Rostock",
+    "lat": 54.0833,
+    "lon": 12.1333,
+    "citation_url": "https://en.wikipedia.org/wiki/Rostock"
+   },
+   {
+    "name": "Liège",
+    "lat": 50.6397,
+    "lon": 5.5706,
+    "citation_url": "https://en.wikipedia.org/wiki/Li%C3%A8ge"
+   },
+   {
+    "name": "Passau",
+    "lat": 48.5744,
+    "lon": 13.4647,
+    "citation_url": "https://en.wikipedia.org/wiki/Passau"
+   },
+   {
+    "name": "Terespol",
+    "lat": 52.0766,
+    "lon": 23.6161,
+    "citation_url": "https://en.wikipedia.org/wiki/Terespol"
+   }
+  ],
+  "cities_outside_checked": [
+   {
+    "name": "Lyon",
+    "lat": 45.7675,
+    "lon": 4.835,
+    "citation_url": "https://en.wikipedia.org/wiki/Lyon"
+   },
+   {
+    "name": "Bordeaux",
+    "lat": 44.84,
+    "lon": -0.58,
+    "citation_url": "https://en.wikipedia.org/wiki/Bordeaux"
+   },
+   {
+    "name": "Geneva",
+    "lat": 46.2017,
+    "lon": 6.1469,
+    "citation_url": "https://en.wikipedia.org/wiki/Geneva"
+   },
+   {
+    "name": "Limoges",
+    "lat": 45.8353,
+    "lon": 1.2625,
+    "citation_url": "https://en.wikipedia.org/wiki/Limoges"
+   },
+   {
+    "name": "Clermont-Ferrand",
+    "lat": 45.7831,
+    "lon": 3.0824,
+    "citation_url": "https://en.wikipedia.org/wiki/Clermont-Ferrand"
+   },
+   {
+    "name": "Royan",
+    "lat": 45.62,
+    "lon": -1.03,
+    "citation_url": "https://en.wikipedia.org/wiki/Royan"
+   },
+   {
+    "name": "Dover",
+    "lat": 51.1295,
+    "lon": 1.3089,
+    "citation_url": "https://en.wikipedia.org/wiki/Dover"
+   },
+   {
+    "name": "London",
+    "lat": 51.5072,
+    "lon": -0.1275,
+    "citation_url": "https://en.wikipedia.org/wiki/London"
+   },
+   {
+    "name": "Copenhagen",
+    "lat": 55.6761,
+    "lon": 12.5683,
+    "citation_url": "https://en.wikipedia.org/wiki/Copenhagen"
+   },
+   {
+    "name": "Kiel",
+    "lat": 54.3233,
+    "lon": 10.1394,
+    "citation_url": "https://en.wikipedia.org/wiki/Kiel"
+   },
+   {
+    "name": "Flensburg",
+    "lat": 54.7819,
+    "lon": 9.4367,
+    "citation_url": "https://en.wikipedia.org/wiki/Flensburg"
+   },
+   {
+    "name": "Kaliningrad",
+    "lat": 54.7003,
+    "lon": 20.4531,
+    "citation_url": "https://en.wikipedia.org/wiki/Kaliningrad"
+   },
+   {
+    "name": "Vilnius",
+    "lat": 54.6872,
+    "lon": 25.28,
+    "citation_url": "https://en.wikipedia.org/wiki/Vilnius"
+   },
+   {
+    "name": "Kaunas",
+    "lat": 54.8972,
+    "lon": 23.8861,
+    "citation_url": "https://en.wikipedia.org/wiki/Kaunas"
+   },
+   {
+    "name": "Hrodna",
+    "lat": 53.6667,
+    "lon": 23.8333,
+    "citation_url": "https://en.wikipedia.org/wiki/Grodno"
+   },
+   {
+    "name": "Brest, Belarus",
+    "lat": 52.1347,
+    "lon": 23.6569,
+    "citation_url": "https://en.wikipedia.org/wiki/Brest,_Belarus"
+   },
+   {
+    "name": "Lviv",
+    "lat": 49.8425,
+    "lon": 24.0322,
+    "citation_url": "https://en.wikipedia.org/wiki/Lviv"
+   },
+   {
+    "name": "Minsk",
+    "lat": 53.9006,
+    "lon": 27.5586,
+    "citation_url": "https://en.wikipedia.org/wiki/Minsk"
+   },
+   {
+    "name": "Bratislava",
+    "lat": 48.1439,
+    "lon": 17.1097,
+    "citation_url": "https://en.wikipedia.org/wiki/Bratislava"
+   },
+   {
+    "name": "Budapest",
+    "lat": 47.4925,
+    "lon": 19.0514,
+    "citation_url": "https://en.wikipedia.org/wiki/Budapest"
+   },
+   {
+    "name": "Graz",
+    "lat": 47.0708,
+    "lon": 15.4386,
+    "citation_url": "https://en.wikipedia.org/wiki/Graz"
+   },
+   {
+    "name": "Innsbruck",
+    "lat": 47.2683,
+    "lon": 11.3933,
+    "citation_url": "https://en.wikipedia.org/wiki/Innsbruck"
+   },
+   {
+    "name": "Milan",
+    "lat": 45.4669,
+    "lon": 9.19,
+    "citation_url": "https://en.wikipedia.org/wiki/Milan"
+   },
+   {
+    "name": "Turin",
+    "lat": 45.0792,
+    "lon": 7.6761,
+    "citation_url": "https://en.wikipedia.org/wiki/Turin"
+   },
+   {
+    "name": "Ljubljana",
+    "lat": 46.0514,
+    "lon": 14.5061,
+    "citation_url": "https://en.wikipedia.org/wiki/Ljubljana"
+   },
+   {
+    "name": "Marseille",
+    "lat": 43.2964,
+    "lon": 5.37,
+    "citation_url": "https://en.wikipedia.org/wiki/Marseille"
+   },
+   {
+    "name": "Toulouse",
+    "lat": 43.6045,
+    "lon": 1.444,
+    "citation_url": "https://en.wikipedia.org/wiki/Toulouse"
+   },
+   {
+    "name": "Montpellier",
+    "lat": 43.6119,
+    "lon": 3.8772,
+    "citation_url": "https://en.wikipedia.org/wiki/Montpellier"
+   },
+   {
+    "name": "Avignon",
+    "lat": 43.95,
+    "lon": 4.8075,
+    "citation_url": "https://en.wikipedia.org/wiki/Avignon"
+   },
+   {
+    "name": "Grenoble",
+    "lat": 45.1715,
+    "lon": 5.7224,
+    "citation_url": "https://en.wikipedia.org/wiki/Grenoble"
+   },
+   {
+    "name": "Annecy",
+    "lat": 45.916,
+    "lon": 6.133,
+    "citation_url": "https://en.wikipedia.org/wiki/Annecy"
+   },
+   {
+    "name": "Chamonix",
+    "lat": 45.9231,
+    "lon": 6.8697,
+    "citation_url": "https://en.wikipedia.org/wiki/Chamonix"
+   },
+   {
+    "name": "Odense",
+    "lat": 55.3958,
+    "lon": 10.3886,
+    "citation_url": "https://en.wikipedia.org/wiki/Odense"
+   },
+   {
+    "name": "Aarhus",
+    "lat": 56.1572,
+    "lon": 10.2107,
+    "citation_url": "https://en.wikipedia.org/wiki/Aarhus"
+   },
+   {
+    "name": "Esbjerg",
+    "lat": 55.4833,
+    "lon": 8.45,
+    "citation_url": "https://en.wikipedia.org/wiki/Esbjerg"
+   },
+   {
+    "name": "Chełm",
+    "lat": 51.1322,
+    "lon": 23.4778,
+    "citation_url": "https://en.wikipedia.org/wiki/Che%C5%82m"
+   },
+   {
+    "name": "Saint-Étienne",
+    "lat": 45.4347,
+    "lon": 4.3903,
+    "citation_url": "https://en.wikipedia.org/wiki/Saint-%C3%89tienne"
+   },
+   {
+    "name": "Valence, Drôme",
+    "lat": 44.9333,
+    "lon": 4.8917,
+    "citation_url": "https://en.wikipedia.org/wiki/Valence,_Dr%C3%B4me"
+   },
+   {
+    "name": "Carcassonne",
+    "lat": 43.2133,
+    "lon": 2.3508,
+    "citation_url": "https://en.wikipedia.org/wiki/Carcassonne"
+   },
+   {
+    "name": "Biarritz",
+    "lat": 43.48,
+    "lon": -1.56,
+    "citation_url": "https://en.wikipedia.org/wiki/Biarritz"
+   },
+   {
+    "name": "Bayonne",
+    "lat": 43.49,
+    "lon": -1.48,
+    "citation_url": "https://en.wikipedia.org/wiki/Bayonne"
+   }
+  ],
+  "city_coordinate_source": "Wikipedia article coordinates fetched via the MediaWiki GeoData API (see sources); membership computed by ray-casting point-in-polygon in lon/lat",
+  "checks": {
+   "kiel_canal_polyline_vertices_inside": 0,
+   "alps_crest_vertices_inside": [],
+   "carpathian_crest_vertices_inside": [],
+   "passes_inside": [],
+   "forests_inside": [
+    "Black Forest (Schwarzwald)",
+    "Ardennes",
+    "Bohemian Forest (Šumava) with the Bavarian Forest",
+    "Tuchola Forest (Bory Tucholskie)",
+    "Spessart"
+   ],
+   "marshes_inside": [
+    "Biebrza marshes (Biebrza National Park)"
+   ]
+  },
+  "open_questions": [
+   "Whether wetlands inside the zone (Wadden Sea, Biebrza) are exempt from destruction.",
+   "Whether Vienna, the Swiss Plateau (Basel, Zurich, Bern) and Kraków should be inside; all three currently are.",
+   "Whether Kaliningrad Oblast should be inside; it is currently outside."
+  ],
+  "citation_url": [
+   "https://en.wikipedia.org/wiki/Elbe",
+   "https://en.wikipedia.org/wiki/Lake_Constance",
+   "https://en.wikipedia.org/wiki/Lake_Geneva",
+   "https://en.wikipedia.org/wiki/Lake_Neusiedl",
+   "https://en.wikipedia.org/wiki/Pointe_de_Grave",
+   "https://en.wikipedia.org/wiki/Przemy%C5%9Bl",
+   "https://en.wikipedia.org/wiki/Strait_of_Dover",
+   "https://en.wikipedia.org/wiki/Terespol",
+   "https://en.wikipedia.org/wiki/Ushant",
+   "https://en.wikipedia.org/wiki/Vistula_Lagoon"
+  ],
+  "confidence": "proposal"
+ }
+}
