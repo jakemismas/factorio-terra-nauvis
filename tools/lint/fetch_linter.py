@@ -5,9 +5,7 @@
 
 The binary lands in its own directory (downloads are untrusted data, project rule 8) and is accepted
 only when its sha256 equals the manifest's. With --github-env, TN_LUACHECK is appended there so the
-later steps' `earth_test.py static` finds it. It reads no secret and touches nothing else. Both
-output options pass tools/tnguard.py's refusal (the live profile, any folder named mods and any
-spelling but a plain drive-letter path), like every other tool's.
+later steps' `earth_test.py static` finds it. It reads no secret and touches nothing else.
 """
 import argparse
 import hashlib
@@ -17,10 +15,6 @@ import urllib.request
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-if str(HERE.parent) not in sys.path:
-    sys.path.insert(0, str(HERE.parent))
-
-import tnguard  # noqa: E402
 
 
 def main(argv=None):
@@ -28,7 +22,6 @@ def main(argv=None):
     ap.add_argument("--dest", required=True)
     ap.add_argument("--github-env")
     a = ap.parse_args(argv)
-    tnguard.refuse_live_outputs(a, "fetch_linter.py")
     m = json.loads((HERE / "manifest.json").read_text(encoding="utf-8"))["linter"]
     dest = Path(a.dest)
     dest.mkdir(parents=True, exist_ok=True)

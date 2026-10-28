@@ -452,8 +452,6 @@ def main():
     p = sub.add_parser("selftest")
     p.set_defaults(fn=lambda a: selftest())
     a = ap.parse_args()
-    import tnguard
-    tnguard.refuse_live_outputs(a, "nav.py")
     if a.cmd == "water" and not a.b and not a.to_border:
         ap.error("water needs --b or --to-border")
     sys.exit(a.fn(a))

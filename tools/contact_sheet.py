@@ -267,8 +267,6 @@ def main():
     ap.add_argument("--panel-px", type=int, default=480)
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
-    import tnguard
-    tnguard.refuse_live_outputs(a, "contact_sheet.py")
     sys.exit(cmd_build(a))
 
 

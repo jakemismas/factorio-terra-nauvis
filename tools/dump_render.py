@@ -101,20 +101,17 @@ def run_dump(instance, modset, out, seed=1000, areas="", points="", names="", ty
              grid="", grid_name="elevation", grid_threshold="0", grid_op="ge"):
     """Configure and run one scenario; returns (exit code, RESULT line, path of the dump JSON or None).
     Every ep-s8-dump setting is written on every call: stored values persist in the modset otherwise.
-    It runs only inside tools/earth_test.py's guard bracket (design constraint 1; tnguard). Under
-    game_selftest.py --replay it launches nothing and answers from the stored run directory."""
+    A run that may have left its instance stops every further game run (design constraint 1;
+    tnguard.run_breach). Under game_selftest.py --replay it launches nothing and answers from the
+    stored run directory."""
     if REPLAY["on"]:
         import game_selftest as gs
         code, so, res = gs.replayed_result(out, f"replay {label}")
         f = Path(out) / "script-output" / "ep-s8-dump" / f"{label}.json"
         return code, res, (f if f.exists() else None), so
     import tnguard
-    tnguard.require_bracket("dump_render.py run_dump")
-    why = tnguard.live_output_problem(out)
-    if why:
-        raise SystemExit(f"RESULT fail dump_render.py refuses --out: {why}")
-    # fh.py runs with the workspace as its working directory: hand it the absolute path that was
-    # checked (against this process's working directory), never a relative one it would re-anchor
+    # fh.py runs with the workspace as its working directory: hand it an absolute path, resolved
+    # against this process's working directory, never a relative one it would re-anchor
     out = tnguard.absolute_output(out)
     if map_gen_settings:
         map_gen_settings = tnguard.absolute_output(map_gen_settings)
@@ -495,8 +492,6 @@ def main():
     p = sub.add_parser("selftest")
     p.set_defaults(fn=lambda a: selftest())
     a = ap.parse_args()
-    import tnguard
-    tnguard.refuse_live_outputs(a, "dump_render.py")
     sys.exit(a.fn(a))
 
 

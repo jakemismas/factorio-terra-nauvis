@@ -1122,8 +1122,6 @@ def main():
     p.set_defaults(fn=lambda a: selftest())
 
     a = ap.parse_args()
-    import tnguard
-    tnguard.refuse_live_outputs(a, "t1_metrics.py")
     sys.exit(a.fn(a))
 
 

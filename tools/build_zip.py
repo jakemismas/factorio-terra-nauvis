@@ -17,10 +17,9 @@ It reads only the checked-out tree: no git refs, no fh.py, no FACTORIO_WS, no ga
 and when any Earth noise body config.lua defines, released or a firewall body, is missing from
 tests/frozen.json (the Map type fallbacks excepted; design constraint 2). It finds the bodies
 statically, through the luaparser loader, because release.yml runs without the game; the gate's
-frozen row checks the dumped bodies themselves. Every build refuses an output folder inside the
-live profile, with a path segment named mods, in any spelling but a plain drive-letter path (the
-NT namespace included), or holding a second hard link of a file or a link into the live profile
-(nothing in the repo installs into a mods folder; tools/tnguard.py).
+frozen row checks the dumped bodies themselves. --out-dir takes any folder, the live mods folder
+included: copying the built zip there is allowed, and the build
+record lands beside the zip (and the .sha256 with --release).
 """
 import argparse
 import hashlib
@@ -37,7 +36,6 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 import tnconfig  # noqa: E402
-import tnguard  # noqa: E402
 
 REPO = HERE.parent
 MOD = REPO / "terra-nauvis"
@@ -182,9 +180,6 @@ def check_tag(tag, mod_dir=MOD):
 
 
 def build(out_dir=DIST, release=False, mod_dir=MOD, frozen_path=FROZEN):
-    why = tnguard.live_output_problem(out_dir)
-    if why:
-        raise BuildError(f"refusing --out-dir: {why}")
     mod_id, version, cfg = mod_identity(mod_dir)
     if release:
         problems = release_problems(cfg, frozen_path)
@@ -215,7 +210,6 @@ def main(argv=None):
     ap.add_argument("--mod-dir", default=str(MOD), help=argparse.SUPPRESS)
     ap.add_argument("--frozen", default=str(FROZEN), help=argparse.SUPPRESS)
     a = ap.parse_args(argv)
-    tnguard.refuse_live_outputs(a, "build_zip.py")
     try:
         if a.check_tag is not None:
             want = check_tag(a.check_tag, Path(a.mod_dir))

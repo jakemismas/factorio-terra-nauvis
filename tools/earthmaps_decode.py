@@ -946,12 +946,6 @@ def main():
     ap.add_argument("--maps", default="europe,atlantic,olde_world")
     ap.add_argument("--no-simulation", action="store_true", help="skip the river sampler simulation")
     a = ap.parse_args()
-    import importlib.util
-    spec = importlib.util.spec_from_file_location(
-        "tnguard", os.path.join(os.path.dirname(os.path.abspath(__file__)), "tnguard.py"))
-    tnguard = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(tnguard)
-    tnguard.refuse_live_outputs(a, "earthmaps_decode.py")
     src = os.path.abspath(a.src)
     info = json.loads(read_text(os.path.join(src, "info.json"))[1])
     meta = {"source": {"repo": "https://github.com/HySpeed/EarthMaps", "commit": read_git_commit(src),

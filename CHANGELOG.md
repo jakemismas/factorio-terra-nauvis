@@ -59,3 +59,29 @@ versions follow [Semantic Versioning](https://semver.org/).
   the fine field through the start mask and through the redirected `entity:coal:probability` and
   `decorative:brown-asterisk:richness`; beside the live Alien Biomes copy no placeholder preset is
   defined, while the placeholder's redirects would reach the fine field through `tree-palm-b`.
+
+### Changed
+
+- Live-profile protection is fh.py isolation alone (the decision, 2026-10-27 16:19 and
+  23:47; design notes 2026-10-28 00:45): G1 (RESULT `ok`, `isolated=yes`, `errors=0`) is the only
+  live-profile protection, and copying the built zip into the live mods folder is allowed.
+  `tools/build_zip.py --out-dir` takes any folder, the live mods folder included. Design constraint 1
+  in all ten args objects of the design notes section 20, project rule 2, sections 1, 4, 5 and 7, the
+  part 10 live-profile-safety lens, ARCHITECTURE.md, test notes.md and the release-ops parameters
+  say so. The workspace lock, G1, G8 and the stop of every further game run after a run that may
+  have left its instance stay.
+
+### Removed
+
+- The chained G9 guard (snapshot and check, part chaining, the stale build-log check, the journal)
+  and `earth_test.py guard-rebaseline`; the guard-bracket token that `game_selftest.py`,
+  `dump_render.py run`, `oracle.py probe` and the kill probe checked; the write guards
+  (`tnguard.live_output_problem`, `refuse_live_outputs` and the option declarations) in every tool;
+  the T16 launch scan and output-options row with their fixtures; and the gate's `fh_flags` row with
+  `tools/lint/fh-flags.json`. Evidence, with the plan still at `main`'s copy (its revision
+  fails the gate's `plan_main` row until it lands; design notes 2026-10-28 00:45): `baseline`,
+  `suite toolchain` (371.6 s), `gate --through toolchain` (warm, 19 rows, 125.9 s) and
+  `install-check` pass (`previews/earth-build/baseline/20261028-004908-toolchain`,
+  `suite/20261028-004927-toolchain`, `gate/20261028-005558-toolchain` and
+  `install-check/20261028-005821-toolchain`, under `%FACTORIO_WS%`); the zip's sha256 is unchanged
+  (db639d10); T16 runs 13 rows with 161 of 161 fixture controls, and the runner 64 of 64 controls.

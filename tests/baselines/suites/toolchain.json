@@ -5,9 +5,9 @@
   "walker_m0": {
    "key": "2333bdf8892899cd262f580c3e6e171210d89d5cf6cb964ccfc6a1da79365a22",
    "run_dirs": [
-    "previews/earth-build/suite/20261027-175324-toolchain/walk-m0"
+    "previews/earth-build/suite/20261028-004927-toolchain/walk-m0"
    ],
-   "recorded": "2026-10-27 17:57:14",
+   "recorded": "2026-10-28 00:53:18",
    "summary": {
     "requested": 875,
     "window": [
@@ -17,88 +17,88 @@
     "ticks": 3840,
     "columns": {
      "wholeUpdate": {
-      "mean": 0.51789,
-      "p99": 6.34988,
-      "max": 27.7141,
-      "sum_ms": 1988.6934,
-      "per_step_ms": 33.14489
+      "mean": 0.52606,
+      "p99": 6.29652,
+      "max": 27.7525,
+      "sum_ms": 2020.0593,
+      "per_step_ms": 33.66765
      },
      "scriptUpdate": {
-      "mean": 0.00699,
-      "p99": 0.16665,
-      "max": 2.1315,
-      "sum_ms": 26.8229,
-      "per_step_ms": 0.44705
+      "mean": 0.00804,
+      "p99": 0.17632,
+      "max": 2.2009,
+      "sum_ms": 30.879,
+      "per_step_ms": 0.51465
      },
      "mapGenerator": {
-      "mean": 0.39335,
-      "p99": 6.06614,
-      "max": 27.4986,
-      "sum_ms": 1510.4782,
-      "per_step_ms": 25.17464
+      "mean": 0.38691,
+      "p99": 6.0055,
+      "max": 27.5467,
+      "sum_ms": 1485.7186,
+      "per_step_ms": 24.76198
      },
      "mapGeneratorBasicTilesSupportApply": {
-      "mean": 0.00017,
-      "p99": 0.0088,
-      "max": 0.0467,
-      "sum_ms": 0.6462,
-      "per_step_ms": 0.01077
+      "mean": 0.0002,
+      "p99": 0.0111,
+      "max": 0.0539,
+      "sum_ms": 0.7664,
+      "per_step_ms": 0.01277
      },
      "mapGeneratorBasicTilesSupportCompute": {
-      "mean": 0.11595,
-      "p99": 5.83268,
-      "max": 27.5491,
-      "sum_ms": 445.2654,
-      "per_step_ms": 7.42109
+      "mean": 0.11735,
+      "p99": 5.71481,
+      "max": 27.7234,
+      "sum_ms": 450.6268,
+      "per_step_ms": 7.51045
      },
      "mapGeneratorCorrectedTilesApply": {
-      "mean": 0.00056,
-      "p99": 0.02293,
-      "max": 0.1024,
-      "sum_ms": 2.1672,
-      "per_step_ms": 0.03612
+      "mean": 0.00057,
+      "p99": 0.02447,
+      "max": 0.0734,
+      "sum_ms": 2.1884,
+      "per_step_ms": 0.03647
      },
      "mapGeneratorCorrectedTilesCompute": {
-      "mean": 0.07225,
-      "p99": 4.16147,
-      "max": 13.087,
-      "sum_ms": 277.457,
-      "per_step_ms": 4.62428
+      "mean": 0.0712,
+      "p99": 4.14199,
+      "max": 13.0791,
+      "sum_ms": 273.4144,
+      "per_step_ms": 4.55691
      },
      "mapGeneratorCorrectedTilesPrepare": {
       "mean": 1e-05,
       "p99": 0.0004,
-      "max": 0.0016,
-      "sum_ms": 0.0314,
-      "per_step_ms": 0.00052
+      "max": 0.0015,
+      "sum_ms": 0.0303,
+      "per_step_ms": 0.00051
      },
      "mapGeneratorEntitiesApply": {
-      "mean": 0.03962,
-      "p99": 1.23884,
-      "max": 4.3834,
-      "sum_ms": 152.1237,
-      "per_step_ms": 2.53539
+      "mean": 0.04047,
+      "p99": 1.27753,
+      "max": 4.3954,
+      "sum_ms": 155.4081,
+      "per_step_ms": 2.59013
      },
      "mapGeneratorEntitiesCompute": {
-      "mean": 0.23002,
-      "p99": 6.44197,
-      "max": 10.9556,
-      "sum_ms": 883.2586,
-      "per_step_ms": 14.72098
+      "mean": 0.22851,
+      "p99": 6.22002,
+      "max": 8.0105,
+      "sum_ms": 877.4659,
+      "per_step_ms": 14.62443
      },
      "mapGeneratorEntitiesPrepare": {
-      "mean": 0.00125,
-      "p99": 0.03106,
-      "max": 0.0692,
-      "sum_ms": 4.8181,
-      "per_step_ms": 0.0803
+      "mean": 0.00122,
+      "p99": 0.0312,
+      "max": 0.0667,
+      "sum_ms": 4.6776,
+      "per_step_ms": 0.07796
      },
      "mapGeneratorVariations": {
-      "mean": 0.01475,
-      "p99": 0.88409,
-      "max": 2.9087,
-      "sum_ms": 56.6383,
-      "per_step_ms": 0.94397
+      "mean": 0.01484,
+      "p99": 0.8716,
+      "max": 2.9388,
+      "sum_ms": 57.0037,
+      "per_step_ms": 0.95006
      }
     }
    }
@@ -106,21 +106,21 @@
   "perf15": {
    "key": "86eabf3b1ec0d9ea786f0eafb159fa14602e6ef0a0cf5c172e2f6afeef79e85b",
    "run_dirs": [
-    "previews/earth-build/suite/20261027-175324-toolchain/walk-perf15-m0",
-    "previews/earth-build/suite/20261027-175324-toolchain/walk-perf15-heavy"
+    "previews/earth-build/suite/20261028-004927-toolchain/walk-perf15-m0",
+    "previews/earth-build/suite/20261028-004927-toolchain/walk-perf15-heavy"
    ],
-   "recorded": "2026-10-27 17:57:31",
+   "recorded": "2026-10-28 00:53:35",
    "summary": {
     "deltas_ms": {
-     "mapGeneratorBasicTilesSupportApply": -0.016,
-     "mapGeneratorBasicTilesSupportCompute": 339.371,
-     "mapGeneratorCorrectedTilesApply": -0.227,
-     "mapGeneratorCorrectedTilesCompute": 5.691,
-     "mapGeneratorCorrectedTilesPrepare": 0.002,
-     "mapGeneratorEntitiesApply": -3.972,
-     "mapGeneratorEntitiesCompute": -10.722,
-     "mapGeneratorEntitiesPrepare": -0.004,
-     "mapGeneratorVariations": 0.517
+     "mapGeneratorBasicTilesSupportApply": 0.134,
+     "mapGeneratorBasicTilesSupportCompute": 349.158,
+     "mapGeneratorCorrectedTilesApply": 0.127,
+     "mapGeneratorCorrectedTilesCompute": 1.344,
+     "mapGeneratorCorrectedTilesPrepare": 0.001,
+     "mapGeneratorEntitiesApply": 1.404,
+     "mapGeneratorEntitiesCompute": 5.307,
+     "mapGeneratorEntitiesPrepare": -0.135,
+     "mapGeneratorVariations": 0.298
     },
     "moved": "mapGeneratorBasicTilesSupportCompute"
    }
@@ -128,9 +128,9 @@
   "save_m0": {
    "key": "81514e923437e4690d9280243569dc2f1bef8158b4d60ba5fd4e7775ffbca8df",
    "run_dirs": [
-    "previews/earth-build/suite/20261027-175324-toolchain/save-m0"
+    "previews/earth-build/suite/20261028-004927-toolchain/save-m0"
    ],
-   "recorded": "2026-10-27 17:59:34",
+   "recorded": "2026-10-28 00:55:38",
    "summary": {
     "pre": 791700,
     "post": 1185839,
@@ -140,28 +140,28 @@
   "rt_m0": {
    "key": "169f04b15f048126138d7549a16ea5d48faf6d36e495a47efaf0d2b32f45c550",
    "run_dirs": [
-    "previews/earth-build/suite/20261027-175324-toolchain/rt-m0"
+    "previews/earth-build/suite/20261028-004927-toolchain/rt-m0"
    ],
-   "recorded": "2026-10-27 17:58:50",
+   "recorded": "2026-10-28 00:54:54",
    "summary": {
     "ticks": 2160,
-    "mean": 16.608,
+    "mean": 16.609,
     "p50": 16.666,
-    "p95": 17.293,
-    "p99": 17.515,
-    "max": 18.1,
+    "p95": 17.265,
+    "p99": 17.467,
+    "max": 17.974,
     "over_20ms": 0,
     "over_33ms": 0,
-    "window_s": 35.873,
-    "ups": 60.212
+    "window_s": 35.875,
+    "ups": 60.209
    }
   },
   "gst": {
-   "key": "db895872f61d0dc9ab8d0c46585c33e8271b63d630d9a05ef511e62af369a2df",
+   "key": "6f054f70d4117a5ca4740cf865b1f475a59e4f1cca64a50465b50e65164bcd89",
    "run_dirs": [
-    "previews/earth-build/suite/20261027-190504-toolchain/gst"
+    "previews/earth-build/suite/20261028-004927-toolchain/gst"
    ],
-   "recorded": "2026-10-27 19:06:01",
+   "recorded": "2026-10-28 00:51:13",
    "summary": {
     "tests": 31,
     "failed": 0,
@@ -175,21 +175,21 @@
   "t15b_m0": {
    "key": "7cf35dc112e7438adc394c1ac3373fd723b0066d13cf0dc494bda3b464742632",
    "run_dirs": [
-    "previews/earth-build/suite/20261027-175324-toolchain/t15b-m0"
+    "previews/earth-build/suite/20261028-004927-toolchain/t15b-m0"
    ],
-   "recorded": "2026-10-27 17:57:06",
+   "recorded": "2026-10-28 00:53:09",
    "summary": {
     "0xff": {
-     "a_median_ms": 643.2471,
-     "b_median_ms": 643.3803,
-     "ratio": 0.9998,
+     "a_median_ms": 637.5543,
+     "b_median_ms": 649.0534,
+     "ratio": 0.9823,
      "a_spread": [
-      629.8672,
-      651.5055
+      628.0967,
+      652.0446
      ],
      "b_spread": [
-      624.665,
-      645.1522
+      604.6061,
+      660.8955
      ],
      "reps": [
       7,
@@ -198,16 +198,16 @@
      "batches": 1
     },
     "0xffff": {
-     "a_median_ms": 635.3835,
-     "b_median_ms": 642.3126,
-     "ratio": 0.9892,
+     "a_median_ms": 633.5402,
+     "b_median_ms": 634.8821,
+     "ratio": 0.9979,
      "a_spread": [
-      625.3813,
-      645.8194
+      612.4128,
+      649.8677
      ],
      "b_spread": [
-      623.3615,
-      646.3144
+      628.2789,
+      649.5366
      ],
      "reps": [
       7,
@@ -220,5 +220,5 @@
   }
  },
  "game_build": "2.1.23 build 87750",
- "updated": "2026-10-27 19:06:01"
+ "updated": "2026-10-28 00:55:38"
 }

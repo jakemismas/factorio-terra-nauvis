@@ -7,19 +7,14 @@
   python tools/earth_test.py baseline                           rewrite the measured values in tests/
   python tools/earth_test.py static                             T16 static rows: no game, no workspace
   python tools/earth_test.py freeze                             register new Earth bodies (europe-coast on)
-  python tools/earth_test.py guard-rebaseline --reason <text>   A manual re-baseline of the G9 chain:
-                                                                interactive terminal only, never unattended
 
 Rules this file implements (design section 5):
-  1. Guard, lock, budget. Every command that launches the game sits in a chained live-profile guard
-     bracket (fh.py guard snapshot first, fh.py guard check last; within a part each start
-     snapshot must equal the previous command's end snapshot, the part's first command
-     re-baselines, and a build instance's game log newer than the chain's last clean end fails
-     the start), holds the workspace lock (a lock whose owner process is gone is free), reads
-     the game build from its first real run (G8) and, for the gate, stops itself at 9 minutes.
-     A dirty guard stops every game run until the maintainer clears it by hand (GUARD_STOP).
-     Every fh.py launch runs in a kill-on-close job object, so a killed runner leaves no game
-     process behind.
+  1. Lock, budget. Every command that launches the game holds the workspace lock (a lock whose
+     owner process is gone is free), runs every game launch through fh.py and requires G1 of each
+     run: fh.py isolation is the only live-profile protection,
+     and a run that may have left its instance stops the command. It reads the game build from its
+     first real run (G8) and, for the gate, stops itself at 9 minutes. Every fh.py launch runs in a
+     kill-on-close job object, so a killed runner leaves no game process behind.
   2. No trusted verdict files. Every check's key is a sha256 recomputed over its inputs; cached
      raw outputs are re-validated (G1 on every run.json, a run newer than its inputs, images
      re-hashed) and the verdict re-derived with the committed checker. A stale FG row re-runs live;
@@ -40,7 +35,6 @@ import json
 import os
 import random
 import re
-import secrets
 import shutil
 import subprocess
 import sys
@@ -85,7 +79,7 @@ SAVE_BLOCK = (64, 32)
 SERVER = {"port": 34497, "rt_timeout": 75, "save_timeout": 40}
 PERF15_KEEP = "mapGeneratorBasicTilesSupportCompute"
 # The commands that build a Ctx: each is a fixed path segment of the output root.
-COMMANDS = ("gate", "suite", "install-check", "baseline", "freeze", "guard-rebaseline")
+COMMANDS = ("gate", "suite", "install-check", "baseline", "freeze")
 
 
 class GateError(RuntimeError):
@@ -100,8 +94,8 @@ class FatalRun(BaseException):
     """A game run that may have left its instance (run.json isolated not true, a NOT-ISOLATED
     RESULT) or ran on another build (G8): every further game run of the command stops at once.
     It derives from BaseException, so no row's or group loop's `except GateError` or `except
-    Exception` swallows it; only with_bracket catches it, after which the job is terminated and
-    the guard check runs (design constraint 1, project rule 2)."""
+    Exception` swallows it; only with_lock catches it, after which the job is terminated before
+    the lock is released (design constraint 1)."""
 
 
 # ------------------------------------------------------------------------------------------------ milestones
@@ -112,7 +106,7 @@ class FatalRun(BaseException):
 # (M1 here; climate-tiles adds M2). Each later milestone appends its entry.
 REGISTRY = [
     {"id": "toolchain", "part": 1, "order": 0,
-     "fg": ["static", "fh_flags", "plan_main", "section6", "data_src", "offline_selftests", "runner_controls",
+     "fg": ["static", "plan_main", "section6", "data_src", "offline_selftests", "runner_controls",
             "dumps", "frozen", "t13_dump_facts", "isolation_b", "ab_placeholder", "t13_zero_cost",
             "t13_placeholder", "t13_scenario", "t15a_rows", "isolation_a"],
      "ss": ["gst", "t15b_m0", "walker_m0", "perf15", "rt_m0", "save_m0"],
@@ -191,7 +185,7 @@ def key_of(obj):
 
 def write_atomic(path, text):
     """Write a state or tracked file through a temp file and os.replace, so a kill mid-write never
-    leaves a truncated file (chain.json, the cache index, suite manifests, baselines, frozen.json)."""
+    leaves a truncated file (the cache index, suite manifests, baselines, frozen.json)."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
@@ -608,275 +602,10 @@ class Lock:
                                 f"{d.get('since')}); two game-launching commands never overlap")
             time.sleep(2)
 
-    def set_token(self, token, chain, start):
-        """Publish the bracket token (after the G9 start snapshot): children inherit it as
-        TN_BRACKET and the repo's game-launching tools refuse without it (tnguard)."""
-        rec = self.read(self.path) or {}
-        if not self.held or rec.get("pid") != os.getpid():
-            raise GateError("the workspace lock changed hands before the guard bracket opened")
-        rec.update(token=token, chain=str(chain), start=start)
-        write_atomic(self.path, json.dumps(rec))
-        return {"lock": str(self.path), "chain": str(chain), "start": start, "token": token, "pid": os.getpid()}
-
     def release(self):
         if self.held:
             write_atomic(self.path, json.dumps({"pid": 0, "released": time.strftime("%Y-%m-%d %H:%M:%S")}))
             self.held = False
-
-
-# What every G9 halt tells its reader. It names no command: a dirty guard stops all game runs and is
-# reported first on the parent issue; clearing it is the maintainer's, at his own terminal.
-GUARD_STOP = ("stop all game runs and report this first on the sprint parent issue (hard rule 2); only Jake "
-              "clears the guard, by hand at his own interactive terminal, after reviewing the change")
-
-
-class Guard:
-    """The chained live-profile guard (G9; project rule 2), keyed by the part of the command's milestone.
-
-    The chain's last entry is authoritative. A command chains to its clean end snapshot; a last entry
-    whose end check failed halts every later command of the part (GUARD_STOP) until the maintainer clears it by
-    hand; an entry that never finished (a killed command) is checked against its own start snapshot.
-    Only a part's first command re-baselines on its own, and it refuses while the previous part's
-    chain ends dirty or unfinished or the append-only journal records commands of this part that the
-    chain lacks (a lost or replaced chain.json). Every start also fails closed when a build instance
-    (test-instance/instances/ea-*) wrote a game log after the chain's last clean end, which means a
-    game ran outside any chained bracket (design constraint 1); after an entry that never finished,
-    only the instances its ledger names may have (its own runs). chain.json is written atomically."""
-
-    def __init__(self, ctx, part, recover=False):
-        self.ctx, self.part = ctx, part
-        self.root = ctx.root / "guard"
-        self.dir = self.root / f"part-{part}"
-        self.dir.mkdir(parents=True, exist_ok=True)
-        self.chain_file = self.dir / "chain.json"
-        self.journal_file = self.root / "journal.jsonl"
-        self.start_file = None
-        self.token = None
-        try:
-            self.chain = self.read_chain(self.chain_file, part)
-        except GateError:
-            if not recover:
-                raise
-            moved = self.chain_file.with_name(f"chain.json.unreadable-{ctx.stamp}")
-            os.replace(self.chain_file, moved)
-            self._journal("chain-set-aside", moved=moved.name)
-            self.chain = {"part": part, "entries": [], "set_aside": moved.name}
-
-    @staticmethod
-    def read_chain(path, part):
-        if not Path(path).exists():
-            return {"part": part, "entries": []}
-        try:
-            c = json.loads(Path(path).read_text(encoding="utf-8"))
-            if not isinstance(c, dict) or not isinstance(c.get("entries"), list):
-                raise ValueError("no entries list")
-            return c
-        except (OSError, ValueError) as e:
-            raise GateError(f"G9: {path} is unreadable ({e}); {GUARD_STOP}")
-
-    def _save(self):
-        write_atomic(self.chain_file, json.dumps(self.chain, indent=1))
-
-    @staticmethod
-    def entry_epoch(chain_dir, entry, key, snap_key):
-        """When an entry started or ended (epoch seconds): its recorded time, else its snapshot
-        file's modification time (entries written before the time was recorded)."""
-        if entry.get(key):
-            return float(entry[key])
-        f = Path(chain_dir) / str(entry.get(snap_key) or "")
-        return f.stat().st_mtime if entry.get(snap_key) and f.exists() else None
-
-    @staticmethod
-    def chain_last_clean_end(chain_dir, entries):
-        """The end time of a chain's newest entry that ended clean (epoch seconds), or None."""
-        for e in reversed(entries):
-            if e.get("end"):
-                return Guard.entry_epoch(chain_dir, e, "ended_epoch", "end")
-        return None
-
-    def _epoch(self, entry, key, snap_key):
-        return Guard.entry_epoch(self.dir, entry, key, snap_key)
-
-    def stray_logs(self, since, allowed=()):
-        """Build instances (ea-*) whose game log is newer than `since`: a game ran there after the
-        chain's last clean end, outside any chained bracket, unless the instance is in `allowed`
-        (the ledger of an entry that never finished)."""
-        inst = Path(self.ctx.ws) / "test-instance" / "instances"
-        out = []
-        if since is None or not inst.is_dir():
-            return out
-        for d in sorted(inst.glob("ea-*")):
-            f = d / "write-data" / "factorio-current.log"
-            if d.name in allowed or not f.exists():
-                continue
-            m = f.stat().st_mtime
-            if m > since + 0.5:
-                out.append(f"{d.name} ({time.strftime('%H:%M:%S', time.localtime(m))})")
-        return out
-
-    def note_launch(self, instance):
-        """The open entry's ledger: every build instance this bracket launches the game on (the
-        runner's own fh.py runs and its child tools'), saved before the launch."""
-        if not self.start_file or not instance:
-            return
-        for e in self.chain["entries"]:
-            if e["start"] == self.start_file:
-                if instance not in e.setdefault("instances", []):
-                    e["instances"].append(instance)
-                    self._save()
-                return
-
-    def rebaselines(self):
-        """The journal's explicit re-baselines and set-aside chains of this part, for the record."""
-        return [e for e in self.journal_events() if e.get("event") in ("rebaseline", "chain-set-aside")]
-
-    def _journal(self, event, **kw):
-        rec = {"part": self.part, "event": event, "cmd": self.ctx.cmd, "slice": self.ctx.slice,
-               "stamp": self.ctx.stamp, "at": time.strftime("%Y-%m-%d %H:%M:%S")}
-        rec.update(kw)
-        self.root.mkdir(parents=True, exist_ok=True)
-        with open(self.journal_file, "a", encoding="utf-8", newline="\n") as f:
-            f.write(json.dumps(rec) + "\n")
-            f.flush()
-            os.fsync(f.fileno())
-
-    def journal_events(self, part=None):
-        part = self.part if part is None else part
-        if not self.journal_file.exists():
-            return []
-        out = []
-        for line in self.journal_file.read_text(encoding="utf-8").splitlines():
-            try:
-                r = json.loads(line)
-            except ValueError:
-                continue
-            if r.get("part") == part:
-                out.append(r)
-        return out
-
-    def previous_part_problem(self):
-        if self.part <= 1:
-            return None
-        prev = self.root / f"part-{self.part - 1}" / "chain.json"
-        if not prev.exists():
-            return None
-        try:
-            c = self.read_chain(prev, self.part - 1)
-        except GateError as e:
-            return str(e)
-        if not c["entries"]:
-            return None
-        last = c["entries"][-1]
-        if last.get("end"):
-            return None
-        if last.get("ended"):
-            return f"part {self.part - 1}'s chain ends dirty: {last['cmd']} ended with {last.get('check')}"
-        return f"part {self.part - 1}'s chain ends with {last['cmd']} ({last['start']}), which never finished"
-
-    def check(self, snap):
-        return self.ctx.fh_plain(["guard", "check", self.dir / snap])
-
-    def _new_file(self, suffix):
-        name = f"{self.ctx.stamp}-{self.ctx.cmd}-{suffix}.json"
-        n = 1
-        while (self.dir / name).exists():
-            n += 1
-            name = f"{self.ctx.stamp}-{self.ctx.cmd}-{n}-{suffix}.json"
-        return name
-
-    def start(self):
-        entries = self.chain["entries"]
-        if entries:
-            last = entries[-1]
-            if last.get("end"):
-                base, how = last["end"], f"chained to {last['cmd']} {last['end']}"
-                since, allowed, ref = self._epoch(last, "ended_epoch", "end"), (), f"{last['cmd']} {last['end']}"
-            elif last.get("ended"):
-                raise GateError(f"G9: the last command of part {self.part}, {last['cmd']} ({last['start']}), ended "
-                                f"with a dirty guard ({last.get('check')}); {GUARD_STOP}")
-            else:
-                base = last["start"]
-                how = f"chained to the start snapshot of {last['cmd']} {last['start']}, which never finished"
-                # its own runs wrote logs after its start: only the instances its ledger names may have
-                since, allowed = self._epoch(last, "started_epoch", "start"), tuple(last.get("instances") or [])
-                ref = f"the start of {last['cmd']} {last['start']}, which never finished (ledger {list(allowed)})"
-            stray = self.stray_logs(since, allowed)
-            if stray:
-                raise GateError(f"G9: build instances ran the game after {ref}, outside any chained guard bracket "
-                                f"(sacred constraint 1): {stray}; {GUARD_STOP}")
-            res = self.check(base)
-            if not res.startswith("RESULT ok"):
-                raise GateError(f"G9: the live profile changed since {base} ({res}); {GUARD_STOP}")
-            if not last.get("ended"):
-                last["abandoned"] = (f"never finished; its start snapshot checked clean by {self.ctx.cmd} "
-                                     f"{self.ctx.stamp}")
-        else:
-            if any(e.get("event") in ("start", "finish") for e in self.journal_events()):
-                raise GateError(f"G9: {self.chain_file} holds no entries, but {self.journal_file} records commands of "
-                                f"part {self.part}: the chain was lost or replaced; {GUARD_STOP}")
-            prob = self.previous_part_problem()
-            if prob:
-                raise GateError(f"G9: {prob}; the first command of part {self.part} does not re-baseline over it; "
-                                f"{GUARD_STOP}")
-            prev = self.root / f"part-{self.part - 1}" / "chain.json"
-            if self.part > 1 and prev.exists():
-                stray = self.stray_logs(Guard.chain_last_clean_end(prev.parent,
-                                                                   self.read_chain(prev, self.part - 1)["entries"]))
-                if stray:
-                    raise GateError(f"G9: build instances ran the game after part {self.part - 1}'s last clean end, "
-                                    f"outside any chained guard bracket (sacred constraint 1): {stray}; the first "
-                                    f"command of part {self.part} does not re-baseline over them; {GUARD_STOP}")
-            how = "first command of the part: re-baselined"
-        self.start_file = self._new_file("start")
-        res = self.ctx.fh_plain(["guard", "snapshot", self.dir / self.start_file])
-        if not res.startswith("RESULT ok"):
-            raise GateError(f"G9 snapshot failed: {res}")
-        self.token = secrets.token_hex(16)
-        entries.append({"cmd": self.ctx.cmd, "slice": self.ctx.slice, "start": self.start_file, "end": None,
-                        "how": how, "started": time.strftime("%Y-%m-%d %H:%M:%S"), "started_epoch": time.time(),
-                        "token": self.token, "instances": []})
-        self._save()
-        self._journal("start", start=self.start_file, how=how)
-        return f"{res.split(' file=')[0]} ({how})"
-
-    def finish(self):
-        res = self.check(self.start_file)
-        ok = res.startswith("RESULT ok")
-        end_file = self._new_file("end")
-        snap = self.ctx.fh_plain(["guard", "snapshot", self.dir / end_file])
-        snap_ok = snap.startswith("RESULT ok")
-        clean = ok and snap_ok
-        for e in self.chain["entries"]:
-            if e["start"] == self.start_file:
-                e["end"] = end_file if clean else None
-                e["check"] = res if snap_ok else f"{res}; end snapshot failed: {snap}"
-                e["ended"] = time.strftime("%Y-%m-%d %H:%M:%S")
-                e["ended_epoch"] = time.time()
-                e["dirty"] = not clean
-        self._save()
-        self._journal("finish", start=self.start_file, end=end_file if clean else None, check=res, dirty=not clean)
-        return clean, res, snap
-
-    def rebaseline(self, reason, reviewed=None):
-        """A manual re-baseline, by hand: a fresh snapshot becomes the chain's clean last entry, with the
-        reason, the change he reviewed and what it replaced logged in the chain and the journal.
-        Launches no game. cmd_guard_rebaseline is its only caller outside the runner's controls,
-        and it refuses without an interactive terminal and the typed-back change list."""
-        snap_file = self._new_file("rebaseline")
-        res = self.ctx.fh_plain(["guard", "snapshot", self.dir / snap_file])
-        if not res.startswith("RESULT ok"):
-            raise GateError(f"G9 snapshot failed: {res}")
-        last = self.chain["entries"][-1] if self.chain["entries"] else None
-        replaced = {k: last.get(k) for k in ("cmd", "start", "end", "check", "ended")} if last else None
-        now = time.strftime("%Y-%m-%d %H:%M:%S")
-        self.chain["entries"].append({"cmd": "guard-rebaseline", "slice": self.ctx.slice, "start": snap_file,
-                                      "end": snap_file, "how": f"re-baseline by hand: {reason}", "reason": reason,
-                                      "reviewed": reviewed, "replaces": replaced,
-                                      "check": "RESULT ok re-baseline by hand, no check", "started": now,
-                                      "ended": now, "started_epoch": time.time(), "ended_epoch": time.time()})
-        self._save()
-        self._journal("rebaseline", start=snap_file, reason=reason, reviewed=reviewed, replaces=replaced)
-        return res
 
 
 class Run:
@@ -902,25 +631,11 @@ class Ctx:
         self.ws = find_ws(need_ws)
         self.stamp = time.strftime("%Y%m%d-%H%M%S")
         self.killprobe = os.environ.get("TN_KILLPROBE") == "1"
-        self.bracket = None
-        self.guard = None
-        if self.killprobe:
-            # the kill probe launches the game inside its parent gate's guard bracket only
-            why = tnguard.bracket_problem()
-            if why:
-                raise GateError(f"TN_KILLPROBE refused: {why}")
+        self.locked = False
         if self.ws:
             self.fh_py = self.ws / "tools" / "fh.py"
             self.root = tnguard.absolute_output(os.environ["TN_OUT_ROOT"]) \
                 if self.killprobe and os.environ.get("TN_OUT_ROOT") else self.ws / "previews" / "earth-build"
-            why = tnguard.live_output_problem(self.root)
-            if why:
-                raise GateError(f"output root refused: {why}")
-            # the guard journal is the one file under the root appended in place (every other state
-            # file is replaced whole, and runs write into new folders): no second hard link
-            why = tnguard.live_output_problem(self.root / "guard" / "journal.jsonl")
-            if why:
-                raise GateError(f"guard journal refused: {why}")
             self.out = self.root / cmd / f"{self.stamp}-{self.slice}"
             n = 1
             while self.out.exists():
@@ -929,9 +644,6 @@ class Ctx:
             root_r, out_r = self.root.resolve(), self.out.resolve()
             if out_r.parent != (root_r / cmd) or not out_r.is_relative_to(root_r):
                 raise GateError(f"output directory {self.out} resolves outside {self.root}/{cmd}")
-            why = tnguard.live_output_problem(self.out)
-            if why:
-                raise GateError(f"output directory refused: {why}")
             self.out.mkdir(parents=True)
             import perf
             self.perf = perf
@@ -955,8 +667,6 @@ class Ctx:
         e = dict(os.environ)
         e["FACTORIO_WS"] = str(self.ws)
         e.setdefault("PYTHONIOENCODING", "utf-8")
-        if self.bracket:
-            e[tnguard.ENV] = json.dumps(self.bracket)
         return e
 
     def popen_text(self, cmd, timeout, watcher=None, monitor=False):
@@ -981,8 +691,8 @@ class Ctx:
         return p.returncode, text or "", mon
 
     def fh_plain(self, args, timeout=300):
-        """fh.py subcommands that launch no game (guard, modset, settings, compare). They run outside
-        the job, so the guard check still works after the job has been terminated."""
+        """fh.py subcommands that launch no game (modset, settings, compare). They run outside the
+        job."""
         cp = subprocess.run([sys.executable, str(self.fh_py)] + [str(a) for a in args], cwd=str(self.ws),
                             capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout,
                             env=self.env())
@@ -991,16 +701,14 @@ class Ctx:
         return lines[-1] if lines else "RESULT none " + text[-300:]
 
     def fh(self, args, out, timeout=600, watcher=None, monitor=False):
-        """A game run through fh.py into a new --out, only inside the guard bracket (the kill probe:
-        inside its parent's); checks the build pin (G8) on its stdout. A run that may have left its
-        instance (tnguard.run_breach) or ran on another build raises FatalRun: no later game run of
-        this command starts (design constraint 1)."""
-        if self.bracket is None and not self.killprobe:
-            raise GateError(f"fh.py {args[0]} outside the guard bracket: every game launch sits inside the lock and "
-                            f"a chained G9 snapshot and check (hard rule 2)")
+        """A game run through fh.py into a new --out, only while the command holds the workspace lock
+        (the kill probe: under its parent's); checks the build pin (G8) on its stdout. A run that may
+        have left its instance (tnguard.run_breach) or ran on another build raises FatalRun: no later
+        game run of this command starts (design constraint 1)."""
+        if not self.locked and not self.killprobe:
+            raise GateError(f"fh.py {args[0]} outside the workspace lock: every game launch of a runner command holds "
+                            f"it (hard rule 4)")
         self.check_budget(f"fh.py {args[0]}")
-        if self.guard is not None and "--instance" in args:
-            self.guard.note_launch(str(args[list(args).index("--instance") + 1]))
         out = Path(out)
         full = list(args[:1]) + ["--out", out] + list(args[1:]) if "--out" not in args else list(args)
         if "--timeout" not in full and args[0] in ("preview", "scenario", "dump-data", "run", "sample"):
@@ -1665,40 +1373,7 @@ def row_static(ctx, mods, sec6, row, cache):
         row.fails += [l.strip() for l in out.splitlines() if l.startswith(("ROW FAIL", "     - "))][:12] or [out[-400:]]
 
 
-def read_fh_sets(fh_py):
-    import ast
-    tree = ast.parse(Path(fh_py).read_text(encoding="utf-8"))
-    sets = {}
-    for node in tree.body:
-        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
-            if node.targets[0].id in ("GUI_FLAGS", "FORBIDDEN_EXTRA", "HEADLESS_ACTIONS"):
-                sets[node.targets[0].id] = sorted(ast.literal_eval(node.value))
-    return sets
-
-
-def tool_constant(path, name):
-    """A module-level literal of a tool, read with ast (the tool is never imported here)."""
-    import ast
-    for node in ast.parse(Path(path).read_text(encoding="utf-8")).body:
-        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) and \
-                node.targets[0].id == name:
-            return ast.literal_eval(node.value)
-    raise GateError(f"{Path(path).name} defines no literal {name}")
-
-
 KILLPROBE_INSTANCE = "ea-killprobe"
-
-
-def row_fh_flags(ctx, mods, sec6, row, cache):
-    """The launch scan's vendored flag sets equal fh.py's (read with ast, never imported)."""
-    vend = json.loads((HERE / "lint" / "fh-flags.json").read_text(encoding="utf-8"))
-    live = read_fh_sets(ctx.fh_py)
-    for k in ("GUI_FLAGS", "FORBIDDEN_EXTRA"):
-        if sorted(vend[k]) != live.get(k):
-            row.fails.append(f"tools/lint/fh-flags.json {k} differs from fh.py's: {sorted(set(vend[k]) ^ set(live.get(k, [])))}")
-    sha = sha256_file(ctx.fh_py)
-    note = "" if sha == vend.get("fh_py_sha256") else f"; fh.py changed since vendoring ({sha[:12]}), sets still equal"
-    row.detail = f"{len(vend['GUI_FLAGS'])} GUI flags, {len(vend['FORBIDDEN_EXTRA'])} isolation flags equal fh.py's{note}"
 
 
 def row_plan_main(ctx, mods, sec6, row, cache):
@@ -2246,132 +1921,14 @@ def t15b_controls(main):
     return out
 
 
-def guard_controls():
-    """The chained G9 guard on scratch chains with a stub fh.py (no game, no live profile)."""
-    out = {}
-
-    class Stub:
-        def __init__(self, root, cmd, dirty=False):
-            self.root, self.cmd, self.slice, self.stamp = Path(root), cmd, "toolchain", time.strftime("%Y%m%d-%H%M%S")
-            self.ws = Path(root)
-            self.dirty, self.calls = dirty, []
-
-        def fh_plain(self, args, timeout=300):
-            self.calls.append([str(a) for a in args])
-            if args[0] == "guard" and args[1] == "snapshot":
-                Path(args[2]).write_text("{}", encoding="utf-8")
-                return f"RESULT ok snapshot files=1 file={args[2]}"
-            return "RESULT changed added=0 removed=0 changed=1" if self.dirty else "RESULT ok added=0 removed=0 changed=0"
-
-    def halts(fn):
-        try:
-            fn()
-            return False
-        except GateError:
-            return True
-
-    def halt_text(fn):
-        try:
-            fn()
-            return ""
-        except GateError as e:
-            return str(e)
-
-    def game_log(root, inst, ahead=5.0):
-        f = Path(root) / "test-instance" / "instances" / inst / "write-data" / "factorio-current.log"
-        f.parent.mkdir(parents=True, exist_ok=True)
-        f.write_text("log\n", encoding="utf-8")
-        t = time.time() + ahead
-        os.utime(f, (t, t))
-    with tempfile.TemporaryDirectory(prefix="tn-guard-") as td:
-        td = Path(td)
-        g = Guard(Stub(td / "a", "baseline", dirty=True), 1)
-        g.start()
-        g.finish()
-        msg = halt_text(lambda: Guard(Stub(td / "a", "gate"), 1).start())
-        out["G9: a dirty end check halts the next command of the part"] = (bool(msg), "")
-        out["G9: the halt says to stop and report on the parent issue, and names no re-baseline command"] = (
-            "parent issue" in msg and "guard-rebaseline" not in msg and "earth_test.py" not in msg, msg[-120:])
-        # design constraint 1: a game run outside the chained bracket shows in the build instances' logs
-        g = Guard(Stub(td / "g", "gate"), 1)
-        g.start()
-        g.finish()
-        game_log(td / "g", "ea-dev")
-        out["G9: a build instance's game log written after the chain's last clean end halts the next command"] = (
-            halts(lambda: Guard(Stub(td / "g", "gate"), 1).start()), "")
-        g = Guard(Stub(td / "h", "gate"), 1)
-        g.start()
-        g.finish()
-        game_log(td / "h", "ea-dev", ahead=-3600.0)
-        out["G9: a build instance's log older than the last clean end passes"] = (
-            not halts(lambda: Guard(Stub(td / "h", "gate"), 1).start()), "")
-        game_log(td / "h", "other-caller")
-        out["G9: an instance outside the build's ea- names is not the build's run and passes"] = (
-            not halts(lambda: Guard(Stub(td / "h", "gate"), 1).start()), "")
-        g = Guard(Stub(td / "i", "suite"), 1)
-        g.start()
-        g.note_launch("ea-suite")                  # killed after launching on ea-suite: never finishes
-        game_log(td / "i", "ea-suite")
-        out["G9: after an entry that never finished, its own ledger's instance may hold a newer log"] = (
-            not halts(lambda: Guard(Stub(td / "i", "gate"), 1).start()), "")
-        g = Guard(Stub(td / "j", "suite"), 1)
-        g.start()
-        g.note_launch("ea-suite")
-        game_log(td / "j", "ea-dev")
-        out["G9: after an entry that never finished, an instance outside its ledger halts"] = (
-            halts(lambda: Guard(Stub(td / "j", "gate"), 1).start()), "")
-        g = Guard(Stub(td / "k", "gate"), 1)
-        g.start()
-        g.finish()
-        game_log(td / "k", "ea-gate")
-        out["G9: a part's first command halts on a game log written after the previous part's last clean end"] = (
-            halts(lambda: Guard(Stub(td / "k", "gate"), 2).start()), "")
-        g = Guard(Stub(td / "b", "suite"), 1)
-        g.start()                                   # killed: never finishes
-        s2 = Stub(td / "b", "gate")
-        Guard(s2, 1).start()
-        checks = [c for c in s2.calls if c[1] == "check"]
-        out["G9: an unfinished entry is checked against its own start snapshot"] = (
-            bool(checks) and checks[0][2].endswith(g.start_file), checks[:1])
-        g = Guard(Stub(td / "c", "suite"), 1)
-        g.start()
-        out["G9: a changed profile after an unfinished entry halts"] = (
-            halts(lambda: Guard(Stub(td / "c", "gate", dirty=True), 1).start()), "")
-        g = Guard(Stub(td / "d", "gate"), 1)
-        g.start()
-        g.finish()
-        chain = td / "d" / "guard" / "part-1" / "chain.json"
-        os.replace(chain, chain.with_name("chain.json.moved"))
-        out["G9: a lost chain.json that the journal records halts (no silent re-baseline)"] = (
-            halts(lambda: Guard(Stub(td / "d", "gate"), 1).start()), "")
-        chain.write_text('{"part": 1, "entr', encoding="utf-8")
-        out["G9: a truncated chain.json halts"] = (halts(lambda: Guard(Stub(td / "d", "gate"), 1)), "")
-        rb = Guard(Stub(td / "d", "guard-rebaseline"), 1, recover=True)
-        rb.rebaseline("control: the chain was set aside")
-        ok = not halts(lambda: Guard(Stub(td / "d", "gate"), 1).start())
-        out["G9: only the explicit, logged re-baseline clears it"] = (
-            ok and any(e.get("event") == "rebaseline" for e in rb.journal_events()), "")
-        g = Guard(Stub(td / "e", "gate", dirty=True), 1)
-        g.start()
-        g.finish()
-        out["G9: a part's first command refuses while the previous part's chain ends dirty"] = (
-            halts(lambda: Guard(Stub(td / "e", "gate"), 2).start()), "")
-        g = Guard(Stub(td / "f", "gate"), 1)
-        g.start()
-        g.finish()
-        out["G9: a part's first command re-baselines after a clean previous part"] = (
-            not halts(lambda: Guard(Stub(td / "f", "gate"), 2).start()), "")
-    return out
-
-
 def fatal_run_controls():
     """Design constraint 1: a game run that may have left its instance, or one on another build,
     stops the whole command (no game, no live profile; scratch run directories and a stub
     command). A run.json with isolated false or unknown, a scenario step not isolated, and a
     NOT-ISOLATED or isolated=NO RESULT line are breaches; an isolated run and a launch fh.py refused
     (no run.json) are not. FatalRun is no Exception: fg_rows passes it through and runs no later
-    row; Ctx.check_build raises it on another build; with_bracket catches it, terminates the job,
-    and only then runs the guard check."""
+    row; Ctx.check_build raises it on another build; with_lock catches it and terminates the job
+    while it still holds the lock, which it then releases."""
     import types
     import perf
     out = {}
@@ -2438,32 +1995,26 @@ def fatal_run_controls():
             raised = True
         out["fatal: G8, a run on another build, stops the command"] = (raised, "")
 
-        class BracketCtx:
+        class LockCtx:
             def __init__(self, root):
                 self.root, self.ws, self.out = root, root, root / "out"
                 self.out.mkdir(parents=True)
                 self.cmd, self.slice, self.stamp = "gate", "toolchain", time.strftime("%Y%m%d-%H%M%S")
-                self.log_lines, self.shared, self.bracket, self.guard, self.calls = [], {}, None, None, []
-                self.job = types.SimpleNamespace(terminate=lambda: self.calls.append("terminate"))
+                self.log_lines, self.shared, self.locked, self.calls = [], {}, False, []
+                lock_file = root / "earth-test.lock"
+                self.job = types.SimpleNamespace(terminate=lambda: self.calls.append(
+                    "terminate, lock free" if Lock.is_free(lock_file) else "terminate, lock held"))
 
             def say(self, line):
                 self.log_lines.append(line)
-
-            def fh_plain(self, args, timeout=300):
-                self.calls.append(f"{args[0]} {args[1]}")
-                if args[0] == "guard" and args[1] == "snapshot":
-                    Path(args[2]).write_text("{}", encoding="utf-8")
-                    return f"RESULT ok snapshot files=1 file={args[2]}"
-                return "RESULT ok added=0 removed=0 changed=0"
-        bc = BracketCtx(td / "bracket")
+        lc = LockCtx(td / "lock")
 
         def body():
             raise FatalRun("fixture breach")
-        code = with_bracket(bc, body)
-        checks = [i for i, c in enumerate(bc.calls) if c == "guard check"]
-        out["fatal: with_bracket catches FatalRun, terminates the job, then runs the guard check"] = (
-            code == 1 and any(l.startswith("FATAL ") for l in bc.log_lines) and "terminate" in bc.calls and
-            bool(checks) and bc.calls.index("terminate") < checks[-1], bc.calls)
+        code = with_lock(lc, body)
+        out["fatal: with_lock catches FatalRun, terminates the job while it holds the lock, then frees the lock"] = (
+            code == 1 and any(l.startswith("FATAL ") for l in lc.log_lines) and lc.calls == ["terminate, lock held"]
+            and Lock.is_free(lc.root / "earth-test.lock") and not lc.locked, lc.calls)
     return out
 
 
@@ -2498,84 +2049,16 @@ def oracle_controls():
     return out
 
 
-def bracket_controls(ctx):
-    """Design constraint 1: every repo tool that launches the game refuses outside the guard bracket.
-    Each is started with TN_BRACKET removed (and once with a forged one) and must print its refusal
-    before fh.py runs; no game process may appear. Any slip would still sit inside this command's
-    own lock and G9 bracket."""
-    out = {}
-    env = {k: v for k, v in ctx.env().items() if k != tnguard.ENV}
-    probe = ctx.out / "bracket-probe"
-    runs = {
-        "bracket: game_selftest.py refuses outside the bracket": [HERE / "game_selftest.py", "--out-root", probe / "gst"],
-        "bracket: dump_render.py run refuses outside the bracket": [
-            HERE / "dump_render.py", "run", "--instance", "ea-bracket", "--modset", "ea-m0", "--out", probe / "dump"],
-        "bracket: oracle.py probe refuses outside the bracket": [
-            HERE / "oracle.py", "probe", "--map", "europe", "--scale", "6", "--names", "elevation", "--instance",
-            "ea-bracket", "--modset", "ea-m0", "--out", probe / "probe"],
-    }
-    forged = dict(env, **{tnguard.ENV: json.dumps(dict(ctx.bracket or {}, token="0" * 32))})
-    cases = [(k, v, env) for k, v in runs.items()] + [
-        ("bracket: a forged token is refused", runs["bracket: game_selftest.py refuses outside the bracket"], forged),
-        ("bracket: the kill probe refuses outside its parent's bracket",
-         [HERE / "earth_test.py", "gate", "--through", ctx.slice], dict(env, TN_KILLPROBE="1",
-                                                                         TN_LOCK_FILE=str(probe / "x.lock"),
-                                                                         TN_OUT_ROOT=str(probe / "root")))]
-    for label, args, e in cases:
-        before = set(ctx.perf.game_pids())
-        cp = subprocess.run([sys.executable] + [str(a) for a in args], cwd=str(ctx.ws), capture_output=True, text=True,
-                            encoding="utf-8", errors="replace", env=e, timeout=120)
-        text = cp.stdout + cp.stderr
-        new_games = set(ctx.perf.game_pids()) - before
-        refused = cp.returncode != 0 and ("refuses to launch the game" in text or "TN_KILLPROBE refused" in text)
-        out[label] = (refused and not new_games and not (probe / "gst").exists() and not (probe / "dump").exists(),
-                      text.strip().splitlines()[-1:] if text.strip() else [])
-    return out
-
-
-def rebaseline_controls(ctx):
-    """The guard's re-baseline is left to the maintainer: started the way an unattended job or a script
-    starts it (stdin and stdout are pipes), guard-rebaseline must refuse at once, before it takes
-    the lock or writes the chain or the journal; the terminal test itself accepts only a console."""
-    out = {}
-    part = slice_entry(ctx.slice)["part"]
-    files = [ctx.root / "guard" / f"part-{part}" / "chain.json", ctx.root / "guard" / "journal.jsonl"]
-
-    def state():
-        return [(p.stat().st_mtime_ns, p.stat().st_size) if p.exists() else None for p in files]
-    before, t0 = state(), time.time()
-    cp = subprocess.run([sys.executable, str(HERE / "earth_test.py"), "guard-rebaseline", "--reason", "control"],
-                        cwd=str(REPO), stdin=subprocess.DEVNULL, capture_output=True, text=True, encoding="utf-8",
-                        errors="replace", timeout=90, env=ctx.env())
-    text = (cp.stdout or "") + (cp.stderr or "")
-    out["guard-rebaseline refuses an unattended start at once and changes nothing"] = (
-        cp.returncode != 0 and "interactive terminal" in text and time.time() - t0 < 60 and state() == before,
-        text.strip().splitlines()[-1:] if text.strip() else [])
-
-    class Term:
-        def __init__(self, tty):
-            self.tty = tty
-
-        def isatty(self):
-            return self.tty
-    out["the operator test accepts a console and refuses pipes"] = (
-        operator_problem(Term(True), Term(True)) is None and operator_problem(Term(False), Term(True)) is not None and
-        operator_problem(Term(True), Term(False)) is not None, "")
-    out["GUARD_STOP names no command"] = ("earth_test.py" not in GUARD_STOP and "guard-rebaseline" not in GUARD_STOP, "")
-    return out
-
-
 def slice_id_controls():
     """A crafted milestone id never reaches the file system: gate and suite refuse it before any path is
-    built (Ctx validates it first; guard-rebaseline's --milestone goes through the same check behind its
-    terminal test), so nothing appears in a scratch workspace."""
+    built (Ctx validates it first), so nothing appears in a scratch workspace."""
     out = {}
     with tempfile.TemporaryDirectory(prefix="tn-sliceid-") as td:
         ws = Path(td) / "ws"
         (ws / "tools").mkdir(parents=True)
         (ws / "tools" / "fh.py").write_text("raise SystemExit('the slice-id control never runs fh.py')\n",
                                             encoding="utf-8")
-        env = {k: v for k, v in os.environ.items() if k != tnguard.ENV}
+        env = dict(os.environ)
         env["FACTORIO_WS"] = str(ws)
         crafted_id = "x/../../../outside/mods/evil"
         cases = {"gate --through with ..": ["gate", "--through", crafted_id],
@@ -2621,19 +2104,14 @@ def row_runner_controls(ctx, mods, sec6, row, cache):
             results.update(group(main))
         except Exception as e:
             results[f"{group.__name__} ran"] = (False, f"{type(e).__name__}: {e}")
-    for group in (guard_controls, fatal_run_controls, oracle_controls, gst_replay_controls):
+    for group in (fatal_run_controls, oracle_controls, gst_replay_controls):
         try:
             results.update(group())
         except Exception as e:
             results[f"{group.__name__} ran"] = (False, f"{type(e).__name__}: {e}")
     if ctx.killprobe:
-        results["bracket controls skipped inside the kill probe"] = (True, "")
+        results["slice id controls skipped inside the kill probe"] = (True, "")
     else:
-        for group in (bracket_controls, rebaseline_controls):
-            try:
-                results.update(group(ctx))
-            except Exception as e:
-                results[f"{group.__name__} ran"] = (False, f"{type(e).__name__}: {e}")
         try:
             results.update(slice_id_controls())
         except Exception as e:
@@ -2659,8 +2137,6 @@ def kill_control(ctx):
     lock = td / "fixture.lock"
     env = ctx.env()
     env.update({"TN_KILLPROBE": "1", "TN_LOCK_FILE": str(lock), "TN_OUT_ROOT": str(td / "root")})
-    if ctx.guard is not None:
-        ctx.guard.note_launch(KILLPROBE_INSTANCE)
     p = ctx.job.popen([sys.executable, str(HERE / "earth_test.py"), "gate", "--through", ctx.slice], cwd=str(REPO),
                       stdout=open(td / "probe.txt", "w", encoding="utf-8"), stderr=subprocess.STDOUT, env=env)
     t0 = time.time()
@@ -2698,12 +2174,8 @@ def kill_control(ctx):
 
 
 def killprobe_gate(ctx):
-    """Inside the kill control's child: its parent gate holds the workspace lock and an open guard
-    entry (Ctx verified TN_BRACKET), so the long game run sits inside that bracket; take the
-    fixture lock and start the run."""
-    why = tnguard.live_output_problem(os.environ["TN_LOCK_FILE"])
-    if why:
-        raise GateError(f"TN_LOCK_FILE refused: {why}")
+    """Inside the kill control's child: its parent gate holds the workspace lock, so the long game
+    run sits under it; take the fixture lock and start the run."""
     lock = Lock(tnguard.absolute_output(os.environ["TN_LOCK_FILE"]))
     lock.acquire("killprobe gate", wait_s=5)
     mods = Mods(ctx)
@@ -3302,7 +2774,7 @@ def row_isolation_a(ctx, mods, sec6, row, cache):
 
 
 ROW_FUNCS = {
-    "static": row_static, "fh_flags": row_fh_flags, "plan_main": row_plan_main, "section6": row_section6,
+    "static": row_static, "plan_main": row_plan_main, "section6": row_section6,
     "frozen": row_frozen, "data_src": row_data_src, "offline_selftests": row_offline_selftests,
     "runner_controls": row_runner_controls, "dumps": row_dumps, "t13_dump_facts": row_t13_dump_facts,
     "isolation_b": row_isolation_b, "ab_placeholder": row_ab_placeholder, "t13_zero_cost": row_t13_zero_cost,
@@ -3821,11 +3293,10 @@ def gst_replay(d, only=None, tamper=None):
             os.replace(copy / "game-selftest.json", Path(td) / "stored-verdicts.json")
         if tamper:
             tamper(copy)
-        env = {k: v for k, v in os.environ.items() if k != tnguard.ENV}
         cmd = [sys.executable, str(HERE / "game_selftest.py"), "--out-root", str(copy), "--replay"]
         cmd += ["--only", only] if only else []
         cp = subprocess.run(cmd, cwd=str(REPO), capture_output=True, text=True, encoding="utf-8", errors="replace",
-                            timeout=900, env=env)
+                            timeout=900)
         lines = [l for l in (cp.stdout or "").splitlines() if l.startswith("RESULT ")]
         tail = lines[-1] if lines else (cp.stdout or cp.stderr or "")[-300:]
         rf = copy / "game-selftest.json"
@@ -3870,7 +3341,6 @@ def gst_replay_controls():
     # evidence itself it must refuse before writing anything, whatever folder it is started from
     sf = d / "game-selftest.json"
     before = sha256_file(sf) if sf.exists() else None
-    env = {k: v for k, v in os.environ.items() if k != tnguard.ENV}
     try:
         rel = os.path.relpath(d, tnguard.ws_root())
     except ValueError:
@@ -3879,7 +3349,7 @@ def gst_replay_controls():
     for args in (["--out-root", str(d)], ["--out-root", rel]):
         cp = subprocess.run([sys.executable, str(HERE / "game_selftest.py")] + args + ["--replay", "--only", "t1"],
                             cwd=str(REPO), capture_output=True, text=True, encoding="utf-8", errors="replace",
-                            timeout=120, env=env)
+                            timeout=120)
         refused.append(cp.returncode != 0 and "refuses --replay" in (cp.stdout or "") + (cp.stderr or ""))
     out["gst replay: a replay on the stored evidence itself (absolute or workspace-relative) is refused"] = (
         all(refused) and (sha256_file(sf) if sf.exists() else None) == before, refused)
@@ -3972,8 +3442,6 @@ def suite_checks(ctx, mods, sec6):
 
     def gst_run(deadline):
         out = ctx.out / "gst"
-        if ctx.guard is not None:
-            ctx.guard.note_launch(tool_constant(HERE / "game_selftest.py", "INSTANCE"))
         code, text, _ = ctx.popen_text([sys.executable, HERE / "game_selftest.py", "--out-root", out], 1800)
         (ctx.out / "gst.txt").write_text(text, encoding="utf-8")
         # the child stops itself on a breach; the runner then stops every further game run too
@@ -4052,29 +3520,19 @@ def suite_checks(ctx, mods, sec6):
 
 # ------------------------------------------------------------------------------------------------ commands
 
-def with_bracket(ctx, fn):
-    """Lock, guard snapshot, the bracket token, the command, guard check, lock release; the job dies
-    with us. Every game launch of the command and of its child tools sits inside this bracket."""
+def with_lock(ctx, fn):
+    """Lock, the command, lock release; the job dies with us. Every game launch of the command and of
+    its child tools runs while the command holds the workspace lock."""
     lock = Lock(ctx.root / "earth-test.lock")
-    guard = None
     code = 1
     try:
         lock.acquire(ctx.cmd)
-        guard = Guard(ctx, slice_entry(ctx.slice)["part"])
-        ctx.say(f"G9 {guard.start()}")
-        ctx.guard = guard
-        # the record of every manual re-baseline in this part: the run logs each one
-        for e in guard.rebaselines():
-            ctx.say(f"G9 NOTE part {guard.part} {e.get('event')} at {e.get('at')}: {e.get('reason') or e.get('moved')} "
-                    f"(replaced {(e.get('replaces') or {}).get('cmd')} {(e.get('replaces') or {}).get('start')}); "
-                    f"log it on the sprint parent issue")
-        ctx.shared["rebaselines"] = len(guard.rebaselines())
-        ctx.bracket = lock.set_token(guard.token, guard.chain_file, guard.start_file)
+        ctx.locked = True
         code = fn()
     except FatalRun as e:
-        # the job is terminated and the guard checked below, before anything else can launch
-        ctx.say(f"FATAL {e}; every further game run of this command is stopped, the job is terminated and the "
-                f"guard check runs now; {GUARD_STOP}")
+        # the job is terminated below, before the lock is released and before anything else can launch
+        ctx.say(f"FATAL {e}; every further game run of this command is stopped and the job is terminated; report "
+                f"it first on the sprint parent issue (sacred constraint 1)")
         code = 1
     except BudgetExceeded as e:
         ctx.say(f"BUDGET {e}")
@@ -4091,13 +3549,7 @@ def with_bracket(ctx, fn):
             ctx.job.terminate()
         except Exception:
             pass
-        ctx.bracket = None
-        ctx.guard = None
-        if guard is not None and guard.start_file:
-            ok, res, _ = guard.finish()
-            ctx.say(f"G9 check {res}")
-            if not ok:
-                code = 1
+        ctx.locked = False
         lock.release()
         (ctx.out / "console.txt").write_text("\n".join(ctx.log_lines) + "\n", encoding="utf-8")
     return code
@@ -4141,12 +3593,12 @@ def cmd_gate(a):
             return 1
         return 0 if all(not r.fails for r in state["rows"]) else 1
 
-    code = with_bracket(ctx, body)
+    code = with_lock(ctx, body)
     failed = [r.name for r in state["rows"] if r.fails]
     secs = round(time.time() - ctx.t0, 1)
     verdict = "ok" if code == 0 and not failed and not state["not_run"] else "fail"
     print(f"GATE {verdict} through={a.through} mode={mode} rows={len(state['rows'])} failed={failed} "
-          f"not_run={state['not_run']} rebaselines={ctx.shared.get('rebaselines', 0)} seconds={secs} out={ctx.out}",
+          f"not_run={state['not_run']} seconds={secs} out={ctx.out}",
           flush=True)
     return 0 if verdict == "ok" else 1
 
@@ -4253,7 +3705,7 @@ def cmd_suite(a):
             write_atomic(man_path, json.dumps(manifest, indent=1, default=str) + "\n")
         return 0 if ok else 1
 
-    code = with_bracket(ctx, body)
+    code = with_lock(ctx, body)
     print(f"SUITE {'ok' if code == 0 else 'fail'} slice={a.slice} only={a.only or '-'} "
           f"seconds={round(time.time() - ctx.t0, 1)} manifest={SUITES / (a.slice + '.json')} out={ctx.out}", flush=True)
     return code
@@ -4295,7 +3747,7 @@ def cmd_install_check(a):
             ctx.say(f"FAIL {f}")
         return 0 if not fails else 1
 
-    code = with_bracket(ctx, body)
+    code = with_lock(ctx, body)
     print(f"INSTALL-CHECK {'ok' if code == 0 else 'fail'} zip={info.get('zip')} sha256={info.get('sha')} "
           f"modset={info.get('modset')} earth_preview={list((info.get('earth') or {}).values())[:1]} "
           f"vanilla_preview={list((info.get('vanilla') or {}).values())[:1]} out={ctx.out}", flush=True)
@@ -4384,7 +3836,7 @@ def cmd_baseline(a):
         ctx.say(f"wrote {BUDGETS} ({len(rows)} rows) and {BASELINES / ('build-' + GAME_BUILD + '.json')}")
         return 0
 
-    code = with_bracket(ctx, body)
+    code = with_lock(ctx, body)
     print(f"BASELINE {'ok' if code == 0 else 'fail'} seconds={round(time.time() - ctx.t0, 1)} out={ctx.out}", flush=True)
     return code
 
@@ -4428,104 +3880,9 @@ def cmd_freeze(a):
         write_atomic(TESTS / "frozen.json", json.dumps(fz, indent=1) + "\n")
         return 0
 
-    code = with_bracket(ctx, body)
+    code = with_lock(ctx, body)
     print(f"FREEZE {'ok' if code == 0 else 'fail'} added={len(added)} {added[:10]} out={ctx.out}", flush=True)
     return code
-
-
-def operator_problem(stdin=None, stdout=None):
-    """Why this process is not a person at an interactive terminal, or None. The guard's re-baseline
-    is left to the maintainer (project rule 2: a dirty guard stops all game runs and is reported first on
-    the parent issue; the plan defines no other re-baseline than a part's first command): it needs
-    stdin and stdout on a console, so an unattended job's or a script's pipes are refused."""
-    stdin = sys.stdin if stdin is None else stdin
-    stdout = sys.stdout if stdout is None else stdout
-    try:
-        if stdin is None or stdout is None or not stdin.isatty() or not stdout.isatty():
-            return ("refuses: clearing the guard is Jake's, by hand at an interactive terminal (a console window; in "
-                    "Git Bash prefix winpty); an unattended run stops and reports on the sprint parent issue")
-    except (AttributeError, ValueError, OSError):
-        return "refuses: no interactive terminal"
-    return None
-
-
-CHANGED_RE = re.compile(r"^CHANGED (.*) \[[^\]]*\] -> \[[^\]]*\]$")
-
-
-def guard_check_lines(ctx, snap):
-    """fh.py guard check of one snapshot, with its ADDED, REMOVED and CHANGED lines: (RESULT line,
-    lines, changed paths). Launches no game."""
-    cp = subprocess.run([sys.executable, str(ctx.fh_py), "guard", "check", str(snap)], cwd=str(ctx.ws),
-                        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300, env=ctx.env())
-    lines = (cp.stdout or "").splitlines()
-    paths = []
-    for l in lines:
-        if l.startswith(("ADDED", "REMOVED")):
-            paths.append(l.split(None, 1)[1].strip() if len(l.split(None, 1)) > 1 else "")
-        else:
-            m = CHANGED_RE.match(l)
-            if m:
-                paths.append(m.group(1).strip())
-    res = next((l for l in reversed(lines) if l.startswith("RESULT ")), "RESULT none")
-    return res, [l for l in lines if not l.startswith("RESULT ")], paths
-
-
-def cmd_guard_rebaseline(a):
-    """A manual re-baseline of the chained guard (G9), by hand only: after he has reviewed a dirty,
-    unfinished or set-aside chain, a fresh snapshot becomes the chain's clean last entry, with his
-    reason and the change he typed back logged in the chain and the journal (every later command
-    prints it). It refuses without an interactive terminal, before it takes the lock or touches
-    anything; then it shows fh.py guard check against the chain's last snapshot and the stray game
-    logs, and goes on only when the operator types back every changed path. Launches no game."""
-    why = operator_problem()
-    if why:
-        print(f"RESULT fail guard-rebaseline {why}", flush=True)
-        return 1
-    if not (a.reason or "").strip():
-        print("RESULT fail guard-rebaseline needs --reason (what changed in the live profile and why it is safe)")
-        return 1
-    slice_id = checked_slice(a.slice or current_slice()["id"])
-    ctx = Ctx("guard-rebaseline", slice_id)
-    lock = Lock(ctx.root / "earth-test.lock")
-    try:
-        lock.acquire(ctx.cmd)
-        guard = Guard(ctx, slice_entry(slice_id)["part"], recover=True)
-        entries = guard.chain["entries"]
-        last = entries[-1] if entries else None
-        base = (last.get("end") or last.get("start")) if last else None
-        print(f"G9 part {guard.part}: last entry {last and last.get('cmd')} {last and last.get('start')} "
-              f"({'clean' if last and last.get('end') else 'dirty' if last and last.get('ended') else 'unfinished' if last else 'none'})")
-        res, lines, paths = (guard_check_lines(ctx, guard.dir / base) if base else ("RESULT none (no snapshot)", [], []))
-        for l in lines:
-            print(f"  {l}")
-        print(f"  {res}")
-        stray = guard.stray_logs(Guard.chain_last_clean_end(guard.dir, entries))
-        if stray:
-            print(f"  game logs written after the chain's last clean end: {stray}")
-        print("Type back every changed path listed above, one per line, then an empty line "
-              "(type none when no path is listed):", flush=True)
-        typed = []
-        while True:
-            line = input().strip()
-            if not line:
-                break
-            typed.append(line)
-        want = sorted(paths)
-        ok = (typed == ["none"] and not want) or (sorted(typed) == want and want)
-        if not ok:
-            print(f"RESULT fail guard-rebaseline: the typed list {sorted(typed)} is not the changed list {want}; "
-                  f"nothing re-baselined", flush=True)
-            return 1
-        res2 = guard.rebaseline(a.reason.strip(), reviewed={"base": base, "check": res, "changed": want,
-                                                           "stray_logs": stray})
-    except GateError as e:
-        print(f"RESULT fail {e}", flush=True)
-        return 1
-    finally:
-        lock.release()
-    print(f"RESULT ok G9 re-baselined part {slice_entry(slice_id)['part']} by hand ({res2.split(' file=')[0]}); "
-          f"reason: {a.reason.strip()}; chain {guard.chain_file}; log it on the sprint parent issue", flush=True)
-    return 0
 
 
 def cmd_static(a):
@@ -4553,11 +3910,6 @@ def main(argv=None):
     sub.add_parser("baseline").set_defaults(fn=cmd_baseline)
     sub.add_parser("static").set_defaults(fn=cmd_static)
     sub.add_parser("freeze").set_defaults(fn=cmd_freeze)
-    r = sub.add_parser("guard-rebaseline", help="Jake's hand re-baseline of the chained live-profile guard (an "
-                       "interactive terminal only; an unattended run stops and reports on the parent issue)")
-    r.add_argument("--reason", required=True)
-    r.add_argument("--slice", help="the slice whose part's chain to re-baseline (default: the newest slice)")
-    r.set_defaults(fn=cmd_guard_rebaseline)
     a = ap.parse_args(argv)
     try:
         return a.fn(a)

@@ -5,12 +5,14 @@ Every row here reads only the checked-out tree: no game, no fh.py, no FACTORIO_W
 so ci.yml runs the same rows on GitHub's runner that the gate runs as its step 1. Each row returns
 a list of failure messages (empty means pass) and a short detail line.
 
-Rows: lint, info_json, locale, dashes, registration, names, design_rules, launch_scan, output_args,
-workflow_scan, attribution_scan, data_src, frozen_static, zip, plus fixture positive controls
-for the scans (each rule must fail its own fixture; fixtures are written at run time into a
-temporary directory outside the scanned trees and never committed).
+Rows: lint, info_json, locale, dashes, registration, names, design_rules, workflow_scan,
+attribution_scan, data_src, frozen_static, zip, plus fixture positive controls for the scans (each
+rule must fail its own fixture; fixtures are written at run time into a temporary directory outside
+the scanned trees and never committed). No row scans tools/ or tests/ for game launches,
+live-profile paths or copies into a mods folder (the workflow scan still keeps both workflows off
+the game and the workspace): fh.py isolation (G1) is the only live-profile protection (the maintainer's
+decision, 2026-10-27 23:47), and copying the built zip into the live mods folder is allowed (16:19).
 """
-import ast as pyast
 import hashlib
 import json
 import os
@@ -28,7 +30,6 @@ if str(HERE) not in sys.path:
 
 import build_zip  # noqa: E402
 import tnconfig  # noqa: E402
-import tnguard  # noqa: E402
 
 REPO = HERE.parent
 MOD = REPO / "terra-nauvis"
@@ -37,7 +38,7 @@ LINT = HERE / "lint"
 # The mod scans never use walk_files: they read build_zip's own file list (mod_files), so every
 # file the zip ships is scanned and a skipped folder cannot hide one.
 SKIP_DIRS = {"dist", "spikes", "__pycache__", "node_modules"}
-# Needles of the launch scan, assembled so this file holds no literal the scan would flag in itself.
+# Needles of the workflow scan, in fragments as they were when the retired launch scan read this file.
 GAME_IMAGE = "factorio" + ".exe"
 APPDATA_WORD = "app" + "data"
 
@@ -97,8 +98,8 @@ def mod_lua(mod=MOD):
 
 
 def walk_all(root):
-    """Every file under root except inside .git and __pycache__ folders: the launch and attribution
-    scans read dot folders and the folders walk_files skips (dist, spikes, node_modules) too."""
+    """Every file under root except inside .git and __pycache__ folders: the attribution scan reads
+    dot folders and the folders walk_files skips (dist, spikes, node_modules) too."""
     out = []
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = sorted(d for d in dirnames if d not in (".git", "__pycache__"))
@@ -761,399 +762,7 @@ def row_design(mod=MOD):
     return f, "APPROVALS 1a defaults for existing settings, D1, D2, literals outside data tables, U5"
 
 
-# ------------------------------------------------------------------------------------------------ launch scan
-
-def fh_flags(lint_dir=LINT):
-    d = load_json(Path(lint_dir) / "fh-flags.json")
-    return set(d["GUI_FLAGS"]), set(d["FORBIDDEN_EXTRA"])
-
-
-LAUNCH_FUNCS = {"run", "Popen", "call", "check_call", "check_output", "system", "startfile", "execv", "execvp",
-                "spawnv", "spawnl", "create_subprocess_exec", "create_subprocess_shell"}
-COPY_FUNCS = {"copy", "copy2", "copyfile", "copytree", "move", "replace", "rename"}
-MODS_RE = re.compile(r"(^|[\\/])mods([\\/]|$)", re.I)
-COPY_CMDS = {"copy-item", "copy", "xcopy", "robocopy", "cp", "move-item", "mv", "move"}
-
-
-def _docstring_ids(tree):
-    ids = set()
-    for node in pyast.walk(tree):
-        if isinstance(node, (pyast.Module, pyast.FunctionDef, pyast.AsyncFunctionDef, pyast.ClassDef)):
-            body = getattr(node, "body", [])
-            if body and isinstance(body[0], pyast.Expr) and isinstance(body[0].value, pyast.Constant) \
-                    and isinstance(body[0].value.value, str):
-                ids.add(id(body[0].value))
-    return ids
-
-
-def _consts(node):
-    return [n.value for n in pyast.walk(node) if isinstance(n, pyast.Constant) and isinstance(n.value, str)]
-
-
-def _call_name(call):
-    f = call.func
-    if isinstance(f, pyast.Attribute):
-        return f.attr
-    if isinstance(f, pyast.Name):
-        return f.id
-    return ""
-
-
-def _is_fh_marker(el):
-    if isinstance(el, pyast.Constant) and isinstance(el.value, str) and el.value.replace("\\", "/").endswith("fh.py"):
-        return True
-    if isinstance(el, pyast.Name) and el.id.upper() in ("FH", "FH_PY"):
-        return True
-    if isinstance(el, pyast.Attribute) and el.attr.upper() in ("FH", "FH_PY"):
-        return True
-    return False
-
-
-# assembled from fragments, like APPDATA_WORD, so this file holds no literal its own scan flags
-LIVE_WORDS = (APPDATA_WORD, "roam" + "ing\\factorio", "roam" + "ing/factorio", "system-" + "write-data")
-OUT_FLAGS = {"--out-dir", "--out", "--out-root", "--png-out", "--json-out", "--mod-directory"}
-WRITE_FUNCS = {"write_bytes", "write_text", "copyfile", "copyfileobj", "symlink", "symlink_to", "hardlink_to",
-               "link", "link_to", "unpack_archive", "make_archive", "extractall", "build"}
-FACTORIO_MODS_RE = re.compile(r"(^|[\\/])factorio[\\/]+mods([\\/]|$)", re.I)
-
-
-def live_word(text):
-    low = text.lower()
-    return next((w for w in LIVE_WORDS if w in low), None)
-
-
-def _assignments(tree):
-    """{name: [value nodes]} of every simple assignment in the file (any scope)."""
-    env = {}
-    for node in pyast.walk(tree):
-        if isinstance(node, pyast.Assign):
-            for t in node.targets:
-                if isinstance(t, pyast.Name):
-                    env.setdefault(t.id, []).append(node.value)
-        elif isinstance(node, (pyast.AnnAssign, pyast.AugAssign)) and isinstance(node.target, pyast.Name) and node.value:
-            env.setdefault(node.target.id, []).append(node.value)
-        elif isinstance(node, pyast.NamedExpr):
-            env.setdefault(node.target.id, []).append(node.value)
-    return env
-
-
-PATH_CALLS = {"str", "Path", "PurePath", "PureWindowsPath", "WindowsPath", "PosixPath", "fspath", "abspath",
-              "normpath", "realpath", "expanduser", "expandvars", "resolve", "absolute", "joinpath", "join"}
-
-
-def _folds(node, env, depth=0, seen=None):
-    """Best-effort string values of an expression (at most 16): string constants; + and / joins;
-    f-strings; str(), Path(), os.path.join() and similar wrappers and methods; os.environ[...] and
-    getenv(...) as %NAME%; and names through every assignment in the file. Unknown parts read '?'."""
-    seen = seen or set()
-    if depth > 12:
-        return ["?"]
-    if isinstance(node, pyast.Constant):
-        return [node.value] if isinstance(node.value, str) else ["?"]
-    if isinstance(node, pyast.JoinedStr):
-        outs = [""]
-        for v in node.values:
-            parts = _folds(v.value if isinstance(v, pyast.FormattedValue) else v, env, depth + 1, seen)
-            outs = [a + b for a in outs for b in parts][:16]
-        return outs
-    if isinstance(node, pyast.BinOp) and isinstance(node.op, (pyast.Add, pyast.Div)):
-        sep = "/" if isinstance(node.op, pyast.Div) else ""
-        return [a + sep + b for a in _folds(node.left, env, depth + 1, seen)
-                for b in _folds(node.right, env, depth + 1, seen)][:16]
-    if isinstance(node, pyast.Name):
-        if node.id in seen or node.id not in env:
-            return ["?"]
-        out = []
-        for v in env[node.id]:
-            out += _folds(v, env, depth + 1, seen | {node.id})
-        return out[:16] or ["?"]
-    if isinstance(node, pyast.Subscript):
-        base = node.value
-        if isinstance(base, pyast.Attribute) and base.attr == "environ":
-            key = _folds(node.slice, env, depth + 1, seen)
-            return [f"%{k}%" for k in key][:16]
-        return ["?"]
-    if isinstance(node, pyast.Call):
-        nm = _call_name(node)
-        if nm in ("getenv", "get") and node.args and isinstance(node.func, pyast.Attribute) and (
-                nm == "getenv" or (isinstance(node.func.value, pyast.Attribute) and node.func.value.attr == "environ")):
-            return [f"%{k}%" for k in _folds(node.args[0], env, depth + 1, seen)][:16]
-        if nm in PATH_CALLS:
-            parts = []
-            if isinstance(node.func, pyast.Attribute) and nm not in ("join",):
-                parts.append(_folds(node.func.value, env, depth + 1, seen))
-            parts += [_folds(a, env, depth + 1, seen) for a in node.args]
-            outs = [""]
-            for ps in parts:
-                outs = [a + ("/" if a else "") + b for a in outs for b in ps][:16]
-            return outs
-    return ["?"]
-
-
-def _last_component(s):
-    return re.split(r"[\\/]", s.strip().strip("\"'"))[-1].lower()
-
-
-def py_launch_findings(path, text, gui, forbidden, allow_exe, allow_live=False):
-    out = []
-    try:
-        tree = pyast.parse(text)
-    except SyntaxError as e:
-        return [f"{path}: Python syntax error {e}"]
-    docs = _docstring_ids(tree)
-    env = _assignments(tree)
-    # Graphical and portal long flags have no use but launching the game, so they fail anywhere in
-    # code. The isolation flags (--config, --mod-directory, -c, ...) and the short graphical flags
-    # (-s, -m) are ordinary options of other programs (git -c, python -m, luacheck --config), so
-    # they fail only as argv tokens bound for fh.py.
-    gui_long = {f for f in gui if f.startswith("--")}
-    bound_only = (gui | forbidden) - gui_long
-    fh_bound = set()
-    for node in pyast.walk(tree):
-        if isinstance(node, pyast.Call):
-            nm = _call_name(node).lower()
-            if "fh" in nm.split("_") or nm.startswith("fh") or nm.endswith("_fh"):
-                for a in node.args:
-                    for sub in pyast.walk(a):
-                        if isinstance(sub, (pyast.List, pyast.Tuple)):
-                            fh_bound.add(id(sub))
-    for node in pyast.walk(tree):
-        if isinstance(node, (pyast.List, pyast.Tuple)):
-            els = node.elts
-            consts = [e.value for e in els if isinstance(e, pyast.Constant) and isinstance(e.value, str)]
-            bound = id(node) in fh_bound or any(_is_fh_marker(e) for e in els) or \
-                "--instance" in consts or "--modset" in consts
-            for c in consts:
-                tok = c.split("=", 1)[0]
-                if bound and tok in bound_only:
-                    out.append(f"{path}:{node.lineno}: argv token {c!r} bound for fh.py is a flag fh.py refuses")
-            low = [c.lower() for c in consts]
-            if any("mapshot" in c for c in low) and "render" in low:
-                out.append(f"{path}:{node.lineno}: mapshot render in an argument list")
-            for i, e in enumerate(els[:-1]):
-                if isinstance(e, pyast.Constant) and isinstance(e.value, str) and e.value in OUT_FLAGS:
-                    for v in _folds(els[i + 1], env):
-                        if MODS_RE.search(v) or live_word(v):
-                            out.append(f"{path}:{node.lineno}: {e.value} points into a mods folder or the live profile")
-                            break
-        if isinstance(node, pyast.Constant) and isinstance(node.value, str) and id(node) not in docs:
-            v = node.value
-            lv = v.lower()
-            if v.split("=", 1)[0] in gui_long:
-                out.append(f"{path}:{node.lineno}: {v!r} is a graphical or portal flag fh.py refuses")
-            if GAME_IMAGE in lv and not allow_exe:
-                out.append(f"{path}:{node.lineno}: names the game image outside the process-inspection module")
-            if live_word(v) and not allow_live:
-                out.append(f"{path}:{node.lineno}: live-profile path ({live_word(v)})")
-            if FACTORIO_MODS_RE.search(v):
-                out.append(f"{path}:{node.lineno}: a Factorio mods folder path")
-        if isinstance(node, pyast.Call):
-            nm = _call_name(node)
-            if nm in LAUNCH_FUNCS and node.args:
-                first = node.args[0]
-                prog = first.elts[0] if isinstance(first, (pyast.List, pyast.Tuple)) and first.elts else first
-                for c in _folds(prog, env):
-                    lc = _last_component(c.split(" ")[0] if isinstance(first, pyast.Constant) else c)
-                    if GAME_IMAGE in c.lower() or lc in ("factorio", GAME_IMAGE):
-                        out.append(f"{path}:{node.lineno}: launches the game directly (only fh.py launches the game)")
-                        break
-            dests = []
-            if nm in COPY_FUNCS and len(node.args) >= 2:
-                dests.append(node.args[1])
-            if nm in WRITE_FUNCS:
-                if isinstance(node.func, pyast.Attribute):
-                    dests.append(node.func.value)
-                dests += list(node.args[:1]) + [k.value for k in node.keywords if k.arg in ("out_dir", "dst", "dest")]
-            if nm == "open" and node.args:
-                mode = node.args[1] if len(node.args) > 1 else next((k.value for k in node.keywords if k.arg == "mode"),
-                                                                     None)
-                if isinstance(mode, pyast.Constant) and isinstance(mode.value, str) and set(mode.value) & set("wax+"):
-                    dests.append(node.args[0])
-            for d in dests:
-                if any(MODS_RE.search(c) or c.lower() == "mods" or FACTORIO_MODS_RE.search(c) for c in _folds(d, env)):
-                    out.append(f"{path}:{node.lineno}: copies or writes into a mods folder")
-                    break
-    return sorted(set(out))
-
-
-def _tokens(line):
-    return [t for t in re.split(r"[\s\"'`,;()|]+", line) if t]
-
-
-# Whole-line comments by file type; a line in any other file is scanned whatever it starts with.
-LINE_COMMENTS = {".lua": ("--",), ".bat": ("rem ", "REM ", "@rem ", "::"), ".cmd": ("rem ", "REM ", "@rem ", "::"),
-                 ".js": ("//",), ".mjs": ("//",), ".cjs": ("//",), ".ts": ("//",)}
-HASH_COMMENT_SUFFIXES = {".sh", ".bash", ".zsh", ".ps1", ".psm1", ".yml", ".yaml", ".toml", ".ini", ".txt", ".cfg", ""}
-
-
-def line_launch_findings(path, text, gui, forbidden, allow_exe, allow_live=False):
-    out = []
-    long_flags = {f for f in gui | forbidden if f.startswith("--")}
-    short_flags = {f for f in gui | forbidden if not f.startswith("--")}
-    suffix = Path(path).suffix.lower()
-    comments = LINE_COMMENTS.get(suffix, ("#",) if suffix in HASH_COMMENT_SUFFIXES else ())
-    for i, raw in enumerate(text.split("\n"), 1):
-        line = raw.strip()
-        if not line or (comments and line.startswith(comments)):
-            continue
-        toks = _tokens(line)
-        low = line.lower()
-        bound = "fh.py" in low or "factorio" in low
-        for t in toks:
-            tt = t.split("=", 1)[0]
-            if tt in long_flags or (bound and tt in short_flags):
-                out.append(f"{path}:{i}: token {t!r} is a flag fh.py refuses")
-        if "mapshot" in low and "render" in [t.lower() for t in toks]:
-            out.append(f"{path}:{i}: mapshot render")
-        if live_word(line) and not allow_live:
-            out.append(f"{path}:{i}: live-profile path ({live_word(line)})")
-        if FACTORIO_MODS_RE.search(line):
-            out.append(f"{path}:{i}: a Factorio mods folder path")
-        if GAME_IMAGE in low:
-            launching = re.search(r"(start-process|invoke-expression|invoke-item|^&|\s&\s|cmd(\.exe)?\s+/c|^\.\\|"
-                                  r"^start\s)", low)
-            if not allow_exe or launching:
-                out.append(f"{path}:{i}: names or launches the game image")
-        for k, t in enumerate(toks[:-1]):
-            if t in OUT_FLAGS and (MODS_RE.search(toks[k + 1]) or live_word(toks[k + 1])):
-                out.append(f"{path}:{i}: {t} points into a mods folder or the live profile")
-        segs = re.split(r"[|;]|&&", line)
-        for seg in segs:
-            st = _tokens(seg)
-            if st and st[0].lower() in COPY_CMDS and any(MODS_RE.search(t) for t in st[1:]):
-                out.append(f"{path}:{i}: copies into a mods folder")
-            if st and _last_component(st[0].lstrip("&").strip()) in ("factorio", GAME_IMAGE):
-                out.append(f"{path}:{i}: runs the game binary directly")
-    return sorted(set(out))
-
-
-# Files the launch scan reads as data rather than code: the vendored flag sets it matches against.
-LAUNCH_DATA = {"tools/lint/fh-flags.json"}
-EXEC_SUFFIXES = {".exe", ".com", ".scr", ".msi", ".dll"}
-ROOT_SCRIPT_SUFFIXES = {".sh", ".bash", ".zsh", ".ps1", ".psm1", ".py", ".pyw", ".js", ".mjs", ".cjs", ".ts", ".bat",
-                        ".cmd", ".vbs"}
-
-
-def launch_findings(roots, lint_dir=LINT, base=REPO, files=()):
-    """The launch scan over every file of the given trees (dot and build folders included, .git and
-    __pycache__ aside) plus extra files: Python through its AST, every other text file line by line,
-    and a binary executable (which no scan can read) is a finding of its own."""
-    gui, forbidden = fh_flags(lint_dir)
-    allow_exe = {"tools/perf.py", "tools/affinity_watch.ps1"}
-    allow_live = {"tools/tnguard.py"}
-    out, n = [], 0
-    paths = [p for root in roots for p in walk_all(root)] + [Path(f) for f in files]
-    for p in paths:
-        r = rel(p, base)
-        if r in LAUNCH_DATA:
-            continue
-        if p.suffix.lower() in EXEC_SUFFIXES:
-            out.append(f"{r}: a binary executable in a scanned tree (the scan cannot read it)")
-            continue
-        text = read_text_or_none(p)
-        if text is None:
-            continue
-        n += 1
-        is_py = p.suffix.lower() in (".py", ".pyw") or text.startswith("#!") and "python" in text.split("\n", 1)[0]
-        fn = py_launch_findings if is_py else line_launch_findings
-        out += fn(r, text, gui, forbidden, r in allow_exe, r in allow_live)
-    return out, n
-
-
-def root_scripts(repo=REPO):
-    """Script files at the repo root: by suffix, or by a #! line."""
-    out = []
-    for p in sorted(Path(repo).iterdir()):
-        if not p.is_file():
-            continue
-        head = (read_text_or_none(p) or "")[:2]
-        if p.suffix.lower() in ROOT_SCRIPT_SUFFIXES or head == "#!":
-            out.append(p)
-    return out
-
-
-def argparse_dests(tree):
-    """(dest, line) of every add_argument call of a Python file: its dest= keyword, else its first
-    long option (dashes to underscores), else its first short option, else its positional name;
-    (None, line) when the option names are not literal strings (the row fails closed on it)."""
-    out = []
-    for node in pyast.walk(tree):
-        if not (isinstance(node, pyast.Call) and isinstance(node.func, pyast.Attribute) and
-                node.func.attr == "add_argument"):
-            continue
-        dest = next((kw.value.value for kw in node.keywords if kw.arg == "dest" and
-                     isinstance(kw.value, pyast.Constant) and isinstance(kw.value.value, str)), None)
-        if dest is None and any(kw.arg == "dest" for kw in node.keywords):
-            out.append((None, node.lineno))
-            continue
-        if dest is None:
-            if any(not (isinstance(a, pyast.Constant) and isinstance(a.value, str)) for a in node.args) or not node.args:
-                out.append((None, node.lineno))
-                continue
-            opts = [a.value for a in node.args]
-            longs = [o for o in opts if o.startswith("--")]
-            shorts = [o for o in opts if o.startswith("-") and not o.startswith("--")]
-            dest = longs[0][2:] if longs else (shorts[0][1:] if shorts else opts[0])
-        out.append((dest.replace("-", "_"), node.lineno))
-    return out
-
-
-def _calls_refuse(tree):
-    for node in pyast.walk(tree):
-        if isinstance(node, pyast.Call):
-            f = node.func
-            if (isinstance(f, pyast.Attribute) and f.attr == "refuse_live_outputs") or \
-                    (isinstance(f, pyast.Name) and f.id == "refuse_live_outputs"):
-                return True
-    return False
-
-
-def output_args_findings(tools_dir=HERE, base=REPO):
-    """Design constraint 1 for every tool's options: each argparse dest of each Python file under
-    tools/ is declared in exactly one of tnguard's OUTPUT_ARGS (written), READ_ARGS (read only) and
-    VALUE_ARGS (never a path), so a new option that writes cannot slip past the live-profile
-    refusal unnoticed; and every file with an output dest calls tnguard.refuse_live_outputs."""
-    out = []
-    sets = {"output": tnguard.OUTPUT_ARGS, "read": tnguard.READ_ARGS, "value": tnguard.VALUE_ARGS}
-    for a, b in (("output", "read"), ("output", "value"), ("read", "value")):
-        both = sets[a] & sets[b]
-        if both:
-            out.append(f"tnguard declares {sorted(both)} as both {a} and {b} options")
-    n = 0
-    for p in walk_files(tools_dir, {".py"}):
-        try:
-            tree = pyast.parse(Path(p).read_text(encoding="utf-8"))
-        except SyntaxError as e:
-            out.append(f"{rel(p, base)}: does not parse ({e})")
-            continue
-        has_output = False
-        for dest, line in argparse_dests(tree):
-            n += 1
-            if dest is None:
-                out.append(f"{rel(p, base)}:{line}: add_argument with option names the scan cannot read")
-                continue
-            kinds = [k for k, s in sets.items() if dest in s]
-            if not kinds:
-                out.append(f"{rel(p, base)}:{line}: option dest {dest!r} is declared in none of tnguard's OUTPUT_ARGS, "
-                           f"READ_ARGS or VALUE_ARGS (a written path must be in OUTPUT_ARGS)")
-            has_output = has_output or "output" in kinds
-        if has_output and not _calls_refuse(tree):
-            out.append(f"{rel(p, base)}: declares an output option but never calls tnguard.refuse_live_outputs")
-    return out, n
-
-
-def row_output_args(repo=REPO):
-    f, n = output_args_findings(Path(repo) / "tools", repo)
-    return f, (f"{n} argparse options under tools/ each declared written, read or value in tnguard; every tool "
-               f"with a written option refuses the live profile")
-
-
-def row_launch(repo=REPO):
-    roots = [Path(repo) / d for d in ("tools", "tests", ".github")]
-    extra = root_scripts(repo)
-    f, n = launch_findings([r for r in roots if r.exists()], LINT, repo, extra)
-    return f, f"{n} text files in tools/, tests/ and .github/ and {len(extra)} root scripts"
-
+# ------------------------------------------------------------------------------------------------ workflow yaml
 
 class YamlError(ValueError):
     pass
@@ -1801,36 +1410,9 @@ def fixture_controls():
     """Positive controls: every scan rule must fail a fixture that breaks it. Fixtures live in a fresh
     temporary directory outside the scanned trees and are never committed."""
     results = []
-    gui, forbidden = fh_flags()
     exe = "factorio" + ".exe"
-    app = "%" + "APP" + "DATA" + "%"
-    gflag = sorted(f for f in gui if f.startswith("--"))[0]
     with tempfile.TemporaryDirectory(prefix="tn-fixtures-") as td:
         td = Path(td)
-        cases = {
-            "launch: the game image launched directly":
-                ("tools/a.py", f"import subprocess\nsubprocess.run([r'C:\\game\\bin\\x64\\{exe}', '--create', 'x.zip'])\n"),
-            "launch: a flag fh.py refuses":
-                ("tools/b.py", f"FH = 'tools/fh.py'\ncmd = [FH, 'run', '--', '{gflag}', 'save.zip']\n"),
-            "launch: mapshot render":
-                ("tools/c.ps1", "& python tools/fh.py run -- mapshot render\n"),
-            "launch: a live-profile path":
-                ("tools/d.py", f"import os\nLIVE = r'{app}\\Factorio'\n"),
-            "launch: copy into a mods folder":
-                ("tools/e.ps1", "Copy-Item dist\\x.zip \"$HOME\\Fact" + "orio\\mods\\\"\n"),
-            "launch: short flag bound for fh.py":
-                ("tools/f.py", "FH = 'tools/fh.py'\nargs = [FH, 'run', '--', '-c', 'other.ini']\n"),
-        }
-        for label, (path, text) in cases.items():
-            d = td / label.split(":")[0] / str(abs(hash(label)) % 10 ** 8)
-            _write(d, path, text)
-            f, _ = launch_findings([d], LINT, d)
-            results.append((label, bool(f), f[:2]))
-        clean = td / "clean-launch"
-        _write(clean, "tools/ok.py", "import subprocess, sys\nsubprocess.run([sys.executable, '-m', 'pip', 'list'])\n"
-                                     "subprocess.run(['git', '-c', 'core.quotepath=off', 'status'])\n")
-        f, _ = launch_findings([clean], LINT, clean)
-        results.append(("launch: python -m and git -c stay clean", not f, f[:2]))
         # attribution
         word = "".join(["Cl", "aude"])
         d = td / "attr"
@@ -2032,7 +1614,6 @@ def fixture_controls():
         f = name_findings(m)
         results.append(("names: a noise name outside config.lua", bool(f), f[:1]))
         results += name_form_fixtures(td, cfg)
-        results += output_args_fixtures(td)
         m = td / "mod-coord" / "terra-nauvis"
         shutil.copytree(MOD, m)
         _write(m, "prototypes/expressions/extra.lua", "local e = \"x - 7200\"\nreturn e\n")
@@ -2060,7 +1641,6 @@ def fixture_controls():
         f = toggle_multiply_findings({"x": "a * tn_canals"}, ["tn_canals"])
         results.append(("design: toggle multiply (U5, dump check)", bool(f), f[:1]))
         results += registration_form_fixtures(td)
-        results += launch_form_fixtures(td, gui)
         results += schema_fixtures(td, cfg)
     return results
 
@@ -2106,91 +1686,6 @@ def name_form_fixtures(td, cfg):
     _write(clean, "prototypes/extra.lua", "local t = {elevation = 1}\nlocal e = t.elevation\nreturn e\n")
     f = name_findings(clean)
     out.append(("names: identifiers that spell no Earth name stay clean", not f, f[:1]))
-    return out
-
-
-def output_args_fixtures(td):
-    """The output_args row: an undeclared option dest fails, a written option without the refusal
-    call fails, and a declared, refused one passes."""
-    out = []
-    cases = {
-        "output_args: an option declared nowhere fails": (
-            "import argparse\nap = argparse.ArgumentParser()\nap.add_argument('--install-into')\n", True),
-        "output_args: a written option without refuse_live_outputs fails": (
-            "import argparse\nap = argparse.ArgumentParser()\nap.add_argument('--out')\na = ap.parse_args()\n", True),
-        "output_args: a computed option name fails closed": (
-            "import argparse\nap = argparse.ArgumentParser()\nflag = '--o' + 'ut'\nap.add_argument(flag)\n", True),
-        "output_args: a declared, refused written option passes": (
-            "import argparse\nimport tnguard\nap = argparse.ArgumentParser()\nap.add_argument('--out')\n"
-            "ap.add_argument('--seed')\na = ap.parse_args()\ntnguard.refuse_live_outputs(a, 'x')\n", False),
-    }
-    for label, (text, must_fail) in cases.items():
-        d = td / ("oargs-" + str(abs(hash(label)) % 10 ** 8))
-        _write(d, "tools/x.py", text)
-        f, _ = output_args_findings(d / "tools", d)
-        out.append((label, bool(f) == must_fail, f[:1]))
-    out += relative_output_fixtures(td)
-    return out
-
-
-def relative_output_fixtures(td):
-    """A relative output is judged where the tool writes it: joined to the folder the tool resolves
-    it against (its base), not to whatever folder it was started from. A scratch workspace holds a
-    scratch profile; the relative path lands in that profile from the workspace but not from the
-    folder the tool runs in. tnguard must refuse it with that base and rewrite every passing output
-    to the absolute path it checked; and game_selftest.py --replay, started from another folder
-    with that relative --out-root (it joins a relative --out-root onto FACTORIO_WS), must refuse it
-    and write nothing (the round-3 review's escape). Every write would land in the scratch folder."""
-    import argparse
-    import contextlib
-    import io
-    out = []
-    bs = "\\"
-    fact = "Fact" + "orio"
-    app = "APP" + "DATA"
-    ws = td / "rel-ws"
-    (ws / "repo").mkdir(parents=True)
-    profile = ws / "prof" / fact
-    (profile / "evidence").mkdir(parents=True)
-    (profile / "evidence" / "keep.txt").write_text("x", encoding="utf-8")
-    rel = "prof" + bs + fact + bs + "evidence"
-    orig_roots = tnguard.live_profile_roots
-    tnguard.live_profile_roots = lambda: [profile.resolve()] + orig_roots()
-    try:
-        out.append(("output_args: a relative output is judged against the tool's base, not its working folder",
-                    tnguard.live_output_problem(rel, ws) is not None and
-                    tnguard.live_output_problem(rel, ws / "repo") is None, ""))
-        ns = argparse.Namespace(out_root=rel, seed="1")
-        try:
-            with contextlib.redirect_stdout(io.StringIO()):
-                tnguard.refuse_live_outputs(ns, "fixture", base=ws)
-            refused = False
-        except SystemExit:
-            refused = True
-        ok_ns = argparse.Namespace(out_root="fine", seed="1")
-        tnguard.refuse_live_outputs(ok_ns, "fixture", base=ws)
-        out.append(("output_args: refuse_live_outputs refuses with the base and rewrites a passing output to its "
-                    "absolute path", refused and ok_ns.out_root == str(ws / "fine") and ok_ns.seed == "1",
-                    ok_ns.out_root))
-    finally:
-        tnguard.live_profile_roots = orig_roots
-    import importlib.util
-    label = "output_args: game_selftest.py --replay judges a relative --out-root where it writes it"
-    if not (importlib.util.find_spec("numpy") and importlib.util.find_spec("PIL")):
-        out.append((label, True, "skipped: numpy and PIL are absent (CI installs only the lint requirements); the "
-                                 "gate's static row runs it"))
-        return out
-    env = {k: v for k, v in os.environ.items() if k != tnguard.ENV}
-    env["FACTORIO_WS"] = str(ws)
-    env[app] = str(profile.parent)
-    before = sorted(p.name for p in (profile / "evidence").iterdir())
-    cp = subprocess.run([sys.executable, str(HERE / "game_selftest.py"), "--out-root", rel, "--replay"],
-                        cwd=str(ws / "repo"), env=env, capture_output=True, text=True, encoding="utf-8",
-                        errors="replace", timeout=180)
-    after = sorted(p.name for p in (profile / "evidence").iterdir())
-    text = (cp.stdout or "") + (cp.stderr or "")
-    out.append((label, cp.returncode != 0 and "refuses --out-root" in text and before == after,
-                (text.strip().splitlines() or [""])[-1][:200]))
     return out
 
 
@@ -2244,144 +1739,6 @@ def registration_form_fixtures(td):
         refused = True
     out.append(("scan list: a Lua file under a dist folder is scanned and refused by the zip", bool(f) and refused,
                 f[:1]))
-    return out
-
-
-def launch_form_fixtures(td, gui):
-    """Each live-profile, mods-folder and launch form must fail the launch scan."""
-    exe = "factorio" + ".exe"
-    app = "APP" + "DATA"
-    fact = "Fact" + "orio"
-    forms = {
-        "launch: a shell script copying into the live mods folder": (
-            "tools/install.sh", f'cp dist/terra-nauvis_0.1.0.zip "${app}/{fact}/mods/"\n'),
-        "launch: the braced live-profile variable in a script": ("tools/a.ps1", f"Get-ChildItem ${{{app}}}\n"),
-        "launch: the PowerShell live-profile variable in a script": ("tools/b.ps1", f"Get-ChildItem $env:{app}\n"),
-        "launch: the roaming profile path without the profile variable": ("tools/c.py", f"P = '~/Roaming/{fact}/saves'\n"),
-        "launch: a JavaScript copy into a mods folder": (
-            "tools/x.js", f"require('fs').copyFileSync('dist/x.zip', process.env.{app} + '/{fact}/mods/x.zip')\n"),
-        "launch: build_zip.py --out-dir into the live mods folder": (
-            "tools/inst.py", "import os, subprocess, sys\nsubprocess.run([sys.executable, 'tools/build_zip.py', "
-                             f"'--out-dir', os.path.expandvars('${app}/{fact}/mods')])\n"),
-        "launch: --out-dir into a mods folder in a script": ("tools/d.ps1", "python tools/build_zip.py --out-dir "
-                                                                            "C:/somewhere/mods\n"),
-        "launch: a game launch under a dist folder": (
-            "tools/dist/run.py", f"import subprocess\nsubprocess.run([r'C:/g/bin/x64/{exe}', '--create', 'x'])\n"),
-        "launch: a game launch under a dot folder": (
-            "tools/.hidden/run.py", f"import subprocess\nsubprocess.run([r'C:/g/bin/x64/{exe}', '--create', 'x'])\n"),
-        "launch: the game through a path variable": (
-            "tools/v.py", "import subprocess\nfrom pathlib import Path\nexe = Path('C:/g') / 'bin' / 'x64' / "
-                          "('fact' + 'orio')\nsubprocess.run([str(exe), '--version'])\n"),
-        "launch: a write into a mods folder": (
-            "tools/w.py", "from pathlib import Path\nd = Path('C:/x') / 'mods'\n(d / 'x.zip').write_bytes(b'')\n"),
-        "launch: the game binary run from a shell script": ("tools/g.sh", f'"$GAME/bin/x64/{fact.lower()}" --version\n'),
-        "launch: the write-data placeholder of the live profile": (
-            "tools/cfg.py", "W = 'write-data=__PATH__" + "system-" + "write-data__'\n"),
-    }
-    out = []
-    for label, (path, text) in forms.items():
-        d = td / ("launch-" + str(abs(hash(label)) % 10 ** 8))
-        _write(d, path, text)
-        f, _ = launch_findings([d / "tools"], LINT, d)
-        out.append((label, bool(f), f[:1]))
-    d = td / "launch-exe"
-    (d / "tools").mkdir(parents=True)
-    (d / "tools" / "helper.exe").write_bytes(b"MZ\0\0")
-    f, _ = launch_findings([d / "tools"], LINT, d)
-    out.append(("launch: a binary executable in a scanned tree", bool(f), f[:1]))
-    d = td / "launch-root"
-    _write(d, "setup.sh", f'cp dist/x.zip "$HOME/{fact}/mods/"\n')
-    f, _ = launch_findings([], LINT, d, root_scripts(d))
-    out.append(("launch: a root script copying into a mods folder", bool(f), f[:1]))
-    live = Path(os.environ.get(app) or Path.home() / ("App" + "Data") / "Roaming") / fact
-    bs = "\\"
-    # Every spelling build_zip.build() is handed targets a scratch profile, added to the guard's
-    # roots for the duration: were a spelling to slip past the guard, the zip would land in the
-    # scratch folder, never in the real live profile. The real profile is only ever checked.
-    fake = td / "profile-root" / fact
-    (fake / "saves").mkdir(parents=True)
-    (fake / "player-data.json").write_text("{}", encoding="utf-8")
-    drive, rest = str(fake)[:1], str(fake)[2:]
-    linked = td / "linked-out" / "player-data.json"
-    linked.parent.mkdir(parents=True)
-    os.link(fake / "player-data.json", linked)
-    spellings = {
-        "a mods folder": td / "out" / "mods",
-        "the live profile": fake / "x",
-        "the extended-length spelling": bs * 2 + "?" + bs + str(fake) + bs + "saves",
-        "the forward-slash extended-length spelling": "//?/" + str(fake).replace(bs, "/") + "/config",
-        "the localhost admin share": bs * 2 + "localhost" + bs + drive + "$" + rest + bs + "saves",
-        "the loopback-address admin share": bs * 2 + "127.0.0.1" + bs + drive.lower() + "$" + rest + bs + "script-output",
-        "the extended UNC admin share": bs * 2 + "?" + bs + "UNC" + bs + "localhost" + bs + drive + "$" + rest,
-        "the device spelling": bs * 2 + "." + bs + str(fake) + bs + "saves",
-        "a mods folder with a trailing dot": td / "out" / "mods." / "x",
-        "the NT-namespace spelling of a profile file": bs + "??" + bs + str(fake) + bs + "player-data.json",
-        "the NT-namespace spelling of a profile folder": bs + "??" + bs + str(fake) + bs + "saves",
-        "the NT-namespace admin share": bs + "??" + bs + "UNC" + bs + "localhost" + bs + drive + "$" + rest + bs + "saves",
-        "the NT-namespace spelling with a lower-case drive": bs + "??" + bs + str(fake).lower() + bs + "saves",
-        "the forward-slash NT-namespace spelling": "/??/" + str(fake).replace(bs, "/") + "/saves",
-        "the global NT namespace": bs + "GLOBAL??" + bs + str(fake) + bs + "saves",
-        "a device-object path": bs + "Device" + bs + "HarddiskVolume1" + rest + bs + "saves",
-        "a root-relative path": bs + rest.lstrip(bs) + bs + "saves",
-        "a drive-relative path": drive + ":" + "x",
-        "a wildcard": str(td / "out") + bs + "*",
-        "a hard link to a profile file": linked,
-        "a folder holding a hard link to a profile file": linked.parent,
-    }
-    try:
-        import _winapi
-        jx = td / "junction"
-        _winapi.CreateJunction(str(fake), str(jx))
-        jdir = td / "holds-junction"
-        jdir.mkdir()
-        _winapi.CreateJunction(str(fake), str(jdir / "inner"))
-        spellings.update({"a plain path through a junction into the profile": jx / "x",
-                          "the NT-namespace spelling through a junction": bs + "??" + bs + str(jx) + bs + "x",
-                          "a folder holding a junction into the profile": jdir})
-    except (ImportError, OSError, AttributeError):
-        out.append(("tnguard junction spellings (no junction support here)", True, "skipped"))
-    orig_roots = tnguard.live_profile_roots
-    tnguard.live_profile_roots = lambda: [fake.resolve()] + orig_roots()
-    try:
-        refused = {}
-        for label, target in spellings.items():
-            try:
-                build_zip.build(target)
-                refused[label] = False
-            except build_zip.BuildError:
-                refused[label] = True
-        escaped = sorted(p.relative_to(fake).as_posix() for p in fake.rglob("*") if p.suffix in (".zip", ".sha256")
-                         or p.name.endswith(".build.json"))
-        out.append(("build_zip.py refuses an --out-dir in a mods folder or the (scratch) live profile, in every spelling",
-                    all(refused.values()) and not escaped and tnguard.live_output_problem(td / "out" / "dist") is None,
-                    [k for k, v in refused.items() if not v] + escaped))
-        for label, target in spellings.items():
-            out.append((f"tnguard refuses {label} as an output", tnguard.live_output_problem(target) is not None, ""))
-    finally:
-        tnguard.live_profile_roots = orig_roots
-    out.append(("tnguard refuses the real live profile, plainly and in the NT namespace (checked, never written)",
-                tnguard.live_output_problem(live / "x") is not None and
-                tnguard.live_output_problem(bs + "??" + bs + str(live) + bs + "x") is not None, ""))
-    import argparse
-    import contextlib
-    import io
-    for dest in ("candidate_out", "dest", "github_env", "out_json"):
-        ns = argparse.Namespace(**{dest: str(live / "saves" / "x.png")})
-        try:
-            with contextlib.redirect_stdout(io.StringIO()):
-                tnguard.refuse_live_outputs(ns, "fixture")
-            ok = False
-        except SystemExit:
-            ok = True
-        out.append((f"refuse_live_outputs refuses --{dest.replace('_', '-')} into the live profile", ok, ""))
-    for p in (linked, td / "junction", td / "holds-junction" / "inner"):
-        try:
-            if p.is_dir() and not p.is_symlink():
-                os.rmdir(p)
-            elif p.exists():
-                os.unlink(p)
-        except OSError:
-            pass
     return out
 
 
@@ -2453,9 +1810,8 @@ def row_fixtures():
 ROWS = [
     ("lint", row_lint), ("info_json", row_info), ("locale", row_locale), ("dashes", row_dashes),
     ("registration", row_registration), ("names", row_names), ("design_rules", row_design),
-    ("launch_scan", row_launch), ("output_args", row_output_args), ("workflow_scan", row_workflow),
-    ("attribution_scan", row_attribution), ("data_src", row_data_src), ("frozen_static", row_frozen), ("zip", row_zip),
-    ("fixtures", row_fixtures),
+    ("workflow_scan", row_workflow), ("attribution_scan", row_attribution), ("data_src", row_data_src),
+    ("frozen_static", row_frozen), ("zip", row_zip), ("fixtures", row_fixtures),
 ]
 
 
