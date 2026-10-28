@@ -1,0 +1,2856 @@
+{
+ "format": "earth-oracle/1",
+ "map": "europe",
+ "built_by": "mod/spikes/S8-tooling/oracle.py build",
+ "sources": {
+  "reference_json": "mod/spikes/S8-tooling/reference/europe.json",
+  "reference_land_png_sha256": "29b127d5c7bd5c8b03c5fa5fa9205f8484742720a71d45df991aa613492f9a2b",
+  "geography_json": "mod/docs/plan/research/R7b-geography.json"
+ },
+ "georeference": {
+  "px_per_degree": 45.0,
+  "lon_left_edge": -11.0222,
+  "lat_top_edge": 71.9333
+ },
+ "width_px": 2400,
+ "height_px": 1704,
+ "earthmaps_radii": {
+  "decompressed_width_radius": 1200,
+  "decompressed_height_radius": 852,
+  "source": "worldgen.lua:444,448 floor((n + 0.5) / 2)"
+ },
+ "conventions": {
+  "pixel": "u = (lon - lon_left_edge) * 45, v = (lat_top_edge - lat) * 45; pixel col spans [col, col + 1)",
+  "tile": "floor convention: x = (u - wr) * scale; a place's tile is the tile holding its ref_pixel centre, evaluated by the game at that tile's integer corner (earthgeo.py)",
+  "tiles_by_scale": "precomputed [x, y] of that tile for scales 1 to 6 (floor convention)",
+  "expect": "null = unknown; expect_when lists overrides that apply under a settings context",
+  "snap": "ref_pixel is the nearest pixel of the expected kind within 8.0 px of the published point (land for cities and isthmuses, water for straits); null when none"
+ },
+ "properties": [
+  "land",
+  "water",
+  "river",
+  "climate_band",
+  "tile_family_ab",
+  "tile_family_vanilla",
+  "region",
+  "destroyed_zone",
+  "forest",
+  "hotspot"
+ ],
+ "places": [
+  {
+   "id": "city:Tirana",
+   "name": "Tirana",
+   "kind": "city",
+   "full_name": "Europe, Albania, Tirana",
+   "lon": 20.233,
+   "lat": 41.167,
+   "source": "EarthMaps data/cities_europe.lua line 7, position [103, 266] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1406,
+    1384
+   ],
+   "snap_px": 0.023,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    20.23336,
+    41.16663
+   ],
+   "tiles_by_scale": {
+    "1": [
+     206,
+     532
+    ],
+    "2": [
+     413,
+     1065
+    ],
+    "3": [
+     619,
+     1597
+    ],
+    "4": [
+     826,
+     2130
+    ],
+    "5": [
+     1032,
+     2662
+    ],
+    "6": [
+     1239,
+     3195
+    ]
+   }
+  },
+  {
+   "id": "city:Andorra la Vella",
+   "name": "Andorra la Vella",
+   "kind": "city",
+   "full_name": "Europe, Andorra, Andorra la Vella",
+   "lon": 2.056,
+   "lat": 42.367,
+   "source": "EarthMaps data/cities_europe.lua line 8, position [-306, 239] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    588,
+    1330
+   ],
+   "snap_px": 0.025,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    2.05558,
+    42.36663
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -612,
+     478
+    ],
+    "2": [
+     -1223,
+     957
+    ],
+    "3": [
+     -1835,
+     1435
+    ],
+    "4": [
+     -2446,
+     1914
+    ],
+    "5": [
+     -3058,
+     2392
+    ],
+    "6": [
+     -3669,
+     2871
+    ]
+   }
+  },
+  {
+   "id": "city:Vienna",
+   "name": "Vienna",
+   "kind": "city",
+   "full_name": "Europe, Austria, Vienna",
+   "lon": 17.3,
+   "lat": 47.122,
+   "source": "EarthMaps data/cities_europe.lua line 9, position [37, 132] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1274,
+    1116
+   ],
+   "snap_px": 0.009,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    17.30002,
+    47.12219
+   ],
+   "tiles_by_scale": {
+    "1": [
+     74,
+     264
+    ],
+    "2": [
+     149,
+     529
+    ],
+    "3": [
+     223,
+     793
+    ],
+    "4": [
+     298,
+     1058
+    ],
+    "5": [
+     372,
+     1322
+    ],
+    "6": [
+     447,
+     1587
+    ]
+   }
+  },
+  {
+   "id": "city:Minsk",
+   "name": "Minsk",
+   "kind": "city",
+   "full_name": "Europe, Belarus, Minsk",
+   "lon": 26.544,
+   "lat": 52.233,
+   "source": "EarthMaps data/cities_europe.lua line 10, position [245, 17] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1690,
+    886
+   ],
+   "snap_px": 0.025,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    26.54447,
+    52.2333
+   ],
+   "tiles_by_scale": {
+    "1": [
+     490,
+     34
+    ],
+    "2": [
+     981,
+     69
+    ],
+    "3": [
+     1471,
+     103
+    ],
+    "4": [
+     1962,
+     138
+    ],
+    "5": [
+     2452,
+     172
+    ],
+    "6": [
+     2943,
+     207
+    ]
+   }
+  },
+  {
+   "id": "city:Brussels",
+   "name": "Brussels",
+   "kind": "city",
+   "full_name": "Europe, Belgium, Brussels",
+   "lon": 4.678,
+   "lat": 50.367,
+   "source": "EarthMaps data/cities_europe.lua line 11, position [-247, 59] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    706,
+    970
+   ],
+   "snap_px": 0.019,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    4.6778,
+    50.36663
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -494,
+     118
+    ],
+    "2": [
+     -987,
+     237
+    ],
+    "3": [
+     -1481,
+     355
+    ],
+    "4": [
+     -1974,
+     474
+    ],
+    "5": [
+     -2468,
+     592
+    ],
+    "6": [
+     -2961,
+     711
+    ]
+   }
+  },
+  {
+   "id": "city:Sarajevo",
+   "name": "Sarajevo",
+   "kind": "city",
+   "full_name": "Europe, Bosnia and Herzegovina, Sarajevo",
+   "lon": 18.189,
+   "lat": 43.433,
+   "source": "EarthMaps data/cities_europe.lua line 12, position [57, 215] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1314,
+    1282
+   ],
+   "snap_px": 0.014,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    18.18891,
+    43.4333
+   ],
+   "tiles_by_scale": {
+    "1": [
+     114,
+     430
+    ],
+    "2": [
+     229,
+     861
+    ],
+    "3": [
+     343,
+     1291
+    ],
+    "4": [
+     458,
+     1722
+    ],
+    "5": [
+     572,
+     2152
+    ],
+    "6": [
+     687,
+     2583
+    ]
+   }
+  },
+  {
+   "id": "city:Sofia",
+   "name": "Sofia",
+   "kind": "city",
+   "full_name": "Europe, Bulgaria, Sofia",
+   "lon": 23.567,
+   "lat": 41.967,
+   "source": "EarthMaps data/cities_europe.lua line 13, position [178, 248] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1556,
+    1348
+   ],
+   "snap_px": 0.022,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    23.56669,
+    41.96663
+   ],
+   "tiles_by_scale": {
+    "1": [
+     356,
+     496
+    ],
+    "2": [
+     713,
+     993
+    ],
+    "3": [
+     1069,
+     1489
+    ],
+    "4": [
+     1426,
+     1986
+    ],
+    "5": [
+     1782,
+     2482
+    ],
+    "6": [
+     2139,
+     2979
+    ]
+   }
+  },
+  {
+   "id": "city:Zagreb",
+   "name": "Zagreb",
+   "kind": "city",
+   "full_name": "Europe, Croatia, Zagreb",
+   "lon": 16.411,
+   "lat": 45.567,
+   "source": "EarthMaps data/cities_europe.lua line 14, position [17, 167] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1234,
+    1186
+   ],
+   "snap_px": 0.018,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    16.41113,
+    45.56663
+   ],
+   "tiles_by_scale": {
+    "1": [
+     34,
+     334
+    ],
+    "2": [
+     69,
+     669
+    ],
+    "3": [
+     103,
+     1003
+    ],
+    "4": [
+     138,
+     1338
+    ],
+    "5": [
+     172,
+     1672
+    ],
+    "6": [
+     207,
+     2007
+    ]
+   }
+  },
+  {
+   "id": "city:Prague",
+   "name": "Prague",
+   "kind": "city",
+   "full_name": "Europe, Czechia, Prague",
+   "lon": 14.989,
+   "lat": 50.367,
+   "source": "EarthMaps data/cities_europe.lua line 15, position [-15, 59] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1170,
+    970
+   ],
+   "snap_px": 0.017,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    14.98891,
+    50.36663
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -30,
+     118
+    ],
+    "2": [
+     -59,
+     237
+    ],
+    "3": [
+     -89,
+     355
+    ],
+    "4": [
+     -118,
+     474
+    ],
+    "5": [
+     -148,
+     592
+    ],
+    "6": [
+     -177,
+     711
+    ]
+   }
+  },
+  {
+   "id": "city:Tallinn",
+   "name": "Tallinn",
+   "kind": "city",
+   "full_name": "Europe, Estonia, Tallinn",
+   "lon": 25.078,
+   "lat": 59.211,
+   "source": "EarthMaps data/cities_europe.lua line 16, position [212, -140] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1624,
+    572
+   ],
+   "snap_px": 0.01,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    25.0778,
+    59.21108
+   ],
+   "tiles_by_scale": {
+    "1": [
+     424,
+     -280
+    ],
+    "2": [
+     849,
+     -559
+    ],
+    "3": [
+     1273,
+     -839
+    ],
+    "4": [
+     1698,
+     -1118
+    ],
+    "5": [
+     2122,
+     -1398
+    ],
+    "6": [
+     2547,
+     -1677
+    ]
+   }
+  },
+  {
+   "id": "city:Helsinki",
+   "name": "Helsinki",
+   "kind": "city",
+   "full_name": "Europe, Finland, Helsinki",
+   "lon": 25.033,
+   "lat": 60.367,
+   "source": "EarthMaps data/cities_europe.lua line 17, position [211, -166] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1622,
+    520
+   ],
+   "snap_px": 0.023,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "cold (D9 names Finland)"
+   },
+   "ref_pixel_lonlat": [
+    25.03336,
+    60.36663
+   ],
+   "tiles_by_scale": {
+    "1": [
+     422,
+     -332
+    ],
+    "2": [
+     845,
+     -663
+    ],
+    "3": [
+     1267,
+     -995
+    ],
+    "4": [
+     1690,
+     -1326
+    ],
+    "5": [
+     2112,
+     -1658
+    ],
+    "6": [
+     2535,
+     -1989
+    ]
+   }
+  },
+  {
+   "id": "city:Paris",
+   "name": "Paris",
+   "kind": "city",
+   "full_name": "Europe, France, Paris",
+   "lon": 2.411,
+   "lat": 49.389,
+   "source": "EarthMaps data/cities_europe.lua line 18, position [-298, 81] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    604,
+    1014
+   ],
+   "snap_px": 0.009,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    2.41113,
+    49.38886
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -596,
+     162
+    ],
+    "2": [
+     -1191,
+     325
+    ],
+    "3": [
+     -1787,
+     487
+    ],
+    "4": [
+     -2382,
+     650
+    ],
+    "5": [
+     -2978,
+     812
+    ],
+    "6": [
+     -3573,
+     975
+    ]
+   }
+  },
+  {
+   "id": "city:Berlin",
+   "name": "Berlin",
+   "kind": "city",
+   "full_name": "Europe, Germany, Berlin",
+   "lon": 13.256,
+   "lat": 52.189,
+   "source": "EarthMaps data/cities_europe.lua line 19, position [-54, 18] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1092,
+    888
+   ],
+   "snap_px": 0.02,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    13.25558,
+    52.18886
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -108,
+     36
+    ],
+    "2": [
+     -215,
+     73
+    ],
+    "3": [
+     -323,
+     109
+    ],
+    "4": [
+     -430,
+     146
+    ],
+    "5": [
+     -538,
+     182
+    ],
+    "6": [
+     -645,
+     219
+    ]
+   }
+  },
+  {
+   "id": "city:Athens",
+   "name": "Athens",
+   "kind": "city",
+   "full_name": "Europe, Greece, Athens",
+   "lon": 22.856,
+   "lat": 38.456,
+   "source": "EarthMaps data/cities_europe.lua line 20, position [162, 327] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1524,
+    1506
+   ],
+   "snap_px": 0.029,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    22.85558,
+    38.45552
+   ],
+   "tiles_by_scale": {
+    "1": [
+     324,
+     654
+    ],
+    "2": [
+     649,
+     1309
+    ],
+    "3": [
+     973,
+     1963
+    ],
+    "4": [
+     1298,
+     2618
+    ],
+    "5": [
+     1622,
+     3272
+    ],
+    "6": [
+     1947,
+     3927
+    ]
+   }
+  },
+  {
+   "id": "city:Budapest",
+   "name": "Budapest",
+   "kind": "city",
+   "full_name": "Europe, Hungary, Budapest",
+   "lon": 20.011,
+   "lat": 46.722,
+   "source": "EarthMaps data/cities_europe.lua line 21, position [98, 141] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1396,
+    1134
+   ],
+   "snap_px": 0.01,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    20.01113,
+    46.72219
+   ],
+   "tiles_by_scale": {
+    "1": [
+     196,
+     282
+    ],
+    "2": [
+     393,
+     565
+    ],
+    "3": [
+     589,
+     847
+    ],
+    "4": [
+     786,
+     1130
+    ],
+    "5": [
+     982,
+     1412
+    ],
+    "6": [
+     1179,
+     1695
+    ]
+   }
+  },
+  {
+   "id": "city:Rome",
+   "name": "Rome",
+   "kind": "city",
+   "full_name": "Europe, Italy, Rome",
+   "lon": 11.967,
+   "lat": 42.144,
+   "source": "EarthMaps data/cities_europe.lua line 22, position [-83, 244] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1034,
+    1340
+   ],
+   "snap_px": 0.023,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    11.96669,
+    42.14441
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -166,
+     488
+    ],
+    "2": [
+     -331,
+     977
+    ],
+    "3": [
+     -497,
+     1465
+    ],
+    "4": [
+     -662,
+     1954
+    ],
+    "5": [
+     -828,
+     2442
+    ],
+    "6": [
+     -993,
+     2931
+    ]
+   }
+  },
+  {
+   "id": "city:Pristina",
+   "name": "Pristina",
+   "kind": "city",
+   "full_name": "Europe, Kosovo, Pristina",
+   "lon": 21.522,
+   "lat": 42.056,
+   "source": "EarthMaps data/cities_europe.lua line 23, position [132, 246] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1464,
+    1344
+   ],
+   "snap_px": 0.024,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    21.52224,
+    42.05552
+   ],
+   "tiles_by_scale": {
+    "1": [
+     264,
+     492
+    ],
+    "2": [
+     529,
+     985
+    ],
+    "3": [
+     793,
+     1477
+    ],
+    "4": [
+     1058,
+     1970
+    ],
+    "5": [
+     1322,
+     2462
+    ],
+    "6": [
+     1587,
+     2955
+    ]
+   }
+  },
+  {
+   "id": "city:Riga",
+   "name": "Riga",
+   "kind": "city",
+   "full_name": "Europe, Latvia, Riga",
+   "lon": 23.656,
+   "lat": 56.678,
+   "source": "EarthMaps data/cities_europe.lua line 24, position [180, -83] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1560,
+    686
+   ],
+   "snap_px": 0.022,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    23.65558,
+    56.67774
+   ],
+   "tiles_by_scale": {
+    "1": [
+     360,
+     -166
+    ],
+    "2": [
+     721,
+     -331
+    ],
+    "3": [
+     1081,
+     -497
+    ],
+    "4": [
+     1442,
+     -662
+    ],
+    "5": [
+     1802,
+     -828
+    ],
+    "6": [
+     2163,
+     -993
+    ]
+   }
+  },
+  {
+   "id": "city:Vaduz",
+   "name": "Vaduz",
+   "kind": "city",
+   "full_name": "Europe, Liechtenstein, Vaduz",
+   "lon": 9.567,
+   "lat": 46.544,
+   "source": "EarthMaps data/cities_europe.lua line 25, position [-137, 145] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    926,
+    1142
+   ],
+   "snap_px": 0.023,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    9.56669,
+    46.54441
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -274,
+     290
+    ],
+    "2": [
+     -547,
+     581
+    ],
+    "3": [
+     -821,
+     871
+    ],
+    "4": [
+     -1094,
+     1162
+    ],
+    "5": [
+     -1368,
+     1452
+    ],
+    "6": [
+     -1641,
+     1743
+    ]
+   }
+  },
+  {
+   "id": "city:Vilnius",
+   "name": "Vilnius",
+   "kind": "city",
+   "full_name": "Europe, Lithuania, Vilnius",
+   "lon": 21.433,
+   "lat": 54.056,
+   "source": "EarthMaps data/cities_europe.lua line 26, position [130, -24] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1460,
+    804
+   ],
+   "snap_px": 0.027,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    21.43336,
+    54.05552
+   ],
+   "tiles_by_scale": {
+    "1": [
+     260,
+     -48
+    ],
+    "2": [
+     521,
+     -95
+    ],
+    "3": [
+     781,
+     -143
+    ],
+    "4": [
+     1042,
+     -190
+    ],
+    "5": [
+     1302,
+     -238
+    ],
+    "6": [
+     1563,
+     -285
+    ]
+   }
+  },
+  {
+   "id": "city:Luxembourg",
+   "name": "Luxembourg",
+   "kind": "city",
+   "full_name": "Europe, Luxembourg, Luxembourg",
+   "lon": 6.1,
+   "lat": 49.256,
+   "source": "EarthMaps data/cities_europe.lua line 27, position [-215, 84] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    770,
+    1020
+   ],
+   "snap_px": 0.022,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    6.10002,
+    49.25552
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -430,
+     168
+    ],
+    "2": [
+     -859,
+     337
+    ],
+    "3": [
+     -1289,
+     505
+    ],
+    "4": [
+     -1718,
+     674
+    ],
+    "5": [
+     -2148,
+     842
+    ],
+    "6": [
+     -2577,
+     1011
+    ]
+   }
+  },
+  {
+   "id": "city:Chisinau",
+   "name": "Chisinau",
+   "kind": "city",
+   "full_name": "Europe, Moldova, Chisinau",
+   "lon": 29.478,
+   "lat": 46.456,
+   "source": "EarthMaps data/cities_europe.lua line 28, position [311, 147] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1822,
+    1146
+   ],
+   "snap_px": 0.023,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    29.4778,
+    46.45552
+   ],
+   "tiles_by_scale": {
+    "1": [
+     622,
+     294
+    ],
+    "2": [
+     1245,
+     589
+    ],
+    "3": [
+     1867,
+     883
+    ],
+    "4": [
+     2490,
+     1178
+    ],
+    "5": [
+     3112,
+     1472
+    ],
+    "6": [
+     3735,
+     1767
+    ]
+   }
+  },
+  {
+   "id": "city:Monaco",
+   "name": "Monaco",
+   "kind": "city",
+   "full_name": "Europe, Monaco, Monaco",
+   "lon": 7.744,
+   "lat": 44.1,
+   "source": "EarthMaps data/cities_europe.lua line 29, position [-178, 200] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    844,
+    1252
+   ],
+   "snap_px": 0.021,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    7.74447,
+    44.09997
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -356,
+     400
+    ],
+    "2": [
+     -711,
+     801
+    ],
+    "3": [
+     -1067,
+     1201
+    ],
+    "4": [
+     -1422,
+     1602
+    ],
+    "5": [
+     -1778,
+     2002
+    ],
+    "6": [
+     -2133,
+     2403
+    ]
+   }
+  },
+  {
+   "id": "city:Podgorica",
+   "name": "Podgorica",
+   "kind": "city",
+   "full_name": "Europe, Montenegro, Podgorica",
+   "lon": 19.433,
+   "lat": 42.544,
+   "source": "EarthMaps data/cities_europe.lua line 30, position [85, 235] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1370,
+    1322
+   ],
+   "snap_px": 0.024,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    19.43336,
+    42.54441
+   ],
+   "tiles_by_scale": {
+    "1": [
+     170,
+     470
+    ],
+    "2": [
+     341,
+     941
+    ],
+    "3": [
+     511,
+     1411
+    ],
+    "4": [
+     682,
+     1882
+    ],
+    "5": [
+     852,
+     2352
+    ],
+    "6": [
+     1023,
+     2823
+    ]
+   }
+  },
+  {
+   "id": "city:Amsterdam",
+   "name": "Amsterdam",
+   "kind": "city",
+   "full_name": "Europe, Netherlands, Amsterdam",
+   "lon": 4.9,
+   "lat": 52.322,
+   "source": "EarthMaps data/cities_europe.lua line 31, position [-242, 15] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    716,
+    882
+   ],
+   "snap_px": 0.009,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    4.90002,
+    52.32219
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -484,
+     30
+    ],
+    "2": [
+     -967,
+     61
+    ],
+    "3": [
+     -1451,
+     91
+    ],
+    "4": [
+     -1934,
+     122
+    ],
+    "5": [
+     -2418,
+     152
+    ],
+    "6": [
+     -2901,
+     183
+    ]
+   }
+  },
+  {
+   "id": "city:Skopje",
+   "name": "Skopje",
+   "kind": "city",
+   "full_name": "Europe, North Macedonia, Skopje",
+   "lon": 22.056,
+   "lat": 41.344,
+   "source": "EarthMaps data/cities_europe.lua line 32, position [144, 262] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1488,
+    1376
+   ],
+   "snap_px": 0.027,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    22.05558,
+    41.34441
+   ],
+   "tiles_by_scale": {
+    "1": [
+     288,
+     524
+    ],
+    "2": [
+     577,
+     1049
+    ],
+    "3": [
+     865,
+     1573
+    ],
+    "4": [
+     1154,
+     2098
+    ],
+    "5": [
+     1442,
+     2622
+    ],
+    "6": [
+     1731,
+     3147
+    ]
+   }
+  },
+  {
+   "id": "city:Oslo",
+   "name": "Oslo",
+   "kind": "city",
+   "full_name": "Europe, Norway, Oslo",
+   "lon": 10.856,
+   "lat": 59.922,
+   "source": "EarthMaps data/cities_europe.lua line 33, position [-108, -156] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    984,
+    540
+   ],
+   "snap_px": 0.021,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "cold (D9 names Norway)"
+   },
+   "ref_pixel_lonlat": [
+    10.85558,
+    59.92219
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -216,
+     -312
+    ],
+    "2": [
+     -431,
+     -623
+    ],
+    "3": [
+     -647,
+     -935
+    ],
+    "4": [
+     -862,
+     -1246
+    ],
+    "5": [
+     -1078,
+     -1558
+    ],
+    "6": [
+     -1293,
+     -1869
+    ]
+   }
+  },
+  {
+   "id": "city:Warsaw",
+   "name": "Warsaw",
+   "kind": "city",
+   "full_name": "Europe, Poland, Warsaw",
+   "lon": 21.256,
+   "lat": 51.211,
+   "source": "EarthMaps data/cities_europe.lua line 34, position [126, 40] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1452,
+    932
+   ],
+   "snap_px": 0.019,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    21.25558,
+    51.21108
+   ],
+   "tiles_by_scale": {
+    "1": [
+     252,
+     80
+    ],
+    "2": [
+     505,
+     161
+    ],
+    "3": [
+     757,
+     241
+    ],
+    "4": [
+     1010,
+     322
+    ],
+    "5": [
+     1262,
+     402
+    ],
+    "6": [
+     1515,
+     483
+    ]
+   }
+  },
+  {
+   "id": "city:Lisbon",
+   "name": "Lisbon",
+   "kind": "city",
+   "full_name": "Europe, Portugal, Lisbon",
+   "lon": -9.011,
+   "lat": 38.633,
+   "source": "EarthMaps data/cities_europe.lua line 35, position [-555, 323] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    90,
+    1498
+   ],
+   "snap_px": 0.014,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    -9.01109,
+    38.6333
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -1110,
+     646
+    ],
+    "2": [
+     -2219,
+     1293
+    ],
+    "3": [
+     -3329,
+     1939
+    ],
+    "4": [
+     -4438,
+     2586
+    ],
+    "5": [
+     -5548,
+     3232
+    ],
+    "6": [
+     -6657,
+     3879
+    ]
+   }
+  },
+  {
+   "id": "city:Bucharest",
+   "name": "Bucharest",
+   "kind": "city",
+   "full_name": "Europe, Romania, Bucharest",
+   "lon": 26.144,
+   "lat": 44.322,
+   "source": "EarthMaps data/cities_europe.lua line 36, position [236, 195] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1672,
+    1242
+   ],
+   "snap_px": 0.023,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    26.14447,
+    44.32219
+   ],
+   "tiles_by_scale": {
+    "1": [
+     472,
+     390
+    ],
+    "2": [
+     945,
+     781
+    ],
+    "3": [
+     1417,
+     1171
+    ],
+    "4": [
+     1890,
+     1562
+    ],
+    "5": [
+     2362,
+     1952
+    ],
+    "6": [
+     2835,
+     2343
+    ]
+   }
+  },
+  {
+   "id": "city:Moscow",
+   "name": "Moscow",
+   "kind": "city",
+   "full_name": "Europe, Russia, Moscow",
+   "lon": 37.522,
+   "lat": 55.033,
+   "source": "EarthMaps data/cities_europe.lua line 37, position [492, -46] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    2184,
+    760
+   ],
+   "snap_px": 0.017,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "cold (D9 names Russia)"
+   },
+   "ref_pixel_lonlat": [
+    37.52224,
+    55.0333
+   ],
+   "tiles_by_scale": {
+    "1": [
+     984,
+     -92
+    ],
+    "2": [
+     1969,
+     -183
+    ],
+    "3": [
+     2953,
+     -275
+    ],
+    "4": [
+     3938,
+     -366
+    ],
+    "5": [
+     4922,
+     -458
+    ],
+    "6": [
+     5907,
+     -549
+    ]
+   }
+  },
+  {
+   "id": "city:San Marino",
+   "name": "San Marino",
+   "kind": "city",
+   "full_name": "Europe, San Marino, San Marino",
+   "lon": 11.922,
+   "lat": 44.278,
+   "source": "EarthMaps data/cities_europe.lua line 38, position [-84, 196] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1032,
+    1244
+   ],
+   "snap_px": 0.016,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    11.92224,
+    44.27774
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -168,
+     392
+    ],
+    "2": [
+     -335,
+     785
+    ],
+    "3": [
+     -503,
+     1177
+    ],
+    "4": [
+     -670,
+     1570
+    ],
+    "5": [
+     -838,
+     1962
+    ],
+    "6": [
+     -1005,
+     2355
+    ]
+   }
+  },
+  {
+   "id": "city:Belgrade",
+   "name": "Belgrade",
+   "kind": "city",
+   "full_name": "Europe, Serbia, Belgrade",
+   "lon": 20.811,
+   "lat": 45.033,
+   "source": "EarthMaps data/cities_europe.lua line 39, position [116, 179] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1432,
+    1210
+   ],
+   "snap_px": 0.015,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    20.81113,
+    45.0333
+   ],
+   "tiles_by_scale": {
+    "1": [
+     232,
+     358
+    ],
+    "2": [
+     465,
+     717
+    ],
+    "3": [
+     697,
+     1075
+    ],
+    "4": [
+     930,
+     1434
+    ],
+    "5": [
+     1162,
+     1792
+    ],
+    "6": [
+     1395,
+     2151
+    ]
+   }
+  },
+  {
+   "id": "city:Bratislava",
+   "name": "Bratislava",
+   "kind": "city",
+   "full_name": "Europe, Slovakia, Bratislava",
+   "lon": 19.211,
+   "lat": 48.278,
+   "source": "EarthMaps data/cities_europe.lua line 40, position [80, 106] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1360,
+    1064
+   ],
+   "snap_px": 0.013,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    19.21113,
+    48.27774
+   ],
+   "tiles_by_scale": {
+    "1": [
+     160,
+     212
+    ],
+    "2": [
+     321,
+     425
+    ],
+    "3": [
+     481,
+     637
+    ],
+    "4": [
+     642,
+     850
+    ],
+    "5": [
+     802,
+     1062
+    ],
+    "6": [
+     963,
+     1275
+    ]
+   }
+  },
+  {
+   "id": "city:Ljubljana",
+   "name": "Ljubljana",
+   "kind": "city",
+   "full_name": "Europe, Slovenia, Ljubljana",
+   "lon": 14.456,
+   "lat": 46.144,
+   "source": "EarthMaps data/cities_europe.lua line 41, position [-27, 154] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1146,
+    1160
+   ],
+   "snap_px": 0.027,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    14.45558,
+    46.14441
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -54,
+     308
+    ],
+    "2": [
+     -107,
+     617
+    ],
+    "3": [
+     -161,
+     925
+    ],
+    "4": [
+     -214,
+     1234
+    ],
+    "5": [
+     -268,
+     1542
+    ],
+    "6": [
+     -321,
+     1851
+    ]
+   }
+  },
+  {
+   "id": "city:Madrid",
+   "name": "Madrid",
+   "kind": "city",
+   "full_name": "Europe, Spain, Madrid",
+   "lon": -3.367,
+   "lat": 40.678,
+   "source": "EarthMaps data/cities_europe.lua line 42, position [-428, 277] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    344,
+    1406
+   ],
+   "snap_px": 0.02,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    -3.36664,
+    40.67774
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -856,
+     554
+    ],
+    "2": [
+     -1711,
+     1109
+    ],
+    "3": [
+     -2567,
+     1663
+    ],
+    "4": [
+     -3422,
+     2218
+    ],
+    "5": [
+     -4278,
+     2772
+    ],
+    "6": [
+     -5133,
+     3327
+    ]
+   }
+  },
+  {
+   "id": "city:Stockholm",
+   "name": "Stockholm",
+   "kind": "city",
+   "full_name": "Europe, Sweden, Stockholm",
+   "lon": 18.411,
+   "lat": 59.656,
+   "source": "EarthMaps data/cities_europe.lua line 43, position [62, -150] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1324,
+    552
+   ],
+   "snap_px": 0.022,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "cold (D9 names Sweden)"
+   },
+   "ref_pixel_lonlat": [
+    18.41113,
+    59.65552
+   ],
+   "tiles_by_scale": {
+    "1": [
+     124,
+     -300
+    ],
+    "2": [
+     249,
+     -599
+    ],
+    "3": [
+     373,
+     -899
+    ],
+    "4": [
+     498,
+     -1198
+    ],
+    "5": [
+     622,
+     -1498
+    ],
+    "6": [
+     747,
+     -1797
+    ]
+   }
+  },
+  {
+   "id": "city:Bern",
+   "name": "Bern",
+   "kind": "city",
+   "full_name": "Europe, Switzerland, Bern",
+   "lon": 7.744,
+   "lat": 46.011,
+   "source": "EarthMaps data/cities_europe.lua line 44, position [-178, 157] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    844,
+    1166
+   ],
+   "snap_px": 0.021,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    7.74447,
+    46.01108
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -356,
+     314
+    ],
+    "2": [
+     -711,
+     629
+    ],
+    "3": [
+     -1067,
+     943
+    ],
+    "4": [
+     -1422,
+     1258
+    ],
+    "5": [
+     -1778,
+     1572
+    ],
+    "6": [
+     -2133,
+     1887
+    ]
+   }
+  },
+  {
+   "id": "city:Ankara",
+   "name": "Ankara",
+   "kind": "city",
+   "full_name": "Europe, Turkey, Ankara",
+   "lon": 32.456,
+   "lat": 39.656,
+   "source": "EarthMaps data/cities_europe.lua line 45, position [378, 300] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1956,
+    1452
+   ],
+   "snap_px": 0.029,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    32.45558,
+    39.65552
+   ],
+   "tiles_by_scale": {
+    "1": [
+     756,
+     600
+    ],
+    "2": [
+     1513,
+     1201
+    ],
+    "3": [
+     2269,
+     1801
+    ],
+    "4": [
+     3026,
+     2402
+    ],
+    "5": [
+     3782,
+     3002
+    ],
+    "6": [
+     4539,
+     3603
+    ]
+   }
+  },
+  {
+   "id": "city:Kyiv",
+   "name": "Kyiv",
+   "kind": "city",
+   "full_name": "Europe, Ukraine, Kyiv",
+   "lon": 30.811,
+   "lat": 49.789,
+   "source": "EarthMaps data/cities_europe.lua line 46, position [341, 72] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1882,
+    996
+   ],
+   "snap_px": 0.009,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    30.81113,
+    49.78886
+   ],
+   "tiles_by_scale": {
+    "1": [
+     682,
+     144
+    ],
+    "2": [
+     1365,
+     289
+    ],
+    "3": [
+     2047,
+     433
+    ],
+    "4": [
+     2730,
+     578
+    ],
+    "5": [
+     3412,
+     722
+    ],
+    "6": [
+     4095,
+     867
+    ]
+   }
+  },
+  {
+   "id": "city:London",
+   "name": "London",
+   "kind": "city",
+   "full_name": "Europe, United Kingdom, London",
+   "lon": 0.322,
+   "lat": 51.656,
+   "source": "EarthMaps data/cities_europe.lua line 47, position [-345, 30] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    510,
+    912
+   ],
+   "snap_px": 0.024,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    0.32224,
+    51.65552
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -690,
+     60
+    ],
+    "2": [
+     -1379,
+     121
+    ],
+    "3": [
+     -2069,
+     181
+    ],
+    "4": [
+     -2758,
+     242
+    ],
+    "5": [
+     -3448,
+     302
+    ],
+    "6": [
+     -4137,
+     363
+    ]
+   }
+  },
+  {
+   "id": "strait:gibraltar",
+   "name": "Strait of Gibraltar",
+   "kind": "strait",
+   "lon": -5.5173,
+   "lat": 35.9669,
+   "source": "R7b-geography.json straits gibraltar narrowest_point (midpoint of the OSM points for Punta de Oliveros (Spain) and Point Cires (Morocco), the endpoints named by es.wikipedia); https://en.wikipedia.org/wiki/Strait_of_Gibraltar",
+   "min_width_m": 14200,
+   "ref_pixel": [
+    247,
+    1618
+   ],
+   "snap_px": 0.221,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    -5.5222,
+    35.96663
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -953,
+     766
+    ],
+    "2": [
+     -1905,
+     1533
+    ],
+    "3": [
+     -2858,
+     2299
+    ],
+    "4": [
+     -3810,
+     3066
+    ],
+    "5": [
+     -4763,
+     3832
+    ],
+    "6": [
+     -5715,
+     4599
+    ]
+   }
+  },
+  {
+   "id": "strait:bosporus",
+   "name": "Bosporus",
+   "kind": "strait",
+   "lon": 29.055,
+   "lat": 41.0778,
+   "source": "R7b-geography.json straits bosporus narrowest_point (midpoint of the Kandilli and Aşiyan neighbourhood coordinates (approximate; neighbourhood centres, not shore points)); https://en.wikipedia.org/wiki/Bosporus",
+   "min_width_m": 700,
+   "ref_pixel": [
+    1803,
+    1388
+   ],
+   "snap_px": 0.026,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    29.05558,
+    41.07774
+   ],
+   "tiles_by_scale": {
+    "1": [
+     603,
+     536
+    ],
+    "2": [
+     1207,
+     1073
+    ],
+    "3": [
+     1810,
+     1609
+    ],
+    "4": [
+     2414,
+     2146
+    ],
+    "5": [
+     3017,
+     2682
+    ],
+    "6": [
+     3621,
+     3219
+    ]
+   }
+  },
+  {
+   "id": "strait:dardanelles",
+   "name": "Dardanelles",
+   "kind": "strait",
+   "lon": 26.4144,
+   "lat": 40.1964,
+   "source": "R7b-geography.json straits dardanelles narrowest_point (Nara Burnu coordinate; the article places the narrowest point at Nara Burnu, abreast Çanakkale); https://en.wikipedia.org/wiki/Dardanelles",
+   "min_width_m": 1200,
+   "ref_pixel": [
+    1684,
+    1428
+   ],
+   "snap_px": 0.37,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    26.41113,
+    40.18886
+   ],
+   "tiles_by_scale": {
+    "1": [
+     484,
+     576
+    ],
+    "2": [
+     969,
+     1153
+    ],
+    "3": [
+     1453,
+     1729
+    ],
+    "4": [
+     1938,
+     2306
+    ],
+    "5": [
+     2422,
+     2882
+    ],
+    "6": [
+     2907,
+     3459
+    ]
+   }
+  },
+  {
+   "id": "strait:dover",
+   "name": "Strait of Dover",
+   "kind": "strait",
+   "lon": 1.4786,
+   "lat": 51.0072,
+   "source": "R7b-geography.json straits dover narrowest_point (midpoint of the South Foreland and Cap Gris-Nez article coordinates); https://en.wikipedia.org/wiki/Strait_of_Dover",
+   "min_width_m": 33200,
+   "ref_pixel": [
+    562,
+    941
+   ],
+   "snap_px": 0.178,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    1.4778,
+    51.01108
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -638,
+     89
+    ],
+    "2": [
+     -1275,
+     179
+    ],
+    "3": [
+     -1913,
+     268
+    ],
+    "4": [
+     -2550,
+     358
+    ],
+    "5": [
+     -3188,
+     447
+    ],
+    "6": [
+     -3825,
+     537
+    ]
+   }
+  },
+  {
+   "id": "strait:oresund",
+   "name": "Øresund",
+   "kind": "strait",
+   "lon": 12.6625,
+   "lat": 56.043,
+   "source": "R7b-geography.json straits oresund narrowest_point (midpoint of the Helsingør and Helsingborg town coordinates (approximate)); https://en.wikipedia.org/wiki/%C3%98resund",
+   "min_width_m": 4000,
+   "ref_pixel": [
+    1065,
+    715
+   ],
+   "snap_px": 0.536,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    12.65558,
+    56.0333
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -135,
+     -137
+    ],
+    "2": [
+     -269,
+     -273
+    ],
+    "3": [
+     -404,
+     -410
+    ],
+    "4": [
+     -538,
+     -546
+    ],
+    "5": [
+     -673,
+     -683
+    ],
+    "6": [
+     -807,
+     -819
+    ]
+   }
+  },
+  {
+   "id": "strait:great_belt",
+   "name": "Great Belt",
+   "kind": "strait",
+   "lon": 11.0,
+   "lat": 55.333,
+   "source": "R7b-geography.json straits great_belt narrowest_point (article coordinate near Sprogø; location of the 16 km minimum is not stated in the source (UNVERIFIED)); https://en.wikipedia.org/wiki/Great_Belt",
+   "min_width_m": 16000,
+   "ref_pixel": [
+    990,
+    747
+   ],
+   "snap_px": 0.697,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    10.98891,
+    55.32219
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -210,
+     -105
+    ],
+    "2": [
+     -419,
+     -209
+    ],
+    "3": [
+     -629,
+     -314
+    ],
+    "4": [
+     -838,
+     -418
+    ],
+    "5": [
+     -1048,
+     -523
+    ],
+    "6": [
+     -1257,
+     -627
+    ]
+   }
+  },
+  {
+   "id": "strait:little_belt",
+   "name": "Little Belt",
+   "kind": "strait",
+   "lon": 9.7294,
+   "lat": 55.5181,
+   "source": "R7b-geography.json straits little_belt narrowest_point (midpoint of the two Little Belt bridge coordinates at Snævringen (The Narrows)); https://en.wikipedia.org/wiki/Little_Belt",
+   "min_width_m": 800,
+   "ref_pixel": [
+    933,
+    738
+   ],
+   "snap_px": 0.371,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    9.72224,
+    55.52219
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -267,
+     -114
+    ],
+    "2": [
+     -533,
+     -227
+    ],
+    "3": [
+     -800,
+     -341
+    ],
+    "4": [
+     -1066,
+     -454
+    ],
+    "5": [
+     -1333,
+     -568
+    ],
+    "6": [
+     -1599,
+     -681
+    ]
+   }
+  },
+  {
+   "id": "isthmus:corinth",
+   "name": "Isthmus of Corinth",
+   "kind": "isthmus",
+   "lon": 22.9878,
+   "lat": 37.9414,
+   "source": "R7b-geography.json isthmuses corinth narrowest_point (article coordinate (on the canal line)); https://en.wikipedia.org/wiki/Isthmus_of_Corinth",
+   "min_width_m": 6300,
+   "ref_pixel": [
+    1530,
+    1529
+   ],
+   "snap_px": 0.144,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "water": true,
+      "land": false
+     },
+     "note": "the point lies on the canal line (R7b canals)"
+    }
+   ],
+   "ref_pixel_lonlat": [
+    22.98891,
+    37.94441
+   ],
+   "tiles_by_scale": {
+    "1": [
+     330,
+     677
+    ],
+    "2": [
+     661,
+     1355
+    ],
+    "3": [
+     991,
+     2032
+    ],
+    "4": [
+     1322,
+     2710
+    ],
+    "5": [
+     1652,
+     3387
+    ],
+    "6": [
+     1983,
+     4065
+    ]
+   }
+  }
+ ]
+}

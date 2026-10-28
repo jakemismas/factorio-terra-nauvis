@@ -1,0 +1,9 @@
+{
+  "name": "ea-coast-twin",
+  "version": "0.1.0",
+  "title": "ea-coast-twin",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only constant-coast twin for isolation check (a) (S9's method): every firewall body named in twin-names.lua becomes a constant. The runner writes twin-names.lua and the dependency on the mod under test into a staged copy at run time. Never shipped.",
+  "dependencies": ["base >= 2.1.23"]
+}

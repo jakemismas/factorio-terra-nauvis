@@ -1,0 +1,28 @@
+{
+ "format": "tn-baselines/1",
+ "game_build": "2.1.23 build 87750",
+ "note": "Vanilla and comparator hashes keyed by game build (G8), the placeholder preset's preview hashes and the T15b block's census on M0. Written by 'earth_test.py baseline'.",
+ "previews_256": {
+  "M0": {
+   "1000": "b5ce38715e7fac569eec2c7dec2863115b3f635f4aadd8d6efe5d5711cb704ae",
+   "1002": "a170055f71649a8c2e6cf160b30c7a0eda3dfbb293a0c916a8db8ab1c28674c8",
+   "1004": "0f6c371136cd39825c39a46ffea37b89e7732a0ff7d6b9036d4e8ff8609ab7e2"
+  },
+  "placeholder": {
+   "1000": "3d2fa678243d0390313b53364d9edf728b48ab3ef074f8654c2288bc4cfb9cfe",
+   "1002": "349216fffabe8a9b0ba7acf4e4c679b78f760df407ae920b725f0516539f1e7a",
+   "1004": "e7eaf88df7dc9814fecb6f9d52071227739180c19d01492b93e739ff8d0cb2a3"
+  }
+ },
+ "t15b_block": {
+  "chunks": "64:32:-64:-48",
+  "census_m0": {
+   "water_tiles": 57117,
+   "trees": 7136,
+   "enemies": 630,
+   "resources": 1778,
+   "rocks": 193,
+   "cliffs": 363
+  }
+ }
+}

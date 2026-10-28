@@ -1,0 +1,5 @@
+{"name": "tq2 local test", "description": "loopback only, no players", "tags": [], "max_players": 0,
+ "visibility": {"public": false, "lan": false}, "username": "", "password": "", "token": "",
+ "game_password": "", "require_user_verification": false, "auto_pause": false,
+ "auto_pause_when_players_connect": false, "autosave_interval": 0, "autosave_slots": 1,
+ "allow_commands": "admins-only", "only_admins_can_pause_the_game": true}

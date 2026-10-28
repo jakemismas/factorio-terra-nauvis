@@ -1,0 +1,9 @@
+{
+  "name": "tq1-gen",
+  "version": "0.1.0",
+  "title": "tq1-gen",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only generation timer, ported from the planning spike TQ1: forces one 16 x 16 chunk block and times the call. Never shipped.",
+  "dependencies": ["base >= 2.1.23"]
+}

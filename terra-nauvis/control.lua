@@ -1,0 +1,4 @@
+-- Control stage: event wiring only (ARCHITECTURE.md, "Control stage"). Milestone toolchain registers
+-- no event, because the placeholder preset needs no script. In every milestone the T16 registration
+-- scan allows only the events of ARCHITECTURE.md's event table: never on_tick or on_nth_tick, and
+-- no per-chunk event outside scripts/bandfix.lua.

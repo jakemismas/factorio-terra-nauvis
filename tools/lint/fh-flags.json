@@ -1,0 +1,44 @@
+{
+ "format": "tn-fh-flags/1",
+ "note": "Vendored from the workspace harness tools/fh.py (read with ast, never imported). The T16 launch scan reads these sets so it runs without fh.py; the gate, which has FACTORIO_WS, fails when they differ from fh.py's.",
+ "fh_py_sha256": "31fd22a06591277b5797aa2080badd440478d0853915a41070bac4cbbee7f9bf",
+ "GUI_FLAGS": [
+  "--apply-update",
+  "--benchmark-frame",
+  "--benchmark-graphics",
+  "--dap",
+  "--dump-icon-sprites",
+  "--fullscreen",
+  "--generate-map-preview-random",
+  "--heavy",
+  "--host",
+  "--host-interactive",
+  "--load-game",
+  "--load-scenario",
+  "--map2scenario",
+  "--mp-connect",
+  "--scenario2map",
+  "--sync-mods",
+  "--until-tick",
+  "--window-size",
+  "-m",
+  "-s"
+ ],
+ "FORBIDDEN_EXTRA": [
+  "--config",
+  "--executable-path",
+  "--mod-directory",
+  "--no-log-rotation",
+  "-c"
+ ],
+ "HEADLESS_ACTIONS": [
+  "--benchmark",
+  "--create",
+  "--dump-data",
+  "--generate-map-preview",
+  "--help",
+  "--start-server",
+  "--version",
+  "-h"
+ ]
+}

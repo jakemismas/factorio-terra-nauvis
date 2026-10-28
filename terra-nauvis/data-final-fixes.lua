@@ -1,0 +1,3 @@
+-- Everything that reads other mods' final state: entity wrappers and gated hooks on shared
+-- prototypes (ARCHITECTURE.md, "Module map"; first content in milestone waterways). Empty in milestone
+-- toolchain.

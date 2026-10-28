@@ -1,0 +1,6670 @@
+{
+ "map": "atlantic",
+ "earthmaps_world": "Earth - Atlantic",
+ "source": {
+  "repo": "https://github.com/HySpeed/EarthMaps",
+  "commit": "23c647b83fc4e4794dac994bfbd2232f4202cb6b",
+  "info_json": {
+   "name": "EarthMaps",
+   "version": "2.1.2",
+   "factorio_version": "2.1",
+   "dependencies": [
+    "base >= 2.1.0"
+   ]
+  },
+  "world_file": "data/world_atlantic.lua",
+  "world_file_sha256": "3bb758e3263b53265dc603a82ea5f0b2c0437bd44bc15f817573e7c62b69fd1a",
+  "cities_file": "data/cities_atlantic.lua",
+  "cities_file_sha256": "b7b99386b4718a78390ff3567bcb34b52f151eaad61d518d964304bfadca9009"
+ },
+ "decoder": {
+  "script": "mod/spikes/S8-tooling/earthmaps_decode.py",
+  "version": "1"
+ },
+ "crop_of_atlantic": {
+  "atlantic_offset_rows": 0,
+  "atlantic_offset_cols": 0,
+  "matched_snippets": 6,
+  "identical_px": 102355036,
+  "total_px": 102355036
+ },
+ "width_px": 15689,
+ "height_px": 6524,
+ "earthmaps_radii": {
+  "decompressed_width_radius": 7844,
+  "decompressed_height_radius": 3262,
+  "source": "worldgen.lua:444,448 floor((n + 0.5) / 2)"
+ },
+ "georeference": {
+  "projection": "plate carree (equirectangular): column linear in longitude, row linear in latitude",
+  "px_per_degree": 45.0,
+  "lon_left_edge": -168.6444,
+  "lon_right_edge": 180.0,
+  "lat_top_edge": 87.1778,
+  "lat_bottom_edge": -57.8,
+  "pixel_centre_formula": "lon = lon_left_edge + (col + 0.5) / 45; lat = lat_top_edge - (row + 0.5) / 45 (0-based col, row)",
+  "km_per_px_north_south": 2.471,
+  "km_per_px_east_west_at": {
+   "0N": 2.471,
+   "30N": 2.1399,
+   "45N": 1.7473,
+   "50N": 1.5883,
+   "55N": 1.4173,
+   "60N": 1.2355,
+   "70N": 0.8451
+  },
+  "earthmaps_tile_origin": {
+   "lon": 5.6778,
+   "lat": 14.6778,
+   "note": "tile (0, 0) samples pixel (col wr, row hr); tile (x, y) at scale s samples pixel (x/s + wr, y/s + hr), worldgen.lua:221-224,244"
+  },
+  "status": "derived: least-squares fit on the Atlantic raster (see atlantic.json georeference_fit) plus exact crop offsets; datum assumed WGS84"
+ },
+ "world_size_tiles_by_scale": [
+  {
+   "scale": 0.25,
+   "width": 3922,
+   "height": 1631,
+   "tiles": 6396782,
+   "land_tiles_approx": 1881151,
+   "km_per_tile_north_south": 9.884
+  },
+  {
+   "scale": 0.5,
+   "width": 7844,
+   "height": 3262,
+   "tiles": 25587128,
+   "land_tiles_approx": 7524603,
+   "km_per_tile_north_south": 4.942
+  },
+  {
+   "scale": 1,
+   "width": 15689,
+   "height": 6524,
+   "tiles": 102355036,
+   "land_tiles_approx": 30098413,
+   "km_per_tile_north_south": 2.471
+  },
+  {
+   "scale": 2,
+   "width": 31378,
+   "height": 13048,
+   "tiles": 409420144,
+   "land_tiles_approx": 120393652,
+   "km_per_tile_north_south": 1.2355
+  },
+  {
+   "scale": 3,
+   "width": 47067,
+   "height": 19572,
+   "tiles": 921195324,
+   "land_tiles_approx": 270885717,
+   "km_per_tile_north_south": 0.8237
+  },
+  {
+   "scale": 4,
+   "width": 62756,
+   "height": 26096,
+   "tiles": 1637680576,
+   "land_tiles_approx": 481574608,
+   "km_per_tile_north_south": 0.6177
+  },
+  {
+   "scale": 5,
+   "width": 78445,
+   "height": 32620,
+   "tiles": 2558875900,
+   "land_tiles_approx": 752460325,
+   "km_per_tile_north_south": 0.4942
+  },
+  {
+   "scale": 6,
+   "width": 94134,
+   "height": 39144,
+   "tiles": 3684781296,
+   "land_tiles_approx": 1083542868,
+   "km_per_tile_north_south": 0.4118
+  },
+  {
+   "scale": 7,
+   "width": 109823,
+   "height": 45668,
+   "tiles": 5015396764,
+   "land_tiles_approx": 1474822237,
+   "km_per_tile_north_south": 0.353
+  },
+  {
+   "scale": 8,
+   "width": 125512,
+   "height": 52192,
+   "tiles": 6550722304,
+   "land_tiles_approx": 1926298432,
+   "km_per_tile_north_south": 0.3089
+  },
+  {
+   "scale": 9,
+   "width": 141201,
+   "height": 58716,
+   "tiles": 8290757916,
+   "land_tiles_approx": 2437971453,
+   "km_per_tile_north_south": 0.2746
+  },
+  {
+   "scale": 10,
+   "width": 156890,
+   "height": 65240,
+   "tiles": 10235503600,
+   "land_tiles_approx": 3009841300,
+   "km_per_tile_north_south": 0.2471
+  },
+  {
+   "scale": 20,
+   "width": 313780,
+   "height": 130480,
+   "tiles": 40942014400,
+   "land_tiles_approx": 12039365200,
+   "km_per_tile_north_south": 0.1235
+  }
+ ],
+ "class_legend": {
+  "source": "worldgen.lua:17-30",
+  "classes": [
+   {
+    "index": 0,
+    "code": "_",
+    "tile": "out-of-map",
+    "is_land": false,
+    "is_water": false,
+    "pixels": 0,
+    "fraction": 0.0,
+    "png_rgb": [
+     0,
+     0,
+     0
+    ],
+    "game_map_color": [
+     0,
+     0,
+     0
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:952"
+   },
+   {
+    "index": 1,
+    "code": "o",
+    "tile": "deepwater",
+    "is_land": false,
+    "is_water": true,
+    "pixels": 29462159,
+    "fraction": 0.287843,
+    "png_rgb": [
+     20,
+     40,
+     110
+    ],
+    "game_map_color": [
+     38,
+     64,
+     73
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:997"
+   },
+   {
+    "index": 2,
+    "code": "O",
+    "tile": "deepwater-green",
+    "is_land": false,
+    "is_water": true,
+    "pixels": 0,
+    "fraction": 0.0,
+    "png_rgb": [
+     10,
+     60,
+     60
+    ],
+    "game_map_color": [
+     0.0941,
+     0.149,
+     0.066
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1046"
+   },
+   {
+    "index": 3,
+    "code": "w",
+    "tile": "water",
+    "is_land": false,
+    "is_water": true,
+    "pixels": 42794464,
+    "fraction": 0.418098,
+    "png_rgb": [
+     60,
+     120,
+     200
+    ],
+    "game_map_color": [
+     51,
+     83,
+     95
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1094"
+   },
+   {
+    "index": 4,
+    "code": "W",
+    "tile": "water-green",
+    "is_land": false,
+    "is_water": true,
+    "pixels": 0,
+    "fraction": 0.0,
+    "png_rgb": [
+     40,
+     110,
+     90
+    ],
+    "game_map_color": [
+     31,
+     48,
+     18
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1142"
+   },
+   {
+    "index": 5,
+    "code": "g",
+    "tile": "grass-1",
+    "is_land": true,
+    "is_water": false,
+    "pixels": 3522433,
+    "fraction": 0.034414,
+    "png_rgb": [
+     120,
+     170,
+     60
+    ],
+    "game_map_color": [
+     55,
+     53,
+     11
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1349"
+   },
+   {
+    "index": 6,
+    "code": "m",
+    "tile": "grass-3",
+    "is_land": true,
+    "is_water": false,
+    "pixels": 8679470,
+    "fraction": 0.084798,
+    "png_rgb": [
+     150,
+     190,
+     90
+    ],
+    "game_map_color": [
+     65,
+     52,
+     28
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1414"
+   },
+   {
+    "index": 7,
+    "code": "G",
+    "tile": "grass-2",
+    "is_land": true,
+    "is_water": false,
+    "pixels": 5465679,
+    "fraction": 0.053399,
+    "png_rgb": [
+     40,
+     110,
+     40
+    ],
+    "game_map_color": [
+     66,
+     57,
+     15
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1381"
+   },
+   {
+    "index": 8,
+    "code": "d",
+    "tile": "dirt-3",
+    "is_land": true,
+    "is_water": false,
+    "pixels": 5215192,
+    "fraction": 0.050952,
+    "png_rgb": [
+     170,
+     130,
+     80
+    ],
+    "game_map_color": [
+     133,
+     92,
+     53
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1571"
+   },
+   {
+    "index": 9,
+    "code": "D",
+    "tile": "dirt-6",
+    "is_land": true,
+    "is_water": false,
+    "pixels": 632173,
+    "fraction": 0.006176,
+    "png_rgb": [
+     110,
+     80,
+     50
+    ],
+    "game_map_color": [
+     80,
+     55,
+     31
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1665"
+   },
+   {
+    "index": 10,
+    "code": "s",
+    "tile": "sand-1",
+    "is_land": true,
+    "is_water": false,
+    "pixels": 2440364,
+    "fraction": 0.023842,
+    "png_rgb": [
+     235,
+     215,
+     150
+    ],
+    "game_map_color": [
+     138,
+     103,
+     58
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1730"
+   },
+   {
+    "index": 11,
+    "code": "S",
+    "tile": "sand-3",
+    "is_land": true,
+    "is_water": false,
+    "pixels": 4143102,
+    "fraction": 0.040478,
+    "png_rgb": [
+     200,
+     170,
+     100
+    ],
+    "game_map_color": [
+     115,
+     83,
+     47
+    ],
+    "game_map_color_source": "data/base/prototypes/tile/tiles.lua:1798"
+   }
+  ],
+  "codes_present": [
+   "o",
+   "w",
+   "g",
+   "m",
+   "G",
+   "d",
+   "D",
+   "s",
+   "S"
+  ]
+ },
+ "land_px": 30098413,
+ "water_px": 72256623,
+ "land_fraction": 0.294059,
+ "out_of_map_px": 0,
+ "land_mask_rule": "land = g m G d D s S (grass-1, grass-3, grass-2, dirt-3, dirt-6, sand-1, sand-3); water = o O w W. Rivers, lakes, marsh and the 1 px coastline stroke are all water classes in the data, so they count as water. No shallow-water class exists.",
+ "coast_px": 974429,
+ "coast_definition": "land pixels 4-adjacent to a water pixel inside the raster (the raster border is not water)",
+ "water_px_adjacent_to_land_by_class": {
+  "o": 561782,
+  "w": 244611
+ },
+ "coast_px_touching_o": 701769,
+ "diagonal_only_links": {
+  "count": 36271,
+  "definition": "2x2 blocks with water on one diagonal and land on the other: water joins only in 8-connectivity, and land likewise"
+ },
+ "connectivity": {
+  "land_4": {
+   "components": 5337,
+   "not_touching_border": 5333,
+   "largest_px": [
+    17434632,
+    4927335,
+    2725415,
+    1379761,
+    1286908
+   ],
+   "size_histogram": {
+    "1-1": 1617,
+    "2-2": 610,
+    "3-4": 603,
+    "5-8": 580,
+    "9-16": 514,
+    "17-32": 408,
+    "33-64": 308,
+    "65-128": 221,
+    "129-256": 152,
+    "257-512": 102,
+    "513-1024": 83,
+    "1025-4096": 77,
+    "4097-16384": 29,
+    "16385-65536": 20,
+    ">=65537": 13
+   }
+  },
+  "land_8": {
+   "components": 3837,
+   "not_touching_border": 3833,
+   "largest_px": [
+    17451860,
+    7935552,
+    1379800,
+    1287281,
+    214659
+   ],
+   "size_histogram": {
+    "1-1": 619,
+    "2-2": 419,
+    "3-4": 455,
+    "5-8": 514,
+    "9-16": 466,
+    "17-32": 397,
+    "33-64": 303,
+    "65-128": 210,
+    "129-256": 147,
+    "257-512": 96,
+    "513-1024": 81,
+    "1025-4096": 71,
+    "4097-16384": 28,
+    "16385-65536": 20,
+    ">=65537": 11
+   }
+  },
+  "water_4": {
+   "components": 52486,
+   "not_touching_border": 52485,
+   "largest_px": [
+    71604551,
+    96591,
+    49766,
+    13454,
+    11699
+   ],
+   "size_histogram": {
+    "1-1": 22299,
+    "2-2": 10876,
+    "3-4": 8029,
+    "5-8": 5280,
+    "9-16": 2908,
+    "17-32": 1381,
+    "33-64": 735,
+    "65-128": 469,
+    "129-256": 274,
+    "257-512": 123,
+    "513-1024": 70,
+    "1025-4096": 30,
+    "4097-16384": 9,
+    "16385-65536": 1,
+    ">=65537": 2
+   }
+  },
+  "water_8": {
+   "components": 17715,
+   "not_touching_border": 17714,
+   "largest_px": [
+    71894523,
+    102365,
+    11752,
+    5801,
+    5111
+   ],
+   "size_histogram": {
+    "1-1": 5469,
+    "2-2": 3237,
+    "3-4": 3603,
+    "5-8": 2384,
+    "9-16": 1298,
+    "17-32": 662,
+    "33-64": 400,
+    "65-128": 332,
+    "129-256": 186,
+    "257-512": 87,
+    "513-1024": 37,
+    "1025-4096": 14,
+    "4097-16384": 4,
+    "16385-65536": 0,
+    ">=65537": 2
+   }
+  }
+ },
+ "smallest_islands_px_4conn": [
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1
+ ],
+ "smallest_islands_px_8conn": [
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1,
+  1
+ ],
+ "largest_land_components_4conn": [
+  {
+   "area_px": 17434632,
+   "bbox_px": [
+    6801,
+    427,
+    15688,
+    5489
+   ],
+   "bbox_lonlat": [
+    -17.5,
+    -34.81,
+    179.99,
+    77.68
+   ],
+   "touches_border": true
+  },
+  {
+   "area_px": 4927335,
+   "bbox_px": [
+    24,
+    692,
+    5083,
+    3598
+   ],
+   "bbox_lonlat": [
+    -168.1,
+    7.21,
+    -55.68,
+    71.79
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 2725415,
+   "bbox_px": [
+    3929,
+    3364,
+    6022,
+    6347
+   ],
+   "bbox_lonlat": [
+    -81.32,
+    -53.88,
+    -34.81,
+    12.41
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 1379761,
+   "bbox_px": [
+    12683,
+    4406,
+    14501,
+    5684
+   ],
+   "bbox_lonlat": [
+    113.21,
+    -39.14,
+    153.61,
+    -10.74
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 1286908,
+   "bbox_px": [
+    4312,
+    161,
+    7073,
+    1223
+   ],
+   "bbox_lonlat": [
+    -72.81,
+    59.99,
+    -11.46,
+    83.59
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 276939,
+   "bbox_px": [
+    4536,
+    3535,
+    5343,
+    4072
+   ],
+   "bbox_lonlat": [
+    -67.83,
+    -3.32,
+    -49.9,
+    8.61
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 214619,
+   "bbox_px": [
+    3536,
+    601,
+    4830,
+    1139
+   ],
+   "bbox_lonlat": [
+    -90.06,
+    61.86,
+    -61.3,
+    73.81
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 180950,
+   "bbox_px": [
+    3457,
+    184,
+    4838,
+    496
+   ],
+   "bbox_lonlat": [
+    -91.81,
+    76.14,
+    -61.12,
+    83.08
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 124812,
+   "bbox_px": [
+    13483,
+    3940,
+    14372,
+    4404
+   ],
+   "bbox_lonlat": [
+    130.99,
+    -10.7,
+    150.74,
+    -0.39
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 116148,
+   "bbox_px": [
+    12488,
+    3609,
+    12955,
+    4111
+   ],
+   "bbox_lonlat": [
+    108.88,
+    -4.19,
+    119.26,
+    6.97
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 104747,
+   "bbox_px": [
+    2229,
+    622,
+    3048,
+    842
+   ],
+   "bbox_lonlat": [
+    -119.1,
+    68.46,
+    -100.9,
+    73.34
+   ],
+   "touches_border": false
+  },
+  {
+   "area_px": 101371,
+   "bbox_px": [
+    9535,
+    4462,
+    9860,
+    5074
+   ],
+   "bbox_lonlat": [
+    43.26,
+    -25.59,
+    50.48,
+    -11.99
+   ],
+   "touches_border": false
+  }
+ ],
+ "lakes_4conn": {
+  "count": 52485,
+  "size_histogram": {
+   "1-1": 22299,
+   "2-2": 10876,
+   "3-4": 8029,
+   "5-8": 5280,
+   "9-16": 2908,
+   "17-32": 1381,
+   "33-64": 735,
+   "65-128": 469,
+   "129-256": 274,
+   "257-512": 123,
+   "513-1024": 70,
+   "1025-4096": 30,
+   "4097-16384": 9,
+   "16385-65536": 1,
+   ">=65537": 1
+  },
+  "definition": "water components (4-connected) that do not touch the raster border"
+ },
+ "thin_water": {
+  "definition": "water pixels not covered by any all-water 3x3 square (morphological opening); width 1 = not covered by any all-water 2x2 square",
+  "px": 421380,
+  "width_1_px": 236647,
+  "width_2_px": 184733,
+  "by_class": {
+   "o": 328665,
+   "w": 92715
+  },
+  "components_8conn": 36627,
+  "components_8conn_ge_20px": 2491,
+  "px_in_components_ge_20px": 295840,
+  "diagonal_only_links_inside_thin_water": 35090,
+  "png": "atlantic-thinwater.png (all thin water, not only components >= 20 px)"
+ },
+ "straits_and_isthmuses": {
+  "method": "inside the window only: seeds snapped to the nearest pixel of the right kind within 5 px; max_passable_*_square_px = largest k such that a k x k all-water (or all-land) square can move in 4-connected steps from a placement covering seed A to one covering seed B (0 = not connected)",
+  "features": [
+   {
+    "name": "Strait of Gibraltar",
+    "kind": "strait",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     7292,
+     2276,
+     7382,
+     2334
+    ],
+    "window_lonlat": [
+     -6.6,
+     35.3,
+     -4.6,
+     36.6
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 2.0,
+    "water_connected_4": true,
+    "water_connected_8": true,
+    "max_passable_water_square_px": 5
+   },
+   {
+    "name": "Bosporus",
+    "kind": "strait",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     8882,
+     2057,
+     8914,
+     2084
+    ],
+    "window_lonlat": [
+     28.75,
+     40.85,
+     29.45,
+     41.45
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.861,
+    "water_connected_4": true,
+    "water_connected_8": true,
+    "max_passable_water_square_px": 1
+   },
+   {
+    "name": "Dardanelles",
+    "kind": "strait",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     8756,
+     2096,
+     8804,
+     2129
+    ],
+    "window_lonlat": [
+     25.95,
+     39.85,
+     27.0,
+     40.6
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.887,
+    "water_connected_4": true,
+    "water_connected_8": true,
+    "max_passable_water_square_px": 2
+   },
+   {
+    "name": "Strait of Dover",
+    "kind": "strait",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     7616,
+     1601,
+     7697,
+     1655
+    ],
+    "window_lonlat": [
+     0.6,
+     50.4,
+     2.4,
+     51.6
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.555,
+    "water_connected_4": true,
+    "water_connected_8": true,
+    "max_passable_water_square_px": 12
+   },
+   {
+    "name": "Oresund",
+    "kind": "strait",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     8142,
+     1389,
+     8178,
+     1434
+    ],
+    "window_lonlat": [
+     12.3,
+     55.3,
+     13.1,
+     56.3
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.389,
+    "water_connected_4": true,
+    "water_connected_8": true,
+    "max_passable_water_square_px": 2
+   },
+   {
+    "name": "Great Belt",
+    "kind": "strait",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     8066,
+     1403,
+     8102,
+     1448
+    ],
+    "window_lonlat": [
+     10.6,
+     55.0,
+     11.4,
+     56.0
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.4,
+    "water_connected_4": true,
+    "water_connected_8": true,
+    "max_passable_water_square_px": 11
+   },
+   {
+    "name": "Little Belt",
+    "kind": "strait",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     8016,
+     1412,
+     8048,
+     1448
+    ],
+    "window_lonlat": [
+     9.5,
+     55.0,
+     10.2,
+     55.8
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.403,
+    "water_connected_4": true,
+    "water_connected_8": true,
+    "max_passable_water_square_px": 1
+   },
+   {
+    "name": "Strait of Messina",
+    "kind": "strait",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     8277,
+     2190,
+     8304,
+     2217
+    ],
+    "window_lonlat": [
+     15.3,
+     37.9,
+     15.9,
+     38.5
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.942,
+    "water_connected_4": true,
+    "water_connected_8": true,
+    "max_passable_water_square_px": 2
+   },
+   {
+    "name": "Kerch Strait",
+    "kind": "strait",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     9218,
+     1871,
+     9254,
+     1902
+    ],
+    "window_lonlat": [
+     36.2,
+     44.9,
+     37.0,
+     45.6
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.74,
+    "water_connected_4": true,
+    "water_connected_8": true,
+    "max_passable_water_square_px": 3
+   },
+   {
+    "name": "Isthmus of Corinth",
+    "kind": "isthmus",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     8610,
+     2204,
+     8637,
+     2226
+    ],
+    "window_lonlat": [
+     22.7,
+     37.7,
+     23.3,
+     38.2
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.949,
+    "land_connected_4": true,
+    "land_connected_8": true,
+    "max_passable_land_square_px": 1,
+    "seas_connected_by_water_4": false,
+    "seas_connected_by_water_8": false
+   },
+   {
+    "name": "Isthmus of Suez",
+    "kind": "isthmus",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     9011,
+     2496,
+     9083,
+     2591
+    ],
+    "window_lonlat": [
+     31.6,
+     29.6,
+     33.2,
+     31.7
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 2.126,
+    "land_connected_4": true,
+    "land_connected_8": true,
+    "max_passable_land_square_px": 6,
+    "seas_connected_by_water_4": false,
+    "seas_connected_by_water_8": false
+   },
+   {
+    "name": "Isthmus of Panama",
+    "kind": "isthmus",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     3962,
+     3482,
+     4043,
+     3544
+    ],
+    "window_lonlat": [
+     -80.6,
+     8.4,
+     -78.8,
+     9.8
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 2.44,
+    "land_connected_4": false,
+    "land_connected_8": true,
+    "max_passable_land_square_px": 0,
+    "seas_connected_by_water_4": false,
+    "seas_connected_by_water_8": true
+   },
+   {
+    "name": "Jutland base (Kiel Canal)",
+    "kind": "isthmus",
+    "in_map": true,
+    "measured": true,
+    "window_px": [
+     7976,
+     1461,
+     8066,
+     1506
+    ],
+    "window_lonlat": [
+     8.6,
+     53.7,
+     10.6,
+     54.7
+    ],
+    "km_per_px_ns": 2.471,
+    "km_per_px_ew": 1.445,
+    "land_connected_4": true,
+    "land_connected_8": true,
+    "max_passable_land_square_px": 25,
+    "seas_connected_by_water_4": false,
+    "seas_connected_by_water_8": false
+   }
+  ]
+ },
+ "wetland_windows": [
+  {
+   "name": "Pripyat Marshes (Polesia)",
+   "window_lonlat": [
+    25.0,
+    51.5,
+    29.0,
+    52.5
+   ],
+   "px": 8326,
+   "class_fraction": {
+    "o": 0.019,
+    "g": 0.0331,
+    "m": 0.9479
+   }
+  },
+  {
+   "name": "Danube Delta",
+   "window_lonlat": [
+    28.7,
+    44.8,
+    29.8,
+    45.5
+   ],
+   "px": 1683,
+   "class_fraction": {
+    "o": 0.1444,
+    "w": 0.1497,
+    "g": 0.057,
+    "m": 0.3737,
+    "G": 0.2751
+   }
+  },
+  {
+   "name": "Camargue (Rhone delta)",
+   "window_lonlat": [
+    4.3,
+    43.35,
+    4.9,
+    43.7
+   ],
+   "px": 476,
+   "class_fraction": {
+    "o": 0.1282,
+    "w": 0.1155,
+    "g": 0.0483,
+    "m": 0.2227,
+    "G": 0.4853
+   }
+  },
+  {
+   "name": "Po Delta",
+   "window_lonlat": [
+    12.0,
+    44.8,
+    12.6,
+    45.1
+   ],
+   "px": 420,
+   "class_fraction": {
+    "o": 0.1667,
+    "w": 0.2643,
+    "g": 0.0786,
+    "m": 0.1333,
+    "G": 0.3571
+   }
+  },
+  {
+   "name": "Wadden Sea coast",
+   "window_lonlat": [
+    4.8,
+    53.0,
+    8.8,
+    53.7
+   ],
+   "px": 5973,
+   "class_fraction": {
+    "o": 0.0904,
+    "w": 0.3377,
+    "g": 0.0193,
+    "m": 0.5527
+   }
+  },
+  {
+   "name": "Sudd",
+   "window_lonlat": [
+    29.5,
+    6.5,
+    32.0,
+    9.5
+   ],
+   "px": 15504,
+   "class_fraction": {
+    "o": 0.0225,
+    "w": 0.0016,
+    "g": 0.01,
+    "m": 0.0695,
+    "G": 0.7762,
+    "S": 0.1202
+   }
+  },
+  {
+   "name": "Okavango Delta",
+   "window_lonlat": [
+    22.0,
+    -20.0,
+    23.7,
+    -18.5
+   ],
+   "px": 5313,
+   "class_fraction": {
+    "o": 0.0041,
+    "w": 0.0077,
+    "g": 0.01,
+    "m": 0.0252,
+    "G": 0.4355,
+    "S": 0.5174
+   }
+  },
+  {
+   "name": "Mesopotamian Marshes",
+   "window_lonlat": [
+    46.5,
+    30.5,
+    47.8,
+    31.5
+   ],
+   "px": 2760,
+   "class_fraction": {
+    "o": 0.0562,
+    "w": 0.1054,
+    "m": 0.0496,
+    "G": 0.104,
+    "d": 0.1989,
+    "s": 0.2116,
+    "S": 0.2743
+   }
+  },
+  {
+   "name": "Vasyugan Swamp",
+   "window_lonlat": [
+    75.0,
+    56.0,
+    82.0,
+    58.0
+   ],
+   "px": 28756,
+   "class_fraction": {
+    "o": 0.0023,
+    "w": 0.0,
+    "g": 0.0326,
+    "m": 0.9642,
+    "G": 0.0009
+   }
+  },
+  {
+   "name": "Sundarbans",
+   "window_lonlat": [
+    88.5,
+    21.5,
+    89.8,
+    22.5
+   ],
+   "px": 2760,
+   "class_fraction": {
+    "o": 0.2018,
+    "w": 0.1692,
+    "g": 0.2928,
+    "m": 0.3362
+   }
+  },
+  {
+   "name": "Pantanal",
+   "window_lonlat": [
+    -58.0,
+    -20.0,
+    -55.5,
+    -16.0
+   ],
+   "px": 20453,
+   "class_fraction": {
+    "o": 0.0235,
+    "w": 0.0008,
+    "g": 0.0204,
+    "m": 0.8574,
+    "G": 0.0851,
+    "d": 0.0007,
+    "D": 0.0102,
+    "S": 0.0019
+   }
+  },
+  {
+   "name": "Everglades",
+   "window_lonlat": [
+    -81.2,
+    25.2,
+    -80.4,
+    26.5
+   ],
+   "px": 2220,
+   "class_fraction": {
+    "o": 0.0338,
+    "w": 0.014,
+    "g": 0.0171,
+    "m": 0.9351
+   }
+  }
+ ],
+ "land_classes_by_latitude": [
+  {
+   "lat_band": "80 to 85",
+   "land_px": 391957,
+   "class_fraction_of_land": {
+    "g": 0.0131,
+    "m": 0.0643,
+    "G": 0.0115,
+    "d": 0.9097,
+    "s": 0.0014
+   }
+  },
+  {
+   "lat_band": "75 to 80",
+   "land_px": 828938,
+   "class_fraction_of_land": {
+    "g": 0.0068,
+    "m": 0.031,
+    "G": 0.0082,
+    "d": 0.9526,
+    "s": 0.0014,
+    "S": 0.0001
+   }
+  },
+  {
+   "lat_band": "70 to 75",
+   "land_px": 1208796,
+   "class_fraction_of_land": {
+    "g": 0.0094,
+    "m": 0.0252,
+    "G": 0.0191,
+    "d": 0.9407,
+    "D": 0.0,
+    "s": 0.0007,
+    "S": 0.005
+   }
+  },
+  {
+   "lat_band": "65 to 70",
+   "land_px": 2466593,
+   "class_fraction_of_land": {
+    "g": 0.0176,
+    "m": 0.2174,
+    "G": 0.169,
+    "d": 0.5519,
+    "D": 0.0006,
+    "s": 0.0011,
+    "S": 0.0423
+   }
+  },
+  {
+   "lat_band": "60 to 65",
+   "land_px": 2426065,
+   "class_fraction_of_land": {
+    "g": 0.1016,
+    "m": 0.5209,
+    "G": 0.1091,
+    "d": 0.2367,
+    "D": 0.0042,
+    "s": 0.003,
+    "S": 0.0245
+   }
+  },
+  {
+   "lat_band": "55 to 60",
+   "land_px": 1907633,
+   "class_fraction_of_land": {
+    "g": 0.1836,
+    "m": 0.6201,
+    "G": 0.0861,
+    "d": 0.0885,
+    "D": 0.0067,
+    "s": 0.0012,
+    "S": 0.0137
+   }
+  },
+  {
+   "lat_band": "50 to 55",
+   "land_px": 2068909,
+   "class_fraction_of_land": {
+    "g": 0.1706,
+    "m": 0.5075,
+    "G": 0.2309,
+    "d": 0.0298,
+    "D": 0.0126,
+    "s": 0.0026,
+    "S": 0.0458
+   }
+  },
+  {
+   "lat_band": "45 to 50",
+   "land_px": 1938272,
+   "class_fraction_of_land": {
+    "g": 0.146,
+    "m": 0.303,
+    "G": 0.2702,
+    "d": 0.0221,
+    "D": 0.0178,
+    "s": 0.0204,
+    "S": 0.2205
+   }
+  },
+  {
+   "lat_band": "40 to 45",
+   "land_px": 1671819,
+   "class_fraction_of_land": {
+    "g": 0.0798,
+    "m": 0.271,
+    "G": 0.2093,
+    "d": 0.0353,
+    "D": 0.0519,
+    "s": 0.1145,
+    "S": 0.2382
+   }
+  },
+  {
+   "lat_band": "35 to 40",
+   "land_px": 1521576,
+   "class_fraction_of_land": {
+    "g": 0.0704,
+    "m": 0.2559,
+    "G": 0.1795,
+    "d": 0.104,
+    "D": 0.0535,
+    "s": 0.1244,
+    "S": 0.2123
+   }
+  },
+  {
+   "lat_band": "30 to 35",
+   "land_px": 1510051,
+   "class_fraction_of_land": {
+    "g": 0.078,
+    "m": 0.2194,
+    "G": 0.1283,
+    "d": 0.1442,
+    "D": 0.0337,
+    "s": 0.224,
+    "S": 0.1723
+   }
+  },
+  {
+   "lat_band": "25 to 30",
+   "land_px": 1439219,
+   "class_fraction_of_land": {
+    "g": 0.0774,
+    "m": 0.1701,
+    "G": 0.1269,
+    "d": 0.0454,
+    "D": 0.0335,
+    "s": 0.3457,
+    "S": 0.201
+   }
+  },
+  {
+   "lat_band": "20 to 25",
+   "land_px": 1256330,
+   "class_fraction_of_land": {
+    "g": 0.0515,
+    "m": 0.1892,
+    "G": 0.1145,
+    "d": 0.0129,
+    "D": 0.0416,
+    "s": 0.4413,
+    "S": 0.149
+   }
+  },
+  {
+   "lat_band": "15 to 20",
+   "land_px": 1045243,
+   "class_fraction_of_land": {
+    "g": 0.0717,
+    "m": 0.17,
+    "G": 0.0793,
+    "d": 0.012,
+    "D": 0.0352,
+    "s": 0.4375,
+    "S": 0.1944
+   }
+  },
+  {
+   "lat_band": "10 to 15",
+   "land_px": 838528,
+   "class_fraction_of_land": {
+    "g": 0.097,
+    "m": 0.1448,
+    "G": 0.2147,
+    "d": 0.0082,
+    "D": 0.0255,
+    "s": 0.0567,
+    "S": 0.4532
+   }
+  },
+  {
+   "lat_band": "5 to 10",
+   "land_px": 862536,
+   "class_fraction_of_land": {
+    "g": 0.1368,
+    "m": 0.3469,
+    "G": 0.3201,
+    "d": 0.0203,
+    "D": 0.031,
+    "s": 0.0168,
+    "S": 0.1281
+   }
+  },
+  {
+   "lat_band": "0 to 5",
+   "land_px": 752931,
+   "class_fraction_of_land": {
+    "g": 0.4869,
+    "m": 0.2614,
+    "G": 0.1125,
+    "d": 0.0185,
+    "D": 0.027,
+    "s": 0.0055,
+    "S": 0.0883
+   }
+  },
+  {
+   "lat_band": "-5 to 0",
+   "land_px": 834131,
+   "class_fraction_of_land": {
+    "g": 0.6138,
+    "m": 0.2054,
+    "G": 0.0886,
+    "d": 0.0163,
+    "D": 0.0231,
+    "s": 0.0052,
+    "S": 0.0476
+   }
+  },
+  {
+   "lat_band": "-10 to -5",
+   "land_px": 815250,
+   "class_fraction_of_land": {
+    "g": 0.333,
+    "m": 0.359,
+    "G": 0.2021,
+    "d": 0.017,
+    "D": 0.0279,
+    "s": 0.0046,
+    "S": 0.0564
+   }
+  },
+  {
+   "lat_band": "-15 to -10",
+   "land_px": 726039,
+   "class_fraction_of_land": {
+    "g": 0.1289,
+    "m": 0.4175,
+    "G": 0.3311,
+    "d": 0.033,
+    "D": 0.0179,
+    "s": 0.0076,
+    "S": 0.0641
+   }
+  },
+  {
+   "lat_band": "-20 to -15",
+   "land_px": 849225,
+   "class_fraction_of_land": {
+    "g": 0.0479,
+    "m": 0.302,
+    "G": 0.3395,
+    "d": 0.0371,
+    "D": 0.0212,
+    "s": 0.0142,
+    "S": 0.2382
+   }
+  },
+  {
+   "lat_band": "-25 to -20",
+   "land_px": 884389,
+   "class_fraction_of_land": {
+    "g": 0.0412,
+    "m": 0.239,
+    "G": 0.3013,
+    "d": 0.0276,
+    "D": 0.015,
+    "s": 0.0225,
+    "S": 0.3534
+   }
+  },
+  {
+   "lat_band": "-30 to -25",
+   "land_px": 784427,
+   "class_fraction_of_land": {
+    "g": 0.0359,
+    "m": 0.1626,
+    "G": 0.4406,
+    "d": 0.0207,
+    "D": 0.0144,
+    "s": 0.0284,
+    "S": 0.2974
+   }
+  },
+  {
+   "lat_band": "-35 to -30",
+   "land_px": 571307,
+   "class_fraction_of_land": {
+    "g": 0.0244,
+    "m": 0.1083,
+    "G": 0.504,
+    "d": 0.0128,
+    "D": 0.0179,
+    "s": 0.0123,
+    "S": 0.3204
+   }
+  },
+  {
+   "lat_band": "-40 to -35",
+   "land_px": 236779,
+   "class_fraction_of_land": {
+    "g": 0.0864,
+    "m": 0.208,
+    "G": 0.2866,
+    "d": 0.0217,
+    "D": 0.0187,
+    "s": 0.0105,
+    "S": 0.368
+   }
+  },
+  {
+   "lat_band": "-45 to -40",
+   "land_px": 127966,
+   "class_fraction_of_land": {
+    "g": 0.1401,
+    "m": 0.2186,
+    "G": 0.3368,
+    "d": 0.0567,
+    "D": 0.0448,
+    "s": 0.0212,
+    "S": 0.1817
+   }
+  },
+  {
+   "lat_band": "-50 to -45",
+   "land_px": 85405,
+   "class_fraction_of_land": {
+    "g": 0.0892,
+    "m": 0.161,
+    "G": 0.3499,
+    "d": 0.0863,
+    "D": 0.0428,
+    "s": 0.0484,
+    "S": 0.2224
+   }
+  },
+  {
+   "lat_band": "-55 to -50",
+   "land_px": 46509,
+   "class_fraction_of_land": {
+    "g": 0.1283,
+    "m": 0.2295,
+    "G": 0.1813,
+    "d": 0.0992,
+    "D": 0.0163,
+    "s": 0.0442,
+    "S": 0.3013
+   }
+  },
+  {
+   "lat_band": "-60 to -55",
+   "land_px": 1590,
+   "class_fraction_of_land": {
+    "g": 0.3138,
+    "m": 0.3145,
+    "G": 0.0962,
+    "d": 0.2195,
+    "D": 0.005,
+    "s": 0.0258,
+    "S": 0.0252
+   }
+  }
+ ],
+ "cities": {
+  "count": 50,
+  "duplicate_keys": [],
+  "position_rule": "tile = chunk centre of (position * 2 * scale), worldgen.lua:38-40; pixel = (2x + wr, 2y + hr)",
+  "on_water": [
+   "Kovdor",
+   "Johannesburg",
+   "Chengdu"
+  ],
+  "same_chunk_clashes_by_scale": {
+   "0.25": [],
+   "0.5": [],
+   "1": [],
+   "2": [],
+   "3": [],
+   "4": [],
+   "5": [],
+   "6": [],
+   "7": [],
+   "8": [],
+   "9": [],
+   "10": [],
+   "20": []
+  },
+  "clash_effect": "initCityChunks raises 'Chunk position already exists in chunk map' (worldgen.lua:80-81) when two cities share a chunk",
+  "list": [
+   {
+    "full_name": "Europe, Czech Republic, Prague",
+    "name": "Prague",
+    "cities_file_line": 7,
+    "position": [
+     178,
+     -831
+    ],
+    "pixel": [
+     8200,
+     1600
+    ],
+    "lonlat": [
+     13.589,
+     51.611
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 17.49,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       368,
+       -1648
+      ],
+      "chunk": [
+       11,
+       -52
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       720,
+       -3312
+      ],
+      "chunk": [
+       22,
+       -104
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       1424,
+       -6640
+      ],
+      "chunk": [
+       44,
+       -208
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       2128,
+       -9968
+      ],
+      "chunk": [
+       66,
+       -312
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       3568,
+       -16624
+      ],
+      "chunk": [
+       111,
+       -520
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Europe, Spain, Madrid",
+    "name": "Madrid",
+    "cities_file_line": 8,
+    "position": [
+     -222,
+     -581
+    ],
+    "pixel": [
+     7400,
+     2100
+    ],
+    "lonlat": [
+     -4.189,
+     40.5
+    ],
+    "class": "D",
+    "on_land": true,
+    "nearest_water_px": 29.02,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -432,
+       -1168
+      ],
+      "chunk": [
+       -14,
+       -37
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -880,
+       -2320
+      ],
+      "chunk": [
+       -28,
+       -73
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -1776,
+       -4656
+      ],
+      "chunk": [
+       -56,
+       -146
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -2672,
+       -6960
+      ],
+      "chunk": [
+       -84,
+       -218
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -4432,
+       -11632
+      ],
+      "chunk": [
+       -139,
+       -364
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Europe, United Kingdom, London",
+    "name": "London",
+    "cities_file_line": 9,
+    "position": [
+     -122,
+     -831
+    ],
+    "pixel": [
+     7600,
+     1600
+    ],
+    "lonlat": [
+     0.256,
+     51.611
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 6.71,
+    "land_fraction_within_10px": 0.932,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -240,
+       -1648
+      ],
+      "chunk": [
+       -8,
+       -52
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -496,
+       -3312
+      ],
+      "chunk": [
+       -16,
+       -104
+      ],
+      "nearest_pixel_on_land": false
+     },
+     "4": {
+      "tile": [
+       -976,
+       -6640
+      ],
+      "chunk": [
+       -31,
+       -208
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -1456,
+       -9968
+      ],
+      "chunk": [
+       -46,
+       -312
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -2448,
+       -16624
+      ],
+      "chunk": [
+       -77,
+       -520
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Europe, Russia, Kovdor",
+    "name": "Kovdor",
+    "cities_file_line": 10,
+    "position": [
+     528,
+     -1131
+    ],
+    "pixel": [
+     8900,
+     1000
+    ],
+    "lonlat": [
+     29.144,
+     64.944
+    ],
+    "class": "o",
+    "on_land": false,
+    "nearest_land_px": 1.0,
+    "land_fraction_within_10px": 0.667,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       1072,
+       -2256
+      ],
+      "chunk": [
+       33,
+       -71
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       2128,
+       -4528
+      ],
+      "chunk": [
+       66,
+       -142
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       4240,
+       -9040
+      ],
+      "chunk": [
+       132,
+       -283
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       6352,
+       -13584
+      ],
+      "chunk": [
+       198,
+       -425
+      ],
+      "nearest_pixel_on_land": false
+     },
+     "10": {
+      "tile": [
+       10576,
+       -22608
+      ],
+      "chunk": [
+       330,
+       -707
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Europe, Russia, Munguy",
+    "name": "Munguy",
+    "cities_file_line": 11,
+    "position": [
+     1678,
+     -1131
+    ],
+    "pixel": [
+     11200,
+     1000
+    ],
+    "lonlat": [
+     80.256,
+     64.944
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 35.06,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       3344,
+       -2256
+      ],
+      "chunk": [
+       104,
+       -71
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       6704,
+       -4528
+      ],
+      "chunk": [
+       209,
+       -142
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       13424,
+       -9040
+      ],
+      "chunk": [
+       419,
+       -283
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       20144,
+       -13584
+      ],
+      "chunk": [
+       629,
+       -425
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       33552,
+       -22608
+      ],
+      "chunk": [
+       1048,
+       -707
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Europe, Russia, Xeta",
+    "name": "Xeta",
+    "cities_file_line": 12,
+    "position": [
+     2178,
+     -1331
+    ],
+    "pixel": [
+     12200,
+     600
+    ],
+    "lonlat": [
+     102.478,
+     73.833
+    ],
+    "class": "d",
+    "on_land": true,
+    "nearest_water_px": 21.4,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       4368,
+       -2672
+      ],
+      "chunk": [
+       136,
+       -84
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       8720,
+       -5328
+      ],
+      "chunk": [
+       272,
+       -167
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       17424,
+       -10640
+      ],
+      "chunk": [
+       544,
+       -333
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       26128,
+       -15984
+      ],
+      "chunk": [
+       816,
+       -500
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       43568,
+       -26608
+      ],
+      "chunk": [
+       1361,
+       -832
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Europe, Russia, Yakutia",
+    "name": "Yakutia",
+    "cities_file_line": 13,
+    "position": [
+     2678,
+     -1131
+    ],
+    "pixel": [
+     13200,
+     1000
+    ],
+    "lonlat": [
+     124.7,
+     64.944
+    ],
+    "class": "d",
+    "on_land": true,
+    "nearest_water_px": 2.83,
+    "land_fraction_within_10px": 0.88,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       5360,
+       -2256
+      ],
+      "chunk": [
+       167,
+       -71
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       10704,
+       -4528
+      ],
+      "chunk": [
+       334,
+       -142
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       21424,
+       -9040
+      ],
+      "chunk": [
+       669,
+       -283
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       32144,
+       -13584
+      ],
+      "chunk": [
+       1004,
+       -425
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       53552,
+       -22608
+      ],
+      "chunk": [
+       1673,
+       -707
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Europe, Russia, Zyryanka",
+    "name": "Zyryanka",
+    "cities_file_line": 14,
+    "position": [
+     3178,
+     -1131
+    ],
+    "pixel": [
+     14200,
+     1000
+    ],
+    "lonlat": [
+     146.922,
+     64.944
+    ],
+    "class": "d",
+    "on_land": true,
+    "nearest_water_px": 8.94,
+    "land_fraction_within_10px": 0.973,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       6352,
+       -2256
+      ],
+      "chunk": [
+       198,
+       -71
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       12720,
+       -4528
+      ],
+      "chunk": [
+       397,
+       -142
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       25424,
+       -9040
+      ],
+      "chunk": [
+       794,
+       -283
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       38128,
+       -13584
+      ],
+      "chunk": [
+       1191,
+       -425
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       63568,
+       -22608
+      ],
+      "chunk": [
+       1986,
+       -707
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Europe, Ukraine, Kharkiv",
+    "name": "Kharkiv",
+    "cities_file_line": 15,
+    "position": [
+     678,
+     -831
+    ],
+    "pixel": [
+     9200,
+     1600
+    ],
+    "lonlat": [
+     35.811,
+     51.611
+    ],
+    "class": "G",
+    "on_land": true,
+    "nearest_water_px": 2.0,
+    "land_fraction_within_10px": 0.968,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       1360,
+       -1648
+      ],
+      "chunk": [
+       42,
+       -52
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       2704,
+       -3312
+      ],
+      "chunk": [
+       84,
+       -104
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       5424,
+       -6640
+      ],
+      "chunk": [
+       169,
+       -208
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       8144,
+       -9968
+      ],
+      "chunk": [
+       254,
+       -312
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       13552,
+       -16624
+      ],
+      "chunk": [
+       423,
+       -520
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Africa, Angola, Huambo",
+    "name": "Huambo",
+    "cities_file_line": 16,
+    "position": [
+     253,
+     469
+    ],
+    "pixel": [
+     8350,
+     4200
+    ],
+    "lonlat": [
+     16.922,
+     -6.167
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 9.06,
+    "land_fraction_within_10px": 0.971,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       496,
+       944
+      ],
+      "chunk": [
+       15,
+       29
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       1008,
+       1872
+      ],
+      "chunk": [
+       31,
+       58
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       2032,
+       3760
+      ],
+      "chunk": [
+       63,
+       117
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       3024,
+       5616
+      ],
+      "chunk": [
+       94,
+       175
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       5072,
+       9392
+      ],
+      "chunk": [
+       158,
+       293
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Africa, Chad, Mongo",
+    "name": "Mongo",
+    "cities_file_line": 17,
+    "position": [
+     178,
+     44
+    ],
+    "pixel": [
+     8200,
+     3350
+    ],
+    "lonlat": [
+     13.589,
+     12.722
+    ],
+    "class": "S",
+    "on_land": true,
+    "nearest_water_px": 31.78,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       368,
+       80
+      ],
+      "chunk": [
+       11,
+       2
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       720,
+       176
+      ],
+      "chunk": [
+       22,
+       5
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       1424,
+       368
+      ],
+      "chunk": [
+       44,
+       11
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       2128,
+       528
+      ],
+      "chunk": [
+       66,
+       16
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       3568,
+       880
+      ],
+      "chunk": [
+       111,
+       27
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Africa, Ethiopia, Dangila",
+    "name": "Dangila",
+    "cities_file_line": 18,
+    "position": [
+     678,
+     44
+    ],
+    "pixel": [
+     9200,
+     3350
+    ],
+    "lonlat": [
+     35.811,
+     12.722
+    ],
+    "class": "S",
+    "on_land": true,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       1360,
+       80
+      ],
+      "chunk": [
+       42,
+       2
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       2704,
+       176
+      ],
+      "chunk": [
+       84,
+       5
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       5424,
+       368
+      ],
+      "chunk": [
+       169,
+       11
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       8144,
+       528
+      ],
+      "chunk": [
+       254,
+       16
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       13552,
+       880
+      ],
+      "chunk": [
+       423,
+       27
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Africa, Mali, Bamako",
+    "name": "Bamako",
+    "cities_file_line": 19,
+    "position": [
+     -322,
+     44
+    ],
+    "pixel": [
+     7200,
+     3350
+    ],
+    "lonlat": [
+     -8.633,
+     12.722
+    ],
+    "class": "G",
+    "on_land": true,
+    "nearest_water_px": 4.12,
+    "land_fraction_within_10px": 0.993,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -656,
+       80
+      ],
+      "chunk": [
+       -21,
+       2
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -1296,
+       176
+      ],
+      "chunk": [
+       -41,
+       5
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -2576,
+       368
+      ],
+      "chunk": [
+       -81,
+       11
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -3856,
+       528
+      ],
+      "chunk": [
+       -121,
+       16
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -6448,
+       880
+      ],
+      "chunk": [
+       -202,
+       27
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Africa, Morocco, Akka",
+    "name": "Akka",
+    "cities_file_line": 20,
+    "position": [
+     -322,
+     -331
+    ],
+    "pixel": [
+     7200,
+     2600
+    ],
+    "lonlat": [
+     -8.633,
+     29.389
+    ],
+    "class": "G",
+    "on_land": true,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -656,
+       -656
+      ],
+      "chunk": [
+       -21,
+       -21
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -1296,
+       -1328
+      ],
+      "chunk": [
+       -41,
+       -42
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -2576,
+       -2640
+      ],
+      "chunk": [
+       -81,
+       -83
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -3856,
+       -3984
+      ],
+      "chunk": [
+       -121,
+       -125
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -6448,
+       -6608
+      ],
+      "chunk": [
+       -202,
+       -207
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Africa, North Africa, Waddan",
+    "name": "Waddan",
+    "cities_file_line": 21,
+    "position": [
+     178,
+     -331
+    ],
+    "pixel": [
+     8200,
+     2600
+    ],
+    "lonlat": [
+     13.589,
+     29.389
+    ],
+    "class": "s",
+    "on_land": true,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       368,
+       -656
+      ],
+      "chunk": [
+       11,
+       -21
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       720,
+       -1328
+      ],
+      "chunk": [
+       22,
+       -42
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       1424,
+       -2640
+      ],
+      "chunk": [
+       44,
+       -83
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       2128,
+       -3984
+      ],
+      "chunk": [
+       66,
+       -125
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       3568,
+       -6608
+      ],
+      "chunk": [
+       111,
+       -207
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Africa, South Africa, Johannesburg",
+    "name": "Johannesburg",
+    "cities_file_line": 22,
+    "position": [
+     478,
+     869
+    ],
+    "pixel": [
+     8800,
+     5000
+    ],
+    "lonlat": [
+     26.922,
+     -23.944
+    ],
+    "class": "w",
+    "on_land": false,
+    "nearest_land_px": 1.0,
+    "land_fraction_within_10px": 0.968,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       944,
+       1744
+      ],
+      "chunk": [
+       29,
+       54
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       1904,
+       3472
+      ],
+      "chunk": [
+       59,
+       108
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       3824,
+       6960
+      ],
+      "chunk": [
+       119,
+       217
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       5744,
+       10416
+      ],
+      "chunk": [
+       179,
+       325
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       9552,
+       17392
+      ],
+      "chunk": [
+       298,
+       543
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Africa, Tanzania, Songea",
+    "name": "Songea",
+    "cities_file_line": 23,
+    "position": [
+     678,
+     469
+    ],
+    "pixel": [
+     9200,
+     4200
+    ],
+    "lonlat": [
+     35.811,
+     -6.167
+    ],
+    "class": "G",
+    "on_land": true,
+    "nearest_water_px": 20.62,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       1360,
+       944
+      ],
+      "chunk": [
+       42,
+       29
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       2704,
+       1872
+      ],
+      "chunk": [
+       84,
+       58
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       5424,
+       3760
+      ],
+      "chunk": [
+       169,
+       117
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       8144,
+       5616
+      ],
+      "chunk": [
+       254,
+       175
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       13552,
+       9392
+      ],
+      "chunk": [
+       423,
+       293
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Arabia, Saudi Arabia, Tabuk",
+    "name": "Tabuk",
+    "cities_file_line": 24,
+    "position": [
+     678,
+     -331
+    ],
+    "pixel": [
+     9200,
+     2600
+    ],
+    "lonlat": [
+     35.811,
+     29.389
+    ],
+    "class": "S",
+    "on_land": true,
+    "nearest_water_px": 37.22,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       1360,
+       -656
+      ],
+      "chunk": [
+       42,
+       -21
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       2704,
+       -1328
+      ],
+      "chunk": [
+       84,
+       -42
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       5424,
+       -2640
+      ],
+      "chunk": [
+       169,
+       -83
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       8144,
+       -3984
+      ],
+      "chunk": [
+       254,
+       -125
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       13552,
+       -6608
+      ],
+      "chunk": [
+       423,
+       -207
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Asia, China, Chengdu",
+    "name": "Chengdu",
+    "cities_file_line": 25,
+    "position": [
+     2178,
+     -331
+    ],
+    "pixel": [
+     12200,
+     2600
+    ],
+    "lonlat": [
+     102.478,
+     29.389
+    ],
+    "class": "o",
+    "on_land": false,
+    "nearest_land_px": 1.0,
+    "land_fraction_within_10px": 0.837,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       4368,
+       -656
+      ],
+      "chunk": [
+       136,
+       -21
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       8720,
+       -1328
+      ],
+      "chunk": [
+       272,
+       -42
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       17424,
+       -2640
+      ],
+      "chunk": [
+       544,
+       -83
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       26128,
+       -3984
+      ],
+      "chunk": [
+       816,
+       -125
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       43568,
+       -6608
+      ],
+      "chunk": [
+       1361,
+       -207
+      ],
+      "nearest_pixel_on_land": false
+     }
+    }
+   },
+   {
+    "full_name": "Asia, China, Nanchang",
+    "name": "Nanchang",
+    "cities_file_line": 26,
+    "position": [
+     2478,
+     -331
+    ],
+    "pixel": [
+     12800,
+     2600
+    ],
+    "lonlat": [
+     115.811,
+     29.389
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 7.81,
+    "land_fraction_within_10px": 0.9,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       4944,
+       -656
+      ],
+      "chunk": [
+       154,
+       -21
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       9904,
+       -1328
+      ],
+      "chunk": [
+       309,
+       -42
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       19824,
+       -2640
+      ],
+      "chunk": [
+       619,
+       -83
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       29744,
+       -3984
+      ],
+      "chunk": [
+       929,
+       -125
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       49552,
+       -6608
+      ],
+      "chunk": [
+       1548,
+       -207
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Asia, China, Songling",
+    "name": "Songling",
+    "cities_file_line": 27,
+    "position": [
+     2678,
+     -831
+    ],
+    "pixel": [
+     13200,
+     1600
+    ],
+    "lonlat": [
+     124.7,
+     51.611
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 15.0,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       5360,
+       -1648
+      ],
+      "chunk": [
+       167,
+       -52
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       10704,
+       -3312
+      ],
+      "chunk": [
+       334,
+       -104
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       21424,
+       -6640
+      ],
+      "chunk": [
+       669,
+       -208
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       32144,
+       -9968
+      ],
+      "chunk": [
+       1004,
+       -312
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       53552,
+       -16624
+      ],
+      "chunk": [
+       1673,
+       -520
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Asia, India, Delhi",
+    "name": "Delhi",
+    "cities_file_line": 28,
+    "position": [
+     1678,
+     -331
+    ],
+    "pixel": [
+     11200,
+     2600
+    ],
+    "lonlat": [
+     80.256,
+     29.389
+    ],
+    "class": "g",
+    "on_land": true,
+    "nearest_water_px": 3.0,
+    "land_fraction_within_10px": 0.984,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       3344,
+       -656
+      ],
+      "chunk": [
+       104,
+       -21
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       6704,
+       -1328
+      ],
+      "chunk": [
+       209,
+       -42
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       13424,
+       -2640
+      ],
+      "chunk": [
+       419,
+       -83
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       20144,
+       -3984
+      ],
+      "chunk": [
+       629,
+       -125
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       33552,
+       -6608
+      ],
+      "chunk": [
+       1048,
+       -207
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Asia, India, Hampi",
+    "name": "Hampi",
+    "cities_file_line": 29,
+    "position": [
+     1578,
+     -31
+    ],
+    "pixel": [
+     11000,
+     3200
+    ],
+    "lonlat": [
+     75.811,
+     16.056
+    ],
+    "class": "G",
+    "on_land": true,
+    "nearest_water_px": 11.7,
+    "land_fraction_within_10px": 0.993,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       3152,
+       -48
+      ],
+      "chunk": [
+       98,
+       -2
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       6320,
+       -112
+      ],
+      "chunk": [
+       197,
+       -4
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       12624,
+       -240
+      ],
+      "chunk": [
+       394,
+       -8
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       18928,
+       -368
+      ],
+      "chunk": [
+       591,
+       -12
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       31568,
+       -624
+      ],
+      "chunk": [
+       986,
+       -20
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Asia, Iran, Bam",
+    "name": "Bam",
+    "cities_file_line": 30,
+    "position": [
+     1178,
+     -331
+    ],
+    "pixel": [
+     10200,
+     2600
+    ],
+    "lonlat": [
+     58.033,
+     29.389
+    ],
+    "class": "s",
+    "on_land": true,
+    "nearest_water_px": 43.57,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       2352,
+       -656
+      ],
+      "chunk": [
+       73,
+       -21
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       4720,
+       -1328
+      ],
+      "chunk": [
+       147,
+       -42
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       9424,
+       -2640
+      ],
+      "chunk": [
+       294,
+       -83
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       14128,
+       -3984
+      ],
+      "chunk": [
+       441,
+       -125
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       23568,
+       -6608
+      ],
+      "chunk": [
+       736,
+       -207
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Asia, Kazakhstan, Aktobe",
+    "name": "Aktobe",
+    "cities_file_line": 31,
+    "position": [
+     1178,
+     -831
+    ],
+    "pixel": [
+     10200,
+     1600
+    ],
+    "lonlat": [
+     58.033,
+     51.611
+    ],
+    "class": "G",
+    "on_land": true,
+    "nearest_water_px": 24.0,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       2352,
+       -1648
+      ],
+      "chunk": [
+       73,
+       -52
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       4720,
+       -3312
+      ],
+      "chunk": [
+       147,
+       -104
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       9424,
+       -6640
+      ],
+      "chunk": [
+       294,
+       -208
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       14128,
+       -9968
+      ],
+      "chunk": [
+       441,
+       -312
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       23568,
+       -16624
+      ],
+      "chunk": [
+       736,
+       -520
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Asia, Kazakhstan, Semey",
+    "name": "Semey",
+    "cities_file_line": 32,
+    "position": [
+     1678,
+     -831
+    ],
+    "pixel": [
+     11200,
+     1600
+    ],
+    "lonlat": [
+     80.256,
+     51.611
+    ],
+    "class": "G",
+    "on_land": true,
+    "nearest_water_px": 49.82,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       3344,
+       -1648
+      ],
+      "chunk": [
+       104,
+       -52
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       6704,
+       -3312
+      ],
+      "chunk": [
+       209,
+       -104
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       13424,
+       -6640
+      ],
+      "chunk": [
+       419,
+       -208
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       20144,
+       -9968
+      ],
+      "chunk": [
+       629,
+       -312
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       33552,
+       -16624
+      ],
+      "chunk": [
+       1048,
+       -520
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Asia, Mongolia, Moron",
+    "name": "Moron",
+    "cities_file_line": 33,
+    "position": [
+     2178,
+     -831
+    ],
+    "pixel": [
+     12200,
+     1600
+    ],
+    "lonlat": [
+     102.478,
+     51.611
+    ],
+    "class": "d",
+    "on_land": true,
+    "nearest_water_px": 14.14,
+    "land_fraction_within_10px": 0.998,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       4368,
+       -1648
+      ],
+      "chunk": [
+       136,
+       -52
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       8720,
+       -3312
+      ],
+      "chunk": [
+       272,
+       -104
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       17424,
+       -6640
+      ],
+      "chunk": [
+       544,
+       -208
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       26128,
+       -9968
+      ],
+      "chunk": [
+       816,
+       -312
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       43568,
+       -16624
+      ],
+      "chunk": [
+       1361,
+       -520
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Asia, Thailand, Bangkok",
+    "name": "Bangkok",
+    "cities_file_line": 34,
+    "position": [
+     2128,
+     -31
+    ],
+    "pixel": [
+     12100,
+     3200
+    ],
+    "lonlat": [
+     100.256,
+     16.056
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 5.0,
+    "land_fraction_within_10px": 0.923,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       4272,
+       -48
+      ],
+      "chunk": [
+       133,
+       -2
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       8528,
+       -112
+      ],
+      "chunk": [
+       266,
+       -4
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       17040,
+       -240
+      ],
+      "chunk": [
+       532,
+       -8
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       25552,
+       -368
+      ],
+      "chunk": [
+       798,
+       -12
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       42576,
+       -624
+      ],
+      "chunk": [
+       1330,
+       -20
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Central America, Mexico, Mexico City",
+    "name": "Mexico City",
+    "cities_file_line": 35,
+    "position": [
+     -2372,
+     -131
+    ],
+    "pixel": [
+     3100,
+     3000
+    ],
+    "lonlat": [
+     -99.744,
+     20.5
+    ],
+    "class": "G",
+    "on_land": true,
+    "nearest_water_px": 12.81,
+    "land_fraction_within_10px": 0.993,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -4752,
+       -272
+      ],
+      "chunk": [
+       -149,
+       -9
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -9488,
+       -528
+      ],
+      "chunk": [
+       -297,
+       -17
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -18960,
+       -1040
+      ],
+      "chunk": [
+       -593,
+       -33
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -28464,
+       -1584
+      ],
+      "chunk": [
+       -890,
+       -50
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -47440,
+       -2608
+      ],
+      "chunk": [
+       -1483,
+       -82
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Canada, Ellesmere Island",
+    "name": "Ellesmere Island",
+    "cities_file_line": 36,
+    "position": [
+     -1972,
+     -1431
+    ],
+    "pixel": [
+     3900,
+     400
+    ],
+    "lonlat": [
+     -81.967,
+     78.278
+    ],
+    "class": "d",
+    "on_land": true,
+    "nearest_water_px": 17.69,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -3952,
+       -2864
+      ],
+      "chunk": [
+       -124,
+       -90
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -7888,
+       -5712
+      ],
+      "chunk": [
+       -247,
+       -179
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -15760,
+       -11440
+      ],
+      "chunk": [
+       -493,
+       -358
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -23664,
+       -17168
+      ],
+      "chunk": [
+       -740,
+       -537
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -39440,
+       -28624
+      ],
+      "chunk": [
+       -1233,
+       -895
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Canada, Fort Liard",
+    "name": "Fort Liard",
+    "cities_file_line": 37,
+    "position": [
+     -3022,
+     -1131
+    ],
+    "pixel": [
+     1800,
+     1000
+    ],
+    "lonlat": [
+     -128.633,
+     64.944
+    ],
+    "class": "d",
+    "on_land": true,
+    "nearest_water_px": 29.27,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -6032,
+       -2256
+      ],
+      "chunk": [
+       -189,
+       -71
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -12080,
+       -4528
+      ],
+      "chunk": [
+       -378,
+       -142
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -24176,
+       -9040
+      ],
+      "chunk": [
+       -756,
+       -283
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -36272,
+       -13584
+      ],
+      "chunk": [
+       -1134,
+       -425
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -60432,
+       -22608
+      ],
+      "chunk": [
+       -1889,
+       -707
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Canada, Hearst",
+    "name": "Hearst",
+    "cities_file_line": 38,
+    "position": [
+     -1972,
+     -831
+    ],
+    "pixel": [
+     3900,
+     1600
+    ],
+    "lonlat": [
+     -81.967,
+     51.611
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 22.36,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -3952,
+       -1648
+      ],
+      "chunk": [
+       -124,
+       -52
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -7888,
+       -3312
+      ],
+      "chunk": [
+       -247,
+       -104
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -15760,
+       -6640
+      ],
+      "chunk": [
+       -493,
+       -208
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -23664,
+       -9968
+      ],
+      "chunk": [
+       -740,
+       -312
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -39440,
+       -16624
+      ],
+      "chunk": [
+       -1233,
+       -520
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Canada, Mid Baffin",
+    "name": "Mid Baffin",
+    "cities_file_line": 39,
+    "position": [
+     -1772,
+     -1231
+    ],
+    "pixel": [
+     4300,
+     800
+    ],
+    "lonlat": [
+     -73.078,
+     69.389
+    ],
+    "class": "d",
+    "on_land": true,
+    "nearest_water_px": 44.55,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -3536,
+       -2448
+      ],
+      "chunk": [
+       -111,
+       -77
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -7088,
+       -4912
+      ],
+      "chunk": [
+       -222,
+       -154
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -14160,
+       -9840
+      ],
+      "chunk": [
+       -443,
+       -308
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -21264,
+       -14768
+      ],
+      "chunk": [
+       -665,
+       -462
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -35440,
+       -24624
+      ],
+      "chunk": [
+       -1108,
+       -770
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Canada, Okak",
+    "name": "Okak",
+    "cities_file_line": 40,
+    "position": [
+     -1572,
+     -956
+    ],
+    "pixel": [
+     4700,
+     1350
+    ],
+    "lonlat": [
+     -64.189,
+     57.167
+    ],
+    "class": "S",
+    "on_land": true,
+    "nearest_water_px": 18.36,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -3152,
+       -1904
+      ],
+      "chunk": [
+       -99,
+       -60
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -6288,
+       -3824
+      ],
+      "chunk": [
+       -197,
+       -120
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -12560,
+       -7632
+      ],
+      "chunk": [
+       -393,
+       -239
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -18864,
+       -11472
+      ],
+      "chunk": [
+       -590,
+       -359
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -31440,
+       -19120
+      ],
+      "chunk": [
+       -983,
+       -598
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Canada, Saskatoon",
+    "name": "Saskatoon",
+    "cities_file_line": 41,
+    "position": [
+     -2522,
+     -856
+    ],
+    "pixel": [
+     2800,
+     1550
+    ],
+    "lonlat": [
+     -106.411,
+     52.722
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 7.07,
+    "land_fraction_within_10px": 0.961,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -5040,
+       -1712
+      ],
+      "chunk": [
+       -158,
+       -54
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -10096,
+       -3408
+      ],
+      "chunk": [
+       -316,
+       -107
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -20176,
+       -6832
+      ],
+      "chunk": [
+       -631,
+       -214
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -30256,
+       -10256
+      ],
+      "chunk": [
+       -946,
+       -321
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -50448,
+       -17104
+      ],
+      "chunk": [
+       -1577,
+       -535
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Canada, Yellowknife",
+    "name": "Yellowknife",
+    "cities_file_line": 42,
+    "position": [
+     -2472,
+     -1156
+    ],
+    "pixel": [
+     2900,
+     950
+    ],
+    "lonlat": [
+     -104.189,
+     66.056
+    ],
+    "class": "d",
+    "on_land": true,
+    "nearest_water_px": 31.78,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -4944,
+       -2320
+      ],
+      "chunk": [
+       -155,
+       -73
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -9872,
+       -4624
+      ],
+      "chunk": [
+       -309,
+       -145
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -19760,
+       -9232
+      ],
+      "chunk": [
+       -618,
+       -289
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -29648,
+       -13872
+      ],
+      "chunk": [
+       -927,
+       -434
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -49424,
+       -23120
+      ],
+      "chunk": [
+       -1545,
+       -723
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Greenland, Qaanaaq",
+    "name": "Qaanaaq",
+    "cities_file_line": 43,
+    "position": [
+     -1372,
+     -1431
+    ],
+    "pixel": [
+     5100,
+     400
+    ],
+    "lonlat": [
+     -55.3,
+     78.278
+    ],
+    "class": "d",
+    "on_land": true,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -2736,
+       -2864
+      ],
+      "chunk": [
+       -86,
+       -90
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -5488,
+       -5712
+      ],
+      "chunk": [
+       -172,
+       -179
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -10960,
+       -11440
+      ],
+      "chunk": [
+       -343,
+       -358
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -16464,
+       -17168
+      ],
+      "chunk": [
+       -515,
+       -537
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -27440,
+       -28624
+      ],
+      "chunk": [
+       -858,
+       -895
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Greenland, Summit Camp",
+    "name": "Summit Camp",
+    "cities_file_line": 44,
+    "position": [
+     -1122,
+     -1181
+    ],
+    "pixel": [
+     5600,
+     900
+    ],
+    "lonlat": [
+     -44.189,
+     67.167
+    ],
+    "class": "d",
+    "on_land": true,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -2256,
+       -2352
+      ],
+      "chunk": [
+       -71,
+       -74
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -4496,
+       -4720
+      ],
+      "chunk": [
+       -141,
+       -148
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -8976,
+       -9456
+      ],
+      "chunk": [
+       -281,
+       -296
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -13456,
+       -14160
+      ],
+      "chunk": [
+       -421,
+       -443
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -22448,
+       -23632
+      ],
+      "chunk": [
+       -702,
+       -739
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, Greenland, Uranienborg",
+    "name": "Uranienborg",
+    "cities_file_line": 45,
+    "position": [
+     -772,
+     -1431
+    ],
+    "pixel": [
+     6300,
+     400
+    ],
+    "lonlat": [
+     -28.633,
+     78.278
+    ],
+    "class": "d",
+    "on_land": true,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -1552,
+       -2864
+      ],
+      "chunk": [
+       -49,
+       -90
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -3088,
+       -5712
+      ],
+      "chunk": [
+       -97,
+       -179
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -6160,
+       -11440
+      ],
+      "chunk": [
+       -193,
+       -358
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -9264,
+       -17168
+      ],
+      "chunk": [
+       -290,
+       -537
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -15440,
+       -28624
+      ],
+      "chunk": [
+       -483,
+       -895
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, United States, Albany",
+    "name": "Albany",
+    "cities_file_line": 46,
+    "position": [
+     -1797,
+     -631
+    ],
+    "pixel": [
+     4250,
+     2000
+    ],
+    "lonlat": [
+     -74.189,
+     42.722
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 8.25,
+    "land_fraction_within_10px": 0.948,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -3600,
+       -1264
+      ],
+      "chunk": [
+       -113,
+       -40
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -7184,
+       -2512
+      ],
+      "chunk": [
+       -225,
+       -79
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -14384,
+       -5040
+      ],
+      "chunk": [
+       -450,
+       -158
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -21552,
+       -7568
+      ],
+      "chunk": [
+       -674,
+       -237
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -35952,
+       -12624
+      ],
+      "chunk": [
+       -1124,
+       -395
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, United States, Boise",
+    "name": "Boise",
+    "cities_file_line": 47,
+    "position": [
+     -2722,
+     -631
+    ],
+    "pixel": [
+     2400,
+     2000
+    ],
+    "lonlat": [
+     -115.3,
+     42.722
+    ],
+    "class": "S",
+    "on_land": true,
+    "nearest_water_px": 9.49,
+    "land_fraction_within_10px": 0.964,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -5456,
+       -1264
+      ],
+      "chunk": [
+       -171,
+       -40
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -10896,
+       -2512
+      ],
+      "chunk": [
+       -341,
+       -79
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -21776,
+       -5040
+      ],
+      "chunk": [
+       -681,
+       -158
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -32656,
+       -7568
+      ],
+      "chunk": [
+       -1021,
+       -237
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -54448,
+       -12624
+      ],
+      "chunk": [
+       -1702,
+       -395
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, United States, Minneapolis",
+    "name": "Minneapolis",
+    "cities_file_line": 48,
+    "position": [
+     -2247,
+     -631
+    ],
+    "pixel": [
+     3350,
+     2000
+    ],
+    "lonlat": [
+     -94.189,
+     42.722
+    ],
+    "class": "G",
+    "on_land": true,
+    "nearest_water_px": 2.24,
+    "land_fraction_within_10px": 0.973,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -4496,
+       -1264
+      ],
+      "chunk": [
+       -141,
+       -40
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -8976,
+       -2512
+      ],
+      "chunk": [
+       -281,
+       -79
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -17968,
+       -5040
+      ],
+      "chunk": [
+       -562,
+       -158
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -26960,
+       -7568
+      ],
+      "chunk": [
+       -843,
+       -237
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -44944,
+       -12624
+      ],
+      "chunk": [
+       -1405,
+       -395
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, United States, El Paso",
+    "name": "El Paso",
+    "cities_file_line": 49,
+    "position": [
+     -2572,
+     -431
+    ],
+    "pixel": [
+     2700,
+     2400
+    ],
+    "lonlat": [
+     -108.633,
+     33.833
+    ],
+    "class": "D",
+    "on_land": true,
+    "nearest_water_px": 28.79,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -5136,
+       -848
+      ],
+      "chunk": [
+       -161,
+       -27
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -10288,
+       -1712
+      ],
+      "chunk": [
+       -322,
+       -54
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -20560,
+       -3440
+      ],
+      "chunk": [
+       -643,
+       -108
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -30864,
+       -5168
+      ],
+      "chunk": [
+       -965,
+       -162
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -51440,
+       -8624
+      ],
+      "chunk": [
+       -1608,
+       -270
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, United States, Hughes",
+    "name": "Hughes",
+    "cities_file_line": 50,
+    "position": [
+     -3622,
+     -1131
+    ],
+    "pixel": [
+     600,
+     1000
+    ],
+    "lonlat": [
+     -155.3,
+     64.944
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 5.1,
+    "land_fraction_within_10px": 0.896,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -7248,
+       -2256
+      ],
+      "chunk": [
+       -227,
+       -71
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -14480,
+       -4528
+      ],
+      "chunk": [
+       -453,
+       -142
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -28976,
+       -9040
+      ],
+      "chunk": [
+       -906,
+       -283
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -43472,
+       -13584
+      ],
+      "chunk": [
+       -1359,
+       -425
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -72432,
+       -22608
+      ],
+      "chunk": [
+       -2264,
+       -707
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "North America, United States, Montgomery",
+    "name": "Montgomery",
+    "cities_file_line": 51,
+    "position": [
+     -2022,
+     -431
+    ],
+    "pixel": [
+     3800,
+     2400
+    ],
+    "lonlat": [
+     -84.189,
+     33.833
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 6.32,
+    "land_fraction_within_10px": 0.959,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -4048,
+       -848
+      ],
+      "chunk": [
+       -127,
+       -27
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -8080,
+       -1712
+      ],
+      "chunk": [
+       -253,
+       -54
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -16176,
+       -3440
+      ],
+      "chunk": [
+       -506,
+       -108
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -24272,
+       -5168
+      ],
+      "chunk": [
+       -759,
+       -162
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -40432,
+       -8624
+      ],
+      "chunk": [
+       -1264,
+       -270
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "South America, Argentina, Cordoba",
+    "name": "Cordoba",
+    "cities_file_line": 52,
+    "position": [
+     -1572,
+     969
+    ],
+    "pixel": [
+     4700,
+     5200
+    ],
+    "lonlat": [
+     -64.189,
+     -28.389
+    ],
+    "class": "G",
+    "on_land": true,
+    "nearest_water_px": 7.07,
+    "land_fraction_within_10px": 0.989,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -3152,
+       1936
+      ],
+      "chunk": [
+       -99,
+       60
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -6288,
+       3888
+      ],
+      "chunk": [
+       -197,
+       121
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -12560,
+       7760
+      ],
+      "chunk": [
+       -393,
+       242
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -18864,
+       11632
+      ],
+      "chunk": [
+       -590,
+       363
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -31440,
+       19376
+      ],
+      "chunk": [
+       -983,
+       605
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "South America, Brazil, Palmas",
+    "name": "Palmas",
+    "cities_file_line": 53,
+    "position": [
+     -1172,
+     519
+    ],
+    "pixel": [
+     5500,
+     4300
+    ],
+    "lonlat": [
+     -46.411,
+     -8.389
+    ],
+    "class": "m",
+    "on_land": true,
+    "nearest_water_px": 29.0,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -2352,
+       1040
+      ],
+      "chunk": [
+       -74,
+       32
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -4688,
+       2064
+      ],
+      "chunk": [
+       -147,
+       64
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -9360,
+       4144
+      ],
+      "chunk": [
+       -293,
+       129
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -14064,
+       6224
+      ],
+      "chunk": [
+       -440,
+       194
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -23440,
+       10384
+      ],
+      "chunk": [
+       -733,
+       324
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "South America, Peru, Iquitos",
+    "name": "Iquitos",
+    "cities_file_line": 54,
+    "position": [
+     -1722,
+     369
+    ],
+    "pixel": [
+     4400,
+     4000
+    ],
+    "lonlat": [
+     -70.856,
+     -1.722
+    ],
+    "class": "g",
+    "on_land": true,
+    "nearest_water_px": 15.26,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       -3440,
+       752
+      ],
+      "chunk": [
+       -108,
+       23
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       -6896,
+       1488
+      ],
+      "chunk": [
+       -216,
+       46
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       -13776,
+       2960
+      ],
+      "chunk": [
+       -431,
+       92
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       -20656,
+       4432
+      ],
+      "chunk": [
+       -646,
+       138
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       -34448,
+       7376
+      ],
+      "chunk": [
+       -1077,
+       230
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Oceania, Australia, Griffith",
+    "name": "Griffith",
+    "cities_file_line": 55,
+    "position": [
+     3178,
+     969
+    ],
+    "pixel": [
+     14200,
+     5200
+    ],
+    "lonlat": [
+     146.922,
+     -28.389
+    ],
+    "class": "S",
+    "on_land": true,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       6352,
+       1936
+      ],
+      "chunk": [
+       198,
+       60
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       12720,
+       3888
+      ],
+      "chunk": [
+       397,
+       121
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       25424,
+       7760
+      ],
+      "chunk": [
+       794,
+       242
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       38128,
+       11632
+      ],
+      "chunk": [
+       1191,
+       363
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       63568,
+       19376
+      ],
+      "chunk": [
+       1986,
+       605
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   },
+   {
+    "full_name": "Oceania, Australia, Newman",
+    "name": "Newman",
+    "cities_file_line": 56,
+    "position": [
+     2528,
+     869
+    ],
+    "pixel": [
+     12900,
+     5000
+    ],
+    "lonlat": [
+     118.033,
+     -23.944
+    ],
+    "class": "G",
+    "on_land": true,
+    "land_fraction_within_10px": 1.0,
+    "spawn_tile_by_scale": {
+     "1": {
+      "tile": [
+       5072,
+       1744
+      ],
+      "chunk": [
+       158,
+       54
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "2": {
+      "tile": [
+       10128,
+       3472
+      ],
+      "chunk": [
+       316,
+       108
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "4": {
+      "tile": [
+       20240,
+       6960
+      ],
+      "chunk": [
+       632,
+       217
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "6": {
+      "tile": [
+       30352,
+       10416
+      ],
+      "chunk": [
+       948,
+       325
+      ],
+      "nearest_pixel_on_land": true
+     },
+     "10": {
+      "tile": [
+       50576,
+       17392
+      ],
+      "chunk": [
+       1580,
+       543
+      ],
+      "nearest_pixel_on_land": true
+     }
+    }
+   }
+  ]
+ },
+ "river_sampler_simulation": {
+  "method": "numpy port of generateTileName (worldgen.lua:239-311), including the 4-corner weighted vote and random()/max_scale jitter (numpy RNG, seed 1, instead of Factorio's math.random); water = o O w W; connected_4 = the two river end points are joined by 4-connected water tiles inside the window",
+  "rivers": [
+   {
+    "river": "Rhine (Mainz to Cologne)",
+    "end_points_px": [
+     [
+      1673,
+      7961
+     ],
+     [
+      1630,
+      7902
+     ]
+    ],
+    "pixels": {
+     "connected_4": false,
+     "connected_8": true
+    },
+    "by_scale": [
+     {
+      "scale": 0.25,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 21
+     },
+     {
+      "scale": 0.5,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 45
+     },
+     {
+      "scale": 1,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 19
+     },
+     {
+      "scale": 2,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 16
+     },
+     {
+      "scale": 3,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 18
+     },
+     {
+      "scale": 4,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 14
+     },
+     {
+      "scale": 6,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 14
+     }
+    ]
+   },
+   {
+    "river": "Danube (Vienna to Budapest)",
+    "end_points_px": [
+     [
+      1752,
+      8326
+     ],
+     [
+      1785,
+      8446
+     ]
+    ],
+    "pixels": {
+     "connected_4": false,
+     "connected_8": true
+    },
+    "by_scale": [
+     {
+      "scale": 0.25,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 17
+     },
+     {
+      "scale": 0.5,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 39
+     },
+     {
+      "scale": 1,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 37
+     },
+     {
+      "scale": 2,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 23
+     },
+     {
+      "scale": 3,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 28
+     },
+     {
+      "scale": 4,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 19
+     },
+     {
+      "scale": 6,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 24
+     }
+    ]
+   },
+   {
+    "river": "Elbe (Magdeburg to Hamburg)",
+    "end_points_px": [
+     [
+      1577,
+      8113
+     ],
+     [
+      1514,
+      8038
+     ]
+    ],
+    "pixels": {
+     "connected_4": false,
+     "connected_8": true
+    },
+    "by_scale": [
+     {
+      "scale": 0.25,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 14
+     },
+     {
+      "scale": 0.5,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 44
+     },
+     {
+      "scale": 1,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 27
+     },
+     {
+      "scale": 2,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 24
+     },
+     {
+      "scale": 3,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 26
+     },
+     {
+      "scale": 4,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 17
+     },
+     {
+      "scale": 6,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 21
+     }
+    ]
+   },
+   {
+    "river": "Vistula (Warsaw to Torun)",
+    "end_points_px": [
+     [
+      1572,
+      8535
+     ],
+     [
+      1538,
+      8426
+     ]
+    ],
+    "pixels": {
+     "connected_4": false,
+     "connected_8": true
+    },
+    "by_scale": [
+     {
+      "scale": 0.25,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 23
+     },
+     {
+      "scale": 0.5,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 51
+     },
+     {
+      "scale": 1,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 22
+     },
+     {
+      "scale": 2,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 18
+     },
+     {
+      "scale": 3,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 22
+     },
+     {
+      "scale": 4,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 17
+     },
+     {
+      "scale": 6,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 14
+     }
+    ]
+   },
+   {
+    "river": "Loire (Orleans to Tours)",
+    "end_points_px": [
+     [
+      1768,
+      7674
+     ],
+     [
+      1790,
+      7620
+     ]
+    ],
+    "pixels": {
+     "connected_4": false,
+     "connected_8": true
+    },
+    "by_scale": [
+     {
+      "scale": 0.25,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 10
+     },
+     {
+      "scale": 0.5,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 23
+     },
+     {
+      "scale": 1,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 24
+     },
+     {
+      "scale": 2,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 17
+     },
+     {
+      "scale": 3,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 23
+     },
+     {
+      "scale": 4,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 21
+     },
+     {
+      "scale": 6,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 16
+     }
+    ]
+   },
+   {
+    "river": "Dnieper (Kyiv to Cherkasy)",
+    "end_points_px": [
+     [
+      1652,
+      8963
+     ],
+     [
+      1698,
+      9031
+     ]
+    ],
+    "pixels": {
+     "connected_4": false,
+     "connected_8": true
+    },
+    "by_scale": [
+     {
+      "scale": 0.25,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 10
+     },
+     {
+      "scale": 0.5,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 19
+     },
+     {
+      "scale": 1,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 8
+     },
+     {
+      "scale": 2,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 7
+     },
+     {
+      "scale": 3,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 8
+     },
+     {
+      "scale": 4,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 4
+     },
+     {
+      "scale": 6,
+      "connected_4": false,
+      "max_square_tiles": 0,
+      "water_components_4_in_window": 8
+     }
+    ]
+   }
+  ]
+ },
+ "georeference_fit": {
+  "method": "least squares on extreme pixels of matched land components (4-connected), outliers dropped above max(3*MAD, 3 px); x and y fitted independently",
+  "fitted": {
+   "px_per_degree_lon": 44.9984,
+   "px_per_degree_lat": 44.9957,
+   "lon_at_left_edge": -168.6545,
+   "lat_at_top_edge": 87.1991,
+   "rms_x_px": 1.93,
+   "rms_y_px": 1.64,
+   "n_x": 29,
+   "n_x_total": 32,
+   "n_y": 30,
+   "n_y_total": 32,
+   "dropped": [
+    "Greenland W",
+    "Hokkaido E",
+    "Java W",
+    "Sri Lanka N",
+    "NZ North Island N"
+   ]
+  },
+  "rms_y_px_all_points_by_projection": {
+   "mercator": 424.1,
+   "miller": 177.8,
+   "equirectangular": 17.2
+  },
+  "snapped": {
+   "model": "integer crop (511 columns, 127 rows) of a 16200 x 8100 px, 45 px/deg global plate carree grid",
+   "lon_at_left_edge": -168.644444,
+   "lat_at_top_edge": 87.177778,
+   "rms_x_px": 1.94,
+   "rms_y_px": 1.77,
+   "mean_x_px": 0.13,
+   "mean_y_px": 0.65
+  },
+  "controls": [
+   {
+    "name": "Afro-Eurasia",
+    "matched": true,
+    "iou": 0.999,
+    "area_px": 17434632,
+    "bbox_px": [
+     6801,
+     427,
+     15688,
+     5489
+    ]
+   },
+   {
+    "name": "South America",
+    "matched": true,
+    "iou": 0.999,
+    "area_px": 2725415,
+    "bbox_px": [
+     3929,
+     3364,
+     6022,
+     6347
+    ]
+   },
+   {
+    "name": "Australia",
+    "matched": true,
+    "iou": 0.997,
+    "area_px": 1379761,
+    "bbox_px": [
+     12683,
+     4406,
+     14501,
+     5684
+    ]
+   },
+   {
+    "name": "Greenland",
+    "matched": true,
+    "iou": 0.983,
+    "area_px": 1286908,
+    "bbox_px": [
+     4312,
+     161,
+     7073,
+     1223
+    ]
+   },
+   {
+    "name": "Madagascar",
+    "matched": true,
+    "iou": 0.986,
+    "area_px": 101371,
+    "bbox_px": [
+     9535,
+     4462,
+     9860,
+     5074
+    ]
+   },
+   {
+    "name": "Iceland",
+    "matched": true,
+    "iou": 0.976,
+    "area_px": 37442,
+    "bbox_px": [
+     6488,
+     930,
+     6979,
+     1070
+    ]
+   },
+   {
+    "name": "Sri Lanka",
+    "matched": true,
+    "iou": 0.888,
+    "area_px": 10252,
+    "bbox_px": [
+     11177,
+     3495,
+     11272,
+     3656
+    ]
+   },
+   {
+    "name": "Tasmania",
+    "matched": true,
+    "iou": 0.955,
+    "area_px": 13151,
+    "bbox_px": [
+     14098,
+     5754,
+     14263,
+     5886
+    ]
+   },
+   {
+    "name": "Ireland",
+    "matched": true,
+    "iou": 0.964,
+    "area_px": 21494,
+    "bbox_px": [
+     7118,
+     1433,
+     7343,
+     1606
+    ]
+   },
+   {
+    "name": "Newfoundland",
+    "matched": true,
+    "iou": 0.97,
+    "area_px": 24678,
+    "bbox_px": [
+     4917,
+     1602,
+     5219,
+     1824
+    ]
+   },
+   {
+    "name": "Taiwan",
+    "matched": true,
+    "iou": 0.903,
+    "area_px": 5950,
+    "bbox_px": [
+     12993,
+     2787,
+     13076,
+     2935
+    ]
+   },
+   {
+    "name": "Hainan",
+    "matched": true,
+    "iou": 0.913,
+    "area_px": 5650,
+    "bbox_px": [
+     12478,
+     3018,
+     12583,
+     3104
+    ]
+   },
+   {
+    "name": "Hokkaido",
+    "matched": true,
+    "iou": 0.933,
+    "area_px": 16918,
+    "bbox_px": [
+     13879,
+     1876,
+     14137,
+     2059
+    ]
+   },
+   {
+    "name": "Java",
+    "matched": true,
+    "iou": 0.95,
+    "area_px": 19941,
+    "bbox_px": [
+     12335,
+     4189,
+     12745,
+     4317
+    ]
+   },
+   {
+    "name": "NZ South Island",
+    "matched": true,
+    "iou": 0.979,
+    "area_px": 31801,
+    "bbox_px": [
+     15080,
+     5747,
+     15430,
+     6023
+    ]
+   },
+   {
+    "name": "NZ North Island",
+    "matched": true,
+    "iou": 0.568,
+    "area_px": 19858,
+    "bbox_px": [
+     15409,
+     5566,
+     15623,
+     5795
+    ]
+   },
+   {
+    "name": "Vancouver Island",
+    "matched": true,
+    "iou": 0.966,
+    "area_px": 7395,
+    "bbox_px": [
+     1811,
+     1635,
+     2040,
+     1748
+    ]
+   },
+   {
+    "name": "Cuba",
+    "matched": true,
+    "iou": 0.981,
+    "area_px": 17725,
+    "bbox_px": [
+     3767,
+     2881,
+     4251,
+     3030
+    ]
+   }
+  ],
+  "observations": [
+   {
+    "feature": "Afro-Eurasia",
+    "edge": "S",
+    "geo_deg": -34.833,
+    "px": 5489.5
+   },
+   {
+    "feature": "Afro-Eurasia",
+    "edge": "N",
+    "geo_deg": 77.72,
+    "px": 427.5
+   },
+   {
+    "feature": "Afro-Eurasia",
+    "edge": "W",
+    "geo_deg": -17.53,
+    "px": 6801.5
+   },
+   {
+    "feature": "South America",
+    "edge": "W",
+    "geo_deg": -81.33,
+    "px": 3929.5
+   },
+   {
+    "feature": "South America",
+    "edge": "E",
+    "geo_deg": -34.79,
+    "px": 6022.5
+   },
+   {
+    "feature": "Australia",
+    "edge": "N",
+    "geo_deg": -10.69,
+    "px": 4406.5
+   },
+   {
+    "feature": "Australia",
+    "edge": "S",
+    "geo_deg": -39.14,
+    "px": 5684.5
+   },
+   {
+    "feature": "Australia",
+    "edge": "W",
+    "geo_deg": 113.16,
+    "px": 12683.5
+   },
+   {
+    "feature": "Australia",
+    "edge": "E",
+    "geo_deg": 153.64,
+    "px": 14501.5
+   },
+   {
+    "feature": "Greenland",
+    "edge": "N",
+    "geo_deg": 83.66,
+    "px": 161.5
+   },
+   {
+    "feature": "Greenland",
+    "edge": "W",
+    "geo_deg": -73.07,
+    "px": 4312.5
+   },
+   {
+    "feature": "Greenland",
+    "edge": "E",
+    "geo_deg": -11.4,
+    "px": 7073.5
+   },
+   {
+    "feature": "Madagascar",
+    "edge": "N",
+    "geo_deg": -11.95,
+    "px": 4462.5
+   },
+   {
+    "feature": "Madagascar",
+    "edge": "S",
+    "geo_deg": -25.61,
+    "px": 5074.5
+   },
+   {
+    "feature": "Madagascar",
+    "edge": "W",
+    "geo_deg": 43.19,
+    "px": 9535.5
+   },
+   {
+    "feature": "Madagascar",
+    "edge": "E",
+    "geo_deg": 50.48,
+    "px": 9860.5
+   },
+   {
+    "feature": "Iceland",
+    "edge": "N",
+    "geo_deg": 66.54,
+    "px": 930.5
+   },
+   {
+    "feature": "Iceland",
+    "edge": "S",
+    "geo_deg": 63.39,
+    "px": 1070.5
+   },
+   {
+    "feature": "Iceland",
+    "edge": "W",
+    "geo_deg": -24.53,
+    "px": 6488.5
+   },
+   {
+    "feature": "Iceland",
+    "edge": "E",
+    "geo_deg": -13.5,
+    "px": 6979.5
+   },
+   {
+    "feature": "Sri Lanka",
+    "edge": "N",
+    "geo_deg": 9.835,
+    "px": 3495.5
+   },
+   {
+    "feature": "Sri Lanka",
+    "edge": "S",
+    "geo_deg": 5.919,
+    "px": 3656.5
+   },
+   {
+    "feature": "Sri Lanka",
+    "edge": "E",
+    "geo_deg": 81.88,
+    "px": 11272.5
+   },
+   {
+    "feature": "Tasmania",
+    "edge": "N",
+    "geo_deg": -40.64,
+    "px": 5754.5
+   },
+   {
+    "feature": "Tasmania",
+    "edge": "S",
+    "geo_deg": -43.64,
+    "px": 5886.5
+   },
+   {
+    "feature": "Tasmania",
+    "edge": "W",
+    "geo_deg": 144.6,
+    "px": 14098.5
+   },
+   {
+    "feature": "Tasmania",
+    "edge": "E",
+    "geo_deg": 148.35,
+    "px": 14263.5
+   },
+   {
+    "feature": "Ireland",
+    "edge": "N",
+    "geo_deg": 55.383,
+    "px": 1433.5
+   },
+   {
+    "feature": "Ireland",
+    "edge": "S",
+    "geo_deg": 51.44,
+    "px": 1606.5
+   },
+   {
+    "feature": "Ireland",
+    "edge": "W",
+    "geo_deg": -10.48,
+    "px": 7118.5
+   },
+   {
+    "feature": "Ireland",
+    "edge": "E",
+    "geo_deg": -5.43,
+    "px": 7343.5
+   },
+   {
+    "feature": "Newfoundland",
+    "edge": "N",
+    "geo_deg": 51.63,
+    "px": 1602.5
+   },
+   {
+    "feature": "Newfoundland",
+    "edge": "S",
+    "geo_deg": 46.62,
+    "px": 1824.5
+   },
+   {
+    "feature": "Newfoundland",
+    "edge": "W",
+    "geo_deg": -59.42,
+    "px": 4917.5
+   },
+   {
+    "feature": "Newfoundland",
+    "edge": "E",
+    "geo_deg": -52.62,
+    "px": 5219.5
+   },
+   {
+    "feature": "Taiwan",
+    "edge": "N",
+    "geo_deg": 25.3,
+    "px": 2787.5
+   },
+   {
+    "feature": "Taiwan",
+    "edge": "S",
+    "geo_deg": 21.9,
+    "px": 2935.5
+   },
+   {
+    "feature": "Taiwan",
+    "edge": "W",
+    "geo_deg": 120.03,
+    "px": 12993.5
+   },
+   {
+    "feature": "Taiwan",
+    "edge": "E",
+    "geo_deg": 122.0,
+    "px": 13076.5
+   },
+   {
+    "feature": "Hainan",
+    "edge": "N",
+    "geo_deg": 20.16,
+    "px": 3018.5
+   },
+   {
+    "feature": "Hainan",
+    "edge": "S",
+    "geo_deg": 18.16,
+    "px": 3104.5
+   },
+   {
+    "feature": "Hainan",
+    "edge": "W",
+    "geo_deg": 108.61,
+    "px": 12478.5
+   },
+   {
+    "feature": "Hainan",
+    "edge": "E",
+    "geo_deg": 111.05,
+    "px": 12583.5
+   },
+   {
+    "feature": "Hokkaido",
+    "edge": "N",
+    "geo_deg": 45.52,
+    "px": 1876.5
+   },
+   {
+    "feature": "Hokkaido",
+    "edge": "S",
+    "geo_deg": 41.4,
+    "px": 2059.5
+   },
+   {
+    "feature": "Hokkaido",
+    "edge": "E",
+    "geo_deg": 145.82,
+    "px": 14137.5
+   },
+   {
+    "feature": "Java",
+    "edge": "N",
+    "geo_deg": -5.88,
+    "px": 4189.5
+   },
+   {
+    "feature": "Java",
+    "edge": "S",
+    "geo_deg": -8.78,
+    "px": 4317.5
+   },
+   {
+    "feature": "Java",
+    "edge": "W",
+    "geo_deg": 105.21,
+    "px": 12335.5
+   },
+   {
+    "feature": "Java",
+    "edge": "E",
+    "geo_deg": 114.6,
+    "px": 12745.5
+   },
+   {
+    "feature": "NZ South Island",
+    "edge": "N",
+    "geo_deg": -40.5,
+    "px": 5747.5
+   },
+   {
+    "feature": "NZ South Island",
+    "edge": "S",
+    "geo_deg": -46.67,
+    "px": 6023.5
+   },
+   {
+    "feature": "NZ South Island",
+    "edge": "W",
+    "geo_deg": 166.43,
+    "px": 15080.5
+   },
+   {
+    "feature": "NZ South Island",
+    "edge": "E",
+    "geo_deg": 174.32,
+    "px": 15430.5
+   },
+   {
+    "feature": "NZ North Island",
+    "edge": "N",
+    "geo_deg": -34.39,
+    "px": 5566.5
+   },
+   {
+    "feature": "NZ North Island",
+    "edge": "S",
+    "geo_deg": -41.61,
+    "px": 5795.5
+   },
+   {
+    "feature": "NZ North Island",
+    "edge": "E",
+    "geo_deg": 178.55,
+    "px": 15623.5
+   },
+   {
+    "feature": "Vancouver Island",
+    "edge": "N",
+    "geo_deg": 50.78,
+    "px": 1635.5
+   },
+   {
+    "feature": "Vancouver Island",
+    "edge": "S",
+    "geo_deg": 48.31,
+    "px": 1748.5
+   },
+   {
+    "feature": "Vancouver Island",
+    "edge": "W",
+    "geo_deg": -128.43,
+    "px": 1811.5
+   },
+   {
+    "feature": "Vancouver Island",
+    "edge": "E",
+    "geo_deg": -123.29,
+    "px": 2040.5
+   },
+   {
+    "feature": "Cuba",
+    "edge": "S",
+    "geo_deg": 19.83,
+    "px": 3030.5
+   },
+   {
+    "feature": "Cuba",
+    "edge": "W",
+    "geo_deg": -84.95,
+    "px": 3767.5
+   },
+   {
+    "feature": "Cuba",
+    "edge": "E",
+    "geo_deg": -74.13,
+    "px": 4251.5
+   }
+  ]
+ },
+ "png": {
+  "classes": {
+   "file": "atlantic-classes.png",
+   "sha256": "753df5ad381eeea33e71cd9fe95ce5d85a9e2bd070d69e8bfafd0fd38138e8ac"
+  },
+  "land": {
+   "file": "atlantic-land.png",
+   "sha256": "150af4cb1634045dc62ad07c5e9c46081733a6e6476bfedb91c5ec08a38518f4"
+  },
+  "thinwater": {
+   "file": "atlantic-thinwater.png",
+   "sha256": "547c262029ffbf8000e16f62bf5428368a9922233940fecd77664cfb5c395dfc"
+  }
+ }
+}

@@ -1,0 +1,2304 @@
+{
+ "format": "earth-oracle/1",
+ "map": "olde_world",
+ "built_by": "mod/spikes/S8-tooling/oracle.py build",
+ "sources": {
+  "reference_json": "mod/spikes/S8-tooling/reference/olde_world.json",
+  "reference_land_png_sha256": "7a7af0b11aeb8e21f84adbdf965f94f800789435ce228572267c45dd87e20e57",
+  "geography_json": "mod/docs/plan/research/R7b-geography.json"
+ },
+ "georeference": {
+  "px_per_degree": 45.0,
+  "lon_left_edge": -19.1778,
+  "lat_top_edge": 82.0889
+ },
+ "width_px": 8963,
+ "height_px": 5847,
+ "earthmaps_radii": {
+  "decompressed_width_radius": 4481,
+  "decompressed_height_radius": 2923,
+  "source": "worldgen.lua:444,448 floor((n + 0.5) / 2)"
+ },
+ "conventions": {
+  "pixel": "u = (lon - lon_left_edge) * 45, v = (lat_top_edge - lat) * 45; pixel col spans [col, col + 1)",
+  "tile": "floor convention: x = (u - wr) * scale; a place's tile is the tile holding its ref_pixel centre, evaluated by the game at that tile's integer corner (earthgeo.py)",
+  "tiles_by_scale": "precomputed [x, y] of that tile for scales 1 to 6 (floor convention)",
+  "expect": "null = unknown; expect_when lists overrides that apply under a settings context",
+  "snap": "ref_pixel is the nearest pixel of the expected kind within 8.0 px of the published point (land for cities and isthmuses, water for straits); null when none"
+ },
+ "properties": [
+  "land",
+  "water",
+  "river",
+  "climate_band",
+  "tile_family_ab",
+  "tile_family_vanilla",
+  "region",
+  "destroyed_zone",
+  "forest",
+  "hotspot"
+ ],
+ "places": [
+  {
+   "id": "city:Prague",
+   "name": "Prague",
+   "kind": "city",
+   "full_name": "Europe, Czech Republic, Prague",
+   "lon": 13.7,
+   "lat": 52.1,
+   "source": "EarthMaps data/cities_olde_world.lua line 6, position [-1501, -787] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1479,
+    1349
+   ],
+   "snap_px": 0.001,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    13.69998,
+    52.10001
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3002,
+     -1574
+    ],
+    "2": [
+     -6003,
+     -3147
+    ],
+    "3": [
+     -9005,
+     -4721
+    ],
+    "4": [
+     -12006,
+     -6294
+    ],
+    "5": [
+     -15008,
+     -7868
+    ],
+    "6": [
+     -18009,
+     -9441
+    ]
+   }
+  },
+  {
+   "id": "city:Madrid",
+   "name": "Madrid",
+   "kind": "city",
+   "full_name": "Europe, Spain, Madrid",
+   "lon": -4.078,
+   "lat": 40.989,
+   "source": "EarthMaps data/cities_olde_world.lua line 7, position [-1901, -537] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    679,
+    1849
+   ],
+   "snap_px": 0.01,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    -4.0778,
+    40.9889
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3802,
+     -1074
+    ],
+    "2": [
+     -7603,
+     -2147
+    ],
+    "3": [
+     -11405,
+     -3221
+    ],
+    "4": [
+     -15206,
+     -4294
+    ],
+    "5": [
+     -19008,
+     -5368
+    ],
+    "6": [
+     -22809,
+     -6441
+    ]
+   }
+  },
+  {
+   "id": "city:London",
+   "name": "London",
+   "kind": "city",
+   "full_name": "Europe, United Kingdom, London",
+   "lon": 0.367,
+   "lat": 52.1,
+   "source": "EarthMaps data/cities_olde_world.lua line 8, position [-1801, -787] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    879,
+    1349
+   ],
+   "snap_px": 0.016,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    0.36664,
+    52.10001
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3602,
+     -1574
+    ],
+    "2": [
+     -7203,
+     -3147
+    ],
+    "3": [
+     -10805,
+     -4721
+    ],
+    "4": [
+     -14406,
+     -6294
+    ],
+    "5": [
+     -18008,
+     -7868
+    ],
+    "6": [
+     -21609,
+     -9441
+    ]
+   }
+  },
+  {
+   "id": "city:Kovdor",
+   "name": "Kovdor",
+   "kind": "city",
+   "full_name": "Europe, Russia, Kovdor",
+   "lon": 29.256,
+   "lat": 65.433,
+   "source": "EarthMaps data/cities_olde_world.lua line 9, position [-1151, -1087] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    2179,
+    749
+   ],
+   "snap_px": 0.026,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "cold (D9 names Russia)"
+   },
+   "ref_pixel_lonlat": [
+    29.25553,
+    65.43334
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2302,
+     -2174
+    ],
+    "2": [
+     -4603,
+     -4347
+    ],
+    "3": [
+     -6905,
+     -6521
+    ],
+    "4": [
+     -9206,
+     -8694
+    ],
+    "5": [
+     -11508,
+     -10868
+    ],
+    "6": [
+     -13809,
+     -13041
+    ]
+   }
+  },
+  {
+   "id": "city:Munguy",
+   "name": "Munguy",
+   "kind": "city",
+   "full_name": "Europe, Russia, Munguy",
+   "lon": 80.367,
+   "lat": 65.433,
+   "source": "EarthMaps data/cities_olde_world.lua line 10, position [-1, -1087] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    4479,
+    749
+   ],
+   "snap_px": 0.022,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "cold (D9 names Russia)"
+   },
+   "ref_pixel_lonlat": [
+    80.36664,
+    65.43334
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2,
+     -2174
+    ],
+    "2": [
+     -3,
+     -4347
+    ],
+    "3": [
+     -5,
+     -6521
+    ],
+    "4": [
+     -6,
+     -8694
+    ],
+    "5": [
+     -8,
+     -10868
+    ],
+    "6": [
+     -9,
+     -13041
+    ]
+   }
+  },
+  {
+   "id": "city:Xeta",
+   "name": "Xeta",
+   "kind": "city",
+   "full_name": "Europe, Russia, Xeta",
+   "lon": 102.589,
+   "lat": 74.322,
+   "source": "EarthMaps data/cities_olde_world.lua line 11, position [499, -1287] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    5479,
+    349
+   ],
+   "snap_px": 0.012,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "cold (D9 names Russia)"
+   },
+   "ref_pixel_lonlat": [
+    102.58887,
+    74.32223
+   ],
+   "tiles_by_scale": {
+    "1": [
+     998,
+     -2574
+    ],
+    "2": [
+     1997,
+     -5147
+    ],
+    "3": [
+     2995,
+     -7721
+    ],
+    "4": [
+     3994,
+     -10294
+    ],
+    "5": [
+     4992,
+     -12868
+    ],
+    "6": [
+     5991,
+     -15441
+    ]
+   }
+  },
+  {
+   "id": "city:Yakutia",
+   "name": "Yakutia",
+   "kind": "city",
+   "full_name": "Europe, Russia, Yakutia",
+   "lon": 124.811,
+   "lat": 65.433,
+   "source": "EarthMaps data/cities_olde_world.lua line 12, position [999, -1087] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    6479,
+    749
+   ],
+   "snap_px": 0.016,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "cold (D9 names Russia)"
+   },
+   "ref_pixel_lonlat": [
+    124.81109,
+    65.43334
+   ],
+   "tiles_by_scale": {
+    "1": [
+     1998,
+     -2174
+    ],
+    "2": [
+     3997,
+     -4347
+    ],
+    "3": [
+     5995,
+     -6521
+    ],
+    "4": [
+     7994,
+     -8694
+    ],
+    "5": [
+     9992,
+     -10868
+    ],
+    "6": [
+     11991,
+     -13041
+    ]
+   }
+  },
+  {
+   "id": "city:Zyryanka",
+   "name": "Zyryanka",
+   "kind": "city",
+   "full_name": "Europe, Russia, Zyryanka",
+   "lon": 147.033,
+   "lat": 65.433,
+   "source": "EarthMaps data/cities_olde_world.lua line 13, position [1499, -1087] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    7479,
+    749
+   ],
+   "snap_px": 0.021,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "cold (D9 names Russia)"
+   },
+   "ref_pixel_lonlat": [
+    147.03331,
+    65.43334
+   ],
+   "tiles_by_scale": {
+    "1": [
+     2998,
+     -2174
+    ],
+    "2": [
+     5997,
+     -4347
+    ],
+    "3": [
+     8995,
+     -6521
+    ],
+    "4": [
+     11994,
+     -8694
+    ],
+    "5": [
+     14992,
+     -10868
+    ],
+    "6": [
+     17991,
+     -13041
+    ]
+   }
+  },
+  {
+   "id": "city:Kharkiv",
+   "name": "Kharkiv",
+   "kind": "city",
+   "full_name": "Europe, Ukraine, Kharkiv",
+   "lon": 35.922,
+   "lat": 52.1,
+   "source": "EarthMaps data/cities_olde_world.lua line 14, position [-1001, -787] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    2479,
+    1349
+   ],
+   "snap_px": 0.009,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    35.9222,
+    52.10001
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2002,
+     -1574
+    ],
+    "2": [
+     -4003,
+     -3147
+    ],
+    "3": [
+     -6005,
+     -4721
+    ],
+    "4": [
+     -8006,
+     -6294
+    ],
+    "5": [
+     -10008,
+     -7868
+    ],
+    "6": [
+     -12009,
+     -9441
+    ]
+   }
+  },
+  {
+   "id": "city:Huambo",
+   "name": "Huambo",
+   "kind": "city",
+   "full_name": "Africa, Angola, Huambo",
+   "lon": 16.367,
+   "lat": -5.678,
+   "source": "EarthMaps data/cities_olde_world.lua line 15, position [-1441, 513] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1599,
+    3949
+   ],
+   "snap_px": 0.019,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    16.36664,
+    -5.67777
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2882,
+     1026
+    ],
+    "2": [
+     -5763,
+     2053
+    ],
+    "3": [
+     -8645,
+     3079
+    ],
+    "4": [
+     -11526,
+     4106
+    ],
+    "5": [
+     -14408,
+     5132
+    ],
+    "6": [
+     -17289,
+     6159
+    ]
+   }
+  },
+  {
+   "id": "city:Mongo",
+   "name": "Mongo",
+   "kind": "city",
+   "full_name": "Africa, Chad, Mongo",
+   "lon": 13.7,
+   "lat": 13.211,
+   "source": "EarthMaps data/cities_olde_world.lua line 16, position [-1501, 88] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1479,
+    3099
+   ],
+   "snap_px": 0.006,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    13.69998,
+    13.21112
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3002,
+     176
+    ],
+    "2": [
+     -6003,
+     353
+    ],
+    "3": [
+     -9005,
+     529
+    ],
+    "4": [
+     -12006,
+     706
+    ],
+    "5": [
+     -15008,
+     882
+    ],
+    "6": [
+     -18009,
+     1059
+    ]
+   }
+  },
+  {
+   "id": "city:Dangila",
+   "name": "Dangila",
+   "kind": "city",
+   "full_name": "Africa, Ethiopia, Dangila",
+   "lon": 35.922,
+   "lat": 13.211,
+   "source": "EarthMaps data/cities_olde_world.lua line 17, position [-1001, 88] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    2479,
+    3099
+   ],
+   "snap_px": 0.011,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    35.9222,
+    13.21112
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2002,
+     176
+    ],
+    "2": [
+     -4003,
+     353
+    ],
+    "3": [
+     -6005,
+     529
+    ],
+    "4": [
+     -8006,
+     706
+    ],
+    "5": [
+     -10008,
+     882
+    ],
+    "6": [
+     -12009,
+     1059
+    ]
+   }
+  },
+  {
+   "id": "city:Bamako",
+   "name": "Bamako",
+   "kind": "city",
+   "full_name": "Africa, Mali, Bamako",
+   "lon": -8.522,
+   "lat": 13.211,
+   "source": "EarthMaps data/cities_olde_world.lua line 18, position [-2001, 88] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    479,
+    3099
+   ],
+   "snap_px": 0.012,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    -8.52224,
+    13.21112
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -4002,
+     176
+    ],
+    "2": [
+     -8003,
+     353
+    ],
+    "3": [
+     -12005,
+     529
+    ],
+    "4": [
+     -16006,
+     706
+    ],
+    "5": [
+     -20008,
+     882
+    ],
+    "6": [
+     -24009,
+     1059
+    ]
+   }
+  },
+  {
+   "id": "city:Akka",
+   "name": "Akka",
+   "kind": "city",
+   "full_name": "Africa, Morocco, Akka",
+   "lon": -8.522,
+   "lat": 29.878,
+   "source": "EarthMaps data/cities_olde_world.lua line 19, position [-2001, -287] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    479,
+    2349
+   ],
+   "snap_px": 0.015,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "hot (D9: North Africa is hot and desert by default)"
+   },
+   "ref_pixel_lonlat": [
+    -8.52224,
+    29.87779
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -4002,
+     -574
+    ],
+    "2": [
+     -8003,
+     -1147
+    ],
+    "3": [
+     -12005,
+     -1721
+    ],
+    "4": [
+     -16006,
+     -2294
+    ],
+    "5": [
+     -20008,
+     -2868
+    ],
+    "6": [
+     -24009,
+     -3441
+    ]
+   }
+  },
+  {
+   "id": "city:Waddan",
+   "name": "Waddan",
+   "kind": "city",
+   "full_name": "Africa, North Africa, Waddan",
+   "lon": 13.7,
+   "lat": 29.878,
+   "source": "EarthMaps data/cities_olde_world.lua line 20, position [-1501, -287] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    1479,
+    2349
+   ],
+   "snap_px": 0.01,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {
+    "climate": "hot (D9: North Africa is hot and desert by default)"
+   },
+   "ref_pixel_lonlat": [
+    13.69998,
+    29.87779
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3002,
+     -574
+    ],
+    "2": [
+     -6003,
+     -1147
+    ],
+    "3": [
+     -9005,
+     -1721
+    ],
+    "4": [
+     -12006,
+     -2294
+    ],
+    "5": [
+     -15008,
+     -2868
+    ],
+    "6": [
+     -18009,
+     -3441
+    ]
+   }
+  },
+  {
+   "id": "city:Johannesburg",
+   "name": "Johannesburg",
+   "kind": "city",
+   "full_name": "Africa, South Africa, Johannesburg",
+   "lon": 27.033,
+   "lat": -23.456,
+   "source": "EarthMaps data/cities_olde_world.lua line 21, position [-1201, 913] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    2079,
+    4749
+   ],
+   "snap_px": 0.025,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    27.03331,
+    -23.45554
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2402,
+     1826
+    ],
+    "2": [
+     -4803,
+     3653
+    ],
+    "3": [
+     -7205,
+     5479
+    ],
+    "4": [
+     -9606,
+     7306
+    ],
+    "5": [
+     -12008,
+     9132
+    ],
+    "6": [
+     -14409,
+     10959
+    ]
+   }
+  },
+  {
+   "id": "city:Songea",
+   "name": "Songea",
+   "kind": "city",
+   "full_name": "Africa, Tanzania, Songea",
+   "lon": 35.922,
+   "lat": -5.678,
+   "source": "EarthMaps data/cities_olde_world.lua line 22, position [-1001, 513] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    2479,
+    3949
+   ],
+   "snap_px": 0.014,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    35.9222,
+    -5.67777
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2002,
+     1026
+    ],
+    "2": [
+     -4003,
+     2053
+    ],
+    "3": [
+     -6005,
+     3079
+    ],
+    "4": [
+     -8006,
+     4106
+    ],
+    "5": [
+     -10008,
+     5132
+    ],
+    "6": [
+     -12009,
+     6159
+    ]
+   }
+  },
+  {
+   "id": "city:Tabuk",
+   "name": "Tabuk",
+   "kind": "city",
+   "full_name": "Arabia, Saudi Arabia, Tabuk",
+   "lon": 35.922,
+   "lat": 29.878,
+   "source": "EarthMaps data/cities_olde_world.lua line 23, position [-1001, -287] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    2479,
+    2349
+   ],
+   "snap_px": 0.013,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    35.9222,
+    29.87779
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2002,
+     -574
+    ],
+    "2": [
+     -4003,
+     -1147
+    ],
+    "3": [
+     -6005,
+     -1721
+    ],
+    "4": [
+     -8006,
+     -2294
+    ],
+    "5": [
+     -10008,
+     -2868
+    ],
+    "6": [
+     -12009,
+     -3441
+    ]
+   }
+  },
+  {
+   "id": "city:Chengdu",
+   "name": "Chengdu",
+   "kind": "city",
+   "full_name": "Asia, China, Chengdu",
+   "lon": 102.589,
+   "lat": 29.878,
+   "source": "EarthMaps data/cities_olde_world.lua line 24, position [499, -287] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    5479,
+    2349
+   ],
+   "snap_px": 0.011,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    102.58887,
+    29.87779
+   ],
+   "tiles_by_scale": {
+    "1": [
+     998,
+     -574
+    ],
+    "2": [
+     1997,
+     -1147
+    ],
+    "3": [
+     2995,
+     -1721
+    ],
+    "4": [
+     3994,
+     -2294
+    ],
+    "5": [
+     4992,
+     -2868
+    ],
+    "6": [
+     5991,
+     -3441
+    ]
+   }
+  },
+  {
+   "id": "city:Nanchang",
+   "name": "Nanchang",
+   "kind": "city",
+   "full_name": "Asia, China, Nanchang",
+   "lon": 115.922,
+   "lat": 29.878,
+   "source": "EarthMaps data/cities_olde_world.lua line 25, position [799, -287] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    6079,
+    2349
+   ],
+   "snap_px": 0.013,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    115.9222,
+    29.87779
+   ],
+   "tiles_by_scale": {
+    "1": [
+     1598,
+     -574
+    ],
+    "2": [
+     3197,
+     -1147
+    ],
+    "3": [
+     4795,
+     -1721
+    ],
+    "4": [
+     6394,
+     -2294
+    ],
+    "5": [
+     7992,
+     -2868
+    ],
+    "6": [
+     9591,
+     -3441
+    ]
+   }
+  },
+  {
+   "id": "city:Songling",
+   "name": "Songling",
+   "kind": "city",
+   "full_name": "Asia, China, Songling",
+   "lon": 124.811,
+   "lat": 52.1,
+   "source": "EarthMaps data/cities_olde_world.lua line 26, position [999, -787] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    6479,
+    1349
+   ],
+   "snap_px": 0.004,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    124.81109,
+    52.10001
+   ],
+   "tiles_by_scale": {
+    "1": [
+     1998,
+     -1574
+    ],
+    "2": [
+     3997,
+     -3147
+    ],
+    "3": [
+     5995,
+     -4721
+    ],
+    "4": [
+     7994,
+     -6294
+    ],
+    "5": [
+     9992,
+     -7868
+    ],
+    "6": [
+     11991,
+     -9441
+    ]
+   }
+  },
+  {
+   "id": "city:Delhi",
+   "name": "Delhi",
+   "kind": "city",
+   "full_name": "Asia, India, Delhi",
+   "lon": 80.367,
+   "lat": 29.878,
+   "source": "EarthMaps data/cities_olde_world.lua line 27, position [-1, -287] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    4479,
+    2349
+   ],
+   "snap_px": 0.019,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    80.36664,
+    29.87779
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2,
+     -574
+    ],
+    "2": [
+     -3,
+     -1147
+    ],
+    "3": [
+     -5,
+     -1721
+    ],
+    "4": [
+     -6,
+     -2294
+    ],
+    "5": [
+     -8,
+     -2868
+    ],
+    "6": [
+     -9,
+     -3441
+    ]
+   }
+  },
+  {
+   "id": "city:Hampi",
+   "name": "Hampi",
+   "kind": "city",
+   "full_name": "Asia, India, Hampi",
+   "lon": 75.922,
+   "lat": 16.544,
+   "source": "EarthMaps data/cities_olde_world.lua line 28, position [-101, 13] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    4279,
+    2949
+   ],
+   "snap_px": 0.022,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    75.9222,
+    16.54446
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -202,
+     26
+    ],
+    "2": [
+     -403,
+     53
+    ],
+    "3": [
+     -605,
+     79
+    ],
+    "4": [
+     -806,
+     106
+    ],
+    "5": [
+     -1008,
+     132
+    ],
+    "6": [
+     -1209,
+     159
+    ]
+   }
+  },
+  {
+   "id": "city:Bam",
+   "name": "Bam",
+   "kind": "city",
+   "full_name": "Asia, Iran, Bam",
+   "lon": 58.144,
+   "lat": 29.878,
+   "source": "EarthMaps data/cities_olde_world.lua line 29, position [-501, -287] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    3479,
+    2349
+   ],
+   "snap_px": 0.021,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    58.14442,
+    29.87779
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -1002,
+     -574
+    ],
+    "2": [
+     -2003,
+     -1147
+    ],
+    "3": [
+     -3005,
+     -1721
+    ],
+    "4": [
+     -4006,
+     -2294
+    ],
+    "5": [
+     -5008,
+     -2868
+    ],
+    "6": [
+     -6009,
+     -3441
+    ]
+   }
+  },
+  {
+   "id": "city:Aktobe",
+   "name": "Aktobe",
+   "kind": "city",
+   "full_name": "Asia, Kazakhstan, Aktobe",
+   "lon": 58.144,
+   "lat": 52.1,
+   "source": "EarthMaps data/cities_olde_world.lua line 30, position [-501, -787] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    3479,
+    1349
+   ],
+   "snap_px": 0.019,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    58.14442,
+    52.10001
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -1002,
+     -1574
+    ],
+    "2": [
+     -2003,
+     -3147
+    ],
+    "3": [
+     -3005,
+     -4721
+    ],
+    "4": [
+     -4006,
+     -6294
+    ],
+    "5": [
+     -5008,
+     -7868
+    ],
+    "6": [
+     -6009,
+     -9441
+    ]
+   }
+  },
+  {
+   "id": "city:Semey",
+   "name": "Semey",
+   "kind": "city",
+   "full_name": "Asia, Kazakhstan, Semey",
+   "lon": 80.367,
+   "lat": 52.1,
+   "source": "EarthMaps data/cities_olde_world.lua line 31, position [-1, -787] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    4479,
+    1349
+   ],
+   "snap_px": 0.016,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    80.36664,
+    52.10001
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2,
+     -1574
+    ],
+    "2": [
+     -3,
+     -3147
+    ],
+    "3": [
+     -5,
+     -4721
+    ],
+    "4": [
+     -6,
+     -6294
+    ],
+    "5": [
+     -8,
+     -7868
+    ],
+    "6": [
+     -9,
+     -9441
+    ]
+   }
+  },
+  {
+   "id": "city:Moron",
+   "name": "Moron",
+   "kind": "city",
+   "full_name": "Asia, Mongolia, Moron",
+   "lon": 102.589,
+   "lat": 52.1,
+   "source": "EarthMaps data/cities_olde_world.lua line 32, position [499, -787] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    5479,
+    1349
+   ],
+   "snap_px": 0.006,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    102.58887,
+    52.10001
+   ],
+   "tiles_by_scale": {
+    "1": [
+     998,
+     -1574
+    ],
+    "2": [
+     1997,
+     -3147
+    ],
+    "3": [
+     2995,
+     -4721
+    ],
+    "4": [
+     3994,
+     -6294
+    ],
+    "5": [
+     4992,
+     -7868
+    ],
+    "6": [
+     5991,
+     -9441
+    ]
+   }
+  },
+  {
+   "id": "city:Bangkok",
+   "name": "Bangkok",
+   "kind": "city",
+   "full_name": "Asia, Thailand, Bangkok",
+   "lon": 100.367,
+   "lat": 16.544,
+   "source": "EarthMaps data/cities_olde_world.lua line 33, position [449, 13] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    5379,
+    2949
+   ],
+   "snap_px": 0.026,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    100.36664,
+    16.54446
+   ],
+   "tiles_by_scale": {
+    "1": [
+     898,
+     26
+    ],
+    "2": [
+     1797,
+     53
+    ],
+    "3": [
+     2695,
+     79
+    ],
+    "4": [
+     3594,
+     106
+    ],
+    "5": [
+     4492,
+     132
+    ],
+    "6": [
+     5391,
+     159
+    ]
+   }
+  },
+  {
+   "id": "city:Griffith",
+   "name": "Griffith",
+   "kind": "city",
+   "full_name": "Oceania, Australia, Griffith",
+   "lon": 147.033,
+   "lat": -27.9,
+   "source": "EarthMaps data/cities_olde_world.lua line 34, position [1499, 1013] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    7479,
+    4949
+   ],
+   "snap_px": 0.014,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    147.03331,
+    -27.89999
+   ],
+   "tiles_by_scale": {
+    "1": [
+     2998,
+     2026
+    ],
+    "2": [
+     5997,
+     4053
+    ],
+    "3": [
+     8995,
+     6079
+    ],
+    "4": [
+     11994,
+     8106
+    ],
+    "5": [
+     14992,
+     10132
+    ],
+    "6": [
+     17991,
+     12159
+    ]
+   }
+  },
+  {
+   "id": "city:Newman",
+   "name": "Newman",
+   "kind": "city",
+   "full_name": "Oceania, Australia, Newman",
+   "lon": 118.144,
+   "lat": -23.456,
+   "source": "EarthMaps data/cities_olde_world.lua line 35, position [849, 913] via R1 georeference (pixel centre)",
+   "ref_pixel": [
+    6179,
+    4749
+   ],
+   "snap_px": 0.028,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": false
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    118.14442,
+    -23.45554
+   ],
+   "tiles_by_scale": {
+    "1": [
+     1698,
+     1826
+    ],
+    "2": [
+     3397,
+     3653
+    ],
+    "3": [
+     5095,
+     5479
+    ],
+    "4": [
+     6794,
+     7306
+    ],
+    "5": [
+     8492,
+     9132
+    ],
+    "6": [
+     10191,
+     10959
+    ]
+   }
+  },
+  {
+   "id": "strait:gibraltar",
+   "name": "Strait of Gibraltar",
+   "kind": "strait",
+   "lon": -5.5173,
+   "lat": 35.9669,
+   "source": "R7b-geography.json straits gibraltar narrowest_point (midpoint of the OSM points for Punta de Oliveros (Spain) and Point Cires (Morocco), the endpoints named by es.wikipedia); https://en.wikipedia.org/wiki/Strait_of_Gibraltar",
+   "min_width_m": 14200,
+   "ref_pixel": [
+    614,
+    2075
+   ],
+   "snap_px": 0.223,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    -5.52224,
+    35.96668
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3867,
+     -848
+    ],
+    "2": [
+     -7733,
+     -1695
+    ],
+    "3": [
+     -11600,
+     -2543
+    ],
+    "4": [
+     -15466,
+     -3390
+    ],
+    "5": [
+     -19333,
+     -4238
+    ],
+    "6": [
+     -23199,
+     -5085
+    ]
+   }
+  },
+  {
+   "id": "strait:bosporus",
+   "name": "Bosporus",
+   "kind": "strait",
+   "lon": 29.055,
+   "lat": 41.0778,
+   "source": "R7b-geography.json straits bosporus narrowest_point (midpoint of the Kandilli and Aşiyan neighbourhood coordinates (approximate; neighbourhood centres, not shore points)); https://en.wikipedia.org/wiki/Bosporus",
+   "min_width_m": 700,
+   "ref_pixel": [
+    2170,
+    1845
+   ],
+   "snap_px": 0.024,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    29.05553,
+    41.07779
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2311,
+     -1078
+    ],
+    "2": [
+     -4621,
+     -2155
+    ],
+    "3": [
+     -6932,
+     -3233
+    ],
+    "4": [
+     -9242,
+     -4310
+    ],
+    "5": [
+     -11553,
+     -5388
+    ],
+    "6": [
+     -13863,
+     -6465
+    ]
+   }
+  },
+  {
+   "id": "strait:dardanelles",
+   "name": "Dardanelles",
+   "kind": "strait",
+   "lon": 26.4144,
+   "lat": 40.1964,
+   "source": "R7b-geography.json straits dardanelles narrowest_point (Nara Burnu coordinate; the article places the narrowest point at Nara Burnu, abreast Çanakkale); https://en.wikipedia.org/wiki/Dardanelles",
+   "min_width_m": 1200,
+   "ref_pixel": [
+    2051,
+    1885
+   ],
+   "snap_px": 0.369,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    26.41109,
+    40.1889
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2430,
+     -1038
+    ],
+    "2": [
+     -4859,
+     -2075
+    ],
+    "3": [
+     -7289,
+     -3113
+    ],
+    "4": [
+     -9718,
+     -4150
+    ],
+    "5": [
+     -12148,
+     -5188
+    ],
+    "6": [
+     -14577,
+     -6225
+    ]
+   }
+  },
+  {
+   "id": "strait:dover",
+   "name": "Strait of Dover",
+   "kind": "strait",
+   "lon": 1.4786,
+   "lat": 51.0072,
+   "source": "R7b-geography.json straits dover narrowest_point (midpoint of the South Foreland and Cap Gris-Nez article coordinates); https://en.wikipedia.org/wiki/Strait_of_Dover",
+   "min_width_m": 33200,
+   "ref_pixel": [
+    929,
+    1398
+   ],
+   "snap_px": 0.181,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    1.47776,
+    51.01112
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3552,
+     -1525
+    ],
+    "2": [
+     -7103,
+     -3049
+    ],
+    "3": [
+     -10655,
+     -4574
+    ],
+    "4": [
+     -14206,
+     -6098
+    ],
+    "5": [
+     -17758,
+     -7623
+    ],
+    "6": [
+     -21309,
+     -9147
+    ]
+   }
+  },
+  {
+   "id": "strait:oresund",
+   "name": "Øresund",
+   "kind": "strait",
+   "lon": 12.6625,
+   "lat": 56.043,
+   "source": "R7b-geography.json straits oresund narrowest_point (midpoint of the Helsingør and Helsingborg town coordinates (approximate)); https://en.wikipedia.org/wiki/%C3%98resund",
+   "min_width_m": 4000,
+   "ref_pixel": [
+    1432,
+    1172
+   ],
+   "snap_px": 0.536,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    12.65553,
+    56.03334
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3049,
+     -1751
+    ],
+    "2": [
+     -6097,
+     -3501
+    ],
+    "3": [
+     -9146,
+     -5252
+    ],
+    "4": [
+     -12194,
+     -7002
+    ],
+    "5": [
+     -15243,
+     -8753
+    ],
+    "6": [
+     -18291,
+     -10503
+    ]
+   }
+  },
+  {
+   "id": "strait:great_belt",
+   "name": "Great Belt",
+   "kind": "strait",
+   "lon": 11.0,
+   "lat": 55.333,
+   "source": "R7b-geography.json straits great_belt narrowest_point (article coordinate near Sprogø; location of the 16 km minimum is not stated in the source (UNVERIFIED)); https://en.wikipedia.org/wiki/Great_Belt",
+   "min_width_m": 16000,
+   "ref_pixel": [
+    1358,
+    1204
+   ],
+   "snap_px": 0.696,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    11.01109,
+    55.32223
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3123,
+     -1719
+    ],
+    "2": [
+     -6245,
+     -3437
+    ],
+    "3": [
+     -9368,
+     -5156
+    ],
+    "4": [
+     -12490,
+     -6874
+    ],
+    "5": [
+     -15613,
+     -8593
+    ],
+    "6": [
+     -18735,
+     -10311
+    ]
+   }
+  },
+  {
+   "id": "strait:little_belt",
+   "name": "Little Belt",
+   "kind": "strait",
+   "lon": 9.7294,
+   "lat": 55.5181,
+   "source": "R7b-geography.json straits little_belt narrowest_point (midpoint of the two Little Belt bridge coordinates at Snævringen (The Narrows)); https://en.wikipedia.org/wiki/Little_Belt",
+   "min_width_m": 800,
+   "ref_pixel": [
+    1300,
+    1195
+   ],
+   "snap_px": 0.374,
+   "expect": {
+    "land": false,
+    "water": true,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "ref_pixel_lonlat": [
+    9.7222,
+    55.52223
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -3181,
+     -1728
+    ],
+    "2": [
+     -6361,
+     -3455
+    ],
+    "3": [
+     -9542,
+     -5183
+    ],
+    "4": [
+     -12722,
+     -6910
+    ],
+    "5": [
+     -15903,
+     -8638
+    ],
+    "6": [
+     -19083,
+     -10365
+    ]
+   }
+  },
+  {
+   "id": "isthmus:corinth",
+   "name": "Isthmus of Corinth",
+   "kind": "isthmus",
+   "lon": 22.9878,
+   "lat": 37.9414,
+   "source": "R7b-geography.json isthmuses corinth narrowest_point (article coordinate (on the canal line)); https://en.wikipedia.org/wiki/Isthmus_of_Corinth",
+   "min_width_m": 6300,
+   "ref_pixel": [
+    1897,
+    1986
+   ],
+   "snap_px": 0.146,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "water": true,
+      "land": false
+     },
+     "note": "the point lies on the canal line (R7b canals)"
+    }
+   ],
+   "ref_pixel_lonlat": [
+    22.98887,
+    37.94446
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2584,
+     -937
+    ],
+    "2": [
+     -5167,
+     -1873
+    ],
+    "3": [
+     -7751,
+     -2810
+    ],
+    "4": [
+     -10334,
+     -3746
+    ],
+    "5": [
+     -12918,
+     -4683
+    ],
+    "6": [
+     -15501,
+     -5619
+    ]
+   }
+  },
+  {
+   "id": "isthmus:suez",
+   "name": "Isthmus of Suez",
+   "kind": "isthmus",
+   "lon": 32.3442,
+   "lat": 30.705,
+   "source": "R7b-geography.json isthmuses suez narrowest_point (Suez Canal article coordinate used as a representative point; the isthmus article has no coordinate (location of the minimum UNVERIFIED)); https://en.wikipedia.org/wiki/Isthmus_of_Suez",
+   "min_width_m": 125000,
+   "ref_pixel": [
+    2317,
+    2312
+   ],
+   "snap_px": 1.015,
+   "expect": {
+    "land": true,
+    "water": false,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null
+   },
+   "hints": {},
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "water": true,
+      "land": false
+     },
+     "note": "the point lies on the canal line (R7b canals)"
+    }
+   ],
+   "ref_pixel_lonlat": [
+    32.3222,
+    30.70001
+   ],
+   "tiles_by_scale": {
+    "1": [
+     -2164,
+     -611
+    ],
+    "2": [
+     -4327,
+     -1221
+    ],
+    "3": [
+     -6491,
+     -1832
+    ],
+    "4": [
+     -8654,
+     -2442
+    ],
+    "5": [
+     -10818,
+     -3053
+    ],
+    "6": [
+     -12981,
+     -3663
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "format": "tn-design-rules/1",
+ "note": "Data the T16 design-rules check reads (TST-18). settings holds the APPROVALS 1a row of every setting that exists, keyed by its config.lua key; each slice that adds a setting adds its row here.",
+ "settings": {
+  "scale": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-scale (DECISIONS 07:25)",
+   "type": "string-setting",
+   "setting_type": "startup",
+   "default_value": "6",
+   "allowed_values": ["1", "2", "3", "4", "5", "6"]
+  }
+ },
+ "numeric_literals_allowed": [0, 1, 2]
+}

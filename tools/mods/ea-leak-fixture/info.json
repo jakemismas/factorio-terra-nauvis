@@ -1,0 +1,11 @@
+{
+  "name": "ea-leak-fixture",
+  "version": "0.1.0",
+  "title": "ea-leak-fixture",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only fixture presets for the isolation checks' positive controls: one redirects the keys fixture-names.lua lists for it (the mod's fine field, without its start mask), so vanilla starting ore reads the fine field and both isolation checks must report it; the other adds an entity and a decorative autoplace key redirected to fixture bodies that read the fine field, which the static walk must follow. The runner writes fixture-names.lua and the dependency on the mod under test into a staged copy at run time. Never shipped.",
+  "dependencies": [
+    "base >= 2.1.23"
+  ]
+}

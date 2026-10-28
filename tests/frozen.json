@@ -1,0 +1,6 @@
+{
+ "format": "tn-frozen/1",
+ "note": "Registered Earth noise bodies (ARCHITECTURE.md data flow step 6; ruling 21). Each entry is the sha256 of a body's generation fields (expression, local expressions and functions, a function's parameters; never intended_property, localised_name or order) as --dump-data writes them on M1, appended by 'python tools/earth_test.py freeze' from europe-coast on and never changed in place. Placeholder names and the Map type fallbacks are never registered.",
+ "hash_fields": ["type", "name", "expression", "local_expressions", "local_functions", "parameters"],
+ "bodies": {}
+}

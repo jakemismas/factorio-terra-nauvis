@@ -1,0 +1,9 @@
+{
+  "name": "ep-s8-dump",
+  "version": "0.0.1",
+  "title": "Earth plan S8 tile and entity dump",
+  "author": "Jake Mismas",
+  "description": "Test tool. On a chosen tick, writes the tiles and selected entities of given areas, point probes (calculate_tile_properties plus the real tile) and an optional cliff collision scene to script-output/ep-s8-dump/. Configured by startup settings that dump_render.py run sets.",
+  "factorio_version": "2.1",
+  "dependencies": ["base >= 2.1.23"]
+}

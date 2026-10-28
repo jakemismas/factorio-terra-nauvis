@@ -1,0 +1,106 @@
+{
+ "format": "tn-budgets/1",
+ "note": "Measured values only (ruling 3): complexity rows from 64 px --verbose previews at seed 1000. Written by 'earth_test.py baseline'; the gate requires equality and reads thresholds from the plan's section 6.",
+ "game_build": "2.1.23 build 87750",
+ "rows": [
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "vanilla",
+   "map": null,
+   "modset": "M0",
+   "preset": null,
+   "scale": null,
+   "toggles": "n/a",
+   "programs": {
+    "cliff": {
+     "expressions": 377,
+     "unique": 220,
+     "operations": 134,
+     "registers": 17,
+     "complexity": 287
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 934,
+     "operations": 600,
+     "registers": 92,
+     "complexity": 8549
+    },
+    "tile": {
+     "expressions": 1296,
+     "unique": 593,
+     "operations": 479,
+     "registers": 53,
+     "complexity": 10068
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "default",
+   "map": null,
+   "modset": "M1",
+   "preset": null,
+   "scale": null,
+   "toggles": "n/a",
+   "programs": {
+    "cliff": {
+     "expressions": 377,
+     "unique": 220,
+     "operations": 134,
+     "registers": 17,
+     "complexity": 287
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 934,
+     "operations": 600,
+     "registers": 92,
+     "complexity": 8549
+    },
+    "tile": {
+     "expressions": 1296,
+     "unique": 593,
+     "operations": 479,
+     "registers": 53,
+     "complexity": 10068
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "placeholder",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 6,
+   "toggles": "n/a",
+   "programs": {
+    "cliff": {
+     "expressions": 377,
+     "unique": 220,
+     "operations": 134,
+     "registers": 17,
+     "complexity": 287
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 934,
+     "operations": 600,
+     "registers": 92,
+     "complexity": 8549
+    },
+    "tile": {
+     "expressions": 1321,
+     "unique": 608,
+     "operations": 494,
+     "registers": 53,
+     "complexity": 10093
+    }
+   }
+  }
+ ]
+}

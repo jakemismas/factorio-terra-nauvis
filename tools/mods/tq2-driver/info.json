@@ -1,0 +1,9 @@
+{
+  "name": "tq2-driver",
+  "version": "0.1.0",
+  "title": "tq2-driver",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only benchmark driver, ported from the planning spike TQ2: forced block timer, exploring frontier, benchmark-mode walker, real-time intervals and server saves. Never shipped.",
+  "dependencies": ["base >= 2.1.23", "? EarthMaps", "? factorio-world", "? alien-biomes"]
+}

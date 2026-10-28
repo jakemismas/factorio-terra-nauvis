@@ -1,0 +1,14 @@
+{
+  "name": "terra-nauvis",
+  "version": "0.1.0",
+  "title": "Terra Nauvis",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Earth maps for Nauvis, generated entirely in noise. Early build: one placeholder preset, Terra Nauvis: Europe.",
+  "dependencies": [
+    "base >= 2.1.23",
+    "? alien-biomes",
+    "? cargo-ships-oil-rig",
+    "? rso-mod"
+  ]
+}

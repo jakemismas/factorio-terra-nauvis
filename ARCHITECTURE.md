@@ -64,7 +64,9 @@ tests/frozen.json <-- freeze      hooks on shared prototypes        land from tn
 
 ## Module map
 
-Repo paths are relative to the repo root; mod files live under `terra-nauvis/`, the zip's root folder.
+Repo paths are relative to the repo root; every mod file lives under `terra-nauvis/`, the zip's root folder,
+so the `prototypes/` and `scripts/` rows below are `terra-nauvis/prototypes/...` and `terra-nauvis/scripts/...`
+(folded in by `toolchain` from its fit review).
 
 | Path | Responsibility | Contract it exposes | First milestone |
 |---|---|---|---|
@@ -75,50 +77,63 @@ Repo paths are relative to the repo root; mod files live under `terra-nauvis/`, 
 | `terra-nauvis/data-final-fixes.lua` | Everything that reads other mods' final state: entity wrappers (ores, enemies, offshore oil), gated hooks on shared prototypes (the `water-shallow` hook for fords and marshes; vanilla tiles, trees, rocks and decoratives beside AB; marsh tiles without AB; forest boost; AB palm switch; the Earth-gated ridge exclusion on ore probability) | hooks follow the stable-hook rule (Expression graph) | 4 (fords), 6 |
 | `terra-nauvis/control.lua` | Event wiring only | registers exactly the events in "Control stage" | 0 |
 | `terra-nauvis/locale/en/terra-nauvis.cfg` | Setting names and descriptions; `[string-mod-setting] <setting>-<value>=<label>` for every dropdown value, with world size; preset names and descriptions; the `[noise-expression]` Map type names "Terra Nauvis: <map>"; messages, the Map type notice among them | every used key exists; no line without `=` (a missing `=` fails the load, S11) | 0; Map type names 1 and 3 |
-| `terra-nauvis/changelog.txt`, `LICENSE`, `thumbnail.png` | Factorio changelog, GPLv3 (EarthMaps data reuse), thumbnail (later) | | 0, 13 |
-| `prototypes/config.lua` | The single source of names and constants (table below) | pure data: reads no `data`, `settings`, `game` or `script`, so the settings, data and control stages and the Python tools (through a luaparser loader) read one file | 0 |
-| `prototypes/presets.lua` | The three presets from config, `settings.startup` and `mods`, ordered right after Default; the prototype-level fallbacks the Map type entries read, built from the same table | the redirect table under "Expression graph"; AB keys only with AB loaded, Oil Rig keys only with the Oil Rig; each fallback equals what its preset bakes (section "Map type entries") | 0 (placeholder), 1 |
-| `prototypes/expressions/coast.lua` | Coordinate chain, coast transfer, lattice detail, far-field box, elevation composition, emitted once per map as that map's elevation entry; the coarse land key `tn_land_coarse` | the firewall names: Tile only; `tn_land_coarse` is the one land field outside Tile; the newest entry of each map carries the Map type fields | 1 |
-| `prototypes/expressions/spawn.lua` | City fold, random pick, spawn offsets, spawn lake, inland lakes, `distance`, start mask | `tn_cx`, `tn_cy` and the city index readable at (0, 0) | 1, 2 |
-| `prototypes/expressions/climate.lua` | Temperature, moisture and aux (AB and fallback variants), vanilla-scale temperature, slider hooks, marsh and destroyed-zone lifts | firewall-clean: Entity reads it through AB trees | 6 |
-| `prototypes/expressions/regions.lua` | Region layer, S10 design (d): table rows, the shared warp, per-region outputs and layer aggregates (section "Region layer") | consumers read only the interface names; no region formula anywhere else (S10) | 5 |
-| `prototypes/expressions/tiles.lua` | Bodies behind the tile hooks: vanilla tiles beside AB, marsh tiles | | 6 |
-| `prototypes/expressions/trees.lua` | Restored vanilla tree bodies, forest-boost multiplier, AB palm switch | | 6, 7 |
-| `prototypes/expressions/resources.lua` | Ore wrappers (richness ramp, hotspots), offshore-oil wrapper, offshore field stamps | | 9 |
-| `prototypes/expressions/enemies.lua` | Enemy-layer wrapper | | 9 |
-| `prototypes/expressions/ridges.lua` | `cliff_elevation` and `cliffiness` from the ranges table | slider-proof, contour units (S5) | 8 |
-| `prototypes/expressions/destroyed.lua` | Destroyed-zone consumers: temperature lift, start mask, random-pool switch | | 10 |
-| `prototypes/expressions/waterways.lua` | Loads the generated waterway sets; canals and dams switch; the ford key's bodies | | 4 |
-| `prototypes/generated/` | `geo_<map>_v<n>.lua`, `coarse_<map>_v<n>.lua`, `waterways_<map>_s<k>_v<n>.lua` (with the ford sets), `bandfix_<map>_v<n>.lua` | machine-written; the header records tool version and input sha256; never hand-edited; one file per released version | 1, 3, 4, 11 |
-| `prototypes/tables/` | `cities`, `hotspots`, `forests`, `ranges`, `canals`, `marshes`, `regions`, `destroyed`: approval data in degrees, with sources; hotspot rows take the adopted centre (`lat`, `lon` in `approvals-data.json`), which decision 16 moved inland for one hotspot | versioned by release (copy-on-write after a release) | per milestone |
-| `scripts/start.lua` | `on_init`: world detection, storage, D29 message, cliff "none" reset, D12 and D32 warnings logged and recorded in `storage` for the per-player path | | 2, 8 |
-| `scripts/guards.lua` | Missing-name guard, drift line, the Map type notice, D33 surface guard, per-player notice, RSO and Destroyed Europe warnings (`on_player_created`) | | 1, 2 |
-| `scripts/markers.lua` | D28 city markers | no per-chunk event | 13 |
-| `scripts/bandfix.lua` | Tolerance-band coast fix | the only per-chunk handler | 11 |
-| `tools/earth_test.py` | Runner: `gate --through <milestone-id>` (each milestone's testCommand, under 10 minutes), `suite <milestone-id>` (full variants into the content-hash cache), `install-check`, `baseline`, `freeze` and `static` commands | finds fh.py through `FACTORIO_WS` (default `%FACTORIO_WS%`) and refuses to run a game-launching command without it; `static` launches nothing and needs neither, so CI runs it; never writes tracked files while gating; trusts no verdict file, only cache entries whose key it recomputes; parses the perf thresholds from the plan's threshold table; a guard snapshot and check around every command that launches the game | 0 |
+| `terra-nauvis/changelog.txt`, `LICENSE`, `SOURCE-OFFER.txt`, `thumbnail.png` | Factorio changelog, GPLv3 (EarthMaps data reuse), the written source offer (GPLv3 section 6: the zip tells a recipient how to get the mod, `tools/` and `data-src/` from the author), thumbnail (later) | `tools/build_zip.py` ships every file of the folder and refuses anything but Lua, JSON, cfg, txt, png, md and LICENSE | 0, 13 |
+| `terra-nauvis/prototypes/config.lua` | The single source of names and constants (table below) | pure data: reads no `data`, `settings`, `game` or `script` and calls no function, so the settings, data and control stages and the Python tools (through `tools/tnconfig.py`, a luaparser loader of that subset) read one file; it marks the placeholder preset's names, which are never registered or released | 0 |
+| `terra-nauvis/prototypes/presets.lua` | The three presets from config, `settings.startup` and `mods`, ordered right after Default; the prototype-level fallbacks the Map type entries read, built from the same table | the redirect table under "Expression graph"; AB keys only with AB loaded, Oil Rig keys only with the Oil Rig; each fallback equals what its preset bakes (section "Map type entries"); in `toolchain` the placeholder preset redirects `elevation` and `starting_resources_lake_mask` (to the placeholder's copy of vanilla's start mask on `elevation_nauvis`), so design constraint 3 holds on it; with a mod of `placeholder.withheld_with` loaded (Alien Biomes, whose two palms read `elevation` in the Entity program) the placeholder preset is not defined at all, since only `climate-tiles`' palm switch makes an Earth preset safe beside them (reconciliation 9) | 0 (placeholder), 1 |
+| `terra-nauvis/prototypes/expressions/coast.lua` | Coordinate chain, coast transfer, lattice detail, far-field box, elevation composition, emitted once per map as that map's elevation entry; the coarse land key `tn_land_coarse`. In `toolchain` only the placeholder shape and its start mask | the firewall names: Tile only; `tn_land_coarse` is the one land field outside Tile; the newest entry of each map carries the Map type fields | 0 (placeholder), 1 |
+| `terra-nauvis/prototypes/expressions/spawn.lua` | City fold, random pick, spawn offsets, spawn lake, inland lakes, `distance`, start mask | `tn_cx`, `tn_cy` and the city index readable at (0, 0) | 1, 2 |
+| `terra-nauvis/prototypes/expressions/climate.lua` | Temperature, moisture and aux (AB and fallback variants), vanilla-scale temperature, slider hooks, marsh and destroyed-zone lifts | firewall-clean: Entity reads it through AB trees | 6 |
+| `terra-nauvis/prototypes/expressions/regions.lua` | Region layer, S10 design (d): table rows, the shared warp, per-region outputs and layer aggregates (section "Region layer") | consumers read only the interface names; no region formula anywhere else (S10) | 5 |
+| `terra-nauvis/prototypes/expressions/tiles.lua` | Bodies behind the tile hooks: vanilla tiles beside AB, marsh tiles | | 6 |
+| `terra-nauvis/prototypes/expressions/trees.lua` | Restored vanilla tree bodies, forest-boost multiplier, AB palm switch | | 6, 7 |
+| `terra-nauvis/prototypes/expressions/resources.lua` | Ore wrappers (richness ramp, hotspots), offshore-oil wrapper, offshore field stamps | | 9 |
+| `terra-nauvis/prototypes/expressions/enemies.lua` | Enemy-layer wrapper | | 9 |
+| `terra-nauvis/prototypes/expressions/ridges.lua` | `cliff_elevation` and `cliffiness` from the ranges table | slider-proof, contour units (S5) | 8 |
+| `terra-nauvis/prototypes/expressions/destroyed.lua` | Destroyed-zone consumers: temperature lift, start mask, random-pool switch | | 10 |
+| `terra-nauvis/prototypes/expressions/waterways.lua` | Loads the generated waterway sets; canals and dams switch; the ford key's bodies | | 4 |
+| `terra-nauvis/prototypes/generated/` | `geo_<map>_v<n>.lua`, `coarse_<map>_v<n>.lua`, `waterways_<map>_s<k>_v<n>.lua` (with the ford sets), `bandfix_<map>_v<n>.lua` | machine-written; the header records tool version and input sha256; never hand-edited; one file per released version | 1, 3, 4, 11 |
+| `terra-nauvis/prototypes/tables/` | `cities`, `hotspots`, `forests`, `ranges`, `canals`, `marshes`, `regions`, `destroyed`: approval data in degrees, with sources; hotspot rows take the adopted centre (`lat`, `lon` in `approvals-data.json`), which decision 16 moved inland for one hotspot | versioned by release (copy-on-write after a release) | per milestone |
+| `terra-nauvis/scripts/start.lua` | `on_init`: world detection, storage, D29 message, cliff "none" reset, D12 and D32 warnings logged and recorded in `storage` for the per-player path | | 2, 8 |
+| `terra-nauvis/scripts/guards.lua` | Missing-name guard, drift line, the Map type notice, D33 surface guard, per-player notice, RSO and Destroyed Europe warnings (`on_player_created`) | | 1, 2 |
+| `terra-nauvis/scripts/markers.lua` | D28 city markers | no per-chunk event | 13 |
+| `terra-nauvis/scripts/bandfix.lua` | Tolerance-band coast fix | the only per-chunk handler | 11 |
+| `tools/earth_test.py` | Runner: `gate --through <milestone-id>` (each milestone's testCommand, under 10 minutes; `--cold` ignores the FG cache to time the cold gate; the FG rows of every milestone up to `<milestone-id>` and only `<milestone-id>`'s suite evidence), `suite <milestone-id>` (full variants into the content-hash cache; `--only <check>`), `install-check`, `baseline`, `freeze`, `static` and `guard-rebaseline --reason <text>` (A manual re-baseline of the chained guard by hand: it refuses unless stdin and stdout are an interactive terminal and the operator types back every changed path `fh.py guard check` lists, and no halt message names it) commands; the milestone registry (FG rows, SS checks, live-sample pools, oracle properties and the dumps the frozen row reads, per milestone) | finds fh.py through `FACTORIO_WS` (default `%FACTORIO_WS%`) and refuses to run a game-launching command without it; `static` launches nothing and needs neither, so CI runs it; validates every milestone id (`SLICE_ID` and the registry) before it builds any path and keeps each output directory inside its output root, refused by `tnguard.py` like every tool's; never writes tracked files while gating, and writes state and tracked files atomically (temp file plus replace); trusts no verdict file, only cache entries whose key it recomputes, each key covering what its check measures (the M0 timing rows: vanilla program signatures, the driver mods, the timing machinery, fh.py, the build and the record format); re-derives suite evidence from raw outputs alone: each timed repetition's validity from its run directory, the affinity watcher's records and the persisted monitor reads (never the runner's `reps.jsonl` verdicts, only cross-checked), the walker's affinity the same way, the server saves' sizes from the files, and the game self-test by replaying a copy of its stored runs (`game_selftest.py --replay`, which launches nothing); parses every cell of the plan's section 6 (6.2 limits bound by program, modset and map; 6.3 allocations per modset and map, "every other milestone" included) and fails closed on one it cannot read; a 6.2 From cell naming no milestone (P3) is in force from the first milestone, and a row in force that no check of the runner consumes (`LIMIT_CONSUMERS`) fails the section6 row; rule 5's extra group of 7 reps per config for a timed ratio within 0.03 of a limit, decided pooled (in the gate only when it fits the budget, else it fails closed naming the ratio); a guard snapshot and check around every command that launches the game, chained on the chain's last entry, with an append-only journal; every start also fails when a build instance (`test-instance/instances/ea-*`) wrote a game log after the chain's last clean end, a game run outside every chained bracket (after an entry that never finished, only the instances its launch ledger names may have), and prints every manual re-baseline in the part, which the gate's verdict line counts; every game launch inside the bracket, whose token it hands its child tools (`tnguard.py`) | 0 |
 | `tools/build_geo.py` | Tents fit and emitter | reproducible emission (Build-time data flow) | 1 |
 | `tools/build_waterways.py` | Waterway vectorisation, per-scale smoothing and simplification | | 4 |
-| `tools/build_zip.py` | Packaging; `--release`; `--release --push-tag` (the release tag step) | byte-reproducible zip, the same on this machine and on GitHub's `windows-latest` runner; `--release` refuses an Earth body missing from tests/frozen.json (the Map type fallbacks excepted), which every milestone from `europe-coast` on keeps complete, so it works at any point of the release; `--push-tag` pushes only the tag `v<version>` on `origin/main`'s head when it carries the release trailer | 0; tag step 14 |
+| `tools/build_zip.py` | Packaging; `--release`; `--check-tag <tag>` (release.yml's tag check); `--release --push-tag` (the release tag step) | byte-reproducible zip (stored entries, fixed timestamps and attributes, sorted), the same on this machine and on GitHub's `windows-latest` runner; `--release` refuses while config.lua marks a placeholder name, and refuses any unregistered Earth body: every noise name config.lua defines, released bodies and firewall bodies alike, missing from tests/frozen.json, the Map type fallbacks excepted (design constraint 2), which every milestone from `europe-coast` on keeps complete, so from then it works at any point of the release; the gate's frozen row checks the dumped bodies themselves; `--push-tag` pushes only the tag `v<version>` on `origin/main`'s head when it carries the release trailer | 0; tag step 14 |
 | `.github/workflows/ci.yml` | On every push and pull request: `earth_test.py static` and `build_zip.py`, the zip uploaded as an artifact | no game, no fh.py, no `FACTORIO_WS`; `contents: read`; actions pinned to full commit SHAs | 0 |
 | `.github/workflows/release.yml` | On a pushed tag `v*`: checks the tag against `info.json`, runs `build_zip.py --release`, publishes the GitHub release with the zip and its `.sha256` | the workflow's own `GITHUB_TOKEN` with `contents: write` and the preinstalled `gh`, no other secret; no game | 0 |
-| `tools/t1_metrics.py`, `oracle.py`, `dump_render.py`, `contact_sheet.py`, `nav.py`, `earthgeo.py` | S8's tools with their self-tests; `earthgeo.py` holds the pixel conventions | conventions equal config.lua's | 0 |
-| `tools/perf.py` | T15 timing: TQ1b block, 16 LP affinity (0xFFFF, the weaker-machine proxy) with 8 LP (0xFF) recorded as a diagnostic, quiet-window protocol, census check | | 0 |
-| lint config | selene or luacheck installed per user (version recorded), luaparser 4.2.0 as the syntax floor | | 0 |
-| `data-src/earthmaps/` | Decoded rasters, reference JSON, provenance, GPLv3 notice | read-only tool input | 0 |
-| `tests/` | `oracle/<map>.json`, `budgets.json` (measured values only, never thresholds), `frozen.json`, `baselines/` | the gate reads main's committed copies | 0 |
+| `tools/t1_metrics.py`, `oracle.py`, `dump_render.py`, `contact_sheet.py`, `nav.py`, `earthgeo.py`, `earthmaps_decode.py`, `game_selftest.py` | S8's tools with their self-tests, ported from `spikes/S8-tooling` in an earlier prototype; `earthgeo.py` holds the pixel conventions and reads them from config.lua; `oracle.py extend` and `validate` build and check `tests/oracle/<map>.json`; the game self-test uses content-hashed `ea-s8-*` modsets, and `game_selftest.py --replay` re-derives its 31 verdicts from a finished run's stored outputs (every game command answered from its own `run.json`, nothing launched) | conventions equal config.lua's; rasters from `data-src/`, the oracle from `tests/oracle/`, the workspace from `FACTORIO_WS` | 0 |
+| `tools/tnconfig.py` | The luaparser loader of config.lua (local assignments, table constructors, literals, `..` and arithmetic; anything else fails closed) and the schema accessors of its groups (`firewall_names`, `fallbacks`, `release_registry`, `toggles`, `placeholder_names`, `noise_names`, `unregistered_names`, `schema_problems`, `defined_names`) | the one way Python reads Earth names and constants; an accessor raises on a wrong shape and never reads one as empty; `schema_problems` also reconciles the stores of Earth body names: every firewall body but the placeholder's sits in a `release_registry` row, and every noise name carries the noise prefix | 0 |
+| `tools/tnguard.py` | The safety rails design constraint 1 shares across tools: the live-profile and mods-folder output refusal every tool's output options pass through (plain drive-letter paths only: extended-length, device and UNC spellings, admin shares among them, are refused; the live profile, from `APPDATA`, the known roaming folder and the home default, is matched by resolved path and by file identity of the nearest existing ancestor; a `mods` segment is matched as Windows opens it); the declaration of every tool option as written (`OUTPUT_ARGS`), read (`READ_ARGS`) or a value (`VALUE_ARGS`); and the guard-bracket check (`TN_BRACKET`) that `game_selftest.py`, `dump_render.py run`, `oracle.py probe` and the gate's kill probe pass before fh.py launches the game | the one module that names the live profile, to refuse it (the launch scan allows it that alone); launches nothing | 0 |
+| `tools/tn_static.py` | T16's static rows and their run-time fixture controls (lint, info.json, locale, dashes, registration, names, design rules, launch scan, output options, workflow scan, attribution scan, data-src hashes, frozen and budgets shape, zip) | no game, no fh.py, no FACTORIO_WS, no git refs; needs only luaparser and the linter; the mod scans read `build_zip.py`'s own file classification (shipped and refused files), so no file in the mod folder escapes them; the registration scan is an allowlist over every use of `script`, `defines.events`, `require` and indirect global access; the name scan reads string literals and identifiers (dot-index fields, table-constructor keys, method names) of every mod Lua file and of `tools/mods/` (its Lua and `info.json` files too); the output-options row requires every argparse dest under `tools/` to be declared in `tnguard.py` and every tool with a written one to call its refusal; the frozen row requires every noise name config.lua defines, but the placeholder's and the fallbacks, to be registered; the launch and attribution scans read every file of their trees (dot and build folders included) and the launch scan the repo's root scripts too | 0 |
+| `tools/mods/` | Test-only mods, never shipped: S8's `ep-s8-dump`, `ep-s8-probe`, `ep-s8-disc-world`; TQ1's timer `tq1-gen` (block from a runtime-global setting); TQ2's driver `tq2-driver` (forced, explore, walk, rtexplore and save jobs); `ea-coast-twin` (isolation (a)'s constant-coast twin, named at run time by the runner), `ea-leak-fixture` (the isolation checks' positive controls: a test-only preset carrying the first Earth preset's keys without the start mask, and one carrying all of them plus an entity and a decorative autoplace key redirected to fixture bodies that read the fine field; values that are numbers stay numbers) and `ea-heavy-probe` (PERF-15) | they get any Earth name from the runner at run time, so a rename stays a config edit (the T16 name scan reads them) | 0 |
+| `tools/affinity_watch.ps1` | TQ1b's affinity watcher, `-Mask` 0xFFFF (the 16 LP proxy, its default) or 0xFF (the 8 LP diagnostic) | with `tools/perf.py`, the only script that names the game's process image, and it never launches one | 0 |
+| `tools/perf.py` | T15 timing: TQ1b block, 16 LP affinity (0xFFFF, the weaker-machine proxy) with 8 LP (0xFF) recorded as a diagnostic, quiet-window protocol, census check; the kill-on-close job object every fh.py launch runs in; the parsers (force time, `--verbose` complexity, `--benchmark-verbose all`, real-time intervals) | the one process-inspection module: it lists, watches and pins game processes fh.py started, and never launches one | 0 |
+| `tools/lint/` | luacheck 1.2.0 installed per user under `%FACTORIO_WS%\downloads\luacheck-1.2.0\` (`manifest.json` records version, source and sha256; `luacheckrc.lua` declares each stage's globals; `fetch_linter.py` installs it in CI), luaparser 4.2.0 as the syntax floor (`requirements.txt`), the vendored fh.py flag sets (`fh-flags.json`) the launch scan reads, and the warnings allow-list | the linter's checked-file count equals the zip's Lua file count | 0 |
+| `data-src/earthmaps/` | Decoded rasters, reference JSON (byte copies of S8's), provenance, GPLv3 notice | read-only tool input; the gate regenerates the rasters with the decoder and compares them byte for byte | 0 |
+| `data-src/approvals/` | `approvals-data.json`, a byte copy of `spikes/approvals/out/approvals-data.json`, with its provenance | read-only; the milestones load its rows into `terra-nauvis/prototypes/tables/` | 0 |
+| `tests/` | `oracle/<map>.json` (with S8's place set as the fixture `oracle/s8/`), `budgets.json` (measured values only, never thresholds), `frozen.json`, `design-rules.json` (the APPROVALS 1a row of every existing setting), `baselines/` (`build-<n>.json`, `suites/<milestone>.json`) | the gate compares the working tree's measured values with its own measurement and with main's committed copies | 0 |
 | the design notes, `docs/posters/` | Plan documents; posters (D30) | | 13 |
 
-`prototypes/config.lua` holds:
+`prototypes/config.lua` holds the groups below. Their shapes are the contract every Python reader
+uses through `tools/tnconfig.py`'s accessors, which raise on a wrong shape instead of reading it as
+empty (an empty Lua table `{}` is an empty table of either shape); the T16 names row reports every
+shape problem (`tnconfig.schema_problems`). Keyed groups pair with an order list, as `settings` with
+`setting_order`.
 
-| Group | Contents |
-|---|---|
-| Identity | mod ID, title; setting, preset, expression and locale prefixes |
-| Maps | key (`europe`, `atlantic`, `olde_world`; settings say `old-world`, APPROVALS 1a), preset name, display name, raster size, `wr` and `hr`, georeference, world size per scale |
-| Scales | 1 to 6, default 6; the coordinate-chain constant `floor(s / 2)` |
-| Toggles | setting name, preset key, default, mechanism (name switch or hook gate), on and off values; Exact coastlines with the maps it may act on |
-| Keys | every `property_expression_names` key any Earth preset sets (D33 guard, missing-name guard, T14); per map, the names its elevation entry reads and whether each is map-qualified (the fallback list) |
-| Release registry | per release: geography id, every released name, the generated files it loads |
-| Tunables | transfer gain and sign offset, detail amplitude, ramp, hotspot and enemy constants, every `seed1`, ore frequency 0.75, the forest boost (2; a per-family data value), the random-oil sea threshold on `tn_land_coarse`, the maps Exact coastlines may act on, river width factors (k = 3 major, 2 minor), ford spacing (60 reference px) and length (8 tiles), the Map type and preset orders |
+| Group | Contents | Shape |
+|---|---|---|
+| Identity | mod ID, title; setting, preset, expression and locale prefixes | `identity = {id, title, version, author, factorio_version, base_version, setting_prefix, noise_prefix}` |
+| Maps | key (`europe`, `atlantic`, `olde_world`; settings say `old-world`, APPROVALS 1a), preset name, display name, raster size, `wr` and `hr`, georeference, world size per scale | `maps = {<key> = {key, setting_key, display, width_px, height_px, wr, hr, lon_left_edge, lat_top_edge}}`, `map_order = {<keys>}`; the plan's tables name maps by `display` |
+| Scales | 1 to 6, default 6; the coordinate-chain constant `floor(s / 2)` | `scales = {values = {...}, default}` |
+| Settings and presets | each setting's name, type, default and values; each preset's name, map and order | `settings = {<key> = {...}}` with `setting_order`; `presets = {<key> = {name, map, order, placeholder}}` with `preset_order` |
+| Toggles | setting name, preset key, default, mechanism (name switch or hook gate), on and off values; Exact coastlines with the maps it may act on | `toggles = {<key> = {setting = <settings key>, preset_key, default, mechanism = "name switch" or "hook gate", on, off, maps}}` with `toggle_order` |
+| Keys | every `property_expression_names` key any Earth preset sets (D33 guard, missing-name guard, T14); per map, the names its elevation entry reads and whether each is map-qualified (the fallback list) | `preset_keys = {<keys>}`; `fallbacks = {<map key> = {{name = <noise name>, map_qualified = <bool>}, ...}}`: the Map type fallbacks, never registered in `tests/frozen.json`, exempt from `build_zip.py --release`'s registry check and part of the names config defines |
+| Firewall | per map, the fine field: the map's elevation entry and every term only it reads (design constraint 3; the isolation checks and the constant-coast twin read it) | `firewall = {<map key> = {<noise names>}}`; in `toolchain` the placeholder's `firewall = {<keys of placeholder.names>}` (its elevation) supplies it, and an empty field fails every isolation check |
+| Placeholder | the `toolchain` preset's map, scale, spawn pixel, shore, sea floor, the start mask's constants and its names (never registered or released; `europe-coast` retires it) | `placeholder = {preset, map, scale, spawn_px, shore_tiles, sea_floor, start_mask_floor, start_mask_span, names = {<key> = <noise name>}, keys = {<keys of names>}, firewall = {<keys>}, withheld_with = {<mod names>}}`; `withheld_with` lists the mods whose presence withholds the placeholder preset (`alien-biomes`) |
+| Release registry | per release: geography id, every released name, the generated files it loads | `release_registry = {{release = <version>, geography = <id>, names = {<noise names>}, files = {<generated files>}}, ...}` |
+| Tunables | transfer gain and sign offset, detail amplitude, ramp, hotspot and enemy constants, every `seed1`, ore frequency 0.75, the forest boost (2; a per-family data value), the random-oil sea threshold on `tn_land_coarse`, the maps Exact coastlines may act on, river width factors (k = 3 major, 2 minor), ford spacing (60 reference px) and length (8 tiles), the Map type and preset orders | keyed tables of numbers, one group per expression module, added by the milestone that reads them |
 
 ## Build-time data flow
 
@@ -636,7 +651,13 @@ Rules:
 | `on_chunk_deleted`, `on_surface_cleared`, `on_surface_deleted` | bandfix | only if the band fix keeps per-chunk keys (worldgen-runtime rule 1) |
 
 Never registered: `on_tick`, `on_nth_tick`, `on_chunk_charted`, or any other per-tick or per-chunk
-event. T16 checks the registrations statically.
+event. T16 checks the registrations statically, as an allowlist: the global `script` appears only as
+the base of a direct `script.on_event(defines.events.<name>, ...)` with an event of this table, a
+lifecycle call in `control.lua` or `scripts/`, or a read of `script.mod_name`, `active_mods`,
+`feature_flags` or `level`; an alias or other use of `script`, indirect global access (`_G`, `_ENV`,
+`rawget` and the like), a `require` of anything but a file of the mod or an allowed core module (the
+core `event_handler` library registers events), a computed index into `defines.events`, and any
+reference to a per-tick event or, outside `scripts/bandfix.lua`, to a per-chunk event fail it.
 
 ### Rules
 
@@ -774,7 +795,7 @@ vanilla, 1.249 and 1.213x AB alone. The 8 LP figures below are history.
 | Forced generation, full program, Earth over vanilla, 16 LP (TQ1b block, affinity 0xFFFF), per map at scales 6 and 1 | at most 1.5x: the binding performance rule (the plan's P1). TQ3: S9's Europe composite 1.045x on TQ1b's block and 1.048x far at 16 LP; TQ2: 1.26x and 1.19x at 8 LP, 1.00 to 1.03x at 24 LP | D7; TQ2; TQ3 and 13:20 | the gate (Europe at scale 6, every milestone); the suite of every milestone that adds Tile or Entity work, per map; `ridges` completes and times every map's full program |
 | Same, Earth plus AB over AB alone | at most 1.5x at 16 LP (the plan's P2). AB alone is 1.00 to 1.05x vanilla at 24 LP and 1.19 to 1.21x at 8 LP; TQ3 timed S9's composite at 1.249 and 1.213x AB alone at 16 LP, inside the bar (TQ2: 1.59 to 1.66x at 8 LP, 1.20 to 1.23x at 24 LP), so `climate-tiles` keeps the flip rule for Alien Biomes worlds (cut order below) as a guard, for a map the build pushes over 1.5 at 16 LP | decision 5; REVIEW, TQ1b, TQ2, TQ3, 12:35 and 13:20 | the same, from `climate-tiles` |
 | Relative limit per milestone | the formula and the per-milestone time allocations in the plan's table (section 6.3), read against TQ3's 16 LP composite (1.045x vanilla and 1.249x AB alone on TQ1b's block) until `europe-coast` records the build's own (TQ2 gave 1.26x and 1.66x at 8 LP) | decisions 3 and 5; TQ2 | gate perf step |
-| Same, 24 LP | at most 1.5x | D7 | release suite |
+| Same, 24 LP | at most 1.5x (the plan's P3, whose From names no milestone, so it is in force from `toolchain`) | D7 | milestone and release suites: the runner holds every 24 LP forced-generation ratio of an Earth modset against its comparator to it wherever a suite records one (`toolchain` records none) |
 | Exploring, the in-play lag (asynchronous generation, R8 2.8) | gated in real time at 60 UPS on a loopback server, TQ2's frontier at 24 LP: ticks over 20 ms, the p99 interval and the longest interval (the plan's P4 to P6), against vanilla (AB: AB alone); benchmark mode recorded per milestone, its `scriptUpdate` gated (P7). TQ2: 2 late ticks of 2,160 (EarthMaps 108, Factorio World 120), p99 17.6 against vanilla's 17.5 ms; benchmark mode 4.46x vanilla's mean, because a column's tile step (78 ms on S9's composite) lands inside a tick only when ticks run back to back | decision 7 as design notes 10:20 restates it; TQ2 | milestone suites from `europe-coast`, re-validated by the gate perf step |
 | First column into empty land | a request into empty land builds a 7 x 17 chunk support neighbourhood, 7 columns of tile work at once; TQ2: 466 ms of main thread in benchmark mode, a 302 ms interval at 60 UPS (505 with AB), longer than either world mod's longest (41 and 86 ms); the plan's P6 limits it, and `europe-coast` traces and reduces it | TQ2 | milestone suites from `europe-coast` |
 | Tile complexity per world | a diagnostic cap with per-feature allocations in the plan's table (P10, P11, section 6.3). the review's provisional 113,000 sat on the 8 LP chord between tents 4,096 (0.993x) and 16,384 (1.641x), which reaches 1.5x near 121,600; TQ2 timed S9's composite (Tile 112,387) at 1.26x at 8 LP, under the chord's 1.44 estimate, while with AB (173,325) it timed 1.66x AB alone at 8 LP, so on M2 the timed rule binds, not the cap | decisions 3 and 5; REVIEW, TQ1b, TQ2 | gate perf step (T15a) |
@@ -819,9 +840,9 @@ Design constraints (each enforced by the gate):
 
 | # | Invariant | Enforced by |
 |---|---|---|
-| S-1 | Every game run goes through `%FACTORIO_WS%\tools\fh.py` with its own instance and modset, and every run that writes data has a RESULT line reading `isolated=yes`; nothing launches the game against, or writes to, `%APPDATA%\Factorio`, and nothing in the repo installs into a mods folder (players get the zip of a GitHub release by hand) | `earth_test.py` refuses any other RESULT on a run that writes data (`--version` and `--help` runs are exempt and say so; a loopback server passes with `exit=timeout`, TST-11); a live-profile guard snapshot and check around every command that launches the game, gate, suites, install-check and perf (G9); the T16 launch scan |
-| S-2 | Registered expression bodies are byte-frozen in their generation fields (`tests/frozen.json`, from `europe-coast` on); names are append-only; the Map type fallbacks, which mirror startup settings, are the one exemption | gate freeze check on the M1 and M2 dumps; the T16 fallback check; `build_zip.py --release` refuses any other unregistered body |
-| S-3 | On Terra Nauvis presets the Entity and Cliff programs never read the fine coast field; their one land field is `tn_land_coarse`. A Map type entry picked alone is outside this by design and is timed and reported (Map type entries) | isolation check (a) against the constant-coast twin and (b) the static walk |
+| S-1 | Every game run goes through `%FACTORIO_WS%\tools\fh.py` with its own instance and modset, and every run that writes data has a RESULT line reading `isolated=yes`; nothing launches the game against, or writes to, `%APPDATA%\Factorio`, and nothing in the repo installs into a mods folder (players get the zip of a GitHub release by hand) | `earth_test.py` refuses any other RESULT on a run that writes data (`--version` and `--help` runs are exempt and say so; a loopback server passes with `exit=timeout`, TST-11), and a run whose `run.json` records isolation as anything but true, a NOT-ISOLATED RESULT or a run on another build (G8) stops every further game run of the command at once (no row or group loop catches it: the job is terminated and the guard check runs), as do the game self-test and `dump_render.py` on their own runs; a live-profile guard snapshot and check around every command that launches the game, gate, suites, install-check and perf (G9), chained on the chain's last entry, re-baselined only by a part's first command after a clean previous part (the plan defines no other re-baseline: a dirty guard stops all game runs and is reported first on the parent issue, and only the maintainer clears it, by hand at an interactive terminal); every start fails on a build instance's game log newer than the chain's last clean end (a game run outside every chained bracket); the bracket token every repo tool that launches the game checks (`tools/tnguard.py`), and the output refusal of the live profile in every spelling (extended-length, device, UNC and NT-namespace spellings are refused outright), of a file with a second hard link or a folder holding one or a link into the profile, and of any folder named mods, for every option any tool writes, each judged at the absolute path the tool writes (a relative path joined to the tool's own base, never re-anchored by a subprocess) (each declared in `tnguard.py`, checked by T16); the T16 launch scan over every file of `tools/`, `tests/` and `.github/` and the root scripts |
+| S-2 | Registered expression bodies are byte-frozen in their generation fields (`tests/frozen.json`, from `europe-coast` on); names are append-only; the Map type fallbacks, which mirror startup settings, are the one exemption | the gate's frozen row on the dumps the runner's registry names (M1; M2 from `climate-tiles`): every Earth body (a prefixed or config-defined noise body) registered unless it is the placeholder's or a fallback, every registered body present and unchanged, with the exact freeze command on a failure; the T16 frozen row (every noise name config.lua defines, the same exemptions, against `tests/frozen.json`) and fallback check; config.lua's schema (every firewall body but the placeholder's in a release row, every noise name prefixed); `build_zip.py --release` refuses any other unregistered body |
+| S-3 | On Terra Nauvis presets the Entity and Cliff programs never read the fine coast field; their one land field is `tn_land_coarse`. A Map type entry picked alone is outside this by design and is timed and reported (Map type entries) | isolation check (a) against the constant-coast twin and (b) the static walk, gating from `toolchain` (whose placeholder preset redirects the start mask too), each with its positive controls on the test-only `ea-leak-fixture` presets (the start-mask route; for (b) also a redirected entity and decorative autoplace key, which the walk follows as the program reads it); beside Alien Biomes, whose palms read `elevation`, the placeholder preset is withheld, which the gate's `ab_placeholder` row checks on M1 plus the live AB copy, its control walking the palms to the fine field. That row speaks only for presets marked placeholder and retires with the placeholder in `europe-coast`. From `europe-coast` until `climate-tiles` the real presets are defined beside AB and AB's palms read their `elevation` entry, the fine field, in the Entity program (the leak design notes 17:55 measured on the placeholder): that leak is outside the gate in parts 2 to 4, and `climate-tiles` closes it with the palm switch and the M2 isolation checks (design note 9) |
 | S-4 | No per-tick handler, and no per-chunk handler except the band fix, which is registered only on saves whose map's preset carried the band-fix key (Exact coastlines on, the map's checks passed) | T16 static registration allowlist; `scriptUpdate` in T15c and T15d |
 | S-5 | All names (mod ID, settings, expressions, presets, locale keys) come from `prototypes/config.lua` | T16: no literal names or coordinates outside config and tables; D36 rename dry run |
 
@@ -886,7 +907,131 @@ takes over the Map type fields.
   made. The gate's wall time is measured here, and a deliberately heavy probe shows which
   `mapGenerator*` column moves (PERF-15).
 - **Gate.** T16 (the workflow scan included), T13 load on M1, tool self-tests (S8: 62, 760, 10, 4
-  and 10 offline checks and the 31-check game suite).
+  and 10 offline checks and the 31-check game suite). Design constraint 3 holds on the placeholder
+  preset too: it redirects `starting_resources_lake_mask` to `tn_placeholder_start_mask_europe`, a copy
+  of vanilla 2.1.23's start mask that reads `elevation_nauvis`, so isolation (a) (Entity and Cliff
+  equal between the real build and its constant-coast twin while Tile differs) and (b) (no firewall
+  name under any Entity, decorative or Cliff root of the dump walk) gate from here. Their positive
+  controls run on test-only presets of `tools/mods/ea-leak-fixture`: one carries every key of the
+  first Earth preset but the start mask (numbers stay numbers), so the fine field alone is
+  redirected and both checks must report vanilla's starting-ore mask reaching it; the other carries
+  every key plus an entity and a decorative autoplace key (`entity:<name>:probability` and the like,
+  the form the ore and offshore-oil redirects take from `resources-enemies`) redirected to fixture
+  bodies that read the fine field, and (b) must follow both, since the walk reads a placed
+  prototype's property keys through the preset (and the planet's own redirects) and its own
+  autoplace text only when a key is not redirected. Beside Alien Biomes the placeholder preset is
+  withheld, because AB's palms read `elevation`; the `ab_placeholder` row dumps M1 plus the live AB
+  copy (`fh.py modset --from-live`), finds no preset marked placeholder there, and its control walks
+  that dump with the placeholder's redirects to the fine field through the palms. The row retires
+  with the placeholder in `europe-coast`; from then until `climate-tiles` the real presets exist
+  beside AB, AB's palms read their `elevation` entry in the Entity program, and that leak is outside
+  the gate until `climate-tiles`' palm switch and M2 isolation checks close it (S-3).
+  P10 and P14 (and, as each milestone brings them into force, every complexity row of 6.2, bound by its
+  program, modset and map), P18 (M0t against M0t at 16 LP, from suite evidence and the live sample,
+  with rule 5's pooled group near a bound) and P3 (every 24 LP Earth ratio a suite records; none
+  yet) gate from here. The frozen row already requires every Earth body of the M1 dump but the
+  placeholder's to be registered, so it passes trivially here and binds from `europe-coast` on.
+- **Build note** (process, not a contract). The build hands the builder only the args record, so
+  before writing code the builder reads its issue, whose acceptance criteria the review
+  audits, the plan's "### Milestone 0: toolchain" with its sections 2, 4, 5 and 6, this section, and
+  test notes G1 to G10, T13, T16 and 5.2 to 5.6. Order of work: the final code change, then
+  `python tools/earth_test.py baseline`, then `python tools/earth_test.py suite toolchain` last. A
+  later change re-runs the suite, or the gate fails on stale suite evidence.
+- **Fit review, folded in.** The accepted patches beyond the rows above; where the build decided
+  differently, the design notes entry named here governs.
+  - *Ported planning data.* `spikes/` on main is an ignored, empty shell, so every spike
+    input is read with `git show` or `git archive` from the prototype branch (`45c86d706c21`).
+    `data-src/earthmaps/<map>.json` and `data-src/approvals/approvals-data.json` are byte copies;
+    each `PROVENANCE.md` records the planning commit, every file's sha256, EarthMaps commit
+    `23c647b8` and the decoder command. T16's data-src row re-hashes the copies. The gate's data_src
+    row regenerates the rasters with `python -I tools/earthmaps_decode.py` from
+    `%FACTORIO_WS%\downloads\earthmaps\src` into its run directory (`--no-simulation`: the PNGs do
+    not depend on it), compares each PNG byte for byte with the committed file and with the sha256
+    its reference JSON records under `png`, and checks sizes and class counts against that JSON. No
+    gate step reads `spikes/` or `previews/earth-plan/`.
+  - *Porting fixes.* The S8, TQ1 and TQ2 tools derive no path root from their spike location:
+    rasters and reference JSON come from `data-src/earthmaps/`, the oracle from `tests/oracle/`,
+    docs from the repo root and the workspace from `FACTORIO_WS`. The game self-test and the timing
+    jobs run on `ea-` instances and modsets; TQ2's `tq2-driver` is ported, not
+    rewritten.
+  - *Self-test counts.* 62 + 760 + 10 + 4 + 10 are S8's counts on S8's own inputs, and each offline
+    self-test passes with zero failures; `oracle.py selftest` reproduces the 760 on S8's place set,
+    the byte-copied fixture `tests/oracle/s8/`. `oracle.py validate` checks the rows
+    `tests/oracle/<map>.json` adds (R7b, R7a, R1 and the brief's climate rows) separately: each has
+    a source, its expectations are null or tagged per decisions 14 and 19, and `reference_holds` runs
+    only where a land expectation exists. The issue evidence records the actual counts.
+  - *Freeze and `--release`.* `earth_test.py freeze` and the frozen-body checker ship here; both
+    hash generation fields only and are append-only, and the checker's controls make a changed hash
+    and a missing name fail and a GUI-only field change pass. config.lua marks the placeholder's
+    names: freeze never registers them, the checker exempts them, and `build_zip.py --release`
+    refuses while one exists. `--release` finds Earth bodies statically from config.lua through
+    `tools/tnconfig.py`, because `release.yml` runs without the game.
+  - *T15a bootstrap.* `tests/budgets.json` keeps the placeholder preset's complexity rows under
+    their own row key `placeholder`, never as `europe` rows. They meet the caps (P10, P14) and
+    `toolchain`'s 6.3 allocation, differ from vanilla's 10,068 / 8,549 / 287 (G5), and
+    `europe-coast` deletes them when it retires the preset. For a row main lacks (a map's first
+    rows) the growth base is the comparator's row, M0, or BAB for M2 rows: the base 6.3's
+    allocations were computed over (S9's Europe Entity minus its hotspot and forest increments,
+    12,443 - 1,353 - 2,307 = 8,783, is the +234 over M0's 8,549 that 6.3 cites; derived).
+  - *Positive controls and PERF-15.* The fit review assumed a placeholder without a start-mask
+    redirect, with both isolation checks run as record-only controls reporting the leak through
+    vanilla's starting-ore mask (R6 Q3). The build redirects the start mask instead and gates both
+    checks from here, with the leak controls on `ea-leak-fixture` (design notes 15:25 and 16:40; Gate
+    above). PERF-15 runs once in the milestone suite, record-only: the benchmark-mode walker times a
+    deliberately heavy probe elevation (`tools/mods/ea-heavy-probe`) against M0 and records which
+    `mapGenerator*` column moves, next to Phase 4's BasicTilesSupportCompute finding
+    (BENCHMARKS.md:247-272).
+  - *Section 6 parser.* The plan is read with `git show main:the design notes. The fit review
+    parsed only the rows in force; the build parses every 6.2 and 6.3 cell in every gate, fails
+    closed on an unreadable one, and fails on a TBD-P4 cell only where it is in force (design notes
+    16:40 and 17:55).
+  - *Launch scan.* `static` runs without fh.py, so `tools/lint/fh-flags.json` vendors fh.py's
+    `GUI_FLAGS` and `FORBIDDEN_EXTRA` with fh.py's sha256, and the gate's fh_flags row, which has
+    `FACTORIO_WS`, fails when they differ from fh.py's sets, read with `ast` and never imported.
+    Flags match only as argv tokens bound for fh.py or a process launch (string constants in
+    argument lists; tokens in `.ps1`, `.yml` and `.cmd` lines), never free text, so `python -m` and
+    `git -c` pass. The game's process image is named only in `tools/perf.py` and
+    `tools/affinity_watch.ps1`, never as a launched program, and `fh.py modset` is the only way a zip
+    reaches a mod directory. Every scan fixture (launch, workflow, attribution) is generated at run
+    time in a temporary directory outside the scanned trees and never committed, so the real scans
+    need no exemptions.
+  - *Attribution scan.* The scanner assembles its patterns from fragments at run time
+    and writes its positive-control fixture into a temporary directory: no committed file, command
+    line, CHANGELOG.md or the design notes holds a literal pattern, and the guard is never bypassed
+    (U14).
+  - *CI independence.* `static` and `build_zip.py` read only the checked-out tree: no git refs (a
+    default `actions/checkout` has no local main on pull requests and branch pushes, so the
+    plan-versus-main and budgets-versus-main comparisons are the gate's alone), no fh.py import and
+    no `FACTORIO_WS`. The zip stores its entries uncompressed, so it is
+    byte-identical on `windows-latest` whatever the zlib; the build record still names the
+    interpreter and zlib, and CI pins Python 3.13.3. The release step compares the CI artifact with a
+    local build after the part (design section 18). CI installs luaparser 4.2.0 and luacheck at the
+    versions `tools/lint/` records and checks the linter's sha256.
+  - *Lint.* No linter was on PATH, so luacheck 1.2.0 is downloaded under project rule 8 into its own
+    directory under `%FACTORIO_WS%\downloads\` (version, source URL and sha256 in `tools/lint/`),
+    with Factorio's globals declared per stage. The file-count rule covers the
+    zip's Lua files (`terra-nauvis/`); luaparser parses every Lua file in the repo, `tools/mods/`
+    included.
+  - *Runner robustness.* Every fh.py launch runs in a kill-on-close job object, so a
+    hard-killed runner takes its game tree with it. The workspace lock
+    (`%FACTORIO_WS%\previews\earth-build\earth-test.lock`) records its owner's PID, and a lock whose
+    owner is dead is free. The guard chain lives outside the repo under
+    `%FACTORIO_WS%\previews\earth-build\guard\part-<n>\`, keyed by the part the command's milestone
+    belongs to: a part's first command re-baselines, and every other command's start snapshot must
+    equal the chain's last end snapshot.
+  - *T16 scope.* The name scan covers the mod's Lua under `terra-nauvis/`, config.lua excepted, and
+    `tools/mods/`, whose test mods get any Earth name from the runner at run time, so the D36 rename
+    dry run stays a config edit. The placeholder shape takes every coordinate and constant from
+    config.lua (S-5). settings.lua ships only the scale setting, so the design-rules check asserts
+    APPROVALS 1a defaults only for settings that exist, and each later milestone adds its own rows. A
+    dependency version has at least two numeric parts (mod-dev rule 4): `base >= 2.1.23` passes,
+    and the `?` dependencies carry no version.
+  - *Docs and source offer.* The builder writes the CHANGELOG [Unreleased] entry, with the
+    measured cold and warm gate times and their run directories, and a the design notes entry for each
+    fork (the linter, the placeholder shape, any gate row moved to the suite under rule 4); the
+    commit step keeps them and adds no second entry. The zip's top folder
+    carries `LICENSE` (GPLv3) and `SOURCE-OFFER.txt`, which tells a recipient how to obtain the
+    corresponding source (the mod, `tools/` and `data-src/`) from the author (GPLv3 section 6).
 
 ### 1. `europe-coast` (part 2, order 0)
 

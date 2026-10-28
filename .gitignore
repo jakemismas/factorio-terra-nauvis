@@ -1,1 +1,4 @@
 __pycache__/
+
+# Build output of tools/build_zip.py (never committed).
+dist/

@@ -1,0 +1,9 @@
+{
+  "name": "ea-heavy-probe",
+  "version": "0.1.0",
+  "title": "ea-heavy-probe",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only deliberately heavy elevation for PERF-15: shows which mapGenerator column of --benchmark-verbose moves when the Tile program grows. Never shipped.",
+  "dependencies": ["base >= 2.1.23"]
+}

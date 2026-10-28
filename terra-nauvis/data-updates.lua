@@ -1,0 +1,2 @@
+-- Reserved for edits that must follow every mod's data.lua and precede every data-final-fixes.lua
+-- (ARCHITECTURE.md, "Module map"). Empty in the first release.

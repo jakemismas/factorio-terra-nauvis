@@ -1,0 +1,9 @@
+{
+  "name": "ep-s8-disc-world",
+  "version": "0.0.1",
+  "title": "Earth plan S8 disc world",
+  "author": "Jake Mismas",
+  "description": "Test-only: Nauvis elevation becomes ep_s8_disc (a land disc of radius 200 tiles), so a real preview can be scored by t1_metrics against an analytic reference.",
+  "factorio_version": "2.1",
+  "dependencies": ["base >= 2.1.23", "ep-s8-probe"]
+}

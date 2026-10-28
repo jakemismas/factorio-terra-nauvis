@@ -1,0 +1,5 @@
+{
+ "format": "tn-lint-allowlist/1",
+ "note": "Committed allow-list of linter warnings (T16 pass rule: warnings only from this list). Each entry is a substring of one luacheck warning line, with the reason beside it in a later slice's DECISIONS.md entry.",
+ "luacheck": []
+}

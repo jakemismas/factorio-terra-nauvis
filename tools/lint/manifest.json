@@ -1,0 +1,20 @@
+{
+ "format": "tn-lint-manifest/1",
+ "note": "The T16 lint toolchain (DECISIONS 06:45). The linter lints the zip's Lua files; luaparser parses every Lua file in the repo as the syntax floor. ci.yml and release.yml install both at these versions, the linter checked against this sha256 (tools/lint/fetch_linter.py).",
+ "linter": {
+  "name": "luacheck",
+  "version": "1.2.0",
+  "source": "https://github.com/lunarmodules/luacheck/releases/download/v1.2.0/luacheck.exe",
+  "release": "https://github.com/lunarmodules/luacheck/releases/tag/v1.2.0",
+  "sha256": "0f1c69c4d09f1ebb4d8df14c215e4553e2e639bd4cb7bf3c639b0daa6198317b",
+  "bytes": 820238,
+  "installed": "2026-10-27, per user, into %FACTORIO_WS%\\downloads\\luacheck-1.2.0\\ (hard rule 8)",
+  "user_install_paths": ["~/Documents/Factorio/downloads/luacheck-1.2.0/luacheck.exe"],
+  "config": "tools/lint/luacheckrc.lua"
+ },
+ "luaparser": {
+  "version": "4.2.0",
+  "python": "3.13.3",
+  "requirements": "tools/lint/requirements.txt"
+ }
+}

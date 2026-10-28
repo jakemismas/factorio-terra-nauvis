@@ -1,0 +1,9 @@
+{
+  "name": "ep-s8-probe",
+  "version": "0.0.1",
+  "title": "Earth plan S8 probe expressions",
+  "author": "Jake Mismas",
+  "description": "Test-only noise expressions for the S8 tool self-tests: the sample position itself and an analytic land disc.",
+  "factorio_version": "2.1",
+  "dependencies": ["base >= 2.1.23"]
+}
