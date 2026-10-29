@@ -1,0 +1,80 @@
+{
+ "window_px": [
+  0,
+  0,
+  2400,
+  1704
+ ],
+ "t1_window": {
+  "pixel_agreement": 0.991846,
+  "land_iou": 0.985033,
+  "false_land_px": 16622,
+  "false_water_px": 16361,
+  "coast_deviation_px": {
+   "misclassified": 32983,
+   "max": 7.106335201775948,
+   "p99": 1.5811,
+   "mean": 0.5931,
+   "capped": 0,
+   "cap": 64,
+   "capped_note": null,
+   "within_half_px": 26977,
+   "histogram": {
+    "0.5 (edge)": 26977,
+    "0.71 (corner)": 3848,
+    "<=1.5": 1751,
+    "<=2.5": 387,
+    "<=4.5": 16,
+    "<=8.5": 4,
+    "<=16.5": 0,
+    "<=64": 0,
+    ">64": 0
+   }
+  },
+  "d7": {
+   "agreement_bar": 0.99,
+   "agreement_pass": true,
+   "coast_bar_px": 0.5,
+   "coast_pass": false
+  }
+ },
+ "islands_window": {
+  "1": {
+   "islands": 270,
+   "present": 84,
+   "separate": 67,
+   "merged": 17,
+   "missing": 186
+  },
+  "2-4": {
+   "islands": 211,
+   "present": 72,
+   "separate": 61,
+   "merged": 11,
+   "missing": 139
+  },
+  "5-16": {
+   "islands": 173,
+   "present": 72,
+   "separate": 58,
+   "merged": 14,
+   "missing": 101
+  },
+  "17-64": {
+   "islands": 107,
+   "present": 79,
+   "separate": 65,
+   "merged": 14,
+   "missing": 28
+  },
+  "65+": {
+   "islands": 86,
+   "present": 86,
+   "separate": 44,
+   "merged": 42,
+   "missing": 0
+  }
+ },
+ "preview": "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s1-00/1000.png",
+ "sheet": "previews/earth-build/suite/20261029-124540-europe-coast/v1/europe-s1-whole.png"
+}

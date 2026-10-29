@@ -120,7 +120,8 @@ def run_dump(instance, modset, out, seed=1000, areas="", points="", names="", ty
     if not ml.exists() or not any(m["name"] == "ep-s8-dump" and m["enabled"]
                                   for m in json.loads(ml.read_text(encoding="utf-8"))["mods"]):
         raise SystemExit(f"RESULT fail modset {modset} lacks ep-s8-dump: python tools/fh.py modset {modset} --add {MOD_DIR}")
-    vals = {"label": label, "areas": areas, "points": points, "names": names, "decoratives": bool(decoratives),
+    vals = {"label": label, "areas": areas, "late-areas": "", "points": points, "names": names,
+            "decoratives": bool(decoratives),
             "scene": scene, "scene-lattice": int(lattice), "gen-tick": int(gen_tick), "tick": int(dump_tick),
             "types": DEFAULT_TYPES if types is None else types, "grid": grid, "grid-name": grid_name or "elevation",
             "grid-threshold": str(grid_threshold), "grid-op": grid_op}

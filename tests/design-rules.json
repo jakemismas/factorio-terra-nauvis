@@ -8,6 +8,17 @@
    "setting_type": "startup",
    "default_value": "6",
    "allowed_values": ["1", "2", "3", "4", "5", "6"]
+  },
+  "spawn_city_europe": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-spawn-city-europe (random plus 40 of EarthMaps' 41 Europe cities, default random); section 12 removes Luxembourg (data-src/approvals/approvals-data.json cities.europe.dropdown)",
+   "type": "string-setting",
+   "setting_type": "startup",
+   "default_value": "random",
+   "allowed_values": ["random", "tirana", "andorra-la-vella", "vienna", "minsk", "brussels", "sarajevo", "sofia",
+    "zagreb", "prague", "tallinn", "helsinki", "paris", "berlin", "athens", "budapest", "rome", "pristina", "riga",
+    "vaduz", "vilnius", "chisinau", "monaco", "podgorica", "amsterdam", "skopje", "oslo", "warsaw", "lisbon",
+    "bucharest", "moscow", "san-marino", "belgrade", "bratislava", "ljubljana", "madrid", "stockholm", "bern",
+    "ankara", "kyiv", "london"]
   }
  },
  "numeric_literals_allowed": [0, 1, 2]

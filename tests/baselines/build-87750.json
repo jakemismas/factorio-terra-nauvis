@@ -1,17 +1,17 @@
 {
  "format": "tn-baselines/1",
  "game_build": "2.1.23 build 87750",
- "note": "Vanilla and comparator hashes keyed by game build (G8), the placeholder preset's preview hashes and the T15b block's census on M0. Written by 'earth_test.py baseline'.",
+ "note": "Vanilla and comparator hashes keyed by game build (G8), each Terra Nauvis map's preset preview hashes, the T15b block's census on M0, and M0's census of each map's own T15b blocks (fixed in geo coordinates through the spawn offset). Written by 'earth_test.py baseline'.",
  "previews_256": {
   "M0": {
    "1000": "b5ce38715e7fac569eec2c7dec2863115b3f635f4aadd8d6efe5d5711cb704ae",
    "1002": "a170055f71649a8c2e6cf160b30c7a0eda3dfbb293a0c916a8db8ab1c28674c8",
    "1004": "0f6c371136cd39825c39a46ffea37b89e7732a0ff7d6b9036d4e8ff8609ab7e2"
   },
-  "placeholder": {
-   "1000": "3d2fa678243d0390313b53364d9edf728b48ab3ef074f8654c2288bc4cfb9cfe",
-   "1002": "349216fffabe8a9b0ba7acf4e4c679b78f760df407ae920b725f0516539f1e7a",
-   "1004": "e7eaf88df7dc9814fecb6f9d52071227739180c19d01492b93e739ff8d0cb2a3"
+  "europe": {
+   "1000": "2543be10579fca8f8fecef2b3b7a072c7d5a75f5e3ece6a15345a4d93e36e295",
+   "1002": "0d85cfdb6795e9f666a8b0d1b6b815316b7ebdad3010b1626f845a727d60f561",
+   "1004": "78d312ef07d7016ea4b155d25e65e5a7bb9981d50ed3cdb42e46c0c72a6dc653"
   }
  },
  "t15b_block": {
@@ -23,6 +23,35 @@
    "resources": 1778,
    "rocks": 193,
    "cliffs": 363
+  }
+ },
+ "t15b_europe": {
+  "map": "europe",
+  "blocks": {
+   "6": "-104:-57:-232:-137",
+   "1": "-24:-16:-39:-23"
+  },
+  "block_land": {
+   "6": 0.9235,
+   "1": 0.7791
+  },
+  "census_m0": {
+   "1": {
+    "water_tiles": 202,
+    "trees": 6084,
+    "enemies": 67,
+    "resources": 1507,
+    "rocks": 166,
+    "cliffs": 323
+   },
+   "6": {
+    "water_tiles": 35052,
+    "trees": 11468,
+    "enemies": 615,
+    "resources": 7274,
+    "rocks": 222,
+    "cliffs": 330
+   }
   }
  }
 }

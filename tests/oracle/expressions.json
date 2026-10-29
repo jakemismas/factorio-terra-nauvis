@@ -1,12 +1,12 @@
 {
  "_note": "How each oracle property is read from a run. expr = named noise expression sampled through fh.py sample or the ep-s8-dump points probe; null = not built yet, so the property is skipped. rule: ge/gt/le/lt against threshold gives a boolean; bands maps value ranges to names; values maps rounded values to names; source 'tile' reads the real tile name from a probe.",
  "land": {
-  "expr": null,
+  "expr": "elevation",
   "rule": "ge",
   "threshold": 0
  },
  "water": {
-  "expr": null,
+  "expr": "elevation",
   "rule": "lt",
   "threshold": 0
  },

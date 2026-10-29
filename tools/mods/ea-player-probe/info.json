@@ -1,0 +1,9 @@
+{
+  "name": "ea-player-probe",
+  "version": "0.0.1",
+  "title": "Earth build T18 player probe (test only)",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test tool, never shipped. Records whether a headless run can script a player (T18, ruling 25): in on_init it looks up LuaGameScript.create_test_player, which 2.1.23's runtime-api.json lists only on LuaSimulation, and writes what it found to script-output/ea-player-probe/player.json.",
+  "dependencies": ["base >= 2.1.23"]
+}

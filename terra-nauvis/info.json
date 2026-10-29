@@ -4,7 +4,7 @@
   "title": "Terra Nauvis",
   "author": "Jake Mismas",
   "factorio_version": "2.1",
-  "description": "Earth maps for Nauvis, generated entirely in noise. Early build: one placeholder preset, Terra Nauvis: Europe.",
+  "description": "Earth maps for Nauvis, generated entirely in noise. This build: Europe's real coastline at map scales 1 to 6 in an endless deep ocean, with the spawn at a chosen or random city beside a lake, as the Terra Nauvis: Europe preset and Map type (beside Alien Biomes, the Map type only).",
   "dependencies": [
     "base >= 2.1.23",
     "? alien-biomes",

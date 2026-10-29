@@ -1,0 +1,1252 @@
+{
+ "format": "tn-suite/1",
+ "slice": "europe-coast",
+ "checks": {
+  "t18_drift": {
+   "key": "176dd656b9bfbfebbb405a1a17951c34248247d82dc412128925231009c5e095",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/t18-create",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t18-load-at-3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t18-load-at-6",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t18-load-moved-at-6",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t18-load-older-at-3"
+   ],
+   "recorded": "2026-10-29 12:56:30",
+   "summary": {
+    "at_3": 1,
+    "at_6": 0,
+    "moved_at_6": 1,
+    "moved_at_6_any": 1,
+    "older_at_3": 1,
+    "older_at_3_any": 1
+   }
+  },
+  "t3_detail": {
+   "key": "7e596ef49d766be93bc3418c96ad680577cfcadfee73b6624d04d7fc40d5de5f",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-on-s1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-off-s1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-on-s2",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-off-s2",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-on-s3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-off-s3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-on-s4",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-off-s4",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-on-s5",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-off-s5",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-on-s6",
+    "previews/earth-build/suite/20261029-124540-europe-coast/detail-off-s6"
+   ],
+   "recorded": "2026-10-29 12:55:59",
+   "summary": {
+    "scale_1": 0,
+    "t1_on_s1": 0.991846,
+    "scale_2": 0,
+    "t1_on_s2": 0.991846,
+    "scale_3": 0,
+    "t1_on_s3": 0.991846,
+    "scale_4": 0,
+    "t1_on_s4": 0.991846,
+    "scale_5": 0,
+    "t1_on_s5": 0.991846,
+    "scale_6": 0,
+    "t1_on_s6": 0.991846,
+    "control_off_centre": {
+     "2": [
+      64,
+      59,
+      64
+     ],
+     "3": [
+      64,
+      59,
+      64
+     ],
+     "4": [
+      64,
+      59,
+      64
+     ],
+     "5": [
+      64,
+      59,
+      64
+     ],
+     "6": [
+      64,
+      59,
+      64
+     ]
+    }
+   }
+  },
+  "t11_values": {
+   "key": "05eaa55731719c7a06397025022876d0b02b6883f50d95185aa1cbc0c24abf35",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-create-1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-create-2",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-create-3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-create-4",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-create-5",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-create-6",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-1-under-2",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-1-under-1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-2-under-2",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-2-under-3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-2-under-2",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-3-under-3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-3-under-4",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-3-under-3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-4-under-4",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-4-under-5",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-4-under-4",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-5-under-5",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-5-under-6",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-5-under-5",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-6-under-6",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-6-under-1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-6-under-6",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t11v-1-under-1"
+   ],
+   "recorded": "2026-10-29 12:56:20",
+   "summary": {
+    "1_under_2": {
+     "tiles": 41984,
+     "differing_vs_fresh_a": 0,
+     "differing_vs_fresh_b": 24343,
+     "entities": 351,
+     "entities_differing_vs_fresh_a": 0,
+     "entities_differing_vs_fresh_b": 1103,
+     "late_tiles_differing_vs_fresh_a": 0,
+     "roundtrip_names": 15,
+     "read_back": {
+      "tn_scale": 1,
+      "tn_map": 1,
+      "tn_geo": 2,
+      "tn_cx_europe_v2": 206,
+      "tn_cy_europe_v2": 532,
+      "tn_city_europe": 0
+     },
+     "tn_map": [
+      1,
+      1,
+      1
+     ],
+     "drift_lines": 1,
+     "undrifted_drift_lines": [
+      0,
+      0
+     ]
+    },
+    "2_under_3": {
+     "tiles": 41984,
+     "differing_vs_fresh_a": 0,
+     "differing_vs_fresh_b": 6059,
+     "entities": 1156,
+     "entities_differing_vs_fresh_a": 0,
+     "entities_differing_vs_fresh_b": 900,
+     "late_tiles_differing_vs_fresh_a": 0,
+     "roundtrip_names": 15,
+     "read_back": {
+      "tn_scale": 2,
+      "tn_map": 1,
+      "tn_geo": 2,
+      "tn_cx_europe_v2": 413,
+      "tn_cy_europe_v2": 1065,
+      "tn_city_europe": 0
+     },
+     "tn_map": [
+      1,
+      1,
+      1
+     ],
+     "drift_lines": 1,
+     "undrifted_drift_lines": [
+      0,
+      0
+     ]
+    },
+    "3_under_4": {
+     "tiles": 41984,
+     "differing_vs_fresh_a": 0,
+     "differing_vs_fresh_b": 5820,
+     "entities": 922,
+     "entities_differing_vs_fresh_a": 0,
+     "entities_differing_vs_fresh_b": 571,
+     "late_tiles_differing_vs_fresh_a": 0,
+     "roundtrip_names": 15,
+     "read_back": {
+      "tn_scale": 3,
+      "tn_map": 1,
+      "tn_geo": 2,
+      "tn_cx_europe_v2": 619,
+      "tn_cy_europe_v2": 1597,
+      "tn_city_europe": 0
+     },
+     "tn_map": [
+      1,
+      1,
+      1
+     ],
+     "drift_lines": 1,
+     "undrifted_drift_lines": [
+      0,
+      0
+     ]
+    },
+    "4_under_5": {
+     "tiles": 41984,
+     "differing_vs_fresh_a": 0,
+     "differing_vs_fresh_b": 2556,
+     "entities": 1195,
+     "entities_differing_vs_fresh_a": 0,
+     "entities_differing_vs_fresh_b": 234,
+     "late_tiles_differing_vs_fresh_a": 0,
+     "roundtrip_names": 15,
+     "read_back": {
+      "tn_scale": 4,
+      "tn_map": 1,
+      "tn_geo": 2,
+      "tn_cx_europe_v2": 826,
+      "tn_cy_europe_v2": 2130,
+      "tn_city_europe": 0
+     },
+     "tn_map": [
+      1,
+      1,
+      1
+     ],
+     "drift_lines": 1,
+     "undrifted_drift_lines": [
+      0,
+      0
+     ]
+    },
+    "5_under_6": {
+     "tiles": 41984,
+     "differing_vs_fresh_a": 0,
+     "differing_vs_fresh_b": 1836,
+     "entities": 1289,
+     "entities_differing_vs_fresh_a": 0,
+     "entities_differing_vs_fresh_b": 225,
+     "late_tiles_differing_vs_fresh_a": 0,
+     "roundtrip_names": 15,
+     "read_back": {
+      "tn_scale": 5,
+      "tn_map": 1,
+      "tn_geo": 2,
+      "tn_cx_europe_v2": 1032,
+      "tn_cy_europe_v2": 2662,
+      "tn_city_europe": 0
+     },
+     "tn_map": [
+      1,
+      1,
+      1
+     ],
+     "drift_lines": 1,
+     "undrifted_drift_lines": [
+      0,
+      0
+     ]
+    },
+    "6_under_1": {
+     "tiles": 41984,
+     "differing_vs_fresh_a": 0,
+     "differing_vs_fresh_b": 24051,
+     "entities": 1236,
+     "entities_differing_vs_fresh_a": 0,
+     "entities_differing_vs_fresh_b": 995,
+     "late_tiles_differing_vs_fresh_a": 0,
+     "roundtrip_names": 15,
+     "read_back": {
+      "tn_scale": 6,
+      "tn_map": 1,
+      "tn_geo": 2,
+      "tn_cx_europe_v2": 1239,
+      "tn_cy_europe_v2": 3195,
+      "tn_city_europe": 0
+     },
+     "tn_map": [
+      1,
+      1,
+      1
+     ],
+     "drift_lines": 1,
+     "undrifted_drift_lines": [
+      0,
+      0
+     ]
+    }
+   }
+  },
+  "t1_previews": {
+   "key": "54fef620d308f94b28ada7ec9741afdc469d2902e77e61fda5f6fda7b9605234",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s1-00",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s3-00",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s3-01",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s3-02",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s3-03",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-00",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-01",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-02",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-03",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-04",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-05",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-06",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-07",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-08",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-09",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-10",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s6-11"
+   ],
+   "recorded": "2026-10-29 12:52:25",
+   "summary": {
+    "scale_1": {
+     "agreement": 0.991846,
+     "iou": 0.985033,
+     "p99_px": 1.5811,
+     "max_px": 7.106335201775948,
+     "mean_px": 0.5931,
+     "misclassified": 32983,
+     "covered_px": 4089600,
+     "evaluated_px": 4045039,
+     "masked_px": {
+      "thin_water": 44561,
+      "lake_footprints_d15": 0,
+      "corridors_d16": 0
+     },
+     "islands_conn4": {
+      "1": [
+       84,
+       270
+      ],
+      "2-4": [
+       72,
+       211
+      ],
+      "5-16": [
+       72,
+       173
+      ],
+      "17-64": [
+       79,
+       107
+      ],
+      "65+": [
+       86,
+       86
+      ]
+     },
+     "islands_conn8": {
+      "1": [
+       30,
+       113
+      ],
+      "2-4": [
+       55,
+       159
+      ],
+      "5-16": [
+       66,
+       161
+      ],
+      "17-64": [
+       75,
+       104
+      ],
+      "65+": [
+       80,
+       80
+      ]
+     },
+     "islands_65_missing": [
+      0,
+      0
+     ],
+     "thin_water_became_land": {
+      "pixels": 42625,
+      "reaches": 3976,
+      "reaches_20_px_plus": 346
+     },
+     "hidden_by_cliffs_px": 0
+    },
+    "scale_3": {
+     "agreement": 0.991846,
+     "iou": 0.985033,
+     "p99_px": 1.5811,
+     "max_px": 7.106335201775948,
+     "mean_px": 0.5931,
+     "misclassified": 32983,
+     "covered_px": 4089600,
+     "evaluated_px": 4045039,
+     "masked_px": {
+      "thin_water": 44561,
+      "lake_footprints_d15": 0,
+      "corridors_d16": 0
+     },
+     "islands_conn4": {
+      "1": [
+       84,
+       270
+      ],
+      "2-4": [
+       72,
+       211
+      ],
+      "5-16": [
+       72,
+       173
+      ],
+      "17-64": [
+       79,
+       107
+      ],
+      "65+": [
+       86,
+       86
+      ]
+     },
+     "islands_conn8": {
+      "1": [
+       30,
+       113
+      ],
+      "2-4": [
+       55,
+       159
+      ],
+      "5-16": [
+       66,
+       161
+      ],
+      "17-64": [
+       75,
+       104
+      ],
+      "65+": [
+       80,
+       80
+      ]
+     },
+     "islands_65_missing": [
+      0,
+      0
+     ],
+     "thin_water_became_land": {
+      "pixels": 42625,
+      "reaches": 3976,
+      "reaches_20_px_plus": 346
+     },
+     "hidden_by_cliffs_px": 0
+    },
+    "scale_6": {
+     "agreement": 0.991846,
+     "iou": 0.985033,
+     "p99_px": 1.5811,
+     "max_px": 7.106335201775948,
+     "mean_px": 0.5931,
+     "misclassified": 32983,
+     "covered_px": 4089600,
+     "evaluated_px": 4045039,
+     "masked_px": {
+      "thin_water": 44561,
+      "lake_footprints_d15": 0,
+      "corridors_d16": 0
+     },
+     "islands_conn4": {
+      "1": [
+       84,
+       270
+      ],
+      "2-4": [
+       72,
+       211
+      ],
+      "5-16": [
+       72,
+       173
+      ],
+      "17-64": [
+       79,
+       107
+      ],
+      "65+": [
+       86,
+       86
+      ]
+     },
+     "islands_conn8": {
+      "1": [
+       30,
+       113
+      ],
+      "2-4": [
+       55,
+       159
+      ],
+      "5-16": [
+       66,
+       161
+      ],
+      "17-64": [
+       75,
+       104
+      ],
+      "65+": [
+       80,
+       80
+      ]
+     },
+     "islands_65_missing": [
+      0,
+      0
+     ],
+     "thin_water_became_land": {
+      "pixels": 42625,
+      "reaches": 3976,
+      "reaches_20_px_plus": 346
+     },
+     "hidden_by_cliffs_px": 0
+    }
+   }
+  },
+  "v1_sheets": {
+   "key": "18ea09331915c9f75cbc19f13a58e08025941c1c6e74fdf612ae7ed5b58709fd",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/v1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/v1-smoke-preview"
+   ],
+   "recorded": "2026-10-29 12:52:37",
+   "summary": {
+    "sheets": [
+     "europe-s1-aegean.png",
+     "europe-s1-channel.png",
+     "europe-s1-denmark.png",
+     "europe-s1-whole.png",
+     "europe-s3-aegean.png",
+     "europe-s3-channel.png",
+     "europe-s3-denmark.png",
+     "europe-s3-whole.png",
+     "europe-s6-aegean.png",
+     "europe-s6-channel.png",
+     "europe-s6-denmark.png",
+     "europe-s6-whole.png"
+    ],
+    "committed": [
+     "tests/baselines/suites/europe-coast/v1/europe-s1-aegean.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s1-channel.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s1-denmark.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s1-whole.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s3-aegean.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s3-channel.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s3-denmark.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s3-whole.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s6-aegean.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s6-channel.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s6-denmark.png",
+     "tests/baselines/suites/europe-coast/v1/europe-s6-whole.png"
+    ],
+    "smoke_preview": {
+     "path": "previews/earth-build/suite/20261029-124540-europe-coast/v1-smoke-preview/1000.png",
+     "sha256": "36a31364c8b78c14897ddf333a06bfe499f13850184bfe756aa2f52034b13915",
+     "preset": "terra-nauvis-europe",
+     "seed": 1000,
+     "size": 1024
+    }
+   }
+  },
+  "t15b_m1": {
+   "key": "1b5af9e5ae7873d44b4dce577b7e366dba3118d3188e8fd922364eb1b0740de9",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/t15b-m1-s6",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t15b-m1-s1"
+   ],
+   "recorded": "2026-10-29 13:03:47",
+   "summary": {
+    "scale_6": {
+     "0xff": {
+      "a_median_ms": 703.6371,
+      "b_median_ms": 626.8154,
+      "ratio": 1.1226,
+      "a_spread": [
+       699.4079,
+       713.4597
+      ],
+      "b_spread": [
+       611.6607,
+       635.1248
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1
+     },
+     "0xffff": {
+      "a_median_ms": 626.7095,
+      "b_median_ms": 627.0308,
+      "ratio": 0.9995,
+      "a_spread": [
+       613.7768,
+       632.1538
+      ],
+      "b_spread": [
+       610.2598,
+       636.3285
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1,
+      "borderline": null
+     },
+     "0xffffff": {
+      "a_median_ms": 629.9563,
+      "b_median_ms": 626.5749,
+      "ratio": 1.0054,
+      "a_spread": [
+       613.7941,
+       641.6738
+      ],
+      "b_spread": [
+       624.8564,
+       649.3345
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1,
+      "borderline": null
+     }
+    },
+    "scale_1": {
+     "0xff": {
+      "a_median_ms": 618.5744,
+      "b_median_ms": 563.4814,
+      "ratio": 1.0978,
+      "a_spread": [
+       615.1324,
+       633.5398
+      ],
+      "b_spread": [
+       556.6628,
+       566.3368
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1
+     },
+     "0xffff": {
+      "a_median_ms": 552.7382,
+      "b_median_ms": 557.9981,
+      "ratio": 0.9906,
+      "a_spread": [
+       540.9697,
+       564.1512
+      ],
+      "b_spread": [
+       527.9477,
+       567.0626
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1,
+      "borderline": null
+     }
+    },
+    "chord_lp8": {
+     "chord_at_8192": 1.209,
+     "measured": 1.1226,
+     "error": -0.0864
+    },
+    "chord_lp24": {
+     "chord_at_8192": 1.1747,
+     "measured": 1.0054,
+     "error": -0.1693
+    },
+    "composite": {
+     "tq3_16lp": 1.045,
+     "phase4_8lp": 1.26,
+     "phase4_24lp": 1.03,
+     "measured_16lp": 0.9995
+    },
+    "block_land_s6": 0.9235,
+    "block_land_s1": 0.7791
+   }
+  },
+  "maptype_cost": {
+   "key": "d5c0d2d9cc15786f60be5e40e3d043f2fc12758a353709972dc314cae21dee16",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/mt-cx",
+    "previews/earth-build/suite/20261029-124540-europe-coast/t15b-maptype"
+   ],
+   "recorded": "2026-10-29 12:58:40",
+   "summary": {
+    "complexity": {
+     "cliff": {
+      "expressions": 377,
+      "unique": 220,
+      "operations": 134,
+      "registers": 17,
+      "complexity": 287
+     },
+     "entity": {
+      "expressions": 2063,
+      "unique": 934,
+      "operations": 600,
+      "registers": 92,
+      "complexity": 8869
+     },
+     "tile": {
+      "expressions": 69386,
+      "unique": 44220,
+      "operations": 44088,
+      "registers": 888,
+      "complexity": 83052
+     }
+    },
+    "forced": {
+     "0xff": {
+      "a_median_ms": 703.8096,
+      "b_median_ms": 630.0635,
+      "ratio": 1.117,
+      "a_spread": [
+       700.1923,
+       715.7587
+      ],
+      "b_spread": [
+       623.8352,
+       657.3543
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1
+     },
+     "0xffff": {
+      "a_median_ms": 636.8197,
+      "b_median_ms": 633.275,
+      "ratio": 1.0056,
+      "a_spread": [
+       621.8751,
+       659.2365
+      ],
+      "b_spread": [
+       592.0784,
+       645.5
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1,
+      "borderline": null
+     }
+    }
+   }
+  },
+  "walker_m1": {
+   "key": "7106ef2ed2c97a4ae40855b4773c7616327795eccb41730074adc536910e73da",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/walk-m1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/walk-m0",
+    "previews/earth-build/suite/20261029-124540-europe-coast/walk-m1-ff",
+    "previews/earth-build/suite/20261029-124540-europe-coast/walk-m0-ff"
+   ],
+   "recorded": "2026-10-29 13:04:34",
+   "summary": {
+    "scriptUpdate_delta_ms": 0.00075,
+    "wholeUpdate": {
+     "mean_ratio": 3.6174,
+     "p99_m1": 85.04306,
+     "p99_m0": 6.59366
+    },
+    "basic_tiles_support": {
+     "m1": {
+      "mean": 1.4929,
+      "p99": 85.96734,
+      "max": 392.2621,
+      "sum_ms": 5732.74,
+      "per_step_ms": 95.54567
+     },
+     "m0": {
+      "mean": 0.11939,
+      "p99": 5.8088,
+      "max": 27.7769,
+      "sum_ms": 458.4572,
+      "per_step_ms": 7.64095
+     }
+    },
+    "basic_tiles_support_steps": {
+     "m1": {
+      "first_ms": 392.262,
+      "later_ms": 86.415,
+      "max_ms": 392.262
+     },
+     "m0": {
+      "first_ms": 0.368,
+      "later_ms": 0.306,
+      "max_ms": 27.777
+     }
+    },
+    "mapGenerator_sum_ms": {
+     "m1": 7041.877,
+     "m0": 1825.962
+    },
+    "peak_mb": {
+     "m1": 221.6,
+     "m0": 200.7,
+     "m1_minus_m0": 20.9
+    },
+    "mask": "0xffff",
+    "diagnostic": {
+     "0xff": {
+      "scriptUpdate_delta_ms": 0.00031,
+      "wholeUpdate": {
+       "mean_ratio": 3.5834,
+       "p99_m1": 85.72054,
+       "p99_m0": 6.54941
+      },
+      "basic_tiles_support": {
+       "m1": {
+        "mean": 1.47961,
+        "p99": 86.61761,
+        "max": 369.3164,
+        "sum_ms": 5681.7157,
+        "per_step_ms": 94.69526
+       },
+       "m0": {
+        "mean": 0.11807,
+        "p99": 5.93191,
+        "max": 28.093,
+        "sum_ms": 453.3794,
+        "per_step_ms": 7.55632
+       }
+      },
+      "basic_tiles_support_steps": {
+       "m1": {
+        "first_ms": 369.316,
+        "later_ms": 86.865,
+        "max_ms": 369.316
+       },
+       "m0": {
+        "first_ms": 0.42,
+        "later_ms": 0.34,
+        "max_ms": 28.093
+       }
+      },
+      "mapGenerator_sum_ms": {
+       "m1": 6995.998,
+       "m0": 1837.634
+      },
+      "peak_mb": {
+       "m1": 218.9,
+       "m0": 206.1,
+       "m1_minus_m0": 12.8
+      }
+     }
+    }
+   }
+  },
+  "save_m1": {
+   "key": "c7d54c77625108b9c9d6f6e692ceab296b8758c88f92084f21aefd7a57eeea65",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/save-m1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/save-m0"
+   ],
+   "recorded": "2026-10-29 13:15:37",
+   "summary": {
+    "m1": {
+     "pre": 1159845,
+     "post": 1690994,
+     "increment": 531149
+    },
+    "m0": {
+     "pre": 791722,
+     "post": 1289123,
+     "increment": 497401
+    },
+    "increment_ratio": 1.0678,
+    "whole_save_ratio": 1.3117
+   }
+  },
+  "rt_m1": {
+   "key": "cd7727f1caa1b2ed951ac2c2f2e4adfeb29e6c32128f269a887790f4b512f067",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/rt-m1-1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/rt-m1-2",
+    "previews/earth-build/suite/20261029-124540-europe-coast/rt-m1-3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/rt-m0-1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/rt-m0-2",
+    "previews/earth-build/suite/20261029-124540-europe-coast/rt-m0-3"
+   ],
+   "recorded": "2026-10-29 13:14:07",
+   "summary": {
+    "m1": [
+     {
+      "ticks": 2160,
+      "mean": 16.661,
+      "p50": 16.663,
+      "p95": 17.32,
+      "p99": 17.502,
+      "max": 216.37,
+      "over_20ms": 2,
+      "over_33ms": 1,
+      "window_s": 35.988,
+      "ups": 60.02
+     },
+     {
+      "ticks": 2160,
+      "mean": 16.661,
+      "p50": 16.664,
+      "p95": 17.32,
+      "p99": 17.589,
+      "max": 215.725,
+      "over_20ms": 2,
+      "over_33ms": 1,
+      "window_s": 35.988,
+      "ups": 60.02
+     },
+     {
+      "ticks": 2160,
+      "mean": 16.664,
+      "p50": 16.665,
+      "p95": 17.35,
+      "p99": 17.566,
+      "max": 203.073,
+      "over_20ms": 2,
+      "over_33ms": 1,
+      "window_s": 35.993,
+      "ups": 60.011
+     }
+    ],
+    "m0": [
+     {
+      "ticks": 2160,
+      "mean": 16.608,
+      "p50": 16.665,
+      "p95": 17.295,
+      "p99": 17.547,
+      "max": 18.267,
+      "over_20ms": 0,
+      "over_33ms": 0,
+      "window_s": 35.873,
+      "ups": 60.213
+     },
+     {
+      "ticks": 2160,
+      "mean": 16.607,
+      "p50": 16.665,
+      "p95": 17.291,
+      "p99": 17.522,
+      "max": 18.077,
+      "over_20ms": 0,
+      "over_33ms": 0,
+      "window_s": 35.871,
+      "ups": 60.215
+     },
+     {
+      "ticks": 2160,
+      "mean": 16.61,
+      "p50": 16.666,
+      "p95": 17.339,
+      "p99": 17.548,
+      "max": 18.332,
+      "over_20ms": 0,
+      "over_33ms": 0,
+      "window_s": 35.878,
+      "ups": 60.204
+     }
+    ],
+    "peak_mb": {
+     "m1": [
+      238.8,
+      232.0,
+      233.1
+     ],
+     "m0": [
+      213.4,
+      207.7,
+      206.0
+     ],
+     "m1_median": 233.1,
+     "m0_median": 207.7,
+     "m1_minus_m0": 25.4
+    },
+    "p5_ratio": 1.0011
+   }
+  },
+  "hitch": {
+   "key": "21115de9411685fd5bd06fb5044ecf0b2c01bd238d3f925e42eea9c2f216c1f4",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/hitch-walk-real-m1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/hitch-rt-real",
+    "previews/earth-build/suite/20261029-124540-europe-coast/hitch-walk-twin-m1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/hitch-rt-twin",
+    "previews/earth-build/suite/20261029-124540-europe-coast/hitch-walk-cheap-m1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/hitch-rt-cheap"
+   ],
+   "recorded": "2026-10-29 13:20:34",
+   "summary": {
+    "real": {
+     "basic_tiles_support_first_ms": 386.591,
+     "basic_tiles_support_later_ms": 86.824,
+     "basic_tiles_support_max_ms": 386.591,
+     "rt_longest_ms": 218.223,
+     "rt_over_20ms": 2
+    },
+    "twin": {
+     "basic_tiles_support_first_ms": 0.664,
+     "basic_tiles_support_later_ms": 0.254,
+     "basic_tiles_support_max_ms": 24.029,
+     "rt_longest_ms": 18.109,
+     "rt_over_20ms": 0
+    },
+    "cheap": {
+     "basic_tiles_support_first_ms": 223.348,
+     "basic_tiles_support_later_ms": 51.267,
+     "basic_tiles_support_max_ms": 223.348,
+     "rt_longest_ms": 58.74,
+     "rt_over_20ms": 1
+    },
+    "coast_share_first_ms": 385.927
+   }
+  },
+  "save_excess": {
+   "key": "22e3ecd01facf17db4845f353787d72f187155f863fd17ee56b1582281ba0b08",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/excess-spawn-m1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/excess-spawn-m0",
+    "previews/earth-build/suite/20261029-124540-europe-coast/excess-london-m1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/excess-london-twin-m1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/excess-spawn-nospace-m1",
+    "previews/earth-build/suite/20261029-124540-europe-coast/excess-spawn-cheap-m1"
+   ],
+   "recorded": "2026-10-29 13:25:06",
+   "summary": {
+    "spawn_m1": {
+     "pre_bytes": 1159845,
+     "map_files": {
+      "level-init.dat": 557558,
+      "level.dat1": 195004,
+      "level.dat0": 364745,
+      "level.datmetadata": 7
+     },
+     "ratio_to_m0": 1.465
+    },
+    "m0": {
+     "pre_bytes": 791722,
+     "map_files": {
+      "level-init.dat": 373622,
+      "level.dat0": 375865,
+      "level.datmetadata": 7
+     }
+    },
+    "london_m1": {
+     "pre_bytes": 1128624,
+     "map_files": {
+      "level-init.dat": 541769,
+      "level.dat1": 175172,
+      "level.dat0": 369140,
+      "level.datmetadata": 7
+     },
+     "ratio_to_m0": 1.4255
+    },
+    "london_twin": {
+     "pre_bytes": 815176,
+     "map_files": {
+      "level-init.dat": 385346,
+      "level.dat0": 387423,
+      "level.datmetadata": 7
+     },
+     "ratio_to_m0": 1.0296
+    },
+    "spawn_nospace": {
+     "pre_bytes": 1159843,
+     "map_files": {
+      "level-init.dat": 557556,
+      "level.dat1": 195003,
+      "level.dat0": 364746,
+      "level.datmetadata": 7
+     },
+     "ratio_to_m0": 1.465
+    },
+    "spawn_cheap": {
+     "pre_bytes": 981231,
+     "map_files": {
+      "level-init.dat": 468459,
+      "level.dat1": 80308,
+      "level.dat0": 389926,
+      "level.datmetadata": 7
+     },
+     "ratio_to_m0": 1.2394
+    }
+   }
+  },
+  "t1_corner": {
+   "key": "09649a7c3fd09374329f8c5d831d44fea3fa0b490a0f5aec89f85f4578e880c0",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/corner-real-s3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/corner-nocorner-s3",
+    "previews/earth-build/suite/20261029-124540-europe-coast/corner-real-s6",
+    "previews/earth-build/suite/20261029-124540-europe-coast/corner-nocorner-s6"
+   ],
+   "recorded": "2026-10-29 12:53:27",
+   "summary": {
+    "scale_3": {
+     "with_offset": 0.991846,
+     "without_offset": 0.990839
+    },
+    "scale_6": {
+     "with_offset": 0.991846,
+     "without_offset": 0.990239
+    }
+   }
+  },
+  "preview_time": {
+   "key": "d206d0e01abcbbae9e61a7557a4e8bffd16f1d105bc2af09c6c278a238701a80",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-124540-europe-coast/preview-time"
+   ],
+   "recorded": "2026-10-29 13:06:08",
+   "summary": {
+    "px_1024": {
+     "m1_median_s": 0.664,
+     "m0_median_s": 0.145,
+     "ratio": 4.579,
+     "m1_spread_s": [
+      0.635,
+      0.712
+     ],
+     "m0_spread_s": [
+      0.132,
+      0.176
+     ],
+     "reps": [
+      7,
+      7
+     ]
+    },
+    "px_256": {
+     "m1_median_s": 0.046,
+     "m0_median_s": 0.009,
+     "ratio": 5.111,
+     "m1_spread_s": [
+      0.037,
+      0.048
+     ],
+     "m0_spread_s": [
+      0.009,
+      0.014
+     ],
+     "reps": [
+      7,
+      7
+     ]
+    }
+   }
+  }
+ },
+ "game_build": "2.1.24 build 87808",
+ "updated": "2026-10-29 13:25:06",
+ "frozen": {
+  "format": "tn-frozen-snapshot/1",
+  "through": "europe-coast",
+  "bodies": {
+   "tn_cx_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "7245cf6718889e9cd46bd887ce05cf60a8a9745aa525c509f3f26e04084d4bce",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_cy_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "64e4b3f0df3ae69accfa6e30ed4b6049dd227fa913ba621cff6dce404e57fc6b",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_detail_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "a909d9d816ef683bf52f36c78a4fa1bb1f3e572386c32625a2a9a286b3367167",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_elevation_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "517e1b8b240ac0ea23c506d5878b3a025b2f4fee070df168c4f9d34ad297e1a0",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_far_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "b30d83a7445a94abb0d8cb78dcd20159f9f7b2193ead4efbd38db6dfc3448e6f",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_geo_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "8af1d57b69a35ad654c09bab129e2579056bdfee705d6bf6ce49cfabfcfafc07",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_gx_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "1e8abbdefeb5c13c41fdf5594cff092e8e73286148a20d77fbfeac5f85742f85",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_gy_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "22ceb77386cf371514d5fb1928e5c86927bf8b97928665aa2c022634f49c9e07",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_land_coarse_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "c526f440507613ece7d860e808e4a8f1d4d50f1599ba9134cb2e89e2941aa820",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_start_mask_v1": {
+    "type": "noise-expression",
+    "sha256": "61280740c824f816d617db71eb4d02083586072cfcd3e42671dabd086c082a03",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_u_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "4d8a025c11b2ee5bda93ca992b540da49ee5fdb74aa8391a75f5eaa176b7a08f",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_v_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "6ed69f2c02a37afaa65bd09c49192ff9d21752844d3c79addfdb24c4c0722935",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   }
+  },
+  "sha256": "48abaad2983a626065247a21f664dabcabefe730b2e6e03105b221b8da23f6c7"
+ }
+}

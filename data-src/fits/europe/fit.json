@@ -1,0 +1,11 @@
+{
+ "format": "tn-fit/1",
+ "map": "europe",
+ "note": "Which checkpoint each generated body of Europe is emitted from (tools/build_geo.py). See PROVENANCE.md.",
+ "bodies": {
+  "geo": {"checkpoint": "model-8192-t1e.npz", "file": "geo_europe_v1.lua",
+          "note": "Europe's coast fit, 8,192 tents plus the T1-e local refit"},
+  "land_coarse": {"checkpoint": "model-256.npz", "file": "land_coarse_europe_v1.lua",
+                  "note": "Europe's coarse land field, the 256-tent checkpoint of the same fit"}
+ }
+}

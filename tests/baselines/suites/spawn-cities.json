@@ -1,0 +1,6495 @@
+{
+ "format": "tn-suite/1",
+ "slice": "spawn-cities",
+ "checks": {
+  "t7_sweep": {
+   "key": "1969d45fe2252e0414bbbdbd3437122cbf01bcb4ad022319ccfa91a2a735bad7",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-random-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-tirana-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-andorra-la-vella-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-vienna-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-minsk-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-brussels-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-sarajevo-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-sofia-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-zagreb-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-prague-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-tallinn-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-helsinki-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-paris-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-berlin-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-athens-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-budapest-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-rome-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-pristina-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-riga-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-vaduz-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-vilnius-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-chisinau-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-monaco-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-podgorica-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-amsterdam-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-skopje-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-oslo-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-warsaw-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-lisbon-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-bucharest-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-moscow-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-san-marino-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-belgrade-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-bratislava-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-ljubljana-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-madrid-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-stockholm-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-bern-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-ankara-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-kyiv-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-london-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-random-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-tirana-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-andorra-la-vella-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-vienna-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-minsk-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-brussels-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-sarajevo-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-sofia-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-zagreb-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-prague-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-tallinn-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-helsinki-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-paris-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-berlin-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-athens-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-budapest-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-rome-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-pristina-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-riga-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-vaduz-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-vilnius-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-chisinau-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-monaco-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-podgorica-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-amsterdam-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-skopje-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-oslo-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-warsaw-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-lisbon-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-bucharest-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-moscow-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-san-marino-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-belgrade-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-bratislava-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-ljubljana-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-madrid-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-stockholm-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-bern-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-ankara-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-kyiv-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-london-s3-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-random-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-tirana-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-andorra-la-vella-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-vienna-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-minsk-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-brussels-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-sarajevo-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-sofia-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-zagreb-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-prague-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-tallinn-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-helsinki-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-paris-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-berlin-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-athens-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-budapest-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-rome-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-pristina-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-riga-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-vaduz-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-vilnius-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-chisinau-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-monaco-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-podgorica-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-amsterdam-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-skopje-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-oslo-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-warsaw-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-lisbon-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-bucharest-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-moscow-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-san-marino-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-belgrade-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-bratislava-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-ljubljana-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-madrid-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-stockholm-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-bern-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-ankara-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-kyiv-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-london-s6-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7s-m0"
+   ],
+   "recorded": "2026-10-29 13:32:34",
+   "summary": {
+    "random-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 18.7,
+     "lake": {
+      "footprint_tiles": 1858,
+      "water_tiles": 1851,
+      "centre_distance": 72.1
+     },
+     "ore_150": {
+      "iron-ore": 618,
+      "copper-ore": 409,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 618,
+      "copper-ore": 409,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 196,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 1,
+     "start_disc": {
+      "coarse_min": -47.866,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Tirana. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "tirana-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 18.7,
+     "lake": {
+      "footprint_tiles": 1858,
+      "water_tiles": 1851,
+      "centre_distance": 72.1
+     },
+     "ore_150": {
+      "iron-ore": 618,
+      "copper-ore": 409,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 618,
+      "copper-ore": 409,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 196,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 1,
+     "start_disc": {
+      "coarse_min": -47.866,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Tirana. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "andorra-la-vella-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 42.3,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 557,
+      "copper-ore": 409,
+      "coal": 324,
+      "stone": 222
+     },
+     "ore_reachable": {
+      "iron-ore": 557,
+      "copper-ore": 409,
+      "coal": 324,
+      "stone": 222
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 2,
+     "start_disc": {
+      "coarse_min": -19.163,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Andorra la Vella. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "vienna-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 16.8,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 3,
+     "start_disc": {
+      "coarse_min": 0.541,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Vienna. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "minsk-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 47.9,
+     "lake": {
+      "footprint_tiles": 1848,
+      "water_tiles": 1846,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 690,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 690,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 4,
+     "start_disc": {
+      "coarse_min": 3.888,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Minsk. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "brussels-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.1,
+     "lake": {
+      "footprint_tiles": 1817,
+      "water_tiles": 1812,
+      "centre_distance": 73.5
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 180,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 5,
+     "start_disc": {
+      "coarse_min": -8.886,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Brussels. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "sarajevo-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 34.2,
+     "lake": {
+      "footprint_tiles": 1890,
+      "water_tiles": 1887,
+      "centre_distance": 72.3
+     },
+     "ore_150": {
+      "iron-ore": 618,
+      "copper-ore": 389,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 618,
+      "copper-ore": 389,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 175,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 6,
+     "start_disc": {
+      "coarse_min": -47.866,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Sarajevo. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "sofia-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 682,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 682,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 7,
+     "start_disc": {
+      "coarse_min": -9.365,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Sofia. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "zagreb-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 618,
+      "copper-ore": 419,
+      "coal": 294,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 618,
+      "copper-ore": 419,
+      "coal": 294,
+      "stone": 202
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 8,
+     "start_disc": {
+      "coarse_min": -17.617,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Zagreb. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "prague-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 42.8,
+     "lake": {
+      "footprint_tiles": 1992,
+      "water_tiles": 1982,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 182,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 9,
+     "start_disc": {
+      "coarse_min": 2.477,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Prague. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "tallinn-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 14.5,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 576,
+      "copper-ore": 259,
+      "coal": 301,
+      "stone": 223
+     },
+     "ore_reachable": {
+      "iron-ore": 576,
+      "copper-ore": 259,
+      "coal": 301,
+      "stone": 223
+     },
+     "lake_shore_reachable": 195,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 10,
+     "start_disc": {
+      "coarse_min": -36.277,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Tallinn. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "helsinki-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 15.5,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1909,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 386,
+      "coal": 255,
+      "stone": 224
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 386,
+      "coal": 255,
+      "stone": 224
+     },
+     "lake_shore_reachable": 145,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 11,
+     "start_disc": {
+      "coarse_min": -36.277,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Helsinki. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "paris-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 440,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 440,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 12,
+     "start_disc": {
+      "coarse_min": -29.154,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Paris. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "berlin-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 34.1,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 13,
+     "start_disc": {
+      "coarse_min": -3.323,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Berlin. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "athens-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 14.5,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 557,
+      "copper-ore": 409,
+      "coal": 255,
+      "stone": 217
+     },
+     "ore_reachable": {
+      "iron-ore": 557,
+      "copper-ore": 409,
+      "coal": 255,
+      "stone": 217
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 14,
+     "start_disc": {
+      "coarse_min": -9.365,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Athens. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "budapest-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 15,
+     "start_disc": {
+      "coarse_min": 4.561,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Budapest. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "rome-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 14.5,
+     "lake": {
+      "footprint_tiles": 1890,
+      "water_tiles": 1887,
+      "centre_distance": 72.3
+     },
+     "ore_150": {
+      "iron-ore": 604,
+      "copper-ore": 332,
+      "coal": 238,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 604,
+      "copper-ore": 332,
+      "coal": 238,
+      "stone": 202
+     },
+     "lake_shore_reachable": 175,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 16,
+     "start_disc": {
+      "coarse_min": -17.617,
+      "sea": true,
+      "probe_max_error": 0.0
+     },
+     "start_message": [
+      "Spawn city: Rome. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "pristina-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 49.5,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 74.0
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 167,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 17,
+     "start_disc": {
+      "coarse_min": -47.866,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Pristina. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "riga-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 14.5,
+     "lake": {
+      "footprint_tiles": 1751,
+      "water_tiles": 1749,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 661,
+      "copper-ore": 282,
+      "coal": 446,
+      "stone": 223
+     },
+     "ore_reachable": {
+      "iron-ore": 661,
+      "copper-ore": 282,
+      "coal": 446,
+      "stone": 223
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 18,
+     "start_disc": {
+      "coarse_min": -36.277,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Riga. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "vaduz-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 27.6,
+     "lake": {
+      "footprint_tiles": 1856,
+      "water_tiles": 1850,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 158
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 156
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 19,
+     "start_disc": {
+      "coarse_min": -9.238,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Vaduz. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "vilnius-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 16.8,
+     "lake": {
+      "footprint_tiles": 1877,
+      "water_tiles": 1876,
+      "centre_distance": 71.8
+     },
+     "ore_150": {
+      "iron-ore": 661,
+      "copper-ore": 419,
+      "coal": 446,
+      "stone": 278
+     },
+     "ore_reachable": {
+      "iron-ore": 661,
+      "copper-ore": 419,
+      "coal": 446,
+      "stone": 278
+     },
+     "lake_shore_reachable": 158,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 20,
+     "start_disc": {
+      "coarse_min": -11.434,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Vilnius. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "chisinau-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 30.0,
+     "lake": {
+      "footprint_tiles": 1817,
+      "water_tiles": 1812,
+      "centre_distance": 73.5
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "lake_shore_reachable": 180,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 21,
+     "start_disc": {
+      "coarse_min": -44.044,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Chisinau. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "monaco-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 16.5,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 254,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 254,
+      "stone": 250
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 22,
+     "start_disc": {
+      "coarse_min": -20.86,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Monaco. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "podgorica-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 16.3,
+     "lake": {
+      "footprint_tiles": 1890,
+      "water_tiles": 1887,
+      "centre_distance": 72.3
+     },
+     "ore_150": {
+      "iron-ore": 618,
+      "copper-ore": 389,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 618,
+      "copper-ore": 389,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 175,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 23,
+     "start_disc": {
+      "coarse_min": -47.866,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Podgorica. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "amsterdam-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 15.0,
+     "lake": {
+      "footprint_tiles": 1871,
+      "water_tiles": 1867,
+      "centre_distance": 74.4
+     },
+     "ore_150": {
+      "iron-ore": 576,
+      "copper-ore": 355,
+      "coal": 323,
+      "stone": 223
+     },
+     "ore_reachable": {
+      "iron-ore": 576,
+      "copper-ore": 355,
+      "coal": 323,
+      "stone": 223
+     },
+     "lake_shore_reachable": 192,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 24,
+     "start_disc": {
+      "coarse_min": -13.275,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Amsterdam. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "skopje-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 419,
+      "coal": 222,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 419,
+      "coal": 222,
+      "stone": 202
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 25,
+     "start_disc": {
+      "coarse_min": -47.866,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Skopje. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "oslo-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 15.6,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 566,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 566,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 26,
+     "start_disc": {
+      "coarse_min": -21.251,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Oslo. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "warsaw-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 47.9,
+     "lake": {
+      "footprint_tiles": 1848,
+      "water_tiles": 1846,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 27,
+     "start_disc": {
+      "coarse_min": 1.897,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Warsaw. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "lisbon-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 15.2,
+     "lake": {
+      "footprint_tiles": 1856,
+      "water_tiles": 1850,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 557,
+      "copper-ore": 389,
+      "coal": 373,
+      "stone": 225
+     },
+     "ore_reachable": {
+      "iron-ore": 557,
+      "copper-ore": 389,
+      "coal": 373,
+      "stone": 225
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 28,
+     "start_disc": {
+      "coarse_min": -16.745,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Lisbon. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "bucharest-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.0,
+     "lake": {
+      "footprint_tiles": 1858,
+      "water_tiles": 1851,
+      "centre_distance": 72.1
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 196,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 29,
+     "start_disc": {
+      "coarse_min": -6.346,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Bucharest. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "moscow-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 442,
+      "coal": 243,
+      "stone": 187
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 442,
+      "coal": 243,
+      "stone": 187
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 30,
+     "start_disc": {
+      "coarse_min": -12.703,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Moscow. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "san-marino-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 18.1,
+     "lake": {
+      "footprint_tiles": 1848,
+      "water_tiles": 1846,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 371,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 371,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 31,
+     "start_disc": {
+      "coarse_min": -17.617,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: San Marino. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "belgrade-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 38.7,
+     "lake": {
+      "footprint_tiles": 1992,
+      "water_tiles": 1982,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 182,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 32,
+     "start_disc": {
+      "coarse_min": 1.316,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Belgrade. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "bratislava-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 49.5,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 74.0
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 167,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 33,
+     "start_disc": {
+      "coarse_min": 7.337,
+      "sea": false,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Bratislava. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "ljubljana-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 36.5,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 74.0
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 140,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 125,
+      "stone": 250
+     },
+     "lake_shore_reachable": 167,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 34,
+     "start_disc": {
+      "coarse_min": -17.617,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Ljubljana. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "madrid-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.3,
+     "lake": {
+      "footprint_tiles": 1856,
+      "water_tiles": 1850,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 35,
+     "start_disc": {
+      "coarse_min": -43.975,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Madrid. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "stockholm-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 14.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 672,
+      "copper-ore": 386,
+      "coal": 324,
+      "stone": 203
+     },
+     "ore_reachable": {
+      "iron-ore": 672,
+      "copper-ore": 386,
+      "coal": 324,
+      "stone": 203
+     },
+     "lake_shore_reachable": 157,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 36,
+     "start_disc": {
+      "coarse_min": -21.045,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Stockholm. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "bern-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 18.1,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 574,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 160
+     },
+     "ore_reachable": {
+      "iron-ore": 574,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 160
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 37,
+     "start_disc": {
+      "coarse_min": -9.238,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Bern. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "ankara-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1834,
+      "water_tiles": 1831,
+      "centre_distance": 71.6
+     },
+     "ore_150": {
+      "iron-ore": 491,
+      "copper-ore": 371,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 491,
+      "copper-ore": 371,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 38,
+     "start_disc": {
+      "coarse_min": -5.507,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Ankara. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "kyiv-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 27.5,
+     "lake": {
+      "footprint_tiles": 1834,
+      "water_tiles": 1831,
+      "centre_distance": 71.6
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 39,
+     "start_disc": {
+      "coarse_min": 1.435,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Kyiv. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "london-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 16.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 549,
+      "copper-ore": 386,
+      "coal": 324,
+      "stone": 183
+     },
+     "ore_reachable": {
+      "iron-ore": 549,
+      "copper-ore": 386,
+      "coal": 324,
+      "stone": 183
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 40,
+     "start_disc": {
+      "coarse_min": -29.154,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: London. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "random-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 195,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 1,
+     "start_disc": {
+      "coarse_min": -27.815,
+      "sea": true,
+      "probe_max_error": 7e-06
+     },
+     "start_message": [
+      "Spawn city: Tirana. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "tirana-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 195,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 1,
+     "start_disc": {
+      "coarse_min": -27.815,
+      "sea": true,
+      "probe_max_error": 7e-06
+     },
+     "start_message": [
+      "Spawn city: Tirana. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "andorra-la-vella-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 2,
+     "start_disc": {
+      "coarse_min": -2.258,
+      "sea": true,
+      "probe_max_error": 1.3e-05
+     },
+     "start_message": [
+      "Spawn city: Andorra la Vella. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "vienna-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.1,
+     "lake": {
+      "footprint_tiles": 1817,
+      "water_tiles": 1812,
+      "centre_distance": 73.5
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 180,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 3,
+     "start_disc": {
+      "coarse_min": 10.047,
+      "sea": false,
+      "probe_max_error": 5e-06
+     },
+     "start_message": [
+      "Spawn city: Vienna. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "minsk-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 47.9,
+     "lake": {
+      "footprint_tiles": 1848,
+      "water_tiles": 1846,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 618,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 618,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 4,
+     "start_disc": {
+      "coarse_min": 3.888,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Minsk. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "brussels-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 5,
+     "start_disc": {
+      "coarse_min": 1.801,
+      "sea": false,
+      "probe_max_error": 5e-06
+     },
+     "start_message": [
+      "Spawn city: Brussels. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "sarajevo-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1834,
+      "water_tiles": 1831,
+      "centre_distance": 71.6
+     },
+     "ore_150": {
+      "iron-ore": 566,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 566,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 6,
+     "start_disc": {
+      "coarse_min": -6.503,
+      "sea": true,
+      "probe_max_error": 1.4e-05
+     },
+     "start_message": [
+      "Spawn city: Sarajevo. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "sofia-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 7,
+     "start_disc": {
+      "coarse_min": 1.825,
+      "sea": false,
+      "probe_max_error": 1.6e-05
+     },
+     "start_message": [
+      "Spawn city: Sofia. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "zagreb-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 8,
+     "start_disc": {
+      "coarse_min": 2.799,
+      "sea": false,
+      "probe_max_error": 5e-06
+     },
+     "start_message": [
+      "Spawn city: Zagreb. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "prague-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.5,
+     "lake": {
+      "footprint_tiles": 1860,
+      "water_tiles": 1854,
+      "centre_distance": 71.2
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 442,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 442,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 201,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 9,
+     "start_disc": {
+      "coarse_min": 13.014,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Prague. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "tallinn-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 33.5,
+     "lake": {
+      "footprint_tiles": 1751,
+      "water_tiles": 1749,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 10,
+     "start_disc": {
+      "coarse_min": -7.85,
+      "sea": true,
+      "probe_max_error": 1.1e-05
+     },
+     "start_message": [
+      "Spawn city: Tallinn. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "helsinki-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 22.6,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 342,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 340,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 250
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 11,
+     "start_disc": {
+      "coarse_min": -7.85,
+      "sea": true,
+      "probe_max_error": 1.1e-05
+     },
+     "start_message": [
+      "Spawn city: Helsinki. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "paris-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.1,
+     "lake": {
+      "footprint_tiles": 1817,
+      "water_tiles": 1812,
+      "centre_distance": 73.5
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 180,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 12,
+     "start_disc": {
+      "coarse_min": 2.759,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Paris. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "berlin-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.1,
+     "lake": {
+      "footprint_tiles": 1817,
+      "water_tiles": 1812,
+      "centre_distance": 73.5
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 180,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 13,
+     "start_disc": {
+      "coarse_min": 3.979,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Berlin. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "athens-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 23.0,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 359,
+      "copper-ore": 386,
+      "coal": 329,
+      "stone": 203
+     },
+     "ore_reachable": {
+      "iron-ore": 359,
+      "copper-ore": 386,
+      "coal": 329,
+      "stone": 203
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 14,
+     "start_disc": {
+      "coarse_min": -5.365,
+      "sea": true,
+      "probe_max_error": 9e-06
+     },
+     "start_message": [
+      "Spawn city: Athens. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "budapest-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.1,
+     "lake": {
+      "footprint_tiles": 1817,
+      "water_tiles": 1812,
+      "centre_distance": 73.5
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 180,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 15,
+     "start_disc": {
+      "coarse_min": 13.664,
+      "sea": false,
+      "probe_max_error": 5e-06
+     },
+     "start_message": [
+      "Spawn city: Budapest. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "rome-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 18.1,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 74.0
+     },
+     "ore_150": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 255,
+      "stone": 225
+     },
+     "ore_reachable": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 255,
+      "stone": 225
+     },
+     "lake_shore_reachable": 167,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 16,
+     "start_disc": {
+      "coarse_min": -3.34,
+      "sea": true,
+      "probe_max_error": 1.8e-05
+     },
+     "start_message": [
+      "Spawn city: Rome. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "pristina-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.3,
+     "lake": {
+      "footprint_tiles": 1751,
+      "water_tiles": 1749,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 17,
+     "start_disc": {
+      "coarse_min": 5.759,
+      "sea": false,
+      "probe_max_error": 1.4e-05
+     },
+     "start_message": [
+      "Spawn city: Pristina. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "riga-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 29.5,
+     "lake": {
+      "footprint_tiles": 1751,
+      "water_tiles": 1749,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 18,
+     "start_disc": {
+      "coarse_min": -36.277,
+      "sea": true,
+      "probe_max_error": 3.8e-05
+     },
+     "start_message": [
+      "Spawn city: Riga. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "vaduz-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 19,
+     "start_disc": {
+      "coarse_min": 6.501,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Vaduz. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "vilnius-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 29.7,
+     "lake": {
+      "footprint_tiles": 1834,
+      "water_tiles": 1831,
+      "centre_distance": 71.6
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 229,
+      "stone": 242
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 229,
+      "stone": 242
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 20,
+     "start_disc": {
+      "coarse_min": 0.761,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Vilnius. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "chisinau-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 332,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 332,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 21,
+     "start_disc": {
+      "coarse_min": -7.29,
+      "sea": true,
+      "probe_max_error": 9.8e-05
+     },
+     "start_message": [
+      "Spawn city: Chisinau. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "monaco-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 36.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 332,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 332,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 22,
+     "start_disc": {
+      "coarse_min": -7.635,
+      "sea": true,
+      "probe_max_error": 7e-06
+     },
+     "start_message": [
+      "Spawn city: Monaco. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "podgorica-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 39.9,
+     "lake": {
+      "footprint_tiles": 1992,
+      "water_tiles": 1982,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 690,
+      "copper-ore": 440,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 690,
+      "copper-ore": 440,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 182,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 23,
+     "start_disc": {
+      "coarse_min": -30.124,
+      "sea": true,
+      "probe_max_error": 2.8e-05
+     },
+     "start_message": [
+      "Spawn city: Podgorica. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "amsterdam-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 16.9,
+     "lake": {
+      "footprint_tiles": 1871,
+      "water_tiles": 1867,
+      "centre_distance": 74.4
+     },
+     "ore_150": {
+      "iron-ore": 576,
+      "copper-ore": 324,
+      "coal": 301,
+      "stone": 223
+     },
+     "ore_reachable": {
+      "iron-ore": 576,
+      "copper-ore": 324,
+      "coal": 301,
+      "stone": 223
+     },
+     "lake_shore_reachable": 192,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 24,
+     "start_disc": {
+      "coarse_min": -5.031,
+      "sea": true,
+      "probe_max_error": 6e-06
+     },
+     "start_message": [
+      "Spawn city: Amsterdam. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "skopje-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.2,
+     "lake": {
+      "footprint_tiles": 1877,
+      "water_tiles": 1876,
+      "centre_distance": 71.8
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 158,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 25,
+     "start_disc": {
+      "coarse_min": 4.108,
+      "sea": false,
+      "probe_max_error": 2.9e-05
+     },
+     "start_message": [
+      "Spawn city: Skopje. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "oslo-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 19.0,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 566,
+      "copper-ore": 124,
+      "coal": 243,
+      "stone": 200
+     },
+     "ore_reachable": {
+      "iron-ore": 566,
+      "copper-ore": 124,
+      "coal": 243,
+      "stone": 200
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 26,
+     "start_disc": {
+      "coarse_min": -5.678,
+      "sea": true,
+      "probe_max_error": 1.2e-05
+     },
+     "start_message": [
+      "Spawn city: Oslo. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "warsaw-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 47.9,
+     "lake": {
+      "footprint_tiles": 1848,
+      "water_tiles": 1846,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 27,
+     "start_disc": {
+      "coarse_min": 8.676,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Warsaw. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "lisbon-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 14.1,
+     "lake": {
+      "footprint_tiles": 1856,
+      "water_tiles": 1850,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 618,
+      "copper-ore": 419,
+      "coal": 301,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 618,
+      "copper-ore": 419,
+      "coal": 301,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 28,
+     "start_disc": {
+      "coarse_min": -12.02,
+      "sea": true,
+      "probe_max_error": 2.9e-05
+     },
+     "start_message": [
+      "Spawn city: Lisbon. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "bucharest-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.0,
+     "lake": {
+      "footprint_tiles": 1858,
+      "water_tiles": 1851,
+      "centre_distance": 72.1
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 196,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 29,
+     "start_disc": {
+      "coarse_min": 4.403,
+      "sea": false,
+      "probe_max_error": 7e-06
+     },
+     "start_message": [
+      "Spawn city: Bucharest. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "moscow-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 30,
+     "start_disc": {
+      "coarse_min": 3.83,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Moscow. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "san-marino-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 31,
+     "start_disc": {
+      "coarse_min": -8.625,
+      "sea": true,
+      "probe_max_error": 7e-06
+     },
+     "start_message": [
+      "Spawn city: San Marino. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "belgrade-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 42.8,
+     "lake": {
+      "footprint_tiles": 1992,
+      "water_tiles": 1982,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 182,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 32,
+     "start_disc": {
+      "coarse_min": 12.481,
+      "sea": false,
+      "probe_max_error": 6e-06
+     },
+     "start_message": [
+      "Spawn city: Belgrade. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "bratislava-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 49.5,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 74.0
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 167,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 33,
+     "start_disc": {
+      "coarse_min": 16.761,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Bratislava. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "ljubljana-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.3,
+     "lake": {
+      "footprint_tiles": 1751,
+      "water_tiles": 1749,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 34,
+     "start_disc": {
+      "coarse_min": -1.112,
+      "sea": true,
+      "probe_max_error": 1.8e-05
+     },
+     "start_message": [
+      "Spawn city: Ljubljana. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "madrid-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.3,
+     "lake": {
+      "footprint_tiles": 1856,
+      "water_tiles": 1850,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 35,
+     "start_disc": {
+      "coarse_min": 17.703,
+      "sea": false,
+      "probe_max_error": 1.7e-05
+     },
+     "start_message": [
+      "Spawn city: Madrid. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "stockholm-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 20.0,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 220,
+      "copper-ore": 61,
+      "coal": 324,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 220,
+      "copper-ore": 57,
+      "coal": 324,
+      "stone": 250
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 36,
+     "start_disc": {
+      "coarse_min": -6.762,
+      "sea": true,
+      "probe_max_error": 1.6e-05
+     },
+     "start_message": [
+      "Spawn city: Stockholm. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "bern-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 525,
+      "copper-ore": 381,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 525,
+      "copper-ore": 381,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 37,
+     "start_disc": {
+      "coarse_min": 4.733,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Bern. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "ankara-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.5,
+     "lake": {
+      "footprint_tiles": 1890,
+      "water_tiles": 1887,
+      "centre_distance": 72.3
+     },
+     "ore_150": {
+      "iron-ore": 618,
+      "copper-ore": 389,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 618,
+      "copper-ore": 389,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 175,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 38,
+     "start_disc": {
+      "coarse_min": 3.611,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Ankara. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "kyiv-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 39,
+     "start_disc": {
+      "coarse_min": 7.87,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Kyiv. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "london-s3": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 41.7,
+     "lake": {
+      "footprint_tiles": 1992,
+      "water_tiles": 1982,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 255,
+      "stone": 205
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 255,
+      "stone": 205
+     },
+     "lake_shore_reachable": 182,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 40,
+     "start_disc": {
+      "coarse_min": -7.268,
+      "sea": true,
+      "probe_max_error": 8e-06
+     },
+     "start_message": [
+      "Spawn city: London. World size: 7200 x 5112 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "random-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.3,
+     "lake": {
+      "footprint_tiles": 1871,
+      "water_tiles": 1867,
+      "centre_distance": 74.4
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 329,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 329,
+      "stone": 250
+     },
+     "lake_shore_reachable": 192,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 1,
+     "start_disc": {
+      "coarse_min": 1.648,
+      "sea": false,
+      "probe_max_error": 9e-06
+     },
+     "start_message": [
+      "Spawn city: Tirana. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "tirana-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.3,
+     "lake": {
+      "footprint_tiles": 1871,
+      "water_tiles": 1867,
+      "centre_distance": 74.4
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 329,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 329,
+      "stone": 250
+     },
+     "lake_shore_reachable": 192,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 1,
+     "start_disc": {
+      "coarse_min": 1.648,
+      "sea": false,
+      "probe_max_error": 9e-06
+     },
+     "start_message": [
+      "Spawn city: Tirana. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "andorra-la-vella-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 2,
+     "start_disc": {
+      "coarse_min": 2.712,
+      "sea": false,
+      "probe_max_error": 6e-06
+     },
+     "start_message": [
+      "Spawn city: Andorra la Vella. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "vienna-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 3,
+     "start_disc": {
+      "coarse_min": 12.79,
+      "sea": false,
+      "probe_max_error": 6e-06
+     },
+     "start_message": [
+      "Spawn city: Vienna. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "minsk-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 47.9,
+     "lake": {
+      "footprint_tiles": 1848,
+      "water_tiles": 1846,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 690,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 690,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 4,
+     "start_disc": {
+      "coarse_min": 4.023,
+      "sea": false,
+      "probe_max_error": 5e-06
+     },
+     "start_message": [
+      "Spawn city: Minsk. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "brussels-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 5,
+     "start_disc": {
+      "coarse_min": 5.045,
+      "sea": false,
+      "probe_max_error": 5e-06
+     },
+     "start_message": [
+      "Spawn city: Brussels. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "sarajevo-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1834,
+      "water_tiles": 1831,
+      "centre_distance": 71.6
+     },
+     "ore_150": {
+      "iron-ore": 618,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 618,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 6,
+     "start_disc": {
+      "coarse_min": 1.303,
+      "sea": false,
+      "probe_max_error": 1.4e-05
+     },
+     "start_message": [
+      "Spawn city: Sarajevo. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "sofia-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 7,
+     "start_disc": {
+      "coarse_min": 9.535,
+      "sea": false,
+      "probe_max_error": 1.9e-05
+     },
+     "start_message": [
+      "Spawn city: Sofia. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "zagreb-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 8,
+     "start_disc": {
+      "coarse_min": 5.078,
+      "sea": false,
+      "probe_max_error": 5e-06
+     },
+     "start_message": [
+      "Spawn city: Zagreb. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "prague-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.5,
+     "lake": {
+      "footprint_tiles": 1860,
+      "water_tiles": 1854,
+      "centre_distance": 71.2
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 442,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 442,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 201,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 9,
+     "start_disc": {
+      "coarse_min": 15.659,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Prague. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "tallinn-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 49.5,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 74.0
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "lake_shore_reachable": 167,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 10,
+     "start_disc": {
+      "coarse_min": -6.439,
+      "sea": true,
+      "probe_max_error": 5e-06
+     },
+     "start_message": [
+      "Spawn city: Tallinn. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "helsinki-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.7,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 250
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 11,
+     "start_disc": {
+      "coarse_min": -7.505,
+      "sea": true,
+      "probe_max_error": 9e-06
+     },
+     "start_message": [
+      "Spawn city: Helsinki. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "paris-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.1,
+     "lake": {
+      "footprint_tiles": 1817,
+      "water_tiles": 1812,
+      "centre_distance": 73.5
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 180,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 12,
+     "start_disc": {
+      "coarse_min": 5.157,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Paris. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "berlin-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1834,
+      "water_tiles": 1831,
+      "centre_distance": 71.6
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 13,
+     "start_disc": {
+      "coarse_min": 6.507,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Berlin. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "athens-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 42.6,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 157,
+      "copper-ore": 158,
+      "coal": 324,
+      "stone": 203
+     },
+     "ore_reachable": {
+      "iron-ore": 156,
+      "copper-ore": 158,
+      "coal": 324,
+      "stone": 203
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 14,
+     "start_disc": {
+      "coarse_min": -1.009,
+      "sea": true,
+      "probe_max_error": 1.3e-05
+     },
+     "start_message": [
+      "Spawn city: Athens. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "budapest-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.1,
+     "lake": {
+      "footprint_tiles": 1817,
+      "water_tiles": 1812,
+      "centre_distance": 73.5
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 180,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 15,
+     "start_disc": {
+      "coarse_min": 15.337,
+      "sea": false,
+      "probe_max_error": 5e-06
+     },
+     "start_message": [
+      "Spawn city: Budapest. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "rome-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 35.6,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 74.0
+     },
+     "ore_150": {
+      "iron-ore": 600,
+      "copper-ore": 324,
+      "coal": 275,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 600,
+      "copper-ore": 324,
+      "coal": 275,
+      "stone": 250
+     },
+     "lake_shore_reachable": 167,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 16,
+     "start_disc": {
+      "coarse_min": -2.857,
+      "sea": true,
+      "probe_max_error": 1.2e-05
+     },
+     "start_message": [
+      "Spawn city: Rome. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "pristina-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.3,
+     "lake": {
+      "footprint_tiles": 1751,
+      "water_tiles": 1749,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 17,
+     "start_disc": {
+      "coarse_min": 8.905,
+      "sea": false,
+      "probe_max_error": 8e-06
+     },
+     "start_message": [
+      "Spawn city: Pristina. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "riga-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 49.5,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 74.0
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "lake_shore_reachable": 167,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 18,
+     "start_disc": {
+      "coarse_min": -8.631,
+      "sea": true,
+      "probe_max_error": 2.3e-05
+     },
+     "start_message": [
+      "Spawn city: Riga. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "vaduz-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.1,
+     "lake": {
+      "footprint_tiles": 1817,
+      "water_tiles": 1812,
+      "centre_distance": 73.5
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 180,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 19,
+     "start_disc": {
+      "coarse_min": 8.475,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Vaduz. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "vilnius-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1834,
+      "water_tiles": 1831,
+      "centre_distance": 71.6
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 20,
+     "start_disc": {
+      "coarse_min": 2.232,
+      "sea": false,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Vilnius. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "chisinau-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 690,
+      "copper-ore": 419,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 690,
+      "copper-ore": 419,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 21,
+     "start_disc": {
+      "coarse_min": 1.047,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Chisinau. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "monaco-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 332,
+      "coal": 255,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 332,
+      "coal": 255,
+      "stone": 250
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 22,
+     "start_disc": {
+      "coarse_min": -2.665,
+      "sea": true,
+      "probe_max_error": 1.1e-05
+     },
+     "start_message": [
+      "Spawn city: Monaco. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "podgorica-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 42.8,
+     "lake": {
+      "footprint_tiles": 1992,
+      "water_tiles": 1982,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 182,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 23,
+     "start_disc": {
+      "coarse_min": 2.484,
+      "sea": false,
+      "probe_max_error": 7e-06
+     },
+     "start_message": [
+      "Spawn city: Podgorica. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "amsterdam-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 33.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 576,
+      "copper-ore": 442,
+      "coal": 243,
+      "stone": 223
+     },
+     "ore_reachable": {
+      "iron-ore": 576,
+      "copper-ore": 442,
+      "coal": 243,
+      "stone": 223
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 24,
+     "start_disc": {
+      "coarse_min": -2.357,
+      "sea": true,
+      "probe_max_error": 6e-06
+     },
+     "start_message": [
+      "Spawn city: Amsterdam. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "skopje-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.2,
+     "lake": {
+      "footprint_tiles": 1877,
+      "water_tiles": 1876,
+      "centre_distance": 71.8
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 158,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 25,
+     "start_disc": {
+      "coarse_min": 6.594,
+      "sea": false,
+      "probe_max_error": 1.4e-05
+     },
+     "start_message": [
+      "Spawn city: Skopje. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "oslo-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 37.8,
+     "lake": {
+      "footprint_tiles": 1848,
+      "water_tiles": 1846,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 26,
+     "start_disc": {
+      "coarse_min": 1.538,
+      "sea": false,
+      "probe_max_error": 1.6e-05
+     },
+     "start_message": [
+      "Spawn city: Oslo. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "warsaw-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 47.9,
+     "lake": {
+      "footprint_tiles": 1848,
+      "water_tiles": 1846,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 27,
+     "start_disc": {
+      "coarse_min": 10.246,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Warsaw. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "lisbon-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 14.9,
+     "lake": {
+      "footprint_tiles": 1856,
+      "water_tiles": 1850,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 587,
+      "copper-ore": 389,
+      "coal": 301,
+      "stone": 225
+     },
+     "ore_reachable": {
+      "iron-ore": 587,
+      "copper-ore": 389,
+      "coal": 301,
+      "stone": 225
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 28,
+     "start_disc": {
+      "coarse_min": -9.239,
+      "sea": true,
+      "probe_max_error": 3.9e-05
+     },
+     "start_message": [
+      "Spawn city: Lisbon. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "bucharest-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.0,
+     "lake": {
+      "footprint_tiles": 1858,
+      "water_tiles": 1851,
+      "centre_distance": 72.1
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 196,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 29,
+     "start_disc": {
+      "coarse_min": 7.5,
+      "sea": false,
+      "probe_max_error": 6e-06
+     },
+     "start_message": [
+      "Spawn city: Bucharest. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "moscow-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.2,
+     "lake": {
+      "footprint_tiles": 1809,
+      "water_tiles": 1807,
+      "centre_distance": 71.9
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 30,
+     "start_disc": {
+      "coarse_min": 3.865,
+      "sea": false,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Moscow. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "san-marino-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1716,
+      "water_tiles": 1714,
+      "centre_distance": 71.4
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 355,
+      "coal": 243,
+      "stone": 242
+     },
+     "lake_shore_reachable": 170,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 31,
+     "start_disc": {
+      "coarse_min": -0.778,
+      "sea": true,
+      "probe_max_error": 1.8e-05
+     },
+     "start_message": [
+      "Spawn city: San Marino. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "belgrade-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 42.8,
+     "lake": {
+      "footprint_tiles": 1992,
+      "water_tiles": 1982,
+      "centre_distance": 72.2
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 182,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 32,
+     "start_disc": {
+      "coarse_min": 14.761,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Belgrade. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "bratislava-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 49.5,
+     "lake": {
+      "footprint_tiles": 1792,
+      "water_tiles": 1789,
+      "centre_distance": 74.0
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 167,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 33,
+     "start_disc": {
+      "coarse_min": 18.258,
+      "sea": false,
+      "probe_max_error": 4e-06
+     },
+     "start_message": [
+      "Spawn city: Bratislava. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "ljubljana-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.3,
+     "lake": {
+      "footprint_tiles": 1751,
+      "water_tiles": 1749,
+      "centre_distance": 72.6
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 373,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 34,
+     "start_disc": {
+      "coarse_min": 5.607,
+      "sea": false,
+      "probe_max_error": 1.3e-05
+     },
+     "start_message": [
+      "Spawn city: Ljubljana. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "madrid-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.3,
+     "lake": {
+      "footprint_tiles": 1856,
+      "water_tiles": 1850,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 35,
+     "start_disc": {
+      "coarse_min": 23.206,
+      "sea": false,
+      "probe_max_error": 1.9e-05
+     },
+     "start_message": [
+      "Spawn city: Madrid. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "stockholm-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 38.7,
+     "lake": {
+      "footprint_tiles": 1834,
+      "water_tiles": 1831,
+      "centre_distance": 71.6
+     },
+     "ore_150": {
+      "iron-ore": 690,
+      "copper-ore": 419,
+      "coal": 329,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 690,
+      "copper-ore": 419,
+      "coal": 329,
+      "stone": 250
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 36,
+     "start_disc": {
+      "coarse_min": -5.061,
+      "sea": true,
+      "probe_max_error": 2.5e-05
+     },
+     "start_message": [
+      "Spawn city: Stockholm. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "bern-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 44.6,
+     "lake": {
+      "footprint_tiles": 1834,
+      "water_tiles": 1831,
+      "centre_distance": 71.6
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 189,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 37,
+     "start_disc": {
+      "coarse_min": 6.475,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Bern. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "ankara-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.5,
+     "lake": {
+      "footprint_tiles": 1890,
+      "water_tiles": 1887,
+      "centre_distance": 72.3
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 389,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 389,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 175,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 38,
+     "start_disc": {
+      "coarse_min": 4.288,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Ankara. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "kyiv-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 46.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 419,
+      "coal": 243,
+      "stone": 202
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 39,
+     "start_disc": {
+      "coarse_min": 8.692,
+      "sea": false,
+      "probe_max_error": 3e-06
+     },
+     "start_message": [
+      "Spawn city: Kyiv. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "london-s6": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 43.3,
+     "lake": {
+      "footprint_tiles": 1856,
+      "water_tiles": 1850,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 586,
+      "copper-ore": 394,
+      "coal": 243,
+      "stone": 250
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 40,
+     "start_disc": {
+      "coarse_min": 0.441,
+      "sea": false,
+      "probe_max_error": 8e-06
+     },
+     "start_message": [
+      "Spawn city: London. World size: 14400 x 10224 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "m0_ore": {
+     "iron-ore": 586,
+     "copper-ore": 394,
+     "coal": 243,
+     "stone": 250
+    },
+    "ore_bar": {
+     "checks": 492,
+     "under_half": [
+      {
+       "check": "oslo scale 3 copper-ore",
+       "reachable": 124,
+       "within_150": 124,
+       "vanilla": 394,
+       "sea": true,
+       "coarse_min": -5.678
+      },
+      {
+       "check": "stockholm scale 3 iron-ore",
+       "reachable": 220,
+       "within_150": 220,
+       "vanilla": 586,
+       "sea": true,
+       "coarse_min": -6.762
+      },
+      {
+       "check": "stockholm scale 3 copper-ore",
+       "reachable": 57,
+       "within_150": 61,
+       "vanilla": 394,
+       "sea": true,
+       "coarse_min": -6.762
+      },
+      {
+       "check": "athens scale 6 iron-ore",
+       "reachable": 156,
+       "within_150": 157,
+       "vanilla": 586,
+       "sea": true,
+       "coarse_min": -1.009
+      },
+      {
+       "check": "athens scale 6 copper-ore",
+       "reachable": 158,
+       "within_150": 158,
+       "vanilla": 394,
+       "sea": true,
+       "coarse_min": -1.009
+      }
+     ],
+     "allowed": 7,
+     "rate": 0.01016,
+     "controls": {
+      "T7 ore: a clean sweep passes": true,
+      "T7 ore: one check under half at a start whose disc holds no sea fails": true,
+      "T7 ore: 7 of 492 checks under half by the sea pass": true,
+      "T7 ore: 8 of 492 checks under half by the sea (over 1.5 percent) fail": true,
+      "T7 ore: an ore missing within 150 tiles fails": true,
+      "T7 ore: an ore none of whose tiles is reachable on foot fails": true,
+      "T7 ore: a record without its start disc's sea fails closed": true
+     }
+    },
+    "hotspot_slack_km": {
+     "tirana": [
+      289.5,
+      "copper-bor"
+     ],
+     "andorra-la-vella": [
+      781.6,
+      "iron-lorraine-minette"
+     ],
+     "vienna": [
+      278.3,
+      "coal-upper-silesia"
+     ],
+     "minsk": [
+      750.9,
+      "coal-upper-silesia"
+     ],
+     "brussels": [
+      23.9,
+      "coal-nord-pas-de-calais"
+     ],
+     "sarajevo": [
+      345.8,
+      "copper-bor"
+     ],
+     "sofia": [
+      190.8,
+      "copper-bor"
+     ],
+     "zagreb": [
+      477.5,
+      "coal-upper-silesia"
+     ],
+     "prague": [
+      81.5,
+      "copper-legnica-glogow"
+     ],
+     "tallinn": [
+      931.5,
+      "iron-kiruna-malmberget"
+     ],
+     "helsinki": [
+      818.8,
+      "iron-kiruna-malmberget"
+     ],
+     "paris": [
+      70.6,
+      "coal-nord-pas-de-calais"
+     ],
+     "berlin": [
+      73.0,
+      "uranium-ore-mountains"
+     ],
+     "athens": [
+      58.5,
+      "stone-pentelicus"
+     ],
+     "budapest": [
+      279.7,
+      "copper-bor"
+     ],
+     "rome": [
+      226.3,
+      "stone-carrara"
+     ],
+     "pristina": [
+      138.9,
+      "copper-bor"
+     ],
+     "riga": [
+      765.2,
+      "coal-upper-silesia"
+     ],
+     "vaduz": [
+      208.1,
+      "stone-carrara"
+     ],
+     "vilnius": [
+      384.9,
+      "coal-upper-silesia"
+     ],
+     "chisinau": [
+      345.3,
+      "iron-kryvbas"
+     ],
+     "monaco": [
+      189.4,
+      "stone-carrara"
+     ],
+     "podgorica": [
+      247.0,
+      "copper-bor"
+     ],
+     "amsterdam": [
+      154.0,
+      "coal-nord-pas-de-calais"
+     ],
+     "skopje": [
+      209.0,
+      "copper-bor"
+     ],
+     "oslo": [
+      819.3,
+      "offshore-ekofisk"
+     ],
+     "warsaw": [
+      156.0,
+      "coal-upper-silesia"
+     ],
+     "lisbon": [
+      37.5,
+      "copper-iberian-pyrite-belt"
+     ],
+     "bucharest": [
+      355.5,
+      "copper-bor"
+     ],
+     "moscow": [
+      220.4,
+      "iron-kursk-magnetic-anomaly"
+     ],
+     "san-marino": [
+      131.3,
+      "stone-carrara"
+     ],
+     "belgrade": [
+      83.4,
+      "copper-bor"
+     ],
+     "bratislava": [
+      103.8,
+      "coal-upper-silesia"
+     ],
+     "ljubljana": [
+      420.8,
+      "uranium-ore-mountains"
+     ],
+     "madrid": [
+      366.1,
+      "copper-iberian-pyrite-belt"
+     ],
+     "stockholm": [
+      775.8,
+      "iron-kiruna-malmberget"
+     ],
+     "bern": [
+      266.4,
+      "stone-carrara"
+     ],
+     "ankara": [
+      474.1,
+      "stone-marmara-island"
+     ],
+     "kyiv": [
+      225.2,
+      "iron-kryvbas"
+     ],
+     "london": [
+      265.4,
+      "stone-portland"
+     ]
+    }
+   }
+  },
+  "t7_coastal": {
+   "key": "e041d85e7af5841de722df0eff3b6a550e59d2187b728e0c5165186dd45bf930",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7c-london-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7c-lisbon-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7c-oslo-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7c-helsinki-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7c-monaco-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7c-amsterdam-s1-1000",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7c-m0"
+   ],
+   "recorded": "2026-10-29 13:30:12",
+   "summary": {
+    "london-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 16.8,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 549,
+      "copper-ore": 386,
+      "coal": 324,
+      "stone": 183
+     },
+     "ore_reachable": {
+      "iron-ore": 549,
+      "copper-ore": 386,
+      "coal": 324,
+      "stone": 183
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 40,
+     "start_disc": {
+      "coarse_min": -29.154,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: London. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "lisbon-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 15.2,
+     "lake": {
+      "footprint_tiles": 1856,
+      "water_tiles": 1850,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 557,
+      "copper-ore": 389,
+      "coal": 373,
+      "stone": 225
+     },
+     "ore_reachable": {
+      "iron-ore": 557,
+      "copper-ore": 389,
+      "coal": 373,
+      "stone": 225
+     },
+     "lake_shore_reachable": 176,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 28,
+     "start_disc": {
+      "coarse_min": -16.745,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Lisbon. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "oslo-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 15.6,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 566,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "ore_reachable": {
+      "iron-ore": 566,
+      "copper-ore": 419,
+      "coal": 373,
+      "stone": 202
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 26,
+     "start_disc": {
+      "coarse_min": -21.251,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Oslo. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "helsinki-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 15.5,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1909,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 590,
+      "copper-ore": 386,
+      "coal": 255,
+      "stone": 224
+     },
+     "ore_reachable": {
+      "iron-ore": 590,
+      "copper-ore": 386,
+      "coal": 255,
+      "stone": 224
+     },
+     "lake_shore_reachable": 145,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 11,
+     "start_disc": {
+      "coarse_min": -36.277,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Helsinki. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "monaco-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 16.5,
+     "lake": {
+      "footprint_tiles": 1911,
+      "water_tiles": 1908,
+      "centre_distance": 71.1
+     },
+     "ore_150": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 254,
+      "stone": 250
+     },
+     "ore_reachable": {
+      "iron-ore": 557,
+      "copper-ore": 419,
+      "coal": 254,
+      "stone": 250
+     },
+     "lake_shore_reachable": 165,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 22,
+     "start_disc": {
+      "coarse_min": -20.86,
+      "sea": true,
+      "probe_max_error": 2e-06
+     },
+     "start_message": [
+      "Spawn city: Monaco. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "amsterdam-s1": {
+     "spawn_tile": "dirt-5",
+     "water_within_12": 0,
+     "nearest_water": 15.0,
+     "lake": {
+      "footprint_tiles": 1871,
+      "water_tiles": 1867,
+      "centre_distance": 74.4
+     },
+     "ore_150": {
+      "iron-ore": 576,
+      "copper-ore": 355,
+      "coal": 323,
+      "stone": 223
+     },
+     "ore_reachable": {
+      "iron-ore": 576,
+      "copper-ore": 355,
+      "coal": 323,
+      "stone": 223
+     },
+     "lake_shore_reachable": 192,
+     "enemies_150": {
+      "unit-spawner": 0,
+      "turret": 0,
+      "unit": 0
+     },
+     "city_index": 24,
+     "start_disc": {
+      "coarse_min": -13.275,
+      "sea": true,
+      "probe_max_error": 1e-06
+     },
+     "start_message": [
+      "Spawn city: Amsterdam. World size: 2400 x 1704 tiles.",
+      1
+     ],
+     "intro": true
+    },
+    "m0_ore": {
+     "iron-ore": 586,
+     "copper-ore": 394,
+     "coal": 243,
+     "stone": 250
+    },
+    "ore_bar": {
+     "checks": 24,
+     "under_half": [],
+     "allowed": null,
+     "rate": 0.0
+    }
+   }
+  },
+  "t7_seeds": {
+   "key": "e4f6706a1d9159b4224028a2e07da9626c047920fc4c407fcace3e74a1379395",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7r-1000-0",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7r-1002-1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7r-1004-2",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7r-4000000001-3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7r-4294967295-4",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t7r-1000-5"
+   ],
+   "recorded": "2026-10-29 13:32:46",
+   "summary": {
+    "1000": [
+     1,
+     1
+    ],
+    "1002": [
+     35
+    ],
+    "1004": [
+     29
+    ],
+    "4000000001": [
+     33
+    ],
+    "4294967295": [
+     28
+    ]
+   }
+  },
+  "t3_lakes": {
+   "key": "ba3edd9a1cd8cd0a89808051e487b673610860044b9065001b510f18d8bf44e6",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-s1--1200--852",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-far-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-s6-0--4096",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-s6-2048--4096",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-s6-4096--4096",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-s6-2048--2048",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-s6-4096--2048",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-s6--4096-0",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-s6--2048-0",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-s6-0-0",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-far-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-tiles-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-coast-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-tiles-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t3l-coast-s1"
+   ],
+   "recorded": "2026-10-29 13:33:40",
+   "summary": {
+    "design_fraction": 0.00614,
+    "blocks": {
+     "s1:-1200,-852": {
+      "eligible": 0.417,
+      "density": 0.00609,
+      "lake_points_outside": 97
+     },
+     "s6:0,-4096": {
+      "eligible": 0.574,
+      "density": 0.00632,
+      "lake_points_outside": 386
+     },
+     "s6:2048,-4096": {
+      "eligible": 0.619,
+      "density": 0.00677,
+      "lake_points_outside": 283
+     },
+     "s6:4096,-4096": {
+      "eligible": 0.567,
+      "density": 0.00641,
+      "lake_points_outside": 258
+     },
+     "s6:2048,-2048": {
+      "eligible": 0.747,
+      "density": 0.00646,
+      "lake_points_outside": 17
+     },
+     "s6:4096,-2048": {
+      "eligible": 0.829,
+      "density": 0.00566,
+      "lake_points_outside": 202
+     },
+     "s6:-4096,0": {
+      "eligible": 0.663,
+      "density": 0.0073,
+      "lake_points_outside": 228
+     },
+     "s6:-2048,0": {
+      "eligible": 0.749,
+      "density": 0.00639,
+      "lake_points_outside": 458
+     },
+     "s6:0,0": {
+      "eligible": 0.832,
+      "density": 0.0057,
+      "lake_points_outside": 211
+     }
+    },
+    "far_s1": 16,
+    "far_s6": 16,
+    "tiles_square": {
+     "scale_6": {
+      "geo_origin": [
+       0,
+       -4096
+      ],
+      "water": 24133,
+      "coast_only_water": 22485,
+      "in_lake_footprints": 1637,
+      "added": 1685,
+      "added_beside_a_footprint": 2,
+      "shoreline_flips": 83,
+      "unexplained": 0,
+      "coast_water_lost_off_shore": 0
+     },
+     "scale_1": {
+      "geo_origin": [
+       656,
+       -404
+      ],
+      "grid_lake_points": 198,
+      "water": 15687,
+      "coast_only_water": 12480,
+      "in_lake_footprints": 3186,
+      "added": 3228,
+      "added_beside_a_footprint": 35,
+      "shoreline_flips": 29,
+      "unexplained": 0,
+      "coast_water_lost_off_shore": 0
+     }
+    }
+   }
+  },
+  "t4_start_area": {
+   "key": "f310e8c0615903dbce159b4230a99caa98c99cb5028a013c1f71fe076152ca9e",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t4-earth-enemy_base_probability-0",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t4-m0-enemy_base_probability-1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t4-earth-tier_from_start-2",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t4-m0-tier_from_start-3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t4-earth-enemy_base_probability-4",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t4-m0-enemy_base_probability-5",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t4-earth-tier_from_start-6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t4-m0-tier_from_start-7"
+   ],
+   "recorded": "2026-10-29 13:33:52",
+   "summary": {
+    "enemy_base_probability@0.167": {
+     "earth": 187.3,
+     "m0": 187.3
+    },
+    "tier_from_start@0.167": {
+     "earth": 32.0,
+     "m0": 32.0
+    },
+    "enemy_base_probability@6.000": {
+     "earth": 892.6,
+     "m0": 892.6
+    },
+    "tier_from_start@6.000": {
+     "earth": 900.7,
+     "m0": 900.7
+    }
+   }
+  },
+  "t11_city": {
+   "key": "441c339cfd0459c252556a52da144e1d1176af12e2269d748a73154b7ca87863",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t11c-create-a",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t11c-create-b",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t11c-a-under-b",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t11c-a-under-a",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t11c-b-under-b"
+   ],
+   "recorded": "2026-10-29 13:34:01",
+   "summary": {
+    "tiles": 36864,
+    "differing_vs_fresh_a": 0,
+    "differing_vs_fresh_b": 11760,
+    "entities": 716,
+    "city_read_back": 40,
+    "drift_lines": [
+     1,
+     0,
+     0
+    ]
+   }
+  },
+  "t13_rso": {
+   "key": "379ee6139314104369943d65aee727048ff0fe9663a31c7e8d7a64fb4bd2d89a",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/rso-m5-earth",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/rso-m4-earth",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/rso-m5-default"
+   ],
+   "recorded": "2026-10-29 13:35:45",
+   "summary": {
+    "rso_lines": [
+     1,
+     0,
+     0
+    ]
+   }
+  },
+  "t18_player": {
+   "key": "6014bcda17948277d87817b13f62fc4057bc0fd7640279d36c1650a51023d1f2",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t18-player"
+   ],
+   "recorded": "2026-10-29 13:35:49",
+   "summary": {
+    "create_test_player_available": false,
+    "error": "LuaGameScript doesn't contain key create_test_player.",
+    "players": 0,
+    "connected": 0,
+    "is_multiplayer": false
+   }
+  },
+  "t14_planet": {
+   "key": "266cb837019c990e65ec8159e2b10dfea795e59605732e071b7a0988c98af5aa",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t14-guard",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t14-unguarded",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t14-island-new",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t14-island-added"
+   ],
+   "recorded": "2026-10-29 13:36:03",
+   "summary": {
+    "guard": {
+     "ea-planet-probe-init": [],
+     "ea-planet-probe-tick": []
+    },
+    "unguarded": {
+     "ea-planet-probe-init": [
+      "distance",
+      "elevation",
+      "nauvis_segmentation_multiplier",
+      "segmentation_multiplier",
+      "starting_resources_lake_mask",
+      "tn_city_europe",
+      "tn_cx_europe_v2",
+      "tn_cy_europe_v2",
+      "tn_geo",
+      "tn_land_coarse",
+      "tn_map",
+      "tn_scale",
+      "tn_spawn_bias",
+      "tn_spawn_lake",
+      "water_level"
+     ],
+     "ea-planet-probe-tick": [
+      "distance",
+      "elevation",
+      "nauvis_segmentation_multiplier",
+      "segmentation_multiplier",
+      "starting_resources_lake_mask",
+      "tn_city_europe",
+      "tn_cx_europe_v2",
+      "tn_cy_europe_v2",
+      "tn_geo",
+      "tn_land_coarse",
+      "tn_map",
+      "tn_scale",
+      "tn_spawn_bias",
+      "tn_spawn_lake",
+      "water_level"
+     ]
+    },
+    "island_new": {
+     "ea-planet-probe-init": [
+      "elevation"
+     ],
+     "ea-planet-probe-tick": [
+      "elevation"
+     ]
+    },
+    "island_new_elevation": {
+     "ea-planet-probe-init": "elevation_island",
+     "ea-planet-probe-tick": "elevation_island"
+    },
+    "island_added": {
+     "ea-planet-probe-init": [
+      "elevation"
+     ],
+     "ea-planet-probe-tick": [
+      "elevation"
+     ]
+    },
+    "island_added_elevation": {
+     "ea-planet-probe-init": "elevation_island",
+     "ea-planet-probe-tick": "elevation_island"
+    }
+   }
+  },
+  "t18_force_spawn": {
+   "key": "240980063b384c9d90959b0ea1f4c0cb30fae0b74b639ee7d3b948c10ff82904",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t18-force"
+   ],
+   "recorded": "2026-10-29 13:36:07",
+   "summary": {
+    "offset": [
+     1239,
+     3195
+    ],
+    "spawns": [
+     {
+      "city": "oslo",
+      "tile": "red-desert-1",
+      "world": [
+       -2532,
+       -5064
+      ],
+      "oracle_world": [
+       -2532,
+       -5064
+      ]
+     },
+     {
+      "city": "athens",
+      "tile": "dirt-6",
+      "world": [
+       708,
+       732
+      ],
+      "oracle_world": [
+       708,
+       732
+      ]
+     },
+     {
+      "city": "madrid",
+      "tile": "dirt-2",
+      "world": [
+       -6372,
+       132
+      ],
+      "oracle_world": [
+       -6372,
+       132
+      ]
+     }
+    ]
+   }
+  },
+  "v2_cities": {
+   "key": "d4647f091b297f0d037d295a43e1ebea060e8ef39c6262b56ee8797f568cf937",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-tirana-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-andorra-la-vella-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-vienna-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-minsk-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-brussels-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-sarajevo-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-sofia-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-zagreb-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-prague-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-tallinn-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-helsinki-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-paris-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-berlin-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-athens-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-budapest-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-rome-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-pristina-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-riga-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-vaduz-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-vilnius-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-chisinau-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-monaco-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-podgorica-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-amsterdam-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-skopje-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-oslo-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-warsaw-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-lisbon-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-bucharest-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-moscow-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-san-marino-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-belgrade-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-bratislava-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-ljubljana-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-madrid-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-stockholm-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-bern-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-ankara-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-kyiv-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-london-s1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-tirana-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-andorra-la-vella-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-vienna-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-minsk-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-brussels-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-sarajevo-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-sofia-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-zagreb-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-prague-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-tallinn-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-helsinki-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-paris-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-berlin-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-athens-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-budapest-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-rome-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-pristina-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-riga-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-vaduz-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-vilnius-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-chisinau-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-monaco-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-podgorica-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-amsterdam-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-skopje-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-oslo-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-warsaw-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-lisbon-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-bucharest-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-moscow-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-san-marino-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-belgrade-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-bratislava-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-ljubljana-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-madrid-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-stockholm-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-bern-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-ankara-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-kyiv-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-london-s3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-tirana-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-andorra-la-vella-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-vienna-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-minsk-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-brussels-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-sarajevo-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-sofia-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-zagreb-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-prague-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-tallinn-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-helsinki-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-paris-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-berlin-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-athens-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-budapest-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-rome-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-pristina-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-riga-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-vaduz-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-vilnius-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-chisinau-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-monaco-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-podgorica-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-amsterdam-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-skopje-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-oslo-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-warsaw-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-lisbon-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-bucharest-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-moscow-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-san-marino-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-belgrade-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-bratislava-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-ljubljana-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-madrid-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-stockholm-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-bern-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-ankara-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-kyiv-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2-london-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/v2"
+   ],
+   "recorded": "2026-10-29 13:36:44",
+   "summary": {
+    "sheets": [
+     "europe-cities-s1.png",
+     "europe-cities-s3.png",
+     "europe-cities-s6.png"
+    ],
+    "committed": [
+     "tests/baselines/suites/spawn-cities/v2/europe-cities-s1.png",
+     "tests/baselines/suites/spawn-cities/v2/europe-cities-s3.png",
+     "tests/baselines/suites/spawn-cities/v2/europe-cities-s6.png"
+    ],
+    "previews": 120
+   }
+  },
+  "t15b_m1": {
+   "key": "1b5af9e5ae7873d44b4dce577b7e366dba3118d3188e8fd922364eb1b0740de9",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t15b-m1-s6",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/t15b-m1-s1"
+   ],
+   "recorded": "2026-10-29 13:41:59",
+   "summary": {
+    "scale_6": {
+     "0xff": {
+      "a_median_ms": 705.937,
+      "b_median_ms": 627.6702,
+      "ratio": 1.1247,
+      "a_spread": [
+       688.6303,
+       717.4504
+      ],
+      "b_spread": [
+       595.7609,
+       634.7616
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1
+     },
+     "0xffff": {
+      "a_median_ms": 628.6387,
+      "b_median_ms": 626.1766,
+      "ratio": 1.0039,
+      "a_spread": [
+       618.1774,
+       640.0568
+      ],
+      "b_spread": [
+       608.3962,
+       637.4676
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1,
+      "borderline": null
+     },
+     "0xffffff": {
+      "a_median_ms": 630.5736,
+      "b_median_ms": 627.9588,
+      "ratio": 1.0042,
+      "a_spread": [
+       610.1192,
+       643.6451
+      ],
+      "b_spread": [
+       610.5579,
+       641.4098
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1,
+      "borderline": null
+     }
+    },
+    "scale_1": {
+     "0xff": {
+      "a_median_ms": 628.5685,
+      "b_median_ms": 559.4672,
+      "ratio": 1.1235,
+      "a_spread": [
+       615.0549,
+       675.3629
+      ],
+      "b_spread": [
+       556.1623,
+       575.6094
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1
+     },
+     "0xffff": {
+      "a_median_ms": 554.2666,
+      "b_median_ms": 558.0925,
+      "ratio": 0.9931,
+      "a_spread": [
+       548.8785,
+       561.742
+      ],
+      "b_spread": [
+       550.7609,
+       567.8712
+      ],
+      "reps": [
+       7,
+       7
+      ],
+      "batches": 1,
+      "borderline": null
+     }
+    },
+    "chord_lp8": {
+     "chord_at_8192": 1.209,
+     "measured": 1.1247,
+     "error": -0.0843
+    },
+    "chord_lp24": {
+     "chord_at_8192": 1.1747,
+     "measured": 1.0042,
+     "error": -0.1705
+    },
+    "composite": {
+     "tq3_16lp": 1.045,
+     "phase4_8lp": 1.26,
+     "phase4_24lp": 1.03,
+     "measured_16lp": 1.0039
+    },
+    "block_land_s6": 0.9235,
+    "block_land_s1": 0.7791
+   }
+  },
+  "walker_m1": {
+   "key": "7106ef2ed2c97a4ae40855b4773c7616327795eccb41730074adc536910e73da",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/walk-m1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/walk-m0",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/walk-m1-ff",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/walk-m0-ff"
+   ],
+   "recorded": "2026-10-29 13:42:45",
+   "summary": {
+    "scriptUpdate_delta_ms": 0.00079,
+    "wholeUpdate": {
+     "mean_ratio": 3.6509,
+     "p99_m1": 85.84022,
+     "p99_m0": 6.59901
+    },
+    "basic_tiles_support": {
+     "m1": {
+      "mean": 1.48948,
+      "p99": 86.57355,
+      "max": 370.1282,
+      "sum_ms": 5719.6115,
+      "per_step_ms": 95.32686
+     },
+     "m0": {
+      "mean": 0.11679,
+      "p99": 5.82877,
+      "max": 28.1009,
+      "sum_ms": 448.4842,
+      "per_step_ms": 7.47474
+     }
+    },
+    "basic_tiles_support_steps": {
+     "m1": {
+      "first_ms": 370.128,
+      "later_ms": 87.041,
+      "max_ms": 370.128
+     },
+     "m0": {
+      "first_ms": 0.396,
+      "later_ms": 0.3,
+      "max_ms": 28.101
+     }
+    },
+    "mapGenerator_sum_ms": {
+     "m1": 7048.629,
+     "m0": 1815.581
+    },
+    "peak_mb": {
+     "m1": 227.7,
+     "m0": 200.9,
+     "m1_minus_m0": 26.8
+    },
+    "mask": "0xffff",
+    "diagnostic": {
+     "0xff": {
+      "scriptUpdate_delta_ms": 0.00041,
+      "wholeUpdate": {
+       "mean_ratio": 3.6065,
+       "p99_m1": 84.96723,
+       "p99_m0": 6.54728
+      },
+      "basic_tiles_support": {
+       "m1": {
+        "mean": 1.47856,
+        "p99": 85.78435,
+        "max": 373.1417,
+        "sum_ms": 5677.6794,
+        "per_step_ms": 94.62799
+       },
+       "m0": {
+        "mean": 0.11774,
+        "p99": 5.91871,
+        "max": 27.6241,
+        "sum_ms": 452.1365,
+        "per_step_ms": 7.53561
+       }
+      },
+      "basic_tiles_support_steps": {
+       "m1": {
+        "first_ms": 373.142,
+        "later_ms": 86.854,
+        "max_ms": 373.142
+       },
+       "m0": {
+        "first_ms": 0.371,
+        "later_ms": 0.335,
+        "max_ms": 27.624
+       }
+      },
+      "mapGenerator_sum_ms": {
+       "m1": 6992.043,
+       "m0": 1828.378
+      },
+      "peak_mb": {
+       "m1": 222.9,
+       "m0": 196.7,
+       "m1_minus_m0": 26.2
+      }
+     }
+    }
+   }
+  },
+  "rt_m1": {
+   "key": "cd7727f1caa1b2ed951ac2c2f2e4adfeb29e6c32128f269a887790f4b512f067",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/rt-m1-1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/rt-m1-2",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/rt-m1-3",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/rt-m0-1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/rt-m0-2",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/rt-m0-3"
+   ],
+   "recorded": "2026-10-29 13:50:44",
+   "summary": {
+    "m1": [
+     {
+      "ticks": 2160,
+      "mean": 16.672,
+      "p50": 16.662,
+      "p95": 17.376,
+      "p99": 17.689,
+      "max": 223.339,
+      "over_20ms": 2,
+      "over_33ms": 1,
+      "window_s": 36.011,
+      "ups": 59.981
+     },
+     {
+      "ticks": 2160,
+      "mean": 16.67,
+      "p50": 16.665,
+      "p95": 17.374,
+      "p99": 17.552,
+      "max": 221.324,
+      "over_20ms": 2,
+      "over_33ms": 1,
+      "window_s": 36.007,
+      "ups": 59.988
+     },
+     {
+      "ticks": 2160,
+      "mean": 16.664,
+      "p50": 16.665,
+      "p95": 17.357,
+      "p99": 17.632,
+      "max": 216.163,
+      "over_20ms": 2,
+      "over_33ms": 1,
+      "window_s": 35.993,
+      "ups": 60.011
+     }
+    ],
+    "m0": [
+     {
+      "ticks": 2160,
+      "mean": 16.609,
+      "p50": 16.665,
+      "p95": 17.318,
+      "p99": 17.547,
+      "max": 18.003,
+      "over_20ms": 0,
+      "over_33ms": 0,
+      "window_s": 35.876,
+      "ups": 60.208
+     },
+     {
+      "ticks": 2160,
+      "mean": 16.61,
+      "p50": 16.666,
+      "p95": 17.348,
+      "p99": 17.619,
+      "max": 18.114,
+      "over_20ms": 0,
+      "over_33ms": 0,
+      "window_s": 35.877,
+      "ups": 60.206
+     },
+     {
+      "ticks": 2160,
+      "mean": 16.609,
+      "p50": 16.667,
+      "p95": 17.343,
+      "p99": 17.616,
+      "max": 18.209,
+      "over_20ms": 0,
+      "over_33ms": 0,
+      "window_s": 35.874,
+      "ups": 60.21
+     }
+    ],
+    "peak_mb": {
+     "m1": [
+      232.3,
+      231.9,
+      232.8
+     ],
+     "m0": [
+      208.5,
+      206.7,
+      208.6
+     ],
+     "m1_median": 232.3,
+     "m0_median": 208.5,
+     "m1_minus_m0": 23.8
+    },
+    "p5_ratio": 1.0009
+   }
+  },
+  "save_m1": {
+   "key": "c7d54c77625108b9c9d6f6e692ceab296b8758c88f92084f21aefd7a57eeea65",
+   "run_dirs": [
+    "previews/earth-build/suite/20261029-132507-spawn-cities/save-m1",
+    "previews/earth-build/suite/20261029-132507-spawn-cities/save-m0"
+   ],
+   "recorded": "2026-10-29 13:52:13",
+   "summary": {
+    "m1": {
+     "pre": 1159845,
+     "post": 1690994,
+     "increment": 531149
+    },
+    "m0": {
+     "pre": 791722,
+     "post": 1289123,
+     "increment": 497401
+    },
+    "increment_ratio": 1.0678,
+    "whole_save_ratio": 1.3117
+   }
+  }
+ },
+ "game_build": "2.1.24 build 87808",
+ "updated": "2026-10-29 13:52:13",
+ "frozen": {
+  "format": "tn-frozen-snapshot/1",
+  "through": "spawn-cities",
+  "bodies": {
+   "tn_city_cx_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "c3b236104a025607e6a9cd27f1eafe119d61efbea98babf5732639417a973cb7",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_city_cy_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "15127ba68c81d15fb64b16e966547205edd42e2e98e1e25c3cc94e50f3df08b8",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_city_index_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "5eec160f4637d895292e9383f531c87d7a5b39113a2c550a8bab58a8ee9f1128",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_cx_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "7245cf6718889e9cd46bd887ce05cf60a8a9745aa525c509f3f26e04084d4bce",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_cx_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "d3cacab377280c844468762cfb407ba4af4c4f22bd044ca6bbdf95a82522bbee",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_cy_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "64e4b3f0df3ae69accfa6e30ed4b6049dd227fa913ba621cff6dce404e57fc6b",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_cy_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "53afab539359ab371d7583c9495deb024840f87aa08e082e2b333971a2aefc10",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_detail_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "a909d9d816ef683bf52f36c78a4fa1bb1f3e572386c32625a2a9a286b3367167",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_detail_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "5e87d3448dcedca2b571169e5db9e816f058743384f09bafca0dbd0286781181",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_distance_v1": {
+    "type": "noise-expression",
+    "sha256": "16de61a5eb195adae0b666836d90c17dce2dc701cb8c76bb31e555a4dca84164",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_elevation_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "517e1b8b240ac0ea23c506d5878b3a025b2f4fee070df168c4f9d34ad297e1a0",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_elevation_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "3b618dc22d835e7c18534b11976f3452b5cf512df7056bfba89718351613a694",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_far_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "b30d83a7445a94abb0d8cb78dcd20159f9f7b2193ead4efbd38db6dfc3448e6f",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_far_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "ad203f3d6f4384bb1ebad626eba1831125755d07ee1f9e4f040254546783cb3b",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_geo_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "8af1d57b69a35ad654c09bab129e2579056bdfee705d6bf6ce49cfabfcfafc07",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_geo_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "49d307e8618b7d0f983b9da4fbe2ce58cdac0b7bdc249344ae83cf3ce603ebd0",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_gx_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "1e8abbdefeb5c13c41fdf5594cff092e8e73286148a20d77fbfeac5f85742f85",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_gx_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "0a7d8195919c4bd8933eede3856741cc1d83408b04f9d8ef1e77090241f32241",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_gy_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "22ceb77386cf371514d5fb1928e5c86927bf8b97928665aa2c022634f49c9e07",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_gy_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "66181232e9e260f7bcaf4fb17d5235b0d47719c8d08e7b2932eda834027377c1",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_inland_lakes_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "e3126751070519c1ec4549bac2638596ebfb241c4b6a258ee4afd0a542523627",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_land_coarse_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "c526f440507613ece7d860e808e4a8f1d4d50f1599ba9134cb2e89e2941aa820",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_land_coarse_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "7660e5d5a296d9f9e8c786628a8edb53df9a4b8e096b2d1138fa245abadcf72a",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_spawn_bias_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "6804f3fdb181538ea0f411f34dfb977082772a34e1c3189a020bf149b9f9f421",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_spawn_lake_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "f64a8eaa1e0c4a06746d3eb697fb1347f9f2b958bf6e58437f76a6027db7e52d",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_start_land_v1": {
+    "type": "noise-expression",
+    "sha256": "7b8c5da801d5c9fa1c67731ab811cf5d9a827a96401418da6e1c540a3855b06f",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_start_mask_v1": {
+    "type": "noise-expression",
+    "sha256": "61280740c824f816d617db71eb4d02083586072cfcd3e42671dabd086c082a03",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_start_mask_v2": {
+    "type": "noise-expression",
+    "sha256": "aa774719da79824cbc7e48c6a5b1b0d9bb7f29aca0073b9765660ac1cfade36f",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_u_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "4d8a025c11b2ee5bda93ca992b540da49ee5fdb74aa8391a75f5eaa176b7a08f",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_u_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "44e5fadfa230dd2e69d370c76041159aa891d7f818dc15e2c13ba18ac5d59d42",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_v_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "6ed69f2c02a37afaa65bd09c49192ff9d21752844d3c79addfdb24c4c0722935",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_v_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "d2ccb5aabde4ae253ae44a4cc31a0b52cac05ab79a2270f9b575faf67cb2767f",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   }
+  },
+  "sha256": "87ee24c326855171eb0ac733583715c2b4faaddf271ee043c7b52257370ce2a4"
+ }
+}

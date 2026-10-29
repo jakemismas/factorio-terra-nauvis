@@ -1,0 +1,9 @@
+{
+  "name": "ea-force-spawn",
+  "version": "0.0.1",
+  "title": "Earth build T18 second-force spawn probe (test only)",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test tool, never shipped. T18 (c), D31: reads the mod under test's folded city offsets at (0, 0), places a second force's spawn at other cities from the mod's shipped data only, generates each spawn's chunk and records its tile and elevation to script-output/ea-force-spawn/spawns.json. The runner writes force-spawn-spec.lua into a staged copy at run time.",
+  "dependencies": ["base >= 2.1.23"]
+}

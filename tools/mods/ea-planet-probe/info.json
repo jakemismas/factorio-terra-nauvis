@@ -1,0 +1,9 @@
+{
+  "name": "ea-planet-probe",
+  "version": "0.0.1",
+  "title": "Earth build T14 planet probe (test only)",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test tool, never shipped. Two synthetic planets that set no property_expression_names of their own (S11's eapp-open): one surface made in on_init, which the mod under test never sees (its on_init ran first and the event never fires there), and one made at tick 1 through LuaPlanet.create_surface, which raises on_surface_created. Writes what each surface inherited from the save's default map gen settings to script-output/ea-planet-probe/.",
+  "dependencies": ["base >= 2.1.23"]
+}

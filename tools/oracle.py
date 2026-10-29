@@ -17,6 +17,8 @@ Commands (from the Factorio workspace):
   python mod/tools/oracle.py selftest
 """
 import argparse
+import copy
+import hashlib
 import json
 import math
 import re
@@ -960,6 +962,151 @@ def game_selftest(out_root, t1_runs, record, run):
     record("oracle_check_probe", got == want and rep["counts"]["not_covered"] == 0,
            f"{rep['counts']}; fails equal the analytic disc: {got == want} ({len(got)} fails)")
     return [rd]
+
+
+# ------------------------------------------------------------------------------------------------
+# The spawn shift (milestone spawn-cities; S7 option ii): the chosen city's pixel centre sits at world
+# (0, 0), so every place converts as world = geo - (cx, cy), with (cx, cy) the tile holding that
+# centre, scale (col - wr) + floor(scale / corner_offset_divisor) (ARCHITECTURE.md, "The coordinate
+# chain"). The fold's random pick runs in float32 in the noise program; random_city_index is the
+# tool's model of it (T7 (c)), never control code's: control reads the index back at (0, 0).
+
+CITIES = eg.REPO / "terra-nauvis" / "prototypes" / "tables" / "cities.lua"
+# S7's game runs of the same hash on its 30-city dummy list (spikes/S7-spawn, design notes 04:00): seed ->
+# city picked by the noise program. 4294967295 reads as 4294967296 in float32, so its city (8) is not
+# the integer hash's (1). The model must reproduce every row.
+S7_RANDOM = {"n": 30, "picks": {1000: 11, 1002: 25, 1004: 9, 4000000001: 3, 4294967295: 8},
+             "integer_4294967295": 1}
+_CITY_TABLES = {}
+
+
+def city_table(path=CITIES):
+    """The city table as Python data, parsed once per file content and handed out as a copy: the
+    runner folds the cities for every spawn it places (city_fold), and parsing the table for each
+    one was most of the gate's re-derivation of the T7 sweep."""
+    import tnconfig
+    p = Path(path)
+    text = p.read_text(encoding="utf-8")
+    key = (str(p.resolve()), hashlib.sha256(text.encode("utf-8")).hexdigest())
+    if key not in _CITY_TABLES:
+        _CITY_TABLES[key] = tnconfig.loads(text, str(p), p.name)
+    return copy.deepcopy(_CITY_TABLES[key])
+
+
+def city_fold(cfg, map_key):
+    """(setting values, [(col, row)]) of a map's city fold: the spawn-city setting's values in fold
+    order ("random" first, so city k is values[k]) and each city's reference pixel, converted from the
+    city table's degrees with the pixel-centre formula exactly as spawn.lua converts them."""
+    import tnconfig
+    g = tnconfig.geography(cfg)[map_key]
+    if not g.get("spawn"):
+        raise ValueError(f"config.lua gives {map_key}'s newest geography version no spawn record")
+    values = cfg["settings"][g["city_setting"]]["allowed_values"]
+    rows = city_table()[map_key]["cities"]
+    m = cfg["maps"][map_key]
+    ppd = cfg["coordinates"]["px_per_degree"]
+    px = []
+    for v in values[1:]:
+        c = rows[v]
+        px.append((math.floor((c["lon"] - m["lon_left_edge"]) * ppd), math.floor((m["lat_top_edge"] - c["lat"]) * ppd)))
+    return values, px
+
+
+def random_city_index(cfg, seed, n):
+    """The fold's random pick, 1 to n, as the noise program computes it in float32:
+    (map_seed_small * a + floor(map_seed / d) * b) % n + 1, map_seed_small the integer seed's low 16
+    bits and map_seed itself a float32 (config.lua spawn.hash; S7)."""
+    H = cfg["spawn"]["hash"]
+    f = np.float32
+    ms = f(int(seed))
+    small = f(int(seed) & 0xFFFF)
+    high = np.floor(ms / f(H["high_div"]))
+    h = small * f(H["small_mult"]) + high * f(H["high_mult"])
+    r = h - np.floor(h / f(n)) * f(n)
+    return int(r) + 1
+
+
+def resolved_city(cfg, map_key, seed, number):
+    """The city index (1 to n) a world resolves: its baked city number, or for 0 (random) the model."""
+    _, px = city_fold(cfg, map_key)
+    number = int(number or 0)
+    return number if number > 0 else random_city_index(cfg, seed, len(px))
+
+
+def spawn_offset(cfg, map_key, scale, seed, number):
+    """(cx, cy) in tiles for a world at `scale` and `seed` with the baked city number `number`."""
+    _, px = city_fold(cfg, map_key)
+    col, row = px[resolved_city(cfg, map_key, seed, number) - 1]
+    m = cfg["maps"][map_key]
+    s = int(scale)
+    corner = s // int(cfg["coordinates"]["corner_offset_divisor"])
+    return s * (col - m["wr"]) + corner, s * (row - m["hr"]) + corner
+
+
+def pen_offset(cfg, map_key, pen, seed):
+    """The spawn offset of a world made with property_expression_names `pen` at `seed`: numbers baked for
+    the city offset names of the map's newest geography version stand as they are (europe-coast's 0,
+    or a test-only tile); names (the city fold) resolve through the baked city number."""
+    import tnconfig
+    g = tnconfig.geography(cfg)[map_key]
+    a, b = pen.get(g["cx"]), pen.get(g["cy"])
+    if all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in (a, b)):
+        return int(a), int(b)
+    return spawn_offset(cfg, map_key, int(pen[cfg["keys"]["scale"]]), seed, pen.get(g.get("city"), 0))
+
+
+def world_tile(tile, offset):
+    """A geo tile (the S8 tools' tile space) as a world tile under the spawn shift."""
+    return int(tile[0]) - int(offset[0]), int(tile[1]) - int(offset[1])
+
+
+def spawn_selftest(cfg=None, oracle_dir=None):
+    """Offline checks of the spawn model, outside S8's 760 (selftest's count stays S8's): the float32
+    model reproduces S7's five game picks and differs from the integer hash where S7 found it does;
+    every map with a city fold converts each city to the reference JSON's pixel, its offset at scales
+    1, 3 and 6 is the oracle's pixel-centre tile, and the setting lists no city the approvals removed.
+    Returns [(name, ok, detail)]."""
+    import tnconfig
+    cfg = cfg or tnconfig.load()
+    out = []
+    for seed, want in S7_RANDOM["picks"].items():
+        got = random_city_index(cfg, seed, S7_RANDOM["n"])
+        out.append((f"model seed {seed} picks S7's city {want}", got == want, f"got {got}"))
+    H = cfg["spawn"]["hash"]
+    integer = (65535 * H["small_mult"] + (4294967295 // H["high_div"]) * H["high_mult"]) % S7_RANDOM["n"] + 1
+    out.append(("the integer hash differs at 4294967295 (why control reads the index back)",
+                integer == S7_RANDOM["integer_4294967295"] and integer != S7_RANDOM["picks"][4294967295],
+                f"integer {integer}"))
+    appr = json.loads(APPROVALS.read_text(encoding="utf-8"))
+    newest = tnconfig.geography(cfg)
+    for key in cfg["map_order"]:
+        g = newest.get(key) or {}
+        if not g.get("spawn"):
+            continue
+        mref = eg.MapRef(key)
+        values, px = city_fold(cfg, key)
+        ref = {c["name"]: c for c in mref.meta["cities"]["list"]}
+        rows = city_table()[key]["cities"]
+        O = load_oracle(key, oracle_dir)
+        places = {p["name"]: p for p in O["places"] if p["kind"] == "city"}
+        removed = {r["name"] for r in appr["cities"][key]["removed"]}
+        kept = appr["cities"][key]["kept"]
+        names = [rows[v]["name"] for v in values[1:]]
+        out.append((f"{key}: the setting lists the approvals' kept cities in order",
+                    [ref[n]["full_name"] for n in names if n in ref] == kept and len(names) == len(kept),
+                    f"{len(names)} cities"))
+        out.append((f"{key}: no removed city is a value", not (set(names) & removed), f"removed {sorted(removed)}"))
+        for v, n, (col, row) in zip(values[1:], names, px):
+            r = ref.get(n)
+            out.append((f"{key} {v}: pixel equals the reference JSON's", r is not None and [col, row] == r["pixel"],
+                        f"{(col, row)} against {r and r['pixel']}"))
+            p = places.get(n)
+            for s in (1, 3, 6):
+                k = values.index(v)
+                got = spawn_offset(cfg, key, s, 1000, k)
+                want = tuple(place_tile(mref, p, s)) if p else None
+                out.append((f"{key} {v} scale {s}: offset equals the oracle's tile", got == want, f"{got} against {want}"))
+    return out
 
 
 def main():

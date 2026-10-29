@@ -1,6 +1,9 @@
 # Release: a pushed tag v<version> builds the release zip and publishes it, with
 # its .sha256, as a GitHub release. It uses only the workflow's own GITHUB_TOKEN and never runs the
-# game. The T16 workflow scan (tools/tn_static.py) checks this file.
+# game. The checkout keeps full history, so the tag check refuses a tag whose commit is not on
+# origin/main (a release does not wait on CI, so it ships only what main's history holds) and the
+# release build compares with every earlier release tag. The T16 workflow scan (tools/tn_static.py)
+# checks this file.
 name: release
 
 on:
@@ -17,6 +20,8 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:

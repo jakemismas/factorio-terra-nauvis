@@ -1,7 +1,7 @@
 {
  "format": "tn-budgets/1",
  "note": "Measured values only (ruling 3): complexity rows from 64 px --verbose previews at seed 1000. Written by 'earth_test.py baseline'; the gate requires equality and reads thresholds from the plan's section 6.",
- "game_build": "2.1.23 build 87750",
+ "game_build": "2.1.24 build 87808",
  "rows": [
   {
    "seed": 1000,
@@ -72,33 +72,396 @@
   {
    "seed": 1000,
    "size": 64,
-   "row": "placeholder",
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 1,
+   "toggles": "on",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69366,
+     "unique": 44205,
+     "operations": 44077,
+     "registers": 889,
+     "complexity": 83127
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 1,
+   "toggles": "off",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69366,
+     "unique": 44205,
+     "operations": 44077,
+     "registers": 889,
+     "complexity": 83127
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 2,
+   "toggles": "on",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69365,
+     "unique": 44207,
+     "operations": 44086,
+     "registers": 888,
+     "complexity": 83051
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 2,
+   "toggles": "off",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69365,
+     "unique": 44207,
+     "operations": 44086,
+     "registers": 888,
+     "complexity": 83051
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 3,
+   "toggles": "on",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69369,
+     "unique": 44209,
+     "operations": 44086,
+     "registers": 887,
+     "complexity": 83051
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 3,
+   "toggles": "off",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69369,
+     "unique": 44209,
+     "operations": 44086,
+     "registers": 887,
+     "complexity": 83051
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 4,
+   "toggles": "on",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69373,
+     "unique": 44211,
+     "operations": 44086,
+     "registers": 888,
+     "complexity": 83021
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 4,
+   "toggles": "off",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69373,
+     "unique": 44211,
+     "operations": 44086,
+     "registers": 888,
+     "complexity": 83021
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 5,
+   "toggles": "on",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69377,
+     "unique": 44213,
+     "operations": 44087,
+     "registers": 888,
+     "complexity": 83022
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 5,
+   "toggles": "off",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69377,
+     "unique": 44213,
+     "operations": 44087,
+     "registers": 888,
+     "complexity": 83022
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
    "map": "europe",
    "modset": "M1",
    "preset": "terra-nauvis-europe",
    "scale": 6,
-   "toggles": "n/a",
+   "toggles": "on",
    "programs": {
     "cliff": {
-     "expressions": 377,
-     "unique": 220,
-     "operations": 134,
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
      "registers": 17,
-     "complexity": 287
+     "complexity": 286
     },
     "entity": {
      "expressions": 2063,
-     "unique": 934,
-     "operations": 600,
+     "unique": 933,
+     "operations": 603,
      "registers": 92,
-     "complexity": 8549
+     "complexity": 8534
     },
     "tile": {
-     "expressions": 1321,
-     "unique": 608,
-     "operations": 494,
-     "registers": 53,
-     "complexity": 10093
+     "expressions": 69377,
+     "unique": 44213,
+     "operations": 44087,
+     "registers": 888,
+     "complexity": 83022
+    }
+   }
+  },
+  {
+   "seed": 1000,
+   "size": 64,
+   "row": "map",
+   "map": "europe",
+   "modset": "M1",
+   "preset": "terra-nauvis-europe",
+   "scale": 6,
+   "toggles": "off",
+   "programs": {
+    "cliff": {
+     "expressions": 374,
+     "unique": 216,
+     "operations": 137,
+     "registers": 17,
+     "complexity": 286
+    },
+    "entity": {
+     "expressions": 2063,
+     "unique": 933,
+     "operations": 603,
+     "registers": 92,
+     "complexity": 8534
+    },
+    "tile": {
+     "expressions": 69377,
+     "unique": 44213,
+     "operations": 44087,
+     "registers": 888,
+     "complexity": 83022
     }
    }
   }

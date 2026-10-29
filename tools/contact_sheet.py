@@ -4,7 +4,9 @@
 Panels, left to right, all of one reference-pixel window:
   1 reference   land grey, water dark blue, thin water (excluded from T1) light blue
   2 generated   the land decision (t1_metrics --candidate-out PNG, an array, or derived from the preview)
-  3 preview     the fh.py preview cropped to the window's tiles (1 tile per pixel, resized to the panel)
+  3 preview     the fh.py preview cropped to the window's tiles (1 tile per pixel, resized to the panel);
+                given several previews (`previews`), each tile is drawn from the preview that holds
+                it, so a window wider than one preview shows all of its terrain
   4 difference  t1_metrics overlay: red = generated land on reference water, orange = generated water
                 on reference land, light blue = excluded thin water, black = not covered
 It also runs `fh.py compare` on panels 1 and 2 drawn in one palette (its --sbs image and RESULT line
@@ -81,8 +83,35 @@ def labelled(panels, titles, header):
     return canvas
 
 
+def preview_crop(previews, tx0, tx1, ty0, ty1):
+    """The tiles tx0..tx1 - 1, ty0..ty1 - 1 from fh.py previews, each (path, offset): a preview of
+    size S at offset (x, y) covers the tiles from (x - S / 2, y - S / 2), its offset snapped down to
+    a multiple of 32 as the game snaps it. Each tile is drawn from a preview that holds it (where
+    previews overlap the later one is drawn; their pixels agree, one generator), a tile no preview
+    holds stays black, and a preview that holds none of the window is never decoded. Returns (the
+    crop, the previews drawn from)."""
+    crop = np.zeros((ty1 - ty0, tx1 - tx0, 3), np.uint8)
+    used = []
+    for path, offset in previews:
+        with Image.open(path) as im:
+            S_w, S_h = im.size
+            cx, cy = (offset[0] // 32) * 32, (offset[1] // 32) * 32
+            px0, py0 = tx0 - (cx - S_w // 2), ty0 - (cy - S_h // 2)
+            sx0, sy0 = max(px0, 0), max(py0, 0)
+            sx1, sy1 = min(px0 + crop.shape[1], S_w), min(py0 + crop.shape[0], S_h)
+            if sx1 <= sx0 or sy1 <= sy0:
+                continue
+            pv = np.asarray(im.convert("RGB"))
+        crop[sy0 - py0:sy1 - py0, sx0 - px0:sx1 - px0] = pv[sy0:sy1, sx0:sx1]
+        used.append(path)
+    return crop, used
+
+
 def build(mref, window, cand_land, cand_cov, preview=None, preview_offset=(0, 0), scale=None, origin="floor",
-          panel_px=480, out=None, fh_compare=True):
+          panel_px=480, out=None, fh_compare=True, previews=None):
+    """The sheet of one window. `preview` with `preview_offset` names one fh.py preview; `previews`,
+    a list of (path, offset), names several, which the preview panel tiles together (the T1 runs
+    at scales above 1 cover the map in several previews)."""
     c0, r0, w, h = window
     sl = (slice(r0, r0 + h), slice(c0, c0 + w))
     ref, thin = mref.land[sl].copy(), mref.thin[sl].copy()
@@ -96,22 +125,18 @@ def build(mref, window, cand_land, cand_cov, preview=None, preview_offset=(0, 0)
     p_gen = fit(mask_panel(land, cov), pw, ph)
     p_ov = fit(ov_rgb, pw, ph, max_pool_bad=[t1.OV_COLOURS[t1.OV_FALSE_LAND], t1.OV_COLOURS[t1.OV_FALSE_WATER]])
     panels, titles = [p_ref, p_gen], ["reference", "generated land"]
-    if preview is not None:
-        pv = np.asarray(Image.open(preview).convert("RGB"))
-        S_h, S_w = pv.shape[:2]
-        cx, cy = (preview_offset[0] // 32) * 32, (preview_offset[1] // 32) * 32
+    tiles = list(previews) if previews else ([(preview, preview_offset)] if preview is not None else [])
+    pv_rec = None
+    if tiles:
         sf, of = eg.as_fraction(scale), eg.origin_fraction(origin)
         tx0, tx1 = math.floor((c0 - mref.wr - of) * sf), math.ceil((c0 + w - mref.wr - of) * sf)
         ty0, ty1 = math.floor((r0 - mref.hr - of) * sf), math.ceil((r0 + h - mref.hr - of) * sf)
-        px0, py0 = tx0 - (cx - S_w // 2), ty0 - (cy - S_h // 2)
-        crop = np.zeros((ty1 - ty0, tx1 - tx0, 3), np.uint8)
-        sx0, sy0 = max(px0, 0), max(py0, 0)
-        sx1, sy1 = min(px0 + crop.shape[1], S_w), min(py0 + crop.shape[0], S_h)
-        if sx1 > sx0 and sy1 > sy0:
-            crop[sy0 - py0:sy1 - py0, sx0 - px0:sx1 - px0] = pv[sy0:sy1, sx0:sx1]
+        crop, used = preview_crop(tiles, tx0, tx1, ty0, ty1)
+        pv_rec = [str(q) for q in used] if len(used) > 1 else (str(used[0]) if used else None)
         p_pv = np.asarray(Image.fromarray(crop).resize((pw, ph), Image.NEAREST if crop.shape[1] <= pw else Image.BOX))
         panels.append(p_pv)
-        titles.append(f"preview tiles {tx0}..{tx1 - 1}, {ty0}..{ty1 - 1}")
+        titles.append(f"preview tiles {tx0}..{tx1 - 1}, {ty0}..{ty1 - 1}" +
+                      (f" from {len(used)} previews" if len(used) > 1 else ""))
     panels.append(p_ov)
     titles.append("difference (red false land, orange false water)")
     cd = res["coast_deviation_px"]
@@ -122,7 +147,8 @@ def build(mref, window, cand_land, cand_cov, preview=None, preview_offset=(0, 0)
     sheet = labelled(panels, titles, header)
     info = {"window_px": list(window), "t1_window": {k: res[k] for k in ("pixel_agreement", "land_iou", "false_land_px",
                                                                         "false_water_px", "coast_deviation_px", "d7")},
-            "islands_window": res["islands"]["buckets"], "preview": str(preview) if preview else None}
+            "islands_window": res["islands"]["buckets"],
+            "preview": pv_rec}
     if out:
         # absolute: fh.py compare below runs in the workspace and must write --sbs and --mask
         # beside the sheet, not re-anchor a relative path there

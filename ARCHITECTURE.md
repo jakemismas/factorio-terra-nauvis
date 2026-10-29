@@ -1,9 +1,11 @@
 # Architecture
 
-Binding design for Terra Nauvis (mod ID `terra-nauvis`) in the first release: Factorio 2.1.23 (build 87750),
-base game, Alien Biomes 0.8.0 optional. The disagreements with the earlier design notes found while writing this file are listed in "Conflicts and open items". This file is
-living: during a build it changes only through fit-review patches folded in at a milestone commit, and
-whenever a milestone changes a binding contract (Universal Definition of Done).
+Binding design for Terra Nauvis (mod ID `terra-nauvis`) in the first release: Factorio 2.1, written against
+2.1.23 (build 87750) and tested on 2.1.24 (build 87808) since Steam's 2026-10-29 update (G8;
+design notes 2026-10-29 09:00), base game, Alien Biomes 0.8.0 optional. The disagreements with the earlier design notes found while writing this file are listed in
+"Conflicts and open items". This file is living: during a build it changes only through fit-review
+patches folded in at a milestone commit, and whenever a milestone changes a binding contract (Universal
+Definition of Done).
 
 Conventions. Every measured fact carries a source tag that the Sources table at the end resolves to
 a path. "est." marks an estimate, "derived" marks arithmetic on cited numbers, and UNVERIFIED marks
@@ -79,10 +81,10 @@ so the `prototypes/` and `scripts/` rows below are `terra-nauvis/prototypes/...`
 | `terra-nauvis/control.lua` | Event wiring only | registers exactly the events in "Control stage" | 0 |
 | `terra-nauvis/locale/en/terra-nauvis.cfg` | Setting names and descriptions; `[string-mod-setting] <setting>-<value>=<label>` for every dropdown value, with world size; preset names and descriptions; the `[noise-expression]` Map type names "Terra Nauvis: <map>"; messages, the Map type notice among them | every used key exists; no line without `=` (a missing `=` fails the load, S11) | 0; Map type names 1 and 3 |
 | `terra-nauvis/changelog.txt`, `LICENSE`, `SOURCE-OFFER.txt`, `thumbnail.png` | Factorio changelog, GPLv3 (EarthMaps data reuse), the written source offer (GPLv3 section 6: the zip tells a recipient how to get the mod, `tools/` and `data-src/` from the author), thumbnail (later) | `tools/build_zip.py` ships every file of the folder and refuses anything but Lua, JSON, cfg, txt, png, md and LICENSE | 0, 13 |
-| `terra-nauvis/prototypes/config.lua` | The single source of names and constants (table below) | pure data: reads no `data`, `settings`, `game` or `script` and calls no function, so the settings, data and control stages and the Python tools (through `tools/tnconfig.py`, a luaparser loader of that subset) read one file; it marks the placeholder preset's names, which are never registered or released | 0 |
-| `terra-nauvis/prototypes/presets.lua` | The three presets from config, `settings.startup` and `mods`, ordered right after Default; the prototype-level fallbacks the Map type entries read, built from the same table | the redirect table under "Expression graph"; AB keys only with AB loaded, Oil Rig keys only with the Oil Rig; each fallback equals what its preset bakes (section "Map type entries"); in `toolchain` the placeholder preset redirects `elevation` and `starting_resources_lake_mask` (to the placeholder's copy of vanilla's start mask on `elevation_nauvis`), so design constraint 3 holds on it; with a mod of `placeholder.withheld_with` loaded (Alien Biomes, whose two palms read `elevation` in the Entity program) the placeholder preset is not defined at all, since only `climate-tiles`' palm switch makes an Earth preset safe beside them (reconciliation 9) | 0 (placeholder), 1 |
-| `terra-nauvis/prototypes/expressions/coast.lua` | Coordinate chain, coast transfer, lattice detail, far-field box, elevation composition, emitted once per map as that map's elevation entry; the coarse land key `tn_land_coarse`. In `toolchain` only the placeholder shape and its start mask | the firewall names: Tile only; `tn_land_coarse` is the one land field outside Tile; the newest entry of each map carries the Map type fields | 0 (placeholder), 1 |
-| `terra-nauvis/prototypes/expressions/spawn.lua` | City fold, random pick, spawn offsets, spawn lake, inland lakes, `distance`, start mask | `tn_cx`, `tn_cy` and the city index readable at (0, 0) | 1, 2 |
+| `terra-nauvis/prototypes/config.lua` | The single source of names and constants (table below) | pure data: reads no `data`, `settings`, `game` or `script` and calls no function, so the settings, data and control stages and the Python tools (through `tools/tnconfig.py`, a luaparser loader of that subset) read one file; `europe-coast` retired the placeholder group with every name it marked | 0 |
+| `terra-nauvis/prototypes/presets.lua` | The three presets from config, `settings.startup` and `mods`, ordered right after Default; the prototype-level fallbacks the Map type entries read, built from the same table | the redirect table under "Expression graph"; AB keys only with AB loaded, Oil Rig keys only with the Oil Rig; each fallback equals what its geography version's preset bakes, for every version (section "Map type entries"); a preset's geography (its elevation entry, coarse field and `tn_geo`) is chosen in one place, `geography()`, so `climate-tiles` can give Alien Biomes worlds a cheaper one; `toolchain`'s placeholder preset, withheld beside Alien Biomes, retired with `europe-coast` | 0 (placeholder), 1 |
+| `terra-nauvis/prototypes/expressions/coast.lua` | Coordinate chain, coast transfer, lattice detail, far-field box, elevation composition, emitted for every geography version of each map as that version's elevation entry over its own chain (`tn_<x>_<map>_v<n>`), older versions unchanged; the map's coarse land field, which the preset key `tn_land_coarse` names. `toolchain`'s placeholder shape retired with `europe-coast` | the firewall names: Tile only; `tn_land_coarse` is the one land field outside Tile; the newest entry of each map carries the Map type fields | 0 (placeholder), 1 |
+| `terra-nauvis/prototypes/expressions/spawn.lua` | City fold, random pick, spawn offsets, spawn lake, inland lakes, `distance`, every start mask version from its formula (`tn_start_mask_v1` on the coarse field lands first) | each map's city offset names (Europe's v1 chain reads `tn_cx_europe_v1` and `tn_cy_europe_v1`, constants that never move; a city spawn reaches a later entry through names of its own) and the city index readable at (0, 0) | 1 (start mask), 2 |
 | `terra-nauvis/prototypes/expressions/climate.lua` | Temperature, moisture and aux (AB and fallback variants), vanilla-scale temperature, slider hooks, marsh and destroyed-zone lifts | firewall-clean: Entity reads it through AB trees | 6 |
 | `terra-nauvis/prototypes/expressions/regions.lua` | Region layer, S10 design (d): table rows, the shared warp, per-region outputs and layer aggregates (section "Region layer") | consumers read only the interface names; no region formula anywhere else (S10) | 5 |
 | `terra-nauvis/prototypes/expressions/tiles.lua` | Bodies behind the tile hooks: vanilla tiles beside AB, marsh tiles | | 6 |
@@ -92,25 +94,29 @@ so the `prototypes/` and `scripts/` rows below are `terra-nauvis/prototypes/...`
 | `terra-nauvis/prototypes/expressions/ridges.lua` | `cliff_elevation` and `cliffiness` from the ranges table | slider-proof, contour units (S5) | 8 |
 | `terra-nauvis/prototypes/expressions/destroyed.lua` | Destroyed-zone consumers: temperature lift, start mask, random-pool switch | | 10 |
 | `terra-nauvis/prototypes/expressions/waterways.lua` | Loads the generated waterway sets; canals and dams switch; the ford key's bodies | | 4 |
-| `terra-nauvis/prototypes/generated/` | `geo_<map>_v<n>.lua`, `coarse_<map>_v<n>.lua`, `waterways_<map>_s<k>_v<n>.lua` (with the ford sets), `bandfix_<map>_v<n>.lua` | machine-written; the header records tool version and input sha256; never hand-edited; one file per released version | 1, 3, 4, 11 |
+| `terra-nauvis/prototypes/generated/` | `geo_<map>_v<n>.lua`, `land_coarse_<map>_v<n>.lua`, `waterways_<map>_s<k>_v<n>.lua` (with the ford sets), `bandfix_<map>_v<n>.lua` | machine-written; the header records tool version and input sha256; name-free data (the tents read the locals `U` and `V`, which `coast.lua` binds to the map's chain), every line within 120 columns through Lua 5.2's backslash-z continuation; never hand-edited; one file per released version | 1, 3, 4, 11 |
 | `terra-nauvis/prototypes/tables/` | `cities`, `hotspots`, `forests`, `ranges`, `canals`, `marshes`, `regions`, `destroyed`: approval data in degrees, with sources; hotspot rows take the adopted centre (`lat`, `lon` in `approvals-data.json`), which decision 16 moved inland for one hotspot | versioned by release (copy-on-write after a release) | per milestone |
-| `terra-nauvis/scripts/start.lua` | `on_init`: world detection, storage, D29 message, cliff "none" reset, D12 and D32 warnings logged and recorded in `storage` for the per-player path | | 2, 8 |
-| `terra-nauvis/scripts/guards.lua` | Missing-name guard, drift line, the Map type notice, D33 surface guard, per-player notice, RSO and Destroyed Europe warnings (`on_player_created`) | | 1, 2 |
+| `terra-nauvis/scripts/start.lua` | `on_init`: world detection, storage, D29 message, cliff "none" reset, D12 and D32 warnings stored through `guards.record_warning` for the per-player path (section "Guards", stored records) | | 2, 8 |
+| `terra-nauvis/scripts/guards.lua` | Missing-name guard, drift line, the Map type notice, D33 surface guard, per-player notice, RSO and Destroyed Europe warnings (`on_player_created`); `record_warning`, the one writer of the stored warnings, and the validated readers of every stored record | owns `storage.earth.warnings`, `storage.earth.sent` and `storage.map_type.sent` (T16 storage row) | 1, 2 |
 | `terra-nauvis/scripts/markers.lua` | D28 city markers | no per-chunk event | 13 |
 | `terra-nauvis/scripts/bandfix.lua` | Tolerance-band coast fix | the only per-chunk handler | 11 |
-| `tools/earth_test.py` | Runner: `gate --through <milestone-id>` (each milestone's testCommand, under 10 minutes; `--cold` ignores the FG cache to time the cold gate; the FG rows of every milestone up to `<milestone-id>` and only `<milestone-id>`'s suite evidence), `suite <milestone-id>` (full variants into the content-hash cache; `--only <check>`), `install-check`, `baseline`, `freeze` and `static` commands; the milestone registry (FG rows, SS checks, live-sample pools, oracle properties and the dumps the frozen row reads, per milestone) | finds fh.py through `FACTORIO_WS` (default `%FACTORIO_WS%`) and refuses to run a game-launching command without it; `static` launches nothing and needs neither, so CI runs it; validates every milestone id (`SLICE_ID` and the registry) before it builds any path and keeps each output directory inside its output root; never writes tracked files while gating, and writes state and tracked files atomically (temp file plus replace); trusts no verdict file, only cache entries whose key it recomputes, each key covering what its check measures (the M0 timing rows: vanilla program signatures, the driver mods, the timing machinery, fh.py, the build and the record format); re-derives suite evidence from raw outputs alone: each timed repetition's validity from its run directory, the affinity watcher's records and the persisted monitor reads (never the runner's `reps.jsonl` verdicts, only cross-checked), the walker's affinity the same way, the server saves' sizes from the files, and the game self-test by replaying a copy of its stored runs (`game_selftest.py --replay`, which launches nothing); parses every cell of the plan's section 6 (6.2 limits bound by program, modset and map; 6.3 allocations per modset and map, "every other milestone" included) and fails closed on one it cannot read; a 6.2 From cell naming no milestone (P3) is in force from the first milestone, and a row in force that no check of the runner consumes (`LIMIT_CONSUMERS`) fails the section6 row; rule 5's extra group of 7 reps per config for a timed ratio within 0.03 of a limit, decided pooled (in the gate only when it fits the budget, else it fails closed naming the ratio); the workspace lock around every command that launches the game, every game launch while the command holds it, and G1 on every run, a run that may have left its instance stopping the command (`tnguard.run_breach`); fh.py isolation is the only live-profile protection, so no guard snapshot or check brackets a command (G9 retired, design notes 2026-10-28) | 0 |
-| `tools/build_geo.py` | Tents fit and emitter | reproducible emission (Build-time data flow) | 1 |
+| `tools/earth_test.py` | Runner: `gate --through <milestone-id>` (each milestone's testCommand, under 10 minutes; `--cold` ignores the FG cache to time the cold gate; the FG rows of every milestone up to `<milestone-id>`, and the suite evidence of every milestone the gate lands, `<milestone-id>` with each earlier milestone of its group that no reference ref has landed (`gate_evidence_slices` over `pending_slices`), each held to its own manifest, never a landed milestone's, with the live sample drawn over all their checks and a deterministic one compared exactly with its re-derived evidence; design notes 2026-10-29 11:05), `suite <milestone-id>` (full variants into the content-hash cache; `--only <check>`), `install-check`, `baseline`, `freeze` and `static` commands (`suite` and `freeze` write the milestone's frozen snapshot into its suite manifest; the frozen row holds the registry to the earlier milestones' snapshots and the offline bodies of `tools/tnlua.py` to the game's dump); the milestone registry (FG rows, SS checks, live-sample pools, oracle properties and the dumps the frozen row reads, per milestone: one module-level literal, which `tnfrozen.runner_registry` reads for CI and the release build, and the only source of the dump labels a `tests/frozen.json` record may name) | finds fh.py through `FACTORIO_WS` (default `%FACTORIO_WS%`) and refuses to run a game-launching command without it; `static` launches nothing and needs neither, so CI runs it; validates every milestone id (`SLICE_ID` and the registry) before it builds any path and keeps each output directory inside its output root; never writes tracked files while gating, and writes state and tracked files atomically (temp file plus replace); trusts no verdict file, only cache entries whose key it recomputes, each key covering what its check measures (the M0 timing rows: vanilla program signatures, the driver mods, the timing machinery, fh.py, the build and the record format); re-derives suite evidence from raw outputs alone: each timed repetition's validity from its run directory, the affinity watcher's records and the persisted monitor reads (never the runner's `reps.jsonl` verdicts, only cross-checked), the walker's affinity the same way, the server saves' sizes from the files, and the game self-test by replaying a copy of its stored runs (`game_selftest.py --replay`, which launches nothing); parses every cell of the plan's section 6 (6.2 limits bound by program, modset and map; 6.3 allocations per modset and map, "every other milestone" included) and fails closed on one it cannot read; a 6.2 From cell naming no milestone (P3) is in force from the first milestone, and a row in force that no check of the runner consumes (`LIMIT_CONSUMERS`) fails the section6 row; rule 5's extra group of 7 reps per config for a timed ratio within 0.03 of a limit, decided pooled (in the gate only when it fits the budget, else it fails closed naming the ratio); the workspace lock around every command that launches the game, every game launch while the command holds it, and G1 on every run, a run that may have left its instance stopping the command (`tnguard.run_breach`); fh.py isolation is the only live-profile protection, so no guard snapshot or check brackets a command (G9 retired, design notes 2026-10-28) | 0 |
+| `tools/build_spawn.py` | Spawn bearings emitter (`spawn-cities`): `emit` writes the bearings file the newest geography version's spawn record names (`prototypes/generated/spawn_<map>_v<n>.lua`: per city and scale, from the land component holding the city in the reference land raster, the spawn lake's bearing, and the starting-ore bias bearing, width and on flag chosen by the share of starting patches left off that land over a fixed draw of random spot-noise candidate layouts, scored with the start mask as the game evaluates it from the coarse checkpoint) from the raster, the city table and the map's coarse checkpoint; `check` (the gate's `sc_dump_facts`) re-emits twice and compares byte for byte with the committed file | name-free data; numpy imported by the gate's rows only, never by `static` | 2 |
+| `tools/build_geo.py` | Tents emitter: `emit`, `check` (two emissions byte-identical to the committed files), `refit-islands` (the recorded T1-e local refit) and `offline` (T1 of the checkpoints) | reproducible emission (Build-time data flow); numpy imported by the gate's `geo_emit` row only, never by `static` | 1 |
+| `data-src/fits/<map>/` | The map's fit checkpoints (`model-*.npz`), `fit.json` (which checkpoint each body uses), the emission `manifest.json` and `curve.json`, with a `PROVENANCE.md` the T16 data-src row re-hashes | read-only tool input; a refit is a recorded tool run | 1 (Europe), 3 |
 | `tools/build_waterways.py` | Waterway vectorisation, per-scale smoothing and simplification | | 4 |
-| `tools/build_zip.py` | Packaging; `--release`; `--check-tag <tag>` (release.yml's tag check); `--release --push-tag` (the release tag step) | byte-reproducible zip (stored entries, fixed timestamps and attributes, sorted), the same on this machine and on GitHub's `windows-latest` runner; `--release` refuses while config.lua marks a placeholder name, and refuses any unregistered Earth body: every noise name config.lua defines, released bodies and firewall bodies alike, missing from tests/frozen.json, the Map type fallbacks excepted (design constraint 2), which every milestone from `europe-coast` on keeps complete, so from then it works at any point of the release; the gate's frozen row checks the dumped bodies themselves; `--push-tag` pushes only the tag `v<version>` on `origin/main`'s head when it carries the release trailer | 0; tag step 14 |
+| `tools/build_zip.py` | Packaging; `--release`; `--check-tag <tag>` (release.yml's tag check: the tag is `v` plus info.json's version, names the checked-out commit and sits on origin/main); `--out-dir <folder>` (a folder outside the checkout is a landing); `--release --push-tag` (the release tag step, which the `release` milestone adds: not in the tool yet, and the landed-tag check stands in for its origin/main rule until then) | byte-reproducible zip (stored entries, fixed timestamps and attributes, sorted), the same on this machine and on GitHub's `windows-latest` runner; `--release` refuses while config.lua marks a placeholder name, refuses a `tests/frozen.json` record that breaks the `tnfrozen` contract (a dump label the runner's milestone registry does not assign among them, the registry read from the runner's source), refuses any unregistered Earth body: every noise name config.lua defines, released bodies and firewall bodies alike, missing from tests/frozen.json, the Map type fallbacks excepted (design constraint 2), which every milestone from `europe-coast` on keeps complete, so from then it works at any point of the release; and refuses a moved body: every Earth body the mod's code builds offline (`tools/tnlua.py`) must equal its record, every registered name must still be built, every record of a milestone's frozen snapshot must stand, and nothing an earlier release tag fixes may move (the T16 append-only rule); the gate's frozen row checks the dumped bodies themselves and holds the offline reading to them; a landing (a zip built outside the checkout, such as into the live mods folder) gets the release's body and snapshot checks, refuses to change or drop a body of a zip of this mod already in the folder (read offline from that zip) or a record its build record's snapshot holds, reads nothing else there, and writes its bodies and snapshot into its own build record; `--push-tag` (from `release`) pushes only the tag `v<version>` on `origin/main`'s head when it carries the release trailer | 0; tag step 14 |
 | `.github/workflows/ci.yml` | On every push and pull request: `earth_test.py static` and `build_zip.py`, the zip uploaded as an artifact | no game, no fh.py, no `FACTORIO_WS`; `contents: read`; actions pinned to full commit SHAs | 0 |
-| `.github/workflows/release.yml` | On a pushed tag `v*`: checks the tag against `info.json`, runs `build_zip.py --release`, publishes the GitHub release with the zip and its `.sha256` | the workflow's own `GITHUB_TOKEN` with `contents: write` and the preinstalled `gh`, no other secret; no game | 0 |
+| `.github/workflows/release.yml` | On a pushed tag `v*`, from a full-history checkout: checks the tag against `info.json`, the checked-out commit and origin/main (a tag whose commit main's history does not hold is refused, since the release does not wait on CI), runs `build_zip.py --release` (the offline body check, the milestones' snapshots and the earlier release tags), publishes the GitHub release with the zip and its `.sha256` | the workflow's own `GITHUB_TOKEN` with `contents: write` and the preinstalled `gh`, no other secret; no game | 0 |
 | `tools/t1_metrics.py`, `oracle.py`, `dump_render.py`, `contact_sheet.py`, `nav.py`, `earthgeo.py`, `earthmaps_decode.py`, `game_selftest.py` | S8's tools with their self-tests, ported from `spikes/S8-tooling` in an earlier prototype; `earthgeo.py` holds the pixel conventions and reads them from config.lua; `oracle.py extend` and `validate` build and check `tests/oracle/<map>.json`; the game self-test uses content-hashed `ea-s8-*` modsets, and `game_selftest.py --replay` re-derives its 31 verdicts from a finished run's stored outputs (every game command answered from its own `run.json`, nothing launched) | conventions equal config.lua's; rasters from `data-src/`, the oracle from `tests/oracle/`, the workspace from `FACTORIO_WS` | 0 |
-| `tools/tnconfig.py` | The luaparser loader of config.lua (local assignments, table constructors, literals, `..` and arithmetic; anything else fails closed) and the schema accessors of its groups (`firewall_names`, `fallbacks`, `release_registry`, `toggles`, `placeholder_names`, `noise_names`, `unregistered_names`, `schema_problems`, `defined_names`) | the one way Python reads Earth names and constants; an accessor raises on a wrong shape and never reads one as empty; `schema_problems` also reconciles the stores of Earth body names: every firewall body but the placeholder's sits in a `release_registry` row, and every noise name carries the noise prefix | 0 |
+| `tools/tnconfig.py` | The luaparser loader of config.lua (local assignments, table constructors, literals, `..` and arithmetic; anything else fails closed) and the schema accessors of its groups (`firewall_names`, `geography_versions` and `geography` (every version per map, and each map's newest), `fallbacks` (every version's, per map), `start_masks`, `baked_names` (what a version's preset bakes, the mirror of `presets.lua`), `release_registry`, `toggles`, `placeholder_names`, `noise_names`, `unregistered_names`, `schema_problems`, `defined_names`) | the one way Python reads Earth names and constants; an accessor raises on a wrong shape and never reads one as empty; `schema_problems` also reconciles the stores of Earth body names: every firewall body but the placeholder's sits in a `release_registry` row, and every noise name carries the noise prefix | 0 |
 | `tools/tnguard.py` | G1's fail-fast check, shared by the repo tools that launch the game through fh.py (`run_breach`: a run whose RESULT line or `run.json` shows it may have left its instance stops every further game run of its command; design constraint 1), and their path helpers (`absolute_output`, the workspace and the runner's evidence tree) | refuses no output path: copying the built zip into the live mods folder is allowed, and the write guards, the guard-bracket token and the option declarations it held are retired; launches nothing | 0 |
-| `tools/tn_static.py` | T16's static rows and their run-time fixture controls (lint, info.json, locale, dashes, registration, names, design rules, workflow scan, attribution scan, data-src hashes, frozen and budgets shape, zip) | no game, no fh.py, no FACTORIO_WS, no git refs; needs only luaparser and the linter; the mod scans read `build_zip.py`'s own file classification (shipped and refused files), so no file in the mod folder escapes them; the registration scan is an allowlist over every use of `script`, `defines.events`, `require` and indirect global access; the name scan reads string literals and identifiers (dot-index fields, table-constructor keys, method names) of every mod Lua file and of `tools/mods/` (its Lua and `info.json` files too); the frozen row requires every noise name config.lua defines, but the placeholder's and the fallbacks, to be registered; the attribution scan reads every file of its trees (dot and build folders included); no row scans `tools/` or `tests/` for game launches, live-profile paths or copies into a mods folder (the launch scan and the output-options row are retired, design notes 2026-10-28; the workflow scan still keeps both workflows off the game) | 0 |
-| `tools/mods/` | Test-only mods, never shipped: S8's `ep-s8-dump`, `ep-s8-probe`, `ep-s8-disc-world`; TQ1's timer `tq1-gen` (block from a runtime-global setting); TQ2's driver `tq2-driver` (forced, explore, walk, rtexplore and save jobs); `ea-coast-twin` (isolation (a)'s constant-coast twin, named at run time by the runner), `ea-leak-fixture` (the isolation checks' positive controls: a test-only preset carrying the first Earth preset's keys without the start mask, and one carrying all of them plus an entity and a decorative autoplace key redirected to fixture bodies that read the fine field; values that are numbers stay numbers) and `ea-heavy-probe` (PERF-15) | they get any Earth name from the runner at run time, so a rename stays a config edit (the T16 name scan reads them) | 0 |
+| `tools/tnfrozen.py` | The `tests/frozen.json` contract every reader and writer of the registry shares (the gate's frozen row and `freeze`, the T16 frozen and append-only rows, `build_zip.py --release`): the file keys, the record `{type, sha256, dump, milestone, registered}`, the hash's field list, the runner's milestone registry read statically (`runner_registry`), record and file validation, and whole-record comparison (`record_changes`) | a record's dump label must be one the runner's registry assigns and the record's milestone could have produced, never skipped when it is not; `runner_registry` reads earth_test.py's one module-level `REGISTRY` literal and fails closed when the runner assigns it otherwise or names it in other code that runs at import, and the gate's frozen row checks that reading against the live registry; the shared body hash (`body_hash`) and Earth-body selection, the offline bodies (`offline_bodies`, through `tools/tnlua.py`) held to their records (`body_problems`), and the snapshots a group's earlier milestones and a landed zip's build record keep (`snapshot`, `snapshot_problems`, `suite_snapshots`, `unsnapshotted_problems`: a record a snapshot holds never changes or leaves the registry, and a snapshot whose sha256 does not cover its bodies fails closed); launches nothing | 1 |
+| `tools/tnlua.py` | The mod's settings and data stages run offline: a Lua 5.2 subset interpreter over luaparser's tree, with stubs for `data` (`data.raw` with vanilla's default `map-gen-presets` only, and `data:extend`), `settings.startup` (the settings stage's defaults) and `mods` (`base`), reading the mod from a folder or a zip | numbers are doubles and print as Lua 5.2 does (`%.14g`); `string.format`, `table`, `math` and the globals the mod uses; fails closed on any construct or call outside the subset, a require outside the mod, a text built from an address and a sort tie between distinct values; the gate's frozen row holds its bodies equal to the game's M1 dump on every run (34 of 34 at its introduction) | 1 |
+| `tools/tn_static.py` | T16's static rows and their run-time fixture controls (lint, info.json, locale, dashes, registration, the stored-records contract, names, design rules, workflow scan, attribution scan, data-src hashes, frozen and budgets shape, the offline bodies row, the append-only row against main, origin/main, a pull request's base, every release tag and the earlier milestones' frozen snapshots, fallbacks, zip) | no game, no fh.py, no FACTORIO_WS; reads git refs only for the append-only references; needs only luaparser and the linter; the bodies row runs the mod's settings and data stages offline (`tools/tnlua.py`) and holds every body built there to its record, so CI fails a registered body changed in place through its code; the mod scans read `build_zip.py`'s own file classification (shipped and refused files), so no file in the mod folder escapes them; the registration scan is an allowlist over every use of `script`, `defines.events`, `require` and indirect global access; the name scan reads string literals and identifiers (dot-index fields, table-constructor keys, method names) of every mod Lua file and of `tools/mods/` (its Lua and `info.json` files too); the frozen row requires every noise name config.lua defines, but the placeholder's and the fallbacks, to be registered, and every record to hold the `tnfrozen` contract against the runner's milestone registry, read statically from `earth_test.py`; the attribution scan reads every file of its trees (dot and build folders included); no row scans `tools/` or `tests/` for game launches, live-profile paths or copies into a mods folder (the launch scan and the output-options row are retired, design notes 2026-10-28; the workflow scan still keeps both workflows off the game) | 0 |
+| `tools/mods/` | Test-only mods, never shipped: S8's `ep-s8-dump`, `ep-s8-probe`, `ep-s8-disc-world`; TQ1's timer `tq1-gen` (block from a runtime-global setting); TQ2's driver `tq2-driver` (forced, explore, walk, rtexplore and save jobs); `ea-coast-twin` (isolation (a)'s constant-coast twin, named at run time by the runner; also the detail-off build of T3), `ea-drop-name` (the missing-name guard's test build: the names the runner gives it dropped, with every preset key that names them), `ea-leak-fixture` (the isolation checks' positive controls: a test-only preset carrying the first Earth preset's keys without the start mask, and one carrying all of them plus an entity and a decorative autoplace key redirected to fixture bodies that read the fine field; values that are numbers stay numbers) and `ea-heavy-probe` (PERF-15) | they get any Earth name from the runner at run time, so a rename stays a config edit (the T16 name scan reads them) | 0 |
 | `tools/affinity_watch.ps1` | TQ1b's affinity watcher, `-Mask` 0xFFFF (the 16 LP proxy, its default) or 0xFF (the 8 LP diagnostic) | with `tools/perf.py`, the only script that names the game's process image, and it never launches one | 0 |
-| `tools/perf.py` | T15 timing: TQ1b block, 16 LP affinity (0xFFFF, the weaker-machine proxy) with 8 LP (0xFF) recorded as a diagnostic, quiet-window protocol, census check; the kill-on-close job object every fh.py launch runs in; the parsers (force time, `--verbose` complexity, `--benchmark-verbose all`, real-time intervals) | the one process-inspection module: it lists, watches and pins game processes fh.py started, and never launches one | 0 |
+| `tools/perf.py` | T15 timing: TQ1b block, 16 LP affinity (0xFFFF, the weaker-machine proxy) with 8 LP (0xFF) recorded as a diagnostic, quiet-window protocol, census check (a wholly suspended game process is parked, not running); the kill-on-close job object every fh.py launch runs in; the parsers (force time, `--verbose` complexity, `--benchmark-verbose all`, real-time intervals) | the one process-inspection module: it lists, watches and pins game processes fh.py started, and never launches one | 0 |
 | `tools/lint/` | luacheck 1.2.0 installed per user under `%FACTORIO_WS%\downloads\luacheck-1.2.0\` (`manifest.json` records version, source and sha256; `luacheckrc.lua` declares each stage's globals; `fetch_linter.py` installs it in CI), luaparser 4.2.0 as the syntax floor (`requirements.txt`), and the warnings allow-list | the linter's checked-file count equals the zip's Lua file count | 0 |
 | `data-src/earthmaps/` | Decoded rasters, reference JSON (byte copies of S8's), provenance, GPLv3 notice | read-only tool input; the gate regenerates the rasters with the decoder and compares them byte for byte | 0 |
 | `data-src/approvals/` | `approvals-data.json`, a byte copy of `spikes/approvals/out/approvals-data.json`, with its provenance | read-only; the milestones load its rows into `terra-nauvis/prototypes/tables/` | 0 |
@@ -126,15 +132,20 @@ shape problem (`tnconfig.schema_problems`). Keyed groups pair with an order list
 | Group | Contents | Shape |
 |---|---|---|
 | Identity | mod ID, title; setting, preset, expression and locale prefixes | `identity = {id, title, version, author, factorio_version, base_version, setting_prefix, noise_prefix}` |
-| Maps | key (`europe`, `atlantic`, `olde_world`; settings say `old-world`, APPROVALS 1a), preset name, display name, raster size, `wr` and `hr`, georeference, world size per scale | `maps = {<key> = {key, setting_key, display, width_px, height_px, wr, hr, lon_left_edge, lat_top_edge}}`, `map_order = {<keys>}`; the plan's tables name maps by `display` |
+| Maps | key (`europe`, `atlantic`, `olde_world`; settings say `old-world`, APPROVALS 1a), preset name, display name, raster size, `wr` and `hr`, georeference, world size per scale | `maps = {<key> = {key, id, setting_key, display, width_px, height_px, wr, hr, lon_left_edge, lat_top_edge}}`, `map_order = {<keys>}`; `id` is the map's `tn_map` value, a positive integer unique across maps that saves hold, so it never changes (tnconfig's id-space check; the T16 append-only row); the plan's tables name maps by `display` |
 | Scales | 1 to 6, default 6; the coordinate-chain constant `floor(s / 2)` | `scales = {values = {...}, default}` |
-| Settings and presets | each setting's name, type, default and values; each preset's name, map and order | `settings = {<key> = {...}}` with `setting_order`; `presets = {<key> = {name, map, order, placeholder}}` with `preset_order` |
+| Settings and presets | each setting's name, type, default and values; each preset's name, map, order and the mods whose presence withholds it (Alien Biomes until `climate-tiles`) | `settings = {<key> = {...}}` with `setting_order`; `presets = {<key> = {name, map, order, withheld_with = {<mod names>}}}` with `preset_order` |
 | Toggles | setting name, preset key, default, mechanism (name switch or hook gate), on and off values; Exact coastlines with the maps it may act on | `toggles = {<key> = {setting = <settings key>, preset_key, default, mechanism = "name switch" or "hook gate", on, off, maps}}` with `toggle_order` |
-| Keys | every `property_expression_names` key any Earth preset sets (D33 guard, missing-name guard, T14); per map, the names its elevation entry reads and whether each is map-qualified (the fallback list) | `preset_keys = {<keys>}`; `fallbacks = {<map key> = {{name = <noise name>, map_qualified = <bool>}, ...}}`: the Map type fallbacks, never registered in `tests/frozen.json`, exempt from `build_zip.py --release`'s registry check and part of the names config defines |
+| Keys | every `property_expression_names` key any Earth preset sets, for every geography version (the missing-name guard, T14 and the D33 Nauvis-only guard, which strips exactly these from other planets' surfaces, so tnconfig fails a key a version's preset bakes that the list lacks) | `preset_keys = {<keys>}`; the Map type fallbacks live in each geography version (row Geography); a top-level `fallbacks` group is retired and fails the schema check |
 | Firewall | per map, the fine field: the map's elevation entry and every term only it reads (design constraint 3; the isolation checks and the constant-coast twin read it) | `firewall = {<map key> = {<noise names>}}`; in `toolchain` the placeholder's `firewall = {<keys of placeholder.names>}` (its elevation) supplies it, and an empty field fails every isolation check |
-| Placeholder | the `toolchain` preset's map, scale, spawn pixel, shore, sea floor, the start mask's constants and its names (never registered or released; `europe-coast` retires it) | `placeholder = {preset, map, scale, spawn_px, shore_tiles, sea_floor, start_mask_floor, start_mask_span, names = {<key> = <noise name>}, keys = {<keys of names>}, firewall = {<keys>}, withheld_with = {<mod names>}}`; `withheld_with` lists the mods whose presence withholds the placeholder preset (`alien-biomes`) |
-| Release registry | per release: geography id, every released name, the generated files it loads | `release_registry = {{release = <version>, geography = <id>, names = {<noise names>}, files = {<generated files>}}, ...}` |
-| Tunables | transfer gain and sign offset, detail amplitude, ramp, hotspot and enemy constants, every `seed1`, ore frequency 0.75, the forest boost (2; a per-family data value), the random-oil sea threshold on `tn_land_coarse`, the maps Exact coastlines may act on, river width factors (k = 3 major, 2 minor), ford spacing (60 reference px) and length (8 tiles), the Map type and preset orders | keyed tables of numbers, one group per expression module, added by the milestone that reads them |
+| Placeholder (retired) | `toolchain`'s placeholder preset; `europe-coast` removed the group, its names and every placeholder text, and the tools read its absence as empty | `placeholder = {preset, map, scale, spawn_px, shore_tiles, sea_floor, start_mask_floor, start_mask_span, names = {<key> = <noise name>}, keys = {<keys of names>}, firewall = {<keys>}, withheld_with = {<mod names>}}`; `withheld_with` lists the mods whose presence withholds the placeholder preset (`alien-biomes`) |
+| Keys | the per-save keys every Earth preset bakes: map, scale, geography release, the coarse-field key, and the vanilla properties the presets redirect | `keys = {map, scale, geo, land_coarse, elevation, start_mask}` |
+| Geography | per map: the Map type order, and every version of the map's elevation entry, oldest first and the newest last. A version is what one geography release points a preset at: its geography id (`tn_geo`, in the one id space across maps and versions of versioning rule 4), its entry, the bodies only that entry reads, its coarse field, its chain with city offset names of its own and the offset its preset bakes there (integers, or names of the expressions that fold it), the start mask version its preset names, the generated file each fit body binds (name-free data, so a later version binds the same files to its own chain), and the Map type fallbacks its entry reads, each valued as that version's preset bakes it; from `spawn-cities` a version may hold a spawn record (its map's spawn-city setting and per-save city number, the resolved index control reads at (0, 0), the spawn lake and starting-ore bias the start mask reads, its own inland lakes, the start land guarantee, the `distance` body and the generated spawn bearings), and then its city offset names name the city fold. The preset names the newest version, whose entry alone carries the Map type fields; older versions stay defined, unchanged; `presets.lua` picks a preset's version here | `geography = {<map key> = {map_type_order, versions = {{geo_id, entry, geo, land_coarse, detail, far, gx, gy, u, v, cx, cy, city_offset, start_mask, fits = {geo, land_coarse}, fallbacks = {{name, map_qualified, frozen}, ...}, spawn = {city_setting, city, city_index, spawn_lake, spawn_bias, inland_lakes, start_land, distance, bearings} (optional)}, ...}}}`; no two versions of a map share a noise name of their own (its chain, entry, fit, detail and box names and its inland lakes, which read its chain; a later version never re-points an older one's), while the spawn bodies that read no chain (the city fold, the spawn lake and bias, the guarantee, `distance`) may serve several versions, as a start mask version does; each `geo_id` is unique across every version of every map and has its release-registry row under the same map, each version's entry, coast, detail and box, and with a spawn record its inland lakes and the guarantee, are in its map's firewall while the spawn lake, bias, fold and `distance` are not, a spawn record's city number is a fallback that mirrors its setting and its version's city offset values name the fold, its start mask is a `start_mask` version and its fits and spawn bearings are release-registry files; a fallback name listed by two versions or maps carries the same flags; `tnconfig.geography` returns each map's newest version with `map_type_order`, `entry_versions` (every version's entry, oldest first) and its spawn record's fields copied to the top level, for the readers that want the preset's version |
+| Messages | control code's locale section and keys (the notice and its withheld-preset variant, the drift lines, the missing-name line, the withheld-preset warning; from `spawn-cities` the start message, the RSO warning and the city drift line); a stored warning names its key here, so a key saves can hold is never removed or renamed (section "Guards", stored records; the T16 append-only row) | `messages = {section, keys = {notice, notice_withheld, drift_scale, drift_follows, drift_update, missing_name, withheld_beside, start, rso, drift_city}}`, each key a distinct locale key |
+| Water slider | vanilla's readers of the water slider, which every Earth preset bakes at their default-slider values (D15) | `water_slider = {{key = <vanilla noise name>, value = <number>}, ...}`, each key also in `preset_keys` |
+| Spawn | from `spawn-cities`: the numbers every spawn body is built from (the names are each geography version's own, in its spawn record): the random fold's constants (S7's hash), the spawn lake, the starting-ore bias, the start land guarantee and the inland lakes' spot-noise constants | `spawn = {random_value, hash = {small_mult, high_mult, high_div}, lake = {distance, bearings, magnitude, offset, divisor, noise}, bias = {radius, excluder, widths, seed, layouts, ores, candidates, region, spacing, patch, share, margin}, land = {radius, slope}, inland_lakes = {seed1, region, per_region, radius, level, gain, candidates, spacing, cone_divisor, shore, coast_px, coast_gain, start_radii, start_slope}}`; `keys` gains `distance`, `spawn_lake` and `spawn_bias` |
+| Release registry | per geography release: the release, the map and its `tn_geo` id, every released name, the generated files it loads; how control code and the tools resolve a save's `tn_geo` to its map (versioning rule 4) | `release_registry = {{release = <version>, map = <map key>, geography = <tn_geo id>, names = {<noise names>}, files = {<generated files>}}, ...}`; `map` and `geography` come together, and a geography id appears in one row only |
+| Tunables | the elevation composition (`coast`: transfer offset 0.1 and clamp 16 px, detail amplitude 0.45 px and its octaves with their `seed1` 7101 to 7103, the far floor -100, the edge water -1 from scale 3) and the start mask (`start_mask.versions`: every version, oldest first, each naming its formula, which `spawn.lua` builds from the version's numbers; v1 is formula 1, floor 1, span 10; v2 (`spawn-cities`) is formula 2, floor 1, span 10, coarse gain 2), from `europe-coast`; later: detail amplitude, ramp, hotspot and enemy constants, every `seed1`, ore frequency 0.75, the forest boost (2; a per-family data value), the random-oil sea threshold on `tn_land_coarse`, the maps Exact coastlines may act on, river width factors (k = 3 major, 2 minor), ford spacing (60 reference px) and length (8 tiles), the Map type and preset orders | keyed tables of numbers, one group per expression module, added by the milestone that reads them; `start_mask = {versions = {{name, formula, <parameter> = <number>, ...}, ...}}`, a top-level `start_mask_versions` group retired and failing the schema check |
 
 ## Build-time data flow
 
@@ -155,12 +166,12 @@ shape problem (`tnconfig.schema_problems`). Keyed groups pair with an order list
    same rule (milestone 3). Output: `prototypes/generated/geo_<map>_v<n>.lua`, one scale-independent
    named expression per map that reads the coordinate chain, with row and column factors as shared
    local expressions and balanced parenthesis trees (S1-fit: 131,072 terms compiled and rendered, 4.2
-   MB of data.lua), coefficients printed as float32 `%.9g`. A manifest beside it records terms,
+   MB of data.lua), coefficients printed as float32 `%.9g`. A manifest (`data-src/fits/<map>/manifest.json`) records terms,
    offline T1 numbers, input sha256, fit parameters, emitter version and output sha256. Emission is
    reproducible: the same model gives byte-identical Lua, and the gate re-emits from the committed
    model and compares. A refit is a manual, recorded tool run. The same tool emits each map's coarse
    land field from the 256-term checkpoint of the same fit (S9 used Europe's `model-256.npz`, 94.5
-   percent offline): `prototypes/generated/coarse_<map>_v<n>.lua`, scale-independent, reading the
+   percent offline): `prototypes/generated/land_coarse_<map>_v<n>.lua`, scale-independent, reading the
    coordinate chain, in the same reference-pixel units. Europe's lands in `europe-coast`,
    the other two with their fits in `olde-world-atlantic`; its checkpoint is committed under
    `data-src/fits/` beside the shipped model.
@@ -191,15 +202,44 @@ shape problem (`tnconfig.schema_problems`). Keyed groups pair with an order list
    21). The hash covers the fields that shape generation (expression, local expressions and
    functions, a function's parameters), never the GUI fields `intended_property`, `localised_name`
    and `order`, so a newer elevation entry can take the Map type fields over from an older one
-   without changing its registered hash. The Map type fallbacks mirror startup settings and are not
-   registered (section "Map type entries"). It never changes an existing entry. The gate fails when
-   a registered name is missing or its hash changed, so `build_zip.py --release` finds every body at
-   any point of the release.
+   without changing its registered hash. The Map type fallbacks that mirror startup settings are not
+   registered, and a frozen fallback is (section "Map type entries"). Each entry is a whole record,
+   `{type, sha256, dump, milestone, registered}`, under one contract (`tools/tnfrozen.py`) that every
+   reader enforces: the gate's frozen row, `freeze` itself, the T16 frozen and append-only rows and
+   `build_zip.py --release`. The dump label names the dump the frozen row reads the body from, so it
+   must be a label the runner's milestone registry assigns, and one the record's milestone could have
+   produced: a label no entry assigns (a hand relabel to a later milestone's dump, a typo such as `M1`)
+   or a missing one fails in every reader and is never skipped, and `freeze` refuses to run on such
+   a registry. The gate's frozen row reads every registered body from the dump its record names: a
+   well-formed record whose dump the command did not produce (a later milestone's, when the gate runs
+   through an earlier milestone) fails too, so no record goes unread.
+   Freeze never changes an existing record, and once a reference holds a record the append-only
+   checks compare it whole, so a relabel, a retype, a new milestone or date moves it as a new hash does.
+   The references are every landed state: main, origin/main, a pull request's base and every
+   `v<x.y.z>` release tag; a group's earlier milestone, whose suite manifest
+   (`tests/baselines/suites/<milestone>.json`) carries a `frozen` snapshot of the records registered
+   through it (written by `suite` and `freeze`; an earlier milestone's snapshot only grows, and a record
+   of an earlier milestone without one that no reference holds fails closed); and a zip copied out of
+   the checkout, whose build record carries its bodies and its registry's snapshot (step 7). The
+   gate fails when a registered name is missing from its dump or its hash changed, so `build_zip.py
+   --release` finds every body at any point of the release. The bodies are code built from
+   data, so the dump is not the only reader of a body: `tools/tnlua.py` runs the mod's settings and
+   data stages offline (a Lua 5.2 subset over luaparser's tree, with stubs for `data`,
+   `settings.startup` and `mods`), and every body it builds is held to its record by the T16
+   `bodies` row (CI), by `build_zip.py --release` and by a landing; the gate's frozen row holds that
+   offline reading equal to the game's dump on every run.
 7. **Package.** `build_zip.py` writes `terra-nauvis_<version>.zip` with one top folder, fixed
    timestamps and entry order: two builds give one sha256 (T16), on this machine and on GitHub's
    `windows-latest` runner alike (the repo checks out LF everywhere, `.gitattributes`). `ci.yml`
    uploads that zip as an artifact on every push and pull request; `release.yml` builds the release
    zip on a pushed `v*` tag and publishes it with its `.sha256` as a GitHub release.
+   The release does not wait on CI, so its full-history checkout's tag check refuses a tag that is
+   not the checked-out commit or whose commit is not on origin/main, and its build applies the
+   offline body check, the milestones' snapshots and every earlier release tag. A zip built into a
+   folder outside the checkout (the live mods folder) is a landing: it gets the release's body and
+   snapshot checks, may not change or drop a body of a zip of this mod already in that folder (read
+   offline from the zip itself) nor a record of the build record beside it, and records its own
+   bodies and snapshot there.
 
 Generated files are rebuilt by their tool in the same commit as the change that needs them, and never
 edited by hand.
@@ -213,9 +253,9 @@ module:
 
 | Name | Expression | Source |
 |---|---|---|
-| `tn_cx`, `tn_cy` | if() chain over the map's city table on `tn_city` (0 picks the folded hash of `map_seed`) giving `s (c - wr) + floor(s / 2)` for the city's pixel column c, the tile holding the city's pixel centre (S8 oracle convention), and the same for rows; folds to two constants | S7: Tile 9,350 for 1, 30 or 50 cities and for random; 10,039 for the same chain evaluated per tile |
-| `tn_gx`, `tn_gy` | `x + tn_cx`, `y + tn_cy`: the chosen city sits at world (0, 0) | S7 (spawn by shift) |
-| `tn_u`, `tn_v` | `(tn_gx - floor(tn_scale / 2)) / tn_scale + wr`, the same with `hr`; `wr`, `hr` folded from `tn_map` for the preset-only consumers; each map's elevation entry binds its own map's `wr`, `hr` and city table instead, through map-qualified names (section "Map type entries") | derived below |
+| `tn_cx_<map>_v<n>`, `tn_cy_<map>_v<n>` (the city offset names of chain version n: each version of a map's chain reads offset names of its own, and a landed version's names never move, section "Map type entries", binding; design notes 2026-10-28 07:20) | Europe's v1 (`europe-coast`): per-save numbers the preset bakes 0, with frozen fallbacks 0 registered in `tests/frozen.json`; no later version re-points them. From `spawn-cities` (Europe's v2 entry): new names, `tn_cx_europe_v2` and `tn_cy_europe_v2`, per-save keys the preset points at the city fold `tn_city_cx_europe_v1` and `tn_city_cy_europe_v1` (each frozen fallback's body names the same fold), whose value is the if() chain over the map's city table on `tn_city_index_europe_v1` (the per-save number `tn_city_europe`, or for 0 the float32 fold `(map_seed_small * 157 + floor(map_seed / 65536) * 97) % n + 1`) giving `s (c - wr) + floor(s / 2)` for the city's pixel column c, the tile holding the city's pixel centre (S8 oracle convention), and the same for rows; folds to two constants | S7: Tile 9,350 for 1, 30 or 50 cities and for random; 10,039 for the same chain evaluated per tile; `spawn-cities` read the index back at five seeds equal to `tools/oracle.py`'s float32 model |
+| `tn_gx_<map>_v<n>`, `tn_gy_<map>_v<n>` | `x + tn_cx_<map>_v<n>`, `y + tn_cy_<map>_v<n>`, the same version's offset names (v2 reads v2's names through a chain of its own, never v1's): the chosen city sits at world (0, 0) | S7 (spawn by shift) |
+| `tn_u_<map>_v<n>`, `tn_v_<map>_v<n>` | `(tn_gx_<map>_v<n> - floor(tn_scale / 2)) / tn_scale + wr`, the same with `tn_gy_<map>_v<n>` and `hr`, the map's own `wr` and `hr` from config: what the same version's entry, detail, box and coarse field read. The generic `tn_gx`, `tn_gy`, `tn_u` and `tn_v` with `wr`, `hr` folded from `tn_map` serve preset-only consumers and arrive with the first one | derived below |
 
 Frame: pixel centres sit at integer `u`, `v` (S1-fit's model frame). T1 scores with the floor
 convention: at scale s, pixel c covers tiles `s(c - wr)` to `s(c - wr) + s - 1`, a pixel is
@@ -310,18 +350,20 @@ decision 8, S9's method):
 | `tn_map`, `tn_scale`, `tn_city`, `tn_geo` | presets | per-save numbers; `tn_map` and `tn_geo` never get a prototype; the scale and the map-qualified city names a map's elevation entry reads get prototype fallbacks (section "Map type entries") | fold into every program | 1, 2 |
 | `tn_on`, `tn_forests_on` | presets | hook gates, prototype "0", Earth presets set 1 (forests by toggle) | Tile, Entity | 4 (`tn_on`, fords), 6, 7 |
 | fallbacks for the names a map's elevation entry reads | presets | prototype-level named expressions valued as the preset bakes them under the current startup settings; surface values win (S2) | whatever the entry reads | 1, 3 |
-| `tn_cx`, `tn_cy`, `tn_city_index_v<n>` | spawn | city tables, `tn_city`, `tn_scale`, `map_seed` | all; control reads the index at (0, 0) | 2 |
-| `tn_gx`, `tn_gy`, `tn_u`, `tn_v` | coast | `x`, `y`, offsets, map constants | all | 1 |
-| `tn_geo_<map>_v<n>` | generated | `tn_u`, `tn_v` | Tile only | 1, 3 |
-| `tn_land_coarse_<map>_v<n>`, through the key `tn_land_coarse` | generated | `tn_u`, `tn_v`; the 256-term checkpoint of the map's fit | Entity (the only land field outside Tile) | 1 (Europe), 3 |
-| `tn_detail_v<n>` | coast | `tn_u`, `tn_v`, basis noise; 0 at pixel centres, amplitude set by the fit's gradient | Tile only | 1 |
-| `tn_far_v<n>` | coast | `tn_u`, `tn_v`, the map's extent | Tile only | 1 |
+| `tn_cx_<map>_v<n>`, `tn_cy_<map>_v<n>` (each chain version's own offset names) | presets | v1: constants 0 (frozen fallbacks); v2: per-save keys naming the city fold, with frozen fallbacks naming it too | all | 1 (v1), 2 |
+| `tn_city_<map>` (a fallback mirroring the spawn-city setting), `tn_city_index_<map>_v<n>`, `tn_city_cx_<map>_v<n>`, `tn_city_cy_<map>_v<n>` | spawn | the map's city table (`prototypes/tables/cities.lua`, in the setting's order), `tn_city_<map>`, `tn_scale`, `map_seed`, `map_seed_small` | all; control reads the index at (0, 0) | 2 |
+| `tn_start_land_v<n>` | spawn | `tn_distance_v<n>`: `if(d < 16, (16 - d) * 0.5 + 0.1, -inf)`, land within 16 tiles of the spawn (the tile correction step waters the guarantee's outer ring next to the sea, so 16 keeps 12 dry) | Tile only (firewall by rule, though analytic) | 2 |
+| `tn_gx_<map>_v<n>`, `tn_gy_<map>_v<n>`, `tn_u_<map>_v<n>`, `tn_v_<map>_v<n>` | coast | `x`, `y`, the same version's city offset names, `tn_scale`, the map's constants | all | 1 (Europe), 3 |
+| `tn_geo_<map>_v<n>` | generated | the same version's `tn_u_<map>_v<n>`, `tn_v_<map>_v<n>` (a later version binds the same generated file to its own chain) | Tile only | 1, 3 |
+| `tn_land_coarse_<map>_v<n>`, through the key `tn_land_coarse` | generated | the same version's `tn_u_<map>_v<n>`, `tn_v_<map>_v<n>`; the 256-term checkpoint of the map's fit | Entity (the only land field outside Tile) | 1 (Europe), 3 |
+| `tn_detail_<map>_v<n>` | coast | basis noise on the map's chain offsets; 0 at pixel centres, amplitude set by the fit's gradient | Tile only | 1 |
+| `tn_far_<map>_v<n>` | coast | the same version's `tn_gx_<map>_v<n>`, `tn_gy_<map>_v<n>`, the map's extent W s x H s | Tile only | 1 |
 | `tn_ww_*`, `tn_canals_*`, `tn_dams_*`, `tn_fords_*` (per map, scale, version) | generated | `tn_gx`, `tn_gy` | Tile only | 4 |
-| `tn_spawn_lake_v<n>` | spawn | `x`, `y`, `map_seed`: analytic lake about 72 tiles out at a seed-folded angle (S7: nearest water 42.6 tiles) | Tile; Entity only inside the start mask | 2 |
-| `tn_inland_lakes_v<n>` | spawn | `tn_gx`, `tn_gy`, `map_seed`; fixed density, kept out of the start radius | Tile only | 2 |
+| `tn_spawn_lake_<map>_v<n>`, `tn_spawn_bias_<map>_v<n>` (through the preset keys `tn_spawn_lake`, `tn_spawn_bias` for the start mask) | spawn | `x`, `y`, `map_seed`, `tn_city_index_<map>_v<n>`, `tn_scale` and the map's generated spawn bearings (`prototypes/generated/spawn_<map>_v<n>.lua`, `tools/build_spawn.py`): the analytic lake about 72 tiles out on the city's lake bearing at the save's scale (inside the land component holding the city), vanilla's starting-lake shape `2.5 ((d + n) / 8 - 3)` (S7: nearest water 42.6 tiles); where the generated table turns it on, the bias clamp(1 + (x, y) . b / w, 0, 1) on the city's generated bearing b and width w (50 to 150 tiles), else 1: `tools/build_spawn.py` picks them, or no bias, per city and scale by the share of starting patches left off the city's own land over 150 random candidate layouts (vanilla takes each ore's best of about 11 candidates in the start disc, so a bias only steers among them; design notes 2026-10-29 00:30) | the lake: Tile, and Entity inside the start mask; the bias: Entity | 2 |
+| `tn_inland_lakes_<map>_v<n>` | spawn | the map's `tn_gx_<map>`, `tn_gy_<map>` (spot noise in geo tiles: 8 conical spots of radius 24 per 1,024-tile region, water where `12 (1/3 - spot) + shore < 0`), its fit `tn_geo_<map>` (no lake under 2.5 px from the coast), `tn_distance_v<n>` and `starting_area_radius` (none within 1.5 start radii); design water fraction 0.61 percent of eligible land, fixed in tiles | Tile only | 2 |
 | `tn_fields_<map>_v<n>` | resources | field table, jitter constants | Tile only | 9 |
 | `tn_elevation_<map>_v<n>` | coast | the composition below, one entry per map; the newest version carries `intended_property = "elevation"`, the `[noise-expression]` name "Terra Nauvis: <map>" and its order (the Map type entry) | Tile only | 1 (Europe), 3 |
-| `tn_start_mask_v<n>` | spawn | `tn_land_coarse`, the spawn lake, `distance`: `clamp((e - 1) / 10, 0, 1)` with `e = min(tn_scale * tn_land_coarse, tn_spawn_lake)`, S9's form without its far-field box (every tent is 0 outside the raster, S1-fit); no firewall name | Entity | 1, refined 2 |
+| `tn_start_mask_v<n>` | spawn | v1: `clamp((tn_scale * tn_land_coarse - floor) / span, 0, 1)`, floor 1 and span 10 from config; it reads neither the spawn lake nor the far-field box (a firewall name). v2 (`spawn-cities`): `clamp((min(2 * tn_land_coarse, tn_spawn_lake) - 1) / 10, 0, 1) * tn_spawn_bias`, the coarse field in reference pixels (full from 5.5, graded below, the same at every scale), the map's spawn lake and its starting-ore bias, through preset keys | Entity | 1, refined 2 |
 | `tn_sea_v<n>` | resources | `tn_land_coarse` below the configured offshore threshold, so rivers, canals, D15 lakes and marshes, which the coarse field reads as land, fall outside it (FEAS-07). Large drawn lakes the coarse field reads as water (Ladoga, the Great Lakes) are not excluded by the threshold; `resources-enemies` excludes them through table rows or records the exception, with the threshold | Entity | 9 |
 | `tn_distance_v<n>` | spawn | `sqrt(x * x + y * y)` | Entity, Cliff | 2 |
 | `tn_temperature_*`, `tn_moisture_*`, `tn_aux_*` (AB and fallback variants) | climate | latitude from `tn_v`, noise, slider controls (`control:hot` and `control:cold` only when AB is loaded, R3 6), region aggregates, `tn_destroyed` | Tile, Entity | 6, 10 |
@@ -349,10 +391,12 @@ Each Earth preset sets these `property_expression_names` keys:
 | `entity:<ore>:probability`, `entity:<ore>:richness` for iron, copper, coal, stone, uranium, crude oil | `tn_ore_*` | Entity | 9 | S6 (the preset route renders byte-identical to an in-place edit) |
 | `enemy_base_probability` | `tn_enemy_v<n>` | Entity | 9 | S6 |
 | `entity:offshore-oil:probability`, `:richness` (Oil Rig loaded) | `tn_offshore_*` | Entity | 9 | R4 4.7 |
-| `tn_map`, `tn_scale`, `tn_city`, `tn_geo` | numbers | fold | 1, 2 | S2 |
+| `tn_map`, `tn_scale`, `tn_city`, `tn_geo`; each map's city offset names, per version of its chain (`tn_cx_europe_v1`, `tn_cy_europe_v1`; from `spawn-cities` `tn_cx_europe_v2`, `tn_cy_europe_v2`) | numbers; from `spawn-cities` the newest version's offset names name the map's city fold and the map-qualified city number `tn_city_<map>` is baked | fold | 1, 2 | S2 |
+| `tn_spawn_lake`, `tn_spawn_bias` | the map's `tn_spawn_lake_<map>_v<n>`, `tn_spawn_bias_<map>_v<n>` | Entity (the start mask) | 2 | the shared start mask v2 reads the map's lake and bias, as it reads `tn_land_coarse` |
+| `water_level`, `segmentation_multiplier`, `nauvis_segmentation_multiplier` | 0, 1 and 1.5, their values at the default water slider (config.lua `water_slider`) | Tile, Entity, Cliff | 1 | D15: 2.1.23's only readers of `control:water:*`, which vanilla cliffs, moisture and aux still read on an Earth preset, so the slider is inert on preset worlds |
 | `tn_on`, `tn_forests_on` | 1 (forests: 1 or 0 by toggle) | hooks | 4, 6, 7 | S3, S10 |
 | `tn_fords` | the map's ford set for the save's scale | Tile (the `water-shallow` hook) | 4 | design notes 12:35 |
-| `tn_coast` | `tn_geo_<map>_v<n>` | Tile | 1 | version selector |
+| `tn_coast` | not set: each map's entry names its own `tn_geo_<map>_v<n>`, and a later fit ships in the entry's next version (fit review, `europe-coast`) | | | |
 | `tn_waterways`, `tn_canals` | the map's set for the save's scale; canals set or dams set | Tile | 4 | per-scale polylines picked by name (REVIEW) |
 | `tn_ridges`, `tn_hotspots`, `tn_destroyed` | the live body or a neutral body | Cliff, Entity, Tile | 8, 9, 10 | name switches (S2) |
 | hook keys (`tn_vtile_<tile>`, `tn_marsh_<tile>`, `tn_vtree_<tree>_p`, `_r`, `tn_tree_mult`) | versioned bodies | Tile, Entity | 6, 7 | stable hooks |
@@ -364,6 +408,11 @@ known gotcha). Every redirect value must name a defined noise expression or be a
 else is ignored with only a log line (noise rule 3). No redirect target reads the property it
 replaces (`Parameter 'arg_register' expects Number, None given.`). The presets sort right after
 Default: S13 used order "a-tn-a" to "-c" under Default's "a" and before Rich resources' "b".
+A preset is not defined while a mod of its config.lua `withheld_with` list is loaded: beside Alien
+Biomes the presets are withheld until `climate-tiles`' palm switch (section "Alien Biomes"), and
+their fallbacks stay defined, so each map's Map type entry still works there. Withholding reaches
+new worlds only: a world made from a preset that later loads beside such a mod keeps naming its fine
+field, so control code warns it once and records it (section "Guards").
 
 ### Map type entries (D2 amended; S13)
 
@@ -383,15 +432,30 @@ Binding rules:
   the dropdown lists one entry per map; older versions stay defined for the saves that name them,
   and `tests/frozen.json` hashes only generation fields (Build-time data flow, step 6). Where
   `climate-tiles` gives Alien Biomes worlds their own geography, the entry that install lists is the
-  one its preset names.
+  one its preset names. config.lua's `geography.<map>.versions` holds every version of a map's
+  entry, oldest first and the newest last, each with the names, fallbacks and start mask of its own,
+  and an older version still counts: control code identifies a
+  Map-type-only world by any of them and, after `on_init`, by its record in `storage`, never by the
+  Map type fields only the newest carries (design notes 2026-10-28 07:20, worlds identified by any
+  entry version).
 - **Fallbacks.** A Map type pick sets only `elevation` (`spikes/S13-gui/mgs-maptype-europe.json`),
   so every other name the entry reads needs a prototype-level fallback: a named expression whose
   body is the value the preset bakes under the current startup settings, built from the same table
   as the preset. Surface values beat prototype names (S2), so preset worlds and saves keep their own
   values, and the fallbacks act only on a world made from the Map type alone, which therefore
   follows the startup settings at every load (S2: a value left only as a prototype followed the new
-  settings). Fallbacks mirror settings, so they are not registered in `tests/frozen.json`; T16
-  checks that each equals what its preset bakes.
+  settings). A fallback that mirrors a startup setting (`tn_scale`) is not registered in
+  `tests/frozen.json` (U3's one exemption); a fallback no setting moves is a constant, marked
+  `frozen` in config.lua and registered like every Earth body (Europe's city offset names,
+  `tn_cx_europe_v1` and `tn_cy_europe_v1`, 0). T16 checks that each equals what its preset bakes.
+- **A landed entry's values never move with the mod (binding).** Every name a landed map entry
+  reads through a prototype either mirrors a startup setting, which the world follows by design
+  (Contradictions item 15), or is a registered body, frozen by the gate's frozen row. No later
+  version re-points such a name in place: an entry that needs another value (a city spawn) takes
+  names of its own and so its own chain, and its coast, coarse, detail and box bodies under its
+  version, which the generated files' name-free data makes a binding in `coast.lua`, not a new
+  file. A Map-type-only world therefore moves only with its startup settings, never with a mod
+  update.
 - **Map-qualified names.** One prototype fallback holds one value, so a value that differs by map
   (the chain's `wr` and `hr`, the city table and city setting, the coast, coarse, waterway, canal,
   dam, ford and offshore sets) reaches a map's entry only bound inside it or through a
@@ -402,11 +466,16 @@ Binding rules:
   shape and spawn with the base climate and no ridges, hotspots, forests, marshes or fords; the
   Entity readers of `elevation` compile the fine field there (firewall section), so the route is
   timed and reported, never held to P1, P2 or the isolation checks.
-- **Notice.** A world whose Nauvis surface names a Map type entry for `elevation` and holds no
-  `tn_geo` is a Map-type-only world. Control code logs a one-time notice that names the map's preset
-  and what it adds (Earth climate, ridges and hotspots, and fords from `waterways` on) and sends it
-  to each created player (Control stage). Such a world is not an Earth world for the start message,
-  the missing-name guard or the band fix.
+- **Notice.** A world whose Nauvis surface names a version of a map's elevation entry for
+  `elevation` and holds no `tn_geo` is a Map-type-only world (section "Guards"). Control code logs a
+  one-time notice that names the map's preset and what it adds (Earth climate, ridges and hotspots,
+  and fords from `waterways` on), warns that a changed scale setting can move the terrain of chunks
+  generated later (the scale fallback follows the setting; every other value it reads is frozen, so
+  no mod update moves it), and sends it to each created player (Control stage). Where the map's preset is withheld (beside Alien Biomes until
+  `climate-tiles`) the notice says so instead of naming a preset the new-game screen does not list.
+  Every message names the map by its preset's name, which no version changes, never by an entry's
+  `[noise-expression]` name, which only the newest version keeps. Such a world is not an Earth world
+  for the start message, the missing-name guard or the band fix.
 - **Order.** Entries sort Europe, Atlantic, Old World with vanilla's default entry first (S13's
   "3000-tn-a" to "-c" listed them after Lakes and before Island,
   the design notes); presets sort in the same sequence right after
@@ -519,11 +588,19 @@ entry or read through its map-qualified name (section "Map type entries").
    untested 1000 times gain (design review note). Milestone 1 sets both for vanilla; milestone 6 recalibrates
    with AB under each map's entry's next `_v<n>`: beach band present, deepwater below
    -5.5 offshore (R3 3.1).
-3. Far field: `min(e, tn_far_v<n>)`, deep water beyond the map's box out to at least 100,000 tiles
-   (D15). Every tent is 0 outside the raster (S1-fit).
-4. Start land guarantee (`spawn-cities`; design note 14): `max(e, g)`, with `g` positive
-   within the guarantee radius of the spawn, so a city whose pixel is water (three on Atlantic, R1
-   section 11) starts on land. It precedes dams and carves, so a named waterway still cuts through it:
+3. Far field: `min(e, tn_far_<map>_v<n>)`, a hard cut on the map's W s x H s extent (`if(d < 0, far floor,
+   if(d < ring, edge water, inf))` with `d` the signed tile distance to it), deep water beyond the extent
+   out to any distance (D15). Tents can reach past the raster edge, so the box, not the fit, ends the map.
+   The game lets deepwater border only water (its `allowed_neighbors`), so a land tile on the extent's
+   edge would turn the first tile beyond it to plain water; from scale 3, where the extent's outermost
+   tile never holds a pixel centre, that tile reads the edge water (-1, plain water), and deep water
+   starts 1 tile out. At scales 1 and 2 the outermost tile can hold a pixel centre, so it keeps its
+   class (T1) and a land edge keeps the game's plain-water tile beyond it (design notes 2026-10-28 05:30, deep water 1
+   tile beyond the edge).
+4. Start land guarantee (`spawn-cities`; design note 14): `max(e, g)`, with `g =
+   tn_start_land_v<n>` positive within 16 tiles of the spawn and `-inf` beyond, so a city whose pixel
+   is water (three on Atlantic, R1 section 11) starts on land. It precedes dams and carves, so a
+   named waterway still cuts through it:
    D16 wins over the guarantee.
 5. Dams: `max(e, 4 * (hw_dam - d * s))` for the canals-off set (S4).
 6. Carves: `min(e, max(-2.2 or -6, 4 * (d * s - hw)))` for rivers (-2.2: plain `water` in vanilla
@@ -535,7 +612,12 @@ entry or read through its map-qualified name (section "Map type entries").
 8. Offshore fields: `min(e, -6)` inside each jittered field disc where `e` is already below 0
    (APPROVALS 3).
 
-No step reads `control:water:*` or `segmentation_multiplier`, so the water slider is inert (D15).
+No step reads `control:water:*` or `segmentation_multiplier`. Vanilla cliffs, moisture and aux still do,
+through `water_level`, `segmentation_multiplier` and `nauvis_segmentation_multiplier`, 2.1.23's only
+readers of the water slider, so every Earth preset bakes those three at their default-slider values
+(section "Preset redirects"): the slider is inert on preset worlds, cliffs and land included (D15;
+the gate's `water_inert` row). A Map-type-only world sets only `elevation`, so its cliffs and climate
+still follow the slider.
 
 **No river cuts a start area (decision 18, binding).** The spawn, its start lake and its starting ore
 sit on one walkable side of any waterway. The composition alone does not ensure it, because vanilla's
@@ -567,7 +649,8 @@ Rules:
 - Prototype defaults exist for three kinds of Earth name only: gates and hook keys, because
   non-Earth worlds compile the hooks, and their defaults are always the off branch; and the
   fallbacks of the names a map's elevation entry reads, valued as the preset bakes them, because a
-  Map type pick sets nothing else. Every other per-save number and key has
+  Map type pick sets nothing else; a fallback no setting moves is frozen
+  (section "Map type entries"). Every other per-save number and key has
   no prototype, so a preset world missing one fails at creation with `Unknown variable` (exit 1)
   instead of drifting (S2), and the missing-name guard covers the rest.
 - Values read back as strings; control code uses `tonumber` (S7).
@@ -587,24 +670,77 @@ Rules:
   a dropped name silently gives new chunks vanilla terrain (design review note). It stays silent on a
   Map-type-only world, whose missing keys are by design.
 - **Map type notice** (`on_init`, then `on_player_created`): on a Map-type-only world (the surface
-  names a Map type entry for `elevation`, which `prototypes.named_noise_expression[name]
-  .intended_property` confirms, and holds no `tn_geo`), one log line and one stored message naming
-  the map's preset and what it adds; each created player receives it once (S11: `game.print` in
-  `on_init` reaches no player). It also records the fallback values the world was created with,
-  read from `prototypes.named_noise_expression`, never from `settings.startup`.
+  names a version of a map's elevation entry for `elevation`, any of config.lua's geography versions
+  and defined in `prototypes.named_noise_expression`, and holds no `tn_geo`; an older version still
+  counts, since only the newest carries the Map type fields, and after `on_init` the record in
+  `storage.map_type` identifies the world), one log line naming the map's preset and what it adds,
+  and warning that a changed scale setting can move the terrain of chunks generated later (where the
+  map's preset is withheld, beside Alien Biomes until `climate-tiles`, the variant says the preset is
+  not offered there); each created player receives it once (S11: `game.print` in `on_init` reaches
+  no player), built when it is sent from that version's text and the mods active then, so no stored
+  message outlives its locale key. `on_init` also records the fallback values the world was created
+  with, read from `prototypes.named_noise_expression`, never from `settings.startup`.
 - **Drift line** (`on_configuration_changed` with `mod_startup_settings_changed`, which arrives with
   empty `mod_changes`, mod-dev rule 7): one info line per stored scale, city or toggle that differs
-  from the current startup setting, for example "this save keeps scale 3; the setting applies to new
-  worlds only" (S2 Q3). On a Map-type-only world it compares the recorded fallback values with the
-  current ones and says instead that the world follows the changed settings, so new chunks may not
-  match. It never changes the world. Whether `game.print` at load reaches a GUI player is
-  UNVERIFIED (S2); the log line is certain.
+  from the current startup setting, for example "this world keeps map scale 3 for life, as every
+  world made from a Terra Nauvis preset does; the scale setting (now 5) applies to new worlds and to
+  worlds that use a Terra Nauvis map type alone" (S2 Q3). No player-facing text promises that a
+  changed setting reaches new worlds only: a Map-type-only world follows it, so the setting's own
+  description says so before any change, beside the Map type notice (review round 3, design notes
+  2026-10-28 10:00). On a Map-type-only world it runs on every `on_configuration_changed`, a mod
+  update as well as a setting change (a same-version mod whose content changed raises the event too:
+  its checksum differs, measured in design notes 2026-10-28 05:30), compares the recorded fallback values with the current
+  ones, for exactly the names recorded at creation, and says instead that the world follows the
+  changed setting, or this version of the mod for a value the mod itself moved (which the frozen
+  fallbacks forbid a real build: that line is a tripwire), so new chunks may not match. Each line
+  names the map by its preset. It never changes the world. Whether `game.print` at load reaches a
+  GUI player is UNVERIFIED (S2); the log line is certain. A headless server's load has no player
+  connected, so there the log line is all that remains, and the record moves on, so the line is not
+  repeated: on that route the setting's description and the notice are the warnings a player gets.
+- **Withheld-preset warning** (`on_configuration_changed` and `on_init`, Earth worlds): withholding a
+  preset beside a mod (config.lua `withheld_with`) reaches new worlds only. An Earth world whose
+  map's preset lists an active mod, either a preset world loaded later beside Alien Biomes or a world
+  made beside it from the preset's full map-gen-settings file, still names its fine field for
+  `elevation`, and AB's palms then compile it into the Entity program for every new chunk. No load
+  can change a save's names, so this route is outside S-3's checks by design, as the Map type route
+  is: one loud warning (`log` and a red `game.print`) per withholding mod, once per save, recorded in
+  `storage.earth.withheld_beside` and, through `record_warning`, in `storage.earth.warnings`, which
+  each created player receives and `climate-tiles`' palm switch can read (design notes 2026-10-28 07:20,
+  a preset save beside Alien Biomes).
+- **Stored records** (binding on every milestone that warns a player or reads storage; design notes
+  2026-10-28 11:50). `scripts/guards.lua` owns the per-player send path, and every other milestone
+  writes to it only through `guards.record_warning(key, args)`:
+  - `storage.earth.warnings` is a list of records `{key = <a key of config.lua messages.keys>, args =
+    {<LocalisedString>, ...}}`; a player receives one as `{messages.section .. "." ..
+    messages.keys[key], table.unpack(args)}`, its text built when it is sent, from that version's
+    locale. `record_warning` checks the key and that `args` is a table, stores the record and says it
+    at once (`log` and a red `game.print`); a call that breaks that is logged and stores nothing.
+  - `storage.earth.sent[player_index]` is the number of records that player has received, and
+    `storage.map_type.sent[player_index]` is `true` once that player has had the Map type notice.
+  - `storage.earth` also holds `schema`, `map`, `scale`, `geo` (the surface's `tn_map`, `tn_scale`
+    and `tn_geo` as numbers) and `withheld_beside` (mod name to tick); `storage.map_type` holds
+    `schema`, `map` (a map key) and `fallbacks`, a list of `{name, value}` with the fallback bodies
+    the world was made with.
+  - A stored key is never removed from or renamed in `messages.keys`: retiring a message keeps its
+    key and locale entry. The readers still check every stored field before use: a record of
+    another shape, or one whose key this version lacks, is skipped with one log line, and a count
+    that is not a number reads as none sent, so no stored record can stop a load or a player's
+    creation.
+  - `scripts/guards.lua` builds `storage.earth` and `storage.map_type` in `on_init`; every other file
+    adds or changes fields of its own and never replaces either table, or `storage` itself, which
+    would drop the stored warnings and counts.
+  - T16 enforces it: the storage row keeps every other file of the mod off the `warnings` and `sent`
+    fields and off wholesale assignments to `storage`, `storage.earth` and `storage.map_type`, and
+    requires each `record_warning` call to name a literal key of `messages.keys`; the append-only
+    row fails a removed or renamed key against main and origin/main.
 
 ### Release versioning policy
 
 1. A body is registered when the milestone that adds it lands, from `europe-coast` on, and
    released when it ships in a release zip. From registration on its text is immutable:
-   `tests/frozen.json` holds its sha256, and the gate fails on a missing or changed registered name.
+   `tests/frozen.json` holds its record (sha256 and the dump the gate reads it from, among others),
+   and the gate fails on a missing or changed registered name and on a record that changed or breaks
+   the record contract (Build-time data flow, step 6).
 2. Changes ship under new names (`_v<n+1>`), presets for new worlds point at them, and old names stay
    defined forever. An A save under changed code seamed 3 chunks out of the generated area; with the
    new body under a new name it differed in 0 of 41,984 tiles (S2 Q5).
@@ -614,9 +750,18 @@ Rules:
    (ores, enemies, offshore oil) wrap it on purpose, so bobenemies' intensity cap and the Oil Rig's
    patch set keep acting (S6, R4, R5). There Earth freezes its own terms only, and old saves' ore and
    enemies follow game and pack updates as vanilla saves do.
-4. `tn_geo` increments whenever a geography name a preset points at changes. Control code keys
-   release-coupled data (city tables for the message and markers, band-fix data) by the save's
-   `tn_geo`, never by "latest".
+4. `tn_geo` is one id space across every map. Each geography release,
+   a map's set of geography names a preset points at, takes the next unused positive integer and
+   keeps it for good: a change to any geography name a preset points at ships a new release with a
+   new id, and no id is reused, renumbered or shared by two maps. config.lua's `release_registry`
+   lists every geography release with its `map` and `geography` id, and each geography version's
+   `geo_id` (`geography.<map>.versions[n].geo_id`) names its release; the newest version's is the one
+   the map's preset bakes. Control code keys release-coupled data (city
+   tables for the message and markers, band-fix data) by the save's `tn_geo` alone, resolved through
+   `release_registry` (tnconfig's `geo_maps` is the tools' copy), never by "latest" and never by
+   scanning maps for a `geo_id`. `tn_map` ids (`maps.<key>.id`) are a second space with the same
+   rules. tnconfig's id-space check fails a shared or malformed id and a `geo_id` without its row
+   under its own map; the T16 append-only row fails an id that moved against main or origin/main.
 5. A released table version is never edited; an approval edit after release creates the next version
    (copy-on-write), and expressions built from it take the next suffix.
 6. One generated file per released version; tools refuse to overwrite a released one.
@@ -633,8 +778,9 @@ Rules:
 10. Only the newest version of a map's elevation entry carries `intended_property`, `localised_name`
     and `order`. Moving those GUI fields to a newer version edits no registered body, because the
     registered hash covers generation fields only (Build-time data flow, step 6). The Map type
-    fallbacks are never registered: they mirror startup settings, and T16 checks them against the
-    presets instead.
+    fallbacks that mirror startup settings are never registered, and T16 checks them against the
+    presets instead; a frozen fallback is registered, so no later version can move the worlds that
+    read it (section "Map type entries", binding).
 
 ## Control stage
 
@@ -642,11 +788,11 @@ Rules:
 
 | Event | Script | Work |
 |---|---|---|
-| `on_init` | start, guards, markers | Earth world means the Nauvis surface's `property_expression_names` holds `tn_geo`; never decided from `settings.startup` or a noise fallback. A Map-type-only world (the surface names a Map type entry for `elevation` and holds no `tn_geo`; milestone 1): log and store the Map type notice and the fallback values, run the D33 sweep and stop. Other non-Earth worlds: run the D33 sweep and stop. Earth: fill `storage.earth` (schema, map, scale, city, geo, toggles) from those values with `tonumber`; read the resolved city index with `calculate_tile_properties` at (0, 0), because the random pick folds in float32 and Lua cannot recompute it (S7: seed 4294967295 gave city 8, the integer hash city 1); set the D29 intro through `remote.call("freeplay", "set_custom_intro_message", ...)` when that interface exists, plus a log line; cliff "none" reset (ridges on and `nauvis_cliff` size 0: write size 1 back with a whole-table assignment and log it; S5 restored 330 of 330 cliffs); D32 RSO warning when `script.active_mods["rso-mod"]` (log `RSO-WARNING` and a localised print, S11); D12 warning when Destroyed Europe was requested without AB (`on_init` runs under the creating settings); both recorded in `storage.earth.warnings` for the per-player path; D33 sweep; markers if their setting is on; band-fix flag from the save's own key (milestone 11) |
+| `on_init` | start, guards, markers | Earth world means the Nauvis surface's `property_expression_names` holds `tn_geo`; never decided from `settings.startup` or a noise fallback. A Map-type-only world (the surface names any version of a map's elevation entry for `elevation` and holds no `tn_geo`; milestone 1): log the Map type notice, record the world and its fallback values in `storage.map_type`, run the D33 sweep (Terra Nauvis's own values only) and stop. Other non-Earth worlds: stop (the D33 sweep runs and touches nothing there). Earth: fill `storage.earth` (schema, map, scale, city, geo, toggles) from those values with `tonumber`; read the resolved city index with `calculate_tile_properties` at (0, 0), because the random pick folds in float32 and Lua cannot recompute it (S7: seed 4294967295 gave city 8, the integer hash city 1); set the D29 intro through `remote.call("freeplay", "set_custom_intro_message", ...)` when that interface exists, plus a log line; cliff "none" reset (ridges on and `nauvis_cliff` size 0: write size 1 back with a whole-table assignment and log it; S5 restored 330 of 330 cliffs); D32 RSO warning when `script.active_mods["rso-mod"]` (log `RSO-WARNING` and a localised print, S11); D12 warning when Destroyed Europe was requested without AB (`on_init` runs under the creating settings); both stored through `guards.record_warning` as `{key, args}` records in `storage.earth.warnings` for the per-player path (section "Guards", stored records); D33 sweep; markers if their setting is on; band-fix flag from the save's own key (milestone 11) |
 | `on_load` | control | re-register the band-fix handler when `storage.earth.bandfix`; never writes storage (mod-dev rule 9) |
-| `on_configuration_changed` | guards | missing-name guard (Earth worlds); drift line (Earth and Map-type-only worlds); D33 sweep; storage schema migration written to be harmless on storage that `on_init` built (mod-dev rule 6) |
+| `on_configuration_changed` | guards | missing-name guard (Earth worlds); drift line (Earth and Map-type-only worlds); withheld-preset warning (Earth worlds, milestone 1; also at `on_init` for a world made beside a withholding mod); D33 sweep; storage schema migration written to be harmless on storage that `on_init` built (mod-dev rule 6) |
 | `on_surface_created` | guards | D33 guard on the new surface (it fires inside `LuaPlanet.create_surface`, S11) |
-| `on_player_created` | guards | send each stored message to the new player once: the Map type notice on a Map-type-only world (milestone 1), and on an Earth world each warning in `storage.earth.warnings`, RSO (D32) and Destroyed Europe without AB (D12): S11 found that `game.print` in `on_init` reaches no player. Tested on a loopback server with a scripted player, a route still UNVERIFIED (Conflicts, item 15) |
+| `on_player_created` | guards | send each stored message to the new player once: the Map type notice on a Map-type-only world (milestone 1), and on an Earth world each warning in `storage.earth.warnings` it has not had (`storage.earth.sent` counts them; every record's shape checked first, section "Guards", stored records), the withheld-preset warning (milestone 1), RSO (D32) and Destroyed Europe without AB (D12): S11 found that `game.print` in `on_init` reaches no player. Tested on a loopback server with a scripted player, a route still UNVERIFIED (Conflicts, item 15) |
 | `on_runtime_mod_setting_changed` | markers | D28 markers on or off |
 | `on_chunk_generated` | bandfix | registered only when `storage.earth.bandfix` (milestone 11) |
 | `on_chunk_deleted`, `on_surface_cleared`, `on_surface_deleted` | bandfix | only if the band fix keeps per-chunk keys (worldgen-runtime rule 1) |
@@ -678,7 +824,16 @@ reference to a per-tick event or, outside `scripts/bandfix.lua`, to a per-chunk 
 - On every surface other than Nauvis, remove (write `""`) each listed key whose value equals the
   save's own value in `game.default_map_gen_settings.property_expression_names`, which is what a new
   surface inherits (S11), with a whole-table assignment. A planet that sets a key itself keeps it,
-  because its value differs. A non-Earth save matches nothing.
+  because its value differs.
+- Only an Earth or a Map-type-only world is touched (`kind` of the Nauvis surface is set), and only a
+  default that is Terra Nauvis's: on an Earth world every listed key, because the defaults hold
+  `tn_geo` and an Earth preset or file wrote them; otherwise a key of the mod's own (`tn_` prefix) or
+  a default that names one of its noise expressions. Several listed keys are vanilla's (`elevation`,
+  `distance`, `starting_resources_lake_mask` and the water slider's), and vanilla presets set some
+  of them (Island and Lakes set `elevation`, ribbon-world too), so a save made without Terra Nauvis
+  that gains it is never touched, and a Map-type-only world keeps every vanilla value. T14's
+  negative control holds it: an Island world, new and with the mod added to its save, keeps the
+  inherited `elevation_island` on both probe surfaces.
 - Runs in `on_surface_created` and as a sweep over `game.surfaces` in `on_init` and
   `on_configuration_changed`: surfaces created inside an `on_init` never raised the event (S11).
 - Cost: nothing per chunk. It cannot fix such a planet's new-game preview (cosmetic, S11).
@@ -702,6 +857,17 @@ reference to a per-tick event or, outside `scripts/bandfix.lua`, to a per-chunk 
 
 ### Alien Biomes
 
+- Until `climate-tiles`' palm switch, every Terra Nauvis preset is withheld beside AB (config.lua
+  `presets.<key>.withheld_with`): AB 0.8.0's `tree-palm-a` and `tree-palm-b` read `elevation` in the
+  Entity program, so a preset there would carry its fine field into it (S-3). Each map's Map type
+  entry stays, outside S-3 by design, and its notice says the preset is not offered beside AB. The
+  gate's `ab_withheld` row checks it.
+  Withholding reaches new worlds only: a world made from a preset without AB and later loaded beside
+  it (AB places its trees under the `trees` control the surface already has) names its fine field
+  for good, so its palms read it in the Entity program from then on. That save route is outside
+  S-3 by design: the guards warn it once and record it in storage for the palm switch, and
+  `ab_withheld` checks the warning (section "Guards"; design notes 2026-10-28 07:20). The maintainer may rule
+  otherwise (option (b) of design notes 2026-10-28 05:30 pulls the palm switch forward).
 - AB overwrites `temperature`, `moisture` and `aux` in place and never writes
   `property_expression_names` (R3). Earth presets redirect all three; on Earth worlds 99.99 to 100
   percent of sampled AB land sat inside its tile's temperature box, and default-preset worlds stayed
@@ -768,10 +934,16 @@ reference to a per-tick event or, outside `scripts/bandfix.lua`, to a per-chunk 
 
 ### Space Age
 
-Not installed. A preset key reaches every planet that does not set that key itself, and the D33 guard
-removes it (S11). Gated hooks on vanilla tiles would hide them from any other planet that lists them
-(AB's own comment says removing vanilla tile autoplace broke Space Age, R3 3.2). UNVERIFIED; smoke
-step 8.
+Installed since 2026-10-28 and pinned off in every runner modset. The maintainer's
+rule (2026-10-28): Terra Nauvis must work with Space Age and never touch other planets. A preset key
+reaches every planet that does not set that key itself, so every key an Earth preset sets is listed in
+config.lua's `preset_keys` (tnconfig's schema check fails a baked key it lacks), and the D33 guard
+(`scripts/guards.lua` `surface_guard`, from `spawn-cities`) removes exactly those keys from every other
+surface (S11). The `sa-compat` run on the `spawn-cities` draft (`previews/earth-build/sa-compat/r1`,
+with space-age, quality, elevated-rails and recycler on) found Vulcanus, Fulgora, Gleba, Aquilo and the
+platform generating as without Terra Nauvis once the guard ran, and the inherited keys without it.
+Gated hooks on vanilla tiles would hide them from any other planet that lists them (AB's own comment
+says removing vanilla tile autoplace broke Space Age, R3 3.2). The GUI and play remain smoke step 8.
 
 ## Performance budgets
 
@@ -807,13 +979,13 @@ vanilla, 1.249 and 1.213x AB alone. The 8 LP figures below are history.
 | Entity with AB | Earth plus AB 22,507 against AB alone 24,377 with S3's analytic climate; S9's composite 25,259 | S3, S9 | M2 rows |
 | Cliff complexity | vanilla 287; ridges about 4.4 per range segment; S9's whole Cliff program 124 for three Europe ranges | S5, S9 | T15a |
 | Isolation | Entity and Cliff identical between the real build and the constant-coast twin, with and without AB, while the twin's Tile differs; no Entity or Cliff root reaches a firewall name, on the presets | decision 8; S9 | gate perf step |
-| A Map type entry picked alone | reported, not gated: its Tile, Entity and Cliff complexity and its forced-generation ratio at 16 LP, scale 6, against M0 (M2: BAB); vanilla's starting-ore mask and AB's palms read the fine field there (Map type entries) | design notes 12:35; TQ1b | `europe-coast`, `olde-world-atlantic`, `climate-tiles` |
+| A Map type entry picked alone | reported, not gated: its Tile, Entity and Cliff complexity and its forced-generation ratio at 16 LP, scale 6, against M0 (M2: BAB), with the same pair at 8 LP recorded beside it; vanilla's starting-ore mask and AB's palms read the fine field there (Map type entries) | design notes 12:35; TQ1b; design section 6.2 | `europe-coast`, `olde-world-atlantic`, `climate-tiles` |
 | Earth Lua per chunk | 0 without the band fix; `scriptUpdate` within 0.01 ms per tick of vanilla | brief section 5, test notes 5.5 | T16 static allowlist; gate perf step |
 | Band fix, when on (Exact coastlines) | per map: average at most 0.24 ms per generated chunk and no handler tick above 2 ms, measured on Europe at scale 1 and on Olde World at scale 6, both at 16 LP, with 8 LP recorded | design notes 07:05 and 12:35 | `coast-band-fix` |
-| Preview time | reported, not gated: TQ2 measured S9's composite at 5.09x vanilla at 1024 px (6.27x at 256 px), against the 5.4 to 6.5x estimate (REVIEW); tents 4,096 2.94x, AB alone 4.05x (TQ1b) | design notes 07:05 and 10:20 (D8 reading); TQ2 | release suite |
+| Preview time | reported, not gated: TQ2 measured S9's composite at 5.09x vanilla at 1024 px (6.27x at 256 px), against the 5.4 to 6.5x estimate (REVIEW); tents 4,096 2.94x, AB alone 4.05x (TQ1b) | design notes 07:05 and 10:20 (D8 reading); TQ2; test notes 5.5 | milestone suites from `europe-coast` (`preview_time`, T15-f: 1024 and 256 px centred on the T15b block, seed 1000, `--threads 8`, 7 valid repetitions per config, the `Map preview generation time` line); release suite |
 | Trees and saves | great forests 2.0x the trees of the same chunks without the boost (accept 1.6 to 2.5); at most 0.1 percent of trees moved outside; trees per generated block at most +27 percent on Europe (+17 Atlantic, +19 Old World); the T10 block's save at most +3 percent; against the same pack without Earth, reported only | decision 15; S10 4.4 | `trees-forests` (T10) |
 | Save size | the forced block's increment between two server saves, gated by the plan's P19 against vanilla (AB: AB alone); the whole save reported. TQ2: increment 1.07x vanilla (0.72x AB alone with AB); whole save 1.50x, because the composite stores its start area about 280 KB larger than vanilla's, twice (`level-init.dat` and `level.dat`), cause untraced; `europe-coast` traces and reduces it | design notes 10:20; TQ2 | milestone suites from `europe-coast` |
-| Startup time, memory, data size | reported. TQ2 reference: data stage 0.530 s against vanilla's 0.368, a new map's first 120 ticks 13.5 ms against 13.2 (EarthMaps 7,035, Factorio World 1,690), peak working set while exploring 221 MB against 205; TQ2's prototype held Europe only, so the shipped mod's startup and memory run somewhat higher (TQ2 caveat) | design section 6; TQ2 | release suite |
+| Startup time, memory, data size | reported. TQ2 reference: data stage 0.530 s against vanilla's 0.368, a new map's first 120 ticks 13.5 ms against 13.2 (EarthMaps 7,035, Factorio World 1,690), peak working set while exploring 221 MB against 205; TQ2's prototype held Europe only, so the shipped mod's startup and memory run somewhat higher (TQ2 caveat) | design section 6; TQ2 | peak working set while exploring, M1 minus M0: milestone suites from `europe-coast` (the benchmark-mode walker at 16 and 8 LP, the real-time runs at 24 LP; `perf.Monitor` reads each game process's peak, kept in the monitor record beside the run); startup: release suite (T15d) |
 
 Measurement rules: complexity ranks variants of one program and is not time (noise rule 8);
 summed complexity predicted preview time within about 20 percent but not forced generation (TQ1b);
@@ -841,9 +1013,9 @@ Design constraints (each enforced by the gate):
 
 | # | Invariant | Enforced by |
 |---|---|---|
-| S-1 | Every game run goes through `%FACTORIO_WS%\tools\fh.py` with its own instance, modset and new `--out`, and every run that writes data has a RESULT line reading `ok`, `isolated=yes` and `errors=0`, so no test run points the game at `%APPDATA%\Factorio`; copying the built zip into the live mods folder is allowed, and players still get the zip of a GitHub release by hand | G1, the only live-profile protection: `earth_test.py` refuses any other RESULT on a run that writes data (`--version` and `--help` runs are exempt and say so; a loopback server passes with `exit=timeout`, TST-11), and a run whose `run.json` records isolation as anything but true, a NOT-ISOLATED RESULT or a run on another build (G8) stops every further game run of the command at once (no row or group loop catches it: the job is terminated before the lock is released), as do the game self-test and `dump_render.py` on their own runs; fh.py itself refuses graphical and portal flags and a repeated `--config`, `-c` or `--mod-directory`. The chained G9 guard, the write guards and the T16 launch and output-options scans are retired |
-| S-2 | Registered expression bodies are byte-frozen in their generation fields (`tests/frozen.json`, from `europe-coast` on); names are append-only; the Map type fallbacks, which mirror startup settings, are the one exemption | the gate's frozen row on the dumps the runner's registry names (M1; M2 from `climate-tiles`): every Earth body (a prefixed or config-defined noise body) registered unless it is the placeholder's or a fallback, every registered body present and unchanged, with the exact freeze command on a failure; the T16 frozen row (every noise name config.lua defines, the same exemptions, against `tests/frozen.json`) and fallback check; config.lua's schema (every firewall body but the placeholder's in a release row, every noise name prefixed); `build_zip.py --release` refuses any other unregistered body |
-| S-3 | On Terra Nauvis presets the Entity and Cliff programs never read the fine coast field; their one land field is `tn_land_coarse`. A Map type entry picked alone is outside this by design and is timed and reported (Map type entries) | isolation check (a) against the constant-coast twin and (b) the static walk, gating from `toolchain` (whose placeholder preset redirects the start mask too), each with its positive controls on the test-only `ea-leak-fixture` presets (the start-mask route; for (b) also a redirected entity and decorative autoplace key, which the walk follows as the program reads it); beside Alien Biomes, whose palms read `elevation`, the placeholder preset is withheld, which the gate's `ab_placeholder` row checks on M1 plus the live AB copy, its control walking the palms to the fine field. That row speaks only for presets marked placeholder and retires with the placeholder in `europe-coast`. From `europe-coast` until `climate-tiles` the real presets are defined beside AB and AB's palms read their `elevation` entry, the fine field, in the Entity program (the leak design notes 17:55 measured on the placeholder): that leak is outside the gate in parts 2 to 4, and `climate-tiles` closes it with the palm switch and the M2 isolation checks (design note 9) |
+| S-1 | Every game run goes through `%FACTORIO_WS%\tools\fh.py` with its own instance, modset and new `--out`, and every run that writes data has a RESULT line reading `ok`, `isolated=yes` and `errors=0`, so no test run points the game at `%APPDATA%\Factorio`; copying the built zip into the live mods folder is allowed, and players still get the zip of a GitHub release by hand | G1, the only live-profile protection: `earth_test.py` refuses any other RESULT on a run that writes data (`--version` and `--help` runs are exempt and say so; a loopback server passes with `exit=timeout`, TST-11), and a run whose `run.json` records isolation as anything but true, a NOT-ISOLATED RESULT or a run on another build (G8) stops every further game run of the command at once (no row or group loop catches it: the job is terminated before the lock is released), across the runner's parallel workers too (the first breach in any worker stops the command and terminates the job at once, every worker checks the stop before each job and nothing launches after it: the `lane_stop` runner controls), as do the game self-test and `dump_render.py` on their own runs; fh.py itself refuses graphical and portal flags and a repeated `--config`, `-c` or `--mod-directory`. The chained G9 guard, the write guards and the T16 launch and output-options scans are retired |
+| S-2 | Registered expression bodies are byte-frozen in their generation fields (`tests/frozen.json`, from `europe-coast` on); names are append-only; the Map type fallbacks that mirror startup settings are the one exemption (a frozen fallback, a constant a landed entry reads, is registered) | the gate's frozen row on the dumps the runner's registry names (M1; M2 from `climate-tiles`): every Earth body (a prefixed or config-defined noise body) registered unless it is the placeholder's or a fallback, every registered body present and unchanged in the dump its record names, with the exact freeze command on a failure, every record holding the `tools/tnfrozen.py` contract (all five fields, the dump label one the registry assigns and the record's milestone could have produced, so no record can switch the row off for its body; the static reading of the registry checked against the live one), and the registry append-only against the union of main's and origin/main's `tests/frozen.json`, whole records compared, failing closed when that reference cannot be read; `freeze` refuses a registry that breaks the contract or a body changed in place; the T16 append-only row, the same comparison without the game, which CI runs on a full-history checkout, and which also fixes the data a landed row's bodies are built from once a reference holds a release row (config.lua's coordinates, number format, coast, spawn, keys, start mask and geography versions and map geometry, the landed release rows, every file a landed row or version binds, each map table of `prototypes/tables/`, and the allowed values of every setting a version's spawn record names, held exactly, since the city fold's random pick folds over their count and presets bake a city as its position; a table may gain keys and a versions list entries at its end, nothing else changes), so a regenerated file or an edited constant fails on a pull request that never reaches the gate; the T16 frozen row (the record contract, and every noise name config.lua defines, the same exemptions, against `tests/frozen.json`) and fallback check; config.lua's schema (every firewall body but the placeholder's in a release row, every noise name prefixed); `build_zip.py --release` refuses a record that breaks the contract and any other unregistered body |
+| S-3 | On Terra Nauvis presets the Entity and Cliff programs never read the fine coast field; their one land field is `tn_land_coarse`. A Map type entry picked alone is outside this by design and is timed and reported (Map type entries) | isolation check (a) against the constant-coast twin and (b) the static walk, gating from `toolchain` (whose placeholder preset redirects the start mask too), each with its positive controls on the test-only `ea-leak-fixture` presets (the start-mask route; for (b) also a redirected entity and decorative autoplace key, which the walk follows as the program reads it); beside Alien Biomes, whose palms read `elevation`, every preset whose `withheld_with` lists AB is not defined (toolchain's placeholder, then from `europe-coast` the real presets, design notes 2026-10-28 05:30, the preset withheld beside Alien Biomes), which the gate's `ab_withheld` row checks on M1 plus the live AB copy: no withheld preset in the dump, isolation (b) on every preset that is defined there, the Map type entries and fallbacks still defined, and its control walking each withheld preset's own redirects to the fine field through the palms. A preset world loaded later beside AB is outside these checks by design: it is warned once and recorded (Guards; `ab_withheld`'s save route). `climate-tiles` ships the palm switch and the M2 isolation checks (design note 9) and lifts the withholding |
 | S-4 | No per-tick handler, and no per-chunk handler except the band fix, which is registered only on saves whose map's preset carried the band-fix key (Exact coastlines on, the map's checks passed) | T16 static registration allowlist; `scriptUpdate` in T15c and T15d |
 | S-5 | All names (mod ID, settings, expressions, presets, locale keys) come from `prototypes/config.lua` | T16: no literal names or coordinates outside config and tables; D36 rename dry run |
 
@@ -901,7 +1073,8 @@ takes over the Map type fields.
   `static` command, and `.github/workflows/ci.yml` and `release.yml`.
 - **Contract.** The runner refuses to run a game-launching command without `FACTORIO_WS` and fh.py;
   `static` launches nothing and runs in CI; every game run is isolated
-  (S-1); the build is pinned to 2.1.23 build 87750 (G8); zips are byte-reproducible, here and on
+  (S-1); the build is pinned to one game build (G8: 2.1.24 build 87808 since design notes 2026-10-29
+  09:00, 2.1.23 build 87750 before); zips are byte-reproducible, here and on
   GitHub's `windows-latest` runner; the workflows never run the game and hold no secret but the
   workflow's own `GITHUB_TOKEN`; the placeholder
   preset's names are never released, and `europe-coast` retires the preset with every registration it
@@ -923,10 +1096,9 @@ takes over the Map type fields.
   autoplace text only when a key is not redirected. Beside Alien Biomes the placeholder preset is
   withheld, because AB's palms read `elevation`; the `ab_placeholder` row dumps M1 plus the live AB
   copy (`fh.py modset --from-live`), finds no preset marked placeholder there, and its control walks
-  that dump with the placeholder's redirects to the fine field through the palms. The row retires
-  with the placeholder in `europe-coast`; from then until `climate-tiles` the real presets exist
-  beside AB, AB's palms read their `elevation` entry in the Entity program, and that leak is outside
-  the gate until `climate-tiles`' palm switch and M2 isolation checks close it (S-3).
+  that dump with the placeholder's redirects to the fine field through the palms. `europe-coast`
+  withholds its real presets beside AB the same way until `climate-tiles`' palm switch, and the row
+  became `ab_withheld`, which speaks for every withheld preset (S-3; design notes 2026-10-28 05:30).
   P10 and P14 (and, as each milestone brings them into force, every complexity row of 6.2, bound by its
   program, modset and map), P18 (M0t against M0t at 16 LP, from suite evidence and the live sample,
   with rule 5's pooled group near a bound) and P3 (every 24 LP Earth ratio a suite records; none
@@ -966,7 +1138,9 @@ takes over the Map type fields.
     and a missing name fail and a GUI-only field change pass. config.lua marks the placeholder's
     names: freeze never registers them, the checker exempts them, and `build_zip.py --release`
     refuses while one exists. `--release` finds Earth bodies statically from config.lua through
-    `tools/tnconfig.py`, because `release.yml` runs without the game.
+    `tools/tnconfig.py`, because `release.yml` runs without the game (from `spawn-cities`' group it also
+    builds them offline through `tools/tnlua.py` and holds each to its record, design notes 2026-10-29
+    08:30).
   - *T15a bootstrap.* `tests/budgets.json` keeps the placeholder preset's complexity rows under
     their own row key `placeholder`, never as `europe` rows. They meet the caps (P10, P14) and
     `toolchain`'s 6.3 allocation, differ from vanilla's 10,068 / 8,549 / 287 (G5), and
@@ -1032,8 +1206,9 @@ takes over the Map type fields.
 
 - **Introduces.** `build_geo.py` and `geo_europe_v1` from the existing 8,192-term checkpoint;
   `tn_land_coarse_europe_v1` from its 256-term checkpoint, defined and budgeted here;
-  the coordinate chain with the `floor(s / 2)` constant (`tn_cx`, `tn_cy` are 0 until
-  `spawn-cities`); the transfer, detail and far-field box; `tn_elevation_europe_v1`, also Europe's
+  the coordinate chain with the `floor(s / 2)` constant (its city offset names `tn_cx_europe_v1`
+  and `tn_cy_europe_v1` are frozen 0: a city spawn reaches the entry's next version through names of
+  its own); the transfer, detail and far-field box; `tn_elevation_europe_v1`, also Europe's
   Map type entry, with its fallbacks and the Map type notice (section "Map type entries"); the real
   Terra Nauvis: Europe preset, ordered right after Default; scale 1 to 6 with world-size labels
   (APPROVALS 1c); `tn_map`, `tn_scale`, `tn_geo`; the `starting_resources_lake_mask` redirect to
@@ -1055,22 +1230,141 @@ takes over the Map type fields.
   excess traced and a reduction of each tried; V1 contact sheets; the
   drift line. REVIEW's deciding experiment: time tents 8,192 alone and the Europe program at 24 and
   16 LP, with 8 LP for the chord TQ1b timed at 8 and 24 LP, and record the chord's error.
+- **Build note** (process, not a contract). The build hands the builder only the args record, so
+  before writing code the builder reads its issue, the plan's "### Milestone 0: europe-coast" with its
+  sections 2, 4, 5 and 6, and this file's europe-coast section with "Map type entries", "Elevation
+  composition", "Per-save parameters and versioning" and "Control stage". Order of work: the final
+  code change, then `python tools/earth_test.py baseline`, then `python tools/earth_test.py suite
+  europe-coast` last.
+- **Fit review, folded in.** The accepted patches beyond the rows above; where the build decided
+  differently, the design notes entry named here governs.
+  - *Runner registry and section 6.* The registry holds europe-coast (FG rows `ec_dump_facts`,
+    `geo_emit`, `t1_t2_grids`, `t3_oracle`, `t11_pair`, `t12_twice`, `t13_routes`, `maptype_route`,
+    `t16_guard`, and from the review `water_inert`; its suite checks; `oracle_properties` land and
+    water, which `tests/oracle/expressions.json` maps to `elevation`). P1, P4, P5, P6, P7 and P19
+    have consumers in `LIMIT_CONSUMERS`; the runner control for a row in force without a consumer
+    now uses P2 at `climate-tiles`.
+  - *The placeholder retired in the runner.* The toolchain rows run on the real Europe preset:
+    `t13_dump_facts` holds the dumped preset to config.lua's table, `t13_preset_preview` (renamed from
+    `t13_placeholder`) and `t13_scenario` use Europe, `tests/budgets.json` holds Europe's rows at
+    scales 1 to 6 with toggles on and off, and the baseline record keys Europe's preview. Exactly one
+    Earth body, the newest Europe entry, carries `intended_property`.
+  - *A Europe-bound entry.* Europe's chain is its own (`tn_gx_europe_v1`, `tn_gy_europe_v1`,
+    `tn_u_europe_v1`, `tn_v_europe_v1`, with Europe's radii and extent from config), the detail and box
+    are per map, and the entry names `tn_geo_europe_v1` directly; it reads only `tn_scale` and the
+    map-qualified `tn_cx_europe_v1` and `tn_cy_europe_v1` (design notes 2026-10-28 03:40, the Europe-bound
+    entry; the names took the chain's version in design notes 2026-10-28 07:20). The generic chain arrives
+    with its first preset-only consumer.
+  - *The city offset route.* `tn_cx_europe_v1` and `tn_cy_europe_v1` (renamed from `tn_cx_europe` and
+    `tn_cy_europe`) are baked 0 with frozen fallbacks 0, registered in `tests/frozen.json`, so no
+    later build can move a Map-type-only world made from this entry; `spawn-cities` gives its v2
+    entry names and a chain of its own and binds the same name-free generated files to it. They have
+    no T11 row, since no setting moves them (design notes 2026-10-28 07:20 supersedes the in-place
+    re-point of design notes 03:40).
+  - *Timed positions.* Every timed block and band is Phase 4's, fixed in geo coordinates through
+    London's pixel and placed through the save's offset; the scale 1 block holds the scale 6 block's
+    extent clear of the start area. Land 92.3 and 79.9 percent.
+  - *Generated files and T16.* `build_geo.py` writes name-free data within 120 columns; the gate's
+    `geo_emit` row re-emits both files twice with a lazy numpy import; S9's constants live in
+    config.lua (`coast`, `start_mask`; A-11); `data-src/fits/europe/` carries its `PROVENANCE.md`, which
+    T16's data-src row re-hashes; `.gitattributes` marks `*.npz` binary.
+  - *Measured, not designed.* T1 previews run with cliff richness 0 and read player-blocking water
+    colours; the two creation routes agree on content while their benchmark checksums differ; the
+    first-column hitch and the start-area save excess are the coast program's (design notes, the T1,
+    T3 and T13, hitch and save-excess entries).
+  - *Review, folded in*. Every Earth preset bakes vanilla's three water-slider readers
+    (`water_inert` row); the presets are withheld beside Alien Biomes until `climate-tiles`
+    (`ab_withheld` row); the Map type notice warns that a mod update can move such a world, and its
+    drift line runs on every configuration change (T18 suite check, a moved-offset build); from
+    scale 3 the extent's outermost tiles are plain water, so deep water starts 1 tile beyond every
+    edge, and T3 measures the extent from the far-field switch and carries its exit-0 guards; T11
+    compares entities as well as tiles and reads back every baked value; the V1 contact sheets are
+    committed under `tests/baselines/suites/europe-coast/v1/`, with smoke step 2's preview in the
+    manifest.
+  - *Review round 2, folded in*. A Map-type-only world is identified by
+    any version of its map's entry and then by `storage`, and every message names its map by the
+    preset (T18's older-entry build proves both); the city offset names are pinned to the entry's
+    version and registered; a preset world loaded later beside Alien Biomes is warned once and
+    recorded (`ab_withheld`'s save route); a breach in one of the runner's workers stops every worker at
+    once (`lane_stop` runner controls); T2 reads back each run's seed with M0's grid as its positive
+    control, `t3_detail` probes off-centre tiles and the on-grid's T1, `t12_twice` and `t13_routes`
+    prove Earth active against M0.
+  - *Review round 3, folded in*. No player-facing text says a changed
+    scale setting reaches new worlds only: the setting's description, the drift line, the preset's
+    description and the mod's changelog say that a preset world keeps its scale and that a world
+    using a Map type alone follows the setting, which moves its new chunks (the route beside Alien
+    Biomes). Section 6.2's recorded rows are complete for this milestone: the walker and the Map type
+    route's forced pair also run at 8 LP as the diagnostic, `preview_time` records T15-f, and the
+    exploring runs keep each game process's peak working set (T15-h), M1 minus M0.
+  - *Review run 2's review, folded in*. A `tests/frozen.json` record's
+    dump label can no longer switch the frozen row off for its body: every record holds the
+    `tools/tnfrozen.py` contract in every reader (a label the runner's milestone registry does not
+    assign, a typo, a missing label or one the record's milestone could not have produced fails and is
+    never skipped; `freeze` refuses such a registry), and the append-only checks compare whole
+    records, so a relabel of a landed record fails like a new hash. The coordinate chain's rows
+    name the offset per chain version: v1's are the frozen 0s, and `spawn-cities`' v2 reads names
+    and a chain of its own.
+  - *Group build with `spawn-cities`, folded in*. The gate's frozen
+    row reads every registered body or fails: a record whose dump the command did not produce
+    fails like an unknown label. config.lua holds every version per map: `geography.<map>.versions`
+    (each version with its own names, `tn_geo` id, city offset, start mask, generated files and Map
+    type fallbacks), `start_mask.versions` (each naming its formula), and no top-level `fallbacks`
+    group; `presets.lua` bakes the newest version and values every version's fallbacks from that
+    version's own table, `coast.lua` emits every version over its own chain, `spawn.lua` every start
+    mask version, and `guards.lua` records the fallbacks of the version a Map-type-only world names.
+    The dumped prototypes are byte-identical to the one-version layout's. T16 holds the documented
+    next version (names of its own, the next `tn_geo` id, the same generated files) as a positive
+    control and its re-pointing, shared-id, unkeyed, unwalled and stray-file variants as negative
+    ones; the coordinate chain, inventory and `spawn-cities` and `extras` contracts name each chain
+    version's own offset names. The V1 sheets' preview panel tiles every T1 preview of its scale, so
+    the whole-map sheets at scales 3 and 6 and the crops on a preview edge show their whole window
+. The runner's kill control checks the probe's own games, by
+    ancestry, pid and start time, so another run's game on the shared machine is no failure
+, and the timing census leaves out a wholly suspended game process
+    (a draft the run's governor parks while the workspace lock is held), which becomes foreign the
+    moment it runs.
 
 ### 2. `spawn-cities` (part 2, order 1)
 
 - **Introduces.** City tables and per-map city settings with random, minus the cities APPROVALS 12
-  removes; `tn_city`, `tn_cx`, `tn_cy`, `tn_city_index_v1` (random is the folded hash of
+  removes; `tn_city_europe`, the v2 chain's own offset names `tn_cx_europe_v2` and `tn_cy_europe_v2`,
+  `tn_city_index_europe_v1` (random is the folded hash of
   `map_seed`, S7); the analytic spawn lake; the start land guarantee (composition step 4); sparse
   inland lakes at a fixed density; the `distance` redirect; a refined start mask for coastal and
   low-lying cities (vanilla's mask starves starting ore below elevation 11, S7); `scripts/start.lua`
   (world detection, storage, D29 message); the D32 warning at creation and to every created player
 , on the per-player path `europe-coast` opened for the Map type notice; the D33 guard;
   Europe's city setting reaching its elevation entry through a map-qualified name with its own
-  fallback, so a Map type pick spawns at the setting's city.
+  fallback, so a Map type pick spawns at the setting's city. That name belongs to the entry's next
+  version (`tn_elevation_europe_v2`) and its own chain: v1's offset constants never move (section
+  "Map type entries", binding), so v2's coordinate chain, coast, coarse, detail and box bodies ship
+  under v2 names, bound to the same name-free generated files (config.lua's `fits`), and v2 joins
+  `geography.europe.versions` after v1 as a version of its own: its next `tn_geo` id with its own
+  release row, its fallbacks (`tn_scale` and the city setting's map-qualified name), its start mask
+  version (`start_mask.versions`, a formula of its own for the spawn lake), its offset names in
+  `preset_keys` and its fine field in the firewall; v1's record stays as written (design notes
+  2026-10-28 17:40).
 - **Contract.** Starting ore and the enemy-free start come from vanilla's own terms through
   `distance` at the origin, the lake from the analytic spawn lake (S7: one patch per ore, 0 enemies
   within 150 tiles, nearest water 42.6 tiles). Under the shift every world coordinate converts as
-  `world = geo - (tn_cx, tn_cy)`.
+  `world = geo - (tn_cx_<map>_v<n>, tn_cy_<map>_v<n>)`, the save's own chain version's offsets;
+  `tools/oracle.py` holds the conversion and the float32 model of the random fold, and control code
+  never recomputes the city: it reads the index back at (0, 0) and resolves the city table through
+  the save's `tn_geo` (the release registry), never the newest version.
+- **Build notes** (design notes 2026-10-28 20:00, which supersede the draft's 05:40 entries where they
+  differ). Europe's version 2 is `geography.europe.versions[2]` with every name its own (`_v2`
+  chain, entry, coast, coarse, detail and box, bound to version 1's generated files), geography id
+  2 with its own release row, the frozen offset fallbacks `tn_cx_europe_v2` and `tn_cy_europe_v2`
+  naming the city fold, the city number `tn_city_europe` as a fallback that mirrors the setting, a
+  spawn record (`spawn = {...}`) naming the spawn bodies, and `tn_start_mask_v2` (formula 2); every
+  version 1 name and record is unchanged. The city setting's values live in config.lua and the rows
+  (degrees) in `prototypes/tables/cities.lua`; inland lakes are spot noise; the europe-coast T1, T2
+  and T3 rows score the coast in a coast-only world (the preset's keys with version 2's offset names
+  0 and the lake and guarantee bodies neutralised through `property_expression_names`), and timed
+  positions place through the runner world's spawn offset; T14's runtime control is a staged build
+  with the surface guard disabled; no player can be scripted headless, so the per-player sends stay
+  with smoke steps 4 and 1. A group's gate meets the allocations of every unlanded milestone up to it
+  together.
 - **Gate.** T7 first on a coastal and low-lying sample (London, Lisbon, Oslo, Amsterdam and Helsinki
   at scale 1; FEAS-06), then every Europe city at scales 1, 3 and 6 (fast subset in the gate); T4
   starting-area row; T11 city flip; T13 M5 warning line and its player path
@@ -1147,7 +1441,11 @@ takes over the Map type fields.
   order under Performance budgets) as a guard, for any map the build pushes over 1.5 there, until
   every map's M2t/BABt meets the plan's P2. The Map type route on M2 (AB's palms
   read the fine field through their key's default) is timed and reported. The palm switch
-  lands here because AB palms read `elevation` (R3 4.1) and (a) runs with AB from this milestone on. Palm
+  lands here because AB palms read `elevation` (R3 4.1) and (a) runs with AB from this milestone on, and
+  with it the milestone empties each preset's `withheld_with`, so the presets return beside AB. Saves
+  made from a preset earlier and loaded beside AB carry `storage.earth.withheld_beside` (the
+  europe-coast guard's record) and no palm-switch key: the milestone decides whether such a save keeps
+  its palms on the fine field or meets the switch as a seam in palm placement, and records it. Palm
   mechanism: the hook in the hooks table; if the M2 zero-cost row shows any change, fall back to
   preset keys `entity:<palm>:probability` holding an Earth copy that reads the switch. D11's limit to
   the adopted AB tiles comes from climate shaping or preset tile keys, never from a redirect that
@@ -1274,7 +1572,8 @@ takes over the Map type fields.
 ### 13. `extras` (part 9, order 0)
 
 - **Introduces.** `scripts/markers.lua` (D28: rendering objects in chart mode or one-shot chart tags,
-  placed at `world = geo - (tn_cx, tn_cy)` from the save's table version; no per-chunk event;
+  placed at `world = geo - (tn_cx_<map>_v<n>, tn_cy_<map>_v<n>)` (the save's own chain version)
+  from the save's table version; no per-chunk event;
   the rendering-object route is tested headless whenever chart tags cannot be, TST-29); posters from
   dumped tiles or stitched previews, never a mapshot render (D30); size context in labels and preset
   descriptions (D3), with the footprint figures labelled as reported community examples (JI-12); the

@@ -22,6 +22,7 @@ fh.py started. It never launches the game; every game run goes through the works
 import ctypes
 import json
 import math
+import os
 import re
 import statistics
 import subprocess
@@ -107,6 +108,10 @@ K32.AssignProcessToJobObject.argtypes = [wintypes.HANDLE, wintypes.HANDLE]
 K32.TerminateJobObject.argtypes = [wintypes.HANDLE, wintypes.UINT]
 K32.TerminateProcess.argtypes = [wintypes.HANDLE, wintypes.UINT]
 NTDLL.NtResumeProcess.argtypes = [wintypes.HANDLE]
+NTDLL.NtSuspendProcess.argtypes = [wintypes.HANDLE]
+NTDLL.NtQuerySystemInformation.argtypes = [ctypes.c_int, ctypes.c_void_p, wintypes.ULONG,
+                                           ctypes.POINTER(wintypes.ULONG)]
+NTDLL.NtQuerySystemInformation.restype = ctypes.c_long
 PSAPI = ctypes.WinDLL("psapi", use_last_error=True)
 PSAPI.GetProcessMemoryInfo.argtypes = [wintypes.HANDLE, ctypes.POINTER(PMC), wintypes.DWORD]
 
@@ -135,11 +140,64 @@ def game_pids():
     return sorted(pid for pid, _, name in processes() if name.lower() == GAME_IMAGE)
 
 
+# SystemProcessInformation on x64: each entry is a SYSTEM_PROCESS_INFORMATION (0x100 bytes: the
+# thread count at 0x04, the pid at 0x50) followed by its SYSTEM_THREAD_INFORMATION records (0x50
+# bytes each: ThreadState at 0x44, WaitReason at 0x48). A thread stopped by NtSuspendProcess or
+# SuspendThread waits with reason Suspended.
+SYSTEM_PROCESS_INFORMATION = 5
+STATUS_INFO_LENGTH_MISMATCH = 0xC0000004
+THREAD_STATE_WAITING, WAIT_REASON_SUSPENDED = 5, 5
+
+
+def suspended_pids():
+    """The pids of processes whose every thread is suspended: a fully suspended process executes
+    nothing, so it cannot perturb a timed run (a build-ahead draft the run's governor parks while
+    the workspace lock is held stays in the process table). An empty set when the query fails, so
+    every process then counts as running (fail closed for the quiet window)."""
+    if ctypes.sizeof(ctypes.c_void_p) != 8:
+        return set()
+    size = 1 << 20
+    for _ in range(8):
+        buf = ctypes.create_string_buffer(size)
+        need = wintypes.ULONG()
+        st = NTDLL.NtQuerySystemInformation(SYSTEM_PROCESS_INFORMATION, buf, size, ctypes.byref(need))
+        if (st & 0xFFFFFFFF) == STATUS_INFO_LENGTH_MISMATCH:
+            size = max(size * 2, need.value + (1 << 16))
+            continue
+        if st != 0:
+            return set()
+        break
+    else:
+        return set()
+    raw, out, off = buf.raw, set(), 0
+    while True:
+        nxt, nthreads = int.from_bytes(raw[off:off + 4], "little"), int.from_bytes(raw[off + 4:off + 8], "little")
+        pid = int.from_bytes(raw[off + 0x50:off + 0x58], "little")
+        states = []
+        for i in range(nthreads):
+            base = off + 0x100 + i * 0x50
+            states.append((int.from_bytes(raw[base + 0x44:base + 0x48], "little"),
+                           int.from_bytes(raw[base + 0x48:base + 0x4C], "little")))
+        if pid and states and all(s == (THREAD_STATE_WAITING, WAIT_REASON_SUSPENDED) for s in states):
+            out.add(pid)
+        if not nxt:
+            return out
+        off += nxt
+
+
 def tasklist_game():
-    """The protocol's literal check: tasklist filtered on the game's image name."""
+    """The protocol's literal check: tasklist filtered on the game's image name, without the game
+    processes that are wholly suspended (suspended_pids: they execute nothing). The quiet window and
+    the check right after a timed run read it."""
     cp = subprocess.run(["tasklist", "/FI", f"IMAGENAME eq {GAME_IMAGE}", "/FO", "CSV", "/NH"],
                         capture_output=True, text=True)
-    return [l for l in cp.stdout.splitlines() if l.lower().startswith(f'"{GAME_IMAGE}"')]
+    rows = [l for l in cp.stdout.splitlines() if l.lower().startswith(f'"{GAME_IMAGE}"')]
+    parked = suspended_pids()
+
+    def pid_of(row):
+        cells = row.split('","')
+        return int(cells[1]) if len(cells) > 1 and cells[1].isdigit() else None
+    return [r for r in rows if pid_of(r) not in parked]
 
 
 def process_start_time(pid):
@@ -238,13 +296,16 @@ class Job:
 class Monitor(threading.Thread):
     """Polls the process table every 0.25 s while a run is in flight (TQ1's monitor): a game
     process outside the run's tree is foreign; handles to our own game processes stay open so their
-    affinity, CPU time and peak memory can be read until and after exit."""
+    affinity, CPU time and peak memory can be read until and after exit. A game process that is
+    wholly suspended at a poll (suspended_pids) runs nothing then: it is recorded in `parked`, and it
+    becomes foreign at the first poll that finds it running."""
 
     def __init__(self, root_pid, interval=0.25):
         super().__init__(daemon=True)
         self.root, self.interval = root_pid, interval
         self.halt = threading.Event()
         self.ours, self.foreign, self.max_games, self.polls = {}, set(), 0, 0
+        self.parked = set()
         self.masks = []
 
     def run(self):
@@ -259,7 +320,10 @@ class Monitor(threading.Thread):
         except OSError:
             return
         parent = {pid: ppid for pid, ppid, _ in procs}
-        games = [pid for pid, _, name in procs if name.lower() == GAME_IMAGE]
+        parked = suspended_pids()
+        every = [pid for pid, _, name in procs if name.lower() == GAME_IMAGE]
+        games = [pid for pid in every if pid not in parked]
+        self.parked.update(pid for pid in every if pid in parked)
         self.polls += 1
         self.max_games = max(self.max_games, len(games))
         for pid in games:
@@ -517,6 +581,16 @@ def selftest():
     checks.append(("intervals", iv["over_20ms"] == 2 and iv["max"] == 300.0))
     j = Job()
     p = j.popen([sys.executable, "-c", "import time; time.sleep(30)"])
+    # a wholly suspended process is parked, and running again once resumed (the census of the quiet
+    # window and the monitor); this process itself is never parked
+    h = K32.OpenProcess(0x0800, False, p.pid)
+    was = p.pid in suspended_pids()
+    NTDLL.NtSuspendProcess(h)
+    parked = p.pid in suspended_pids()
+    NTDLL.NtResumeProcess(h)
+    after = p.pid in suspended_pids()
+    K32.CloseHandle(h)
+    checks.append(("suspended_census", not was and parked and not after and os.getpid() not in suspended_pids()))
     j.terminate()
     p.wait(10)
     checks.append(("job_terminates_children", p.returncode is not None))

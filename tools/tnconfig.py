@@ -165,12 +165,16 @@ def parse_lua(text, where="<lua>"):
 def load(path=CONFIG):
     """The config table of a pure-data Lua file as Python data."""
     path = Path(path)
-    text = path.read_text(encoding="utf-8")
-    tree = parse_lua(text, str(path))
+    return loads(path.read_text(encoding="utf-8"), str(path), path.name)
+
+
+def loads(text, where="<lua>", name=None):
+    """The config table of pure-data Lua text (for example config.lua as a git ref holds it)."""
+    tree = parse_lua(text, where)
     _, astnodes = _ast()
-    data = _Evaluator(astnodes, path.name).chunk(tree)
+    data = _Evaluator(astnodes, name or where).chunk(tree)
     if not isinstance(data, dict):
-        raise ConfigError(f"{path}: the returned value is not a keyed table")
+        raise ConfigError(f"{where}: the returned value is not a keyed table")
     return data
 
 
@@ -240,40 +244,377 @@ def firewall_names(cfg):
     return sorted(out)
 
 
+FALLBACK_FIELDS = {"name", "map_qualified", "frozen"}
+
+
+def _fallback_entries(entries, where):
+    """One geography version's Map type fallbacks, each {name = <noise name>, map_qualified = <bool>,
+    frozen = <bool, optional>}, every name once."""
+    entries = _listed(None, where, entries)
+    for e in entries:
+        if not isinstance(e, dict) or not isinstance(e.get("name"), str) or not e["name"] or \
+                not isinstance(e.get("map_qualified"), bool) or set(e) - FALLBACK_FIELDS or \
+                not isinstance(e.get("frozen", False), bool):
+            raise ConfigError(f"config.lua {where} entries must be {{name = <noise name>, "
+                              f"map_qualified = <bool>, frozen = <bool, optional>}}")
+    names = [e["name"] for e in entries]
+    if len(set(names)) != len(names):
+        raise ConfigError(f"config.lua {where} lists a fallback name twice")
+    return entries
+
+
 def fallbacks(cfg):
-    """The Map type fallbacks (U3's one exemption): `fallbacks` is keyed by map key, each a list of
-    {name = <noise name>, map_qualified = <bool>} for the names that map's elevation entry reads
-    and a Map type pick leaves to prototype-level fallbacks. {map key: [entry, ...]}."""
-    out = {}
-    maps = set(_keyed(cfg, "maps"))
-    for key, entries in _keyed(cfg, "fallbacks").items():
-        if key not in maps:
-            raise ConfigError(f"config.lua fallbacks.{key} is not a map key")
-        entries = _listed(cfg, f"fallbacks.{key}", entries)
-        for e in entries:
-            if not isinstance(e, dict) or not isinstance(e.get("name"), str) or \
-                    not isinstance(e.get("map_qualified"), bool) or set(e) - {"name", "map_qualified"}:
-                raise ConfigError(f"config.lua fallbacks.{key} entries must be {{name = <noise name>, "
-                                  f"map_qualified = <bool>}}")
-        out[key] = entries
+    """The Map type fallbacks of every geography version, per map: {map key: [entry, ...]}, each
+    name once, in version order (a version's `fallbacks` lists the per-save names its elevation
+    entry reads, which a Map type pick leaves to prototype-level fallbacks valued as that version's
+    preset bakes them). A fallback without `frozen` (or false) mirrors a startup setting and is U3's
+    one exemption, never registered; a frozen one is a constant body, registered like every Earth
+    body, so no later version moves it. One prototype serves every map and version that lists a
+    name, so each listing of it must carry the same flags (map_qualified, frozen)."""
+    out, flags = {}, {}
+    for key, versions in geography_versions(cfg).items():
+        lst, seen = [], set()
+        for v in versions:
+            for e in v["fallbacks"]:
+                f = (e["map_qualified"], bool(e.get("frozen")))
+                if flags.setdefault(e["name"], f) != f:
+                    raise ConfigError(f"config.lua lists the Map type fallback {e['name']} with different flags "
+                                      f"(map_qualified, frozen) in two versions or maps: one prototype serves them all")
+                if e["name"] not in seen:
+                    seen.add(e["name"])
+                    lst.append(e)
+        out[key] = lst
     return out
 
 
 def fallback_names(cfg):
+    """Every Map type fallback's name, frozen or not."""
     return sorted({e["name"] for entries in fallbacks(cfg).values() for e in entries})
 
 
+def exempt_fallback_names(cfg):
+    """The fallbacks that mirror a startup setting (not frozen): U3's one exemption from
+    tests/frozen.json."""
+    return sorted({e["name"] for entries in fallbacks(cfg).values() for e in entries if not e.get("frozen")})
+
+
+def frozen_fallback_names(cfg):
+    """The frozen fallbacks: constants no setting moves, registered like every Earth body, so a world
+    that reads one never moves with the mod (ARCHITECTURE.md, "Map type entries")."""
+    return sorted({e["name"] for entries in fallbacks(cfg).values() for e in entries if e.get("frozen")})
+
+
+# The noise names of one geography version, by role: its elevation entry, the bodies only it reads,
+# its coarse land field, its coordinate chain and its city offset names.
+GEOGRAPHY_NAMES = ("entry", "geo", "land_coarse", "detail", "far", "gx", "gy", "u", "v", "cx", "cy")
+VERSION_FIELDS = set(GEOGRAPHY_NAMES) | {"geo_id", "city_offset", "start_mask", "fits", "fallbacks"}
+# A version's optional fields: `spawn` (spawn-cities), the spawn at the chosen city.
+OPTIONAL_VERSION_FIELDS = {"spawn"}
+# The fit bodies a version binds to generated files (tools/build_geo.py's bodies).
+FIT_ROLES = ("geo", "land_coarse")
+GENERATED_DIR = "prototypes/generated/"
+# The fine field of a version (design constraint 3): its entry and every term only it reads.
+FINE_ROLES = ("entry", "geo", "detail", "far")
+# A version's spawn record (spawn-cities): the map's spawn-city setting (a settings key), the
+# per-save city number (a Map type fallback that mirrors the setting), the resolved index control
+# reads back at (0, 0), the spawn lake and starting-ore bias the start mask reads through the
+# preset keys, the version's inland lakes, the start land guarantee, the distance body the preset
+# redirects `distance` to, and the generated spawn bearings file. All of them, or no record.
+SPAWN_FIELDS = ("city_setting", "city", "city_index", "spawn_lake", "spawn_bias", "inland_lakes", "start_land",
+                "distance", "bearings")
+SPAWN_NAMES = ("city", "city_index", "spawn_lake", "spawn_bias", "inland_lakes", "start_land", "distance")
+# The spawn names that read the version's own chain: each version that has them takes its own (never
+# shared with or re-pointed from another version); the other spawn bodies read no chain and may
+# serve several versions, as a start mask version does.
+SPAWN_OWN = ("inland_lakes",)
+# The spawn names in the fine field (ARCHITECTURE.md, the firewall rule): the inland lakes and the
+# start land guarantee, which only the entry reads.
+SPAWN_FINE = ("inland_lakes", "start_land")
+
+
+def spawn_of(version):
+    """A geography version's spawn record, or None (europe-coast's version 1 has none)."""
+    return version.get("spawn") or None
+
+
+def fine_names(version):
+    """A version's fine field: its entry, the bodies only it reads and, with a spawn record, the
+    inland lakes and the start land guarantee."""
+    sp = spawn_of(version)
+    return [version[n] for n in FINE_ROLES] + ([sp[n] for n in SPAWN_FINE] if sp else [])
+
+
+def own_names(version):
+    """The noise names a version takes as its own, which no other version may name: its
+    GEOGRAPHY_NAMES and, with a spawn record, the spawn names that read its chain."""
+    sp = spawn_of(version)
+    return [version[n] for n in GEOGRAPHY_NAMES] + ([sp[n] for n in SPAWN_OWN] if sp else [])
+
+
+def _spawn_record(sp, where, cfg):
+    if not isinstance(sp, dict) or set(sp) != set(SPAWN_FIELDS):
+        raise ConfigError(f"config.lua {where}.spawn must hold exactly {sorted(SPAWN_FIELDS)}")
+    for n in SPAWN_NAMES:
+        if not isinstance(sp[n], str) or not sp[n]:
+            raise ConfigError(f"config.lua {where}.spawn.{n} must be a noise name")
+    b = sp["bearings"]
+    if not (isinstance(b, str) and b.startswith(GENERATED_DIR) and b.endswith(".lua")):
+        raise ConfigError(f"config.lua {where}.spawn.bearings must be a generated file ({GENERATED_DIR}<name>.lua)")
+    settings = _keyed(cfg, "settings")
+    s = settings.get(sp["city_setting"])
+    random_value = ((cfg.get("spawn") or {}).get("random_value"))
+    if not isinstance(s, dict) or s.get("type") != "string-setting":
+        raise ConfigError(f"config.lua {where}.spawn.city_setting {sp['city_setting']!r} is not a string setting's key")
+    vals = s.get("allowed_values") or []
+    if not vals or vals[0] != random_value or len(set(vals)) != len(vals):
+        raise ConfigError(f"config.lua {where}.spawn.city_setting {sp['city_setting']!r}: its allowed values must start "
+                          f"with spawn.random_value {random_value!r} (the per-save number 0) and list each city once")
+    return sp
+
+
+def city_number(cfg, version, value=None):
+    """The per-save city number a version's preset bakes for a spawn-city setting value (default:
+    the setting's default): the value's position in the setting's allowed values, random 0."""
+    s = cfg["settings"][spawn_of(version)["city_setting"]]
+    return s["allowed_values"].index(s["default_value"] if value is None else value)
+
+
+def _offset_value(v):
+    """A city offset the preset bakes: an integer (tiles) or the name of an expression that folds it."""
+    return (isinstance(v, int) and not isinstance(v, bool)) or (isinstance(v, str) and bool(v))
+
+
+def geography_versions(cfg):
+    """`geography` is keyed by map key (europe-coast on), each {map_type_order, versions}: the order
+    of the map's Map type entry, and every version of the map's elevation entry, oldest first and
+    the newest last. A version is {geo_id, entry, geo, land_coarse, detail, far, gx, gy, u, v, cx,
+    cy, city_offset, start_mask, fits = {geo, land_coarse}, fallbacks = {...}}: its geography
+    release id (tn_geo, in the one id space across maps; id_space_problems), the noise names of its
+    entry, the bodies only that entry reads, its coarse field, its chain and its city offset names,
+    the offset its preset bakes there (integers, or names of expressions that fold it), the start
+    mask its preset names, the generated file each fit body binds and the Map type fallbacks its
+    entry reads, plus an optional spawn record (spawn-cities; SPAWN_FIELDS). No two versions of a map
+    share a noise name of their own (own_names): a later version takes names of its own and never
+    re-points an older one's (decision 21; ARCHITECTURE.md, "Map type entries", binding).
+    {map key: [version, ...]}."""
+    out = {}
+    maps = set(_keyed(cfg, "maps"))
+    for key, g in _keyed(cfg, "geography").items():
+        if key not in maps:
+            raise ConfigError(f"config.lua geography.{key} is not a map key")
+        if not isinstance(g, dict) or set(g) != {"map_type_order", "versions"}:
+            raise ConfigError(f"config.lua geography.{key} must hold exactly ['map_type_order', 'versions']")
+        if not isinstance(g["map_type_order"], str) or not g["map_type_order"]:
+            raise ConfigError(f"config.lua geography.{key}.map_type_order must be an order string")
+        versions = _listed(None, f"geography.{key}.versions", g["versions"])
+        if not versions:
+            raise ConfigError(f"config.lua geography.{key}.versions must list at least one version")
+        names = []
+        for i, v in enumerate(versions, 1):
+            where = f"geography.{key}.versions[{i}]"
+            if not isinstance(v, dict) or set(v) - OPTIONAL_VERSION_FIELDS != VERSION_FIELDS:
+                raise ConfigError(f"config.lua {where} must hold exactly {sorted(VERSION_FIELDS)}, and optionally "
+                                  f"{sorted(OPTIONAL_VERSION_FIELDS)}")
+            if "spawn" in v:
+                _spawn_record(v["spawn"], where, cfg)
+            for n in GEOGRAPHY_NAMES + ("start_mask",):
+                if not isinstance(v[n], str) or not v[n]:
+                    raise ConfigError(f"config.lua {where}.{n} must be a noise name")
+            if not _positive_int(v["geo_id"]):
+                raise ConfigError(f"config.lua {where}.geo_id must be a positive integer (a tn_geo id), found "
+                                  f"{v['geo_id']!r}")
+            off = v["city_offset"]
+            if not (isinstance(off, list) and len(off) == 2 and all(_offset_value(x) for x in off)):
+                raise ConfigError(f"config.lua {where}.city_offset must be two values, each an integer or a noise "
+                                  f"name")
+            if "spawn" in v and not all(isinstance(x, str) for x in off):
+                raise ConfigError(f"config.lua {where}.city_offset must name the city fold's two bodies: a version "
+                                  f"with a spawn record moves with its city")
+            fits = v["fits"]
+            if not isinstance(fits, dict) or set(fits) != set(FIT_ROLES) or not all(
+                    isinstance(f, str) and f.startswith(GENERATED_DIR) and f.endswith(".lua") for f in fits.values()):
+                raise ConfigError(f"config.lua {where}.fits must map exactly {list(FIT_ROLES)} to generated files "
+                                  f"({GENERATED_DIR}<name>.lua)")
+            _fallback_entries(v["fallbacks"], f"{where}.fallbacks")
+            names += own_names(v)
+        dup = _duplicates(names)
+        if dup:
+            raise ConfigError(f"config.lua geography.{key} names {dup} in more than one role or version: each version "
+                              f"takes names of its own and never re-points an older one's (ruling 21)")
+        out[key] = versions
+    return out
+
+
+def geography(cfg):
+    """{map key: the map's newest geography version}, with the map's `map_type_order` and its
+    `entry_versions` (every version's entry, oldest first, the newest last) added, and the fields of
+    its spawn record, when it has one, copied to the top level (city_setting, city, city_index, ...;
+    `spawn` stays too): the version the map's preset names, whose entry alone carries the Map type
+    fields. Control code identifies a Map-type-only world by any entry version. Readers that need
+    every version use geography_versions."""
+    raw = _keyed(cfg, "geography")
+    return {key: dict(versions[-1], **(spawn_of(versions[-1]) or {}), map_type_order=raw[key]["map_type_order"],
+                      entry_versions=[v["entry"] for v in versions])
+            for key, versions in geography_versions(cfg).items()}
+
+
+def start_masks(cfg):
+    """`start_mask` is {versions = {...}}: every version of the start mask, oldest first, each
+    {name = <noise name>, formula = <positive integer>, <parameter> = <number>, ...} (spawn.lua
+    builds formula n from the version's numbers). A geography version names the one its preset
+    bakes; older versions stay defined, unchanged. [version, ...]; [] when config.lua
+    has no start mask."""
+    sm = cfg.get("start_mask")
+    if sm is None or sm in ([], {}):
+        return []
+    if not isinstance(sm, dict) or set(sm) != {"versions"}:
+        raise ConfigError("config.lua start_mask must hold exactly ['versions']")
+    out = _listed(None, "start_mask.versions", sm["versions"])
+    for i, m in enumerate(out, 1):
+        if not isinstance(m, dict) or not isinstance(m.get("name"), str) or not m["name"] or \
+                not _positive_int(m.get("formula")) or not all(
+                    isinstance(x, (int, float)) and not isinstance(x, bool)
+                    for k, x in m.items() if k not in ("name", "formula")):
+            raise ConfigError(f"config.lua start_mask.versions[{i}] must be {{name = <noise name>, formula = "
+                              f"<positive integer>, <parameter> = <number>, ...}}")
+    dup = _duplicates([m["name"] for m in out])
+    if dup:
+        raise ConfigError(f"config.lua start_mask.versions names {dup} twice")
+    return out
+
+
+def baked_names(cfg, map_key, version, scale, city=None):
+    """The property_expression_names a geography version's preset bakes at a startup scale (and,
+    for a version with a spawn record, a spawn-city setting value, default the setting's default),
+    as presets.lua builds them from the same rows: the version's entry, start mask and coarse field,
+    the map's tn_map id, the scale, the version's tn_geo id, its city offset under its own names,
+    and vanilla's water-slider readers at their default-slider values (D15); with a spawn record
+    also the distance redirect, the map's city number and the spawn lake and bias keys."""
+    K, m = cfg["keys"], cfg["maps"][map_key]
+    pen = {K["elevation"]: version["entry"], K["start_mask"]: version["start_mask"],
+           K["land_coarse"]: version["land_coarse"], K["map"]: m["id"], K["scale"]: int(scale),
+           K["geo"]: version["geo_id"], version["cx"]: version["city_offset"][0],
+           version["cy"]: version["city_offset"][1]}
+    pen.update({w["key"]: w["value"] for w in water_slider(cfg)})
+    sp = spawn_of(version)
+    if sp:
+        pen.update({K["distance"]: sp["distance"], sp["city"]: city_number(cfg, version, city),
+                    K["spawn_lake"]: sp["spawn_lake"], K["spawn_bias"]: sp["spawn_bias"]})
+    return pen
+
+
+RELEASE_FIELDS = {"release", "map", "geography", "names", "files"}
+
+
+def _positive_int(v):
+    return isinstance(v, int) and not isinstance(v, bool) and v >= 1
+
+
 def release_registry(cfg):
-    """`release_registry` is a list of {release = <version>, geography = <id>, names = {<noise
-    names>}, files = {<generated files>}} (europe-coast writes the first row)."""
+    """`release_registry` is a list of {release = <version>, map = <map key>, geography = <tn_geo
+    id>, names = {<noise names>}, files = {<generated files>}} (europe-coast writes the first row).
+    A row of a geography release carries `map` and `geography` together: the geography id is a
+    positive integer and the map a map key, so every tn_geo a save can hold resolves to one map."""
     out = []
+    maps = set(_keyed(cfg, "maps"))
     for r in _listed(cfg, "release_registry"):
-        if not isinstance(r, dict) or not isinstance(r.get("release"), str) or set(r) - {"release", "geography",
-                                                                                          "names", "files"}:
-            raise ConfigError("config.lua release_registry rows must be {release, geography, names, files}")
+        if not isinstance(r, dict) or not isinstance(r.get("release"), str) or set(r) - RELEASE_FIELDS:
+            raise ConfigError("config.lua release_registry rows must be {release, map, geography, names, files}")
+        if ("map" in r) != ("geography" in r):
+            raise ConfigError(f"config.lua release_registry {r['release']}: a geography release names its map and "
+                              f"its geography id together")
+        if "geography" in r and (not _positive_int(r["geography"]) or r["map"] not in maps):
+            raise ConfigError(f"config.lua release_registry {r['release']}: geography must be a positive integer "
+                              f"(a tn_geo id) and map a map key (found {r.get('geography')!r}, {r.get('map')!r})")
         _names(r.get("names", []), f"release_registry {r['release']} names")
         _names(r.get("files", []), f"release_registry {r['release']} files")
         out.append(r)
+    return out
+
+
+def geo_maps(cfg):
+    """{tn_geo id: map key} over every geography release in release_registry: how control code and
+    the tools resolve a save's tn_geo (ARCHITECTURE.md, "Release versioning policy", rule 4)."""
+    out = {}
+    for r in release_registry(cfg):
+        if "geography" in r:
+            out.setdefault(r["geography"], r["map"])
+    return out
+
+
+def _duplicates(values):
+    seen, dup = set(), []
+    for v in values:
+        if v in seen and v not in dup:
+            dup.append(v)
+        seen.add(v)
+    return dup
+
+
+def id_space_problems(cfg):
+    """The id spaces config.lua defines, each closed: every id is well formed and names one thing
+    only. tn_map ids (maps.<key>.id) are positive integers unique across maps; tn_geo ids are one
+    space across every map: each geography version's geo_id is a positive integer unique across
+    every version of every map, each release_registry geography id appears in one row only, and each
+    version's geo_id has its row, naming that version's map, so no id can collide or resolve to two.
+    Map keys, setting keys, display names, preset names and orders, Map type orders, message locale
+    keys and the detail octaves' seed1 values are unique too. Returns messages (schema_problems
+    reports them)."""
+    out = []
+    try:
+        maps = _keyed(cfg, "maps")
+        for k, m in maps.items():
+            if not isinstance(m, dict):
+                out.append(f"config.lua maps.{k} must be a keyed table")
+                continue
+            if m.get("key") != k:
+                out.append(f"config.lua maps.{k}.key must be {k!r} (found {m.get('key')!r})")
+            if not _positive_int(m.get("id")):
+                out.append(f"config.lua maps.{k}.id must be a positive integer (the tn_map value), found {m.get('id')!r}")
+        good = {k: m for k, m in maps.items() if isinstance(m, dict)}
+        for field, what in (("id", "tn_map id"), ("setting_key", "setting key"), ("display", "display name")):
+            for v in _duplicates([m.get(field) for m in good.values() if m.get(field) is not None]):
+                out.append(f"config.lua maps: {what} {v!r} names more than one map")
+        rows = release_registry(cfg)
+        versions = [(k, i, v) for k, vs in geography_versions(cfg).items() for i, v in enumerate(vs, 1)]
+        for v in _duplicates([v["geo_id"] for _, _, v in versions]):
+            out.append(f"config.lua geography: tn_geo id {v!r} is the geo_id of more than one version or map (one id "
+                       f"space across every map and version)")
+        geo = _keyed(cfg, "geography")
+        for v in _duplicates([g.get("map_type_order") for g in geo.values() if isinstance(g, dict)]):
+            out.append(f"config.lua geography: Map type order {v!r} is used by more than one map")
+        ids = [r["geography"] for r in rows if "geography" in r]
+        for v in _duplicates(ids):
+            out.append(f"config.lua release_registry: tn_geo id {v} appears in more than one row (a geography "
+                       f"release is registered once, under one map)")
+        for k, i, v in versions:
+            own = [r for r in rows if r.get("geography") == v["geo_id"]]
+            if not own:
+                out.append(f"config.lua geography.{k}.versions[{i}].geo_id {v['geo_id']!r} has no release_registry "
+                           f"row (each geography release is registered with its map)")
+            elif any(r["map"] != k for r in own):
+                out.append(f"config.lua geography.{k}.versions[{i}].geo_id {v['geo_id']!r} is registered under map "
+                           f"{[r['map'] for r in own]} in release_registry, not {k!r} (an id names one map)")
+        presets = _keyed(cfg, "presets")
+        for field in ("name", "order"):
+            for v in _duplicates([p.get(field) for p in presets.values() if isinstance(p, dict)]):
+                out.append(f"config.lua presets: {field} {v!r} is used by more than one preset")
+        for k, p in presets.items():
+            if isinstance(p, dict) and "map" in p and p["map"] not in maps:
+                out.append(f"config.lua presets.{k}.map {p['map']!r} is not a map key")
+        msg = (cfg.get("messages") or {}).get("keys") or {}
+        if msg == []:
+            msg = {}
+        if not isinstance(msg, dict) or not all(isinstance(v, str) and v for v in msg.values()):
+            out.append("config.lua messages.keys must map each message key to a locale key")
+        else:
+            for v in _duplicates(list(msg.values())):
+                out.append(f"config.lua messages.keys: locale key {v!r} serves more than one message")
+        octaves = ((cfg.get("coast") or {}).get("detail_octaves")) or []
+        for v in _duplicates([o.get("seed1") for o in octaves if isinstance(o, dict)]):
+            out.append(f"config.lua coast.detail_octaves: seed1 {v!r} is used by more than one octave (A-11)")
+    except ConfigError as e:
+        out.append(str(e))
     return out
 
 
@@ -306,10 +647,47 @@ def toggles(cfg):
     return out
 
 
+def withheld_presets(cfg):
+    """{preset key: [mod names]}: each preset's withheld_with, the mods whose presence withholds it
+    (presets.lua defines no such preset while one is loaded; europe-coast withholds Europe beside
+    Alien Biomes until climate-tiles' palm switch). A preset without the field is never withheld."""
+    out = {}
+    for key, p in _keyed(cfg, "presets").items():
+        if not isinstance(p, dict):
+            raise ConfigError(f"config.lua presets.{key} must be a keyed table")
+        out[key] = list(_names(p.get("withheld_with", []), f"presets.{key}.withheld_with"))
+    return out
+
+
+def water_slider(cfg):
+    """`water_slider` lists {key = <vanilla noise name>, value = <number>}: vanilla's readers of the
+    water slider that every Earth preset bakes at their default-slider value (D15). Each key is a
+    preset key (preset_keys), so the missing-name guard and the D33 guard know it."""
+    out = []
+    keys = set(cfg.get("preset_keys") or [])
+    for e in _listed(cfg, "water_slider"):
+        if not isinstance(e, dict) or set(e) != {"key", "value"} or not isinstance(e.get("key"), str) or \
+                not e["key"] or isinstance(e.get("value"), bool) or not isinstance(e.get("value"), (int, float)):
+            raise ConfigError("config.lua water_slider entries must be {key = <noise name>, value = <number>}")
+        if e["key"] not in keys:
+            raise ConfigError(f"config.lua water_slider key {e['key']!r} is not in preset_keys")
+        out.append(e)
+    if len({e["key"] for e in out}) != len(out):
+        raise ConfigError("config.lua water_slider lists a key twice")
+    return out
+
+
+# Groups that europe-coast's review moved into a per-version home (every version per map). A copy
+# left at the top level would be read by no one, so its versions would silently drop out.
+RETIRED_GROUPS = {"fallbacks": "geography.<map>.versions[n].fallbacks", "start_mask_versions": "start_mask.versions"}
+
+
 def schema_problems(cfg):
     """Every shape problem of config.lua's groups, as messages (the T16 names row reports them)."""
-    out = []
-    for fn in (map_keys, firewall_names, fallbacks, release_registry, toggles):
+    out = [f"config.lua {g} is retired: it lives in {home} (every version per map), and a top-level copy is read by "
+           f"no one" for g, home in RETIRED_GROUPS.items() if g in cfg]
+    for fn in (map_keys, firewall_names, fallbacks, release_registry, toggles, geography_versions, start_masks,
+               withheld_presets, water_slider):
         try:
             fn(cfg)
         except ConfigError as e:
@@ -325,6 +703,7 @@ def schema_problems(cfg):
         _names(cfg.get("preset_keys", []), "preset_keys")
     except ConfigError as e:
         out.append(str(e))
+    out += id_space_problems(cfg)
     ph = cfg.get("placeholder") or {}
     if ph:
         names = ph.get("names") or {}
@@ -348,6 +727,71 @@ def schema_problems(cfg):
         if stray:
             out.append(f"config.lua firewall names {stray} are in no release_registry row: every fine-field body "
                        f"is a registered, released body")
+        released = set(release_names(cfg)) | set(fallback_names(cfg))
+        rel = set(release_names(cfg))
+        fw = _keyed(cfg, "firewall")
+        masks = {m["name"] for m in start_masks(cfg)}
+        files = {f for r in release_registry(cfg) for f in (r.get("files") or [])}
+        pkeys = set(cfg.get("preset_keys") or [])
+        for key, versions in geography_versions(cfg).items():
+            for i, v in enumerate(versions, 1):
+                where = f"geography.{key}.versions[{i}]"
+                sp = spawn_of(v)
+                missing = sorted(v[n] for n in GEOGRAPHY_NAMES if v[n] not in released)
+                missing += [v["entry"]] if v["entry"] not in rel else []
+                missing += [v["start_mask"]] if v["start_mask"] not in rel else []
+                # a spawn record's bodies and the fold its offset names are released bodies; the city
+                # number is a fallback that mirrors the setting (checked with the fallbacks)
+                if sp:
+                    missing += [sp[n] for n in SPAWN_NAMES if n != "city" and sp[n] not in rel]
+                    missing += [x for x in v["city_offset"] if isinstance(x, str) and x not in rel]
+                    if sp["city"] not in exempt_fallback_names(cfg):
+                        out.append(f"config.lua {where}.spawn.city {sp['city']!r} is no Map type fallback that "
+                                   f"mirrors a startup setting (the spawn-city setting's number)")
+                if missing:
+                    out.append(f"config.lua {where} names {sorted(set(missing))}, which no release_registry row or "
+                               f"fallback lists (every entry and start mask version is a released body)")
+                # the fine field: the entry and every term only it reads, in every version
+                unwalled = sorted(n for n in fine_names(v) if n not in (fw.get(key) or []))
+                if unwalled:
+                    out.append(f"config.lua {where} names {unwalled}, which firewall.{key} lacks (the fine field of "
+                               f"every version; sacred constraint 3)")
+                if sp:
+                    walled = sorted(sp[n] for n in SPAWN_NAMES if n not in SPAWN_FINE and sp[n] in set(firewall_names(cfg)))
+                    walled += sorted(x for x in v["city_offset"] if x in set(firewall_names(cfg)))
+                    if walled:
+                        out.append(f"config.lua {where} puts {walled} in the firewall: the start mask and distance read "
+                                   f"them in the Entity program, so they must stay firewall-clean")
+                if v["start_mask"] not in masks:
+                    out.append(f"config.lua {where}.start_mask {v['start_mask']!r} is no start_mask version")
+                stray = sorted(f for f in v["fits"].values() if f not in files)
+                if stray:
+                    out.append(f"config.lua {where}.fits binds {stray}, which no release_registry row lists")
+                if sp and sp["bearings"] not in files:
+                    out.append(f"config.lua {where}.spawn.bearings {sp['bearings']!r} is a file no release_registry row "
+                               f"lists")
+                # every key the version's preset bakes is a preset key: the missing-name guard and the
+                # Nauvis-only surface guard know only those (D33; Space Age)
+                try:
+                    unkeyed = sorted(str(k) for k in baked_names(cfg, key, v, 1) if k not in pkeys)
+                except (KeyError, TypeError) as e:
+                    unkeyed = [f"(no preset table: {type(e).__name__} {e})"]
+                if unkeyed:
+                    out.append(f"config.lua {where}: its preset bakes {unkeyed}, which preset_keys lacks (the "
+                               f"guards strip and check only preset_keys)")
+        for m in start_masks(cfg):
+            if m["name"] not in rel:
+                out.append(f"config.lua start mask {m['name']} is in no release_registry row (every version is a "
+                           f"released body)")
+        # a frozen fallback is a released, registered constant; one that mirrors a setting never is
+        for n in frozen_fallback_names(cfg):
+            if n not in rel:
+                out.append(f"config.lua frozen fallback {n} is in no release_registry row: a frozen fallback is a "
+                           f"registered constant")
+        for n in exempt_fallback_names(cfg):
+            if n in rel:
+                out.append(f"config.lua fallback {n} mirrors a startup setting but a release_registry row lists it "
+                           f"(U3: such fallbacks are never registered; mark it frozen if no setting moves it)")
         prefix = (cfg.get("identity") or {}).get("noise_prefix") or ""
         unprefixed = sorted(n for n in noise_names(cfg) if not prefix or not n.startswith(prefix))
         if unprefixed:
@@ -367,17 +811,20 @@ def placeholder_names(cfg):
 
 
 def noise_names(cfg):
-    """Every noise name config.lua defines: released bodies, Map type fallbacks, firewall bodies and
-    the placeholder's names."""
+    """Every noise name config.lua defines: released bodies, Map type fallbacks, firewall bodies, the
+    start mask versions, every geography version's spawn bodies and the placeholder's names."""
+    spawn = {sp[n] for vs in geography_versions(cfg).values() for v in vs for sp in [spawn_of(v)] if sp
+             for n in SPAWN_NAMES}
     return sorted(set(release_names(cfg)) | set(fallback_names(cfg)) | set(firewall_names(cfg)) |
-                  set(placeholder_names(cfg)))
+                  {m["name"] for m in start_masks(cfg)} | spawn | set(placeholder_names(cfg)))
 
 
 def unregistered_names(cfg, registered):
     """The noise names config.lua defines that tests/frozen.json must hold but does not: every one
-    but the placeholder's names and the Map type fallbacks (U3's one exemption). `registered` is
-    frozen.json's bodies table (or any collection of names)."""
-    exempt = set(placeholder_names(cfg)) | set(fallback_names(cfg))
+    but the placeholder's names and the Map type fallbacks that mirror a startup setting (U3's one
+    exemption; a frozen fallback is registered). `registered` is frozen.json's bodies table (or any
+    collection of names)."""
+    exempt = set(placeholder_names(cfg)) | set(exempt_fallback_names(cfg))
     return sorted(n for n in noise_names(cfg) if n not in exempt and n not in registered)
 
 

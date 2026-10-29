@@ -1,6 +1,7 @@
 # CI: on every push and pull request, the T16 static rows and the mod zip as an
-# artifact. It never runs the game, needs no workspace and reads no secret. The T16 workflow scan
-# (tools/tn_static.py) checks this file.
+# artifact. It never runs the game, needs no workspace and reads no secret. The checkout keeps full
+# history, so the static append-only row can read origin/main (and a pull request's base) and
+# fails closed without it. The T16 workflow scan (tools/tn_static.py) checks this file.
 name: ci
 
 on:
@@ -16,6 +17,8 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:

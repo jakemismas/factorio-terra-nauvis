@@ -3,6 +3,7 @@
 * text=auto eol=lf
 
 *.png binary
+*.npz binary
 *.jpg binary
 *.zip binary
 *.dat binary

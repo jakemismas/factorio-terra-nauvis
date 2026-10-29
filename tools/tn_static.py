@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 """T16 static rows (test notes.md T16; design section 5, `earth_test.py static`).
 
-Every row here reads only the checked-out tree: no game, no fh.py, no FACTORIO_WS and no git refs,
-so ci.yml runs the same rows on GitHub's runner that the gate runs as its step 1. Each row returns
-a list of failure messages (empty means pass) and a short detail line.
+Every row here reads only the checked-out tree: no game, no fh.py and no FACTORIO_WS, so ci.yml
+runs the same rows on GitHub's runner that the gate runs as its step 1. One row reads git refs: the
+append-only row compares the tree with main and origin/main (ci.yml checks out with full history, so
+the runner holds origin/main) and fails closed when it cannot read them. Each row returns a list of
+failure messages (empty means pass) and a short detail line.
 
-Rows: lint, info_json, locale, dashes, registration, names, design_rules, workflow_scan,
-attribution_scan, data_src, frozen_static, zip, plus fixture positive controls for the scans (each
-rule must fail its own fixture; fixtures are written at run time into a temporary directory outside
-the scanned trees and never committed). No row scans tools/ or tests/ for game launches,
+Rows: lint, info_json, locale, dashes, registration, storage, names, design_rules, workflow_scan,
+attribution_scan, data_src, frozen_static, append_only, fallbacks, zip, plus fixture positive
+controls for the scans (each rule must fail its own fixture; fixtures are written at run time into
+a temporary directory outside the scanned trees and never committed). No row scans tools/ or
+tests/ for game launches,
 live-profile paths or copies into a mods folder (the workflow scan still keeps both workflows off
 the game and the workspace): fh.py isolation (G1) is the only live-profile protection (the maintainer's
 decision, 2026-10-27 23:47), and copying the built zip into the live mods folder is allowed (16:19).
 """
+import copy
 import hashlib
 import json
 import os
@@ -30,6 +34,7 @@ if str(HERE) not in sys.path:
 
 import build_zip  # noqa: E402
 import tnconfig  # noqa: E402
+import tnfrozen  # noqa: E402
 
 REPO = HERE.parent
 MOD = REPO / "terra-nauvis"
@@ -144,8 +149,18 @@ def tnconfig_walk(node):
                 stack.extend(x for x in v if isinstance(x, astnodes.Node))
 
 
+_PARSED = {}
+
+
 def parse_lua_file(p):
-    return tnconfig.parse_lua(Path(p).read_text(encoding="utf-8"), rel(p))
+    """luaparser's tree of a Lua file, kept per text as tnlua.parse keeps it: the fixture controls read
+    the mod's files again in every copy they edit, and no reader changes a tree (design notes 2026-10-29
+    11:05). A file that does not parse raises each time it is read."""
+    text = Path(p).read_text(encoding="utf-8")
+    k = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if k not in _PARSED:
+        _PARSED[k] = tnconfig.parse_lua(text, rel(p))
+    return _PARSED[k]
 
 
 def load_json(p):
@@ -350,9 +365,41 @@ def expected_locale(cfg, control_keys=()):
     for p in cfg.get("presets", {}).values():
         exp["map-gen-preset-name"].add(p["name"])
         exp["map-gen-preset-description"].add(p["name"])
+    # the Map type entries: the newest elevation entry of each map carries localised_name
+    # {"noise-expression.<entry>"} (D2 amended), so the [noise-expression] section names it
+    for g in tnconfig.geography(cfg).values():
+        exp.setdefault("noise-expression", set()).add(g["entry"])
+    # control code's messages, whose keys it builds from config.lua's messages group
+    msgs = cfg.get("messages") or {}
+    for key in (msgs.get("keys") or {}).values():
+        exp.setdefault(msgs["section"], set()).add(key)
     for sec, key in control_keys:
         exp.setdefault(sec, set()).add(key)
     return exp
+
+
+def thousands(n):
+    return f"{int(n):,}"
+
+
+def scale_label_findings(cfg, merged):
+    """Each scale value's label (APPROVALS 1c) carries every map's world size at that scale,
+    W s x H s tiles from config.lua's map sizes, written with thousands separators."""
+    out = []
+    s = (cfg.get("settings") or {}).get("scale")
+    if not s:
+        return out
+    labels = merged.get("string-mod-setting", {})
+    for v in s.get("allowed_values") or []:
+        text = labels.get(f"{s['name']}-{v}")
+        if text is None:
+            continue
+        for key in cfg["map_order"]:
+            m = cfg["maps"][key]
+            want = f"{m['display']} {thousands(m['width_px'] * int(v))} x {thousands(m['height_px'] * int(v))}"
+            if want not in text:
+                out.append(f"locale [string-mod-setting] {s['name']}-{v} lacks the world size {want!r} (APPROVALS 1c)")
+    return out
 
 
 def control_locale_keys(mod=MOD):
@@ -372,12 +419,30 @@ def control_locale_keys(mod=MOD):
     return keys
 
 
+def control_noise_label_findings(mod=MOD):
+    """Control code never builds a [noise-expression] locale key: only the newest version of a map's
+    elevation entry keeps its [noise-expression] name, so a message labelled through one would read
+    as an unknown key on a world made from an older version. Messages name a map by its preset's
+    name (or a per-map message key), which no version changes (ARCHITECTURE.md, "Guards")."""
+    from luaparser import astnodes
+    out = []
+    for p in mod_lua(mod):
+        r = rel(p, mod)
+        if not (r == "control.lua" or r.startswith("scripts/")):
+            continue
+        for s, line in lua_strings(parse_lua_file(p), astnodes):
+            if s.startswith("noise-expression."):
+                out.append(f"{r}:{line}: control code builds the locale key {s!r}...: label a world by its map's "
+                           f"preset name, which no version changes")
+    return out
+
+
 def row_locale(mod=MOD):
     cfg = tnconfig.load(Path(mod) / "prototypes" / "config.lua")
     files = sorted((Path(mod) / "locale" / "en").glob("*.cfg"))
-    fails = []
+    fails = control_noise_label_findings(mod)
     if not files:
-        return ["no locale/en/*.cfg file"], ""
+        return fails + ["no locale/en/*.cfg file"], ""
     merged = {}
     for f in files:
         secs, errs = parse_cfg(f.read_text(encoding="utf-8"), rel(f))
@@ -392,6 +457,7 @@ def row_locale(mod=MOD):
         have = set(merged.get(sec, {}))
         for k in sorted(keys - have):
             fails.append(f"locale lacks [{sec}] {k}")
+    fails += scale_label_findings(cfg, merged)
     for sec, kv in merged.items():
         for k, v in kv.items():
             if not v.strip():
@@ -588,6 +654,75 @@ def registration_findings(mod=MOD):
 def row_registration(mod=MOD):
     f = registration_findings(mod)
     return f, f"{len(mod_lua(mod))} Lua files scanned against the event allowlist"
+
+
+# The stored-records contract (ARCHITECTURE.md, "Guards"): the per-player warning store has one owner.
+GUARDS_FILE = "scripts/guards.lua"
+STORED_FIELDS = {"warnings", "sent"}
+WARNING_WRITER = "record_warning"
+
+
+STORED_TABLES = {"storage", "storage.earth", "storage.map_type"}
+
+
+def storage_contract_findings(mod=MOD, cfg=None):
+    """The stored-records contract, statically: storage.earth.warnings and storage.earth.sent (and
+    storage.map_type.sent) belong to scripts/guards.lua, so no other file of the mod indexes a field
+    named warnings or sent, by dot or by a string key, or replaces storage, storage.earth or
+    storage.map_type wholesale (which would drop the stored warnings and counts; other files add or
+    change fields of their own); every warning is stored through record_warning, and each call
+    names its key as a string literal that is a key of config.lua's messages.keys, so a stored key
+    always has its text (a renamed or unknown key fails here)."""
+    from luaparser import astnodes
+    DOT = astnodes.IndexNotation.DOT
+    cfg = cfg if cfg is not None else tnconfig.load(Path(mod) / "prototypes" / "config.lua")
+    keys = set(((cfg.get("messages") or {}).get("keys") or {}) or {})
+    out = []
+
+    def table_name(t):
+        d = _dotted(t, astnodes)
+        if d is None and isinstance(t, astnodes.Index) and isinstance(t.idx, astnodes.String):
+            base = _dotted(t.value, astnodes)
+            k = t.idx.s.decode() if isinstance(t.idx.s, bytes) else t.idx.s
+            d = f"{base}.{k}" if base else None
+        return d
+    for p in mod_lua(mod):
+        r = rel(p, mod)
+        tree = parse_lua_file(p)
+        for n in tnconfig_walk(tree):
+            if isinstance(n, astnodes.Assign) and r != GUARDS_FILE:
+                for t in n.targets:
+                    if table_name(t) in STORED_TABLES:
+                        out.append(f"{r}:{getattr(n, 'line', '?')}: replaces {table_name(t)} wholesale, which "
+                                   f"{GUARDS_FILE} builds (add or change fields of your own instead)")
+            if isinstance(n, astnodes.Index) and r != GUARDS_FILE:
+                k = n.idx.id if n.notation == DOT and isinstance(n.idx, astnodes.Name) else (
+                    (n.idx.s.decode() if isinstance(n.idx.s, bytes) else n.idx.s)
+                    if isinstance(n.idx, astnodes.String) else None)
+                if k in STORED_FIELDS:
+                    out.append(f"{r}:{getattr(n, 'line', '?')}: indexes {k!r}, a stored field only {GUARDS_FILE} "
+                               f"touches (store a warning with guards.{WARNING_WRITER})")
+            if isinstance(n, (astnodes.Call, astnodes.Invoke)):
+                f = n.func
+                name = f.id if isinstance(f, astnodes.Name) else (
+                    f.idx.id if isinstance(f, astnodes.Index) and f.notation == DOT and
+                    isinstance(f.idx, astnodes.Name) else None)
+                if name != WARNING_WRITER:
+                    continue
+                arg = n.args[0] if n.args else None
+                k = (arg.s.decode() if isinstance(arg.s, bytes) else arg.s) if isinstance(arg, astnodes.String) else None
+                if k is None:
+                    out.append(f"{r}:{getattr(n, 'line', '?')}: {WARNING_WRITER} without a literal message key")
+                elif k not in keys:
+                    out.append(f"{r}:{getattr(n, 'line', '?')}: {WARNING_WRITER}({k!r}) names no key of config.lua "
+                               f"messages.keys")
+    return sorted(set(out))
+
+
+def row_storage(mod=MOD):
+    f = storage_contract_findings(mod)
+    return f, (f"{len(mod_lua(mod))} Lua files: the stored warning fields only in {GUARDS_FILE}, every "
+               f"{WARNING_WRITER} key a messages key")
 
 
 # ------------------------------------------------------------------------------------------------ names
@@ -919,9 +1054,13 @@ PUBLISH_COUNT = 'if ($files.Count -ne 2) { throw "expected the zip and its .sha2
 
 
 def _expected_steps(kind, manifest):
-    """The one step sequence each workflow may hold."""
+    """The one step sequence each workflow may hold. Both checkouts keep full
+    history (fetch-depth 0): CI's so the static append-only row reads origin/main and the release
+    tags on the runner, the release's so its tag check can refuse a tag whose commit is not on
+    origin/main and its build can compare with the earlier release tags."""
+    checkout = {"label": "the full-history checkout", "uses": "actions/checkout@", "with": {"fetch-depth": "0"}}
     common = [
-        {"label": "the checkout", "uses": "actions/checkout@"},
+        checkout,
         {"label": "the Python setup", "uses": "actions/setup-python@",
          "with": {"python-version": manifest["luaparser"]["python"]}},
         {"label": "the luaparser and linter install", "run": [PIP_LINE, LINT_LINE]},
@@ -1286,6 +1425,26 @@ def data_src_findings(repo=REPO):
     for name in sorted(p.name for p in ap.iterdir() if p.is_file() and p.name != "PROVENANCE.md"):
         if aprov.get(name) != sha256_file(ap / name):
             out.append(f"data-src/approvals/{name} sha256 differs from its PROVENANCE.md")
+    # the coast fits (europe-coast on): every file of each map's fit folder re-hashes to its
+    # PROVENANCE.md row, and every row names a file that exists
+    fits = repo / "data-src" / "fits"
+    for d in sorted(p for p in fits.iterdir() if p.is_dir()) if fits.is_dir() else []:
+        if not (d / "PROVENANCE.md").exists():
+            out.append(f"data-src/fits/{d.name} has no PROVENANCE.md")
+            continue
+        fprov = provenance_hashes(d / "PROVENANCE.md")
+        names = sorted(p.name for p in d.iterdir() if p.is_file() and p.name != "PROVENANCE.md")
+        for name in names:
+            if name not in fprov:
+                out.append(f"data-src/fits/{d.name}/{name} is not in its PROVENANCE.md")
+            elif sha256_file(d / name) != fprov[name]:
+                out.append(f"data-src/fits/{d.name}/{name} sha256 differs from its PROVENANCE.md")
+        for name in fprov:
+            if name not in names:
+                out.append(f"data-src/fits/{d.name}/PROVENANCE.md lists {name}, which is missing")
+    for key in (cfg.get("geography") or {}):
+        if not (fits / key / "PROVENANCE.md").exists():
+            out.append(f"config.lua gives {key} a geography, but data-src/fits/{key}/ holds no provenance")
     return out
 
 
@@ -1299,24 +1458,31 @@ def row_data_src(repo=REPO):
 THRESHOLD_KEY_RE = re.compile(r"(limit|cap|threshold|allocation|allowance|ceiling|bar)$", re.I)
 
 
-def config_frozen_findings(cfg, fz):
-    """config.lua against tests/frozen.json (design constraint 2), statically: every Earth noise body
-    config.lua defines, released or a firewall body, is registered, the placeholder's names and the
-    Map type fallbacks excepted and never registered; every entry is well formed. The gate's frozen
-    row checks the dumped bodies and their hashes; this row needs no game, so CI runs it too."""
-    out = []
+def config_frozen_findings(cfg, fz, registry=None):
+    """config.lua against tests/frozen.json (design constraint 2), statically: the file and every
+    record keep the tnfrozen contract against the runner's milestone registry (each field present and
+    well formed, the dump label one that a registry entry assigns and the record's milestone could have
+    produced, so no record can switch the gate's frozen row off for its body); every Earth noise
+    body config.lua defines, released or a firewall body, is registered, the placeholder's names and
+    the Map type fallbacks that mirror a startup setting excepted and never registered (a frozen
+    fallback is registered like every body). The gate's frozen row checks the dumped bodies and
+    their hashes; this row needs no game, so CI runs it too. `registry` defaults to the runner's,
+    read statically (fail closed)."""
+    if registry is None:
+        try:
+            registry = tnfrozen.runner_registry()
+        except tnfrozen.RegistryUnreadable as e:
+            return [f"the runner's slice registry is unreadable: {e} (fail closed)"]
+    out = list(tnfrozen.file_problems(fz, registry))
     ph = set(tnconfig.placeholder_names(cfg))
-    fb = set(tnconfig.fallback_names(cfg))
-    bodies = fz.get("bodies") or {}
-    for name, rec in bodies.items():
+    fb = set(tnconfig.exempt_fallback_names(cfg))
+    bodies = fz.get("bodies") if isinstance(fz, dict) and isinstance(fz.get("bodies"), dict) else {}
+    for name in bodies:
         if name in ph:
             out.append(f"placeholder name {name} is registered in tests/frozen.json")
         if name in fb:
-            out.append(f"Map type fallback {name} is registered in tests/frozen.json (U3: fallbacks never are)")
-        if not re.fullmatch(r"[0-9a-f]{64}", str(rec.get("sha256", ""))):
-            out.append(f"tests/frozen.json {name}: sha256 is not 64 hex")
-        if rec.get("type") not in ("noise-expression", "noise-function"):
-            out.append(f"tests/frozen.json {name}: type {rec.get('type')!r}")
+            out.append(f"Map type fallback {name} mirrors a startup setting and is registered in tests/frozen.json "
+                       f"(U3: such fallbacks never are)")
     for name in tnconfig.unregistered_names(cfg, bodies):
         out.append(f"config.lua defines the Earth body {name}, which tests/frozen.json does not register: run python "
                    f"tools/earth_test.py freeze (sacred constraint 2)")
@@ -1328,10 +1494,12 @@ def frozen_static_findings(repo=REPO):
     out = []
     cfg = tnconfig.load(repo / "terra-nauvis" / "prototypes" / "config.lua")
     fz = load_json(repo / "tests" / "frozen.json")
-    if fz.get("format") != "tn-frozen/1" or not isinstance(fz.get("bodies"), dict):
-        out.append("tests/frozen.json is not tn-frozen/1 with a bodies table")
-        return out
-    out += config_frozen_findings(cfg, fz)
+    try:
+        registry = tnfrozen.runner_registry(repo / "tools" / "earth_test.py")
+    except tnfrozen.RegistryUnreadable as e:
+        out.append(f"the runner's slice registry is unreadable: {e} (fail closed)")
+    else:
+        out += config_frozen_findings(cfg, fz, registry)
     bud = load_json(repo / "tests" / "budgets.json")
 
     def walk(o, path):
@@ -1347,10 +1515,538 @@ def frozen_static_findings(repo=REPO):
     return out
 
 
+def map_suffixes(name, maps):
+    """The map keys a noise name carries as its suffix, before an optional version suffix
+    (tn_<name>_<map> or tn_<name>_<map>_v<n>)."""
+    return [m for m in maps if re.search(r"_" + re.escape(m) + r"(?:_v\d+)?$", name)]
+
+
+def fallback_findings(cfg):
+    """The Map type fallbacks statically, for every geography version of every map (older versions'
+    entries stay defined, so their fallbacks do too): each is a key that version's preset bakes
+    (tnconfig.baked_names, the mirror of presets.lua) and a preset key, a map-qualified one carries
+    its map's key as its suffix (before an optional version suffix) and a shared one carries none
+    (one fallback holds one value, so a value that differs by map needs a map-qualified name), none
+    is a firewall body, a frozen one is a released body (so tests/frozen.json registers it and no
+    later version moves it) and one that mirrors a setting is not (U3's one exemption), and every
+    version lists its own. The gate's dump facts check each fallback's value against what its
+    version's preset bakes, at default settings and at T11's settings B."""
+    out = []
+    keys = set(cfg.get("preset_keys") or [])
+    fw = set(tnconfig.firewall_names(cfg))
+    maps = tnconfig.map_keys(cfg)
+    released = set(tnconfig.release_names(cfg))
+    for key, versions in tnconfig.geography_versions(cfg).items():
+        for i, v in enumerate(versions, 1):
+            where = f"{key} version {i} ({v['entry']})"
+            if not v["fallbacks"]:
+                out.append(f"config.lua gives {where} no Map type fallbacks (its entry reads the scale at least)")
+            baked = tnconfig.baked_names(cfg, key, v, 1)
+            for e in v["fallbacks"]:
+                n = e["name"]
+                if n not in keys:
+                    out.append(f"fallback {n} of {where} is not a preset key (preset_keys): no preset bakes it")
+                if n not in baked:
+                    out.append(f"fallback {n} of {where} is no key that version's preset bakes, so nothing values it")
+                suffixed = map_suffixes(n, maps)
+                if e["map_qualified"] and suffixed != [key]:
+                    out.append(f"fallback {n} is marked map-qualified but does not end in _{key} (or _{key}_v<n>)")
+                if not e["map_qualified"] and suffixed:
+                    out.append(f"fallback {n} is shared but ends in a map key {suffixed}: one fallback holds one value")
+                if n in fw:
+                    out.append(f"fallback {n} is a firewall body")
+                if e.get("frozen") and n not in released:
+                    out.append(f"frozen fallback {n} is in no release_registry row: it would never be registered")
+                if not e.get("frozen") and n in released:
+                    out.append(f"fallback {n} mirrors a startup setting but is a released body (U3)")
+    return out
+
+
+def row_fallbacks(repo=REPO):
+    cfg = tnconfig.load(Path(repo) / "terra-nauvis" / "prototypes" / "config.lua")
+    f = fallback_findings(cfg)
+    n = len(tnconfig.fallback_names(cfg))
+    nv = sum(len(v) for v in tnconfig.geography_versions(cfg).values())
+    return f, (f"{n} Map type fallbacks ({len(tnconfig.frozen_fallback_names(cfg))} frozen) over {nv} geography "
+               f"version(s): each a key its version's preset bakes, map-qualified by suffix, none a firewall body, "
+               f"frozen ones released")
+
+
 def row_frozen(repo=REPO):
     f = frozen_static_findings(repo)
     fz = load_json(Path(repo) / "tests" / "frozen.json")
-    return f, f"{len(fz.get('bodies', {}))} registered bodies; budgets.json holds measured values only"
+    return f, (f"{len(fz.get('bodies', {}))} registered bodies, every record held to the tnfrozen contract against "
+               f"the runner's slice registry; budgets.json holds measured values only")
+
+
+# ------------------------------------------------------------------------------------------------ append-only
+#
+# What saves and released zips hold never moves: registered bodies (design constraint 2), the tn_map
+# and tn_geo ids a preset bakes, and the message keys stored warnings name. The reference is every
+# landed state the checkout can see, main and origin/main (and origin/<base> on a pull request's
+# runner, which ci.yml checks out with full history) and every v<x.y.z> release tag, read from git,
+# and the check fails closed: no ref that resolves, or a ref that resolves without a readable file,
+# fails the row instead of comparing against an empty registry. A group's earlier milestones land their
+# registries before main does, in their suite manifests' frozen snapshots (tnfrozen.snapshot), which
+# the row holds the registry to as well.
+REFERENCE_REFS = ("main", "origin/main")
+GIT_REF_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._/-]*")
+RELEASE_TAG_RE = re.compile(r"v\d+\.\d+\.\d+")
+
+
+class ReferenceUnreadable(RuntimeError):
+    pass
+
+
+def release_tag_refs(repo=REPO):
+    """Every release tag the checkout holds (v<x.y.z>) as refs/tags/<tag>, sorted. A push to main is
+    compared with main itself, so only the releases keep a registered record fixed against a commit
+    that reaches main without a pull request. Raises ReferenceUnreadable when git cannot list tags."""
+    cp = subprocess.run(["git", "tag", "--list", "v*"], cwd=str(repo), capture_output=True, text=True)
+    if cp.returncode != 0:
+        raise ReferenceUnreadable(f"git tag --list failed ({(cp.stderr or '').strip()[:200]}) (fail closed)")
+    return [f"refs/tags/{t}" for t in sorted(cp.stdout.split()) if RELEASE_TAG_RE.fullmatch(t)]
+
+
+def reference_refs():
+    refs = list(REFERENCE_REFS)
+    base = os.environ.get("GITHUB_BASE_REF") or ""
+    if base and GIT_REF_RE.fullmatch(base) and ".." not in base and f"origin/{base}" not in refs:
+        refs.append(f"origin/{base}")
+    return refs + [t for t in release_tag_refs() if t not in refs]
+
+
+def git_ref_commit(ref, repo=REPO):
+    """The commit a ref names, or None when it does not resolve."""
+    cp = subprocess.run(["git", "rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}"], cwd=str(repo),
+                        capture_output=True, text=True)
+    sha = (cp.stdout or "").strip()
+    return sha if cp.returncode == 0 and re.fullmatch(r"[0-9a-f]{40}", sha) else None
+
+
+def reference_files(path, repo=REPO, refs=None):
+    """{ref: (commit, text)} of the repo-relative POSIX `path` at every reference ref that resolves.
+    Fails closed: raises ReferenceUnreadable when no reference ref resolves, or when a ref that
+    resolves holds no readable `path`."""
+    refs = list(refs) if refs is not None else reference_refs()
+    out, absent = {}, []
+    for ref in refs:
+        sha = git_ref_commit(ref, repo)
+        if sha is None:
+            absent.append(ref)
+            continue
+        cp = subprocess.run(["git", "show", f"{sha}:{path}"], cwd=str(repo), capture_output=True)
+        if cp.returncode != 0:
+            why = (cp.stderr or b"").decode("utf-8", "replace").strip()[:200]
+            raise ReferenceUnreadable(f"git show {ref}:{path} failed ({why}); the append-only check cannot read its "
+                                      f"reference (fail closed)")
+        try:
+            out[ref] = (sha, cp.stdout.decode("utf-8"))
+        except UnicodeDecodeError as e:
+            raise ReferenceUnreadable(f"{ref}:{path} is not UTF-8 ({e}) (fail closed)") from e
+    if not out:
+        raise ReferenceUnreadable(f"none of the reference refs {refs} resolves; fetch origin or check out with full "
+                                  f"history (fail closed)")
+    return out
+
+
+def frozen_union(registries):
+    """The union of the reference refs' frozen.json registries, {"bodies": {...}}, and the problems
+    (a registry that is not tn-frozen/1, or two refs registering one name with different records:
+    whole records compare, so a dump label, type, milestone or date the refs disagree on fails like a
+    hash)."""
+    union, probs, where = {}, [], {}
+    for ref, fz in sorted(registries.items()):
+        if not isinstance(fz, dict) or fz.get("format") != tnfrozen.FORMAT or not isinstance(fz.get("bodies"), dict):
+            probs.append(f"{ref}:tests/frozen.json is not tn-frozen/1 with a bodies table (fail closed)")
+            continue
+        for name, rec in fz["bodies"].items():
+            if not isinstance(rec, dict):
+                probs.append(f"{ref}:tests/frozen.json {name} is not a record (fail closed)")
+                rec = {}
+            if name in union:
+                diff = tnfrozen.record_changes(rec, union[name])
+                if diff:
+                    probs.append(f"{name}: {where[name]} and {ref} register different records ({diff})")
+                continue
+            union[name] = rec
+            where[name] = ref
+    return {"bodies": union, "where": where}, probs
+
+
+def _as_dict(v):
+    return v if isinstance(v, dict) else {}
+
+
+def append_only_findings(work_fz, work_cfg, refs):
+    """What the working tree dropped or changed of the persisted entries its references hold. `refs`
+    maps a ref to {"frozen": <its tests/frozen.json>, "cfg": <its config table>}. Append-only:
+    every registered body's whole record (type, sha256, the dump label the gate reads it from, milestone
+    and date) and the field list the hashes cover, every tn_map id (maps.<key>.id), every tn_geo id
+    with its map (release_registry), and every stored message key with its locale key and section."""
+    out = []
+    union, probs = frozen_union({ref: d.get("frozen") for ref, d in refs.items()})
+    out += probs
+    bodies = _as_dict(_as_dict(work_fz).get("bodies"))
+    for name, rec in sorted(union["bodies"].items()):
+        ref = union["where"][name]
+        mine = bodies.get(name)
+        if name not in bodies:
+            out.append(f"{name} is registered on {ref} but missing from tests/frozen.json (append-only)")
+            continue
+        diff = tnfrozen.record_changes(mine, rec)
+        if diff:
+            out.append(f"{name}: tests/frozen.json changed the record {ref} registers, in {diff} (append-only: a "
+                       f"record never changes in place; ship a change under the next _v<n>)")
+    for ref, d in sorted(refs.items()):
+        rfz = _as_dict(d.get("frozen"))
+        if "hash_fields" in rfz and rfz.get("hash_fields") != _as_dict(work_fz).get("hash_fields"):
+            out.append(f"tests/frozen.json hash_fields is {rfz.get('hash_fields')!r} on {ref} and "
+                       f"{_as_dict(work_fz).get('hash_fields')!r} here: the registered hashes cover the landed fields")
+    wcfg = work_cfg or {}
+    wmaps = _as_dict(wcfg.get("maps"))
+    try:
+        wgeo = tnconfig.geo_maps(wcfg)
+    except tnconfig.ConfigError as e:
+        out.append(f"config.lua release_registry does not resolve tn_geo ids here: {e}")
+        wgeo = {}
+    wmsg = _as_dict(wcfg.get("messages"))
+    wkeys = _as_dict(wmsg.get("keys"))
+    for ref, d in sorted(refs.items()):
+        rc = _as_dict(d.get("cfg"))
+        for key, m in sorted(_as_dict(rc.get("maps")).items()):
+            rid = m.get("id") if isinstance(m, dict) else None
+            if rid is None:
+                continue
+            got = wmaps.get(key).get("id") if isinstance(wmaps.get(key), dict) else None
+            if got != rid:
+                out.append(f"config.lua maps.{key}.id is {rid!r} on {ref} and {got!r} here: a tn_map id saves hold "
+                           f"never changes")
+        for r in rc.get("release_registry") or []:
+            if not isinstance(r, dict) or "geography" not in r:
+                continue
+            if wgeo.get(r["geography"]) != r.get("map"):
+                out.append(f"config.lua release_registry: tn_geo id {r['geography']!r} names map {r.get('map')!r} on "
+                           f"{ref} and {wgeo.get(r['geography'])!r} here: a tn_geo id saves hold never moves")
+        rmsg = _as_dict(rc.get("messages"))
+        rkeys = _as_dict(rmsg.get("keys"))
+        if rkeys and rmsg.get("section") != wmsg.get("section"):
+            out.append(f"config.lua messages.section is {rmsg.get('section')!r} on {ref} and {wmsg.get('section')!r} "
+                       f"here: stored warnings name their text through it")
+        for k, v in sorted(rkeys.items()):
+            if wkeys.get(k) != v:
+                out.append(f"config.lua messages.keys.{k} is {v!r} on {ref} and {wkeys.get(k)!r} here: a key stored "
+                           f"warnings can hold is never removed or renamed")
+    return sorted(set(out))
+
+
+def append_only_reference(repo=REPO, refs=None):
+    """The reference refs' frozen.json and config.lua as append_only_findings reads them, and the
+    commits read. Raises ReferenceUnreadable (fail closed)."""
+    fzs = reference_files("tests/frozen.json", repo, refs)
+    cfgs = reference_files("terra-nauvis/prototypes/config.lua", repo, refs)
+    out = {}
+    for ref, (sha, text) in fzs.items():
+        if ref not in cfgs or cfgs[ref][0] != sha:
+            raise ReferenceUnreadable(f"{ref} moved while the check read it (fail closed)")
+        try:
+            out[ref] = {"frozen": json.loads(text), "cfg": tnconfig.loads(cfgs[ref][1], f"{ref}:config.lua")}
+        except (ValueError, tnconfig.ConfigError) as e:
+            raise ReferenceUnreadable(f"{ref}: a reference file does not parse ({e}) (fail closed)") from e
+    return out, {ref: sha for ref, (sha, _) in fzs.items()}
+
+
+# The data a registered body is built from (design constraint 2; ARCHITECTURE.md, "Release
+# versioning policy"). The gate's frozen row hashes the dumped bodies and needs the game; these
+# static rules hold the same line for a change that lands through CI alone (a regenerated file, an
+# edited constant or city row). Once a reference holds a release_registry row, every value it holds
+# at one of these config.lua paths keeps its value here: a table may gain keys, a "versions" list may
+# gain entries at its end, and any other value must be equal. The landed rows themselves, every file
+# a landed row or geography version names, every map table of prototypes/tables/ and the allowed
+# values of every setting a geography version names (RELEASE_SETTING_REFS) are fixed too.
+# The expression code (prototypes/expressions/) is code, not data: its bodies change only through
+# the dump, which the gate's frozen row reads.
+RELEASE_CONFIG_PATHS = (("coordinates",), ("number_format",), ("coast",), ("spawn",), ("keys",),
+                        ("start_mask", "versions"), ("geography", "*", "versions"), ("maps", "*"))
+RELEASE_CONFIG_SKIP = ("display",)  # maps.<key>.display: the map's locale name, which no body reads
+RELEASE_TABLES_DIR = "terra-nauvis/prototypes/tables/"
+# A setting's allowed values that a registered body is built from, reached through a geography
+# version's spawn record (spawn.city_setting): the city fold's random pick is "% n + 1" over the
+# list's cities and its if-chains follow the list's order, presets bake a city as its position in
+# the list, and control code reads that number back through the same list. So the list is fixed
+# exactly: no reorder and no append (an append changes n, so every random-city save moves).
+RELEASE_SETTING_REFS = (("spawn", "city_setting"),)
+
+
+def release_settings(cfg):
+    """{settings key: [where it is named]} for every setting a geography version names through a
+    RELEASE_SETTING_REFS field."""
+    out = {}
+    for gk, g in sorted(_as_dict(cfg.get("geography")).items()):
+        for i, v in enumerate(_as_dict(g).get("versions") or []):
+            for rec, field in RELEASE_SETTING_REFS:
+                key = _as_dict(_as_dict(v).get(rec)).get(field)
+                if key is not None:
+                    out.setdefault(key, []).append(f"geography.{gk}.versions[{i + 1}].{rec}.{field}")
+    return out
+
+
+def _norm_bytes(b):
+    return b.replace(b"\r\n", b"\n")
+
+
+def _release_value_findings(ref_v, work_v, where, ref):
+    if isinstance(ref_v, dict):
+        if not isinstance(work_v, dict):
+            return [f"{where} is a table on {ref} and {work_v!r} here (a value a registered body is built from)"]
+        out = []
+        for k in sorted(ref_v, key=str):
+            if k in RELEASE_CONFIG_SKIP and where.startswith("config.lua maps."):
+                continue
+            if k not in work_v:
+                out.append(f"{where}.{k} is on {ref} and gone here (a value a registered body is built from)")
+                continue
+            out += _release_value_findings(ref_v[k], work_v[k], f"{where}.{k}", ref)
+        return out
+    if isinstance(ref_v, list) and where.endswith(".versions"):
+        if not isinstance(work_v, list) or len(work_v) < len(ref_v):
+            return [f"{where} lost entries {ref} holds (versions are append-only)"]
+        return [f"{where}[{i + 1}] changed in place against {ref} (a landed version never changes; add the next "
+                f"version)" for i, (a, b) in enumerate(zip(ref_v, work_v)) if a != b]
+    if ref_v != work_v:
+        return [f"{where} is {json.dumps(ref_v)[:80]} on {ref} and {json.dumps(work_v)[:80]} here: a registered body "
+                f"is built from it, so it never changes in place (ship the change under the next _v<n>)"]
+    return []
+
+
+def _release_paths(cfg, path):
+    """[(where, value)] at a RELEASE_CONFIG_PATHS path of a config table ("*" walks every key)."""
+    nodes = [("config.lua", cfg)]
+    for part in path:
+        nxt = []
+        for where, v in nodes:
+            if not isinstance(v, dict):
+                continue
+            for k in (sorted(v, key=str) if part == "*" else [part]):
+                if k in v:
+                    nxt.append((f"{where}{' ' if where == 'config.lua' else '.'}{k}", v[k]))
+        nodes = nxt
+    return nodes
+
+
+def release_input_files(cfg):
+    """The mod-relative files a config's landed rows bind: every release_registry row's files, and
+    every geography version's fits and spawn bearings."""
+    files = set()
+    for r in cfg.get("release_registry") or []:
+        if isinstance(r, dict):
+            files.update(f for f in (r.get("files") or []) if isinstance(f, str))
+    for g in _as_dict(cfg.get("geography")).values():
+        for v in (_as_dict(g).get("versions") or []):
+            v = _as_dict(v)
+            files.update(f for f in _as_dict(v.get("fits")).values() if isinstance(f, str))
+            b = _as_dict(v.get("spawn")).get("bearings")
+            if isinstance(b, str):
+                files.add(b)
+    return sorted(files)
+
+
+def release_input_findings(work, refs):
+    """What the working tree changed in place of the data a reference's landed bodies are built from.
+    `work` and each `refs[ref]` are {"cfg": <config table>, "files": {<mod-relative path>: <sha256, or
+    None when absent>}, "tables": {<repo-relative path>: <table, or None>}}. A reference without a
+    release_registry row freezes nothing (nothing has landed)."""
+    out = []
+    wcfg = _as_dict(work.get("cfg"))
+    for ref, d in sorted(refs.items()):
+        rc = _as_dict(d.get("cfg"))
+        rows = [r for r in (rc.get("release_registry") or []) if isinstance(r, dict)]
+        if not rows:
+            continue
+        for path in RELEASE_CONFIG_PATHS:
+            got = dict(_release_paths(wcfg, path))
+            for where, v in _release_paths(rc, path):
+                if where not in got:
+                    out.append(f"{where} is on {ref} and gone here (a value a registered body is built from)")
+                    continue
+                out += _release_value_findings(v, got[where], where, ref)
+        rsets, wsets = _as_dict(rc.get("settings")), _as_dict(wcfg.get("settings"))
+        for key, named in sorted(release_settings(rc).items(), key=lambda kv: str(kv[0])):
+            where = f"config.lua settings.{key}.allowed_values"
+            want = _as_dict(rsets.get(key)).get("allowed_values")
+            have = _as_dict(wsets.get(key)).get("allowed_values")
+            if not isinstance(want, list):
+                out.append(f"{where}: {ref}'s {named[0]} names it but {ref} holds no such list (fail closed)")
+            elif have != want:
+                state = "gone" if not isinstance(have, list) else (
+                    "reordered" if sorted(have) == sorted(want) else "changed")
+                out.append(f"{where} is {state} here against {ref} ({len(want)} values there, "
+                           f"{len(have) if isinstance(have, list) else 0} here): {named[0]} builds registered bodies "
+                           f"and baked per-save numbers from its order and length, so it never changes, not even by "
+                           f"an append (ship a new setting under the next geography version)")
+        wrows = [r for r in (wcfg.get("release_registry") or []) if isinstance(r, dict)]
+        for r in rows:
+            mine = [w for w in wrows if w.get("geography") == r.get("geography") and w.get("map") == r.get("map")]
+            if mine != [r]:
+                state = "changed" if mine else "missing"
+                out.append(f"config.lua release_registry row of map {r.get('map')!r} geography {r.get('geography')!r} "
+                           f"is landed on {ref} and {state} here (a landed row never changes)")
+        for f in release_input_files(rc):
+            want = _as_dict(d.get("files")).get(f)
+            have = _as_dict(work.get("files")).get(f)
+            if want is None:
+                out.append(f"terra-nauvis/{f}: {ref}'s landed rows name it but {ref} holds no such file (fail closed)")
+            elif have != want:
+                state = "differs from" if have else "is missing against"
+                out.append(f"terra-nauvis/{f} {state} {ref} (sha256 {str(have)[:12]} here, {want[:12]} there): a "
+                           f"landed row's bodies read it, so it never changes in place (emit the next version's file)")
+        for tp, rt in sorted(_as_dict(d.get("tables")).items()):
+            wt = _as_dict(work.get("tables")).get(tp)
+            if not isinstance(rt, dict):
+                out.append(f"{tp} on {ref} does not parse as a keyed table (fail closed)")
+                continue
+            for k in sorted(rt, key=str):
+                if not isinstance(wt, dict) or k not in wt:
+                    out.append(f"{tp} table {k!r} is on {ref} and gone here (a released table version)")
+                elif wt[k] != rt[k]:
+                    out.append(f"{tp} table {k!r} changed in place against {ref}: a released table version is never "
+                               f"edited (ship the change as the next version)")
+    return sorted(set(out))
+
+
+def _git_ls(sha, prefix, repo=REPO):
+    cp = subprocess.run(["git", "ls-tree", "-r", "--name-only", sha, "--", prefix], cwd=str(repo),
+                        capture_output=True, text=True)
+    if cp.returncode != 0:
+        raise ReferenceUnreadable(f"git ls-tree {sha[:8]} {prefix} failed ({(cp.stderr or '').strip()[:200]}) "
+                                  f"(fail closed)")
+    return [x for x in cp.stdout.splitlines() if x.endswith(".lua")]
+
+
+def _git_blob(sha, path, repo=REPO):
+    cp = subprocess.run(["git", "show", f"{sha}:{path}"], cwd=str(repo), capture_output=True)
+    return cp.stdout if cp.returncode == 0 else None
+
+
+def release_input_reference(refs_cfg, shas, repo=REPO):
+    """The work tree's and each reference's release inputs, as release_input_findings reads them (the
+    work side's "cfg" is the caller's to add)."""
+    repo = Path(repo)
+    refs, wanted, tables = {}, set(), set()
+    for ref, cfg in refs_cfg.items():
+        sha = shas[ref]
+        files, tabs = {}, {}
+        if [r for r in (cfg.get("release_registry") or []) if isinstance(r, dict)]:
+            for f in release_input_files(cfg):
+                blob = _git_blob(sha, f"terra-nauvis/{f}", repo)
+                files[f] = hashlib.sha256(_norm_bytes(blob)).hexdigest() if blob is not None else None
+            for tp in _git_ls(sha, RELEASE_TABLES_DIR, repo):
+                blob = _git_blob(sha, tp, repo)
+                try:
+                    tabs[tp] = tnconfig.loads(blob.decode("utf-8"), f"{ref}:{tp}") if blob is not None else None
+                except (UnicodeDecodeError, tnconfig.ConfigError):
+                    tabs[tp] = None
+            wanted.update(files)
+            tables.update(tabs)
+        refs[ref] = {"cfg": cfg, "files": files, "tables": tabs}
+    wfiles = {}
+    for f in sorted(wanted):
+        p = repo / "terra-nauvis" / f
+        wfiles[f] = hashlib.sha256(_norm_bytes(p.read_bytes())).hexdigest() if p.is_file() else None
+    wtabs = {}
+    for tp in sorted(tables):
+        p = repo / tp
+        try:
+            wtabs[tp] = tnconfig.load(p) if p.is_file() else None
+        except tnconfig.ConfigError:
+            wtabs[tp] = None
+    return {"files": wfiles, "tables": wtabs}, refs
+
+
+def work_release_inputs(cfg, repo=REPO):
+    """The working tree's own release inputs in release_input_findings' shape (the fixtures' base)."""
+    repo = Path(repo)
+    files = {}
+    for f in release_input_files(cfg):
+        p = repo / "terra-nauvis" / f
+        files[f] = hashlib.sha256(_norm_bytes(p.read_bytes())).hexdigest() if p.is_file() else None
+    tables = {}
+    tdir = repo / RELEASE_TABLES_DIR
+    for p in sorted(tdir.glob("*.lua")) if tdir.is_dir() else []:
+        tables[RELEASE_TABLES_DIR + p.name] = tnconfig.load(p)
+    return {"cfg": cfg, "files": files, "tables": tables}
+
+
+def row_append_only(repo=REPO):
+    repo = Path(repo)
+    try:
+        refs, shas = append_only_reference(repo)
+    except ReferenceUnreadable as e:
+        return [str(e)], "the reference is unreadable"
+    work_fz = load_json(repo / "tests" / "frozen.json")
+    work_cfg = tnconfig.load(repo / "terra-nauvis" / "prototypes" / "config.lua")
+    f = append_only_findings(work_fz, work_cfg, refs)
+    try:
+        work_in, ref_in = release_input_reference({r: d["cfg"] for r, d in refs.items()}, shas, repo)
+    except ReferenceUnreadable as e:
+        return f + [str(e)], "the release inputs' reference is unreadable"
+    work_in["cfg"] = work_cfg
+    f = sorted(set(f + release_input_findings(work_in, ref_in)))
+    snap_f, snap_seen = snapshot_findings(repo, work_fz, refs)
+    f = sorted(set(f + snap_f))
+    landed = sorted(ref for ref, d in ref_in.items() if d["cfg"].get("release_registry"))
+    seen = ", ".join(f"{ref} {sha[:8]}" for ref, sha in sorted(shas.items()))
+    return f, (f"registered records (whole: type, sha256, dump, slice, date), tn_map and tn_geo ids and stored "
+               f"message keys append-only against {seen}, and the records against the frozen snapshots of the "
+               f"slices before the registry's newest ({snap_seen}); the landed bodies' inputs (config values, "
+               f"spawn-city setting lists, rows, generated files, tables) fixed against "
+               f"{', '.join(landed) or 'no ref with a landed row yet'}")
+
+
+def snapshot_findings(repo, work_fz, refs):
+    """The registry against the frozen snapshots of every milestone before the runner registry's newest
+    (a group's earlier milestones, which land their registries in their suite manifests before main
+    holds them), and a record of such a milestone without a snapshot that no reference holds (fail
+    closed). Returns (findings, what was read)."""
+    repo = Path(repo)
+    try:
+        registry = tnfrozen.runner_registry(repo / "tools" / "earth_test.py")
+        snaps, none = tnfrozen.suite_snapshots(registry, before=registry[-1]["id"],
+                                               suites=repo / "tests" / "baselines" / "suites")
+    except tnfrozen.RegistryUnreadable as e:
+        return [f"the slices' frozen snapshots are unreadable: {e}"], "unreadable"
+    union, _ = frozen_union({ref: d.get("frozen") for ref, d in refs.items()})
+    f = tnfrozen.snapshot_problems(work_fz, snaps) + tnfrozen.unsnapshotted_problems(work_fz, none, union)
+    seen = ", ".join(f"{k.split(chr(39))[0]} {len((v or {}).get('bodies') or {})} records"
+                     for k, v in sorted(snaps.items())) or "none"
+    return f, seen
+
+
+# ------------------------------------------------------------------------------------------------ bodies
+#
+# The registered bodies themselves, without the game: tools/tnlua.py runs the mod's settings and
+# data stages offline, and every Earth body they build is held to its tests/frozen.json record
+# (tnfrozen.body_problems), so a body changed in place through its code (prototypes/expressions/,
+# presets.lua) fails CI as a re-hash would. The gate's frozen row holds this reading equal to the
+# game's dump on every gate run.
+
+def bodies_findings(mod, fz, cfg):
+    """(findings, bodies or None): the offline bodies of the mod folder `mod` against `fz`."""
+    try:
+        bodies = tnfrozen.offline_bodies(mod, cfg)
+    except Exception as e:  # tnlua.LuaError and anything else: fail closed
+        return [f"the offline data stage did not run: {type(e).__name__}: {e} (fail closed)"], None
+    return tnfrozen.body_problems(bodies, fz, cfg), bodies
+
+
+def row_bodies(repo=REPO):
+    repo = Path(repo)
+    cfg = tnconfig.load(repo / "terra-nauvis" / "prototypes" / "config.lua")
+    fz = load_json(repo / "tests" / "frozen.json")
+    f, bodies = bodies_findings(repo / "terra-nauvis", fz, cfg)
+    n = len((fz.get("bodies") or {}))
+    return f, (f"{len(bodies or {})} Earth bodies built offline by tools/tnlua.py (settings and data stages at default "
+               f"settings), every one of the {n} registered at its record's hash and every other one exempt")
 
 
 # ------------------------------------------------------------------------------------------------ zip
@@ -1487,6 +2183,12 @@ def fixture_controls():
             ("workflow: ci builds a release zip", "ci", add_step(ci, "python tools/build_zip.py --release")),
             ("workflow: ci calls gh", "ci", add_step(ci, "gh release list")),
             ("workflow: ci with an extra trigger", "ci", ci.replace("  pull_request:\n", "  pull_request:\n  workflow_dispatch:\n")),
+            ("workflow: ci checks out without full history", "ci",
+             ci.replace("        with:\n          fetch-depth: 0\n", "")),
+            ("workflow: ci checks out a shallow history", "ci", ci.replace("fetch-depth: 0", "fetch-depth: 1")),
+            ("workflow: release checks out without full history (the landed-tag check needs origin/main)", "rel",
+             rel_wf.replace("        with:\n          fetch-depth: 0\n", "", 1)),
+            ("workflow: release checks out a shallow history", "rel", rel_wf.replace("fetch-depth: 0", "fetch-depth: 1")),
             ("workflow: release not on windows-latest", "rel", rel_wf.replace("windows-latest", "ubuntu-latest")),
             ("workflow: release on another python", "rel", rel_wf.replace('"3.13.3"', '"3.12"')),
             ("workflow: release with an unpinned action", "rel", rel_wf.replace(f"actions/checkout@{sha}", "actions/checkout@v7")),
@@ -1640,8 +2342,17 @@ def fixture_controls():
         results.append(("locale: every dropdown value needs its label", bool(missing), missing[:1]))
         f = toggle_multiply_findings({"x": "a * tn_canals"}, ["tn_canals"])
         results.append(("design: toggle multiply (U5, dump check)", bool(f), f[:1]))
+        results += europe_coast_fixtures(td, cfg)
         results += registration_form_fixtures(td)
         results += schema_fixtures(td, cfg)
+        results += storage_contract_fixtures(td)
+        results += append_only_fixtures(cfg, load_json(REPO / "tests" / "frozen.json"))
+        results += release_input_fixtures(cfg)
+        fz = load_json(REPO / "tests" / "frozen.json")
+        results += bodies_fixtures(td, cfg, fz)
+        results += landing_fixtures(td, cfg, fz)
+        results += landed_tag_fixtures(td)
+        results += snapshot_file_fixtures(td)
     return results
 
 
@@ -1686,6 +2397,265 @@ def name_form_fixtures(td, cfg):
     _write(clean, "prototypes/extra.lua", "local t = {elevation = 1}\nlocal e = t.elevation\nreturn e\n")
     f = name_findings(clean)
     out.append(("names: identifiers that spell no Earth name stay clean", not f, f[:1]))
+    return out
+
+
+def europe_coast_fixtures(td, cfg):
+    """The rows europe-coast added: the Map type entry's [noise-expression] name and the scale
+    labels' world sizes (locale), the fits provenance (data-src) and the fallbacks' shape."""
+    out = []
+    loc = MOD / "locale" / "en" / "terra-nauvis.cfg"
+    entry = next(iter(tnconfig.geography(cfg).values()), {}).get("entry")
+    if entry:
+        m = td / "loc-maptype" / "terra-nauvis"
+        shutil.copytree(MOD, m)
+        text = loc.read_text(encoding="utf-8")
+        (m / "locale" / "en" / "terra-nauvis.cfg").write_text(
+            "\n".join(l for l in text.split("\n") if not l.startswith(entry + "=")), encoding="utf-8")
+        f, _ = row_locale(m)
+        out.append(("locale: a Map type entry without its [noise-expression] name fails",
+                    any(entry in x for x in f), f[:1]))
+    s = cfg["settings"]["scale"]
+    m = td / "loc-sizes" / "terra-nauvis"
+    shutil.copytree(MOD, m)
+    text = loc.read_text(encoding="utf-8")
+    v = s["allowed_values"][-1]
+    key = f"{s['name']}-{v}="
+    m0 = cfg["maps"][cfg["map_order"][0]]
+    right = thousands(m0["width_px"] * int(v))
+    bad = "\n".join((l.replace(right, right + "1") if l.startswith(key) else l) for l in text.split("\n"))
+    (m / "locale" / "en" / "terra-nauvis.cfg").write_text(bad, encoding="utf-8")
+    f, _ = row_locale(m)
+    out.append(("locale: a scale label with a wrong world size fails", any("world size" in x for x in f), f[:1]))
+    r = td / "fits-repo"
+    shutil.copytree(REPO / "data-src", r / "data-src")
+    shutil.copytree(MOD, r / "terra-nauvis")
+    fits = r / "data-src" / "fits"
+    victim = next((p for d in sorted(fits.iterdir()) if d.is_dir() for p in sorted(d.glob("*.npz"))), None)
+    if victim is not None:
+        victim.write_bytes(victim.read_bytes() + b"\0")
+        f = data_src_findings(r)
+        out.append(("data-src: a fit checkpoint differing from its provenance fails",
+                    any(victim.name in x for x in f), f[:1]))
+    else:
+        out.append(("data-src: a fit checkpoint differing from its provenance fails", False, "no fit checkpoint"))
+    geo = tnconfig.geography(cfg)
+    if geo:
+        key0 = next(iter(geo))
+        fb = geo[key0]["fallbacks"]
+        shared = cfg_version(cfg, key0, fallbacks=[{"name": cfg["keys"]["scale"] + "_" + key0, "map_qualified": False}])
+        out.append(("fallbacks: a shared fallback carrying a map suffix fails", bool(fallback_findings(shared)), ""))
+        qual = cfg_version(cfg, key0, fallbacks=[{"name": cfg["keys"]["scale"], "map_qualified": True}])
+        out.append(("fallbacks: a map-qualified fallback without its map suffix fails", bool(fallback_findings(qual)),
+                    ""))
+        stray = cfg_version(cfg, key0, fallbacks=[{"name": cfg["identity"]["noise_prefix"] + "stray",
+                                                   "map_qualified": False}])
+        out.append(("fallbacks: a fallback no preset bakes fails", bool(fallback_findings(stray)), ""))
+        out.append(("fallbacks: config.lua's fallbacks pass", not fallback_findings(cfg), fallback_findings(cfg)[:1]))
+        frozen = [e for e in fb if e.get("frozen")]
+        if frozen:
+            thawed = cfg_version(cfg, key0, fallbacks=[dict(e, frozen=False) if e is frozen[0] else e for e in fb])
+            out.append(("fallbacks: a released fallback that mirrors a setting fails",
+                        bool(fallback_findings(thawed)) and bool(tnconfig.schema_problems(thawed)), ""))
+            unreg = dict(cfg, release_registry=[dict(r, names=[n for n in r["names"] if n != frozen[0]["name"]])
+                                                for r in cfg["release_registry"]])
+            out.append(("fallbacks: a frozen fallback in no release row fails",
+                        bool(fallback_findings(unreg)) and bool(tnconfig.schema_problems(unreg)), ""))
+        else:
+            out.append(("fallbacks: config.lua holds a frozen fallback to test", False, "none frozen"))
+    # control code labels a world by its preset's name, never a [noise-expression] key
+    m = td / "ctl-noise-label" / "terra-nauvis"
+    shutil.copytree(MOD, m)
+    (m / "scripts" / "label_fixture.lua").write_text(
+        'local M = {}\nfunction M.label(e)\n  return {"noise-expression." .. e}\nend\nreturn M\n', encoding="utf-8")
+    f, _ = row_locale(m)
+    out.append(("locale: control code building a [noise-expression] key fails",
+                any("label_fixture.lua" in x for x in f), f[:1]))
+    out.append(("locale: the shipped control code builds no [noise-expression] key",
+                not control_noise_label_findings(MOD), control_noise_label_findings(MOD)[:1]))
+    out += version_fixtures(cfg)
+    return out
+
+
+def cfg_version(cfg, map_key=None, index=-1, **fields):
+    """A deep copy of `cfg` with one geography version's fields set (by default the newest version of
+    the first map): a fixture config for the schema and fallback checks."""
+    out = copy.deepcopy(cfg)
+    geo = out["geography"]
+    geo[map_key or next(iter(geo))]["versions"][index].update(copy.deepcopy(fields))
+    return out
+
+
+def next_version(cfg, map_key=None):
+    """config.lua with the next geography version of a map added the way a later milestone adds one
+    (ARCHITECTURE.md, "Map type entries": the documented v2): every name of its own (each name's
+    version suffix moved on), the next unused tn_geo id with its own release row, the same generated
+    files bound to its own chain, its offset names in preset_keys, its fine field in the firewall, a
+    start mask version of its own, and the fallbacks its entry reads (the shared scale and its own
+    frozen offsets). Returns (config, map key, the new version)."""
+    out = copy.deepcopy(cfg)
+    key = map_key or next(iter(out["geography"]))
+    vs = out["geography"][key]["versions"]
+    last = vs[-1]
+    n = len(vs) + 1
+
+    def bump(name):
+        return re.sub(r"_v\d+$", "", name) + f"_v{n}"
+    new = {r: bump(last[r]) for r in tnconfig.GEOGRAPHY_NAMES}
+    ids = [v["geo_id"] for g in out["geography"].values() for v in g["versions"]]
+    ids += [r["geography"] for r in out["release_registry"] if "geography" in r]
+    gid = max(ids) + 1
+    mask = dict(next(m for m in out["start_mask"]["versions"] if m["name"] == last["start_mask"]),
+                name=bump(last["start_mask"]))
+    out["start_mask"]["versions"].append(mask)
+    own = {last["cx"]: new["cx"], last["cy"]: new["cy"]}
+    v = dict(last, **new, geo_id=gid, start_mask=mask["name"],
+             fallbacks=[dict(e, name=own.get(e["name"], e["name"])) for e in last["fallbacks"]])
+    # a spawn record's names that read the version's chain are the version's own too (its inland
+    # lakes); the other spawn bodies read no chain and serve both versions
+    sp = tnconfig.spawn_of(last)
+    spawn_new = {r: bump(sp[r]) for r in tnconfig.SPAWN_OWN} if sp else {}
+    if sp:
+        v["spawn"] = dict(sp, **spawn_new)
+    vs.append(v)
+    out["release_registry"].append({"release": out["release_registry"][-1]["release"], "map": key, "geography": gid,
+                                    "names": sorted(set(new.values()) | {mask["name"]} | set(spawn_new.values())),
+                                    "files": []})
+    out["preset_keys"] = list(out["preset_keys"]) + [new["cx"], new["cy"]]
+    out["firewall"][key] = list(out["firewall"][key]) + [n for n in tnconfig.fine_names(v)
+                                                         if n not in out["firewall"][key]]
+    return out, key, v
+
+
+def version_fixtures(cfg):
+    """config.lua holds every version of a map's geography, fallbacks and start mask: the documented
+    next version (names of its own, the next tn_geo id, the same generated files) passes every
+    schema and fallback check and becomes the preset's version while the older one stays listed;
+    a next version that re-points an older version's names, shares its tn_geo id, bakes a key
+    preset_keys lacks, leaves its fine field outside the firewall, names a start mask or a file
+    config.lua lacks, or lists a shared fallback with other flags fails; and the retired one-version
+    shapes (a top-level fallbacks group or start_mask_versions, a geography holding entry_versions,
+    an empty versions list, a start mask without its formula) fail instead of being read by no one."""
+    out = []
+    if not tnconfig.geography(cfg) or not tnconfig.start_masks(cfg):
+        return [("versions: the fixtures need a geography and a start mask", False, "")]
+    v2cfg, key, v2 = next_version(cfg)
+    probs = tnconfig.schema_problems(v2cfg) + fallback_findings(v2cfg)
+    newest = tnconfig.geography(v2cfg)[key]
+    out.append(("versions: the documented next version passes the schema and fallback checks",
+                not probs and newest["entry"] == v2["entry"] and newest["entry_versions"][-1] == v2["entry"] and
+                len(newest["entry_versions"]) == len(tnconfig.geography(cfg)[key]["entry_versions"]) + 1, probs[:1]))
+    out.append(("versions: the next version's start mask and fallbacks join the older ones",
+                [m["name"] for m in tnconfig.start_masks(v2cfg)][-1] == v2["start_mask"] and
+                {v2["cx"], v2["cy"]} <= set(tnconfig.frozen_fallback_names(v2cfg)) and
+                set(tnconfig.frozen_fallback_names(cfg)) <= set(tnconfig.frozen_fallback_names(v2cfg)), ""))
+    older = tnconfig.geography_versions(cfg)[key][-1]
+    sk = cfg["keys"]["scale"]
+    cases = {
+        "a next version re-pointing the older version's city offset names": (
+            cfg_version(v2cfg, key, cx=older["cx"], cy=older["cy"],
+                        fallbacks=[e for e in older["fallbacks"]]), "in more than one role or version"),
+        "a next version sharing the older version's tn_geo id": (
+            cfg_version(v2cfg, key, geo_id=older["geo_id"]), "geo_id of more than one version"),
+        "a next version baking an offset name preset_keys lacks": (
+            dict(v2cfg, preset_keys=[k for k in v2cfg["preset_keys"] if k != v2["cx"]]), "preset_keys lacks"),
+        "a next version whose entry is outside the firewall": (
+            dict(v2cfg, firewall={key: [n for n in v2cfg["firewall"][key] if n != v2["entry"]]}),
+            "firewall." + key + " lacks"),
+        "a next version naming no start mask version": (
+            cfg_version(v2cfg, key, start_mask=cfg["identity"]["noise_prefix"] + "start_mask_v99"),
+            "is no start_mask version"),
+        "a next version binding a file no release row lists": (
+            cfg_version(v2cfg, key, fits=dict(v2["fits"], geo="prototypes/generated/geo_nowhere_v9.lua")),
+            "no release_registry row lists"),
+        "a next version listing the shared scale fallback as frozen": (
+            cfg_version(v2cfg, key, fallbacks=[dict(e, frozen=True) if e["name"] == sk else e
+                                               for e in v2["fallbacks"]]), "with different flags"),
+        "a top-level fallbacks group (retired into each geography version)": (
+            dict(cfg, fallbacks={key: [{"name": sk, "map_qualified": False}]}), "retired"),
+        "a top-level start_mask_versions group (retired into start_mask.versions)": (
+            dict(cfg, start_mask_versions=[]), "retired"),
+        "a geography holding entry_versions beside its versions": (
+            dict(cfg, geography={key: dict(cfg["geography"][key], entry_versions=[older["entry"]])}),
+            "must hold exactly"),
+        "a geography with no version": (
+            dict(cfg, geography={key: dict(cfg["geography"][key], versions=[])}), "at least one version"),
+        "a start mask version without its formula": (
+            dict(cfg, start_mask={"versions": [{k: x for k, x in m.items() if k != "formula"}
+                                               for m in cfg["start_mask"]["versions"]]}), "formula"),
+        "a start mask named twice": (
+            dict(cfg, start_mask={"versions": cfg["start_mask"]["versions"] * 2}), "twice"),
+    }
+    for label, (c, needle) in cases.items():
+        got = tnconfig.schema_problems(c)
+        hit = [x for x in got if needle in x]
+        out.append((f"versions: {label} fails the schema check", bool(hit), (hit or got or ["no problem"])[:1]))
+    extra = cfg_version(v2cfg, key, fallbacks=v2["fallbacks"] + [
+        {"name": cfg["identity"]["noise_prefix"] + "unbaked_" + key, "map_qualified": True}])
+    got = fallback_findings(extra)
+    out.append(("versions: a next version's fallback that its preset does not bake fails the fallback row",
+                any("is no key that version's preset bakes" in x for x in got), got[:1]))
+    return out + spawn_record_fixtures(cfg)
+
+
+def spawn_record_fixtures(cfg):
+    """A geography version's spawn record (spawn-cities), class-swept: the shipped record passes, and
+    each way to break it fails the schema check with its own message: a missing field, an inland
+    lakes body another version names (it reads the version's own chain), the inland lakes or the
+    start land guarantee outside the firewall, the spawn lake (the start mask reads it in the Entity
+    program) inside it, city offset numbers beside a city fold, a city number that is a frozen
+    fallback or no fallback at all, a bearings file no release row lists, a city setting whose first
+    value is not random, and a key the version's preset bakes that preset_keys lacks."""
+    out = []
+    geo = tnconfig.geography_versions(cfg)
+    key = next((k for k, vs in geo.items() if tnconfig.spawn_of(vs[-1])), None)
+    if key is None:
+        return [("spawn: the fixtures need a geography version with a spawn record", False, "")]
+    vs = geo[key]
+    v = vs[-1]
+    sp = v["spawn"]
+    i = len(vs) - 1
+    out.append(("spawn: the shipped spawn record passes the schema check", not tnconfig.schema_problems(cfg),
+                tnconfig.schema_problems(cfg)[:1]))
+
+    def with_spawn(**fields):
+        return cfg_version(cfg, key, i, spawn=dict(sp, **fields))
+
+    def fw_without(name):
+        return dict(cfg, firewall=dict(cfg["firewall"], **{key: [n for n in cfg["firewall"][key] if n != name]}))
+    older_spawned = copy.deepcopy(cfg)
+    older_spawned["geography"][key]["versions"][0]["spawn"] = dict(sp)
+    older_spawned["geography"][key]["versions"][0]["city_offset"] = list(v["city_offset"])
+    frozen_city = copy.deepcopy(cfg)
+    for vv in frozen_city["geography"][key]["versions"]:
+        vv["fallbacks"] = [dict(e, frozen=True) if e["name"] == sp["city"] else e for e in vv["fallbacks"]]
+    setting = cfg["settings"][sp["city_setting"]]
+    unrandom = dict(cfg, settings=dict(cfg["settings"], **{sp["city_setting"]: dict(
+        setting, allowed_values=list(setting["allowed_values"][1:]) + setting["allowed_values"][:1])}))
+    cases = {
+        "a spawn record without its bearings file": (
+            cfg_version(cfg, key, i, spawn={k: x for k, x in sp.items() if k != "bearings"}), "must hold exactly"),
+        "an older version naming the newest version's inland lakes": (older_spawned, "in more than one role or version"),
+        "inland lakes outside the firewall": (fw_without(sp["inland_lakes"]), "firewall." + key + " lacks"),
+        "the start land guarantee outside the firewall": (fw_without(sp["start_land"]), "firewall." + key + " lacks"),
+        "the spawn lake inside the firewall": (
+            dict(cfg, firewall=dict(cfg["firewall"], **{key: list(cfg["firewall"][key]) + [sp["spawn_lake"]]})),
+            "must stay firewall-clean"),
+        "city offset numbers beside a city fold": (cfg_version(cfg, key, i, city_offset=[0, 0]), "must name the city fold"),
+        "a city number that is a frozen fallback": (frozen_city, "mirrors a startup setting"),
+        "a city number that is no fallback": (
+            cfg_version(cfg, key, i, fallbacks=[e for e in v["fallbacks"] if e["name"] != sp["city"]]),
+            "mirrors a startup setting"),
+        "a bearings file no release row lists": (
+            with_spawn(bearings="prototypes/generated/spawn_nowhere_v9.lua"), "no release_registry row lists"),
+        "a city setting whose first value is not random": (unrandom, "must start with spawn.random_value"),
+        "a baked spawn key preset_keys lacks": (
+            dict(cfg, preset_keys=[k for k in cfg["preset_keys"] if k != cfg["keys"]["spawn_lake"]]), "preset_keys lacks"),
+    }
+    for label, (c, needle) in cases.items():
+        got = tnconfig.schema_problems(c)
+        hit = [x for x in got if needle in x]
+        out.append((f"spawn: {label} fails the schema check", bool(hit), (hit or got or ["no problem"])[:1]))
     return out
 
 
@@ -1742,6 +2712,84 @@ def registration_form_fixtures(td):
     return out
 
 
+def fixture_frozen(bodies):
+    """A tests/frozen.json fixture holding `bodies` under the tnfrozen contract."""
+    return {"format": tnfrozen.FORMAT, "hash_fields": list(tnfrozen.HASH_FIELDS), "bodies": bodies}
+
+
+def fixture_record(registry, sha256="0" * 64, type_="noise-expression"):
+    """A record that keeps the tnfrozen contract against `registry`, for its newest milestone."""
+    sid = registry[-1]["id"]
+    return tnfrozen.record(type_, sha256, tnfrozen.labels_through(registry)[sid][0], sid, "2026-10-28")
+
+
+def frozen_record_fixtures(td, cfg, registry, rec):
+    """Every field of a tests/frozen.json record fails the static frozen row when it breaks the
+    tnfrozen contract, the dump label first (relabeled to a dump no registry entry assigns, a typo,
+    missing, or one the record's milestone could not have produced), then an unknown milestone, an undefined
+    field, a bad date, hash or type, a record that is not a table and a file without the hash's
+    field list; the release build fails the dump-label cases too; and the static reading of the
+    runner's registry fails closed on a runner that does not assign it once, as a literal that no
+    other module-level statement names. `cfg` registers one body, tn_geo_v1, under `rec`."""
+    out = []
+    name = "tn_geo_v1"
+    unassigned = next(f"m{i}" for i in range(1, 1000) if f"m{i}" not in tnfrozen.assigned_labels(registry))
+
+    def with_rec(**fields):
+        r = dict(rec)
+        for k, v in fields.items():
+            if v is None:
+                r.pop(k, None)
+            else:
+                r[k] = v
+        return fixture_frozen({name: r})
+    two = [{"id": "fx-a", "dumps": ["m1"]}, {"id": "fx-b", "dumps": ["m1", "m2"]}]
+    relabeled = f"a record relabeled to {unassigned}, a dump no registry entry assigns"
+    label_cases = {relabeled: with_rec(dump=unassigned), "a typo of a dump label (M1)": with_rec(dump="M1"),
+                   "a record without a dump label": with_rec(dump=None)}
+    cases = dict({k: (v, registry) for k, v in label_cases.items()}, **{
+        "a record whose dump its slice could not have produced": (fixture_frozen({name: tnfrozen.record(
+            "noise-expression", "0" * 64, "m2", "fx-a", "2026-10-28")}), two),
+        "a record naming a slice the registry lacks": (with_rec(slice="no-such-slice"), registry),
+        "a record holding a field the contract does not define": (with_rec(note="x"), registry),
+        "a record with a malformed date": (with_rec(registered="2026-13-01"), registry),
+        "a record with a malformed sha256": (with_rec(sha256="0" * 63), registry),
+        "a record of an unknown type": (with_rec(type="noise"), registry),
+        "a record that is not a table": (fixture_frozen({name: "m1"}), registry),
+        "a registry without the hash's field list": (
+            {k: v for k, v in fixture_frozen({name: rec}).items() if k != "hash_fields"}, registry)})
+    for label, (fz, reg) in cases.items():
+        f = config_frozen_findings(cfg, fz, reg)
+        out.append((f"static: {label} fails the frozen row", bool(f), f[:1]))
+    p = td / "frozen-record-fixture.json"
+    for label, fz in label_cases.items():
+        p.write_text(json.dumps(fz), encoding="utf-8")
+        probs = build_zip.release_problems(cfg, p)
+        out.append((f"release: {label} fails the release build",
+                    any(f"tests/frozen.json {name}:" in x and "dump" in x for x in probs), probs[:1]))
+    one = '{"id": "a", "dumps": ["m1"]}'
+    runners = {
+        "a runner without REGISTRY": "X = 1\n",
+        "a runner whose REGISTRY is not a literal": "BASE = []\nREGISTRY = BASE + []\n",
+        "a runner extending REGISTRY at module level": f"REGISTRY = [{one}]\nREGISTRY.append({one})\n",
+        "a runner extending REGISTRY in a class body": f"REGISTRY = [{one}]\nclass X:\n    REGISTRY.append({one})\n",
+        "a runner assigning REGISTRY twice": f"REGISTRY = [{one}]\nREGISTRY = [{one}]\n",
+        "a runner whose REGISTRY lists a dump label that is not text": 'REGISTRY = [{"id": "a", "dumps": [1]}]\n',
+        "a runner reading REGISTRY only in function bodies": f"REGISTRY = [{one}]\ndef f():\n    return REGISTRY\n"}
+    for label, text in runners.items():
+        rp = td / ("runner-" + str(abs(hash(label)) % 10 ** 8)) / "earth_test.py"
+        rp.parent.mkdir(parents=True, exist_ok=True)
+        rp.write_text(text, encoding="utf-8")
+        reads = label.startswith("a runner reading")
+        try:
+            got = tnfrozen.runner_registry(rp)
+            out.append((f"registry: {label} {'reads' if reads else 'fails closed'}", reads and got == [json.loads(one)],
+                        "read" if reads else "read without an error"))
+        except tnfrozen.RegistryUnreadable as e:
+            out.append((f"registry: {label} {'reads' if reads else 'fails closed'}", not reads, str(e)[:80]))
+    return out
+
+
 def schema_fixtures(td, cfg):
     """config.lua's group shapes: a wrong shape raises instead of reading as empty, fallbacks are
     exempt from the release registry check and never registered, and defined_names includes them."""
@@ -1752,24 +2800,48 @@ def schema_fixtures(td, cfg):
         out.append(("schema: a list-shaped firewall group raises", False, "read as names"))
     except tnconfig.ConfigError:
         out.append(("schema: a list-shaped firewall group raises", True, ""))
-    bad_fb = dict(cfg, fallbacks=["tn_scale"])
-    out.append(("schema: a flat fallbacks list fails the names row", bool(tnconfig.schema_problems(bad_fb)), ""))
-    out.append(("schema: an unknown map key under fallbacks fails", bool(tnconfig.schema_problems(dict(
-        cfg, fallbacks={"mars": [{"name": "tn_scale", "map_qualified": False}]}))), ""))
-    fb = dict(cfg, fallbacks={"europe": [{"name": "tn_scale", "map_qualified": False}]},
-              release_registry=[{"release": "0.1.0", "geography": "g1", "names": ["tn_scale", "tn_geo_v1"], "files": []}],
-              placeholder=None, presets={"europe": dict(cfg["presets"]["europe"], placeholder=None)})
+    out.append(("schema: an unknown map key under geography fails", bool(tnconfig.schema_problems(dict(
+        cfg, geography=dict(cfg.get("geography") or {}, mars={"map_type_order": "z", "versions": []})))), ""))
+    registry = tnfrozen.runner_registry()
+    rec = fixture_record(registry)
     fz = td / "frozen-fixture.json"
-    fz.write_text(json.dumps({"format": "tn-frozen/1", "bodies": {"tn_geo_v1": {"type": "noise-expression",
-                                                                               "sha256": "0" * 64}}}), encoding="utf-8")
-    out.append(("schema: a fallback in the release registry is exempt from frozen.json", not build_zip.release_problems(
-        fb, fz), build_zip.release_problems(fb, fz)[:1]))
-    fz.write_text(json.dumps({"format": "tn-frozen/1", "bodies": {"tn_geo_v1": {"type": "noise-expression",
-                                                                               "sha256": "0" * 64},
-                                                                 "tn_scale": {"type": "noise-expression",
-                                                                              "sha256": "0" * 64}}}), encoding="utf-8")
-    out.append(("schema: a registered fallback fails the release build", bool(build_zip.release_problems(fb, fz)), ""))
-    out.append(("schema: defined_names includes the fallbacks", "tn_scale" in tnconfig.defined_names(fb)["noise"], ""))
+    # the Map type fallbacks, on the shipped config: the scale mirrors a setting, so it is exempt from
+    # tests/frozen.json and never registered, while a frozen fallback is registered like every body
+    sk = cfg["keys"]["scale"]
+    # each fixture record is the registered one, or carries the body's real hash, which the release
+    # build's offline body and snapshot checks hold it to (tnfrozen.body_problems, snapshot_problems)
+    real = tnfrozen.body_digests(tnfrozen.offline_bodies(MOD, cfg))
+    landed = (load_json(REPO / "tests" / "frozen.json").get("bodies") or {})
+    every = {n: landed.get(n) or dict(rec, **(real.get(n) or {})) for n in tnconfig.unregistered_names(cfg, {})}
+    fz.write_text(json.dumps(fixture_frozen(every)), encoding="utf-8")
+    probs = build_zip.release_problems(cfg, fz)
+    out.append(("schema: a fallback that mirrors a setting is exempt from frozen.json",
+                not probs and sk not in every and sk in tnconfig.exempt_fallback_names(cfg), probs[:1]))
+    rows = [dict(r) for r in cfg["release_registry"]]
+    in_release = dict(cfg, release_registry=[dict(rows[0], names=list(rows[0]["names"]) + [sk])] + rows[1:])
+    out.append(("schema: a fallback that mirrors a setting in a release row fails the names row (U3)",
+                any(sk in x and "U3" in x for x in tnconfig.schema_problems(in_release)), ""))
+    gk = next(iter(cfg["geography"]))
+    # the scale's fallback marked frozen in every version that lists it (one prototype serves them
+    # all, so a version that kept it unfrozen would fail on the differing flags instead)
+    frozen_fb = copy.deepcopy(cfg)
+    for v in frozen_fb["geography"][gk]["versions"]:
+        v["fallbacks"] = [dict(e, frozen=True) if e["name"] == sk else e for e in v["fallbacks"]]
+    out.append(("schema: a frozen fallback in no release row fails the names row",
+                any(sk in x and "frozen fallback" in x for x in tnconfig.schema_problems(frozen_fb)), ""))
+    out.append(("release: a frozen fallback left unregistered fails the release build",
+                any(sk in x for x in build_zip.release_problems(dict(frozen_fb, release_registry=in_release[
+                    "release_registry"]), fz)), ""))
+    fz.write_text(json.dumps(fixture_frozen(dict(every, **{sk: rec}))), encoding="utf-8")
+    probs = build_zip.release_problems(cfg, fz)
+    out.append(("schema: a registered fallback fails the release build",
+                any(sk in p and "is registered" in p for p in probs), probs[:1]))
+    out.append(("schema: defined_names includes the fallbacks", sk in tnconfig.defined_names(cfg)["noise"], ""))
+    # a synthetic config of one released body, for the release build and the frozen rows
+    fb = dict(cfg, release_registry=[{"release": "0.1.0", "map": "europe", "geography": 1, "names": ["tn_geo_v1"],
+                                      "files": []}],
+              placeholder=None, presets={"europe": dict(cfg["presets"]["europe"], placeholder=None)}, firewall={},
+              geography={}, start_mask=None)
     bad_tg = dict(cfg, toggles={"canals": {"setting": "scale", "preset_key": "tn_canals", "mechanism": "name switch"}},
                   toggle_order=[])
     out.append(("schema: toggles without their toggle_order entry fail", bool(tnconfig.schema_problems(bad_tg)), ""))
@@ -1777,25 +2849,591 @@ def schema_fixtures(td, cfg):
     fw_only = dict(fb, firewall={"europe": ["tn_elevation_europe_v1", "tn_geo_europe_v1"]}, release_registry=[])
     out.append(("schema: a firewall body in no release_registry row fails the names row",
                 bool(tnconfig.schema_problems(fw_only)), ""))
-    fz.write_text(json.dumps({"format": "tn-frozen/1", "bodies": {}}), encoding="utf-8")
+    fz.write_text(json.dumps(fixture_frozen({})), encoding="utf-8")
     probs = build_zip.release_problems(fw_only, fz)
     out.append(("release: an unregistered firewall body fails the release build",
                 any("tn_elevation_europe_v1" in p and "not registered" in p for p in probs), probs[:1]))
     fw_reg = dict(fb, firewall={"europe": ["tn_geo_v1"]})
-    fz.write_text(json.dumps({"format": "tn-frozen/1", "bodies": {}}), encoding="utf-8")
+    fz.write_text(json.dumps(fixture_frozen({})), encoding="utf-8")
     out.append(("release: a released body never frozen fails the release build",
                 any("tn_geo_v1" in p for p in build_zip.release_problems(fw_reg, fz)), ""))
     out.append(("static: a config body missing from frozen.json fails the frozen row",
-                any("tn_geo_v1" in x for x in config_frozen_findings(fw_reg, {"bodies": {}})), ""))
+                any("tn_geo_v1" in x for x in config_frozen_findings(fw_reg, fixture_frozen({}), registry)), ""))
     out.append(("static: a registered config body passes the frozen row",
-                not config_frozen_findings(fw_reg, {"bodies": {"tn_geo_v1": {"type": "noise-expression",
-                                                                             "sha256": "0" * 64}}}), ""))
+                not config_frozen_findings(fw_reg, fixture_frozen({"tn_geo_v1": rec}), registry),
+                config_frozen_findings(fw_reg, fixture_frozen({"tn_geo_v1": rec}), registry)[:1]))
+    out += frozen_record_fixtures(td, fw_reg, registry, rec)
     out.append(("schema: a noise name without the noise prefix fails",
-                bool(tnconfig.schema_problems(dict(fb, release_registry=[{"release": "0.1.0", "geography": "g1",
-                                                                         "names": ["elevation_x"], "files": []}]))),
+                any("noise prefix" in x for x in tnconfig.schema_problems(dict(fb, release_registry=[
+                    {"release": "0.1.0", "map": "europe", "geography": 1, "names": ["elevation_x"], "files": []}]))),
                 ""))
+    out += id_space_fixtures(cfg)
+    if cfg.get("geography"):
+        stray = cfg_version(cfg, far=cfg["identity"]["noise_prefix"] + "far_unlisted_v1")
+        out.append(("schema: a geography name in no release row fails the names row",
+                    any("far_unlisted_v1" in x for x in tnconfig.schema_problems(stray)), ""))
+        gk = next(iter(cfg["geography"]))
+        no_off = copy.deepcopy(cfg)
+        no_off["geography"][gk]["versions"][-1].pop("city_offset")
+        out.append(("schema: a geography version without its city offset fails",
+                    bool(tnconfig.schema_problems(no_off)), ""))
     out.append(("schema: the placeholder's names need no registration",
                 not tnconfig.unregistered_names(cfg, {}) if cfg.get("placeholder") else True, ""))
+    # each preset's withheld_with (the mods that withhold it) and the water_slider group (D15)
+    pk = next(iter(cfg.get("presets") or {}), None)
+    if pk:
+        for label, wv in (("a string", "alien-biomes"), ("a list holding a number", ["alien-biomes", 3])):
+            bad_wh = dict(cfg, presets=dict(cfg["presets"], **{pk: dict(cfg["presets"][pk], withheld_with=wv)}))
+            out.append((f"schema: withheld_with as {label} fails", bool(tnconfig.schema_problems(bad_wh)), ""))
+        out.append(("schema: the shipped withheld_with lists pass",
+                    not any("withheld_with" in x for x in tnconfig.schema_problems(cfg)), ""))
+    ws = list(cfg.get("water_slider") or [])
+    if ws:
+        for label, bad_ws in (("a key outside preset_keys", ws + [{"key": "elevation_lakes", "value": 0}]),
+                              ("a non-number value", [dict(ws[0], value="0")] + ws[1:]),
+                              ("a key listed twice", ws + [dict(ws[0])]),
+                              ("an entry with a stray field", [dict(ws[0], note="x")] + ws[1:])):
+            out.append((f"schema: water_slider with {label} fails",
+                        bool(tnconfig.schema_problems(dict(cfg, water_slider=bad_ws))), ""))
+        out.append(("schema: the shipped water_slider passes",
+                    not any("water_slider" in x for x in tnconfig.schema_problems(cfg)), ""))
+    return out
+
+
+def id_space_fixtures(cfg):
+    """The id spaces (tnconfig.id_space_problems): a tn_map id or a tn_geo id shared by two maps, a
+    geo_id with no release row or registered under another map, a geography id in two rows, a row
+    with a geography but no map, a shared Map type order and a non-integer id each fail; the shipped
+    config passes."""
+    out = [("ids: the shipped config.lua passes the id-space check", not tnconfig.id_space_problems(cfg),
+            tnconfig.id_space_problems(cfg)[:1])]
+    maps = list(cfg.get("map_order") or [])
+    geo = dict(cfg.get("geography") or {})
+    rows = [dict(r) for r in cfg.get("release_registry") or []]
+    if len(maps) < 2 or not geo or not rows:
+        return out + [("ids: the fixtures need two maps, a geography and a release row", False, "")]
+    first = next(iter(geo))
+    other = next(m for m in maps if m != first)
+    g0 = tnconfig.geography(cfg)[first]
+    mk = dict(cfg["maps"])
+
+    def other_map(geo_id=None, order="z"):
+        """The first map's geography copied under another map, with its own Map type order and, when
+        given, its versions' tn_geo id."""
+        g = copy.deepcopy(cfg["geography"][first])
+        for v in g["versions"]:
+            v["geo_id"] = v["geo_id"] if geo_id is None else geo_id
+        return dict(geo, **{other: dict(g, map_type_order=order)})
+    cases = {
+        "a tn_map id shared by two maps": (
+            dict(cfg, maps=dict(mk, **{other: dict(mk[other], id=mk[first]["id"])})), "names more than one map"),
+        "a tn_map id that is not a positive integer": (
+            dict(cfg, maps=dict(mk, **{first: dict(mk[first], id=0)})), "must be a positive integer"),
+        "a tn_geo id shared by two maps": (
+            dict(cfg, geography=other_map(), release_registry=rows + [dict(rows[0], map=other, release="0.1.1")]),
+            "geo_id of more than one version or map"),
+        "a geo_id with no release row": (
+            cfg_version(cfg, first, geo_id=g0["geo_id"] + 7), "has no release_registry row"),
+        "a geo_id registered under another map": (
+            dict(cfg, release_registry=[dict(rows[0], map=other)] + rows[1:]), "an id names one map"),
+        "a geography id in two release rows": (
+            dict(cfg, release_registry=rows + [dict(rows[0], release="0.1.1")]), "appears in more than one row"),
+        "a release row with a geography and no map": (
+            dict(cfg, release_registry=[{k: v for k, v in rows[0].items() if k != "map"}] + rows[1:]),
+            "names its map and its geography id together"),
+        "a non-integer geography id": (
+            dict(cfg, release_registry=[dict(rows[0], geography="g1")] + rows[1:]), "must be a positive integer"),
+        "a Map type order shared by two maps": (
+            dict(cfg, geography=other_map(g0["geo_id"] + 1, geo[first]["map_type_order"]),
+                 release_registry=rows + [dict(rows[0], map=other, geography=g0["geo_id"] + 1)]),
+            "Map type order"),
+    }
+    for label, (c, needle) in cases.items():
+        probs = tnconfig.schema_problems(c)
+        hit = [p for p in probs if needle in p]
+        out.append((f"ids: {label} fails the schema check", bool(hit), (hit or probs or ["no problem"])[:1]))
+    return out
+
+
+def storage_contract_fixtures(td):
+    """The stored-records scan: another file indexing the warning store (by dot or by a string key),
+    a record_warning call with an unknown key and one with a computed key each fail."""
+    out = []
+    cases = {
+        "storage: another file appends to storage.earth.warnings": (
+            "scripts/start.lua", "local e = storage.earth\ne.warnings[#e.warnings + 1] = {\"x\"}\n"),
+        "storage: another file writes a sent count by string key": (
+            "scripts/start.lua", "storage.earth[\"sent\"] = {}\n"),
+        "storage: record_warning with a key messages.keys lacks": (
+            "scripts/start.lua", "local g = require(\"scripts.guards\")\ng.record_warning(\"no_such_message\", {})\n"),
+        "storage: record_warning with a computed key": (
+            "scripts/start.lua", "local g = require(\"scripts.guards\")\nlocal k = \"withheld\" .. \"_beside\"\n"
+                                 "g.record_warning(k, {})\n"),
+        "storage: another file replaces storage.earth wholesale": (
+            "scripts/start.lua", "storage.earth = {schema = 1}\n"),
+        "storage: another file replaces storage.map_type by string key": (
+            "scripts/start.lua", "storage[\"map_type\"] = nil\n"),
+    }
+    for label, (path, text) in cases.items():
+        m = td / ("mod-st-" + str(abs(hash(label)) % 10 ** 8)) / "terra-nauvis"
+        shutil.copytree(MOD, m)
+        _write(m, path, text)
+        f = storage_contract_findings(m)
+        out.append((label, bool(f), f[:1]))
+    return out
+
+
+def append_only_fixtures(cfg, fz):
+    """The append-only check on fixture references: a dropped or re-hashed registered body, a record
+    relabeled (to another dump or a mistyped label), re-sliced, re-dated, retyped or given a field, a
+    changed hash field list, a moved tn_map id, a tn_geo id moved to another map, a removed or
+    renamed stored message key and two references disagreeing on a hash or a dump label each fail;
+    the tree against itself and an added body pass; and a ref that does not resolve, or a resolving
+    ref without the file, fails closed."""
+    out = []
+    import copy
+    ref = {"frozen": copy.deepcopy(fz), "cfg": copy.deepcopy(cfg)}
+    out.append(("append-only: the tree against itself passes", not append_only_findings(fz, cfg, {"main": ref}),
+                append_only_findings(fz, cfg, {"main": ref})[:1]))
+    bodies = sorted((fz.get("bodies") or {}))
+    maps = list(cfg.get("map_order") or [])
+    msg = sorted(((cfg.get("messages") or {}).get("keys") or {}))
+    if not bodies or len(maps) < 2 or not msg or not cfg.get("release_registry"):
+        return out + [("append-only: the fixtures need a registered body, two maps, a message and a release row",
+                       False, "")]
+    v = bodies[0]
+    added = copy.deepcopy(fz)
+    added["bodies"]["tn_fixture_added_v1"] = {"type": "noise-expression", "sha256": "1" * 64}
+    out.append(("append-only: an added body passes", not append_only_findings(added, cfg, {"main": ref}), ""))
+    dropped = copy.deepcopy(fz)
+    del dropped["bodies"][v]
+    rehashed = copy.deepcopy(fz)
+    rehashed["bodies"][v]["sha256"] = "2" * 64
+    moved_id = copy.deepcopy(cfg)
+    moved_id["maps"][maps[0]]["id"] = 99
+    moved_geo = copy.deepcopy(cfg)
+    moved_geo["release_registry"][0]["map"] = maps[1]
+    no_msg = copy.deepcopy(cfg)
+    del no_msg["messages"]["keys"][msg[0]]
+    renamed = copy.deepcopy(cfg)
+    renamed["messages"]["keys"][msg[0]] = "renamed-" + renamed["messages"]["keys"][msg[0]]
+    other = copy.deepcopy(ref)
+    other["frozen"]["bodies"][v]["sha256"] = "3" * 64
+    # every field of a landed record is fixed, the dump label the gate reads a body from first: a hand
+    # relabel (to a later milestone's dump or a mistyped one) moves a record as a new hash does
+    own = str(fz["bodies"][v].get("dump"))
+    later = next(f"m{i}" for i in range(1, 1000) if f"m{i}" != own)
+
+    def edited(**fields):
+        e = copy.deepcopy(fz)
+        e["bodies"][v].update(fields)
+        return e
+    other_label = copy.deepcopy(ref)
+    other_label["frozen"]["bodies"][v]["dump"] = later
+    fields_moved = copy.deepcopy(fz)
+    fields_moved["hash_fields"] = [f for f in (fz.get("hash_fields") or []) if f != "parameters"]
+    for label, (wfz, wcfg, refs) in {
+            "a dropped registered body": (dropped, cfg, {"main": ref}),
+            "a registered body re-hashed in place": (rehashed, cfg, {"main": ref}),
+            "a re-hashed body that only origin/main registers (a stale local main)": (
+                rehashed, cfg, {"main": {"frozen": dropped, "cfg": cfg}, "origin/main": ref}),
+            f"a registered record relabeled to {later}": (edited(dump=later), cfg, {"main": ref}),
+            "a registered record's dump label mistyped": (edited(dump=own.upper() if own.upper() != own else own + "x"),
+                                                          cfg, {"main": ref}),
+            "a registered record re-sliced": (edited(slice=str(fz["bodies"][v].get("slice")) + "-x"), cfg,
+                                              {"main": ref}),
+            "a registered record re-dated": (edited(registered="2000-01-01"), cfg, {"main": ref}),
+            "a registered record retyped": (edited(type="noise-function" if fz["bodies"][v].get("type") !=
+                                                   "noise-function" else "noise-expression"), cfg, {"main": ref}),
+            "a registered record given a field": (edited(note="x"), cfg, {"main": ref}),
+            "a changed hash field list": (fields_moved, cfg, {"main": ref}),
+            "a moved tn_map id": (fz, moved_id, {"main": ref}),
+            "a tn_geo id moved to another map": (fz, moved_geo, {"main": ref}),
+            "a removed stored message key": (fz, no_msg, {"main": ref}),
+            "a renamed stored message key": (fz, renamed, {"main": ref}),
+            "two references disagreeing on a hash": (fz, cfg, {"main": ref, "origin/main": other}),
+            "two references disagreeing on a dump label": (fz, cfg, {"main": ref, "origin/main": other_label})}.items():
+        f = append_only_findings(wfz, wcfg, refs)
+        out.append((f"append-only: {label} fails", bool(f), f[:1]))
+    for label, (path, refs) in {
+            "a ref that does not resolve": ("tests/frozen.json", ["refs/heads/tn-fixture-no-such-ref"]),
+            "a resolving ref without the file": ("tests/tn-fixture-no-such-file.json", ["HEAD"])}.items():
+        try:
+            reference_files(path, REPO, refs)
+            out.append((f"append-only: {label} fails closed", False, "read without an error"))
+        except ReferenceUnreadable as e:
+            out.append((f"append-only: {label} fails closed", True, str(e)[:80]))
+    return out
+
+
+def release_input_fixtures(cfg):
+    """The landed bodies' inputs on fixture references built from the working tree: a regenerated
+    file, a changed coast, spawn or coordinates constant, a re-pointed key, a city row edited, a city
+    added, a geography version edited in place, a landed release row edited or dropped and a map's
+    geometry moved each fail; the tree against itself, a version appended, a new constant or map
+    table added and a map's display name changed pass; a reference without a release row freezes
+    nothing; and a reference whose landed row names a file it lacks fails closed."""
+    out = []
+    base = work_release_inputs(cfg)
+    ref = copy.deepcopy(base)
+    files = sorted(base["files"])
+    tables = sorted(base["tables"])
+    maps = list(cfg.get("map_order") or [])
+    geo = sorted(_as_dict(cfg.get("geography")))
+    if not files or not tables or not geo or not cfg.get("release_registry") or not maps:
+        return [("release inputs: the fixtures need a landed row, a generated file, a table and a geography", False,
+                 "")]
+    tk = sorted(base["tables"][tables[0]], key=str)[0]
+
+    def work(edit):
+        w = copy.deepcopy(base)
+        edit(w)
+        return w
+
+    def set_path(w, path, value):
+        d = w["cfg"]
+        for part in path[:-1]:
+            d = d[part]
+        d[path[-1]] = value
+
+    def first_city(w):
+        cities = _as_dict(w["tables"][tables[0]][tk]).get("cities")
+        return cities, sorted(_as_dict(cities), key=str)[0] if _as_dict(cities) else None
+
+    def edit_city(w):
+        cities, c = first_city(w)
+        cities[c]["lon"] = float(cities[c]["lon"]) + 0.5
+
+    def add_city(w):
+        cities, _ = first_city(w)
+        cities["tn-fixture-city"] = {"name": "Fixture", "country": "Nowhere", "lon": 0.0, "lat": 0.0}
+
+    def edit_version(w):
+        w["cfg"]["geography"][geo[0]]["versions"][0]["city_offset"] = [1, 1]
+
+    def add_version(w):
+        vs = w["cfg"]["geography"][geo[0]]["versions"]
+        vs.append(dict(copy.deepcopy(vs[-1]), entry="tn_fixture_entry_v99"))
+
+    def edit_row(w):
+        w["cfg"]["release_registry"][0]["files"] = list(w["cfg"]["release_registry"][0]["files"])[:-1]
+
+    def drop_row(w):
+        del w["cfg"]["release_registry"][0]
+
+    def regen(w):
+        w["files"][files[0]] = "0" * 64
+
+    def drop_file(w):
+        w["files"][files[0]] = None
+
+    def first_number(section):
+        return next(k for k, v in sorted(_as_dict(cfg.get(section)).items()) if isinstance(v, (int, float))
+                    and not isinstance(v, bool))
+    coast_k, coord_k = first_number("coast"), first_number("coordinates")
+    m0 = maps[0]
+    geom_k = next(k for k, v in sorted(_as_dict(cfg["maps"][m0]).items()) if isinstance(v, (int, float))
+                  and not isinstance(v, bool) and k != "id")
+    lake = _as_dict(_as_dict(cfg.get("spawn")).get("lake"))
+    key0 = sorted(_as_dict(cfg.get("keys")))[0]
+    city_sets = sorted(release_settings(cfg))
+    if not city_sets:
+        return out + [("release inputs: the fixtures need a geography version with a spawn-city setting", False, "")]
+    cs = city_sets[0]
+
+    def city_values(w, edit):
+        vals = list(w["cfg"]["settings"][cs]["allowed_values"])
+        w["cfg"]["settings"][cs] = dict(w["cfg"]["settings"][cs], allowed_values=edit(vals))
+
+    failing = {
+        "a regenerated file": regen,
+        "a landed file removed": drop_file,
+        f"coast.{coast_k} changed": lambda w: set_path(w, ("coast", coast_k), cfg["coast"][coast_k] + 1),
+        f"coordinates.{coord_k} changed": lambda w: set_path(w, ("coordinates", coord_k),
+                                                             cfg["coordinates"][coord_k] + 1),
+        "spawn.lake.distance changed": lambda w: set_path(w, ("spawn", "lake", "distance"),
+                                                          lake.get("distance", 0) + 1),
+        "number_format changed": lambda w: set_path(w, ("number_format",), "%.6g"),
+        f"keys.{key0} re-pointed": lambda w: set_path(w, ("keys", key0), "tn_fixture_key"),
+        f"maps.{m0}.{geom_k} moved": lambda w: set_path(w, ("maps", m0, geom_k), cfg["maps"][m0][geom_k] + 1),
+        "a coast constant removed": lambda w: w["cfg"]["coast"].pop(coast_k),
+        "a city row edited": edit_city,
+        "a city added to a released table": add_city,
+        "a released map table removed": lambda w: w["tables"][tables[0]].pop(tk),
+        "a geography version edited in place": edit_version,
+        "a landed release row edited": edit_row,
+        "a landed release row dropped": drop_row,
+        f"settings.{cs} cities swapped": lambda w: city_values(w, lambda v: v[:1] + [v[2], v[1]] + v[3:]),
+        f"settings.{cs} a city appended": lambda w: city_values(w, lambda v: v + ["tn-fixture-city"]),
+        f"settings.{cs} a city inserted": lambda w: city_values(w, lambda v: v[:2] + ["tn-fixture-city"] + v[2:]),
+        f"settings.{cs} sorted": lambda w: city_values(w, lambda v: v[:1] + sorted(v[1:], reverse=True)),
+        f"settings.{cs} a city removed": lambda w: city_values(w, lambda v: v[:-1]),
+        f"settings.{cs} removed": lambda w: w["cfg"]["settings"].pop(cs),
+    }
+    passing = {
+        "the tree against itself": lambda w: None,
+        f"settings.{cs} order key changed": lambda w: set_path(w, ("settings", cs, "order"), "z-fixture"),
+        "a new setting added": lambda w: set_path(w, ("settings", "tn_fixture_setting"),
+                                                  {"name": "x", "allowed_values": ["a"]}),
+        "a geography version appended": add_version,
+        "a new coast constant": lambda w: set_path(w, ("coast", "tn_fixture_new"), 1),
+        "a new map table": lambda w: w["tables"][tables[0]].__setitem__("tn_fixture_map", {"version": 1}),
+        f"maps.{m0}.display renamed": lambda w: set_path(w, ("maps", m0, "display"), "Fixture"),
+    }
+    for label, edit in failing.items():
+        f = release_input_findings(work(edit), {"main": ref})
+        out.append((f"release inputs: {label} fails", bool(f), f[:1]))
+    for label, edit in passing.items():
+        f = release_input_findings(work(edit), {"main": ref})
+        out.append((f"release inputs: {label} passes", not f, f[:1]))
+    unlanded = copy.deepcopy(ref)
+    unlanded["cfg"] = dict(copy.deepcopy(cfg), release_registry=[])
+    f = release_input_findings(work(regen), {"main": unlanded})
+    out.append(("release inputs: a reference without a release row freezes nothing", not f, f[:1]))
+    hollow = copy.deepcopy(ref)
+    hollow["files"][files[0]] = None
+    f = release_input_findings(base, {"main": hollow})
+    out.append(("release inputs: a landed row naming a file its reference lacks fails closed", bool(f), f[:1]))
+    return out
+
+
+def _mod_copy(td, label):
+    m = Path(td) / f"mod-{label}" / "terra-nauvis"
+    shutil.copytree(MOD, m)
+    return m
+
+
+def _edit(m, rel, old, new, where="replace"):
+    """Edit one file of a mod copy; returns False when the edit does not apply (the control fails)."""
+    p = Path(m) / rel
+    text = p.read_text(encoding="utf-8")
+    if where == "append":
+        out = text + new
+    elif where == "prepend":
+        out = new + text
+    else:
+        out = text.replace(old, new, 1)
+    if out == text:
+        return False
+    p.write_text(out, encoding="utf-8", newline="\n")
+    return True
+
+
+def bodies_fixtures(td, cfg, fz):
+    """The bodies row on mod copies: the unchanged mod passes; the review's two probes (the spawn
+    lake's distance halved in spawn.lua, the geo tile chain moved in coast.lua), a frozen fallback's
+    body moved in presets.lua, a registered body no longer defined and an unregistered Earth body
+    added each fail; a Lua error, a require outside the mod and a text built from an address fail
+    closed."""
+    out = []
+    pre = cfg["identity"]["noise_prefix"]
+    reg = sorted((fz.get("bodies") or {}))
+    lakes = [n for n in reg if n.startswith(pre + "spawn_lake")]
+    gxs = [n for n in reg if n.startswith(pre + "gx_")]
+    frozen_fb = sorted(set(tnconfig.frozen_fallback_names(cfg)) & set(reg))
+    m = _mod_copy(td, "bodies-ok")
+    f, b = bodies_findings(m, fz, cfg)
+    out.append(("bodies: the unchanged mod passes", not f and bool(b), f[:1]))
+    import tnlua
+    numeric_fb = [n for n in frozen_fb if tnlua.str2number(str(((b or {}).get(n) or (None, {}))[1].get("expression")))
+                  is not None]
+    cases = {
+        "the spawn lake's distance halved in spawn.lua (the review's probe) fails": (
+            ("prototypes/expressions/spawn.lua", 'lake_d = "sqrt(', 'lake_d = "0.5 * sqrt(', "replace"),
+            lakes, "changed in place"),
+        "the geo tile chain moved in coast.lua (the review's probe) fails": (
+            ("prototypes/expressions/coast.lua", 'def(g.gx, "x + " .. g.cx)', 'def(g.gx, "x + 7 + " .. g.cx)',
+             "replace"), gxs, "changed in place"),
+        "a frozen fallback's body moved in presets.lua fails": (
+            ("prototypes/presets.lua", 'type(value) == "number" and num(value) or value',
+             'type(value) == "number" and num(value + 1) or value', "replace"), numeric_fb, "changed in place"),
+        "a registered body the data stage no longer defines fails": (
+            ("prototypes/presets.lua", "data:extend(fallbacks)", "", "replace"), frozen_fb, "is not defined"),
+        "an unregistered Earth body fails": (
+            ("data.lua", None, f'\ndata:extend({{{{type = "noise-expression", name = "{pre}fixture_unregistered_v1", '
+                               f'expression = "1"}}}})\n', "append"), [f"{pre}fixture_unregistered_v1"],
+            "is not registered"),
+        "a Lua error in the data stage fails closed": (
+            ("data.lua", None, '\nerror("fixture")\n', "append"), [], "did not run"),
+        "a require of a module outside the mod fails closed": (
+            ("data.lua", None, 'require("util")\n', "prepend"), [], "did not run"),
+        "a text built from a table's address fails closed": (
+            ("data.lua", None, "\nlocal fixture = tostring({})\n", "append"), [], "did not run"),
+    }
+    for i, (label, ((rel, old, new, where), names, needle)) in enumerate(cases.items()):
+        m = _mod_copy(td, f"bodies-{i}")
+        if not _edit(m, rel, old, new, where):
+            out.append((f"bodies: {label}", False, ["the edit did not apply"]))
+            continue
+        f, _ = bodies_findings(m, fz, cfg)
+        hit = [x for x in f if needle in x]
+        ok = bool(hit) and all(any(n in x for x in hit) for n in names)
+        if label.startswith(("the spawn", "the geo", "a frozen", "a registered")):
+            ok = ok and bool(names)
+        out.append((f"bodies: {label}", ok, f[:1]))
+    return out
+
+
+def landing_fixtures(td, cfg, fz):
+    """A zip that leaves the checkout lands (build_zip.build with landing): the first lands with its
+    bodies and its registry's snapshot in its build record, and the same tree lands again beside it;
+    a zip already in the folder whose body this build changed (the spawn lake probe) or dropped (an
+    extra body), one that cannot be read offline, and a build record whose snapshot holds a record
+    the registry moved each refuse the landing; a folder inside the checkout is no landing."""
+    out = []
+    folder = Path(td) / "landing-ok"
+    try:
+        _, _, rec = build_zip.build(folder, landing=True)
+        snap = rec.get("frozen") or {}
+        ok = (set(rec.get("bodies") or {}) >= set(fz.get("bodies") or {}) and
+              snap.get("sha256") == tnfrozen.key_of(snap.get("bodies")) and snap.get("bodies") == fz.get("bodies"))
+        out.append(("landing: a first zip lands with its bodies and its registry's snapshot in its build record", ok, ""))
+        build_zip.build(folder, landing=True)
+        out.append(("landing: the same tree lands again beside its own zip", True, ""))
+    except build_zip.BuildError as e:
+        out.append(("landing: a first zip lands and the same tree lands again", False, str(e)[:120]))
+    pre = cfg["identity"]["noise_prefix"]
+
+    def refuses(label, prepare, needle):
+        d = Path(td) / f"landing-{abs(hash(label)) % 10 ** 8}"
+        d.mkdir(parents=True)
+        try:
+            prepare(d)
+        except Exception as e:
+            out.append((f"landing: {label}", False, f"fixture: {type(e).__name__}: {e}"))
+            return
+        try:
+            build_zip.build(d, landing=True)
+            out.append((f"landing: {label}", False, "landed"))
+        except build_zip.BuildError as e:
+            out.append((f"landing: {label}", needle in str(e), str(e)[:160]))
+
+    def old_zip(d, rel, old, new, where):
+        m = _mod_copy(d, "old")
+        if not _edit(m, rel, old, new, where):
+            raise RuntimeError("the edit did not apply")
+        build_zip.build(d, mod_dir=m)
+    refuses("a zip in the folder whose spawn lake this build changed refuses",
+            lambda d: old_zip(d, "prototypes/expressions/spawn.lua", 'lake_d = "sqrt(', 'lake_d = "0.5 * sqrt(', "replace"),
+            "which this build changed")
+    refuses("a zip in the folder with a body this build dropped refuses",
+            lambda d: old_zip(d, "data.lua", None, f'\ndata:extend({{{{type = "noise-expression", name = '
+                                                    f'"{pre}fixture_landed_v1", expression = "1"}}}})\n', "append"),
+            "which this build dropped")
+    refuses("a zip in the folder that cannot be read offline refuses (fail closed)",
+            lambda d: (d / f"{cfg['identity']['id']}_0.0.1.zip").write_bytes(b"not a zip"), "cannot be read offline")
+
+    def moved_snapshot(d):
+        build_zip.build(d)
+        rec_path = d / f"{cfg['identity']['id']}_{cfg['identity']['version']}.build.json"
+        rec = json.loads(rec_path.read_text(encoding="utf-8"))
+        moved = json.loads(json.dumps(fz))
+        name = sorted(moved["bodies"])[0]
+        moved["bodies"][name]["sha256"] = "8" * 64
+        rec["frozen"] = tnfrozen.snapshot(moved, tnfrozen.runner_registry(), tnfrozen.runner_registry()[-1]["id"])
+        rec_path.write_text(json.dumps(rec), encoding="utf-8")
+    refuses("a build record in the folder whose snapshot holds a record the registry moved refuses", moved_snapshot,
+            "changed the record")
+    out.append(("landing: a folder inside the checkout is no landing, one outside it is",
+                not build_zip.leaves_checkout(REPO / "dist") and build_zip.leaves_checkout(Path(td)), ""))
+    return out
+
+
+def _git_fx(repo, *args):
+    ident = ["-c", "user.name=Jake Mismas", "-c", "user.email=jake@jakemismas.com"]
+    cp = subprocess.run(["git", *ident, *args], cwd=str(repo), capture_output=True, text=True)
+    if cp.returncode != 0:
+        raise RuntimeError(f"git {' '.join(args)}: {(cp.stderr or cp.stdout).strip()[:200]}")
+    return cp.stdout.strip()
+
+
+def landed_tag_fixtures(td):
+    """The tag check's landed half (build_zip.check_landed) on a throwaway repository: a tag on
+    origin/main's head passes, and so does an annotated tag on an ancestor of it; a tag on a branch
+    commit that main does not hold, a tag that is not the checked-out commit, a tag that does not
+    resolve and a checkout without origin/main each refuse."""
+    out = []
+    g = Path(td) / "git-landed"
+    g.mkdir()
+
+    def landed(tag):
+        try:
+            build_zip.check_landed(tag, g)
+            return True, ""
+        except build_zip.BuildError as e:
+            return False, str(e)
+    try:
+        _git_fx(g, "init", "-q", "-b", "main")
+        (g / "a.txt").write_text("a\n", encoding="utf-8")
+        _git_fx(g, "add", "a.txt")
+        _git_fx(g, "commit", "-q", "-m", "Add the fixture's first file")
+        a = _git_fx(g, "rev-parse", "HEAD")
+        (g / "a2.txt").write_text("a2\n", encoding="utf-8")
+        _git_fx(g, "add", "a2.txt")
+        _git_fx(g, "commit", "-q", "-m", "Add the fixture's second file")
+        _git_fx(g, "update-ref", "refs/remotes/origin/main", "HEAD")
+        _git_fx(g, "tag", "v0.1.0")
+        ok, why = landed("v0.1.0")
+        out.append(("landed tag: a tag on origin/main's head passes", ok, why[:120]))
+        _git_fx(g, "tag", "-a", "-m", "fixture", "v0.0.9", a)
+        _git_fx(g, "checkout", "-q", "--detach", "v0.0.9")
+        ok, why = landed("v0.0.9")
+        out.append(("landed tag: an annotated tag on an ancestor of origin/main passes", ok, why[:120]))
+        _git_fx(g, "checkout", "-q", "-b", "side", "v0.1.0")
+        (g / "b.txt").write_text("b\n", encoding="utf-8")
+        _git_fx(g, "add", "b.txt")
+        _git_fx(g, "commit", "-q", "-m", "Add a branch commit main does not hold")
+        _git_fx(g, "tag", "v0.1.1")
+        ok, why = landed("v0.1.1")
+        out.append(("landed tag: a tag on a branch commit that origin/main does not hold refuses",
+                    not ok and "is not on origin/main" in why, why[:120]))
+        ok, why = landed("v0.1.0")
+        out.append(("landed tag: a tag that is not the checked-out commit refuses",
+                    not ok and "is not tag" in why, why[:120]))
+        ok, why = landed("v9.9.9")
+        out.append(("landed tag: a tag that does not resolve refuses", not ok and "does not resolve" in why, why[:120]))
+        _git_fx(g, "checkout", "-q", "--detach", "v0.1.0")
+        _git_fx(g, "update-ref", "-d", "refs/remotes/origin/main")
+        ok, why = landed("v0.1.0")
+        out.append(("landed tag: a checkout without origin/main refuses (fail closed)",
+                    not ok and "fail closed" in why, why[:120]))
+    except (RuntimeError, OSError) as e:
+        out.append(("landed tag: the throwaway repository was built", False, str(e)[:160]))
+    return out
+
+
+def snapshot_file_fixtures(td):
+    """The snapshots as the rows read them from suite manifests: an earlier milestone's snapshot passes
+    the registry it was taken from and fails a record of it re-hashed; a manifest that does not parse
+    fails closed; an earlier milestone without a snapshot that registered a record no reference holds
+    fails closed."""
+    out = []
+    reg = [{"id": "fx-a", "dumps": ["m1"]}, {"id": "fx-b", "dumps": ["m1"]}]
+    rec = {"type": "noise-expression", "sha256": "1" * 64, "dump": "m1", "slice": "fx-a", "registered": "2026-10-29"}
+    fz = {"format": tnfrozen.FORMAT, "hash_fields": list(tnfrozen.HASH_FIELDS),
+          "bodies": {"tn_fx_a_v1": dict(rec), "tn_fx_b_v1": dict(rec, slice="fx-b", sha256="2" * 64)}}
+    d = Path(td) / "suites-fixture"
+    d.mkdir()
+    (d / "fx-a.json").write_text(json.dumps({"format": "tn-suite/1", "slice": "fx-a", "checks": {},
+                                             "frozen": tnfrozen.snapshot(fz, reg, "fx-a")}), encoding="utf-8")
+    snaps, none = tnfrozen.suite_snapshots(reg, before="fx-b", suites=d)
+    out.append(("snapshots: an earlier slice's snapshot passes the registry it was taken from",
+                bool(snaps) and not none and not tnfrozen.snapshot_problems(fz, snaps), ""))
+    moved = json.loads(json.dumps(fz))
+    moved["bodies"]["tn_fx_a_v1"]["sha256"] = "3" * 64
+    out.append(("snapshots: an earlier slice's record re-hashed fails its snapshot",
+                any("changed the record" in x for x in tnfrozen.snapshot_problems(moved, snaps)), ""))
+    (d / "fx-a.json").write_text("{not json", encoding="utf-8")
+    try:
+        tnfrozen.suite_snapshots(reg, before="fx-b", suites=d)
+        out.append(("snapshots: a suite manifest that does not parse fails closed", False, "read"))
+    except tnfrozen.RegistryUnreadable:
+        out.append(("snapshots: a suite manifest that does not parse fails closed", True, ""))
+    (d / "fx-a.json").write_text(json.dumps({"format": "tn-suite/1", "slice": "fx-a", "checks": {}}), encoding="utf-8")
+    snaps, none = tnfrozen.suite_snapshots(reg, before="fx-b", suites=d)
+    out.append(("snapshots: an earlier slice without a snapshot whose record no reference holds fails closed",
+                not snaps and any("fail closed" in x for x in tnfrozen.unsnapshotted_problems(fz, none, {"bodies": {}})),
+                ""))
     return out
 
 
@@ -1809,9 +3447,10 @@ def row_fixtures():
 
 ROWS = [
     ("lint", row_lint), ("info_json", row_info), ("locale", row_locale), ("dashes", row_dashes),
-    ("registration", row_registration), ("names", row_names), ("design_rules", row_design),
-    ("workflow_scan", row_workflow), ("attribution_scan", row_attribution), ("data_src", row_data_src),
-    ("frozen_static", row_frozen), ("zip", row_zip), ("fixtures", row_fixtures),
+    ("registration", row_registration), ("storage", row_storage), ("names", row_names),
+    ("design_rules", row_design), ("workflow_scan", row_workflow), ("attribution_scan", row_attribution),
+    ("data_src", row_data_src), ("frozen_static", row_frozen), ("bodies", row_bodies), ("append_only", row_append_only),
+    ("fallbacks", row_fallbacks), ("zip", row_zip), ("fixtures", row_fixtures),
 ]
 
 

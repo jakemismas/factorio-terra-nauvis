@@ -1,0 +1,9 @@
+{
+  "name": "ea-drop-name",
+  "version": "0.1.0",
+  "title": "ea-drop-name",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only build with Earth names dropped, for the missing-name guard (T16): every noise expression named in drop-names.lua is removed, with every map-gen preset key that names it. The runner writes drop-names.lua and the dependency on the mod under test into a staged copy at run time. Never shipped.",
+  "dependencies": ["base >= 2.1.23"]
+}

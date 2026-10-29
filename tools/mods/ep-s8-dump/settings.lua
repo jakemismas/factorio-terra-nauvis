@@ -4,6 +4,10 @@ data:extend{
   {type = "string-setting", name = "ep-s8-dump-surface", setting_type = "startup", default_value = "nauvis", allow_blank = false},
   -- Areas: "x0,y0,w,h;x0,y0,w,h" in tiles, top-left inclusive.
   {type = "string-setting", name = "ep-s8-dump-areas", setting_type = "startup", default_value = "-128,-128,256,256", allow_blank = true},
+  -- Late areas, same form: generated after every other area, behind S2's whole-table round trip
+  -- (surface.map_gen_settings read and assigned back, as any mod merging autoplace entries does);
+  -- the dump appends them to areas and records property_expression_names before and after.
+  {type = "string-setting", name = "ep-s8-dump-late-areas", setting_type = "startup", default_value = "", allow_blank = true},
   {type = "string-setting", name = "ep-s8-dump-types", setting_type = "startup",
    default_value = "tree,simple-entity,resource,cliff,unit-spawner,turret,unit,fish", allow_blank = true},
   {type = "bool-setting", name = "ep-s8-dump-decoratives", setting_type = "startup", default_value = true},
@@ -20,6 +24,10 @@ data:extend{
   {type = "string-setting", name = "ep-s8-dump-grid-name", setting_type = "startup", default_value = "elevation", allow_blank = true},
   {type = "string-setting", name = "ep-s8-dump-grid-threshold", setting_type = "startup", default_value = "0", allow_blank = false},
   {type = "string-setting", name = "ep-s8-dump-grid-op", setting_type = "startup", default_value = "ge", allowed_values = {"ge", "gt", "le", "lt"}},
+  -- Measure (S7's measure(), milestone spawn-cities): "x,y;x,y" centres; at each, resources within 150 and 200
+  -- tiles by name, enemies within 150, 200 and 224 by type, player-blocking water counts and the nearest
+  -- water tile, cliffs and trees within 150. Also records freeplay's custom intro, when that interface exists.
+  {type = "string-setting", name = "ep-s8-dump-measure", setting_type = "startup", default_value = "", allow_blank = true},
   {type = "int-setting", name = "ep-s8-dump-gen-tick", setting_type = "startup", default_value = 1, minimum_value = 1, maximum_value = 100000},
   {type = "int-setting", name = "ep-s8-dump-tick", setting_type = "startup", default_value = 2, minimum_value = 1, maximum_value = 100000},
 }

@@ -1,0 +1,80 @@
+{
+ "window_px": [
+  900,
+  560,
+  240,
+  180
+ ],
+ "t1_window": {
+  "pixel_agreement": 0.977322,
+  "land_iou": 0.959753,
+  "false_land_px": 507,
+  "false_water_px": 459,
+  "coast_deviation_px": {
+   "misclassified": 966,
+   "max": 2.5,
+   "p99": 1.5811,
+   "mean": 0.5854,
+   "capped": 0,
+   "cap": 64,
+   "capped_note": null,
+   "within_half_px": 800,
+   "histogram": {
+    "0.5 (edge)": 800,
+    "0.71 (corner)": 110,
+    "<=1.5": 41,
+    "<=2.5": 15,
+    "<=4.5": 0,
+    "<=8.5": 0,
+    "<=16.5": 0,
+    "<=64": 0,
+    ">64": 0
+   }
+  },
+  "d7": {
+   "agreement_bar": 0.99,
+   "agreement_pass": false,
+   "coast_bar_px": 0.5,
+   "coast_pass": false
+  }
+ },
+ "islands_window": {
+  "1": {
+   "islands": 5,
+   "present": 1,
+   "separate": 1,
+   "merged": 0,
+   "missing": 4
+  },
+  "2-4": {
+   "islands": 7,
+   "present": 1,
+   "separate": 1,
+   "merged": 0,
+   "missing": 6
+  },
+  "5-16": {
+   "islands": 5,
+   "present": 3,
+   "separate": 1,
+   "merged": 2,
+   "missing": 2
+  },
+  "17-64": {
+   "islands": 2,
+   "present": 2,
+   "separate": 2,
+   "merged": 0,
+   "missing": 0
+  },
+  "65+": {
+   "islands": 1,
+   "present": 1,
+   "separate": 0,
+   "merged": 1,
+   "missing": 0
+  }
+ },
+ "preview": "previews/earth-build/suite/20261029-124540-europe-coast/t1pv-s3-00/1000.png",
+ "sheet": "previews/earth-build/suite/20261029-124540-europe-coast/v1/europe-s3-denmark.png"
+}

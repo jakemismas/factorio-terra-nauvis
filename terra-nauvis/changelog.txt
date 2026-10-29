@@ -1,7 +1,27 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
-Date: 2026-10-27
+Date: 2026-10-28
   Features:
-    - Mod skeleton with the Map scale startup setting (1 to 6 tiles per reference pixel, default 6).
-    - Placeholder map-gen preset Terra Nauvis: Europe, listed right after Default: a land box the
-      size of Europe at scale 6 in an endless ocean.
+    - Map scale startup setting: 1 to 6 tiles per reference pixel, default 6; each value's label
+      gives the world size of every map at that scale. A world made from a Terra Nauvis preset keeps
+      the scale it was created with; a world that uses a Terra Nauvis map type alone follows the
+      setting at every load, so changing it moves the terrain of that world's new chunks.
+    - Map-gen preset Terra Nauvis: Europe, listed right after Default: Europe's real coastline in an
+      endless deep ocean. A world made from the preset keeps the scale it was created with.
+    - Map type Terra Nauvis: Europe in the Terrain tab: Europe's coast and spawn on its own, with a
+      one-time notice that the preset adds the rest and that a changed scale or spawn city setting
+      moves such a world's new chunks. A later version never moves it: its other values are frozen.
+    - The water slider leaves a Terra Nauvis: Europe world unchanged, cliffs and land included.
+    - A loud message when a save names a map expression this version lacks, and an info line when
+      the scale or spawn city setting no longer matches a save.
+    - Spawn city startup setting for Europe: Random (the default) or one of 40 cities. The map moves
+      so the city sits at the spawn, with land around it, a lake nearby, the starting ore and the
+      enemy-free start of the base game; the intro names the city and the world size.
+    - Sparse inland lakes across the land, kept off coasts and out of the start area.
+    - A warning at the start, and to each player who joins, when RSO is active.
+    - Other planets' surfaces never take the Terra Nauvis map, and adding the mod to a world made
+      without it leaves every surface of that world as it was.
+  Changes:
+    - With Alien Biomes enabled the Terra Nauvis: Europe preset is not offered yet (its palms would
+      read the fine coast); the Map type entry is. A world made from the preset that later loads
+      beside Alien Biomes gets one loud warning, since its new chunks then generate more slowly.

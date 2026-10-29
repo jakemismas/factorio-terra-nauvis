@@ -10,14 +10,20 @@ local function split(text, sep)
   return out
 end
 
-local function parse_areas()
+local function parse_areas(name)
   local out = {}
-  for _, a in ipairs(split(S("areas"), ";")) do
+  for _, a in ipairs(split(S(name or "areas"), ";")) do
     local v = split(a, ",")
     if #v == 4 then
       out[#out + 1] = {x0 = tonumber(v[1]), y0 = tonumber(v[2]), w = tonumber(v[3]), h = tonumber(v[4])}
     end
   end
+  return out
+end
+
+local function pen_copy(surface)
+  local out = {}
+  for k, v in pairs(surface.map_gen_settings.property_expression_names or {}) do out[k] = v end
   return out
 end
 
@@ -267,7 +273,84 @@ local function scene_probe(surface, made)
   return out
 end
 
+-- S7's measure() (spikes/S7-spawn/mods/s7-spawn/control.lua:41-91), ported for T7 (b): water is every
+-- tile whose collision mask holds the water_tile and player layers (player-blocking water; T1's rule).
+local function blocking_water_names()
+  local out = {}
+  for name, tp in pairs(prototypes.tile) do
+    local layers = tp.collision_mask.layers
+    if layers["water_tile"] and layers["player"] then out[#out + 1] = name end
+  end
+  table.sort(out)
+  return out
+end
+
+local function dist(a, b)
+  local dx, dy = a.x - b.x, a.y - b.y
+  return math.sqrt(dx * dx + dy * dy)
+end
+
+local function measure(surface, c)
+  local R = {center = {x = c.x, y = c.y}}
+  local t = surface.get_tile(c.x, c.y)
+  R.center_tile = t.valid and t.name or "<none>"
+  local per = {}
+  for _, e in pairs(surface.find_entities_filtered{position = c, radius = 200, type = "resource"}) do
+    local p = per[e.name]
+    if not p then
+      p = {n = 0, amount = 0, n150 = 0, amount150 = 0, nearest = 1e9}
+      per[e.name] = p
+    end
+    local d = dist(e.position, c)
+    p.n = p.n + 1
+    p.amount = p.amount + e.amount
+    if d <= 150 then
+      p.n150 = p.n150 + 1
+      p.amount150 = p.amount150 + e.amount
+    end
+    if d < p.nearest then p.nearest = d end
+  end
+  R.resources = per
+  local en = {n150 = 0, n200 = 0, n224 = 0, nearest = 1e9, by_type = {}}
+  for _, e in pairs(surface.find_entities_filtered{position = c, radius = 224, force = "enemy"}) do
+    local d = dist(e.position, c)
+    if d <= 150 then
+      en.n150 = en.n150 + 1
+      en.by_type[e.type] = (en.by_type[e.type] or 0) + 1
+    end
+    if d <= 200 then en.n200 = en.n200 + 1 end
+    en.n224 = en.n224 + 1
+    if d < en.nearest then en.nearest = d end
+  end
+  R.enemies = en
+  local W = blocking_water_names()
+  R.water_names = W
+  R.water = {}
+  for _, r in pairs{12, 32, 64, 100, 150, 200} do
+    R.water["r" .. r] = surface.count_tiles_filtered{position = c, radius = r, name = W}
+  end
+  local near = 1e9
+  for _, tile in pairs(surface.find_tiles_filtered{position = c, radius = 150, name = W}) do
+    local p = tile.position
+    local d = dist({x = p.x + 0.5, y = p.y + 0.5}, c)
+    if d < near then near = d end
+  end
+  R.water_nearest = near
+  R.cliffs150 = surface.count_entities_filtered{position = c, radius = 150, type = "cliff"}
+  R.trees150 = surface.count_entities_filtered{position = c, radius = 150, type = "tree"}
+  return R
+end
+
+local function freeplay_intro()
+  local fp = remote.interfaces["freeplay"]
+  if fp and fp["get_custom_intro_message"] then
+    return {message = remote.call("freeplay", "get_custom_intro_message")}
+  end
+  return nil
+end
+
 local made_scene = nil
+local roundtrip = nil
 
 script.on_event(defines.events.on_tick, function(ev)
   local gen_tick, dump_tick = S("gen-tick"), S("tick")
@@ -280,6 +363,10 @@ script.on_event(defines.events.on_tick, function(ev)
   if ev.tick == gen_tick then
     for _, ar in ipairs(parse_areas()) do request_area(surface, ar.x0, ar.y0, ar.w, ar.h) end
     for _, p in ipairs(parse_points()) do request_area(surface, math.floor(p.x), math.floor(p.y), 1, 1) end
+    for _, a in ipairs(split(S("measure"), ";")) do
+      local v = split(a, ",")
+      if #v == 2 then request_area(surface, tonumber(v[1]) - 224, tonumber(v[2]) - 224, 449, 449) end
+    end
     local scene = {}
     for _, s in ipairs(split(S("scene"), ",")) do scene[s] = true end
     if scene.cliffs then
@@ -289,6 +376,17 @@ script.on_event(defines.events.on_tick, function(ev)
     surface.force_generate_chunk_requests()
     if scene.cliffs then made_scene = scene_setup(surface) end
     if scene.wall then wall_setup(surface) end
+    local late = parse_areas("late-areas")
+    if #late > 0 then
+      -- S2: what any mod merging autoplace entries does, read the whole table and assign it back,
+      -- then generate the late areas under whatever the surface holds afterwards
+      local before = pen_copy(surface)
+      local mgs = surface.map_gen_settings
+      surface.map_gen_settings = mgs
+      roundtrip = {pen_before = before, pen_after = pen_copy(surface)}
+      for _, ar in ipairs(late) do request_area(surface, ar.x0, ar.y0, ar.w, ar.h) end
+      surface.force_generate_chunk_requests()
+    end
   end
   if ev.tick == dump_tick then
     local types = split(S("types"), ",")
@@ -298,9 +396,20 @@ script.on_event(defines.events.on_tick, function(ev)
       areas = {}, names = split(S("names"), ","), types = types,
     }
     for _, ar in ipairs(parse_areas()) do out.areas[#out.areas + 1] = dump_area(surface, ar, types, S("decoratives")) end
+    local late = parse_areas("late-areas")
+    for _, ar in ipairs(late) do out.areas[#out.areas + 1] = dump_area(surface, ar, types, S("decoratives")) end
+    out.late_area_count = #late
+    if roundtrip then out.roundtrip = roundtrip end
     out.points = dump_points(surface, parse_points(), out.names)
     if S("grid") ~= "" then out.grid = dump_grid(surface) end
     if made_scene then out.scene = scene_probe(surface, made_scene) end
+    local centres = {}
+    for _, a in ipairs(split(S("measure"), ";")) do
+      local v = split(a, ",")
+      if #v == 2 then centres[#centres + 1] = measure(surface, {x = tonumber(v[1]), y = tonumber(v[2])}) end
+    end
+    if #centres > 0 then out.measure = centres end
+    out.intro = freeplay_intro()
     helpers.write_file("ep-s8-dump/" .. S("label") .. ".json", helpers.table_to_json(out), false)
     log("ep-s8-dump: wrote ep-s8-dump/" .. S("label") .. ".json, areas " .. #out.areas .. ", points " .. #out.points)
   end
