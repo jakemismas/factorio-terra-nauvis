@@ -1,0 +1,52 @@
+# Latest: every push to main runs the T16 static rows, builds the dev zip CI
+# uploads and replaces the rolling 'latest' pre-release with it, tagged at the pushed commit. It
+# uses only the workflow's own GITHUB_TOKEN and never runs the game. The checkout keeps full history,
+# so the static append-only row can read origin/main and the release tags and fails closed without
+# them. The T16 workflow scan (tools/tn_static.py) checks this file.
+name: latest
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: latest-release
+  cancel-in-progress: false
+
+jobs:
+  latest:
+    runs-on: windows-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13.3"
+      - name: Install luaparser and the linter
+        run: |
+          python -m pip install --disable-pip-version-check -r tools/lint/requirements.txt
+          python tools/lint/fetch_linter.py --dest "$env:RUNNER_TEMP\luacheck" --github-env "$env:GITHUB_ENV"
+      - name: Static checks
+        run: python tools/earth_test.py static
+      - name: Build the zip
+        run: python tools/build_zip.py
+      - name: Publish the latest pre-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $false
+          $files = @(Get-ChildItem -Path dist -File | Where-Object { $_.Name -like "*.zip" } | ForEach-Object { $_.FullName })
+          if ($files.Count -ne 1) { throw "expected exactly one zip in dist, found $($files.Count) files" }
+          gh release view latest --json tagName
+          if ($LASTEXITCODE -eq 0) { gh release delete latest --cleanup-tag --yes; if ($LASTEXITCODE -ne 0) { throw "gh release delete failed with exit code $LASTEXITCODE" } }
+          gh release create latest @files --target "$env:GITHUB_SHA" --prerelease --title latest --notes "Rolling dev build of main at $env:GITHUB_SHA, replaced on every push to main. Install: place the zip in the Factorio mods folder."
+          if ($LASTEXITCODE -ne 0) { throw "gh release create failed with exit code $LASTEXITCODE" }
+          $tag = gh api "repos/$env:GITHUB_REPOSITORY/commits/tags/latest" --jq ".sha"
+          if ($tag -ne $env:GITHUB_SHA) { throw "the latest tag points at $tag, not $env:GITHUB_SHA" }

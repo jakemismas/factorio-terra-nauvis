@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download the linter that tools/lint/manifest.json records and check its sha256 (ci.yml, release.yml).
+"""Download the linter that tools/lint/manifest.json records and check its sha256 (ci.yml, release.yml, latest.yml).
 
   python tools/lint/fetch_linter.py --dest <new directory> [--github-env <GITHUB_ENV file>]
 

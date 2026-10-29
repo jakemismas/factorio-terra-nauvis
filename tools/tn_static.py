@@ -3,17 +3,17 @@
 
 Every row here reads only the checked-out tree: no game, no fh.py and no FACTORIO_WS, so ci.yml
 runs the same rows on GitHub's runner that the gate runs as its step 1. One row reads git refs: the
-append-only row compares the tree with main and origin/main (ci.yml checks out with full history, so
-the runner holds origin/main) and fails closed when it cannot read them. Each row returns a list of
-failure messages (empty means pass) and a short detail line.
+append-only row compares the tree with main and origin/main (ci.yml and latest.yml check out with
+full history, so the runner holds origin/main) and fails closed when it cannot read them. Each row
+returns a list of failure messages (empty means pass) and a short detail line.
 
 Rows: lint, info_json, locale, dashes, registration, storage, names, design_rules, workflow_scan,
 attribution_scan, data_src, frozen_static, append_only, fallbacks, zip, plus fixture positive
 controls for the scans (each rule must fail its own fixture; fixtures are written at run time into
 a temporary directory outside the scanned trees and never committed). No row scans tools/ or
 tests/ for game launches,
-live-profile paths or copies into a mods folder (the workflow scan still keeps both workflows off
-the game and the workspace): fh.py isolation (G1) is the only live-profile protection (the maintainer's
+live-profile paths or copies into a mods folder (the workflow scan still keeps all three workflows
+off the game and the workspace): fh.py isolation (G1) is the only live-profile protection (the maintainer's
 decision, 2026-10-27 23:47), and copying the built zip into the live mods folder is allowed (16:19).
 """
 import copy
@@ -1296,11 +1296,13 @@ def parse_yaml(text):
 # ------------------------------------------------------------------------------------------------ workflow scan
 
 SHA_RE = re.compile(r"^[\w.-]+/[\w.-]+(?:/[\w./-]+)?@[0-9a-f]{40}$")
-# The workflows are a closed world: these keys only, one job, and exactly the expected steps in
-# order, each run block exactly its commands. Anything else can stop a check from failing the run
-# (continue-on-error, if, a trigger filter, an extra step writing $GITHUB_ENV, a shell, a working
-# directory or an environment that runs another program, a checkout of another repository).
+# The workflows are a closed world: these keys only (latest.yml adds its one concurrency block), one
+# job, and exactly the expected steps in order, each run block exactly its commands. Anything else
+# can stop a check from failing the run (continue-on-error, if, a trigger filter, an extra step
+# writing $GITHUB_ENV, a shell, a working directory or an environment that runs another program, a
+# checkout of another repository).
 WORKFLOW_KEYS = {"name", "on", "permissions", "jobs"}
+LATEST_KEYS = WORKFLOW_KEYS | {"concurrency"}
 JOB_KEYS = {"runs-on", "steps"}
 STEP_KEYS = {"name", "uses", "with", "run", "env"}
 PIP_LINE = "python -m pip install --disable-pip-version-check -r tools/lint/requirements.txt"
@@ -1310,13 +1312,36 @@ TOKEN_ENV = "${{ secrets.GITHUB_TOKEN }}"
 PUBLISH_FILES = ('$files = @(Get-ChildItem -Path dist -File | Where-Object { $_.Name -like "*.zip" -or $_.Name -like '
                  '"*.zip.sha256" } | ForEach-Object { $_.FullName })')
 PUBLISH_COUNT = 'if ($files.Count -ne 2) { throw "expected the zip and its .sha256 in dist, found $($files.Count) files" }'
+# latest.yml: one concurrency group that never cancels a running publish, and the
+# publish block line for line. GitHub runs a run block in pwsh after $ErrorActionPreference = 'stop'
+# and ends it with exit $LASTEXITCODE. A native command's non-zero exit throws nothing there (the
+# first line pins $PSNativeCommandUseErrorActionPreference to $false), so the failed view of a
+# missing release only skips the delete, and each gh call that must succeed is checked on its line.
+LATEST_CONCURRENCY = {"group": "latest-release", "cancel-in-progress": "false"}
+LATEST_NOTES = ("Rolling dev build of main at $env:GITHUB_SHA, replaced on every push to main. Install: place the "
+                "zip in the Factorio mods folder.")
+LATEST_PUBLISH = (
+    "$PSNativeCommandUseErrorActionPreference = $false",
+    '$files = @(Get-ChildItem -Path dist -File | Where-Object { $_.Name -like "*.zip" } | ForEach-Object '
+    '{ $_.FullName })',
+    'if ($files.Count -ne 1) { throw "expected exactly one zip in dist, found $($files.Count) files" }',
+    "gh release view latest --json tagName",
+    'if ($LASTEXITCODE -eq 0) { gh release delete latest --cleanup-tag --yes; if ($LASTEXITCODE -ne 0) { throw "gh '
+    'release delete failed with exit code $LASTEXITCODE" } }',
+    'gh release create latest @files --target "$env:GITHUB_SHA" --prerelease --title latest --notes '
+    f'"{LATEST_NOTES}"',
+    'if ($LASTEXITCODE -ne 0) { throw "gh release create failed with exit code $LASTEXITCODE" }',
+    '$tag = gh api "repos/$env:GITHUB_REPOSITORY/commits/tags/latest" --jq ".sha"',
+    'if ($tag -ne $env:GITHUB_SHA) { throw "the latest tag points at $tag, not $env:GITHUB_SHA" }',
+)
+LATEST_CREATE = 5   # the index of the gh release create line in LATEST_PUBLISH
 
 
 def _expected_steps(kind, manifest):
-    """The one step sequence each workflow may hold. Both checkouts keep full
-    history (fetch-depth 0): CI's so the static append-only row reads origin/main and the release
-    tags on the runner, the release's so its tag check can refuse a tag whose commit is not on
-    origin/main and its build can compare with the earlier release tags."""
+    """The one step sequence each workflow may hold. All three
+    checkouts keep full history (fetch-depth 0): CI's and latest's so the static append-only row
+    reads origin/main and the release tags on the runner, the release's so its tag check can refuse a
+    tag whose commit is not on origin/main and its build can compare with the earlier release tags."""
     checkout = {"label": "the full-history checkout", "uses": "actions/checkout@", "with": {"fetch-depth": "0"}}
     common = [
         checkout,
@@ -1329,6 +1354,12 @@ def _expected_steps(kind, manifest):
             {"label": "the static checks", "run": ["python tools/earth_test.py static"]},
             {"label": "the zip build", "run": ["python tools/build_zip.py"]},
             {"label": "the artifact upload", "uses": "actions/upload-artifact@", "with": "upload"},
+        ]
+    if kind == "latest":
+        return common + [
+            {"label": "the static checks", "run": ["python tools/earth_test.py static"]},
+            {"label": "the zip build", "run": ["python tools/build_zip.py"]},
+            {"label": "the publish step", "run": "latest-publish", "env": {"GH_TOKEN": TOKEN_ENV}},
         ]
     return common + [
         {"label": "the tag check", "run": ['python tools/build_zip.py --check-tag "$env:TAG"'], "env": {"TAG": TAG_ENV}},
@@ -1384,13 +1415,56 @@ def publish_problems(name, lines):
     return fails
 
 
+def latest_publish_problems(name, lines):
+    """latest.yml's publish block: exactly the LATEST_PUBLISH lines, and its gh release create parsed
+    for a clear message: the tag latest, exactly @files, and only --target "$env:GITHUB_SHA",
+    --prerelease, --title latest and --notes (no --draft, --latest, --repo or other flag)."""
+    import shlex
+    if lines is None or len(lines) != len(LATEST_PUBLISH):
+        return [f"{name}: the publish step must be exactly the {len(LATEST_PUBLISH)} lines of DECISIONS 22:34 (the "
+                f"native-command pin, the zip list, its count check, the release view, the conditional delete, the "
+                f"create, its check, the tag lookup and its check), found {lines}"]
+    fails = [f"{name}: publish line {i + 1} must be exactly {want!r}, found {got!r}"
+             for i, (got, want) in enumerate(zip(lines, LATEST_PUBLISH)) if got != want]
+    try:
+        tok = shlex.split(lines[LATEST_CREATE])
+    except ValueError as e:
+        return fails + [f"{name}: the gh release create line does not parse ({e})"]
+    if tok[:4] != ["gh", "release", "create", "latest"]:
+        fails.append(f"{name}: the publish command must be gh release create latest (found {tok[:4]})")
+    files, flags, i = [], {}, 4
+    while i < len(tok):
+        t = tok[i]
+        if t in ("--target", "--title", "--notes") and i + 1 < len(tok):
+            flags[t] = tok[i + 1]
+            i += 2
+        elif t == "--prerelease":
+            flags[t] = True
+            i += 1
+        elif t.startswith("-"):
+            fails.append(f"{name}: gh release create passes {t}; only --target, --prerelease, --title and --notes "
+                         f"are allowed")
+            i += 1
+        else:
+            files.append(t)
+            i += 1
+    if files != ["@files"]:
+        fails.append(f"{name}: gh release create must attach exactly @files (the dev zip), not {files}")
+    if flags.get("--target") != "$env:GITHUB_SHA" or "--prerelease" not in flags or flags.get("--title") != "latest" \
+            or not flags.get("--notes"):
+        fails.append(f'{name}: gh release create needs --target "$env:GITHUB_SHA", --prerelease, --title latest and '
+                     f'--notes')
+    return fails
+
+
 def structure_problems(name, kind, wf, manifest):
     """The closed-world shape of a workflow: its keys, one job with its keys, and exactly the
     expected steps, each with only its own keys, `with`, `env` and exact run lines."""
     fails = []
-    extra = sorted(set(wf) - WORKFLOW_KEYS)
+    keys = LATEST_KEYS if kind == "latest" else WORKFLOW_KEYS
+    extra = sorted(set(wf) - keys)
     if extra:
-        fails.append(f"{name}: workflow keys {extra} are not allowed (only {sorted(WORKFLOW_KEYS)})")
+        fails.append(f"{name}: workflow keys {extra} are not allowed (only {sorted(keys)})")
     jobs = wf.get("jobs") or {}
     if len(jobs) != 1:
         fails.append(f"{name}: must hold exactly one job, found {sorted(jobs)}")
@@ -1432,6 +1506,8 @@ def structure_problems(name, kind, wf, manifest):
             lines = _run_lines(s)
             if w.get("run") == "publish":
                 fails += publish_problems(name, lines)
+            elif w.get("run") == "latest-publish":
+                fails += latest_publish_problems(name, lines)
             elif "run" in w and lines != w["run"]:
                 fails.append(f"{where} must run exactly {w['run']}, found {lines}")
     return fails
@@ -1558,10 +1634,49 @@ def check_release(text, manifest):
     return fails
 
 
+def check_latest(text, manifest):
+    """latest.yml: every push to main runs the static rows, builds the dev zip and
+    replaces the rolling latest pre-release with it, as strictly shaped as release.yml."""
+    try:
+        wf = parse_yaml(text)
+    except YamlError as e:
+        return [f"latest.yml: {e}"]
+    fails, steps, runs, secrets = _common_workflow("latest.yml", wf, text, manifest)
+    fails += structure_problems("latest.yml", "latest", wf, manifest)
+    on = wf.get("on")
+    if not (isinstance(on, dict) and set(on) == {"push"} and isinstance(on["push"], dict)
+            and set(on["push"]) == {"branches"} and on["push"]["branches"] == ["main"]):
+        fails.append(f"latest.yml: must trigger only on a push to branches [main] (found {on})")
+    if wf.get("permissions") != {"contents": "write"}:
+        fails.append("latest.yml: permissions must be exactly contents: write")
+    if wf.get("concurrency") != LATEST_CONCURRENCY:
+        fails.append(f"latest.yml: concurrency must be exactly group: latest-release, cancel-in-progress: false, so "
+                     f"only the newest push publishes and no running publish is cut short (found "
+                     f"{wf.get('concurrency')})")
+    if any(r.startswith("python tools/build_zip.py --release") for r in runs):
+        fails.append("latest.yml: builds the release zip; latest carries the dev zip CI uploads")
+    order = []
+    for s in steps:
+        r = s.get("run") or ""
+        env = s.get("env") or {}
+        if r.strip() == "python tools/earth_test.py static":
+            order.append("static")
+        if r.strip() == "python tools/build_zip.py":
+            order.append("build")
+        if "gh release create" in r:
+            if env.get("GH_TOKEN") != TOKEN_ENV:
+                fails.append("latest.yml: gh must use the workflow's own GITHUB_TOKEN")
+            order.append("publish")
+    if order != ["static", "build", "publish"]:
+        fails.append(f"latest.yml: steps must be the static checks, build_zip.py, then the publish step, so a broken "
+                     f"main is never published (found {order})")
+    return fails
+
+
 def workflow_findings(gh_dir=REPO / ".github" / "workflows", lint_dir=LINT):
     manifest = lint_manifest(lint_dir)
     out = []
-    for name, fn in (("ci.yml", check_ci), ("release.yml", check_release)):
+    for name, fn in (("ci.yml", check_ci), ("release.yml", check_release), ("latest.yml", check_latest)):
         p = Path(gh_dir) / name
         if not p.exists():
             out.append(f"{name} is missing")
@@ -1575,7 +1690,7 @@ def workflow_findings(gh_dir=REPO / ".github" / "workflows", lint_dir=LINT):
 
 def row_workflow(repo=REPO):
     f = workflow_findings(Path(repo) / ".github" / "workflows", LINT)
-    return f, "ci.yml and release.yml against DECISIONS 12:35"
+    return f, "ci.yml and release.yml against DECISIONS 12:35, latest.yml against DECISIONS 22:34"
 
 
 # ------------------------------------------------------------------------------------------------ attribution scan
@@ -2688,6 +2803,8 @@ def fixture_controls():
         wf_dir = REPO / ".github" / "workflows"
         ci = (wf_dir / "ci.yml").read_text(encoding="utf-8")
         rel_wf = (wf_dir / "release.yml").read_text(encoding="utf-8")
+        latest_wf = (wf_dir / "latest.yml").read_text(encoding="utf-8")
+        names = {"ci": "ci", "rel": "release", "latest": "latest"}
         sha = re.search(r"actions/checkout@([0-9a-f]{40})", ci).group(1)
         muts = [
             ("workflow: ci without pull_request", "ci", ci.replace("  pull_request:\n", "")),
@@ -2728,8 +2845,8 @@ def fixture_controls():
         def job_perm(text):
             return re.sub(r"(\n    runs-on: windows-latest\n)", "\n    permissions:\n      contents: write\\1", text, 1)
         server = "--start" + "-server"
-        for kind, text in (("ci", ci), ("rel", rel_wf)):
-            name = "ci" if kind == "ci" else "release"
+        for kind, text in (("ci", ci), ("rel", rel_wf), ("latest", latest_wf)):
+            name = names[kind]
             muts += [
                 (f"workflow: {name} without the luaparser install", kind, text.replace(pip, "")),
                 (f"workflow: {name} without the linter install", kind, text.replace(lint, "")),
@@ -2752,6 +2869,9 @@ def fixture_controls():
             ("workflow: release checks out without full history (the landed-tag check needs origin/main)", "rel",
              rel_wf.replace("        with:\n          fetch-depth: 0\n", "", 1)),
             ("workflow: release checks out a shallow history", "rel", rel_wf.replace("fetch-depth: 0", "fetch-depth: 1")),
+            ("workflow: latest checks out without full history (the append-only row needs origin/main)", "latest",
+             latest_wf.replace("        with:\n          fetch-depth: 0\n", "", 1)),
+            ("workflow: latest checks out a shallow history", "latest", latest_wf.replace("fetch-depth: 0", "fetch-depth: 1")),
             ("workflow: release not on windows-latest", "rel", rel_wf.replace("windows-latest", "ubuntu-latest")),
             ("workflow: release on another python", "rel", rel_wf.replace('"3.13.3"', '"3.12"')),
             ("workflow: release with an unpinned action", "rel", rel_wf.replace(f"actions/checkout@{sha}", "actions/checkout@v7")),
@@ -2769,7 +2889,10 @@ def fixture_controls():
         for kind, text, line, what in (("ci", ci, static_run, "the static step"), ("ci", ci, build_run, "the build step"),
                                        ("rel", rel_wf, tag_run, "the tag check"),
                                        ("rel", rel_wf, release_run, "the release build"),
-                                       ("rel", rel_wf, publish_run, "the publish step")):
+                                       ("rel", rel_wf, publish_run, "the publish step"),
+                                       ("latest", latest_wf, static_run, "the latest static step"),
+                                       ("latest", latest_wf, build_run, "the latest zip build"),
+                                       ("latest", latest_wf, publish_run, "the latest publish step")):
             line = line if line in text else ""
             muts += [
                 (f"workflow: continue-on-error on {what}", kind,
@@ -2779,11 +2902,11 @@ def fixture_controls():
                 (f"workflow: a working-directory on {what}", kind,
                  after(text, line, "        working-directory: spikes\n") if line else text),
             ]
-            if kind == "ci" or what == "the release build":
+            if kind == "ci" or what in ("the release build", "the latest static step", "the latest zip build"):
                 muts.append((f"workflow: an environment on {what}", kind,
                              after(text, line, "        env:\n          PYTHONPATH: x\n") if line else text))
-        for kind, text in (("ci", ci), ("rel", rel_wf)):
-            name = "ci" if kind == "ci" else "release"
+        for kind, text in (("ci", ci), ("rel", rel_wf), ("latest", latest_wf)):
+            name = names[kind]
             job = "    runs-on: windows-latest\n"
             muts += [
                 (f"workflow: {name} job with continue-on-error", kind, after(text, job, "    continue-on-error: true\n")),
@@ -2830,19 +2953,102 @@ def fixture_controls():
             ("workflow: the release names another repository", "rel",
              rel_wf.replace("--verify-tag", "--verify-tag --repo someone/else")),
         ]
+        # latest.yml: its trigger, permissions, concurrency, step order and publish block
+        lw = latest_wf
+        conc = "concurrency:\n  group: latest-release\n  cancel-in-progress: false\n"
+        static_step = r"      - name: Static checks\n(        .*\n)+"
+        publish_name = "      - name: Publish the latest pre-release\n"
+        delete_check = '; if ($LASTEXITCODE -ne 0) { throw "gh release delete failed with exit code $LASTEXITCODE" }'
+        muts += [
+            ("workflow: latest on a tag", "latest", lw.replace("    branches:\n      - main\n", '    tags:\n      - "v*"\n')),
+            ("workflow: latest on pull_request", "latest", lw.replace("on:\n  push:\n", "on:\n  pull_request:\n  push:\n")),
+            ("workflow: latest with an extra trigger", "latest",
+             lw.replace("on:\n  push:\n", "on:\n  workflow_dispatch:\n  push:\n")),
+            ("workflow: latest on every push", "latest", lw.replace("  push:\n    branches:\n      - main\n", "  push:\n")),
+            ("workflow: latest on another branch", "latest", lw.replace("      - main\n", "      - release\n")),
+            ("workflow: latest on an extra branch", "latest", lw.replace("      - main\n", "      - main\n      - dev\n")),
+            ("workflow: latest on pushes touching some paths only", "latest",
+             lw.replace("      - main\n", '      - main\n    paths:\n      - "terra-nauvis/**"\n')),
+            ("workflow: latest with read permission", "latest", lw.replace("contents: write", "contents: read")),
+            ("workflow: latest with an extra permission", "latest",
+             lw.replace("  contents: write\n", "  contents: write\n  actions: write\n")),
+            ("workflow: latest with write-all permissions", "latest",
+             lw.replace("permissions:\n  contents: write\n", "permissions: write-all\n")),
+            ("workflow: latest with another token", "latest",
+             lw.replace("${{ secrets.GITHUB_TOKEN }}", "${{ secrets.RELEASE_PAT }}")),
+            ("workflow: latest with an unpinned action", "latest", lw.replace(f"actions/checkout@{sha}", "actions/checkout@v7")),
+            ("workflow: latest not on windows-latest", "latest", lw.replace("windows-latest", "ubuntu-latest")),
+            ("workflow: latest on another python", "latest", lw.replace('"3.13.3"', '"3.12"')),
+            ("workflow: latest without the concurrency block", "latest", lw.replace(conc, "")),
+            ("workflow: latest cancels a running publish", "latest",
+             lw.replace("cancel-in-progress: false", "cancel-in-progress: true")),
+            ("workflow: latest in a per-commit concurrency group", "latest",
+             lw.replace("group: latest-release", "group: ${{ github.sha }}")),
+            ("workflow: latest with the concurrency block on its job", "latest",
+             lw.replace(conc + "\n", "").replace("    runs-on: windows-latest\n", "    runs-on: windows-latest\n    "
+                                                 "concurrency:\n      group: latest-release\n      cancel-in-progress: "
+                                                 "false\n", 1)),
+            ("workflow: latest publishes under an if", "latest",
+             lw.replace(publish_name, publish_name + "        if: github.ref == 'refs/heads/main'\n")),
+            ("workflow: latest without the static step", "latest", re.sub(static_step, "", lw)),
+            ("workflow: latest with the static step neutralised in its own run block", "latest",
+             lw.replace("run: python tools/earth_test.py static", "run: python tools/earth_test.py static; exit 0")),
+            ("workflow: latest with the static step followed by exit 0", "latest",
+             lw.replace(static_run, "        run: |\n          python tools/earth_test.py static\n          exit 0\n")),
+            ("workflow: latest publishes before the static checks", "latest",
+             re.sub(static_step, "", lw) + "      - name: Static checks\n        run: python tools/earth_test.py static\n"),
+            ("workflow: latest without the zip build", "latest", re.sub(r"      - name: Build the zip\n(        .*\n)+", "", lw)),
+            ("workflow: latest builds the release zip", "latest",
+             lw.replace(build_run, "        run: python tools/build_zip.py --release\n")),
+            ("workflow: latest with the zip build neutralised in its own run block", "latest",
+             lw.replace(build_run, "        run: python tools/build_zip.py; exit 0\n")),
+            ("workflow: latest with an extra step", "latest",
+             lw.replace(publish_name, "      - name: Build the zip again\n        run: python tools/build_zip.py\n" +
+                        publish_name)),
+            ("workflow: latest without --prerelease", "latest", lw.replace(" --prerelease", "")),
+            ("workflow: latest publishes a draft", "latest", lw.replace(" --prerelease", " --prerelease --draft")),
+            ("workflow: latest marked the repository's Latest release", "latest",
+             lw.replace(" --prerelease", " --prerelease --latest")),
+            ("workflow: latest names another repository", "latest",
+             lw.replace(" --prerelease", " --prerelease --repo someone/else")),
+            ("workflow: latest without --target", "latest", lw.replace(' --target "$env:GITHUB_SHA"', "")),
+            ("workflow: latest at the branch head, not the pushed commit", "latest",
+             lw.replace('--target "$env:GITHUB_SHA"', "--target main")),
+            ("workflow: latest under another tag", "latest", lw.replace("gh release create latest", "gh release create nightly")),
+            ("workflow: latest under another title", "latest", lw.replace("--title latest", '--title "$env:GITHUB_SHA"')),
+            ("workflow: latest notes run a subexpression", "latest", lw.replace('--notes "Rolling', '--notes "$(exit 0)Rolling')),
+            ("workflow: latest attaches an extra file", "latest", lw.replace("latest @files", "latest @files README.md")),
+            ("workflow: latest attaches every file in dist", "latest",
+             lw.replace(' | Where-Object { $_.Name -like "*.zip" }', "")),
+            ("workflow: latest without the zip count check", "latest",
+             re.sub(r"\n\s*if \(\$files\.Count -ne 1\)[^\n]*", "", lw)),
+            ("workflow: latest without the native-command pin", "latest",
+             lw.replace("          $PSNativeCommandUseErrorActionPreference = $false\n", "")),
+            ("workflow: latest deletes without looking first", "latest",
+             lw.replace("gh release view latest --json tagName\n", "gh release delete latest --cleanup-tag --yes\n")),
+            ("workflow: latest delete leaves the old tag", "latest", lw.replace(" --cleanup-tag", "")),
+            ("workflow: latest ignores a failed delete", "latest", lw.replace(delete_check, "")),
+            ("workflow: latest ignores a failed create", "latest",
+             re.sub(r"\n\s*if \(\$LASTEXITCODE -ne 0\) \{ throw \"gh release create[^\n]*", "", lw)),
+            ("workflow: latest without the tag check", "latest", re.sub(r"\n\s*\$tag = gh api [^\n]*\n\s*if \(\$tag [^\n]*", "", lw)),
+            ("workflow: latest checks the tag of another repository", "latest",
+             lw.replace("repos/$env:GITHUB_REPOSITORY/", "repos/someone/else/")),
+            ("workflow: latest tag check compares nothing", "latest", lw.replace("if ($tag -ne $env:GITHUB_SHA)", "if ($false)")),
+            ("workflow: latest publish followed by exit 0", "latest", lw.rstrip("\n") + "\n          exit 0\n"),
+        ]
         lint_dir = td / "lint-fixture"
         shutil.copytree(LINT, lint_dir)
         (lint_dir / "requirements.txt").write_text("luaparser\n", encoding="utf-8")
         f = workflow_findings(REPO / ".github" / "workflows", lint_dir)
         results.append(("workflow: requirements.txt without the luaparser pin", bool(f), f[:1]))
+        checks = {"ci": (check_ci, ci), "rel": (check_release, rel_wf), "latest": (check_latest, latest_wf)}
         for label, kind, text in muts:
-            fn = check_ci if kind == "ci" else check_release
-            orig = ci if kind == "ci" else rel_wf
+            fn, orig = checks[kind]
             f = fn(text, manifest) if text != orig else []
             results.append((label, bool(f) and text != orig, f[:1] if text != orig else ["mutation did not apply"]))
-        results.append(("workflow: the committed ci.yml and release.yml pass the scan",
-                        not check_ci(ci, manifest) and not check_release(rel_wf, manifest),
-                        (check_ci(ci, manifest) + check_release(rel_wf, manifest))[:1]))
+        committed = check_ci(ci, manifest) + check_release(rel_wf, manifest) + check_latest(latest_wf, manifest)
+        results.append(("workflow: the committed ci.yml, release.yml and latest.yml pass the scan", not committed,
+                        committed[:1]))
         # the tag check itself: only "v" plus info.json's version passes
         _, version, _ = build_zip.mod_identity()
         major, minor, patch = version.split(".")

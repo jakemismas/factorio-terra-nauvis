@@ -1,6 +1,6 @@
 {
  "format": "tn-lint-manifest/1",
- "note": "The T16 lint toolchain (DECISIONS 06:45). The linter lints the zip's Lua files; luaparser parses every Lua file in the repo as the syntax floor. ci.yml and release.yml install both at these versions, the linter checked against this sha256 (tools/lint/fetch_linter.py).",
+ "note": "The T16 lint toolchain (DECISIONS 06:45). The linter lints the zip's Lua files; luaparser parses every Lua file in the repo as the syntax floor. ci.yml, release.yml and latest.yml install both at these versions, the linter checked against this sha256 (tools/lint/fetch_linter.py).",
  "linter": {
   "name": "luacheck",
   "version": "1.2.0",
