@@ -249,11 +249,13 @@ if AB then
   -- The marsh's lift is a step at the marsh cut, not a ramp up the weight: rising through the vanilla
   -- tiles' moisture bands, the ramp drew them as a dark rim of one width round every marsh (a tide line).
   -- It starts above Alien Biomes' mid band wherever the frayed edge passes, or its beige sand rims the pools.
+  -- The natural field stops at ab_top: Alien Biomes' wettest trees grow in a band round 0.9, so past its top
+  -- they drew a ring round every moisture peak, a circle of forest about an empty middle.
   local function ab_moisture(extra, edge)
     local cut = num(cfg.tiles.vanilla.marsh_cut)
-    return "clamp(max(" .. moisture_mean() .. " + " .. moisture_spread(false) .. extra .. " + " ..
-      num(M.ab_bias) .. " * var('control:moisture:bias'), if(" .. edge .. " > " .. cut .. ", " .. num(M.marsh) ..
-      " * max(" .. MARSH_W .. ", " .. cut .. "), 0)), 0, 1)"
+    return "clamp(max(min(" .. num(M.ab_top) .. ", " .. moisture_mean() .. " + " .. moisture_spread(false) .. extra ..
+      " + " .. num(M.ab_bias) .. " * var('control:moisture:bias')), if(" .. edge .. " > " .. cut .. ", " ..
+      num(M.marsh) .. " * max(" .. MARSH_W .. ", " .. cut .. "), 0)), 0, 1)"
   end
   def(N.ab.moisture, ab_moisture("", MARSH_W))
   -- Natural aux stays under ab_cap, below AB's alien palette, whatever the spread: it folds back at the

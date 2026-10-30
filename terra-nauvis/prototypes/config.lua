@@ -2139,7 +2139,7 @@ return {
       base = 0.68, equatorial = 0.12, equatorial_lat = 4, equatorial_ramp = 8, dry = 0.55, marsh = 0.9,
       noise = {amplitude = 0.32, wavelength_px = 40, octaves = 3, persistence = 0.6, seed1 = 7603},
       spread = {dry = 0.7, cold = 0.55},
-      ab_bias = 2.2,
+      ab_bias = 2.2, ab_top = 0.92,
       -- north: the boreal belt is moist (the vanilla cold trees want 0.4 to 0.8): the cap rises to wet
       -- from core wet_from_t to wet_full_t, falls to frozen from core frozen_from_t to frozen_full_t,
       -- and a floor (full at core floor_full_t, none from floor_from_t) keeps sand, light dirt and
