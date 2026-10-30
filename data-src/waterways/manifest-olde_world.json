@@ -8,8 +8,8 @@
   "sha256": "6ad48c12e3cb798eb90c0ba236a0a165ca58120526aca1cd4fe43acaac2a9dd5"
  },
  "coast_fit": {
-  "path": "data-src/fits/olde_world/model-4096.npz",
-  "sha256": "bb0ab3adc7931212881690a2c97f1123d245817ea88485d1bee925685345b37a"
+  "path": "data-src/fits/olde_world/model-8192.npz",
+  "sha256": "f28272b9d304191e074c25db1878fceb8057e37c876244535fa429a7817e594e"
  },
  "config": {
   "basin_tiles": 30,
@@ -60,8 +60,8 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s1_v1.lua",
-   "sha256": "5846563a450a084a3d0bc3a98da878b6bfcc7b1b33d6364ce6321f0a557885fd",
-   "bytes": 68544,
+   "sha256": "61fc2d5e432af93c3c66d2a52bcbe682d6136e347d29ce9a807a18fd4372c78d",
+   "bytes": 68548,
    "stats": {
     "segments": {
      "river": 542,
@@ -311,32 +311,32 @@
       },
       {
        "interval": 4,
-       "arc_tiles": 268.0,
-       "centre": [-2243.1435, -1502.3239],
-       "tangent": [0.124347, 0.992239],
+       "arc_tiles": 277.0,
+       "centre": [-2239.6994, -1494.4427],
+       "tangent": [0.661622, 0.749838],
        "half_length": 4.0,
        "half_width": 5.75
       },
       {
        "interval": 5,
-       "arc_tiles": 331.0,
-       "centre": [-2195.25, -1466.28],
+       "arc_tiles": 332.0,
+       "centre": [-2194.5252, -1465.5911],
        "tangent": [0.72485, 0.688907],
        "half_length": 4.0,
        "half_width": 5.75
       },
       {
        "interval": 6,
-       "arc_tiles": 410.0,
-       "centre": [-2122.3052, -1437.2038],
+       "arc_tiles": 414.0,
+       "centre": [-2118.5451, -1435.8394],
        "tangent": [0.940027, 0.3411],
        "half_length": 4.0,
        "half_width": 5.75
       },
       {
        "interval": 7,
-       "arc_tiles": 452.0,
-       "centre": [-2082.8241, -1422.8776],
+       "arc_tiles": 461.0,
+       "centre": [-2074.3638, -1419.8077],
        "tangent": [0.940027, 0.3411],
        "half_length": 4.0,
        "half_width": 5.75
@@ -3996,7 +3996,7 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s2_v1.lua",
-   "sha256": "d34b917edc4c869d90ee1e36c2fdac3d2d34c4b1edf3275401073c519c806225",
+   "sha256": "079d0f69abd94601fdc80284419783fe98fb5ee5b6d2f6c3b7a3345b7bd1291f",
    "bytes": 105707,
    "stats": {
     "segments": {
@@ -4255,9 +4255,9 @@
       },
       {
        "interval": 4,
-       "arc_tiles": 544.0,
-       "centre": [-4486.0723, -3001.0024],
-       "tangent": [0.259573, 0.965723],
+       "arc_tiles": 554.0,
+       "centre": [-4482.5197, -2991.7658],
+       "tangent": [0.536056, 0.844182],
        "half_length": 4.0,
        "half_width": 5.75
       },
@@ -4271,16 +4271,16 @@
       },
       {
        "interval": 6,
-       "arc_tiles": 827.0,
-       "centre": [-4242.8963, -2875.6363],
+       "arc_tiles": 829.0,
+       "centre": [-4241.0058, -2874.9837],
        "tangent": [0.945282, 0.326255],
        "half_length": 4.0,
        "half_width": 5.75
       },
       {
        "interval": 7,
-       "arc_tiles": 891.0,
-       "centre": [-4182.3983, -2854.7559],
+       "arc_tiles": 855.0,
+       "centre": [-4216.4284, -2866.5011],
        "tangent": [0.945282, 0.326255],
        "half_length": 4.0,
        "half_width": 5.75
@@ -4295,11 +4295,13 @@
       },
       {
        "interval": 9,
-       "arc_tiles": 1106.0,
-       "centre": [-4111.2919, -2734.3456],
-       "tangent": [-0.999438, 0.033527],
+       "arc_tiles": 1132.0,
+       "centre": [-4137.2514, -2733.2995],
+       "tangent": [-0.966195, 0.257813],
        "half_length": 4.0,
-       "half_width": 5.75
+       "half_width": 6.9264,
+       "bend_tiles": 1.176,
+       "bank_margin_px": -1.934
       },
       {
        "interval": 10,
@@ -4381,8 +4383,8 @@
       },
       {
        "interval": 5,
-       "arc_tiles": 657.0,
-       "centre": [-6802.5913, -3115.318],
+       "arc_tiles": 624.0,
+       "centre": [-6769.645, -3117.1998],
        "tangent": [-0.998373, 0.057025],
        "half_length": 4.0,
        "half_width": 5.75
@@ -5632,8 +5634,8 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 61.0,
-       "centre": [-3944.9392, -3565.1237],
+       "arc_tiles": 36.0,
+       "centre": [-3969.8411, -3567.336],
        "tangent": [0.996077, 0.08849],
        "half_length": 4.0,
        "half_width": 5.75
@@ -7297,7 +7299,7 @@
        "tangent": [0.909787, 0.415075],
        "half_length": 4.0,
        "half_width": 5.75,
-       "bank_margin_px": 0.016
+       "bank_margin_px": 0.019
       }
      ],
      "fords_skipped": [],
@@ -8022,8 +8024,8 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s3_v1.lua",
-   "sha256": "5b00d591376855baa918c5b00f9249a609e9ff5806be9e874391a4ae2e378156",
-   "bytes": 144123,
+   "sha256": "f5b1661a72ec708d12c35506a66e9b03200a6bc463e55657c14eeb59ff99dc8c",
+   "bytes": 144054,
    "stats": {
     "segments": {
      "river": 1411,
@@ -8031,7 +8033,7 @@
      "canal": 36,
      "dam": 7
     },
-    "fords": 277,
+    "fords": 276,
     "basins": 17,
     "classes": {
      "ww": 6,
@@ -8288,8 +8290,8 @@
       },
       {
        "interval": 4,
-       "arc_tiles": 816.0,
-       "centre": [-6724.9893, -4491.8225],
+       "arc_tiles": 818.0,
+       "centre": [-6723.9034, -4490.1429],
        "tangent": [0.542936, 0.839774],
        "half_length": 4.0,
        "half_width": 6.5
@@ -8312,9 +8314,9 @@
       },
       {
        "interval": 7,
-       "arc_tiles": 1374.0,
-       "centre": [-6226.8826, -4261.6333],
-       "tangent": [0.901002, 0.433816],
+       "arc_tiles": 1426.0,
+       "centre": [-6179.5981, -4240.1382],
+       "tangent": [0.948045, 0.318136],
        "half_length": 4.0,
        "half_width": 6.5
       },
@@ -8327,14 +8329,6 @@
        "half_width": 6.5
       },
       {
-       "interval": 9,
-       "arc_tiles": 1794.0,
-       "centre": [-6300.175, -4036.3312],
-       "tangent": [-0.701399, 0.712769],
-       "half_length": 4.0,
-       "half_width": 6.5
-      },
-      {
        "interval": 10,
        "arc_tiles": 1890.0,
        "centre": [-6385.291, -3997.675],
@@ -8343,7 +8337,14 @@
        "half_width": 6.5
       }
      ],
-     "fords_skipped": [],
+     "fords_skipped": [
+      {
+       "interval": 9,
+       "reason": "a bank is water in the reference or the coast fit (lake, sea or coast)",
+       "reasons": ["a bank is water in the reference or the coast fit (lake, sea or coast)"],
+       "positions": 169
+      }
+     ],
      "fords_expected": 11
     },
     {
@@ -8418,11 +8419,12 @@
       },
       {
        "interval": 5,
-       "arc_tiles": 1047.0,
-       "centre": [-10220.0058, -4671.0868],
+       "arc_tiles": 1049.0,
+       "centre": [-10222.0012, -4671.223],
        "tangent": [-0.99768, -0.068074],
        "half_length": 4.0,
-       "half_width": 6.5
+       "half_width": 6.5,
+       "bank_margin_px": -7.511
       }
      ],
      "fords_skipped": [],
@@ -11052,7 +11054,7 @@
        "tangent": [0.648211, -0.761461],
        "half_length": 4.0,
        "half_width": 6.5,
-       "bank_margin_px": -0.67
+       "bank_margin_px": -0.669
       },
       {
        "interval": 2,
@@ -12243,8 +12245,8 @@
   },
   "4": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s4_v1.lua",
-   "sha256": "2f2d6f2694f291328cc695089c0e10211294003c7f6467fe8a5b977d8b6c6f34",
-   "bytes": 147526,
+   "sha256": "c25cf8a9972541fab61904d4e2444ab21ee75258de5c723f8d7a956803bb6a16",
+   "bytes": 147453,
    "stats": {
     "segments": {
      "river": 1440,
@@ -12252,7 +12254,7 @@
      "canal": 35,
      "dam": 7
     },
-    "fords": 278,
+    "fords": 277,
     "basins": 23,
     "classes": {
      "ww": 6,
@@ -12508,9 +12510,9 @@
       },
       {
        "interval": 4,
-       "arc_tiles": 1098.0,
-       "centre": [-8970.0121, -5994.1953],
-       "tangent": [0.262881, 0.964828],
+       "arc_tiles": 1107.0,
+       "centre": [-8966.6703, -5985.9475],
+       "tangent": [0.542827, 0.839845],
        "half_length": 4.0,
        "half_width": 8.0
       },
@@ -12524,16 +12526,16 @@
       },
       {
        "interval": 6,
-       "arc_tiles": 1651.0,
-       "centre": [-8492.098, -5749.7722],
+       "arc_tiles": 1655.0,
+       "centre": [-8488.2898, -5748.5487],
        "tangent": [0.952069, 0.305884],
        "half_length": 4.0,
        "half_width": 8.0
       },
       {
        "interval": 7,
-       "arc_tiles": 1788.0,
-       "centre": [-8361.6646, -5707.8661],
+       "arc_tiles": 1714.0,
+       "centre": [-8432.1177, -5730.5015],
        "tangent": [0.952069, 0.305884],
        "half_length": 4.0,
        "half_width": 8.0
@@ -12547,14 +12549,6 @@
        "half_width": 8.0
       },
       {
-       "interval": 9,
-       "arc_tiles": 2271.0,
-       "centre": [-8278.3178, -5465.5208],
-       "tangent": [-0.966783, 0.2556],
-       "half_length": 4.0,
-       "half_width": 8.0
-      },
-      {
        "interval": 10,
        "arc_tiles": 2520.0,
        "centre": [-8481.0222, -5333.4355],
@@ -12563,7 +12557,14 @@
        "half_width": 8.0
       }
      ],
-     "fords_skipped": [],
+     "fords_skipped": [
+      {
+       "interval": 9,
+       "reason": "a bank is water in the reference or the coast fit (lake, sea or coast)",
+       "reasons": ["a bank is water in the reference or the coast fit (lake, sea or coast)"],
+       "positions": 229
+      }
+     ],
      "fords_expected": 11
     },
     {
@@ -13962,8 +13963,8 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 101.0,
-       "centre": [-7913.8649, -7119.0317],
+       "arc_tiles": 88.0,
+       "centre": [-7926.2387, -7123.0177],
        "tangent": [0.951833, 0.306617],
        "half_length": 4.0,
        "half_width": 8.0
@@ -13978,8 +13979,8 @@
       },
       {
        "interval": 2,
-       "arc_tiles": 568.0,
-       "centre": [-7551.4174, -7346.0314],
+       "arc_tiles": 573.0,
+       "centre": [-7551.9474, -7351.0033],
        "tangent": [-0.105998, -0.994366],
        "half_length": 4.0,
        "half_width": 8.0
@@ -14538,7 +14539,7 @@
        "tangent": [-0.415224, -0.909719],
        "half_length": 4.0,
        "half_width": 8.0,
-       "bank_margin_px": -0.187
+       "bank_margin_px": -0.195
       }
      ],
      "fords_skipped": [],
@@ -16525,8 +16526,8 @@
   },
   "5": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s5_v1.lua",
-   "sha256": "b49290ac81b6801f00f5c661d90a6bfab684a0eefad481519ab7addce7599787",
-   "bytes": 152594,
+   "sha256": "118a45244004592f00c6df7cfe9a7b93757c4f4640be46da690c00b2f5c0895a",
+   "bytes": 152518,
    "stats": {
     "segments": {
      "river": 1478,
@@ -16534,7 +16535,7 @@
      "canal": 35,
      "dam": 7
     },
-    "fords": 279,
+    "fords": 278,
     "basins": 21,
     "classes": {
      "ww": 8,
@@ -16801,9 +16802,9 @@
       },
       {
        "interval": 4,
-       "arc_tiles": 1368.0,
-       "centre": [-11212.8576, -7493.6378],
-       "tangent": [0.266294, 0.963892],
+       "arc_tiles": 1378.0,
+       "centre": [-11209.418, -7484.3484],
+       "tangent": [0.544756, 0.838594],
        "half_length": 4.0,
        "half_width": 9.5
       },
@@ -16817,16 +16818,16 @@
       },
       {
        "interval": 6,
-       "arc_tiles": 2057.0,
-       "centre": [-10616.7397, -7188.218],
+       "arc_tiles": 2062.0,
+       "centre": [-10611.981, -7186.6834],
        "tangent": [0.951738, 0.306911],
        "half_length": 4.0,
        "half_width": 9.5
       },
       {
        "interval": 7,
-       "arc_tiles": 2229.0,
-       "centre": [-10453.0408, -7135.4292],
+       "arc_tiles": 2139.0,
+       "centre": [-10538.6972, -7163.0513],
        "tangent": [0.951738, 0.306911],
        "half_length": 4.0,
        "half_width": 9.5
@@ -16840,14 +16841,6 @@
        "half_width": 9.5
       },
       {
-       "interval": 9,
-       "arc_tiles": 2830.0,
-       "centre": [-10347.3439, -6832.583],
-       "tangent": [-0.96604, 0.258394],
-       "half_length": 4.0,
-       "half_width": 9.5
-      },
-      {
        "interval": 10,
        "arc_tiles": 3151.0,
        "centre": [-10611.639, -6668.8558],
@@ -16856,7 +16849,14 @@
        "half_width": 9.5
       }
      ],
-     "fords_skipped": [],
+     "fords_skipped": [
+      {
+       "interval": 9,
+       "reason": "a bank is water in the reference or the coast fit (lake, sea or coast)",
+       "reasons": ["a bank is water in the reference or the coast fit (lake, sea or coast)"],
+       "positions": 289
+      }
+     ],
      "fords_expected": 11
     },
     {
@@ -18267,9 +18267,9 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 134.0,
-       "centre": [-9886.4887, -8895.2655],
-       "tangent": [0.904595, 0.426272],
+       "arc_tiles": 170.0,
+       "centre": [-9852.9478, -8887.8698],
+       "tangent": [0.980814, -0.194944],
        "half_length": 4.0,
        "half_width": 9.5
       },
@@ -18283,8 +18283,8 @@
       },
       {
        "interval": 2,
-       "arc_tiles": 724.0,
-       "centre": [-9436.9608, -9181.458],
+       "arc_tiles": 730.0,
+       "centre": [-9439.4719, -9186.9072],
        "tangent": [-0.418527, -0.908204],
        "half_length": 4.0,
        "half_width": 9.5
@@ -18299,9 +18299,9 @@
       },
       {
        "interval": 4,
-       "arc_tiles": 1344.0,
-       "centre": [-8909.1468, -9142.0866],
-       "tangent": [0.991871, -0.127244],
+       "arc_tiles": 1360.0,
+       "centre": [-8893.7194, -9138.9569],
+       "tangent": [0.955779, 0.294086],
        "half_length": 4.0,
        "half_width": 9.5
       },
@@ -20783,8 +20783,8 @@
   },
   "6": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s6_v1.lua",
-   "sha256": "528514167e3531bdade422aeeeaad840382499ffb01c68fec8a82d293b982b91",
-   "bytes": 141120,
+   "sha256": "d920c9bb63bc402a3a8587e5db0a7e8d813ba272df182bf147a7b9a2a1213717",
+   "bytes": 141048,
    "stats": {
     "segments": {
      "river": 1339,
@@ -20792,7 +20792,7 @@
      "canal": 34,
      "dam": 7
     },
-    "fords": 282,
+    "fords": 281,
     "basins": 21,
     "classes": {
      "ww": 8,
@@ -21055,8 +21055,8 @@
       },
       {
        "interval": 4,
-       "arc_tiles": 1636.0,
-       "centre": [-13460.873, -9010.4123],
+       "arc_tiles": 1661.0,
+       "centre": [-13454.1807, -8986.3247],
        "tangent": [0.267692, 0.963505],
        "half_length": 4.0,
        "half_width": 11.0
@@ -21071,16 +21071,16 @@
       },
       {
        "interval": 6,
-       "arc_tiles": 2485.0,
-       "centre": [-12740.9702, -8625.0659],
+       "arc_tiles": 2491.0,
+       "centre": [-12735.2528, -8623.2463],
        "tangent": [0.952905, 0.30327],
        "half_length": 4.0,
        "half_width": 11.0
       },
       {
        "interval": 7,
-       "arc_tiles": 2683.0,
-       "centre": [-12552.2951, -8565.0185],
+       "arc_tiles": 2585.0,
+       "centre": [-12645.6797, -8594.7389],
        "tangent": [0.952905, 0.30327],
        "half_length": 4.0,
        "half_width": 11.0
@@ -21094,14 +21094,6 @@
        "half_width": 11.0
       },
       {
-       "interval": 9,
-       "arc_tiles": 3421.0,
-       "centre": [-12416.0789, -8198.5516],
-       "tangent": [-0.969408, 0.245457],
-       "half_length": 4.0,
-       "half_width": 11.0
-      },
-      {
        "interval": 10,
        "arc_tiles": 3761.0,
        "centre": [-12687.9469, -8011.1074],
@@ -21110,7 +21102,14 @@
        "half_width": 11.0
       }
      ],
-     "fords_skipped": [],
+     "fords_skipped": [
+      {
+       "interval": 9,
+       "reason": "a bank is water in the reference or the coast fit (lake, sea or coast)",
+       "reasons": ["a bank is water in the reference or the coast fit (lake, sea or coast)"],
+       "positions": 349
+      }
+     ],
      "fords_expected": 11
     },
     {
@@ -22509,8 +22508,8 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 142.0,
-       "centre": [-11880.025, -10681.777],
+       "arc_tiles": 123.0,
+       "centre": [-11897.4527, -10689.3452],
        "tangent": [0.917244, 0.398325],
        "half_length": 4.0,
        "half_width": 11.0
@@ -22525,8 +22524,8 @@
       },
       {
        "interval": 2,
-       "arc_tiles": 865.0,
-       "centre": [-11329.9044, -11019.8673],
+       "arc_tiles": 872.0,
+       "centre": [-11331.5716, -11026.6658],
        "tangent": [-0.238177, -0.971222],
        "half_length": 4.0,
        "half_width": 11.0

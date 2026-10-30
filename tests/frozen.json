@@ -859,45 +859,45 @@
   },
   "tn_fords_olde_world_s1_v1": {
    "type": "noise-expression",
-   "sha256": "b283563fe7b0fbb155562404dd3c0b3f1d0f91e960b3bcb63068086accac409a",
+   "sha256": "1f0b885162c1297dce0120df4bece2a26979c776204ec137966bdd2c581eb1b2",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s2_v1": {
    "type": "noise-expression",
-   "sha256": "2387867a80a5d2c68a11164c8876080255435439a4a8064a169e5bd6061d4f73",
+   "sha256": "1dcaa811596f57228922e83f3db5bd86a3fc83902637fe0adb0881b84967f54f",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s3_v1": {
    "type": "noise-expression",
-   "sha256": "30013b9c6713e76544c5203597401bc942f53c27d6526188f68c7339c01e6d9b",
+   "sha256": "5cc482724e1ddca6231c5ab017caae2895dbe1b816fd055959868ebe0534e768",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s4_v1": {
    "type": "noise-expression",
-   "sha256": "1e2ff13e747411d9b69cd66d7f237913e4b617b0a5e67fbdec01868564279feb",
+   "sha256": "09d2697ffd0fdacb8edfc2b46e2246f79d0793c7e9c4d6497c87a392f1f98d5b",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s5_v1": {
    "type": "noise-expression",
-   "sha256": "4aa76a7e88c282bd0f1c5bac962bc98b8ad288a88d23bac178a094937a92574a",
+   "sha256": "c31210e29327ea3ac4bb57b11210ba128e7b4a846fb29dce8036484b65d28496",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s6_v1": {
    "type": "noise-expression",
-   "sha256": "fc1815b5b221027daa2f5de045385600e80d47f5a263f096c45ab17925f926e3",
+   "sha256": "be17991f224efca588b6ac4082a079c117d981e41d33ace5b299b6ad57cd0fdd",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_atlantic_v2": {
    "type": "noise-expression",
@@ -915,10 +915,10 @@
   },
   "tn_geo_olde_world_v2": {
    "type": "noise-expression",
-   "sha256": "fc3b86252c3c25c5903ce7c70c48049ef71b0c289beeacaec7f3cbadd33649bb",
+   "sha256": "78a958ac7d33e003d8d2aace416dc5de775420c2e7337045182ffe9c53ad61bb",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_gx_atlantic_v2": {
    "type": "noise-expression",
@@ -5234,45 +5234,45 @@
   },
   "tn_fords_olde_world_s1_v2": {
    "type": "noise-expression",
-   "sha256": "6806a482138c58ce40f87ee9b22c82926679197b6f9832beb9f2b8171533dbc5",
+   "sha256": "a7c95ba60ac98e8cf582c2ef0e44c104c81230a913b25433cb20a6deedbac044",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s2_v2": {
    "type": "noise-expression",
-   "sha256": "e0d9ee95a933364efcfd952432d1acb254193cd0a82cbab90a47de15375f11e4",
+   "sha256": "57b0ac33f6ec05e2f8e2997c9f1ffa5b8198907cb89f6ad1d9b4f4ce6a30737f",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s3_v2": {
    "type": "noise-expression",
-   "sha256": "771310a2ee5f38ea814836f8e69356498f254f2b87ff307f579ab45dfae58929",
+   "sha256": "43c58738798c05bc4395779af480d1937b9aec704ea72d83db7aa87f7ffa71e9",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s4_v2": {
    "type": "noise-expression",
-   "sha256": "e9081f74a8c73dd4fc501e338204f6d33cde1b26aa087f2b65aee39a9d8ea833",
+   "sha256": "6c07e3441a1bef6aeb94558eb4372dca3d7fdeed93fdc3fcd26b330e2c01713c",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s5_v2": {
    "type": "noise-expression",
-   "sha256": "1d98e72decb8a0bf4fef2d263a93bed209c0945f2492a38bea3c3ad507e13e17",
+   "sha256": "fa9d02dbc5a3414c42ef0da11ca5830b8247fd682e3507cfaf1fa2f7690a2c39",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s6_v2": {
    "type": "noise-expression",
-   "sha256": "1e5d93e33a08a9058a6d51e614152677d53556817ba561fa2e6e2796c8e98807",
+   "sha256": "9a8606cc8a9a0618ede97a6bbaeef40ab089fbb855503465a885a7953df5e85c",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_atlantic_v3": {
    "type": "noise-expression",
@@ -5290,10 +5290,10 @@
   },
   "tn_geo_olde_world_v3": {
    "type": "noise-expression",
-   "sha256": "53f6fbb6a259ea4a7b50ac3d9e8cd8519a68e077c1e680c8e7aa762550041d5c",
+   "sha256": "800321af0678e33e5cb34d42688ed4e712fe67196445cc7a0052666926ddf644",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_gx_atlantic_v3": {
    "type": "noise-expression",
@@ -7040,45 +7040,45 @@
   },
   "tn_fords_olde_world_s1_v3": {
    "type": "noise-expression",
-   "sha256": "64bd8c6fd5fde4e0bff431ebf7172c82c104892d2ac7e8e58d87aaa87525b592",
+   "sha256": "e84c353204894cea9e3a78718dd61382500f3964aa55cce6e66950d059011206",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s2_v3": {
    "type": "noise-expression",
-   "sha256": "783f4db3b6a0754a2ee660cdb137280585e858ff85e7d08316964f4e3bff21b4",
+   "sha256": "c337ec4a4fcdc91f1c75b3e6d00d1d0121d26f04b7d678506b407a4dc324a977",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s3_v3": {
    "type": "noise-expression",
-   "sha256": "3451360c22210d16879c41aa169c7ef992df46419fe1d28b5c94d219a3f64a78",
+   "sha256": "45d2b98faca41d68f20ea8d92644e24e365d848f0eff4d1761e021daa8129549",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s4_v3": {
    "type": "noise-expression",
-   "sha256": "127a901926985da5a232bdc8d2153a15b0b7608323b9bad3875f698988d1b681",
+   "sha256": "f0f7d9eb8f027f499c048e7283a4bb51fda09271f2595b72fbd737c52adec4e0",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s5_v3": {
    "type": "noise-expression",
-   "sha256": "bff2a0c90937d73ce722813ec766a9e71cfef2ee8dbc71f5676b306f48f182e7",
+   "sha256": "12385c4bf20796ee30635782bced3c6deb26665a2932a395704c1087ce1ec52e",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s6_v3": {
    "type": "noise-expression",
-   "sha256": "45f6863fbfa577cde8246dbb098bd0e92b10c49cd6a7412b3026eec0c21f3747",
+   "sha256": "6b9f8033da73f7a8f07cec88bdffc2ec5bd729c14ad5a3396f5a15302ad50349",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_atlantic_v4": {
    "type": "noise-expression",
@@ -7096,10 +7096,10 @@
   },
   "tn_geo_olde_world_v4": {
    "type": "noise-expression",
-   "sha256": "1d9c3f0e1998805a36edc7aafd6003e43505938d145cf7ba1ea95186c2cad2d3",
+   "sha256": "42c62382fccb845b148f81c8233febeb39cad8a50518e25aded7cdf4ec45d622",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_gx_atlantic_v4": {
    "type": "noise-expression",
@@ -8071,45 +8071,45 @@
   },
   "tn_fords_olde_world_s1_v4": {
    "type": "noise-expression",
-   "sha256": "ca982b011563b373704cc24c21caf4a5e62a6b7d69ceffa38f9045a577993907",
+   "sha256": "a01b1383636b9b82c4cb58c8810b1139fc90f8ee424e5742661a70b4396bce14",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s2_v4": {
    "type": "noise-expression",
-   "sha256": "83ca995eac9045624e96f13d8b3c8c733a4fe39057be48ad637583d96595443d",
+   "sha256": "97ffef5e7e808c9a90ed26456c8c8839087ce909bccd03067823ba9b2c01bf78",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s3_v4": {
    "type": "noise-expression",
-   "sha256": "b9c19766de15e76a6270aff86475a018b96455ff7e986d996659265684722fd5",
+   "sha256": "03c21b6e276e39ece8cca0235e181e26323b540a8759330d61834c7c40d388bd",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s4_v4": {
    "type": "noise-expression",
-   "sha256": "96b4808ed029914f3bf229a82eab7901f8bec29871bc6d029378ecb9fe67d397",
+   "sha256": "67ba0f55516917b90c934b7b6802e2eb1c257638b01e0418f267be0cb55f728c",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s5_v4": {
    "type": "noise-expression",
-   "sha256": "09c54ffa366251007d821e599beec7b04d6e6f65a1e4393e977de245941731ab",
+   "sha256": "48aa8e4c84d49c1160e6f0fb9e6391efcf8bf0ca216754e66b3da143e9f95b4d",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s6_v4": {
    "type": "noise-expression",
-   "sha256": "8bc01684d10cbfbb53544756dc36a4dae9cbd560cba5438d1d762525ecc0450c",
+   "sha256": "6407abc3a1c4f2225b1e1c61e45995190dfb39b23d5dab831136e7875c5a6a33",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_atlantic_v5": {
    "type": "noise-expression",
@@ -8127,10 +8127,10 @@
   },
   "tn_geo_olde_world_v5": {
    "type": "noise-expression",
-   "sha256": "524107891c62f4b0a34c674e7f5621a69a6c78e3001fd0cb9c4ec1fe16e0925b",
+   "sha256": "035c18c21f18a35ae6ed341a89765fe19ddc45b9301d78f1bb52e5ea3b6b7b44",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_gx_atlantic_v5": {
    "type": "noise-expression",
@@ -8743,42 +8743,42 @@
   },
   "tn_fords_olde_world_s1_v5": {
    "type": "noise-expression",
-   "sha256": "084b6a6f927ec706784998f25826a73839b853d7fc1fd9b07b69a370e56e554a",
+   "sha256": "2c01ac7a65e6c29739362ddee23446abdf034ca81f0e62cf6dbe6434889e4ea1",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s2_v5": {
    "type": "noise-expression",
-   "sha256": "6283c53a21de77a264ac31a06e7da2904ff4ca50861ca505b73cd6cde5b33c43",
+   "sha256": "1e228699896f49ca98084f3c446f194ab848f72d5bb56b7a78bb3a1c7a750432",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s3_v5": {
    "type": "noise-expression",
-   "sha256": "0d3bae27996e664a0aba32c0e433a5485c0364b079fb6f4476d357ee3091d224",
+   "sha256": "f9d737c1dd764e12e4de8bb4d155f57c410030a64e84b88678f6ea33fddf0b4c",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s4_v5": {
    "type": "noise-expression",
-   "sha256": "2576f5322e75e9ed020ac3523314d29815fc284ce8d46bf37a3b4a841e5e2dc6",
+   "sha256": "b659b090459f96151e664d3a2be9779ff688572cfcd8d94b27d630ccd338a7d1",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s5_v5": {
    "type": "noise-expression",
-   "sha256": "b791a8d73b54d0078c06a4dc23a40bbd0c447f791144190476c422b426a89b42",
+   "sha256": "46074e7dc0517d6bf532bdfcdf3d16d3c40b3db1ab75655fcb4e09e0e349cc89",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s6_v5": {
    "type": "noise-expression",
-   "sha256": "6f06e1f1b8842add2ea93a5a3b33b473a9f10f322d703e485cf863af4bf5954c",
+   "sha256": "5ab0160c47d097acbef17715c2a2c93ffb86eeddfbadd81ac6a9dd57593a20d5",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
@@ -8792,7 +8792,7 @@
   },
   "tn_geo_olde_world_v6": {
    "type": "noise-expression",
-   "sha256": "7fa7cf364b9782c90852c449b00ed7bf16a9537306741cfa5f320c99b70b52d9",
+   "sha256": "45807e0bc6f59d189ffcc6d6a6b2f04b1e38e99dbc14243bf4f9350c864cd910",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"

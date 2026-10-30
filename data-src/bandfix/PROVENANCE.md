@@ -17,7 +17,7 @@ re-emits the tables twice and compares each byte for byte with the committed fil
 | File | sha256 | Role |
 |---|---|---|
 | `manifest-europe.json` | `2a4f192d1652693d76699fafa1e68c8ceab44e0c24e0750140c3446623032119` | emission manifest |
-| `manifest-olde_world.json` | `3e86480ffc0b0495840227ecdeb2920ce9bc70f162a22dc72e2064b14efcb0d7` | emission manifest |
+| `manifest-olde_world.json` | `4f8bc4461a7981d2309c512c1d90a0e84c3c160fc1daa1135a9a8197c834531b` | emission manifest |
 
 2026-10-30: `bandfix.tables` gained Europe's geography 14 and Old World's 16 and 18 (the soft-edge
 versions; the handler skips the edge band on them). The emitter reads that list only to check the
