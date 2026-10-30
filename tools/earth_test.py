@@ -8974,7 +8974,7 @@ def rd_dump_findings(cfg, d0, d1, table, base="M0"):
             body = (ne1.get(o["name"]) or {}).get("expression")
             if body != f"({live}) * {N['clear']}":
                 out.append(f"wrapper {o['name']} is {str(body)[:80]!r}, not {base}'s live probability times {N['clear']}")
-    ridge =[N["d2"], N["free"], N["cliff_elevation"], N["cliffiness"], N["clear"]] + \
+    ridge =[N["height"], N["free"], N["cliff_elevation"], N["cliffiness"], N["clear"]] + \
         [N[k][mk] for k in ("crest", "openings", "band") for mk in cfg["map_order"] if N[k].get(mk)]
     banned = ("cliff_richness", "control:", "segmentation_multiplier", "cliff_smoothing")
     allowed_maps = {}

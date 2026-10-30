@@ -251,7 +251,7 @@ local RDN = {
   K_CREST = NOISE .. "crest",
   K_OPENINGS = NOISE .. "openings",
   K_BAND = NOISE .. "band",
-  RD_D2 = NOISE .. "ridge_d2" .. RD_V,
+  RD_HEIGHT = NOISE .. "ridge_height" .. RD_V,
   RD_FREE = NOISE .. "ridge_free" .. RD_V,
   RD_CLIFF_ELEVATION = NOISE .. "cliff_elevation" .. RD_V,
   RD_CLIFFINESS = NOISE .. "cliffiness" .. RD_V,
@@ -265,6 +265,24 @@ local RDN = {
   EU_BAND = NOISE .. "band_europe" .. RD_V,
   AT_BAND = NOISE .. "band_atlantic" .. RD_V,
   OW_BAND = NOISE .. "band_olde_world" .. RD_V,
+  EU_WANDER_U = NOISE .. "ridge_u_europe" .. RD_V,
+  AT_WANDER_U = NOISE .. "ridge_u_atlantic" .. RD_V,
+  OW_WANDER_U = NOISE .. "ridge_u_olde_world" .. RD_V,
+  EU_WANDER_V = NOISE .. "ridge_v_europe" .. RD_V,
+  AT_WANDER_V = NOISE .. "ridge_v_atlantic" .. RD_V,
+  OW_WANDER_V = NOISE .. "ridge_v_olde_world" .. RD_V,
+  EU_RUN = NOISE .. "ridge_run_europe" .. RD_V,
+  AT_RUN = NOISE .. "ridge_run_atlantic" .. RD_V,
+  OW_RUN = NOISE .. "ridge_run_olde_world" .. RD_V,
+  EU_DEPTH = NOISE .. "ridge_depth_europe" .. RD_V,
+  AT_DEPTH = NOISE .. "ridge_depth_atlantic" .. RD_V,
+  OW_DEPTH = NOISE .. "ridge_depth_olde_world" .. RD_V,
+  EU_NEAR = NOISE .. "ridge_near_europe" .. RD_V,
+  AT_NEAR = NOISE .. "ridge_near_atlantic" .. RD_V,
+  OW_NEAR = NOISE .. "ridge_near_olde_world" .. RD_V,
+  EU_KEEP = NOISE .. "ridge_keep_europe" .. RD_V,
+  AT_KEEP = NOISE .. "ridge_keep_atlantic" .. RD_V,
+  OW_KEEP = NOISE .. "ridge_keep_olde_world" .. RD_V,
   ORE_IRON = ORE .. "iron_ore_p" .. RD_V,
   ORE_COPPER = ORE .. "copper_ore_p" .. RD_V,
   ORE_COAL = ORE .. "coal_p" .. RD_V,
@@ -1005,8 +1023,10 @@ return {
     {
       release = "0.1.0",
       names = {RDN.EU_CREST, RDN.AT_CREST, RDN.OW_CREST, RDN.EU_OPENINGS, RDN.AT_OPENINGS, RDN.OW_OPENINGS,
-      RDN.EU_BAND, RDN.AT_BAND, RDN.OW_BAND, RDN.RD_D2,
-               RDN.RD_FREE,
+      RDN.EU_BAND, RDN.AT_BAND, RDN.OW_BAND, RDN.RD_HEIGHT,
+               RDN.EU_WANDER_U, RDN.AT_WANDER_U, RDN.OW_WANDER_U, RDN.EU_WANDER_V, RDN.AT_WANDER_V, RDN.OW_WANDER_V,
+               RDN.EU_RUN, RDN.AT_RUN, RDN.OW_RUN, RDN.EU_DEPTH, RDN.AT_DEPTH, RDN.OW_DEPTH,
+               RDN.EU_NEAR, RDN.AT_NEAR, RDN.OW_NEAR, RDN.EU_KEEP, RDN.AT_KEEP, RDN.OW_KEEP, RDN.RD_FREE,
                RDN.RD_CLIFF_ELEVATION, RDN.RD_CLIFFINESS, RDN.RD_CLEAR, RDN.ORE_IRON, RDN.ORE_COPPER, RDN.ORE_COAL,
                RDN.ORE_STONE, RDN.ORE_URANIUM,
                RDN.ORE_OIL},
@@ -1268,17 +1288,28 @@ return {
 
   -- Ridges (milestone ridges; ARCHITECTURE.md milestone contract 8; S5; APPROVALS 5 and 11). Every number the
   -- ridge bodies use; prototypes/expressions/ridges.lua builds them from prototypes/tables/ranges.lua:
-  --   flank_tiles, ramp_tiles, contour   cliff_elevation = cliff_elevation_0 + cliff_elevation_interval * f,
-  --              f = clamp(1 + (flank - d) / ramp, low, high) with d the crest distance in tiles, so the
-  --              only contour is f = 1, flank tiles out on each side, high side toward the crest; the
-  --              flank sits off the 4-tile lattice (S5: an exact lattice hit deletes the cliffs) and
-  --              no term reads cliff_richness, so frequency, continuity and richness are inert
+  --   ramp_tiles, bias_tiles, contour   cliff_elevation = cliff_elevation_0 + cliff_elevation_interval * f,
+  --              f = clamp(1 + h, low, high), h = (depth - bias) / ramp * stretch + fray (ridges.lua), so
+  --              the contours are the ridge's edge and, ramp_tiles further in, one ring; the noise keeps
+  --              them off the 4-tile lattice (S5: an exact lattice hit deletes the cliffs) and no term
+  --              reads cliff_richness, so frequency, continuity and richness are inert
+  --   width      a vertex's half-width in tiles: min_tiles + gain_tiles * (height / ref_m) ^ power, tip_tiles
+  --              at a crest's end vertices (below zero, so the ridge ends in a taper, never a cap)
+  --   wander     the wandering axis: per axis of the chain, noise rows in reference pixels, so one shape
+  --              on the map at every scale (at scale 6, about 100 and 36 tiles over 1,500 and 300)
+  --   run_base, run   the width's multiplier: base plus noise rows in tiles, floored at 0
+  --   stretch, stretch_floor, fray   the height's noise rows: the depth's multiplier (floored, or a ring
+  --              would open wherever it crosses 0) and the term added to it, in contours
+  --   gaps       noise gaps: an opening where the noise rows read under threshold, plus thin_gain as the
+  --              ridge's width at the tile falls from thin_tiles to 0, less collar_gain inside a collar
+  --   collar_tiles   the radius round an opening's slot where the ridge stands whole (ridges.lua keep)
+  --   flank_tiles   the near edge of the ridge from S5's measurements: earth_test.py's T6 metrics read it
   --   cliffiness   the cliffiness of a ridge cell; 0 inside an opening and inside the ridge-free start
   --   pass_tiles   an opening's cliffiness gap along the crest (APPROVALS 5: at least 12, for 8 tiles
   --              clear; S5 measured 16 clear from a 16-tile gap, but a 16-tile slot read 7.5 at Verecke
-  --              on the milestone's T6, at the limit, so 20), reach_tiles its half-length across;
-  --              tip_tiles how far past a crest's end vertex an opening there reaches, so the ridge's
-  --              end cap (flank_tiles out, plus a cell and a cliff's box) goes with it
+  --              on the milestone's T6, at the limit, and the wander shears a slot by up to a third), reach_tiles
+  --              its least half-length across, reach_margin_tiles how far it outreaches the half-width;
+  --              tip_tiles how far past a crest's end vertex an opening there reaches
   --   edge_tiles, edge_reach_tiles   a range cut by a map's edge with no pass on that map: no ridge cell
   --              within edge_tiles of the edge and edge_reach_tiles of the crossing (APPROVALS 5)
   --   start      the ridge-free disc round the spawn: max(radius_tiles, starting_area_radius) plus
@@ -1286,6 +1317,8 @@ return {
   --              0 ridge cliffiness within 150 tiles)
   --   ore_clear_tiles   no ore within this of a crest outside the start disc, past the
   --              flank cliffs' boxes, so no ore entity stands on a ridge cell
+  --   band_margin_px   the crest band reads the segments within this of the map's extent, the reach of
+  --              the ore clearance at scale 1, however far the cliffs reach
   --   band_max_angle_degrees   the ore clearance reads, in the Entity program, each map's crest band: a
   --              superset of the tiles within ore_clear_tiles of a crest, built from crest pieces monotone
   --              along one axis whose segments lie within this angle of it, each a piecewise-linear
@@ -1304,27 +1337,50 @@ return {
   -- Names carry the ridges' version suffix; a changed body ships under the next one.
   ridges = {
     flank_tiles = 16.37,
-    ramp_tiles = 32,
-    contour = {low = 0.5, high = 1.5},
+    ramp_tiles = 24,
+    bias_tiles = 3,
+    contour = {low = 0.5, high = 2.5},
+    width = {ref_m = 4800, min_tiles = 10, gain_tiles = 38, power = 0.8, tip_tiles = -20},
+    wander = {
+      u = {{seed1 = 7501, wavelength = 250, amplitude = 16}, {seed1 = 7502, wavelength = 50, amplitude = 6}},
+      v = {{seed1 = 7503, wavelength = 250, amplitude = 16}, {seed1 = 7504, wavelength = 50, amplitude = 6}},
+    },
+    run_base = 1.15,
+    run = {{seed1 = 7505, wavelength = 420, amplitude = 0.55}, {seed1 = 7506, wavelength = 110, amplitude = 0.3}},
+    stretch = {{seed1 = 7507, wavelength = 80, amplitude = 0.6}},
+    stretch_floor = 0.4,
+    fray = {{seed1 = 7508, wavelength = 34, amplitude = 0.25}},
+    gaps = {noise = {{seed1 = 7509, wavelength = 128, amplitude = 1}, {seed1 = 7510, wavelength = 40, amplitude = 0.6}},
+            threshold = -0.5, thin_tiles = 20, thin_gain = 1.2, collar_gain = 3},
     cliffiness = 10,
-    pass_tiles = 20,
+    pass_tiles = 24,
     reach_tiles = 32,
+    reach_margin_tiles = 32,
+    collar_tiles = 72,
     tip_tiles = 24,
     edge_tiles = 16,
     edge_reach_tiles = 256,
     start = {radius_tiles = 150, margin_tiles = 8},
     ore_clear_tiles = 24,
+    band_margin_px = 40,
     band_max_angle_degrees = 60,
     centre_tiles = 0.5,
     switch_threshold = 0.5,
     reset_size = 1,
     max_arguments = 255,
     names = {
-      d2 = RDN.RD_D2, free = RDN.RD_FREE, cliff_elevation = RDN.RD_CLIFF_ELEVATION, cliffiness = RDN.RD_CLIFFINESS,
+      height = RDN.RD_HEIGHT, free = RDN.RD_FREE, cliff_elevation = RDN.RD_CLIFF_ELEVATION,
+      cliffiness = RDN.RD_CLIFFINESS,
       clear = RDN.RD_CLEAR,
       crest = {europe = RDN.EU_CREST, atlantic = RDN.AT_CREST, olde_world = RDN.OW_CREST},
       openings = {europe = RDN.EU_OPENINGS, atlantic = RDN.AT_OPENINGS, olde_world = RDN.OW_OPENINGS},
       band = {europe = RDN.EU_BAND, atlantic = RDN.AT_BAND, olde_world = RDN.OW_BAND},
+      wander_u = {europe = RDN.EU_WANDER_U, atlantic = RDN.AT_WANDER_U, olde_world = RDN.OW_WANDER_U},
+      wander_v = {europe = RDN.EU_WANDER_V, atlantic = RDN.AT_WANDER_V, olde_world = RDN.OW_WANDER_V},
+      run = {europe = RDN.EU_RUN, atlantic = RDN.AT_RUN, olde_world = RDN.OW_RUN},
+      depth = {europe = RDN.EU_DEPTH, atlantic = RDN.AT_DEPTH, olde_world = RDN.OW_DEPTH},
+      near = {europe = RDN.EU_NEAR, atlantic = RDN.AT_NEAR, olde_world = RDN.OW_NEAR},
+      keep = {europe = RDN.EU_KEEP, atlantic = RDN.AT_KEEP, olde_world = RDN.OW_KEEP},
     },
     ores = {
       {resource = "iron-ore", key = "entity:iron-ore:probability", name = RDN.ORE_IRON},
