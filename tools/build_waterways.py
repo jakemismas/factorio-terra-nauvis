@@ -1137,9 +1137,10 @@ def basin_cover(P, runs, basins, half):
 # interval, and only such an interval, and records it)
 NATURAL_WATER = "a bank is water in the reference or the coast fit (lake, sea or coast)"
 CLASH = "another corridor within the banks"
+POOL = "a turning basin's pool"
 
 
-def place_fords(w, geo, s, P, hw, others, fid="", hw_at=None):
+def place_fords(w, geo, s, P, hw_at, others, fid, basins):
     """Fords of one river at scale s: one per every_px * s tiles of the shipped path.
     Every whole-tile position of an interval, from its middle outward, is a candidate whose banks are
     land in the reference and the coast fit (geo.bank_check) with no other corridor within them. A
@@ -1159,6 +1160,9 @@ def place_fords(w, geo, s, P, hw, others, fid="", hw_at=None):
     # are safe when the warp's whole reach still leaves them on land
     wide = 1 + w["natural"]["width"]["amplitude"]
     reach = warp_reach(w, s)
+    # a ford spans its river, not a basin's pool
+    Bs = w["natural"]["basin"]
+    pool = Bs["radius_tiles"] * wide + Bs["half_length_tiles"] + hl + 2
     L = polyline_length(P)
     n = int(L // D)
     cum = np.concatenate([[0.0], np.cumsum(np.sqrt((np.diff(P, axis=0) ** 2).sum(1)))])
@@ -1192,7 +1196,10 @@ def place_fords(w, geo, s, P, hw, others, fid="", hw_at=None):
             tried += 1
             C, T, _ = point_at(P, a)
             N = np.array([-T[1], T[0]])
-            across = (hw_at(a) if hw_at else hw) * wide + bank_reach(w, s) + F["margin_tiles"]
+            if any(math.hypot(C[0] - b[0], C[1] - b[1]) < pool for b in basins):
+                whys.add(POOL)
+                continue
+            across = hw_at(a) * wide + bank_reach(w, s) + F["margin_tiles"]
             # the reach's deviation from the tangent line over the ford's length plus two tiles each way
             # (its vertices there and the stretch's two ends)
             lo_a, hi_a = a - hl - 2, a + hl + 2
@@ -1307,7 +1314,7 @@ def build_scale(cfg, data, geo, s):
             continue
         others = [(o["P"], o["hw"], o["P"].min(0), o["P"].max(0)) for j, o in enumerate(feats)
                   if j != i and o["kind"] != "dam"]
-        f["fords"], f["fords_skipped"] = place_fords(w, geo, s, f["P"], f["hw"], others, f["id"], hw_at[f["id"]])
+        f["fords"], f["fords_skipped"] = place_fords(w, geo, s, f["P"], hw_at[f["id"]], others, f["id"], f["basins"])
     return {"scale": s, "features": feats, "basins": basins, "half_basin": half, "carved": carved, "ponds": ponds,
             "tolerance_tiles": tol, "rivers_carved": keep, "rivers_listed": len(data["rivers"])}
 

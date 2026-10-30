@@ -128,8 +128,8 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s1_v1.lua",
-   "sha256": "1bc339003d189b2911e0fb01ff0aaad708ee6793bac43603df9ee580ebbd3ee0",
-   "bytes": 70820,
+   "sha256": "0010f759668245efd40e6ee1337bdf0d6e70629a44e267ec6b92544309ea5fe0",
+   "bytes": 70679,
    "stats": {
     "segments": {
      "river": 537,
@@ -137,7 +137,7 @@
      "canal": 18,
      "dam": 7
     },
-    "fords": 265,
+    "fords": 263,
     "basins": 13,
     "ponds": 20,
     "classes": {
@@ -233,8 +233,8 @@
       },
       {
        "interval": 6,
-       "arc_tiles": 397.835,
-       "centre": [-2781.7838, -1378.0086],
+       "arc_tiles": 382.835,
+       "centre": [-2796.7551, -1378.9365],
        "tangent": [0.998085, 0.061865],
        "half_length": 4.0,
        "half_width": 9.9
@@ -476,11 +476,12 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 15.847,
-       "centre": [-3244.9189, -1370.5158],
-       "tangent": [-0.998274, 0.058722],
+       "arc_tiles": 6.847,
+       "centre": [-3236.2013, -1372.0973],
+       "tangent": [-0.90569, 0.42394],
        "half_length": 4.0,
-       "half_width": 7.625
+       "half_width": 8.7783,
+       "bend_tiles": 1.153
       },
       {
        "interval": 1,
@@ -1059,16 +1060,16 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 44.635,
-       "centre": [-3377.0179, -1288.9177],
-       "tangent": [-0.995014, -0.099739],
+       "arc_tiles": 24.635,
+       "centre": [-3359.4004, -1292.1268],
+       "tangent": [-0.600506, 0.799621],
        "half_length": 4.0,
-       "half_width": 9.9
+       "half_width": 8.6
       },
       {
        "interval": 1,
-       "arc_tiles": 86.129,
-       "centre": [-3400.5311, -1266.8835],
+       "arc_tiles": 96.129,
+       "centre": [-3400.7426, -1256.8857],
        "tangent": [-0.021149, 0.999776],
        "half_length": 4.0,
        "half_width": 9.9
@@ -1983,8 +1984,8 @@
       },
       {
        "interval": 4,
-       "arc_tiles": 280.941,
-       "centre": [-3787.7317, 50.4969],
+       "arc_tiles": 287.941,
+       "centre": [-3781.652, 47.0273],
        "tangent": [0.868519, -0.495655],
        "half_length": 4.0,
        "half_width": 9.9
@@ -2314,14 +2315,6 @@
        "half_width": 9.9
       },
       {
-       "interval": 2,
-       "arc_tiles": 143.788,
-       "centre": [-2498.3262, 865.9759],
-       "tangent": [-0.007273, 0.999974],
-       "half_length": 4.0,
-       "half_width": 9.9
-      },
-      {
        "interval": 3,
        "arc_tiles": 208.376,
        "centre": [-2540.9672, 856.3809],
@@ -2410,7 +2403,14 @@
        "half_width": 9.9
       }
      ],
-     "fords_skipped": [],
+     "fords_skipped": [
+      {
+       "interval": 2,
+       "reason": "a turning basin's pool",
+       "reasons": ["a turning basin's pool"],
+       "positions": 43
+      }
+     ],
      "fords_expected": 14
     },
     {
@@ -2780,8 +2780,8 @@
       },
       {
        "interval": 8,
-       "arc_tiles": 517.835,
-       "centre": [2100.9214, -2465.512],
+       "arc_tiles": 502.835,
+       "centre": [2103.5801, -2450.7495],
        "tangent": [-0.177243, -0.984167],
        "half_length": 4.0,
        "half_width": 9.9
@@ -2854,14 +2854,6 @@
        "half_width": 9.9
       },
       {
-       "interval": 3,
-       "arc_tiles": 194.412,
-       "centre": [1119.9546, 53.3939],
-       "tangent": [0.711914, 0.702267],
-       "half_length": 4.0,
-       "half_width": 9.9
-      },
-      {
        "interval": 4,
        "arc_tiles": 252.0,
        "centre": [1102.2648, 85.8114],
@@ -2912,7 +2904,14 @@
        "bank_margin_px": 2.395
       }
      ],
-     "fords_skipped": [],
+     "fords_skipped": [
+      {
+       "interval": 3,
+       "reason": "a turning basin's pool",
+       "reasons": ["a turning basin's pool"],
+       "positions": 38
+      }
+     ],
      "fords_expected": 10
     },
     {
@@ -4267,8 +4266,8 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s2_v1.lua",
-   "sha256": "224be6687940c92dffa402c3ac66fa35819bc3ebdd7c1b6581aff9e21ad148e0",
-   "bytes": 100206,
+   "sha256": "7f918849729cc70ded6b118bdab59ecb8a409e6b659919c8b8a4ecfc5fa41d47",
+   "bytes": 100136,
    "stats": {
     "segments": {
      "river": 876,
@@ -4276,7 +4275,7 @@
      "canal": 22,
      "dam": 7
     },
-    "fords": 274,
+    "fords": 273,
     "basins": 8,
     "ponds": 20,
     "classes": {
@@ -4787,8 +4786,8 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 48.0,
-       "centre": [-5986.4663, -3045.9822],
+       "arc_tiles": 52.0,
+       "centre": [-5990.0821, -3047.6928],
        "tangent": [-0.903944, -0.427651],
        "half_length": 4.0,
        "half_width": 8.75
@@ -6048,14 +6047,6 @@
        "bank_margin_px": 3.169
       },
       {
-       "interval": 12,
-       "arc_tiles": 1484.612,
-       "centre": [-2776.694, -3270.1348],
-       "tangent": [0.8885, 0.458876],
-       "half_length": 4.0,
-       "half_width": 10.05
-      },
-      {
        "interval": 13,
        "arc_tiles": 1672.635,
        "centre": [-2893.0571, -3190.3129],
@@ -6121,7 +6112,14 @@
        "half_width": 10.05
       }
      ],
-     "fords_skipped": [],
+     "fords_skipped": [
+      {
+       "interval": 12,
+       "reason": "a bank is water in the reference or the coast fit (lake, sea or coast); a turning basin's pool",
+       "reasons": ["a bank is water in the reference or the coast fit (lake, sea or coast)", "a turning basin's pool"],
+       "positions": 99
+      }
+     ],
      "fords_expected": 21
     },
     {
@@ -8445,7 +8443,7 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s3_v1.lua",
-   "sha256": "adb62648c1cad9bca69b23d86838c25b1b455b7a2e12d115ed57f8afaa5f3b41",
+   "sha256": "90c146868f1cd07ee2c9f4b96cfff9f00f56295c255e46971eae0a38d03c3f15",
    "bytes": 97472,
    "stats": {
     "segments": {
@@ -8931,8 +8929,8 @@
       },
       {
        "interval": 5,
-       "arc_tiles": 951.247,
-       "centre": [-8371.4118, -4881.0766],
+       "arc_tiles": 960.247,
+       "centre": [-8363.9568, -4886.1188],
        "tangent": [0.828328, -0.560243],
        "half_length": 4.0,
        "half_width": 10.85

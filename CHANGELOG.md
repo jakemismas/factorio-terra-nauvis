@@ -790,6 +790,21 @@ compatibility and known limits are in README.md, and the changelog players see i
 
 ### Changed
 
+- Rivers, lakes and turning basins read as natural water on all three maps (on the
+  Europe map: "way too perfect", "rectangles of water at places"). The rectangles were the turning
+  basins, 30 x 30 Chebyshev squares; the Rhine's pair sat on an out-and-back hook in S4's route. The
+  lines were the raster's octilinear path barely smoothed. `tools/build_waterways.py` (emitter 3) now
+  cuts such hooks, smooths a river by at least 12 reference px, simplifies it with a tolerance that
+  follows its bends and draws a basin as a short capsule on its course; a river's half-width follows a
+  profile from source to mouth, with a tapered source. `waterways.lua` reads every set through one
+  shared domain warp of the geo tiles (three octaves, faded out around the spawn), a low-frequency
+  width noise and a fine bank noise, so the banks wander and stop being parallel for eight noise
+  evaluations per tile, not per segment. Fords read the same warp, so they stay on their rivers, their
+  spacing is jittered and they keep out of a basin's pool.
+  Straits, canals and dams read a lighter warp. The coast fit's own discs on a river's course are
+  filled (20 ponds on Old World, 7 on Europe, 5 on Atlantic). The start lake and the inland lakes get
+  a warp of their own, and inland lakes vary in size. Old World at scale 6 ships 881 river segments
+  against 1,339, Tile 142,264 to 127,988.
 - One geography version per map: Europe v6
   (tn_geo 14), Atlantic v6 (17) and Old World v6 (18) stay, every superseded version goes, and the
   map-wide layers read those versions' chains. 442 bodies dropped, 18 re-registered, config.lua down by
@@ -822,20 +837,6 @@ compatibility and known limits are in README.md, and the changelog players see i
   a fresh M1 dump; 24 previews of the three
   maps at scales 1 and 6 (two preset windows each and an old Map type entry) are pixel-identical
   with unchanged Tile, Entity and Cliff complexity on every preset.
-- Rivers, lakes and turning basins read as natural water on all three maps (on the
-  Europe map: "way too perfect", "rectangles of water at places"). The rectangles were the turning
-  basins, 30 x 30 Chebyshev squares; the Rhine's pair sat on an out-and-back hook in S4's route. The
-  lines were the raster's octilinear path barely smoothed. `tools/build_waterways.py` (emitter 3) now
-  cuts such hooks, smooths a river by at least 12 reference px, simplifies it with a tolerance that
-  follows its bends and draws a basin as a short capsule on its course; a river's half-width follows a
-  profile from source to mouth, with a tapered source. `waterways.lua` reads every set through one
-  shared domain warp of the geo tiles (three octaves, faded out around the spawn) and a low-frequency
-  width noise, so the banks wander and stop being parallel for seven noise evaluations per tile, not
-  per segment. Fords read the same warp, so they stay on their rivers, and their spacing is jittered.
-  Straits, canals and dams read a lighter warp. The coast fit's own discs on a river's course are
-  filled (20 ponds on Old World, 7 on Europe, 5 on Atlantic). The start lake and the inland lakes get
-  a warp of their own, and inland lakes vary in size. Old World at scale 6 ships 881 river segments
-  against 1,339, Tile 142,264 to 127,988.
 - The startup setting Exact coastlines (`terra-nauvis-exact-coast`) is hidden (`hidden = true`,
   default still off, the handler and its tables kept): `bandfix.maps` is empty, so it acts on no
   map and a visible switch would mislead. settings.lua now passes a setting's `hidden` field.

@@ -128,8 +128,8 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_atlantic_s1_v1.lua",
-   "sha256": "57dc94cccfe55a74fbc62094d25ee4e4a0c43720771cb57a197db102f0387b3a",
-   "bytes": 52676,
+   "sha256": "361625570c3f9b867747534decf1877ba937e596a6dc55d8442a8676d19242fc",
+   "bytes": 52599,
    "stats": {
     "segments": {
      "river": 396,
@@ -137,7 +137,7 @@
      "canal": 21,
      "dam": 20
     },
-    "fords": 186,
+    "fords": 185,
     "basins": 11,
     "ponds": 5,
     "classes": {
@@ -233,8 +233,8 @@
       },
       {
        "interval": 6,
-       "arc_tiles": 397.835,
-       "centre": [581.2162, -1488.0086],
+       "arc_tiles": 382.835,
+       "centre": [566.2449, -1488.9365],
        "tangent": [0.998085, 0.061865],
        "half_length": 4.0,
        "half_width": 9.9
@@ -475,11 +475,12 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 15.847,
-       "centre": [118.0811, -1480.5158],
-       "tangent": [-0.998274, 0.058722],
+       "arc_tiles": 6.847,
+       "centre": [126.7987, -1482.0973],
+       "tangent": [-0.90569, 0.42394],
        "half_length": 4.0,
-       "half_width": 7.625
+       "half_width": 8.7783,
+       "bend_tiles": 1.153
       },
       {
        "interval": 1,
@@ -1056,16 +1057,16 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 44.635,
-       "centre": [-14.0179, -1398.9177],
-       "tangent": [-0.995014, -0.099739],
+       "arc_tiles": 24.635,
+       "centre": [3.5996, -1402.1268],
+       "tangent": [-0.600506, 0.799621],
        "half_length": 4.0,
-       "half_width": 9.9
+       "half_width": 8.6
       },
       {
        "interval": 1,
-       "arc_tiles": 86.129,
-       "centre": [-37.5311, -1376.8835],
+       "arc_tiles": 96.129,
+       "centre": [-37.7426, -1366.8857],
        "tangent": [-0.021149, 0.999776],
        "half_length": 4.0,
        "half_width": 9.9
@@ -1552,8 +1553,8 @@
       },
       {
        "interval": 4,
-       "arc_tiles": 280.941,
-       "centre": [-424.7317, -59.5031],
+       "arc_tiles": 287.941,
+       "centre": [-418.652, -62.9727],
        "tangent": [0.868519, -0.495655],
        "half_length": 4.0,
        "half_width": 9.9
@@ -2026,14 +2027,6 @@
        "half_width": 9.9
       },
       {
-       "interval": 2,
-       "arc_tiles": 143.788,
-       "centre": [864.6738, 755.9759],
-       "tangent": [-0.007273, 0.999974],
-       "half_length": 4.0,
-       "half_width": 9.9
-      },
-      {
        "interval": 3,
        "arc_tiles": 208.376,
        "centre": [822.0328, 746.3809],
@@ -2122,7 +2115,14 @@
        "half_width": 9.9
       }
      ],
-     "fords_skipped": [],
+     "fords_skipped": [
+      {
+       "interval": 2,
+       "reason": "a turning basin's pool",
+       "reasons": ["a turning basin's pool"],
+       "positions": 43
+      }
+     ],
      "fords_expected": 14
     },
     {
@@ -3576,7 +3576,7 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_atlantic_s2_v1.lua",
-   "sha256": "5e6b60b092ab2297ba4a296bde3175f78f4a714f28a4146f5c5cfa209086c2ff",
+   "sha256": "73fadfc4fba9b77e6d4dc8c542906dbb7bb8125199bb4af108ca25fd630a5bf4",
    "bytes": 51225,
    "stats": {
     "segments": {
@@ -4096,8 +4096,8 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 48.0,
-       "centre": [739.5337, -3265.9822],
+       "arc_tiles": 52.0,
+       "centre": [735.9179, -3267.6928],
        "tangent": [-0.903944, -0.427651],
        "half_length": 4.0,
        "half_width": 8.75
@@ -6173,7 +6173,7 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_atlantic_s3_v1.lua",
-   "sha256": "cdd6367675059610a906b5d6b2cb7c92f9e13df8b5eca53c2e6018dc1ccd4395",
+   "sha256": "f0efcc88b511e047ae5698ac63da1632db125589347d1ff1f78ec8d7b6bdfc4c",
    "bytes": 40407,
    "stats": {
     "segments": {
@@ -6658,8 +6658,8 @@
       },
       {
        "interval": 5,
-       "arc_tiles": 951.247,
-       "centre": [1717.5882, -5211.0766],
+       "arc_tiles": 960.247,
+       "centre": [1725.0432, -5216.1188],
        "tangent": [0.828328, -0.560243],
        "half_length": 4.0,
        "half_width": 10.85

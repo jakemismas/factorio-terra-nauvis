@@ -128,8 +128,8 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s1_v1.lua",
-   "sha256": "ec823e05974967493a05040d0b0ece61668bc866235ebe75a3338c7c9afbb75e",
-   "bytes": 27500,
+   "sha256": "15afa75c1a56842476094aa48e6e280486e00bf7a767a36e72ab149fd55fd7a3",
+   "bytes": 27499,
    "stats": {
     "segments": {
      "river": 195,
@@ -231,8 +231,8 @@
       },
       {
        "interval": 6,
-       "arc_tiles": 397.835,
-       "centre": [132.2162, 235.9914],
+       "arc_tiles": 382.835,
+       "centre": [117.2449, 235.0635],
        "tangent": [0.998085, 0.061865],
        "half_length": 4.0,
        "half_width": 9.9
@@ -472,11 +472,12 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 15.847,
-       "centre": [-330.9189, 243.4842],
-       "tangent": [-0.998274, 0.058722],
+       "arc_tiles": 6.847,
+       "centre": [-322.2013, 241.9027],
+       "tangent": [-0.90569, 0.42394],
        "half_length": 4.0,
-       "half_width": 7.625
+       "half_width": 8.7783,
+       "bend_tiles": 1.153
       },
       {
        "interval": 1,
@@ -1050,16 +1051,16 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 43.635,
-       "centre": [-462.5862, 325.1005],
-       "tangent": [-0.994207, -0.107482],
+       "arc_tiles": 23.635,
+       "centre": [-445.1847, 321.4742],
+       "tangent": [-0.60614, 0.795358],
        "half_length": 4.0,
-       "half_width": 9.9
+       "half_width": 8.6
       },
       {
        "interval": 1,
-       "arc_tiles": 88.129,
-       "centre": [-486.4842, 349.6917],
+       "arc_tiles": 96.129,
+       "centre": [-486.7105, 357.6885],
        "tangent": [-0.028291, 0.9996],
        "half_length": 4.0,
        "half_width": 9.9
@@ -2784,7 +2785,7 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s2_v1.lua",
-   "sha256": "9291671d45d868e87ab48f504e25a450323ba02e189bcde19e68208f6461259f",
+   "sha256": "31bd91964d97e93624d51e2f4b9bc345f89edb19c4beb35ce141ae6396870cc0",
    "bytes": 38912,
    "stats": {
     "segments": {
@@ -3298,8 +3299,8 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 48.0,
-       "centre": [-158.4663, 182.0178],
+       "arc_tiles": 52.0,
+       "centre": [-162.0821, 180.3072],
        "tangent": [-0.903944, -0.427651],
        "half_length": 4.0,
        "half_width": 8.75
@@ -5126,7 +5127,7 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s3_v1.lua",
-   "sha256": "11bb7b4076a5eee2618b0bfab7b07e703ebf8da6a301a372705fded9a94b3b83",
+   "sha256": "c89c43c4d2c68b182ad9ed29775bd654946fa65d43f91b6c66456cbaeb187e43",
    "bytes": 37916,
    "stats": {
     "segments": {
@@ -5607,8 +5608,8 @@
       },
       {
        "interval": 5,
-       "arc_tiles": 951.247,
-       "centre": [370.5882, -39.0766],
+       "arc_tiles": 960.247,
+       "centre": [378.0432, -44.1188],
        "tangent": [0.828328, -0.560243],
        "half_length": 4.0,
        "half_width": 10.85

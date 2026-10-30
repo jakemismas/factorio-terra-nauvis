@@ -113,7 +113,8 @@ for _, key in ipairs(cfg.map_order) do
       if not gen then
         error("waterways.lua has no generated file for " .. key .. " at scale " .. s)
       end
-      local function set(name, expression, functions)
+      local function set(kind, expression, functions)
+        local name = sets[kind][s]
         local locals = natural_locals(g)
         local lf = {}
         for _, f in ipairs(functions) do
