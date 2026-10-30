@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""V1 contact sheet: reference crop, generated land mask, preview and a red difference overlay.
+"""V1 contact sheet: reference crop, generated land mask, preview and a red difference overlay; and the
+poster mode (V5, D30; milestone extras): one map's whole extent stitched from fh.py previews, with a title, a
+legend and scale bars.
 
 Panels, left to right, all of one reference-pixel window:
   1 reference   land grey, water dark blue, thin water (excluded from T1) light blue
@@ -12,11 +14,19 @@ Panels, left to right, all of one reference-pixel window:
 It also runs `fh.py compare` on panels 1 and 2 drawn in one palette (its --sbs image and RESULT line
 go into the sheet JSON) and the T1 metric for the window.
 
+Poster mode: every reference pixel of the map takes the preview tile holding its centre (t1_metrics'
+map_preview geometry, so the poster's land is exactly what T1's preview mode scores), the whole extent is
+box-filtered to the poster width, and a title band and a legend band with the map colours of the dump's
+tiles and resources and two scale bars (kilometres north to south, tiles at the world's scale) frame it.
+Posters come from previews or dumped tiles only, never from a graphical client (D30).
+
 Commands (from the Factorio workspace):
   python mod/tools/contact_sheet.py --map europe --window 900,650,300,200 --candidate cand.png --preview pv/1000.png --preview-offset X,Y --scale 3 --out sheet.png
+  python mod/tools/contact_sheet.py poster --map europe --scale 1 --seed 1000 --title "Terra Nauvis: Europe" --run pv1/1000.png@32,384 --dump data-raw-dump.json --out docs/posters/europe.png
   python mod/tools/contact_sheet.py selftest
 """
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -198,6 +208,217 @@ def cmd_build(a):
     return 0
 
 
+# Poster mode (V5, D30). KM_PER_DEGREE is a degree of latitude on a sphere of the mean Earth radius, so one
+# reference pixel spans KM_PER_DEGREE / px_per_degree km north to south (APPROVALS 1c: 2,471 m per tile at scale 1).
+POSTER_WIDTH = 2400
+KM_PER_DEGREE = 2 * math.pi * 6371.0 / 360
+POSTER_BG = (24, 24, 24)
+POSTER_FG = (235, 235, 235)
+UNCOVERED = (0, 0, 0)
+KM_STEPS = (50, 100, 200, 250, 500, 1000, 2000, 2500, 5000)
+TILE_STEPS = (100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000)
+# The legend: (label, prototype type, names whose first one the dump holds); a row is left out when the dump
+# holds none of its names.
+POSTER_LEGEND = (
+    ("deep water", "tile", ("deepwater",)), ("water", "tile", ("water",)),
+    ("shallow water and fords", "tile", ("water-shallow",)), ("marsh mud", "tile", ("water-mud",)),
+    ("grassland", "tile", ("grass-1",)), ("dirt and dry land", "tile", ("dirt-4", "dirt-1")),
+    ("sand and desert", "tile", ("sand-1",)),
+    ("iron ore", "resource", ("iron-ore",)), ("copper ore", "resource", ("copper-ore",)),
+    ("coal", "resource", ("coal",)), ("stone", "resource", ("stone",)),
+    ("uranium ore", "resource", ("uranium-ore",)), ("crude oil", "resource", ("crude-oil",)),
+    ("cliff ridges", "cliff", ("cliff",)),
+)
+
+
+def map_rgb(mc):
+    """A dump's map_color as 0 to 255 RGB, as t1_metrics' water colour set reads it (floor of x * 255)."""
+    c = (mc.get("r", 0), mc.get("g", 0), mc.get("b", 0)) if isinstance(mc, dict) else tuple(mc[:3])
+    c = tuple(float(x) for x in c)
+    if all(x <= 1.0 for x in c):
+        return tuple(int(math.floor(x * 255)) for x in c)
+    return tuple(int(round(x)) for x in c)
+
+
+# Entities the map draws in the chart's own colours (utility constants), not a prototype's map colour: trees
+# (blended over the ground, so the swatch is the full colour) and enemy bases.
+POSTER_CHART_LEGEND = (("trees, over the ground", ("default_color_by_type", "tree")),
+                       ("enemy bases", ("default_enemy_color",)))
+
+
+def poster_legend(dump):
+    """[(label, rgb)] of POSTER_LEGEND's rows whose prototype the dump holds with a map colour, then the chart
+    colours of trees and enemy bases from the dump's utility constants."""
+    out = []
+    for label, kind, names in POSTER_LEGEND:
+        for n in names:
+            mc = ((dump.get(kind) or {}).get(n) or {}).get("map_color")
+            if mc is not None:
+                out.append((label, map_rgb(mc)))
+                break
+    chart = (((dump.get("utility-constants") or {}).get("default") or {}).get("chart") or {})
+    for label, path in POSTER_CHART_LEGEND:
+        v = chart
+        for k in path:
+            v = v.get(k) if isinstance(v, dict) else None
+        if isinstance(v, (list, dict)):
+            out.append((label, map_rgb(v)))
+    return out
+
+
+def stitch(mref, runs, scale="1", origin="floor"):
+    """(rgb H x W x 3, covered H x W) at one pixel per reference pixel: each pixel takes the preview tile that
+    holds its centre, from the preview that covers it (t1_metrics.map_preview's geometry; the city offset is
+    0, so a world tile is a geo tile), black where no preview does. runs: [(png, (offset x, offset y))]."""
+    canvas = np.zeros((mref.H, mref.W, 3), np.uint8)
+    cov = np.zeros((mref.H, mref.W), bool)
+    for png, off in runs:
+        rgb = np.asarray(Image.open(png).convert("RGB"))
+        S_h, S_w = rgb.shape[:2]
+        cx, cy = (int(off[0]) // 32) * 32, (int(off[1]) // 32) * 32
+        tx = eg.pixel_centre_tiles(np.arange(mref.W), mref.wr, scale, origin) - (cx - S_w // 2)
+        ty = eg.pixel_centre_tiles(np.arange(mref.H), mref.hr, scale, origin) - (cy - S_h // 2)
+        okc, okr = (tx >= 0) & (tx < S_w), (ty >= 0) & (ty < S_h)
+        cols, rows = np.nonzero(okc)[0], np.nonzero(okr)[0]
+        if cols.size and rows.size:
+            canvas[np.ix_(rows, cols)] = rgb[np.ix_(ty[okr], tx[okc])]
+            cov[np.ix_(rows, cols)] = True
+    return canvas, cov
+
+
+def nice_step(per_px, max_px, steps):
+    """The largest step of `steps` (in units of per_px per pixel) that draws at most max_px pixels."""
+    best = steps[0]
+    for s in steps:
+        if s / per_px <= max_px:
+            best = s
+    return best
+
+
+def poster(mref, runs, title, subtitle, legend, scale="1", width=POSTER_WIDTH, out=None):
+    """The poster image and its record. The map is the stitched extent box-filtered to `width` pixels (never
+    enlarged); the legend band names each colour and draws a north-south kilometre bar and a tile bar at the
+    world's scale (the map is plate carree: east-west distances shrink by the cosine of the latitude)."""
+    from PIL import ImageFont
+    canvas, cov = stitch(mref, runs, scale)
+    w = min(int(width), mref.W)
+    h = max(1, round(mref.H * w / mref.W))
+    img = Image.fromarray(canvas)
+    if (w, h) != (mref.W, mref.H):
+        img = img.resize((w, h), Image.BOX)
+    f_title = ImageFont.load_default(size=26)
+    f_text = ImageFont.load_default(size=18)
+    top, row_h, sw = 64, 30, 22
+    per_row = max(1, (w - 16) // 300)
+    rows_n = -(-len(legend) // per_row) if legend else 0
+    band = 16 + rows_n * row_h + 3 * row_h
+    sheet = Image.new("RGB", (w, top + h + band), POSTER_BG)
+    d = ImageDraw.Draw(sheet)
+    d.text((10, 6), title, fill=POSTER_FG, font=f_title)
+    d.text((10, 38), subtitle, fill=POSTER_FG, font=f_text)
+    sheet.paste(img, (0, top))
+    y0 = top + h + 12
+    for i, (label, rgb) in enumerate(legend):
+        x = 10 + (i % per_row) * 300
+        y = y0 + (i // per_row) * row_h
+        d.rectangle([x, y, x + sw, y + sw], fill=tuple(rgb), outline=POSTER_FG)
+        d.text((x + sw + 8, y + 1), label, fill=POSTER_FG, font=f_text)
+    ref_px_per_poster_px = mref.W / w
+    km_per_px = KM_PER_DEGREE / float(mref.ppd) * ref_px_per_poster_px
+    tiles_per_px = float(eg.as_fraction(scale)) * ref_px_per_poster_px
+    yb = y0 + rows_n * row_h + 8
+    km = nice_step(km_per_px, w / 5, KM_STEPS)
+    tiles = nice_step(tiles_per_px, w / 5, TILE_STEPS)
+    bars = []
+    for i, (n, per, label) in enumerate(((km, km_per_px, f"{km:,} km north to south"),
+                                          (tiles, tiles_per_px, f"{tiles:,} tiles at scale {scale}"))):
+        L = int(round(n / per))
+        y = yb + i * row_h
+        d.rectangle([10, y + 6, 10 + L, y + 14], fill=POSTER_FG)
+        d.text((20 + L, y), label, fill=POSTER_FG, font=f_text)
+        bars.append({"label": label, "px": L})
+    d.text((10, yb + 2 * row_h), "Plate carree: east to west a degree shrinks with the cosine of the latitude, so "
+           "the bars hold north to south. Black: outside every preview.", fill=POSTER_FG, font=f_text)
+    info = {"map": mref.key, "scale": str(scale), "reference_px": [mref.W, mref.H], "map_px": [w, h],
+            "size": list(sheet.size), "covered_px": int(cov.sum()), "uncovered_px": int((~cov).sum()),
+            "legend": [[label, list(rgb)] for label, rgb in legend], "bars": bars,
+            "runs": [{"image": str(p), "sha256": hashlib.sha256(Path(p).read_bytes()).hexdigest(), "offset": list(o)}
+                     for p, o in runs]}
+    if out:
+        out = Path(out)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        sheet.save(out, optimize=False)
+        info["poster"] = str(out)
+        info["poster_sha256"] = hashlib.sha256(out.read_bytes()).hexdigest()
+    return sheet, info
+
+
+def poster_selftest():
+    """Offline: a synthetic map and two overlapping synthetic previews stitch to the pixels map_preview gives
+    T1, the poster has its title, map and legend bands, and two builds give identical bytes."""
+    checks = []
+    W, H = 96, 40
+    mref = eg.MapRef(land=np.ones((H, W), bool), thin=np.zeros((H, W), bool))
+    tmp = Path(tempfile.mkdtemp(prefix="poster-selftest-"))   # outside the repo
+    runs = []
+    for i, off in enumerate(((-32, 0), (32, 0))):
+        a = np.zeros((64, 64, 3), np.uint8)
+        a[..., 0] = np.arange(64)[None, :] + 100 * i
+        a[..., 1] = np.arange(64)[:, None]
+        p = tmp / f"pv{i}.png"
+        Image.fromarray(a).save(p)
+        runs.append((p, off))
+    rgb, cov = stitch(mref, runs, "1")
+    ok_geo = True
+    for p, off in runs:
+        land = np.ones((64, 64), bool)
+        _, C = t1.map_preview(mref, land, off, "1", "floor")
+        ok_geo &= bool((cov | ~C).all())
+    checks.append(("stitch_covers_map_preview", ok_geo and bool(cov.all()), f"covered {int(cov.sum())} of {W * H}"))
+    checks.append(("stitch_right_preview_wins", int(rgb[0, W - 1, 0]) >= 100, str(tuple(rgb[0, W - 1]))))
+    sheet, info = poster(mref, runs, "selftest", "two previews", [("water", (25, 50, 95)), ("land", (200, 200, 190))],
+                         width=96, out=tmp / "a.png")
+    sheet2, info2 = poster(mref, runs, "selftest", "two previews", [("water", (25, 50, 95)), ("land", (200, 200, 190))],
+                           width=96, out=tmp / "b.png")
+    checks.append(("poster_bytes_repeat", info["poster_sha256"] == info2["poster_sha256"], info["poster_sha256"][:12]))
+    checks.append(("poster_bands", sheet.size[1] > H + 64 and info["map_px"] == [W, H], str(sheet.size)))
+    bad = [c for c in checks if not c[1]]
+    for name, ok, detail in checks:
+        print(f"  {'ok  ' if ok else 'FAIL'} {name} {detail}")
+    print(f"RESULT {'ok' if not bad else 'fail'} poster selftest checks={len(checks)} failed={len(bad)}")
+    return 0 if not bad else 1
+
+
+def parse_run(s):
+    """'<png>@<x>,<y>' as (path, (x, y))."""
+    png, _, off = s.rpartition("@")
+    x, y = (int(v) for v in off.split(","))
+    return Path(png), (x, y)
+
+
+def poster_main(argv):
+    ap = argparse.ArgumentParser(description="poster mode: one map stitched from previews (V5, D30)")
+    ap.add_argument("--map", choices=eg.MAPS, required=True)
+    ap.add_argument("--scale", default="1")
+    ap.add_argument("--seed", default="1000")
+    ap.add_argument("--title", required=True)
+    ap.add_argument("--subtitle", default="")
+    ap.add_argument("--run", action="append", required=True, help="<preview png>@<offset x>,<offset y>")
+    ap.add_argument("--dump", required=True, help="data-raw-dump.json of the build (legend colours)")
+    ap.add_argument("--width", type=int, default=POSTER_WIDTH)
+    ap.add_argument("--out", required=True)
+    a = ap.parse_args(argv)
+    mref = eg.MapRef(a.map)
+    dump = json.loads(Path(a.dump).read_text(encoding="utf-8"))
+    sub = a.subtitle or f"seed {a.seed}, scale {a.scale}, stitched from {len(a.run)} preview(s)"
+    _, info = poster(mref, [parse_run(r) for r in a.run], a.title, sub, poster_legend(dump), a.scale, a.width,
+                     out=a.out)
+    Path(a.out).with_suffix(".json").write_text(json.dumps(info, indent=1), encoding="utf-8")
+    print(f"RESULT ok poster={a.out} size={info['size']} covered={info['covered_px']} "
+          f"uncovered={info['uncovered_px']} sha256={info['poster_sha256'][:16]}")
+    return 0
+
+
 def selftest():
     checks = []
 
@@ -276,6 +497,10 @@ def game_selftest(out_root, t1_runs, record, run):
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "selftest":
         sys.exit(selftest())
+    if len(sys.argv) > 1 and sys.argv[1] == "poster-selftest":
+        sys.exit(poster_selftest())
+    if len(sys.argv) > 1 and sys.argv[1] == "poster":
+        sys.exit(poster_main(sys.argv[2:]))
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--map", choices=eg.MAPS)
     ap.add_argument("--ref-land")

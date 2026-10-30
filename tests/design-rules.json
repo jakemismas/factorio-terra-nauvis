@@ -82,6 +82,12 @@
    "type": "bool-setting",
    "setting_type": "startup",
    "default_value": false
+  },
+  "city_markers": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-city-markers (runtime-global, bool, default off; D28)",
+   "type": "bool-setting",
+   "setting_type": "runtime-global",
+   "default_value": false
   }
  },
  "numeric_literals_allowed": [0, 1, 2]

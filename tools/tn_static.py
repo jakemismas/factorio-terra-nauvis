@@ -404,6 +404,94 @@ def scale_label_findings(cfg, merged):
     return out
 
 
+SIZE_FIGURE_RE = re.compile(r"(?<!\d)(?<!\d,)(\d{1,3}(?:,\d{3})+|\d+) x (\d{1,3}(?:,\d{3})+|\d+)(?!\d)(?!,\d)")
+R8_DOC = REPO / "docs" / "plan" / "research" / "R8-perf-footprint.md"
+APPROVALS_DATA = REPO / "data-src" / "approvals" / "approvals-data.json"
+
+
+def size_texts(cfg, merged):
+    """The texts that carry the size context (milestone extras; D3): each scale label, the scale tooltip and each
+    preset description, as (where, text or None, sizes it must carry, sizes it may carry), sizes as "W x H"
+    strings with thousands separators: a scale label its value's world size of every map, the tooltip none, a
+    preset description its map's size at size_context.preset_scales; any of them may carry any world size of
+    the maps it names."""
+    sc = cfg.get("size_context") or {}
+    scale = (cfg.get("settings") or {}).get("scale") or {}
+    values = [int(v) for v in scale.get("allowed_values") or []]
+
+    def size(mk, v):
+        m = cfg["maps"][mk]
+        return f"{thousands(m['width_px'] * v)} x {thousands(m['height_px'] * v)}"
+    every = {size(mk, v) for mk in cfg["map_order"] for v in values}
+    out = []
+    labels = merged.get("string-mod-setting", {})
+    for v in values:
+        need = {size(mk, v) for mk in cfg["map_order"]}
+        out.append((f"[string-mod-setting] {scale['name']}-{v}", labels.get(f"{scale['name']}-{v}"), need, need))
+    if scale:
+        out.append((f"[mod-setting-description] {scale['name']}",
+                    merged.get("mod-setting-description", {}).get(scale["name"]), set(), every))
+    for key in cfg.get("preset_order") or []:
+        p = cfg["presets"][key]
+        need = {size(p["map"], int(v)) for v in sc.get("preset_scales") or []}
+        allowed = {size(p["map"], v) for v in values}
+        out.append((f"[map-gen-preset-description] {p['name']}", merged.get("map-gen-preset-description", {}).get(
+            p["name"]), need, allowed))
+    return out
+
+
+def size_context_findings(cfg, merged, r8_text=None, approvals=None):
+    """D3 and JI-12 (T16 locale; milestone extras): every scale label, the scale tooltip and every preset
+    description carry their world sizes and both factory footprints of config.lua's size_context, every "W x H"
+    figure in them is one of those, and each says size_context.reported_phrase before its first footprint (they
+    are reported community examples, never measurements). The table itself is checked against its sources: each
+    footprint is its R8 section 1 row's figure, and the maps' sizes at every offered scale are
+    approvals-data.json's world_size_tiles (APPROVALS 1c)."""
+    sc = cfg.get("size_context")
+    if not sc:
+        return ["config.lua has no size_context table: the labels' size and footprint figures have no data table "
+                "(slice extras; D3)"]
+    out = []
+    phrase = sc.get("reported_phrase") or ""
+    fps = [f"{thousands(f['width'])} x {thousands(f['height'])}" for f in sc.get("footprints") or []]
+    if len(fps) < 1 or not phrase:
+        out.append("config.lua size_context needs reported_phrase and at least one footprint")
+    r8_text = r8_text if r8_text is not None else (R8_DOC.read_text(encoding="utf-8") if R8_DOC.exists() else "")
+    for f, fig in zip(sc.get("footprints") or [], fps):
+        row = next((l for l in r8_text.splitlines() if l.startswith(f"| {f.get('r8_row')} |")), None)
+        if row is None:
+            out.append(f"size_context footprint {f.get('key')}: R8 holds no row {f.get('r8_row')!r}")
+        elif f"{fig} tiles" not in row:
+            out.append(f"size_context footprint {f.get('key')} is {fig}, which R8's row {f.get('r8_row')!r} does not "
+                       f"give")
+        if f.get("source") and row is not None and f["source"] not in row:
+            out.append(f"size_context footprint {f.get('key')}: its source {f['source']} is not R8's row's")
+    if approvals is None and APPROVALS_DATA.exists():
+        approvals = load_json(APPROVALS_DATA)
+    ws = (approvals or {}).get("world_size_tiles") or {}
+    for mk in cfg["map_order"]:
+        m = cfg["maps"][mk]
+        for v in (cfg.get("settings") or {}).get("scale", {}).get("allowed_values") or []:
+            want = (ws.get(mk) or {}).get(str(v))
+            if want != [m["width_px"] * int(v), m["height_px"] * int(v)]:
+                out.append(f"{mk} at scale {v}: config.lua's size {m['width_px'] * int(v)} x {m['height_px'] * int(v)} "
+                           f"differs from approvals-data.json world_size_tiles {want} (APPROVALS 1c)")
+    for where, text, need, allowed in size_texts(cfg, merged):
+        if text is None:
+            out.append(f"locale {where} is missing")
+            continue
+        found = {f"{a} x {b}" for a, b in SIZE_FIGURE_RE.findall(text)}
+        for fig in sorted((need | set(fps)) - found):
+            out.append(f"locale {where} lacks the figure {fig!r} (D3: world size and both footprints)")
+        for fig in sorted(found - allowed - set(fps)):
+            out.append(f"locale {where} carries {fig!r}, which is neither one of its world sizes nor a footprint of "
+                       f"config.lua's size_context")
+        at = [text.find(fig) for fig in fps if fig in text]
+        if at and (text.find(phrase) < 0 or text.find(phrase) > min(at)):
+            out.append(f"locale {where} does not call its footprints {phrase!r} before giving them (JI-12)")
+    return out
+
+
 def control_locale_keys(mod=MOD):
     """Locale keys control code references: {"section.key", ...} tables in control.lua and scripts/."""
     from luaparser import astnodes
@@ -460,6 +548,9 @@ def row_locale(mod=MOD):
         for k in sorted(keys - have):
             fails.append(f"locale lacks [{sec}] {k}")
     fails += scale_label_findings(cfg, merged)
+    # extras on: the size context (D3, JI-12), whose table arrives with that milestone
+    if cfg.get("size_context") or cfg.get("markers"):
+        fails += size_context_findings(cfg, merged)
     # waterways on: the Map type notice names fords among what the preset adds (plan T16; ARCHITECTURE.md,
     # "Map type entries")
     msgs = cfg.get("messages") or {}
@@ -2457,6 +2548,114 @@ def row_zip(repo=REPO):
     return f, f"{a[0].name} sha256 {a[1][:16]} twice, {len(a[2]['entries'])} files"
 
 
+def release_zip_findings(repo=REPO):
+    """T16 (FG; zip; milestone extras): `build_zip.py --release` twice gives one byte-identical zip, its
+    .sha256 file names that zip and its sha256 exactly, and the release refuses an Earth body missing from
+    tests/frozen.json (a released body and a firewall body each dropped from a copy of the registry) and a
+    registered Map type fallback that mirrors a startup setting, while every such fallback (U3's one
+    exemption) is let through: the real registry holds none of them and the release builds. A frozen
+    fallback is registered like every Earth body (tnconfig.frozen_fallback_names). Returns (findings,
+    detail)."""
+    out = []
+    repo = Path(repo)
+    mod = repo / "terra-nauvis"
+    frozen = repo / "tests" / "frozen.json"
+    cfg = tnconfig.load(mod / "prototypes" / "config.lua")
+    with tempfile.TemporaryDirectory(prefix="tn-release-") as td:
+        td = Path(td)
+        builds = []
+        for tag in ("a", "b"):
+            try:
+                builds.append(build_zip.build(td / tag, release=True, mod_dir=mod, frozen_path=frozen))
+            except build_zip.BuildError as e:
+                return [f"build_zip.py --release refused the tree: {e}"], "the release build was refused"
+        (za, da, _), (zb, db, _) = builds
+        if da != db or za.read_bytes() != zb.read_bytes():
+            out.append(f"two release builds differ: {da} and {db}")
+        side = za.with_name(za.name + ".sha256")
+        want = f"{build_zip.sha256_bytes(za.read_bytes())}  {za.name}\n"
+        if not side.exists():
+            out.append(f"the release wrote no {side.name}")
+        elif side.read_text(encoding="utf-8") != want:
+            out.append(f"{side.name} reads {side.read_text(encoding='utf-8')!r}, want {want!r}")
+        fz = load_json(frozen)
+        bodies = fz.get("bodies") or {}
+        exempt = set(tnconfig.exempt_fallback_names(cfg))
+        if exempt & set(bodies):
+            out.append(f"tests/frozen.json registers Map type fallbacks that mirror a startup setting "
+                       f"{sorted(exempt & set(bodies))[:4]}")
+        released = [n for n in tnconfig.release_names(cfg) if n in bodies]
+        firewall = [n for n in tnconfig.firewall_names(cfg) if n in bodies]
+        controls = []
+        if released:
+            controls.append(("a released body", released[0], None))
+        if firewall:
+            controls.append(("a firewall body", firewall[-1], None))
+        if exempt:
+            fb = sorted(exempt)[0]
+            controls.append(("a registered Map type fallback", fb, {"type": "noise-expression", "sha256": "0" * 64}))
+        for label, name, add in controls:
+            fz2 = json.loads(json.dumps(fz))
+            if add is None:
+                fz2["bodies"].pop(name, None)
+            else:
+                fz2["bodies"][name] = add
+            f2 = td / f"frozen-{len(label)}-{abs(hash(name)) % 10 ** 6}.json"
+            f2.write_text(json.dumps(fz2), encoding="utf-8")
+            try:
+                build_zip.build(td / "refused", release=True, mod_dir=mod, frozen_path=f2)
+                out.append(f"positive control: the release built with {label} ({name}) "
+                           f"{'dropped from' if add is None else 'added to'} the registry")
+            except build_zip.BuildError as e:
+                if name not in str(e):
+                    out.append(f"positive control: the release refused {label} ({name}) without naming it: {e}")
+        if not exempt:
+            out.append("config.lua lists no Map type fallback: the exemption has nothing to let through")
+    return out, (f"{za.name} sha256 {da[:16]} twice, .sha256 matches; refuses {', '.join(c[0] for c in controls)}; "
+                 f"{len(exempt)} unregistered fallbacks let through")
+
+
+def row_release_zip(repo=REPO):
+    return release_zip_findings(repo)
+
+
+# The graphical and portal flags fh.py refuses (its GUI_FLAGS, long forms; fh.py lives outside this repo), written in
+# fragments so this file is not a hit of its own scan. A test run never passes one, and posters never come from
+# the render command of the map-export mod, which reads the live mod list and opens a graphical client (D30; V5).
+GRAPHICAL_FLAGS = tuple("--" + f for f in (
+    "load" + "-game", "load" + "-scenario", "mp" + "-connect", "host", "host" + "-interactive",
+    "benchmark" + "-graphics", "benchmark" + "-frame", "heavy", "until" + "-tick", "sync" + "-mods",
+    "dump" + "-icon-sprites", "full" + "screen", "window" + "-size", "map2" + "scenario", "scenario2" + "map",
+    "apply" + "-update", "dap", "generate-map-preview" + "-random"))
+EXPORT_MOD_WORD = "map" + "shot"
+TOOLS_SCAN_SUFFIXES = {".py", ".lua", ".ps1", ".json", ".md", ".txt", ".js", ".cfg", ".bat", ".sh"}
+
+
+def tools_scan_findings(tools=HERE):
+    """V5, T16 (milestone extras; D30): no file under tools/ names the map-export mod (its render command is the one
+    route a poster must never take) or passes a graphical or portal flag, as a whole token."""
+    out = []
+    pats = [(f, re.compile(r"(?<![\w-])" + re.escape(f) + r"(?![\w-])")) for f in GRAPHICAL_FLAGS]
+    files = [p for p in walk_files(tools) if p.suffix.lower() in TOOLS_SCAN_SUFFIXES]
+    for p in files:
+        try:
+            text = p.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        for i, line in enumerate(text.split("\n"), 1):
+            if EXPORT_MOD_WORD in line.lower():
+                out.append(f"{rel(p)}:{i}: names {EXPORT_MOD_WORD} (posters come from previews or dumped tiles; D30)")
+            for f, pat in pats:
+                if pat.search(line):
+                    out.append(f"{rel(p)}:{i}: the graphical or portal flag {f}")
+    return out, len(files)
+
+
+def row_tools_scan(tools=HERE):
+    f, n = tools_scan_findings(tools)
+    return f, f"{n} files under tools/: no {EXPORT_MOD_WORD} and none of {len(GRAPHICAL_FLAGS)} graphical or portal flags"
+
+
 # ------------------------------------------------------------------------------------------------ fixture controls
 
 def _write(root, relpath, text):
@@ -2722,6 +2921,7 @@ def fixture_controls():
         results += hotspots_fixtures(td)
         results += d33_fixtures()
         results += redefinition_fixtures()
+        results += extras_fixtures(td, cfg)
     return results
 
 
@@ -4147,12 +4347,65 @@ def region_name_fixtures(td, cfg):
 
 # ------------------------------------------------------------------------------------------------ all rows
 
+def extras_fixtures(td, cfg):
+    """The rows extras added: the size context of the locale (a label without a footprint, a wrong figure, a
+    footprint not called reported, a table figure R8 does not give, a map size off APPROVALS 1c) and the tools
+    scan (a graphical flag, the map-export mod's name); the committed locale and tools/ stay clean."""
+    out = []
+    if not cfg.get("size_context"):
+        return [("extras: config.lua has a size_context table", False, ["no size_context"])]
+    secs, _ = parse_cfg((MOD / "locale" / "en" / "terra-nauvis.cfg").read_text(encoding="utf-8"))
+    merged = {k: dict(v) for k, v in secs.items()}
+    out.append(("size context: the committed locale passes", not size_context_findings(cfg, merged),
+                size_context_findings(cfg, merged)[:1]))
+    s = cfg["settings"]["scale"]
+    sc = cfg["size_context"]
+    fp0 = sc["footprints"][0]
+    fig0 = f"{thousands(fp0['width'])} x {thousands(fp0['height'])}"
+    key6 = f"{s['name']}-{s['allowed_values'][-1]}"
+    pkey = cfg["presets"][cfg["preset_order"][0]]["name"]
+
+    def mutated(sec, key, fn):
+        m = {k: dict(v) for k, v in merged.items()}
+        m[sec][key] = fn(m[sec][key])
+        return size_context_findings(cfg, m)
+    for label, sec, key, fn in (
+            ("size context: a scale label without a footprint fails", "string-mod-setting", key6,
+             lambda v: v.replace(fig0, "")),
+            ("size context: a preset description with a wrong world size fails", "map-gen-preset-description", pkey,
+             lambda v: v.replace(" x ", " x 1", 1)),
+            ("size context: footprints not called reported fail", "map-gen-preset-description", pkey,
+             lambda v: v.replace(sc["reported_phrase"], "examples")),
+            ("size context: a scale tooltip without the footprints fails", "mod-setting-description", s["name"],
+             lambda v: v.split(sc["reported_phrase"])[0])):
+        f = mutated(sec, key, fn)
+        out.append((label, bool(f), f[:1]))
+    bad_cfg = json.loads(json.dumps(cfg))
+    bad_cfg["size_context"]["footprints"][0]["width"] = fp0["width"] + 1
+    f = size_context_findings(bad_cfg, merged)
+    out.append(("size context: a footprint R8 does not give fails", any("R8" in x for x in f), f[:1]))
+    bad_cfg = json.loads(json.dumps(cfg))
+    bad_cfg["maps"][cfg["map_order"][0]]["width_px"] += 1
+    f = size_context_findings(bad_cfg, merged)
+    out.append(("size context: a map size off APPROVALS 1c fails", any("world_size_tiles" in x for x in f), f[:1]))
+    f, _ = tools_scan_findings(HERE)
+    out.append(("tools scan: the committed tools/ is clean", not f, f[:1]))
+    for label, text in (("tools scan: a graphical flag in a tool fails", f"args = ['{GRAPHICAL_FLAGS[0]}', 'x']\n"),
+                        ("tools scan: the map-export mod's name in a tool fails", f"# render with {EXPORT_MOD_WORD}\n")):
+        d = td / ("tscan-" + str(abs(hash(label)) % 10 ** 8))
+        _write(d, "x.py", text)
+        f, _ = tools_scan_findings(d)
+        out.append((label, bool(f), f[:1]))
+    return out
+
+
 ROWS = [
     ("lint", row_lint), ("info_json", row_info), ("locale", row_locale), ("dashes", row_dashes),
     ("registration", row_registration), ("storage", row_storage), ("names", row_names),
     ("design_rules", row_design), ("workflow_scan", row_workflow), ("attribution_scan", row_attribution),
     ("data_src", row_data_src), ("frozen_static", row_frozen), ("bodies", row_bodies), ("append_only", row_append_only),
     ("fallbacks", row_fallbacks), ("zip", row_zip), ("regions", row_regions), ("ranges", row_ranges), ("hotspots", row_hotspots),
+    ("release_zip", row_release_zip), ("tools_scan", row_tools_scan),
     ("d33_guard", row_d33), ("redefinitions", row_redefinitions), ("fixtures", row_fixtures),
 ]
 

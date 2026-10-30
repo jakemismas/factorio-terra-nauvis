@@ -292,6 +292,17 @@ REGISTRY = [
      "timed_ss": ["t15b_m1"],
      "oracle_properties": [],
      "dumps": ["m1", "m2"]},
+    # The one-time extras (design section 15, milestone 0): the D28 city markers, one poster per map, the size context
+    # of the scale labels and preset descriptions, the D36 rename dry run and the release zip. FG: ex_static (the
+    # size context, the release zip and the tools scan, which the static row also runs, and the poster mode's
+    # selftest). SS: the markers on M1 and M2 (T18 (b)), the posters (V5) and the rename dry run (D36).
+    {"id": "extras", "part": 9, "order": 0,
+     "fg": ["ex_static"],
+     "ss": ["ex_t18_markers", "ex_posters", "ex_rename"],
+     "deterministic_ss": ["ex_t18_markers", "ex_rename"],
+     "timed_ss": [],
+     "oracle_properties": [],
+     "dumps": ["m1", "m2"]},
 ]
 
 
@@ -21092,6 +21103,585 @@ def bf_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
         "parts": [checks[n].key_fn() for n in ("bf_t15", "bf_t12", "bf_t1c", "bf_t1d")]}), outcome_run, outcome_derive)
 
 
+# ------------------------------------------------------------------------------------------------ extras
+
+# T18 (b) (SS; D28; TST-29): the city markers. A staged copy of the mod carries tools/mods/ea-marker-probe's probe
+# after its control.lua, because a mod may change only its own runtime settings; each run writes the markers
+# setting before its world is created. The probe reports at ticks 1 to 5 and switches the setting off at tick 2
+# and on at tick 4 through settings.global, which raises on_runtime_mod_setting_changed inside the probe's own
+# handler, so tick 2 already reports the change (measured in the draft, design notes, extras).
+EX_MARKER_PROBE = HERE / "mods" / "ea-marker-probe"
+EX_MARKER_SPEC = {"label": "markers", "switch": [{"tick": 2, "value": False}, {"tick": 4, "value": True}],
+                  "report": [1, 2, 3, 4, 5], "last": 5}
+EX_MARKER_TICKS = 8
+EX_MARKER_TOL = 1                      # tiles: each marker within one tile of world = geo minus the spawn offset
+# (label, map key, scale, seed, with Alien Biomes, setting on at creation, route): every map's preset on M1 at the
+# default scale, Europe at scale 1, Europe on M2, Europe made with the setting off (no marker until it is switched
+# on), and with the setting on Europe's Map type entry alone and the default preset (neither is an Earth world:
+# no marker at any step)
+EX_MARKER_RUNS = (("europe", "europe", 6, 1000, False, True, "preset"),
+                  ("europe-s1", "europe", 1, 1002, False, True, "preset"),
+                  ("atlantic", "atlantic", 6, 1000, False, True, "preset"),
+                  ("old-world", "olde_world", 6, 1004, False, True, "preset"),
+                  ("europe-m2", "europe", 6, 1004, True, True, "preset"),
+                  ("europe-off", "europe", 6, 1000, False, False, "preset"),
+                  ("europe-maptype", "europe", None, 1000, False, True, "maptype"),
+                  ("default", None, None, 1000, False, True, "default"))
+# The D36 rename dry run (SS; TST-21): a test identity sharing no text with the real one, so a real name left in
+# the test build's dump is a hit; the preview the two builds must render byte for byte.
+EX_TEST_ID = "earth-dry-run"
+EX_TEST_PREFIX = "edr_"
+EX_RENAME_SIZE = 256
+# V5 (SS; D30): one poster per map from stitched previews at seed 1000 and scale 1, the preset's world with the
+# spawn shift undone and the spawn lake, inland lakes and start land guarantee neutral (coast_only_pen), so its
+# land is the V1 sheets' world's and only cliffs may hide a tile; committed under docs/posters/.
+EX_POSTER_SCALE = 1
+EX_POSTER_SEED = 1000
+POSTERS = REPO / "docs" / "posters"
+EX_AB = ["alien-biomes"] + LIVE_DEPS["alien-biomes"]
+
+
+def ex_stage_markers(ctx, cfg):
+    """A staged test copy of the mod (never shipped) with ea-marker-probe's probe appended to its control.lua and
+    the probe's spec beside it as marker-spec.lua."""
+    dst = ctx.out / "stage" / "markers" / cfg["identity"]["id"]
+    if dst.exists():
+        shutil.rmtree(dst)
+    shutil.copytree(MOD, dst)
+    probe = (EX_MARKER_PROBE / "probe.lua").read_text(encoding="utf-8")
+    ctl = (dst / "control.lua").read_text(encoding="utf-8")
+    (dst / "control.lua").write_text(ctl + "\n" + probe, encoding="utf-8", newline="\n")
+    (dst / "marker-spec.lua").write_text("return " + lua_lit(EX_MARKER_SPEC) + "\n", encoding="utf-8", newline="\n")
+    return dst
+
+
+def ex_preset_mgs(ctx, cfg, mk, scale, ab, label):
+    """(MGS file, pen) of a map's preset as the M1 (or M2) dump holds it at `scale`, with its autoplace controls
+    (a full MGS file, never combined with --preset; U10)."""
+    pname, _ = map_preset(cfg, mk)
+    dump = ctx.shared["dump_m2" if ab else "dump_m1"]
+    pen = dict(preset_pen(dump, pname))
+    if not pen:
+        raise GateError(f"the {'M2' if ab else 'M1'} dump holds no preset {pname}")
+    pin_scale(cfg, mk, pen, scale)
+    body = {"property_expression_names": pen}
+    controls = preset_controls(dump, pname)
+    if controls:
+        body["autoplace_controls"] = controls
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"ex-{label}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f, pen
+
+
+def ex_city_positions(cfg, mk, scale, offset):
+    """{city name: (x, y)} of the tile centre each marker must stand at: the middle tile of the city's
+    reference pixel at `scale` (geo tiles), less the spawn offset (world = geo - offset; T18 (b))."""
+    import oracle
+    rows = tnconfig.load(oracle.CITIES)[mk]["cities"]
+    m, ppd = cfg["maps"][mk], cfg["coordinates"]["px_per_degree"]
+    s = int(scale)
+    corner = s // int(cfg["coordinates"]["corner_offset_divisor"])
+    out = {}
+    for c in rows.values():
+        col = math.floor((c["lon"] - m["lon_left_edge"]) * ppd)
+        row = math.floor((m["lat_top_edge"] - c["lat"]) * ppd)
+        out[c["name"]] = (s * (col - m["wr"]) + corner - offset[0] + 0.5, s * (row - m["hr"]) + corner - offset[1] + 0.5)
+    return out
+
+
+def ex_marker_report(run_dir):
+    f = Path(run_dir) / "script-output" / "ea-marker-probe" / f"{EX_MARKER_SPEC['label']}-report.json"
+    if not f.exists():
+        raise GateError(f"{run_dir}: the marker probe wrote no {f.name}")
+    rep = json.loads(f.read_text(encoding="utf-8"))
+    for st in rep.get("steps") or []:
+        objs = st.get("objects")
+        st["objects"] = list(objs.values()) if isinstance(objs, dict) else (objs or [])
+        if isinstance(st.get("offset"), list):
+            st["offset"] = {}
+    return rep
+
+
+def ex_marker_findings(cfg, run, rep):
+    """T18 (b) on one marker run's report: the counts per step (on at creation: every city, then none after the
+    switch off, every city again after the switch on; off at creation: none until the switch on; a non-Earth world:
+    none at all), every marker a chart-mode text on Nauvis naming one city of the map's table once, within
+    EX_MARKER_TOL tiles of world = geo minus the spawn offset, and the offset the game reads back equal to the
+    oracle's model of the world (G5: an Earth world, its map and scale). Returns (measurements, findings)."""
+    import oracle
+    label, mk, scale, seed, ab, on, route = run
+    steps = {st["tick"]: st for st in rep.get("steps") or []}
+    fails, meas = [], {"counts": {}}
+    want_ticks = EX_MARKER_SPEC["report"]
+    if sorted(steps) != sorted(want_ticks):
+        return meas, [f"{label}: the probe reported ticks {sorted(steps)}, want {want_ticks}"]
+    if route != "preset":
+        for t, st in sorted(steps.items()):
+            meas["counts"][t] = len(st["objects"])
+            if st.get("earth") or st["objects"]:
+                fails.append(f"{label}: tick {t} reports an Earth world or {len(st['objects'])} markers on the "
+                             f"{route} route with the setting on (want none)")
+        return meas, fails
+    g = tnconfig.geography(cfg)[mk]
+    first = steps[want_ticks[0]]
+    if not first.get("earth") or first.get("map") != cfg["maps"][mk]["id"] or first.get("scale") != int(scale):
+        return meas, [f"{label}: not the Earth world it should be (earth {first.get('earth')}, map {first.get('map')}, "
+                      f"scale {first.get('scale')}; G5)"]
+    if "city" in g:
+        number = first.get("city") or 0
+        offset = oracle.spawn_offset(cfg, mk, scale, seed, number)
+    else:
+        offset = tuple(int(v) for v in g["city_offset"])
+    got = first.get("offset") or {}
+    read = (got.get("cx"), got.get("cy"))
+    if None in read or (math.floor(read[0] + 0.5), math.floor(read[1] + 0.5)) != tuple(offset):
+        fails.append(f"{label}: the game reads the city offset {read}, the oracle's model {offset}")
+    want = ex_city_positions(cfg, mk, scale, offset)
+    n = len(want)
+    expect = {1: n if on else 0, 2: 0, 3: 0, 4: n, 5: n}
+    worst = 0.0
+    for t, st in sorted(steps.items()):
+        objs = st["objects"]
+        meas["counts"][t] = len(objs)
+        if len(objs) != expect[t] or st.get("recorded") != expect[t]:
+            fails.append(f"{label}: tick {t} shows {len(objs)} markers ({st.get('recorded')} recorded), want {expect[t]}")
+        if st.get("value") != (on if t == 1 else t >= 4):
+            fails.append(f"{label}: tick {t} reads the setting {st.get('value')}")
+        names = sorted(o.get("text") for o in objs)
+        if objs and names != sorted(want):
+            fails.append(f"{label}: tick {t} marks {sorted(set(names) ^ set(want))[:6]} differently from the map's "
+                         f"city table")
+        for o in objs:
+            if o.get("type") != "text" or o.get("render_mode") != "chart" or o.get("surface") != "nauvis":
+                fails.append(f"{label}: marker {o.get('text')} is a {o.get('render_mode')} {o.get('type')} on "
+                             f"{o.get('surface')}, want a chart text on nauvis")
+                continue
+            w = want.get(o.get("text"))
+            if w is None or o.get("x") is None:
+                continue
+            d = max(abs(o["x"] - w[0]), abs(o["y"] - w[1]))
+            worst = max(worst, d)
+            if d > EX_MARKER_TOL:
+                fails.append(f"{label}: {o['text']} stands at ({o['x']}, {o['y']}), {d} tiles from {w}")
+    meas.update(cities=n, offset=list(offset), worst_tiles=worst)
+    return meas, fails
+
+
+def ex_rename_name(name, cfg, test_id=EX_TEST_ID, test_prefix=EX_TEST_PREFIX):
+    """A game name under the test identity: the noise prefix or the mod ID at its start replaced."""
+    real_id, real_prefix = cfg["identity"]["id"], cfg["identity"]["noise_prefix"]
+    if name.startswith(real_prefix):
+        return test_prefix + name[len(real_prefix):]
+    if name == real_id or name.startswith(real_id + "-"):
+        return test_id + name[len(real_id):]
+    return name
+
+
+def ex_rename_value(v, cfg):
+    """A dumped value with every name in it under the test identity (name references inside expressions too)."""
+    real_id, real_prefix = cfg["identity"]["id"], cfg["identity"]["noise_prefix"]
+    pat = re.compile(r"(?<![A-Za-z0-9_])(" + re.escape(real_prefix) + r"|" + re.escape(real_id) + r"(?=-|\b))")
+
+    def sub(s):
+        return pat.sub(lambda m: EX_TEST_PREFIX if m.group(1) == real_prefix else EX_TEST_ID, s)
+    if isinstance(v, str):
+        return sub(v)
+    if isinstance(v, dict):
+        return {sub(k) if isinstance(k, str) else k: ex_rename_value(x, cfg) for k, x in v.items()}
+    if isinstance(v, list):
+        return [ex_rename_value(x, cfg) for x in v]
+    return v
+
+
+def ex_stage_rename(root, cfg):
+    """The D36 rename dry run's build: a copy of the mod whose config.lua names the test ID and prefix, whose
+    info.json names the test ID and whose locale keys are renamed; nothing else changes, so a rename stays a data
+    edit (design constraint 5). Returns (staged folder, the files that differ from the mod)."""
+    dst = Path(root) / EX_TEST_ID
+    if dst.exists():
+        shutil.rmtree(dst)
+    shutil.copytree(MOD, dst)
+    cp = dst / "prototypes" / "config.lua"
+    text = cp.read_text(encoding="utf-8")
+    text, n1 = re.subn(r'^local ID = "[^"\n]*"$', f'local ID = "{EX_TEST_ID}"', text, count=1, flags=re.M)
+    text, n2 = re.subn(r'^local NOISE = "[^"\n]*"$', f'local NOISE = "{EX_TEST_PREFIX}"', text, count=1, flags=re.M)
+    if n1 != 1 or n2 != 1:
+        raise GateError("config.lua holds no single `local ID = ...` and `local NOISE = ...` line: the rename dry run "
+                        "cannot set its test identity there")
+    cp.write_text(text, encoding="utf-8", newline="\n")
+    ip = dst / "info.json"
+    info = json.loads(ip.read_text(encoding="utf-8"))
+    info["name"] = EX_TEST_ID
+    ip.write_text(json.dumps(info, indent=2) + "\n", encoding="utf-8", newline="\n")
+    for f in sorted((dst / "locale").rglob("*.cfg")):
+        lines = []
+        for line in f.read_text(encoding="utf-8").split("\n"):
+            m = re.fullmatch(r"\[(.*)\]", line)
+            if m:
+                line = "[" + ex_rename_name(m.group(1), cfg) + "]"
+            elif "=" in line and not line.startswith((";", "#")):
+                k, v = line.split("=", 1)
+                line = ex_rename_name(k, cfg) + "=" + v
+            lines.append(line)
+        f.write_text("\n".join(lines), encoding="utf-8", newline="\n")
+    changed = sorted(p.relative_to(dst).as_posix() for p in dst.rglob("*") if p.is_file() and
+                     (not (MOD / p.relative_to(dst)).exists() or
+                      (MOD / p.relative_to(dst)).read_bytes() != p.read_bytes()))
+    return dst, changed
+
+
+def ex_test_registry(cfg, fz, dumps):
+    """tests/frozen.json under the test identity, built for the dry run only: each registered body renamed, its
+    hash the generation-field hash of the real dump's body with every name in it renamed. A body the real dumps do
+    not hold is left out (the real frozen row reports it)."""
+    out = {"format": fz.get("format"), "bodies": {}}
+    for name, rec in (fz.get("bodies") or {}).items():
+        t, label = rec.get("type") or "noise-expression", rec.get("dump", "m1")
+        body = ((dumps.get(label) or {}).get(t) or {}).get(name)
+        if body is None:
+            continue
+        out["bodies"][ex_rename_name(name, cfg)] = {"type": t, "sha256": body_hash(ex_rename_value(body, cfg)),
+                                                    "dump": label}
+    return out
+
+
+def ex_real_name_hits(text, cfg):
+    real_id, real_prefix = cfg["identity"]["id"], cfg["identity"]["noise_prefix"]
+    return len(re.findall(r"(?<![A-Za-z0-9_])" + re.escape(real_prefix), text)) + text.count(real_id)
+
+
+def ex_poster_mgs(ctx, cfg, mk, cliffs=True):
+    """The poster world of a map: its preset as the M1 dump holds it at EX_POSTER_SCALE, the spawn shift undone
+    and the spawn lake, inland lakes and start land guarantee neutral (coast_only_pen; a map without a city fold
+    keeps its baked offset 0), the ridges and every other key as the preset bakes them. cliffs=False gives the V1
+    world of the same map, the T1 previews' (ridges off, cliff richness 0), whose land the poster must keep."""
+    pname, _ = map_preset(cfg, mk)
+    pen = dict(preset_pen(ctx.shared["dump_m1"], pname))
+    if not pen:
+        raise GateError(f"the M1 dump holds no preset {pname}")
+    pin_scale(cfg, mk, pen, EX_POSTER_SCALE)
+    pen = coast_only_pen(cfg, mk, pen)
+    body = {"property_expression_names": pen}
+    if not cliffs:
+        body = {"property_expression_names": ridges_off(cfg, pen), "cliff_settings": NO_CLIFFS}
+    controls = preset_controls(ctx.shared["dump_m1"], pname)
+    if controls:
+        body["autoplace_controls"] = controls
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / ("ex-poster-" + mk + ("" if cliffs else "-v1") + ".json")
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def ex_poster_title(cfg, mk):
+    m = cfg["maps"][mk]
+    sizes = {s: f"{m['width_px'] * s:,} x {m['height_px'] * s:,}" for s in (1, max(cfg["scales"]["values"]))}
+    title = f"{cfg['identity']['title']}: {m['display']}"
+    sub = (f"seed {EX_POSTER_SEED}, scale {EX_POSTER_SCALE}: {sizes[1]} tiles (scale {max(sizes)}: {sizes[max(sizes)]} "
+           f"tiles); the preset's world with its spawn shift undone and no spawn or inland lakes")
+    return title, sub
+
+
+def row_ex_static(ctx, mods, sec6, row, cache):
+    """The extras criteria the static rows hold (T16, FG): the size context of every scale label, the scale
+    tooltip and every preset description against config.lua's size_context, R8 and APPROVALS 1c (JI-12); the
+    release zip byte-reproducible with its .sha256, refusing an unregistered Earth body and letting the Map type
+    fallbacks through; no graphical flag and no map-export mod in tools/ (V5, D30); and the poster
+    mode's offline selftest. Each with its positive controls (tn_static's extras fixtures)."""
+    import contact_sheet
+    cfg = mods.cfg
+    secs, errs = tn_static.parse_cfg((MOD / "locale" / "en" / "terra-nauvis.cfg").read_text(encoding="utf-8"))
+    merged = {k: dict(v) for k, v in secs.items()}
+    f_size = tn_static.size_context_findings(cfg, merged)
+    f_zip, d_zip = tn_static.release_zip_findings()
+    f_tools, n_tools = tn_static.tools_scan_findings()
+    with tempfile.TemporaryDirectory(prefix="tn-ex-fx-") as td:
+        fx = tn_static.extras_fixtures(Path(td), cfg)
+    bad_fx = [x[0] for x in fx if not x[1]]
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        code = contact_sheet.poster_selftest()
+    row.fails += errs + f_size + f_zip + f_tools + [f"fixture control failed: {x}" for x in bad_fx]
+    if code != 0:
+        row.fails.append("the poster mode's selftest failed: " + buf.getvalue().strip()[-300:])
+    n_texts = len(tn_static.size_texts(cfg, merged))
+    row.detail = (f"size context in {n_texts} texts; {d_zip}; tools scan {n_tools} files; {len(fx)} controls "
+                  f"behaved {len(fx) - len(bad_fx)}; poster selftest {'ok' if code == 0 else 'fail'}")
+
+
+def ex_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """extras' suite checks, added to suite_checks' table (design section 15, milestone 0)."""
+    import earthgeo as eg
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    dump_sha = [ctx.shared.get("dump_m1_sha"), ctx.shared.get("dump_m2_sha")]
+
+    def key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "dump": dump_sha, "extra": extra or {}})
+
+    def synthetic_run(out, record):
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "record.json").write_text(json.dumps(record, indent=1, default=str), encoding="utf-8")
+        (out / "run.json").write_text(json.dumps({"exit": 0, "isolated": True, "error_lines": [], "images": {
+            p.name: sha256_file(p) for p in sorted(out.glob("*.png"))}}, indent=1), encoding="utf-8")
+        return out
+
+    # T18 (b) (SS; M1 and M2; D28; TST-29): the markers through rendering.get_all_objects, which needs no charted
+    # chunk, so no loopback server and no smoke fallback; the chart-tag route is not shipped
+    name = cfg["settings"][cfg["markers"]["setting"]]["name"]
+
+    def markers_run(deadline):
+        stage = ex_stage_markers(ctx, cfg)
+        mods.build_zip()
+        h = folder_hash(stage)
+        ms1 = mods.make(f"ea-mk-{mods.zip_sha[:8]}-{h}", [stage])
+        ms2 = mods.make(f"ea-mk2-{mods.zip_sha[:8]}-{h}", [stage], from_live=EX_AB)
+        mods.prepare(ms1, "mk")
+        mods.prepare(ms2, "mk2")
+        lanes = [[], []]
+        for run in EX_MARKER_RUNS:
+            label, mk, scale, seed, ab, on, route = run
+            ms, ln = (ms2, 1) if ab else (ms1, 0)
+
+            def prep(ms=ms, on=on):
+                res = ctx.fh_plain(["settings", ms, "--set", f"runtime-global.{name}={'true' if on else 'false'}"])
+                if not res.startswith("RESULT ok"):
+                    raise GateError(f"fh.py settings {ms}: {res}")
+            mgs = ex_preset_mgs(ctx, cfg, mk, scale, ab, f"mk-{label}")[0] if route == "preset" else                 map_maptype_mgs(ctx, cfg, mk) if route == "maptype" else None
+            lanes[ln].append((prep, scenario_args(lane_instance(ctx, ln), ms, EX_MARKER_TICKS, seed, mgs),
+                              ctx.out / f"ex-markers-{label}", 900))
+        run_lanes(ctx, [l for l in lanes if l])
+        return [ctx.out / f"ex-markers-{r[0]}" for r in EX_MARKER_RUNS]
+
+    def markers_derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != len(EX_MARKER_RUNS):
+            return {}, [f"{len(dirs)} marker runs, want {len(EX_MARKER_RUNS)}"], ""
+        for run, dr in zip(EX_MARKER_RUNS, dirs):
+            fails += g1(dr) + g3(dr) + g2(dr, [cfg["identity"]["id"], "base"] + (EX_AB if run[4] else []))
+            try:
+                rep = ex_marker_report(dr)
+            except GateError as e:
+                fails.append(str(e))
+                continue
+            m, f = ex_marker_findings(cfg, run, rep)
+            meas[run[0]] = m
+            fails += f
+        return meas, fails, "; ".join(
+            f"{k}: {v.get('counts')} of {v.get('cities', 0)}, worst {v.get('worst_tiles', 0)} tiles"
+            for k, v in meas.items())
+
+    checks["ex_t18_markers"] = SuiteCheck("ex_t18_markers", lambda: key("ex_t18_markers", {
+        "runs": EX_MARKER_RUNS, "spec": EX_MARKER_SPEC}), markers_run, markers_derive)
+
+    # V5, T16 (SS; D30): one poster per map from stitched previews of the preset's world (ridges drawn as cliffs),
+    # whose land must equal, pixel for pixel, the land of the same map's V1 world (the T1 previews' world: no
+    # cliffs) rendered here at the same seed and scale, on every pixel a cliff does not hide; both worlds cover the
+    # whole map; the V1 world's T1 score is recorded. The rebuilt poster must equal the committed
+    # docs/posters/<map>.png byte for byte (regenerate: suite extras --only ex_posters, then copy the printed
+    # posters there)
+    maps = [k for k in cfg["map_order"] if (cfg.get("geography") or {}).get(k)]
+    plans = {mk: preview_plan(eg.MapRef(mk), EX_POSTER_SCALE) for mk in maps}
+    kinds = ("poster", "v1")
+
+    def poster_dir(kind, mk, j):
+        return ctx.out / f"ex-{kind}-{mk}-{j:02d}"
+
+    def posters_run(deadline):
+        ms = [mods.make(f"ea-m1p{i + 1}-{mods.zip_sha[:8]}", [mods.build_zip()]) for i in range(PAR_MAX)]
+        for i, m in enumerate(ms):
+            mods.prepare(m, f"m1p{i + 1}")
+        jobs = []
+        for kind in kinds:
+            for mk in maps:
+                size, offs = plans[mk]
+                mgs = ex_poster_mgs(ctx, cfg, mk, cliffs=kind == "poster")
+                for j, off in enumerate(offs):
+                    jobs.append((poster_dir(kind, mk, j), size, mgs, off))
+        lanes = [[] for _ in range(PAR_MAX)]
+        for i, (out, size, mgs, off) in enumerate(jobs):
+            ln = i % PAR_MAX
+            lanes[ln].append((None, preview_args(lane_instance(ctx, ln), ms[ln], size, EX_POSTER_SEED, mgs, off), out,
+                              1800))
+        run_lanes(ctx, lanes)
+        import contact_sheet
+        out = ctx.out / "posters"
+        out.mkdir(parents=True, exist_ok=True)
+        legend = contact_sheet.poster_legend(ctx.shared["dump_m1"])
+        rec = {}
+        for mk in maps:
+            size, offs = plans[mk]
+            runs = [(poster_dir("poster", mk, j) / f"{EX_POSTER_SEED}.png", off) for j, off in enumerate(offs)]
+            title, sub = ex_poster_title(cfg, mk)
+            _, info = contact_sheet.poster(eg.MapRef(mk), runs, title, sub, legend, str(EX_POSTER_SCALE),
+                                           out=out / f"{mk}.png")
+            rec[mk] = info
+        return [j[0] for j in jobs] + [synthetic_run(out, rec)]
+
+    def posters_derive(dirs):
+        fails, meas = [], {}
+        n = sum(len(plans[mk][1]) for mk in maps)
+        if len(dirs) != 2 * n + 1:
+            return {}, [f"{len(dirs)} poster runs, want {2 * n + 1}"], ""
+        for x in dirs[:2 * n]:
+            fails += g1(x) + g3(x) + images_rehash(x)
+        pdir = Path(dirs[2 * n])
+        fails += images_rehash(pdir)
+        colours = blocking_water_colours(ctx.shared["dump_m1"])
+        hidden = cliff_colours(ctx.shared["dump_m1"])
+        at = {}
+        k = 0
+        for kind in kinds:
+            for mk in maps:
+                offs = plans[mk][1]
+                at[(kind, mk)] = [(dirs[k + j], off) for j, off in enumerate(offs)]
+                k += len(offs)
+        for mk in maps:
+            mref = eg.MapRef(mk)
+            Lp, Cp, Hp = previews_land(mref, at[("poster", mk)], EX_POSTER_SCALE, colours, hidden)
+            Lv, Cv, Hv = previews_land(mref, at[("v1", mk)], EX_POSTER_SCALE, colours, hidden)
+            rec = t1_eval(mref, Lv, Cv, scale=EX_POSTER_SCALE)
+            both = Cp & Cv
+            m = {"differing_px": int((both & (Lp != Lv)).sum()), "compared_px": int(both.sum()),
+                 "hidden_by_cliffs_px": int(Hp.sum()), "v1_cliff_px": int(Hv.sum()), "v1_agreement": rec["agreement"],
+                 "v1_iou": rec["iou"]}
+            total = mref.W * mref.H
+            if m["differing_px"]:
+                fails.append(f"{mk}: the poster's land differs from the V1 world's in {m['differing_px']} px")
+            if int(Cp.sum()) + m["hidden_by_cliffs_px"] != total or int(Cv.sum()) != total:
+                fails.append(f"{mk}: the previews leave pixels of the map uncovered (poster {int(Cp.sum())} + "
+                             f"{m['hidden_by_cliffs_px']} under cliffs, V1 world {int(Cv.sum())}, of {total})")
+            if m["v1_cliff_px"]:
+                fails.append(f"{mk}: the V1 world shows {m['v1_cliff_px']} cliff pixels (ridges should be off there)")
+            if m["compared_px"] < total * 0.99:
+                fails.append(f"{mk}: only {m['compared_px']} of {total} px compared (cliffs hide too much)")
+            png = pdir / f"{mk}.png"
+            committed = POSTERS / f"{mk}.png"
+            m["poster"] = str(png)
+            m["poster_sha256"] = sha256_file(png) if png.exists() else None
+            if not committed.exists():
+                fails.append(f"docs/posters/{mk}.png is not committed (V5): copy {png} there")
+            elif m["poster_sha256"] != sha256_file(committed):
+                fails.append(f"docs/posters/{mk}.png differs from the poster these previews build: copy {png} there")
+            meas[mk] = m
+        meas["posters"] = [str(POSTERS / f"{mk}.png") for mk in maps]
+        return meas, fails, "; ".join(
+            f"{mk}: {meas[mk]['differing_px']} px off the V1 world over {meas[mk]['compared_px']} "
+            f"({meas[mk]['hidden_by_cliffs_px']} under cliffs), V1 world T1 {meas[mk]['v1_agreement']}"
+            for mk in maps) + f"; posters for the verification pass: {meas['posters']}"
+
+    checks["ex_posters"] = SuiteCheck("ex_posters", lambda: key("ex_posters", {
+        "plans": plans, "seed": EX_POSTER_SEED, "scale": EX_POSTER_SCALE}), posters_run, posters_derive)
+
+    # T16 (SS; D36; TST-21): the rename dry run. The test build differs from the mod in config.lua's
+    # identity lines, info.json's name and the locale keys only; it loads with G2 naming the test ID, its M1 and M2
+    # dumps hold the test-ID names and no real one, every body passes the frozen check against the registry built
+    # for the test ID while tests/frozen.json stays byte-identical, its release refuses a body dropped from that
+    # registry, and its first preset renders the real build's preview byte for byte (its default preset does not)
+    real_preset = cfg["presets"][cfg["preset_order"][0]]["name"]
+    test_preset = ex_rename_name(real_preset, cfg)
+    frozen_path = TESTS / "frozen.json"
+
+    def rename_run(deadline):
+        before = sha256_file(frozen_path)
+        stage, changed = ex_stage_rename(ctx.out / "stage" / "rename", cfg)
+        tcfg = tnconfig.load(stage / "prototypes" / "config.lua")
+        zpath, tsha, _ = build_zip.build(ctx.out / "rename-zip", mod_dir=stage)
+        mods.build_zip()
+        ms1 = mods.make(f"ea-rn-{mods.zip_sha[:8]}-{tsha[:8]}", [zpath])
+        ms2 = mods.make(f"ea-rn2-{mods.zip_sha[:8]}-{tsha[:8]}", [zpath], from_live=EX_AB)
+        dirs = []
+        for label, ms in (("m1", ms1), ("m2", ms2)):
+            r = ctx.fh(["dump-data", "--instance", ctx.instance, "--modset", ms], ctx.out / f"rename-dump-{label}")
+            dirs.append(r.out)
+            # fh.py settings --set accepts names no mod defines (defect D10): each test name must be dumped first
+            sd = json.loads((r.out / "mod-settings-dump.json").read_text(encoding="utf-8")) \
+                if (r.out / "mod-settings-dump.json").exists() else {}
+            defined = {n for group in sd.values() if isinstance(group, dict) for n in group}
+            missing = sorted(s["name"] for s in tcfg["settings"].values() if s["name"] not in defined)
+            if missing:
+                raise GateError(f"G7: the test build's settings {missing[:4]} are not in {ms}'s mod-settings-dump.json")
+            sets = [f"{s['setting_type']}.{s['name']}={s['default_value']}" for s in tcfg["settings"].values()]
+            res = ctx.fh_plain(["settings", ms, "--set"] + sets)
+            if not res.startswith("RESULT ok"):
+                raise GateError(f"fh.py settings {ms}: {res}")
+        dirs.append(preview(ctx, ms1, "rename-preview-test", EX_RENAME_SIZE, preset=test_preset).out)
+        dirs.append(preview(ctx, ctx.shared["m1"], "rename-preview-real", EX_RENAME_SIZE, preset=real_preset).out)
+        dirs.append(preview(ctx, ms1, "rename-preview-default", EX_RENAME_SIZE).out)
+        treg = ex_test_registry(cfg, json.loads(frozen_path.read_text(encoding="utf-8")),
+                                {"m1": ctx.shared["dump_m1"], "m2": ctx.shared.get("dump_m2") or {}})
+        rec = {"stage": str(stage), "changed": changed, "zip": str(zpath), "zip_sha256": tsha,
+               "frozen_before": before, "frozen_after": sha256_file(frozen_path), "registry_bodies": len(treg["bodies"])}
+        out = synthetic_run(ctx.out / "rename-record", rec)
+        (out / "test-registry.json").write_text(json.dumps(treg, indent=1), encoding="utf-8")
+        return dirs + [out]
+
+    def rename_derive(dirs):
+        fails = []
+        if len(dirs) != 6:
+            return {}, [f"{len(dirs)} rename runs, want 6"], ""
+        for x in dirs[:5]:
+            fails += g1(x) + g3(x)
+        rec = json.loads((Path(dirs[5]) / "record.json").read_text(encoding="utf-8"))
+        treg = json.loads((Path(dirs[5]) / "test-registry.json").read_text(encoding="utf-8"))
+        allowed = {"info.json", "prototypes/config.lua"} | {x.relative_to(MOD).as_posix() for x in
+                                                           (MOD / "locale").rglob("*.cfg")}
+        if not set(rec["changed"]) <= allowed or not {"info.json", "prototypes/config.lua"} <= set(rec["changed"]):
+            fails.append(f"the test build changes {rec['changed']}, want config.lua and info.json and at most the "
+                         f"locale files besides (a rename is a data edit)")
+        if not (rec["frozen_before"] == rec["frozen_after"] == sha256_file(frozen_path)):
+            fails.append("tests/frozen.json changed during the dry run (ruling 21: it stays unchanged)")
+        tcfg = tnconfig.load(Path(rec["stage"]) / "prototypes" / "config.lua")
+        dumps = {}
+        for label, x in (("m1", dirs[0]), ("m2", dirs[1])):
+            so = stdout_of(x)
+            if f"Checksum of {EX_TEST_ID}:" not in so:
+                fails.append(f"{x}: no 'Checksum of {EX_TEST_ID}' (G2)")
+            if f"Checksum of {cfg['identity']['id']}:" in so:
+                fails.append(f"{x}: the real build loaded beside the test build")
+            text = (Path(x) / "data-raw-dump.json").read_text(encoding="utf-8")
+            hits = ex_real_name_hits(text, cfg)
+            if hits:
+                fails.append(f"the test build's {label} dump holds {hits} real names")
+            if text.count(EX_TEST_PREFIX) == 0 or text.count(EX_TEST_ID) == 0:
+                fails.append(f"positive control: the test build's {label} dump holds no test-ID name")
+            dumps[label] = json.loads(text)
+        fails += [f"under the test ID: {f}" for f in frozen_check(treg, treg, dumps, tcfg)]
+        if len(treg["bodies"]) < len((json.loads(frozen_path.read_text(encoding="utf-8")).get("bodies") or {})):
+            fails.append("the test registry lacks bodies tests/frozen.json registers (the real dumps miss them)")
+        reg_file = Path(dirs[5]) / "test-registry.json"
+        probs = build_zip.release_problems(tcfg, reg_file)
+        if probs:
+            fails.append(f"the test build's release refuses under its own registry: {probs[:2]}")
+        victim = sorted(treg["bodies"])[0] if treg["bodies"] else None
+        if victim:
+            t2 = dict(treg, bodies={k: v for k, v in treg["bodies"].items() if k != victim})
+            f2 = Path(tempfile.mkdtemp(prefix="tn-rename-")) / "registry.json"
+            f2.write_text(json.dumps(t2), encoding="utf-8")
+            if not any(victim in p for p in build_zip.release_problems(tcfg, f2)):
+                fails.append(f"positive control: the test build's release lets {victim} through unregistered")
+        img = [list(((load_run_json(x) or {}).get("images") or {}).values()) for x in dirs[2:5]]
+        test_h, real_h, default_h = (i[0] if i else None for i in img)
+        if not test_h or test_h != real_h:
+            fails.append(f"the test build's {test_preset} preview {str(test_h)[:12]} differs from the real build's "
+                         f"{real_preset} {str(real_h)[:12]}")
+        if not default_h or default_h == test_h:
+            fails.append("positive control: the test build's default preview equals its Earth preview (G5)")
+        meas = {"changed": rec["changed"], "registry_bodies": len(treg["bodies"]), "preview": test_h,
+                "frozen_sha256": rec["frozen_after"]}
+        return meas, fails, (f"{EX_TEST_ID} ({EX_TEST_PREFIX}) changes {len(rec['changed'])} data files, registers "
+                             f"{len(treg['bodies'])} bodies under its own registry, preview {str(test_h)[:12]} equals "
+                             f"the real {str(real_h)[:12]}; tests/frozen.json unchanged")
+
+    checks["ex_rename"] = SuiteCheck("ex_rename", lambda: key("ex_rename", {
+        "id": EX_TEST_ID, "prefix": EX_TEST_PREFIX, "frozen": sha256_file(frozen_path)}), rename_run, rename_derive)
+
+
 ROW_FUNCS = {
     "static": row_static, "plan_main": row_plan_main, "section6": row_section6,
     "frozen": row_frozen, "data_src": row_data_src, "offline_selftests": row_offline_selftests,
@@ -21124,6 +21714,8 @@ ROW_FUNCS = {
     "de_dump_facts": row_de_dump_facts, "de_pool": row_de_pool,
     # coast-band-fix
     "bf_dump_facts": row_bf_dump_facts, "bf_off": row_bf_off,
+    # extras
+    "ex_static": row_ex_static,
 }
 
 
@@ -21912,6 +22504,8 @@ def suite_checks(ctx, mods, sec6):
         bf_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     if any(s["id"] == "compat-completeness" for s in registry_upto(ctx.slice)):
         cc_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "extras" for s in registry_upto(ctx.slice)):
+        ex_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     return checks
 
 

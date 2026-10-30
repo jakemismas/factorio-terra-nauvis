@@ -1,0 +1,225 @@
+{
+ "map": "olde_world",
+ "seed": 1000,
+ "scale": 1,
+ "tool": "tools/contact_sheet.py poster",
+ "world": "the map's preset at scale 1, spawn shift undone, spawn lake, inland lakes and start land guarantee neutral (coast_only_pen), ridges on",
+ "size": [
+  2400,
+  1826
+ ],
+ "map_px": [
+  2400,
+  1566
+ ],
+ "legend": [
+  [
+   "deep water",
+   [
+    38,
+    64,
+    73
+   ]
+  ],
+  [
+   "water",
+   [
+    51,
+    83,
+    95
+   ]
+  ],
+  [
+   "shallow water and fords",
+   [
+    82,
+    98,
+    92
+   ]
+  ],
+  [
+   "marsh mud",
+   [
+    65,
+    89,
+    90
+   ]
+  ],
+  [
+   "grassland",
+   [
+    55,
+    53,
+    11
+   ]
+  ],
+  [
+   "dirt and dry land",
+   [
+    103,
+    72,
+    43
+   ]
+  ],
+  [
+   "sand and desert",
+   [
+    138,
+    103,
+    58
+   ]
+  ],
+  [
+   "iron ore",
+   [
+    105,
+    133,
+    147
+   ]
+  ],
+  [
+   "copper ore",
+   [
+    204,
+    98,
+    54
+   ]
+  ],
+  [
+   "coal",
+   [
+    0,
+    0,
+    0
+   ]
+  ],
+  [
+   "stone",
+   [
+    175,
+    155,
+    108
+   ]
+  ],
+  [
+   "uranium ore",
+   [
+    0,
+    178,
+    0
+   ]
+  ],
+  [
+   "crude oil",
+   [
+    198,
+    51,
+    196
+   ]
+  ],
+  [
+   "cliff ridges",
+   [
+    144,
+    119,
+    87
+   ]
+  ],
+  [
+   "trees, over the ground",
+   [
+    48,
+    99,
+    48
+   ]
+  ],
+  [
+   "enemy bases",
+   [
+    255,
+    25,
+    25
+   ]
+  ]
+ ],
+ "bars": [
+  {
+   "label": "2,500 km north to south",
+   "px": 271
+  },
+  {
+   "label": "1,000 tiles at scale 1",
+   "px": 268
+  }
+ ],
+ "poster_sha256": "8146d5092cb8ee4102da00806a67f5b60469fa7c49cb43289db64d437a6691a4",
+ "previews": [
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-olde_world-00",
+   "offset": [
+    -2464,
+    -896
+   ],
+   "sha256": "b1d861d5ff2aae0f44a9f9f9b0e3e1613813eb7e0081857d17e2a0fc273e366c"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-olde_world-01",
+   "offset": [
+    1568,
+    -896
+   ],
+   "sha256": "ccd399909d8b280f4469f4d6f86a5072887e7ed28e31e46da7874f0b1c0bef27"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-olde_world-02",
+   "offset": [
+    5600,
+    -896
+   ],
+   "sha256": "ce65d2d6b544b973fd81f2b17fbabc31bb9748d9c61a13951fd6b75ded1d1800"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-olde_world-03",
+   "offset": [
+    -2464,
+    3136
+   ],
+   "sha256": "2b8f59c216789eba24a7f9165092ad50303490ec83b08c9c1dbbfe8e4417a25f"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-olde_world-04",
+   "offset": [
+    1568,
+    3136
+   ],
+   "sha256": "b73ae06744afd49cf03a8d7c62bb88f2909ce8953f524fd801fcc07d2b81e5ba"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-olde_world-05",
+   "offset": [
+    5600,
+    3136
+   ],
+   "sha256": "9e3250cb017f67202cbcf1a9f9eafe7140b058f45d3617a927a57f5c99c73ae9"
+  }
+ ],
+ "land": {
+  "covered_px": 52364921,
+  "hidden_by_cliffs_px": 41740,
+  "total_px": 52406661,
+  "v1_runs": [
+   "previews/earth-build/draft-extras/posters-v1/poster-olde_world-00",
+   "previews/earth-build/draft-extras/posters-v1/poster-olde_world-01",
+   "previews/earth-build/draft-extras/posters-v1/poster-olde_world-02",
+   "previews/earth-build/draft-extras/posters-v1/poster-olde_world-03",
+   "previews/earth-build/draft-extras/posters-v1/poster-olde_world-04",
+   "previews/earth-build/draft-extras/posters-v1/poster-olde_world-05"
+  ],
+  "compared_px": 52364921,
+  "differing_px": 0,
+  "v1_covered_px": 52406661,
+  "v1_cliff_px": 0,
+  "v1_t1_agreement": 0.991561,
+  "v1_t1_iou": 0.977962
+ }
+}

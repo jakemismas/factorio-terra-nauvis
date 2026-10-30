@@ -11,15 +11,19 @@
 -- player. Milestone coast-band-fix adds Exact coastlines: after world detection on_init records
 -- the save's band-fix key, and on_init and on_load register scripts/bandfix.lua's on_chunk_generated
 -- handler from that record only (a save without the key registers nothing, the one conditional
--- registration); its drift line joins on_configuration_changed.
+-- registration); its drift line joins on_configuration_changed. Milestone extras adds the D28 city
+-- markers: drawn in on_init when their runtime-global setting is on, and drawn or removed when it
+-- changes.
 local guards = require("scripts.guards")
 local start = require("scripts.start")
 local bandfix = require("scripts.bandfix")
+local markers = require("scripts.markers")
 
 script.on_init(function()
   guards.on_init()
   start.on_init()
   bandfix.on_init()
+  markers.on_init()
   guards.sweep_surfaces()
 end)
 
@@ -33,3 +37,4 @@ end)
 
 script.on_event(defines.events.on_surface_created, guards.on_surface_created)
 script.on_event(defines.events.on_player_created, guards.on_player_created)
+script.on_event(defines.events.on_runtime_mod_setting_changed, markers.on_setting_changed)

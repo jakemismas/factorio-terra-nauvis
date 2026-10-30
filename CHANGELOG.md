@@ -634,6 +634,46 @@ versions follow [Semantic Versioning](https://semver.org/).
   explains Gleba chunk (-3, 0) in the main and the travel comparisons. `cc_t17` fails on every map:
   the M0 calibration finds all 92 names, and the arid biome (red desert, its trees and decoratives)
   never generates on an Earth map (`p30-cc_t17-*`; design notes, compat-completeness).
+- Milestone `extras`: the one-time extras. The runtime-global setting City markers
+  (`terra-nauvis-city-markers`, default off, APPROVALS 1a, D28) and `scripts/markers.lua`: with it on, one
+  rendering object in chart mode per city of an Earth world's map, the city's name at the tile holding its
+  reference pixel centre (world = geo - the city offset read back from the save), drawn in `on_init` and
+  drawn or removed when the setting changes; config.lua's `markers` group. The size context (D3, JI-12):
+  every scale label, the scale tooltip and every preset description carry R8's two footprints, a 1k SPM
+  factory core of 683 x 813 tiles and a 9.45k SPM megabase map of 10,000 x 6,000 tiles, called reported
+  community examples, from config.lua's `size_context`, which the T16 locale row binds to R8, to
+  approvals-data.json's world sizes and to every figure in those texts. One poster per map in
+  `docs/posters/` (D30) from `tools/contact_sheet.py poster`, stitched from previews of the map's preset
+  world at scale 1 and seed 1000, 2,400 px wide with a legend and scale bars. The T16 static rows
+  `release_zip` (the release byte-reproducible, its `.sha256` matching, an unregistered body refused, the
+  Map type fallbacks let through) and `tools_scan` (no graphical or portal flag and no map-export mod in
+  tools/), with fixture controls for them and for the size context. Runner: the FG row `ex_static`; the
+  suite checks `ex_t18_markers` (every map on M1, Europe at scale 1 and on M2, made with the setting off,
+  Europe's Map type entry alone and the default preset, through `tools/mods/ea-marker-probe` appended to a
+  staged copy), `ex_posters`
+  (each poster's land equal to its map's V1 world's, the committed poster equal to a rebuild) and
+  `ex_rename` (the D36 rename dry run under `earth-dry-run` and `edr_` with its own registry, tests/frozen.json
+  unchanged). README.md stays the release handoff's. Gate cold and warm wall time: not yet measured (the
+  engine records them).
+- Evidence (draft, on its own isolated instances under `previews/earth-build/draft-extras/`, every game run
+  RESULT ok, isolated=yes, errors=0). T18 (b) (`b30/mk-30-*`): Europe at scale 6, seed 1000 (offset 1239,
+  3195), and at scale 1, seed 1002 (-856, 554), Atlantic (50 cities) and Old World (30) at scale 6, offset 0,
+  and Europe on M2 at seed 1004 (2835, 2343): every city marked at its tile centre (0 tiles off), the offset
+  read back equal to the oracle's model; none left after the setting went off at tick 2, in that same tick,
+  and every city again after it came on at tick 4; a world made with it off showed none until then; Europe's
+  Map type entry alone and the default preset, with it on, showed none. D36 (`b30/rename-30.json`): the test
+  build `earth-dry-run_0.1.0.zip` changes only config.lua, info.json and the locale file, its M1 and M2 dumps
+  show `Checksum of earth-dry-run` and hold no real name, all 832 bodies tests/frozen.json registers pass the
+  frozen check under the registry built for the test ID, whose release passes and refuses a body dropped from
+  it, and its Europe preset's 256 px preview at seed 1000 is the real build's byte for byte (6198d5600ad7f185)
+  while its default preset's differs (b5ce38715e7fac56); tests/frozen.json is only read. V5 (`posters-1`,
+  `posters-v1`): Europe 2,400 x 1,964 px from 1 preview, Atlantic 2,400 x 1,258 from 8, Old World 2,400 x
+  1,826 from 6; each poster's land equals its V1 world's on every compared pixel (4,071,071, 102,281,169 and
+  52,364,921; 0 differing; 18,529, 73,867 and 41,740 under cliffs), the V1 worlds scoring T1 0.991983,
+  0.991262 and 0.991561. Static: locale, release_zip (`terra-nauvis_0.1.0.zip` reproduces; a dropped released
+  body, a dropped firewall body and a registered fallback are refused) and tools_scan pass with 10 of 10
+  fixture controls, the poster selftest 4 of 4; lint keeps the base's one W561 on presets.lua (design notes,
+  extras). `baseline`, the suite and the gate remain for the build.
 
 ### Changed
 

@@ -1,0 +1,243 @@
+{
+ "map": "atlantic",
+ "seed": 1000,
+ "scale": 1,
+ "tool": "tools/contact_sheet.py poster",
+ "world": "the map's preset at scale 1, spawn shift undone, spawn lake, inland lakes and start land guarantee neutral (coast_only_pen), ridges on",
+ "size": [
+  2400,
+  1258
+ ],
+ "map_px": [
+  2400,
+  998
+ ],
+ "legend": [
+  [
+   "deep water",
+   [
+    38,
+    64,
+    73
+   ]
+  ],
+  [
+   "water",
+   [
+    51,
+    83,
+    95
+   ]
+  ],
+  [
+   "shallow water and fords",
+   [
+    82,
+    98,
+    92
+   ]
+  ],
+  [
+   "marsh mud",
+   [
+    65,
+    89,
+    90
+   ]
+  ],
+  [
+   "grassland",
+   [
+    55,
+    53,
+    11
+   ]
+  ],
+  [
+   "dirt and dry land",
+   [
+    103,
+    72,
+    43
+   ]
+  ],
+  [
+   "sand and desert",
+   [
+    138,
+    103,
+    58
+   ]
+  ],
+  [
+   "iron ore",
+   [
+    105,
+    133,
+    147
+   ]
+  ],
+  [
+   "copper ore",
+   [
+    204,
+    98,
+    54
+   ]
+  ],
+  [
+   "coal",
+   [
+    0,
+    0,
+    0
+   ]
+  ],
+  [
+   "stone",
+   [
+    175,
+    155,
+    108
+   ]
+  ],
+  [
+   "uranium ore",
+   [
+    0,
+    178,
+    0
+   ]
+  ],
+  [
+   "crude oil",
+   [
+    198,
+    51,
+    196
+   ]
+  ],
+  [
+   "cliff ridges",
+   [
+    144,
+    119,
+    87
+   ]
+  ],
+  [
+   "trees, over the ground",
+   [
+    48,
+    99,
+    48
+   ]
+  ],
+  [
+   "enemy bases",
+   [
+    255,
+    25,
+    25
+   ]
+  ]
+ ],
+ "bars": [
+  {
+   "label": "5,000 km north to south",
+   "px": 310
+  },
+  {
+   "label": "2,000 tiles at scale 1",
+   "px": 306
+  }
+ ],
+ "poster_sha256": "7241d3a5eeee3be70201fa4ee29b65a696d09b347e03817d2d566a39727df559",
+ "previews": [
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-atlantic-00",
+   "offset": [
+    -5824,
+    -1216
+   ],
+   "sha256": "cc0d32975c630bd8e373f225c07d70d45a7f34f2d53155e0e72cafe36757a567"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-atlantic-01",
+   "offset": [
+    -1792,
+    -1216
+   ],
+   "sha256": "03467815e11e382180607ec43f9ba2e86d40d800242246f2033fac1506874def"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-atlantic-02",
+   "offset": [
+    2240,
+    -1216
+   ],
+   "sha256": "079fe48d150ea2d4506842c05359c197d8d77e6a636745f7b674bc15a08940a4"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-atlantic-03",
+   "offset": [
+    6272,
+    -1216
+   ],
+   "sha256": "d51014a22c06605be657c82bc367b8178216dddc07d2c29907ac86d262cf907c"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-atlantic-04",
+   "offset": [
+    -5824,
+    2816
+   ],
+   "sha256": "995e3d50933a368ebf474485eb77bef2e3c9d18d398fa7ae820b521eb9680bca"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-atlantic-05",
+   "offset": [
+    -1792,
+    2816
+   ],
+   "sha256": "212d37e8061e6661e992a350207d19576d3771d47c51229a5dff824ea924c167"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-atlantic-06",
+   "offset": [
+    2240,
+    2816
+   ],
+   "sha256": "34298ffee0938672d46daced9866331c8005270c58815827fa7a0ba5090b5f05"
+  },
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-atlantic-07",
+   "offset": [
+    6272,
+    2816
+   ],
+   "sha256": "023ee5d52009c721ebebc82087dc6865ed481348582bfda53a1631cbdd37c136"
+  }
+ ],
+ "land": {
+  "covered_px": 102281169,
+  "hidden_by_cliffs_px": 73867,
+  "total_px": 102355036,
+  "v1_runs": [
+   "previews/earth-build/draft-extras/posters-v1/poster-atlantic-00",
+   "previews/earth-build/draft-extras/posters-v1/poster-atlantic-01",
+   "previews/earth-build/draft-extras/posters-v1/poster-atlantic-02",
+   "previews/earth-build/draft-extras/posters-v1/poster-atlantic-03",
+   "previews/earth-build/draft-extras/posters-v1/poster-atlantic-04",
+   "previews/earth-build/draft-extras/posters-v1/poster-atlantic-05",
+   "previews/earth-build/draft-extras/posters-v1/poster-atlantic-06",
+   "previews/earth-build/draft-extras/posters-v1/poster-atlantic-07"
+  ],
+  "compared_px": 102281169,
+  "differing_px": 0,
+  "v1_covered_px": 102355036,
+  "v1_cliff_px": 0,
+  "v1_t1_agreement": 0.991262,
+  "v1_t1_iou": 0.970839
+ }
+}

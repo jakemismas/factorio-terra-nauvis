@@ -1,0 +1,180 @@
+{
+ "map": "europe",
+ "seed": 1000,
+ "scale": 1,
+ "tool": "tools/contact_sheet.py poster",
+ "world": "the map's preset at scale 1, spawn shift undone, spawn lake, inland lakes and start land guarantee neutral (coast_only_pen), ridges on",
+ "size": [
+  2400,
+  1964
+ ],
+ "map_px": [
+  2400,
+  1704
+ ],
+ "legend": [
+  [
+   "deep water",
+   [
+    38,
+    64,
+    73
+   ]
+  ],
+  [
+   "water",
+   [
+    51,
+    83,
+    95
+   ]
+  ],
+  [
+   "shallow water and fords",
+   [
+    82,
+    98,
+    92
+   ]
+  ],
+  [
+   "marsh mud",
+   [
+    65,
+    89,
+    90
+   ]
+  ],
+  [
+   "grassland",
+   [
+    55,
+    53,
+    11
+   ]
+  ],
+  [
+   "dirt and dry land",
+   [
+    103,
+    72,
+    43
+   ]
+  ],
+  [
+   "sand and desert",
+   [
+    138,
+    103,
+    58
+   ]
+  ],
+  [
+   "iron ore",
+   [
+    105,
+    133,
+    147
+   ]
+  ],
+  [
+   "copper ore",
+   [
+    204,
+    98,
+    54
+   ]
+  ],
+  [
+   "coal",
+   [
+    0,
+    0,
+    0
+   ]
+  ],
+  [
+   "stone",
+   [
+    175,
+    155,
+    108
+   ]
+  ],
+  [
+   "uranium ore",
+   [
+    0,
+    178,
+    0
+   ]
+  ],
+  [
+   "crude oil",
+   [
+    198,
+    51,
+    196
+   ]
+  ],
+  [
+   "cliff ridges",
+   [
+    144,
+    119,
+    87
+   ]
+  ],
+  [
+   "trees, over the ground",
+   [
+    48,
+    99,
+    48
+   ]
+  ],
+  [
+   "enemy bases",
+   [
+    255,
+    25,
+    25
+   ]
+  ]
+ ],
+ "bars": [
+  {
+   "label": "1,000 km north to south",
+   "px": 405
+  },
+  {
+   "label": "200 tiles at scale 1",
+   "px": 200
+  }
+ ],
+ "poster_sha256": "b24d70c89c03a77cb34276e90491eadb9db73c9ca5a6f58840f4b91024e73a6f",
+ "previews": [
+  {
+   "run": "previews/earth-build/draft-extras/posters-1/poster-europe-00",
+   "offset": [
+    32,
+    384
+   ],
+   "sha256": "219b79d2118c24f3af62dbd30b7ef382457f99d70e3af98ff79f88904441dc9f"
+  }
+ ],
+ "land": {
+  "covered_px": 4071071,
+  "hidden_by_cliffs_px": 18529,
+  "total_px": 4089600,
+  "v1_runs": [
+   "previews/earth-build/draft-extras/posters-v1/poster-europe-00"
+  ],
+  "compared_px": 4071071,
+  "differing_px": 0,
+  "v1_covered_px": 4089600,
+  "v1_cliff_px": 0,
+  "v1_t1_agreement": 0.991983,
+  "v1_t1_iou": 0.985179
+ }
+}

@@ -860,10 +860,16 @@ return {
       name = ID .. "-exact-coast", type = "bool-setting", setting_type = "startup", default_value = false,
       order = "c-g",
     },
+    -- City markers (milestone extras; APPROVALS 1a, D28, default off): runtime-global, so any admin can switch
+    -- it in a running game; on, the map view shows every city of the world's map (scripts/markers.lua).
+    city_markers = {
+      name = ID .. "-city-markers", type = "bool-setting", setting_type = "runtime-global", default_value = false,
+      order = "d-a",
+    },
   },
   setting_order = {"scale", "spawn_city_europe", "spawn_city_atlantic", "spawn_city_olde_world", "canals",
                    "great_forests", "ridges", "hotspots", "inland_lakes",
-                   "destroyed_europe", "exact_coast"},
+                   "destroyed_europe", "exact_coast", "city_markers"},
 
   -- Map-gen presets, sorted right after Default ("a") and before Rich resources ("b") (S13).
   -- withheld_with lists the mods whose presence withholds a preset (presets.lua defines no such
@@ -2669,5 +2675,43 @@ return {
                land_fill = "g", thin = "h", water_masked = "i", land_masked = "j"},
     symbol_order = {"none", "water", "land", "water_k", "land_k", "water_fill", "land_fill", "thin",
                     "water_masked", "land_masked"},
+  },
+
+  -- City markers (milestone extras; APPROVALS 1a, D28; ARCHITECTURE.md milestone contract 13). With the setting on,
+  -- scripts/markers.lua draws one text per city of the save's map, its name from the map's city table, at the
+  -- tile holding the city's reference pixel centre: world = geo - the city offset, the conversion of
+  -- spawn-cities' force-spawn probe (T18 (c)). They are rendering objects in chart mode: drawn on the map view
+  -- only, for every force, the same size on screen at every zoom; they need no charted chunk and no per-chunk
+  -- event, so the headless T18 check reads them with rendering.get_all_objects.
+  --   centre       where a marker stands inside its tile, in tiles from the tile's corner
+  --   text_scale   the text's size on screen (it scales with zoom)
+  markers = {
+    setting = "city_markers",
+    render_mode = "chart",
+    centre = 0.5,
+    text_scale = 1.5,
+    color = {r = 1, g = 0.9, b = 0.45, a = 1},
+    alignment = "center",
+    vertical_alignment = "middle",
+  },
+
+  -- The size context of the scale labels, the scale tooltip and the preset descriptions (milestone extras; D3,
+  -- JI-12). World sizes are maps' width_px and height_px times the scale (APPROVALS 1c, approvals-data.json
+  -- world_size_tiles); each preset description gives its map's size at preset_scales. No measured footprint of a
+  -- late-game factory exists (R8 section 1: every row graded REPORTED), so the locale carries R8's two figures
+  -- as reported community examples, never as measurements: each footprint below is its R8 row's figure in
+  -- tiles, and every text that carries one says reported_phrase before it. The T16 locale row checks every
+  -- figure of those texts against this table, the maps and R8.
+  size_context = {
+    reported_phrase = "reported community examples",
+    preset_scales = {1, 6},
+    footprints = {
+      {key = "core_1k", r8_row = "1k SPM", width = 683, height = 813,
+       what = "a 1k SPM factory core blueprint, non-beaconed, without mining (Factorio 1.1.101)",
+       source = "https://factoriobin.com/post/EhaghFV6"},
+      {key = "megabase_9k", r8_row = "9.45k SPM", width = 10000, height = 6000,
+       what = "the map of a 9.45k SPM megabase with every outpost, an upper bound (Factorio 0.17.79)",
+       source = "https://forums.factorio.com/viewtopic.php?p=475463"},
+    },
   },
 }
