@@ -2054,8 +2054,9 @@ return {
   --   smooth  the write rule at scales from min_scale up: the reference blurred by a quadratic B-spline must read
   --       the pixel's class by at least threshold + wobble * a smooth tile noise (3/4 is half a pixel from a
   --       straight coast); in a fill pixel it reads within thin of its value at the pixel's centre, a blob. octaves
-  --       name the noise's cells per period_tiles and weights; written land takes the nearest land on a
-  --       lattice of the chunk's own tiles, lattice_tiles apart
+  --       name the noise's cells per period_tiles and weights, hash its lattice values, shift_tiles the second
+  --       reading the deep-water line takes; written land takes the nearest land on a lattice of the chunk's
+  --       own tiles, lattice_tiles apart; spline_centre and ease are the formulas' own constants
   --   row_cache  decoded table rows a peer keeps in memory, the oldest evicted one at a time (a cache of
   --       shipped data, never game state): at scale 6 they span 12,288 tiles north to south
   --   encoding  each table row is its first column, then runs (length - 1) * #symbol_order + symbol index
@@ -2067,8 +2068,7 @@ return {
     setting = "exact_coast", key = BFN.K, on = ONE,
     maps = {"atlantic", "olde_world"},
     checks = {europe = {scale = 1}, atlantic = {scale = 4}, olde_world = {scale = 6}},
-    tables = {europe = {geographies = {5, 8, 11, 14}}, atlantic = {geographies = {17}},
-              olde_world = {geographies = {18}}},
+    tables = {europe = {geographies = {14}}, atlantic = {geographies = {17}}, olde_world = {geographies = {18}}},
     version = 1,
     float_margin_px = 0.01,
     correction_tiles = 2,
@@ -2077,8 +2077,10 @@ return {
     chunk_tiles = 32,
     row_cache = 2048,
     new_water = "water", new_deep = "deepwater", land_fallback = "sand-1",
-    smooth = {min_scale = 3, threshold = 0.72, wobble = 0.22, thin = 0.35, period_tiles = 64, lattice_tiles = 4,
-              octaves = {{cells = 4, weight = 1}, {cells = 12, weight = 0.6}}},
+    smooth = {min_scale = 3, threshold = 0.72, wobble = 0.22, thin = 0.35, spline_centre = 0.75, ease = 3,
+              period_tiles = 64, lattice_tiles = 4, shift_tiles = {21, 32},
+              octaves = {{cells = 4, weight = 1}, {cells = 12, weight = 0.6}},
+              hash = {x = 73, y = 179, seed = 283, modulus = 1021, mix = 31, half = 510}},
     neighbours = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}},
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
     varint_base = 32,

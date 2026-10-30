@@ -111,7 +111,7 @@ local STATE, SHARED, MASKS, MAP, LUT, THIN
 local SMOOTH, THIN_CENTRE, WOBBLE = {}, {}, {}
 local SM = B.smooth
 local WP = SM.period_tiles
-local WP_X, WP_Y = floor(WP / 3), floor(WP / 2)
+local WP_X, WP_Y = SM.shift_tiles[1], SM.shift_tiles[2]
 -- A geography version with the soft map edge (edge = true) sinks land into deep water within
 -- coast.edge_band.mask_px reference px of the box, where the K+ table's classes no longer hold: the
 -- handler writes nothing there (EDGE is that width, or 0 for a version without the edge).
@@ -258,7 +258,7 @@ local function smooth_at(m, j, i)
   local function weight(d, k)
     local u = (k - half) / s
     if d == 0 then
-      return 3 / 4 - u * u
+      return SM.spline_centre - u * u
     end
     local v = 1 / 2 + d * u
     return v * v / 2
@@ -276,13 +276,13 @@ end
 -- A smooth tile noise in -1 .. 1, periodic over WP tiles: value noise of SM.octaves, a pure function of its
 -- lattice indices.
 local function wobble_table()
-  local out = {}
+  local out, H = {}, SM.hash
   local function lattice(n, i, j, seed)
-    local h = ((i % n) * 73 + (j % n) * 179 + seed * 283) % 1021
-    return (h * h * 31 % 1021) / 510 - 1
+    local h = ((i % n) * H.x + (j % n) * H.y + seed * H.seed) % H.modulus
+    return (h * h * H.mix % H.modulus) / H.half - 1
   end
   local function ease(t)
-    return t * t * (3 - 2 * t)
+    return t * t * (SM.ease - 2 * t)
   end
   for y = 0, WP - 1 do
     for x = 0, WP - 1 do

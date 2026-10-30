@@ -5439,14 +5439,14 @@
   },
   "tn_detail_atlantic_v6": {
    "type": "noise-expression",
-   "sha256": "afe845a2efb375e08b21533090d25494936ba854137701388942dca810068ec2",
+   "sha256": "91c6914964a5d1afd5b4a663dc399ee6c29f3bdb13ae906d45a1ee3993e4cba6",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
   "tn_detail_olde_world_v6": {
    "type": "noise-expression",
-   "sha256": "d915ef4225b460ca071f4ffa37bc347b55976a294056e5b348e8df9a67038823",
+   "sha256": "c058a76fb059c293b1e3387453f7ad89abe886060600a8f7945d275b7f459a91",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
@@ -5565,14 +5565,14 @@
   },
   "tn_geo_atlantic_v6": {
    "type": "noise-expression",
-   "sha256": "815a9d0827edb4812625c012b33d218002e5c6ca01fbec9ad965181df6240d6e",
+   "sha256": "ae7b137e6f0cdc912e3788cfc27e1c097c153b4ff2bd0c9ed90567004a93a8b4",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
   "tn_geo_olde_world_v6": {
    "type": "noise-expression",
-   "sha256": "45807e0bc6f59d189ffcc6d6a6b2f04b1e38e99dbc14243bf4f9350c864cd910",
+   "sha256": "2c6d7a60037ea5695ee6ed7243fe588a79d585b53a0ab596b23862dba5ff799c",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
@@ -5635,14 +5635,14 @@
   },
   "tn_shore_atlantic_v4": {
    "type": "noise-expression",
-   "sha256": "8feb8ff0abfbc87507f35b9d306d118393332a992af8ada7338fa5e0368142e9",
+   "sha256": "746c91aa26d6cbcebc7bd50d79563dca1cc2e79a5549b08e1adca761b4f99b53",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
   "tn_shore_olde_world_v4": {
    "type": "noise-expression",
-   "sha256": "e2f3fad986d4e81f6905b6f9898b44222c98926af6a16ca1bbf41858682eedeb",
+   "sha256": "d597b658600bb8881190e3cbd97e968db49295f5a029a3cbd633b98f20227251",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"

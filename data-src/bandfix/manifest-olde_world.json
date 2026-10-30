@@ -8,7 +8,7 @@
   "checkpoint_sha256": "f28272b9d304191e074c25db1878fceb8057e37c876244535fa429a7817e594e",
   "land_sha256": "7a7af0b11aeb8e21f84adbdf965f94f800789435ce228572267c45dd87e20e57",
   "thinwater_sha256": "a06d773279ab91a958d268feacfb12f6fd2f2435a69a38609b33b68b5da77a70",
-  "bandfix_config_sha256": "45964ae4021a99fa0a0442539f3ffedc04631ff60be966478f2f6292c6d01011",
+  "bandfix_config_sha256": "6f005410ad663b236ce8593a19f909b01bc19753c9f897f147a87f182163fe24",
   "coast_detail": [
    0.45,
    1
@@ -35,7 +35,7 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s1_v1.lua",
-   "sha256": "271ece763354d6b90590ea3fe19f87919964c5ba96b65bd57bd85d397e9c3f28",
+   "sha256": "00d1e5db5444f01e49e88aa74995dce147f470525a2acbfa8eb34404c2eae664",
    "bytes": 34601,
    "data_bytes_with_shared": 831347,
    "k_pixels_this_scale": 1438027,
@@ -80,7 +80,7 @@
   },
   "2": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s2_v1.lua",
-   "sha256": "2c5b340c5b7d0b66c7e11fb7bf9b1ee0ab07e75ed4ceb646e5b029583ec51e5b",
+   "sha256": "1a33721c21d55b9ceb26bb6bd9dc77e8df016fac51570603b3278cea05c8ffa8",
    "bytes": 30472,
    "data_bytes_with_shared": 827218,
    "k_pixels_this_scale": 1068431,
@@ -125,7 +125,7 @@
   },
   "3": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s3_v1.lua",
-   "sha256": "38de848f719093bcbd7c98cae209feda0dcccecc2268524b671a48a71e87014d",
+   "sha256": "caf6a39c16d8e0139898d0b469ef2747ece2563d516a868c82cfc6bbebbec4f9",
    "bytes": 29553,
    "data_bytes_with_shared": 826299,
    "k_pixels_this_scale": 943142,
@@ -170,7 +170,7 @@
   },
   "4": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s4_v1.lua",
-   "sha256": "ac817034a642d76fe96245ea18a0dcb92f2c3fa1cc76f7781daa8f0bbbd568b1",
+   "sha256": "87385452d22e6542f1238d61d4cbc41ce4b13f4577889ca5c3cdd9680ba9c3f7",
    "bytes": 29673,
    "data_bytes_with_shared": 826419,
    "k_pixels_this_scale": 884661,
@@ -215,7 +215,7 @@
   },
   "5": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s5_v1.lua",
-   "sha256": "88ef3a441a316a72ce030fc7985d11542ee2269a0ff81741bfa758cc6dc822cd",
+   "sha256": "1ef17cae187558ef3b20482f30d3f2dd105bb216cd1202738f9c5e43dd9776a5",
    "bytes": 29378,
    "data_bytes_with_shared": 826124,
    "k_pixels_this_scale": 849143,
@@ -260,7 +260,7 @@
   },
   "6": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s6_v1.lua",
-   "sha256": "ac0a4b6ffc73f3d5a0cbbfadb87aeb07043446f6d434a9116a1cca056030f099",
+   "sha256": "9bce883e07d8d903bd686a37e0a915155c379b89643b9165c571c1a7c0ac6836",
    "bytes": 29191,
    "data_bytes_with_shared": 825937,
    "k_pixels_this_scale": 871518,

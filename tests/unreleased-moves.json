@@ -684,6 +684,9 @@
   "tn_detail_atlantic_v5": [
    "8d0e8fceb024fc71dfb88114d70a9da0cd4ab489da6907df74a115230866e053"
   ],
+  "tn_detail_atlantic_v6": [
+   "afe845a2efb375e08b21533090d25494936ba854137701388942dca810068ec2"
+  ],
   "tn_detail_europe_v1": [
    "a909d9d816ef683bf52f36c78a4fa1bb1f3e572386c32625a2a9a286b3367167"
   ],
@@ -713,6 +716,9 @@
   ],
   "tn_detail_olde_world_v5": [
    "7510299b9fb2f9539eed707a4081fa551857995ca6e4ad3d72978c9c5f9e9365"
+  ],
+  "tn_detail_olde_world_v6": [
+   "d915ef4225b460ca071f4ffa37bc347b55976a294056e5b348e8df9a67038823"
   ],
   "tn_elevation_atlantic_v1": [
    "c64dbc9e45fbb3a0986b9bfaf1943f8ff351dfb9cc5225814fcad3a26db5e287"
@@ -1084,6 +1090,9 @@
   "tn_geo_atlantic_v5": [
    "d79d3ac710d5037cdb47d9ede4066569bf574c2f4fd151b0f214f5f3bbcf8e56"
   ],
+  "tn_geo_atlantic_v6": [
+   "815a9d0827edb4812625c012b33d218002e5c6ca01fbec9ad965181df6240d6e"
+  ],
   "tn_geo_europe_v1": [
    "8af1d57b69a35ad654c09bab129e2579056bdfee705d6bf6ce49cfabfcfafc07"
   ],
@@ -1120,6 +1129,9 @@
   ],
   "tn_geo_olde_world_v5": [
    "035c18c21f18a35ae6ed341a89765fe19ddc45b9301d78f1bb52e5ea3b6b7b44"
+  ],
+  "tn_geo_olde_world_v6": [
+   "45807e0bc6f59d189ffcc6d6a6b2f04b1e38e99dbc14243bf4f9350c864cd910"
   ],
   "tn_gx_atlantic_v1": [
    "725f5fac09a5b410b973f252d33b5db54bb16215251e4e6d5223ceba61d724ff"
@@ -1343,6 +1355,9 @@
   "tn_shore_atlantic_v3": [
    "a81e1ebb0fac13fcf02d68acc597ba0fa1a6cf5d4c8e4699a31d013c4bb82f81"
   ],
+  "tn_shore_atlantic_v4": [
+   "8feb8ff0abfbc87507f35b9d306d118393332a992af8ada7338fa5e0368142e9"
+  ],
   "tn_shore_europe_v1": [
    "6e5ac6ddf2d36a441dc038748245ef88560dfc25e8d17448ccbf078d6e4fd99b"
   ],
@@ -1357,6 +1372,9 @@
   ],
   "tn_shore_olde_world_v3": [
    "b58bc4e6cc7f75202768dc32bc16dd3d372322923582d8315b29a3bdfd6d0a99"
+  ],
+  "tn_shore_olde_world_v4": [
+   "e2f3fad986d4e81f6905b6f9898b44222c98926af6a16ca1bbf41858682eedeb"
   ],
   "tn_start_mask_v1": [
    "61280740c824f816d617db71eb4d02083586072cfcd3e42671dabd086c082a03"

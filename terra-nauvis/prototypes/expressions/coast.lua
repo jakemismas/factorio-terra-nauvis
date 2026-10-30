@@ -9,9 +9,7 @@
 -- share. The generated files are name-free data, so a later version's fit and coarse bodies bind the
 -- same files to its own chain (config.lua's fits).
 --
--- Composition (europe-coast's version 1; spawn-cities' version 2 adds steps 4 and 7; waterways'
--- versions add steps 5 and 6 around the rest; climate-tiles' versions compose the shore body in
--- place of step 2; later milestones add their steps under the entry's next version):
+-- Composition (a version without a term's field leaves its step out):
 --   c = fit + detail                       reference pixels; the detail is 0 at pixel centres; a version
 --                                          with a coast warp reads fit(warped u, v) with a detail of 0
 --   e = scale * c + if(c > 0, o, -o)       the sign offset: the tile class is the sign of c; a version
@@ -75,8 +73,11 @@ local function def(name, expression, locals)
   return E[#E]
 end
 
--- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain.
-local function fit_body(name, file, g, u, v)
+-- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain, or to
+-- fit_u and fit_v where the version warps its fit. The game parses every body's text at startup (about
+-- 0.5 us a byte) and expands every noise-function call there, so each map carries its fit once: one
+-- geography version per map until the first release.
+local function fit_body(name, file, g, fit_u, fit_v)
   local fit = FILES[file]
   if not fit then
     error("no generated fit is loaded from " .. tostring(file) .. " for " .. name)
@@ -85,8 +86,8 @@ local function fit_body(name, file, g, u, v)
   for k, v in pairs(fit.locals) do
     L[k] = v
   end
-  L.U = u or g.u
-  L.V = v or g.v
+  L.U = fit_u or g.u
+  L.V = fit_v or g.v
   def(name, fit.expression, L)
 end
 
