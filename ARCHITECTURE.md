@@ -317,7 +317,7 @@ Every body is `_v1` until the first release.
 
 **Firewall rule (binding, on Terra Nauvis presets).** The fine field is each map's elevation entry
 `tn_elevation_<map>_v<n>` and every term only it reads: the coast fit, the detail, the far-field
-box, the start land guarantee, the waterway and ford sets, the inland lakes and the offshore field
+box (from `edge-and-lakes` with its edge band), the start land guarantee, the waterway and ford sets, the inland lakes and the offshore field
 stamps. Only the Tile program reads them, and only through the `elevation` property and the
 Tile-only ford hook; the analytic spawn lake is firewall-clean, because it reads only `x`, `y` and
 `map_seed`. Every expression the Entity or Cliff program reaches (climate, `distance`, the region
@@ -421,6 +421,7 @@ Each Earth preset sets these `property_expression_names` keys:
 | `tn_coast` | not set: each map's entry names its own `tn_geo_<map>_v<n>`, and a later fit ships in the entry's next version (fit review, `europe-coast`) | | | |
 | `tn_canals` | the canals toggle, a name switch to `tn_one` or `tn_zero`; each map's entry picks its own waterway, canal and dam sets by name through the folded `tn_scale` (an `if(tn_scale == k, ...)` chain), so no set name is a key | Tile | 4 | per-scale polylines picked by name (REVIEW); only the selected scale and canal branch compile (S4) |
 | `tn_ridges`, `tn_hotspots`, `tn_destroyed` | the live body or a neutral body (ridges: `tn_one` on, `tn_zero` off, read by a folded `if()` as waterways' canals switch is) | Cliff, Entity, Tile | 8, 9, 10 | name switches (S2) |
+| `tn_inland_lakes` | the inland lakes toggle, a name switch to `tn_one` or `tn_zero` (default off); a version with a lakes field reads its inland lakes through a folded `if(tn_inland_lakes > 0.5, <lakes>, inf)`, so off compiles to the spawn lake alone; its prototype is a Map type fallback that mirrors the setting | Tile | 9a | the decision 2026-10-29 17:50 |
 | hook keys (`tn_vtile_<tile>`, `tn_marsh_<tile>`, `tn_vtree_<tree>_p`, `_r`, `tn_tree_mult`) | versioned bodies (every `tn_vtile_<tile>` names the one `tn_vtile_bonus_v1`, A-7) | Tile, Entity | 6, 7 | stable hooks |
 | `tn_bandfix` | a name switch, `tn_one`, in a map's preset only when the startup setting Exact coastlines is on and that map passed all four flip checks; absent otherwise, and absent means off | control only | 11 | decision 9 and 12:35 |
 
@@ -1856,6 +1857,28 @@ takes over the Map type fields.
 - **Gate.** T8, T9, T4 ore, enemy and offshore-oil rows (M3), T5 re-run (offshore stamps),
   T7 (a) re-run, T11 hotspots flip, T15 per map; T13 M3 and M5 rows; V4 at a hotspot; V2 offshore
   fields.
+
+### 9a. `edge-and-lakes` (part 6, order 2)
+
+- **Introduces.** Each map's next geography version (Europe's version 6, `tn_geo` 14; Atlantic's and
+  Old World's version 5, `tn_geo` 15 and 16, every name its own): its far-field box carries
+  the soft map edge (config.lua `coast.edge_band`): inside the extent a second coast, the version's own
+  transfer of b = clamp(d / s + warp - 12, -16, 16) reference px, warp = 8 px times three clamped basis
+  octaves (32, 12 and 4 px, seed1 7401 to 7403, in geo tiles), so land the box cuts sinks into deep
+  water along a wavy coast 4 to 20 px inside the box with a real coast's beach and deepwater profile,
+  and the ring of plain water is gone (every box tile is deep). A version with a spawn record and a
+  `lakes` field reads its inland lakes through the toggle `tn_inland_lakes` (startup setting Inland
+  lakes, default off); the spawn lake is unchanged.
+- **Contract.** With the switch on a world equals the previous version's outside the band's T1 mask;
+  with it off it equals that world with the inland lakes body neutral. T1 masks reference land within
+  `mask_px` (21) of the box on every map whose newest version carries the band and reports
+  `edge_band_share`; `coast-band-fix` must leave that mask alone (its handler skips it as it skips the
+  waterway, lake and dam masks), or it would rebuild the straight cut.
+- **Gate.** FG `el_dump_facts`, `el_offline` (the band's reach against the nearest uncut land, the mask
+  share and a T1 control); SS `el_lakes` (switch off against the neutral lakes body, on against the
+  previous version, the spawn window in all three) and `el_edge` (every box-cut land line ends in water
+  before the box; beyond the mask the previous version holds); T3's oracle row reads the band at the
+  box; spawn-cities' T3 inland-lake rows run with the switch on.
 
 ### 10. `destroyed-europe` (part 7, order 0)
 

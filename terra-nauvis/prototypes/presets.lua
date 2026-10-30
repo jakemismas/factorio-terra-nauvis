@@ -60,6 +60,10 @@
 -- also a Map type fallback, since the version's entry reads it), and sets frequency 0.75 for the six
 -- base resources (D20); data-final-fixes.lua points the ore, richness, enemy and offshore-oil keys at
 -- its wrappers.
+--
+-- From edge-and-lakes each preset also bakes the inland lakes toggle (default off; toggle_values), which
+-- a version with a lakes field reads its inland lakes through, and the toggle's key is that version's
+-- Map type fallback, so a Map-type-only world follows the setting.
 local cfg = require("prototypes.config")
 
 local K = cfg.keys

@@ -24,7 +24,9 @@ Date: 2026-10-28
     - Spawn city startup setting for Europe: Random (the default) or one of 40 cities. The map moves
       so the city sits at the spawn, with land around it, a lake nearby, the starting ore and the
       enemy-free start of the base game; the intro names the city and the world size.
-    - Sparse inland lakes across the land, kept off coasts and out of the start area.
+    - Inland lakes startup setting, off by default: sparse random lakes across the land, kept off
+      coasts and out of the start area. Off leaves the lake at the spawn city, the rivers and the
+      real lakes of the map; a world keeps its value for life.
     - A warning at the start, and to each player who joins, when RSO is active.
     - Other planets' surfaces never take the Terra Nauvis map, and adding the mod to a world made
       without it leaves every surface of that world as it was.
@@ -56,6 +58,9 @@ Date: 2026-10-28
       and none across the starting area; ore never lies on a ridge. The cliffs sliders do not
       change them, and a world started with cliffs at none gets its ridges back beyond the
       starting area.
+    - Where a map's edge cuts through land (North Africa and Russia on Europe, the far east of
+      Siberia on the Atlantic and Old World maps), the land sinks into deep water a little inside
+      the edge along a wavy coast that changes with the map seed, instead of a straight cut.
   Changes:
     - With Alien Biomes enabled the Terra Nauvis presets are not offered yet (its palms would read
       the fine coast); the Map type entries are. A world made from a preset that later loads
