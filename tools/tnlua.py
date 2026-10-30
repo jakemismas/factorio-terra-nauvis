@@ -22,9 +22,10 @@ sort is not stable) and every Lua runtime error raise LuaError, never a partial 
 The subset: every statement of Lua 5.2 but goto and labels; every expression but the 5.3 integer
 and bitwise operators; numbers are doubles (tostring and `..` use "%.14g", as Lua 5.2 does);
 globals assert, error, ipairs, next, pairs, select, tonumber, tostring, type, unpack, log and
-require; string.format (d i u c x X o e E f F g G s %, no %q), len, lower, rep, sub and upper;
-table.concat, insert, remove, sort and unpack; math.abs, ceil, cos, exp, floor, fmod, huge, log,
-max, min, pi, pow, sin, sqrt and tan.
+require; string.format (d i u c x X o e E f F g G s %, no %q), find, gmatch, gsub, len, lower,
+match, rep, sub and upper (Lua patterns without %b and position captures);
+table.concat, insert, remove, sort and unpack; math.abs, acos, asin, ceil, cos, deg, exp, floor, fmod,
+huge, log, max, min, pi, pow, rad, sin, sqrt and tan.
 """
 import math
 import re
@@ -408,6 +409,242 @@ def _string_sub(args):
     return [b[i - 1:j].decode("utf-8", "strict") if i <= j else ""]
 
 
+_LUA_CLASS = {
+    "a": lambda c: c.isascii() and c.isalpha(), "d": lambda c: "0" <= c <= "9",
+    "l": lambda c: "a" <= c <= "z", "u": lambda c: "A" <= c <= "Z",
+    "s": lambda c: c in " \t\n\v\f\r", "w": lambda c: c.isascii() and c.isalnum(),
+    "x": lambda c: c in "0123456789abcdefABCDEF", "c": lambda c: ord(c) < 32 or ord(c) == 127,
+    "p": lambda c: 32 < ord(c) < 127 and not c.isalnum(),
+}
+
+
+def _class_pred(k):
+    f = _LUA_CLASS.get(k.lower())
+    if f is None:
+        return lambda c, k=k: c == k
+    return f if k.islower() else (lambda c, f=f: not f(c))
+
+
+def _set_pred(pat, i):
+    """The Lua set starting after '[' at pat[i]: (predicate over one character, index after ']')."""
+    neg = i < len(pat) and pat[i] == "^"
+    if neg:
+        i += 1
+    preds, first = [], True
+    while True:
+        if i >= len(pat):
+            raise LuaError("malformed pattern (missing ']')")
+        ch = pat[i]
+        if ch == "]" and not first:
+            i += 1
+            break
+        first = False
+        if ch == "%":
+            if i + 1 >= len(pat):
+                raise LuaError("malformed pattern (ends with '%')")
+            preds.append(_class_pred(pat[i + 1]))
+            i += 2
+        elif i + 2 < len(pat) and pat[i + 1] == "-" and pat[i + 2] != "]":
+            lo, hi = ch, pat[i + 2]
+            preds.append(lambda c, lo=lo, hi=hi: lo <= c <= hi)
+            i += 3
+        else:
+            preds.append(lambda c, ch=ch: c == ch)
+            i += 1
+    if neg:
+        return (lambda c: not any(f(c) for f in preds)), i
+    return (lambda c: any(f(c) for f in preds)), i
+
+
+def _rx_class(pred):
+    chars = [chr(b) for b in range(256) if pred(chr(b))]
+    if not chars:
+        return "(?!)"
+    return "[" + "".join("\\" + c if c in "-]\\^[" else c for c in chars) + "]"
+
+
+_PAT_CACHE = {}
+
+
+def lua_pattern(pat):
+    """A Lua 5.2 pattern as a compiled Python regex (single-byte characters; %b and position captures
+    fail closed)."""
+    if pat in _PAT_CACHE:
+        return _PAT_CACHE[pat]
+    out, i, n = [], 0, len(pat)
+    if pat.startswith("^"):
+        out.append(r"\A")
+        i = 1
+    while i < n:
+        ch = pat[i]
+        if ch == "(":
+            if i + 1 < n and pat[i + 1] == ")":
+                raise LuaError("position captures are outside the offline subset (fail closed)")
+            out.append("(")
+            i += 1
+            continue
+        if ch == ")":
+            out.append(")")
+            i += 1
+            continue
+        if ch == "$" and i == n - 1:
+            out.append(r"\Z")
+            i += 1
+            continue
+        if ch == "%":
+            if i + 1 >= n:
+                raise LuaError("malformed pattern (ends with '%')")
+            k = pat[i + 1]
+            if k == "b":
+                raise LuaError("%b is outside the offline subset (fail closed)")
+            if k == "f":
+                if i + 2 >= n or pat[i + 2] != "[":
+                    raise LuaError("missing '[' after '%f' in pattern")
+                pred, j = _set_pred(pat, i + 3)
+                cls = _rx_class(pred)
+                if pred("\0"):
+                    out.append(f"(?<={_rx_class(lambda c: not pred(c))})(?:(?={cls})|\\Z)")
+                else:
+                    out.append(f"(?<!{cls})(?={cls})")
+                i = j
+                continue
+            if k.isdigit():
+                out.append("\\" + k)
+                i += 2
+                continue
+            single = _rx_class(_class_pred(k))
+            i += 2
+        elif ch == "[":
+            pred, i = _set_pred(pat, i + 1)
+            single = _rx_class(pred)
+        elif ch == ".":
+            single = r"[\s\S]"
+            i += 1
+        else:
+            single = re.escape(ch)
+            i += 1
+        q = pat[i] if i < n else ""
+        if q in ("*", "+", "?"):
+            out.append(single + q)
+            i += 1
+        elif q == "-":
+            out.append(single + "*?")
+            i += 1
+        else:
+            out.append(single)
+    rx = re.compile("".join(out))
+    _PAT_CACHE[pat] = rx
+    return rx
+
+
+def _captures(m):
+    return list(m.groups()) if m.re.groups else [m.group(0)]
+
+
+def _init_pos(s, v, fn):
+    i = int(_check_number(v, fn, 3)) if v is not None else 1
+    if i < 0:
+        i = max(len(s) + i + 1, 1)
+    elif i == 0:
+        i = 1
+    return i - 1
+
+
+def _string_find(args):
+    s = _check_string(_arg(args, 0), "find")
+    pat = _check_string(_arg(args, 1), "find", 2)
+    i = _init_pos(s, _arg(args, 2), "find")
+    if i > len(s):
+        return [None]
+    if truthy(_arg(args, 3)):
+        k = s.find(pat, i)
+        return [None] if k < 0 else [float(k + 1), float(k + len(pat))]
+    m = lua_pattern(pat).search(s, i)
+    if not m:
+        return [None]
+    return [float(m.start() + 1), float(m.end())] + (list(m.groups()) if m.re.groups else [])
+
+
+def _string_match(args):
+    s = _check_string(_arg(args, 0), "match")
+    pat = _check_string(_arg(args, 1), "match", 2)
+    i = _init_pos(s, _arg(args, 2), "match")
+    if i > len(s):
+        return [None]
+    m = lua_pattern(pat).search(s, i)
+    return _captures(m) if m else [None]
+
+
+def _string_gmatch(args):
+    s = _check_string(_arg(args, 0), "gmatch")
+    pat = _check_string(_arg(args, 1), "gmatch", 2)
+    it = lua_pattern(pat).finditer(s)
+
+    def step(a):
+        m = next(it, None)
+        return _captures(m) if m else [None]
+    return [Builtin(step, "gmatch iterator")]
+
+
+def _gsub_text(repl, m, caps):
+    out, j = [], 0
+    while j < len(repl):
+        c = repl[j]
+        if c != "%":
+            out.append(c)
+            j += 1
+            continue
+        if j + 1 >= len(repl):
+            raise LuaError("invalid use of '%' in replacement string")
+        d = repl[j + 1]
+        if d == "%":
+            out.append("%")
+        elif d == "0":
+            out.append(m.group(0))
+        elif d.isdigit():
+            k = int(d)
+            if k > len(caps):
+                raise LuaError(f"invalid capture index %{k}")
+            out.append(_check_string(caps[k - 1], "gsub"))
+        else:
+            raise LuaError("invalid use of '%' in replacement string")
+        j += 2
+    return "".join(out)
+
+
+def _string_gsub(args, interp):
+    s = _check_string(_arg(args, 0), "gsub")
+    pat = _check_string(_arg(args, 1), "gsub", 2)
+    repl = _arg(args, 2)
+    limit = _arg(args, 3)
+    limit = int(_check_number(limit, "gsub", 4)) if limit is not None else -1
+    if isinstance(repl, float):
+        repl = fmt_number(repl)
+    count = 0
+
+    def sub(m):
+        nonlocal count
+        if 0 <= limit <= count:
+            return m.group(0)
+        count += 1
+        caps = _captures(m)
+        if isinstance(repl, str):
+            return _gsub_text(repl, m, caps)
+        if isinstance(repl, Table):
+            v = repl.get(caps[0])
+        elif isinstance(repl, (Function, Builtin)):
+            v = (interp.call(repl, caps) or [None])[0]
+        else:
+            raise LuaError(f"bad argument #3 to 'gsub' (string/function/table expected, got {lua_type(repl)})")
+        if v is None or v is False:
+            return m.group(0)
+        if isinstance(v, (str, float)):
+            return _check_string(v, "gsub")
+        raise LuaError(f"invalid replacement value (a {lua_type(v)})")
+    out = lua_pattern(pat).sub(sub, s)
+    return [out, float(count)]
+
+
 def _sort_lt(comp, interp):
     if comp is None:
         return less_than
@@ -614,7 +851,8 @@ def _lib(interp):
         return Builtin(fn, name)
     string = Table()
     for name, fn in {
-            "format": string_format, "sub": _string_sub,
+            "format": string_format, "sub": _string_sub, "find": _string_find, "match": _string_match,
+            "gmatch": _string_gmatch, "gsub": lambda a: _string_gsub(a, interp),
             "len": lambda a: [float(len(_check_string(_arg(a, 0), "len").encode("utf-8")))],
             "lower": lambda a: [_check_string(_arg(a, 0), "lower").lower()],
             "upper": lambda a: [_check_string(_arg(a, 0), "upper").upper()],
@@ -626,7 +864,8 @@ def _lib(interp):
         table.set(name, B(fn, "table." + name))
     m = Table()
     for name, fn in {"abs": abs, "cos": math.cos, "sin": math.sin, "tan": math.tan, "sqrt": math.sqrt,
-                     "exp": math.exp}.items():
+                     "exp": math.exp, "rad": math.radians, "deg": math.degrees, "asin": math.asin,
+                     "acos": math.acos}.items():
         m.set(name, B(_math1(fn, name), "math." + name))
     m.set("floor", B(_floor, "math.floor"))
     m.set("ceil", B(_ceil, "math.ceil"))
@@ -1186,9 +1425,24 @@ def settings_stage(reader, mods=None):
     return out
 
 
-def data_stage(reader, values=None, mods=None):
+VANILLA_RAW = tnconfig.REPO / "tests" / "vanilla-raw.json"
+
+
+def vanilla_raw(path=VANILLA_RAW):
+    """The base game's prototypes the mod's data stage reads (tests/vanilla-raw.json, a reduced
+    base-only --dump-data), {type: {name: prototype}}, or {} when the file is absent."""
+    import json
+    p = Path(path)
+    if not p.exists():
+        return {}
+    return json.loads(p.read_text(encoding="utf-8")).get("raw") or {}
+
+
+def data_stage(reader, values=None, mods=None, base=None):
     """Every prototype the mod's data stage defines, {type: {name: prototype}}, as the dump writes
-    them. Startup settings read their default values unless `values` names one."""
+    them. Startup settings read their default values unless `values` names one. data.raw starts with
+    `base` (default: vanilla_raw()), the base game's prototypes the mod's hooks and wrappers read,
+    beside vanilla's default map-gen-presets entry."""
     sets = settings_stage(reader, mods)
     startup = Table()
     for name, p in sets.items():
@@ -1199,6 +1453,9 @@ def data_stage(reader, values=None, mods=None):
     settings = Table()
     settings.set("startup", startup)
     raw = Table()
+    for t, protos in sorted((vanilla_raw() if base is None else base).items()):
+        if t != "map-gen-presets":
+            raw.set(t, to_lua(protos))
     presets = Table()
     presets.set("default", to_lua({"type": "map-gen-presets", "name": "default"}))
     raw.set("map-gen-presets", presets)

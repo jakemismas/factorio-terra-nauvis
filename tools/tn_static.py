@@ -3908,7 +3908,8 @@ def landing_fixtures(td, cfg, fz):
     try:
         _, _, rec = build_zip.build(folder, landing=True)
         snap = rec.get("frozen") or {}
-        ok = (set(rec.get("bodies") or {}) >= set(fz.get("bodies") or {}) and
+        offline = {n for n, r in (fz.get("bodies") or {}).items() if r.get("dump") in tnfrozen.OFFLINE_DUMPS}
+        ok = (set(rec.get("bodies") or {}) >= offline and
               snap.get("sha256") == tnfrozen.key_of(snap.get("bodies")) and snap.get("bodies") == fz.get("bodies"))
         out.append(("landing: a first zip lands with its bodies and its registry's snapshot in its build record", ok, ""))
         build_zip.build(folder, landing=True)
