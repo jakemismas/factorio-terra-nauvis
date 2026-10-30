@@ -181,12 +181,12 @@ return {
       source = "R7b-geography.json forests atlantic_forest outline, 11 vertices (APPROVALS 4)",
     },
     {
-      id = "pripet", layer = "marsh", shape = "polygon", warp = 0,
+      id = "pripet", layer = "marsh", shape = "path", warp = 0, radius_km = 90,
       maps = {"europe", "atlantic", "olde_world"},
       latlon = {
-        {53.011736, 24.84163}, {53.011736, 29.15837}, {50.988264, 29.15837}, {50.988264, 24.84163},
+        {51.84824, 25.853366}, {52.303521, 26.65601}, {51.747066, 27.401322}, {52.202347, 28.146634},
       },
-      source = "R7b-geography.json marshes pripet box 480 x 225 km (APPROVALS 8)",
+      source = "R7b-geography.json marshes pripet box 480 x 225 km (APPROVALS 8), walked as a bent path",
     },
     {
       id = "danube_delta", layer = "marsh", shape = "disc", warp = 0, lat = 45.2, lon = 29.5, radius_km = 36.4,

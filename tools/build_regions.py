@@ -61,6 +61,8 @@ SHARE_THIN_POLYGON = 0.4    # S10 tuned the Carpathian and Dinaric outlines to 0
 SHARE_POLYGON = 1.0
 SHARE_EXCLUDE = 0.0
 SHARE_MARSH = 0.0
+MARSH_BENDS = ((-1, 0.15), (-0.3, -0.3), (0.35, 0.25), (1, -0.2))   # along the box, across it (shares)
+MARSH_BEND_WIDTH = 0.8      # the path's radius over the box's half height, so its bends stay inside
 SHARE_HOTSPOT = 0.0
 # A polygon is thin when its area over its perimeter, about half its mean width for a strip, is below
 # this: Carpathian 18.9 and Dinaric 17.2 px (S10's two thin outlines), Hyrcanian 10.6; the next is
@@ -368,15 +370,18 @@ def marsh_row(cfg, m, g, maps):
     kpp = km_per_px(cfg)
     fr = frame(cfg)
     if "west_east_km" in ext and "north_south_km" in ext:
-        # a box centred on the article coordinate, its sides converted at km_per_px (APPROVALS 2's
-        # rule: a size in tiles does not depend on latitude)
+        # a box's extent centred on the article coordinate, its sides converted at km_per_px (APPROVALS
+        # 2's rule: a size in tiles does not depend on latitude), walked as a bent path as wide as the
+        # box, so the marsh keeps the box's span and reads as no rectangle
         cu, cv = to_px(float(c["lat"]), float(c["lon"]), fr)
         hu, hv = ext["west_east_km"] / kpp / 2, ext["north_south_km"] / kpp / 2
-        corners = [(cu - hu, cv - hv), (cu + hu, cv - hv), (cu + hu, cv + hv), (cu - hu, cv + hv)]
-        latlon = [[round(a, 6), round(b, 6)] for a, b in (to_latlon(u, v, fr) for u, v in corners)]
-        return {"id": rid, "layer": "marsh", "shape": "polygon", "warp": SHARE_MARSH, "maps": maps, "latlon": latlon,
+        reach = hu - hv
+        bends = [(cu + reach * s, cv + hv * b) for s, b in MARSH_BENDS]
+        latlon = [[round(a, 6), round(b, 6)] for a, b in (to_latlon(u, v, fr) for u, v in bends)]
+        return {"id": rid, "layer": "marsh", "shape": "path", "warp": SHARE_MARSH, "maps": maps,
+                "radius_km": round(hv * kpp * MARSH_BEND_WIDTH, 3), "latlon": latlon,
                 "source": f"R7b-geography.json marshes {m['id']} box {ext['west_east_km']} x {ext['north_south_km']} km "
-                          f"(APPROVALS 8)"}
+                          f"(APPROVALS 8), walked as a bent path"}
     if ext.get("coast_polyline"):
         latlon = [[float(a), float(b)] for a, b in ext["coast_polyline"]]
         pts = [to_px(a, b, fr) for a, b in latlon]

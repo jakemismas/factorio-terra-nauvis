@@ -53,34 +53,21 @@ def(MS.grass.key, MS.grass.off)
 -- alone (with -inf there, water-mud covered the band wherever the lean failed: draft render
 -- pv-m2-s1-eu-1); at and above the band's top, below its bottom where the lean fails, on water and
 -- inside marshes -inf. The lean still reaches below the band's bottom, on its cold side.
-local function vanilla_bonus(t)
-  return "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", -inf, if(elevation > 0, if(" .. t .. " >= " ..
-    num(X.temperate_below) .. ", -inf, if(1 - abs(" .. t .. " - " .. num(V.lean_t) .. ") / " .. num(V.lean_span) ..
-    " + patch - " .. num(V.lean_cut) .. " > 0, " .. num(V.bonus) .. ", if(" .. t .. " >= " .. num(X.temperate_from) ..
-    ", 0, -inf))), -inf))"
-end
-local PATCH = {patch = "clamp(" .. num(V.patch.amplitude) .. " * " .. noise(V.patch) .. ", " .. num(-V.patch.clamp) ..
-  ", " .. num(V.patch.clamp) .. ")"}
-def(V.body, vanilla_bonus("temperature"), PATCH)
+def(V.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) .. ", " ..
+  num(V.bonus) .. ", -inf), if(elevation > 0, if(temperature >= " ..
+  num(X.temperate_below) .. ", -inf, if(1 - abs(temperature - " .. num(V.lean_t) .. ") / " .. num(V.lean_span) ..
+  " + patch - " .. num(V.lean_cut) .. " > 0, " .. num(V.bonus) .. ", if(temperature >= " .. num(X.temperate_from) ..
+  ", 0, -inf))), -inf))",
+  {patch = "clamp(" .. num(V.patch.amplitude) .. " * " .. noise(V.patch) .. ", " .. num(-V.patch.clamp) .. ", " ..
+    num(V.patch.clamp) .. ")"})
 
 -- The exclusion of non-adopted Alien Biomes land tiles from the temperate band.
-local function exclusion(t)
-  return "if(" .. t .. " >= " .. num(X.temperate_from) .. ", if(" .. t .. " < " .. num(X.temperate_below) ..
-    ", if(" .. MARSH_W .. " > " .. num(X.marsh_cut) .. ", 0, -inf), 0), 0)"
-end
-def(X.body, exclusion("temperature"))
-
--- The grain's tile copies (config.lua climate.grain): each key is its plain field, and the bonus and
--- exclusion versions read the temperature copy, so the temperate band's edge frays with the tiles. Tile
--- scores alone read them; they exist only with Alien Biomes, as the fields' grain bodies do.
-if mods["alien-biomes"] then
-  local GK = cfg.climate.grain.keys
-  for field, key in pairs(GK) do
-    def(key, field)
-  end
-  def(V.body_grain, vanilla_bonus(GK.temperature), PATCH)
-  def(X.body_grain, exclusion(GK.temperature))
-end
+-- Inside a marsh the tiles open up to AB's wet ground, but not to its alien palette: a dry belt's red
+-- lift can carry aux past the climate's cap there (the Volga delta went purple), and vanilla's bonus
+-- body takes that ground instead, since with nothing else open AB's water-mud would flood it.
+def(X.body, "if(temperature >= " .. num(X.temperate_from) .. ", if(temperature < " .. num(X.temperate_below) ..
+  ", if(" .. MARSH_W .. " > " .. num(X.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
+  ", -inf, 0), -inf), 0), 0)")
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut
 -- on about 3 percent of tiles, draft run pv-m1-s1-eu-11), the pool noise passes a cut that falls as

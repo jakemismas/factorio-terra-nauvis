@@ -312,8 +312,19 @@ local function row_names(r)
           hu = rn.hu .. r.id .. SUF, hv = rn.hv .. r.id .. SUF}
 end
 
-local function weight(sd_name)
-  return "clamp(" .. num(R.ramp.mid) .. " + " .. sd_name .. " / " .. num(R.ramp.width_px) .. ", 0, 1)"
+local function weight(sd_name, width_px)
+  return "clamp(" .. num(R.ramp.mid) .. " + " .. sd_name .. " / " .. num(width_px or R.ramp.width_px) .. ", 0, 1)"
+end
+
+-- A marsh's own edge (config.lua regions.marsh): the one outline noise every marsh row reads at its
+-- own amplitude, and the row's wider ramp, both from the row's radius in reference pixels.
+local MH = R.marsh
+def(N.marsh_rough, noise(MH.seed1, MH))
+
+local function marsh_edge(r)
+  local radius = r.radius_km / R.km_per_px
+  local ramp = math.min(MH.ramp_cap_px, MH.ramp_share * radius)
+  return math.min(MH.cap_px, MH.share * radius), math.max(R.ramp.width_px, ramp)
 end
 
 -- Every row: its signed distance, weight and depth (and a hotspot's jittered centre).
@@ -346,8 +357,14 @@ for _, r in ipairs(T.rows) do
       text, L = path(pts, r.radius_km / R.km_per_px, qu, qv)
     end
   end
-  def(nm.sd, "(" .. text .. ") + " .. N.rough, L)
-  def(nm.w, weight(nm.sd))
+  if r.layer == "marsh" then
+    local amplitude, width = marsh_edge(r)
+    def(nm.sd, "(" .. text .. ") + " .. N.rough .. " + " .. num(amplitude) .. " * " .. N.marsh_rough, L)
+    def(nm.w, weight(nm.sd, width))
+  else
+    def(nm.sd, "(" .. text .. ") + " .. N.rough, L)
+    def(nm.w, weight(nm.sd))
+  end
   def(nm.depth, nm.sd .. " * " .. K.scale)
   ROWS[#ROWS + 1] = {row = r, names = nm}
 end

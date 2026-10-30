@@ -109,6 +109,7 @@ local RG_WK = NOISE .. "region_wk" .. RG_V
 local RG_WX = NOISE .. "region_wx" .. RG_V
 local RG_WY = NOISE .. "region_wy" .. RG_V
 local RG_ROUGH = NOISE .. "region_rough" .. RG_V
+local RG_MARSH_ROUGH = NOISE .. "region_marsh_rough" .. RG_V
 
 -- The Earth climate: latitude and longitude on the map's chain, the dry belts, the temperature core and
 -- the Alien Biomes and fallback variants the presets redirect temperature, moisture and aux to.
@@ -954,7 +955,7 @@ return {
       release = "0.1.0",
       names = {RG_DESTROYED_SD, RG_DESTROYED_W, RG_DESTROYED_DEPTH, RG_FOREST_W, RG_FOREST_SUM, RG_TREE_MULT,
                RG_MARSH_W, RG_HOTSPOT_W, RG_ENEMY_MULT, RG_U .. RG_V, RG_V_ .. RG_V, RG_OX, RG_OY, RG_AX, RG_AY, RG_WK,
-               RG_WX, RG_WY, RG_ROUGH},
+               RG_WX, RG_WY, RG_ROUGH, RG_MARSH_ROUGH},
       files = {"prototypes/tables/regions.lua"},
     },
     -- The climate and tile bodies (climate-tiles). They belong to no geography: every map's preset names
@@ -1745,6 +1746,14 @@ return {
             seed1_y = 7802},
     rough = {amplitude_px = 1.5, clamp_px = 3, wavelength_px = 6, octaves = 2, persistence = 0.5, seed1 = 7803},
     ramp = {mid = 0.5, width_px = 6},
+    -- A marsh's own edge (an exact disc or box of pools reads as computer-made at any
+    -- zoom). One more noise, wavelength_px the finest octave, joins every marsh row's signed distance at
+    -- share of the row's radius, at most cap_px, and the row's ramp widens to ramp_share of its radius,
+    -- at most ramp_cap_px and never under ramp.width_px, so the pools thin out into dry ground across
+    -- the band instead of stopping at a line. Hard limits nothing downstream reads: a marsh's reach is
+    -- the row's radius plus 1.7 times its amplitude, the most basis noise reaches.
+    marsh = {wavelength_px = 12, octaves = 3, persistence = 0.5, seed1 = 7804, share = 0.6, cap_px = 24,
+             ramp_share = 0.6, ramp_cap_px = 24},
     share_hundredths = 100,
     octave_shift_px = 10000.37,
     max_arguments = 255,
@@ -1761,7 +1770,7 @@ return {
       hotspot_w = RG_HOTSPOT_W, enemy_mult = RG_ENEMY_MULT,
       -- the query point: u, v .. suffix unwarped; u, v .. share .. <hundredths> .. suffix for a share
       u = RG_U, v = RG_V_, ox = RG_OX, oy = RG_OY, ax = RG_AX, ay = RG_AY, wk = RG_WK, wx = RG_WX, wy = RG_WY,
-      rough = RG_ROUGH,
+      rough = RG_ROUGH, marsh_rough = RG_MARSH_ROUGH,
     },
   },
 
@@ -1956,7 +1965,9 @@ return {
       body = CT.VT_BONUS, body_grain = CT.VT_BONUS_G,
       bonus = 10, lean_t = 45, lean_span = 30, lean_cut = 0.5,
       patch = {amplitude = 0.36, clamp = 0.45, wavelength_px = 10, octaves = 3, persistence = 0.5, seed1 = 7605},
-      marsh_cut = 0.5,
+      -- marsh ground starts where the lifted moisture has cleared Alien Biomes' mid band (0.4 to 0.6, its
+      -- beige and grey dirt): at 0.5 those tiles ran round every marsh as a one-width rim
+      marsh_cut = 0.68,
     },
     -- APPROVALS 9's adopted Alien Biomes tiles: six land tiles plus water-mud (approvals-data.json has
     -- no section 9 rows; the T16 approvals row compares this list with APPROVALS.md's checked rows).
@@ -1964,8 +1975,8 @@ return {
                   "mineral-beige-dirt-1", "mineral-cream-sand-1", "mineral-grey-sand-1", "water-mud"},
     exclude = {
       prefixes = {"vegetation-", "mineral-"},
-      key = CT.AB_EXCLUDE, off = "0", body = CT.AB_EXCLUDE_BODY, body_grain = CT.AB_EXCLUDE_BODY_G,
-      temperate_from = 25, temperate_below = 65, marsh_cut = 0.5,
+      key = CT.AB_EXCLUDE, off = "0", body = CT.AB_EXCLUDE_BODY,
+      temperate_from = 25, temperate_below = 65, marsh_cut = 0.68,
     },
     marsh = {
       water_mud = {tile = "water-mud", key = CT.MARSH_MUD, off = "-inf", body = CT.MARSH_MUD_BODY},
