@@ -73,7 +73,7 @@ so the `prototypes/` and `scripts/` rows below are `terra-nauvis/prototypes/...`
 
 | Path | Responsibility | Contract it exposes | First milestone |
 |---|---|---|---|
-| `terra-nauvis/info.json` | Identity and dependencies: `base >= 2.1.23`, `? alien-biomes`, `? cargo-ships-oil-rig`, `? rso-mod`; `factorio_version` "2.1" | name equals the config ID; title at most 100 characters; no Space Age feature flag (mod-dev rule 4) | 0 |
+| `terra-nauvis/info.json` | Identity and dependencies: `base >= 2.1.24`, `? alien-biomes`, `? cargo-ships-oil-rig`, `(?) rso-mod`; `factorio_version` "2.1" | name equals the config ID; title at most 100 characters; no Space Age feature flag (mod-dev rule 4) | 0 |
 | `terra-nauvis/settings.lua` | Startup: scale (string values "1" to "6", default "6"), spawn city per map ("random" plus city keys), toggles hotspots, great-forests, ridges, canals, destroyed-europe, exact-coast (Exact coastlines, design notes 12:35). Runtime-global: city-markers | values are short ASCII tokens, so labels can change without invalidating stored values (S11); names and defaults from config | 0; cities 2; each toggle with its milestone; exact-coast 11 |
 | `terra-nauvis/data.lua` | Requires config, tables, every released generated file and the expression modules; defines the Earth named expressions; builds the presets | `data:extend` only on Earth names, never on another mod's or vanilla's names | 0 |
 | `terra-nauvis/data-updates.lua` | Empty in the first release; reserved for edits that must follow every mod's data.lua and precede every data-final-fixes | none | 0 |
@@ -950,7 +950,7 @@ reference to a per-tick event or, outside `scripts/bandfix.lua`, to a per-chunk 
 
 ### Dependencies and load order
 
-- `info.json` declares `base >= 2.1.23`, `? alien-biomes`, `? cargo-ships-oil-rig`, `? rso-mod`. Any
+- `info.json` declares `base >= 2.1.24`, `? alien-biomes`, `? cargo-ships-oil-rig`, `(?) rso-mod`. Any
   version bound on a `?` dependency stays at or below the installed version (AB 0.8.0, Oil Rig 2.1.2,
   RSO 7.1.4): an older installed target is fatal at startup (mod-management rule 6). No mod in the
   pack declares a dependency on Earth, so no cycle can form (mod-dev rule 5).

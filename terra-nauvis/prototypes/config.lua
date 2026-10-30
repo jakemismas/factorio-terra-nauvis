@@ -782,7 +782,7 @@ return {
     version = "0.1.0",
     author = "Jake Mismas",
     factorio_version = "2.1",
-    base_version = "2.1.23",
+    base_version = "2.1.24",
     setting_prefix = ID .. "-",
     noise_prefix = NOISE,
   },
