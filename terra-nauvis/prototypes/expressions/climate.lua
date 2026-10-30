@@ -228,7 +228,8 @@ if AB then
   local G, GN = C.grain, N.grain
   local T2 = cfg.destroyed.names.temperature
   def(GN.field, "max(clamp((" .. num(G.cold_t) .. " - " .. N.core .. ") / " .. num(G.cold_span) .. ", 0, 1), clamp((" ..
-    N.core .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ")")
+    N.core .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1)) * noise_layer_noise(" ..
+    num(G.layer) .. ")")
   def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. ", max(" .. T2 .. ", " ..
     num(T.ab.max) .. "))")
   def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field))
