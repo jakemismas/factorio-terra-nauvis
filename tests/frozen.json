@@ -5957,7 +5957,7 @@
   },
   "tn_ab_keep_v1": {
    "type": "noise-expression",
-   "sha256": "32282edfb4c66060d089f706427ddfe3c65a2b2e9c60acfb2d50eb918446c737",
+   "sha256": "0e46f276797a9ff6b532eafa5c05454345c7f690a208eb829110e31093529547",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"

@@ -2065,13 +2065,14 @@ return {
     -- takes the vanilla land tiles at the front of its list (they end the walk on their first entries)
     -- and, on its on branch, (own probability) * body. `body` is 0 where the vanilla tile body is not
     -- -inf on land, 1 elsewhere: it is that bonus body without its elevation term, so it reads no fine
-    -- field and may run in the Entity program. `margin` widens its band and lean by the furthest
-    -- climate.grain moves the tile scores' temperature, in temperature units: the grain stays out of
-    -- the Entity program (trees and decoratives keep the plain fields), so the body can only cover the
-    -- frayed edge from outside. grain.temperature is 3 and noise_layer_noise peaked at 1.996 over 14
-    -- seeds of a million tiles. `types` pairs each prototype type with the settings group
-    -- on_nauvis reads; Alien Biomes' palms keep their list (their keys already name Earth copies).
-    scan = {body = CT.AB_KEEP_BODY, margin = 6,
+    -- field and may run in the Entity program. `margin` widens its band and lean, in temperature units,
+    -- over climate.grain's fray: the grain stays out of the Entity program (trees and decoratives keep
+    -- the plain fields), so the body can only cover the frayed edge from outside. The fray's bound is 6
+    -- (grain.temperature 3 times noise_layer_noise's peak of 2), but 6 strips Alien Biomes' trees along
+    -- the cold edge; 4 is the smallest margin that left none of these on vanilla land (design notes
+    -- 2026-10-30 14:30). `types` pairs each prototype type with the settings group on_nauvis reads;
+    -- Alien Biomes' palms keep their list (their keys already name Earth copies).
+    scan = {body = CT.AB_KEEP_BODY, margin = 4,
             types = {{type = "optimized-decorative", group = "decorative"}, {type = "tree", group = "entity"}}},
     marsh = {
       water_mud = {tile = "water-mud", key = CT.MARSH_MUD, off = "-inf", body = CT.MARSH_MUD_BODY},

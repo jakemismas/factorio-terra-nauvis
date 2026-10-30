@@ -74,7 +74,7 @@ def(V.body, vanilla_bonus("temperature"), PATCH)
 -- The list hook's factor: the bonus body's conditions on plain temperature, without its elevation term,
 -- as 0 where that body may not be -inf and 1 where it surely is. The bonus reads the grain's frayed copy
 -- on a preset, and this runs in the Entity program, which keeps the plain fields, so the band's edges and
--- the lean widen by scan.margin, the furthest the grain can move them (config.lua tiles.scan).
+-- the lean widen by scan.margin to cover the fray (config.lua tiles.scan).
 def(S.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", 1, if(temperature >= " ..
   num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " .. num(V.lean_t) .. ") / " ..
   num(V.lean_span) .. " + patch - " .. num(V.lean_cut - S.margin / V.lean_span) ..
