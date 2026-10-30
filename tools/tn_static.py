@@ -758,37 +758,45 @@ def d33_fixtures():
 # definition every earlier caller and the text rows read (the second M.kind of ridges' restack
 # dropped the base's storage branch; lua_function_body and luacheck both see only one of the two).
 
-def redefinition_findings(mod=MOD):
-    """Every function name a mod Lua file's chunk defines twice at its top level: a global or dotted
+def lua_redefinitions(text, where):
+    """Every function name one Lua chunk defines twice at its top level: a global or dotted
     `function a.b()`, a method `function a:b()`, an assignment of a function to a dotted name, or a
-    `local function x`, each as '<file>:<line>: <name> redefined (first at line <n>)'."""
+    `local function x`, each as '<where>:<line>: <name> redefined (first at line <n>)'. A chunk with
+    fewer than two `function` keywords defines at most one, so it is never parsed (the generated
+    tables hold none)."""
+    if text.count("function") < 2:
+        return []
     from luaparser import astnodes
+    out, seen = [], {}
+    for st in tnconfig.parse_lua(text, where).body.body:
+        names = []
+        if isinstance(st, astnodes.LocalFunction):
+            names = ["local " + st.name.id]
+        elif isinstance(st, astnodes.Method):
+            src = _dotted(st.source, astnodes)
+            names = [f"{src}:{st.name.id}"] if src else []
+        elif isinstance(st, astnodes.Function):
+            names = [_dotted(st.name, astnodes)]
+        elif isinstance(st, astnodes.Assign):
+            names = [_dotted(t, astnodes) for t, v in zip(st.targets, st.values)
+                     if isinstance(v, astnodes.AnonymousFunction)]
+        for n in names:
+            if not n:
+                continue
+            line = getattr(st, "line", None) or "?"
+            if n in seen:
+                out.append(f"{where}:{line}: {n} redefined (first at line {seen[n]}); the later copy wins for every "
+                           f"caller")
+            else:
+                seen[n] = line
+    return out
+
+
+def redefinition_findings(mod=MOD):
+    """lua_redefinitions over every Lua file the mod ships."""
     out = []
     for p in mod_lua(mod):
-        r = rel(p, mod)
-        tree = parse_lua_file(p)
-        seen = {}
-        for st in tree.body.body:
-            names = []
-            if isinstance(st, astnodes.LocalFunction):
-                names = ["local " + st.name.id]
-            elif isinstance(st, astnodes.Method):
-                src = _dotted(st.source, astnodes)
-                names = [f"{src}:{st.name.id}"] if src else []
-            elif isinstance(st, astnodes.Function):
-                names = [_dotted(st.name, astnodes)]
-            elif isinstance(st, astnodes.Assign):
-                names = [_dotted(t, astnodes) for t, v in zip(st.targets, st.values)
-                         if isinstance(v, astnodes.AnonymousFunction)]
-            for n in names:
-                if not n:
-                    continue
-                line = getattr(st, "line", None) or "?"
-                if n in seen:
-                    out.append(f"{r}:{line}: {n} redefined (first at line {seen[n]}); the later copy wins for every "
-                               f"caller")
-                else:
-                    seen[n] = line
+        out += lua_redefinitions(Path(p).read_text(encoding="utf-8"), rel(p, mod))
     return out
 
 
@@ -797,25 +805,22 @@ def row_redefinitions(mod=MOD):
     return f, f"{len(mod_lua(mod))} Lua files: each top-level function defined once"
 
 
-def redefinition_fixtures(td):
-    """The redefinition scan: a second M.kind in guards.lua (as ridges' restack carried in), a second
-    local function and a dotted name reassigned to a function each fail; the shipped tree passes."""
-    out = [("redefinitions: the shipped mod passes", not redefinition_findings(MOD), redefinition_findings(MOD)[:1])]
+def redefinition_fixtures():
+    """The redefinition scan on guards.lua's text: the shipped file passes and the walk reads it; a
+    second function M.kind (as ridges' restack carried in), a second local function and a function
+    assigned over a defined M.kind each fail."""
     guards = read_text_or_none(MOD / GUARDS_FILE) or ""
+    walked = any(rel(p, MOD) == GUARDS_FILE for p in mod_lua(MOD))
+    real = lua_redefinitions(guards, GUARDS_FILE) if guards else ["guards.lua is missing"]
+    out = [("redefinitions: the shipped guards.lua passes and the walk reads it", walked and not real, real[:1])]
     cases = {
-        "redefinitions: a second function M.kind fails": (
-            GUARDS_FILE, guards.replace("\nreturn M", "\nfunction M.kind(surface)\n  return nil\nend\n\nreturn M")),
-        "redefinitions: a second local function fails": (
-            GUARDS_FILE, guards.replace("\nreturn M", "\nlocal function pen_of(surface)\n  return {}\nend\n\nreturn M")),
-        "redefinitions: a function assigned over a defined M.kind fails": (
-            GUARDS_FILE, guards.replace("\nreturn M", "\nM.kind = function()\n  return nil\nend\n\nreturn M")),
+        "redefinitions: a second function M.kind fails": "function M.kind(surface)\n  return nil\nend\n",
+        "redefinitions: a second local function fails": "local function pen_of(surface)\n  return {}\nend\n",
+        "redefinitions: a function assigned over a defined M.kind fails": "M.kind = function()\n  return nil\nend\n",
     }
-    for label, (path, text) in cases.items():
-        m = td / ("mod-rd-" + str(abs(hash(label)) % 10 ** 8)) / "terra-nauvis"
-        shutil.copytree(MOD, m)
-        _write(m, path, text)
-        f = redefinition_findings(m)
-        out.append((label, any(path in x for x in f), f[:1]))
+    for label, extra in cases.items():
+        f = lua_redefinitions(guards.replace("\nreturn M", "\n" + extra + "\nreturn M"), GUARDS_FILE)
+        out.append((label, bool(f), f[:1]))
     return out
 
 
@@ -2637,7 +2642,7 @@ def fixture_controls():
         results += ranges_fixtures(td)
         results += hotspots_fixtures(td)
         results += d33_fixtures()
-        results += redefinition_fixtures(td)
+        results += redefinition_fixtures()
     return results
 
 
