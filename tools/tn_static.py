@@ -4597,7 +4597,7 @@ def region_name_fixtures(td, cfg):
     # the static frozen row reads the runner's milestone registry from the tree it checks
     (root / "tools").mkdir(parents=True)
     shutil.copy2(REPO / "tools" / "earth_test.py", root / "tools" / "earth_test.py")
-    text = build_regions.emit_text(build_regions.load_table() + [extra], "a fixture", "a fixture")
+    text = build_regions.emit_text(build_regions.load_table() + [extra], "a fixture", "a fixture", "a fixture")
     _write(root / "terra-nauvis", tnconfig.REGION_TABLE, text)
     staged = tnconfig.load(root / "terra-nauvis" / "prototypes" / "config.lua")
     got = tnconfig.defined_names(staged)["noise"]

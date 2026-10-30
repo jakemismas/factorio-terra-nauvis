@@ -24897,7 +24897,8 @@ def rl_suite_checks(ctx, mods, sec6, checks, d):
         appr = json.loads(br.APPROVALS.read_text(encoding="utf-8"))
         r7b = json.loads(br.R7B.read_text(encoding="utf-8"))
         extra = br.spessart_row(cfg, appr, r7b)
-        text = br.emit_text(rows + [extra], "the staged locality copy", "the staged locality copy")
+        text = br.emit_text(rows + [extra], "the staged locality copy", "the staged locality copy",
+                            "the staged locality copy")
         (dst / tnconfig.REGION_TABLE).write_text(text, encoding="utf-8", newline="\n")
         return dst, extra
 
