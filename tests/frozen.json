@@ -5878,13 +5878,6 @@
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_climate_meander_v1": {
-   "type": "noise-expression",
-   "sha256": "61a0f3978c581507082a68db61f2873bd3f7addc8a855095925eef5452c89f80",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
   "tn_depth_keep_britain_v1": {
    "type": "noise-expression",
    "sha256": "9e8b05575ffc3ddbf14e1643dba514cf242d263a26ef5855efdeb067b24d569a",
@@ -5906,20 +5899,6 @@
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_marsh_pool_v1": {
-   "type": "noise-expression",
-   "sha256": "dec7938d61d90f4cb9b6460a05b3774b0f236aef4c1d2ca88ae76013ee16c306",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_region_marsh_rough_v1": {
-   "type": "noise-expression",
-   "sha256": "f7a6fcbc2c81bec28fdf953dbe8ea05c4cad37cad584859beb58b6c20b6bb69a",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
   "tn_region_u_k250_v1": {
    "type": "noise-expression",
    "sha256": "a01776b16f4a358f120248421e98774d9e5060b6b6a09d6a43e197a67be5ba84",
@@ -5930,6 +5909,69 @@
   "tn_region_v_k250_v1": {
    "type": "noise-expression",
    "sha256": "bcddfc7d4b1304a1cedd70647af9a733c6b379bb868be07d13548e2685483e18",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_sd_keep_britain_v1": {
+   "type": "noise-expression",
+   "sha256": "9fed05938a75f550c9f4313bd4d8d2870e26a8e492fab6a169da40fe691425a7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_sd_keep_carpathians_v1": {
+   "type": "noise-expression",
+   "sha256": "b3e7bdb9a5381891990bc6b8f49e73a90eb3aed18944eaa91baf684a28d03c8f",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_sd_keep_denmark_v1": {
+   "type": "noise-expression",
+   "sha256": "d40faf472564887356b0f85b4e908315ad9fe5a0db9174ff80e553b1e6ee4c58",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_w_keep_britain_v1": {
+   "type": "noise-expression",
+   "sha256": "a57883cf66558f7460507b599adccd39583c7e9337fce22c3137af78187abbe2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_w_keep_carpathians_v1": {
+   "type": "noise-expression",
+   "sha256": "890dc0cefea02b1b6f81fa3dab93b2da051a7532a3b4e8bc015333c32e2de09c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_w_keep_denmark_v1": {
+   "type": "noise-expression",
+   "sha256": "79f07a5013389f6f0400226f83b653db35513192eddbdfd0a42fd8c4e2737904",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_climate_meander_v1": {
+   "type": "noise-expression",
+   "sha256": "61a0f3978c581507082a68db61f2873bd3f7addc8a855095925eef5452c89f80",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_marsh_pool_v1": {
+   "type": "noise-expression",
+   "sha256": "dec7938d61d90f4cb9b6460a05b3774b0f236aef4c1d2ca88ae76013ee16c306",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_region_marsh_rough_v1": {
+   "type": "noise-expression",
+   "sha256": "f7a6fcbc2c81bec28fdf953dbe8ea05c4cad37cad584859beb58b6c20b6bb69a",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
@@ -6063,48 +6105,6 @@
   "tn_ridge_v_olde_world_v1": {
    "type": "noise-expression",
    "sha256": "b4a035a6da0a5e334302e7e9dad484b0cbd1147ed6149e322bd28e6408b0fe2c",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_sd_keep_britain_v1": {
-   "type": "noise-expression",
-   "sha256": "9fed05938a75f550c9f4313bd4d8d2870e26a8e492fab6a169da40fe691425a7",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_sd_keep_carpathians_v1": {
-   "type": "noise-expression",
-   "sha256": "b3e7bdb9a5381891990bc6b8f49e73a90eb3aed18944eaa91baf684a28d03c8f",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_sd_keep_denmark_v1": {
-   "type": "noise-expression",
-   "sha256": "d40faf472564887356b0f85b4e908315ad9fe5a0db9174ff80e553b1e6ee4c58",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_w_keep_britain_v1": {
-   "type": "noise-expression",
-   "sha256": "a57883cf66558f7460507b599adccd39583c7e9337fce22c3137af78187abbe2",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_w_keep_carpathians_v1": {
-   "type": "noise-expression",
-   "sha256": "890dc0cefea02b1b6f81fa3dab93b2da051a7532a3b4e8bc015333c32e2de09c",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_w_keep_denmark_v1": {
-   "type": "noise-expression",
-   "sha256": "79f07a5013389f6f0400226f83b653db35513192eddbdfd0a42fd8c4e2737904",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
