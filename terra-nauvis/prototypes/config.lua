@@ -944,8 +944,8 @@ return {
     -- controls, so they exist only with Alien Biomes and are registered from the M2 dump.
     {
       release = "0.1.0",
-      names = {CT.CL_LAT, CT.CL_LON, CT.CL_DRY, CT.CL_CORE, CT.CL_SHIFT, CT.CL_T_AB, CT.CL_M_AB, CT.CL_A_AB, CT.CL_GRAIN,
-               CT.CL_T_AB_G, CT.CL_M_AB_G, CT.CL_A_AB_G, CT.CL_T_FB,
+      names = {CT.CL_LAT, CT.CL_LON, CT.CL_DRY, CT.CL_CORE, CT.CL_SHIFT, CT.CL_T_AB, CT.CL_M_AB, CT.CL_A_AB,
+               CT.CL_GRAIN, CT.CL_T_AB_G, CT.CL_M_AB_G, CT.CL_A_AB_G, CT.CL_T_FB,
       CT.CL_M_FB, CT.CL_A_FB,
                CT.VT_GRASS_1, CT.VT_GRASS_2, CT.VT_GRASS_3, CT.VT_GRASS_4, CT.VT_DRY_DIRT, CT.VT_DIRT_1, CT.VT_DIRT_2,
                CT.VT_DIRT_3,
