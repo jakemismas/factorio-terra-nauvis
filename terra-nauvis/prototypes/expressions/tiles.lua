@@ -45,6 +45,7 @@ for _, t in ipairs(V.tiles) do
   def(V.keys[t], V.off)
 end
 def(X.key, X.off)
+def(V.mix.key, V.mix.off)
 def(MS.water_mud.key, MS.water_mud.off)
 def(MS.water_shallow.key, MS.water_shallow.off)
 def(MS.grass.key, MS.grass.off)

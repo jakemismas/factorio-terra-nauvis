@@ -77,11 +77,12 @@ water_hook(TL.marsh.water_mud.tile, {TL.marsh.water_mud.key}, TL.marsh.water_mud
 -- prototypes and takes them off Nauvis (R3 3.2); re-listed here behind the gate, each adds its key.
 local function vanilla_hooks()
   local V = TL.vanilla
-  for _, name in ipairs(V.tiles) do
+  for i, name in ipairs(V.tiles) do
     local tile = data.raw.tile[name]
     if tile and tile.autoplace and tile.autoplace.probability_expression then
       tile.autoplace.probability_expression = hook("(" .. tostring(tile.autoplace.probability_expression) .. ") + " ..
-        V.keys[name], V.off)
+        V.keys[name] .. " + " .. V.mix.key .. " * " .. string.format(V.mix.noise, V.mix.first_seed1 + i - 1) ..
+        " * (" .. V.keys[name] .. " > " .. num(V.bonus / 2) .. ")", V.off)
       register(name)
     else
       log(cfg.identity.title .. ": vanilla tile " .. name .. " is missing or has no autoplace")

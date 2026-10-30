@@ -222,6 +222,9 @@ local function grain_values(map_key)
       out[TL.vanilla.keys[t]] = TL.vanilla.body_grain
     end
   end
+  if AB and cfg.tiles.vanilla.mix.maps[map_key] then
+    out[cfg.tiles.vanilla.mix.key] = cfg.tiles.vanilla.mix.amount
+  end
   return out
 end
 

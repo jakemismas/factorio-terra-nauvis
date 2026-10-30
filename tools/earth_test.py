@@ -13217,7 +13217,9 @@ def ct_hook_text(cfg, name, original=None, ab=True):
         return None
     V = TL["vanilla"]
     if name in V["keys"]:
-        return f"if({gate}, ({original}) + {V['keys'][name]}, {V['off']})"
+        mix = V["mix"]["noise"].replace("%d", str(V["mix"]["first_seed1"] + V["tiles"].index(name)))
+        return (f"if({gate}, ({original}) + {V['keys'][name]} + {V['mix']['key']} * {mix} * ({V['keys'][name]} > "
+                f"{ww_num(V['bonus'] / 2)}), {V['off']})")
     X = TL["exclude"]
     if name not in TL["ab_adopted"] and any(name.startswith(pf) for pf in X["prefixes"]):
         return f"if({gate}, ({original}) + {X['key']}, ({original}))"
