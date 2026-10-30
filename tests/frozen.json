@@ -3855,14 +3855,14 @@
   },
   "tn_aux_ab_v1": {
    "type": "noise-expression",
-   "sha256": "59a3a9be195c11eb6f8582f16fd543757431e8cf5fdb13e0f66eee7075225c67",
+   "sha256": "9fca4adccbe8f75164fb5d272423c08a02a7b441b5fd226489142dcfc6f05632",
    "dump": "m2",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
   },
   "tn_moisture_ab_v1": {
    "type": "noise-expression",
-   "sha256": "d8590e8e966c136b76a6fd2836690a1eb65770560ea19fda1ed285d3b074b5c1",
+   "sha256": "1241ec649c6e7bb592e9a9c19b1b8fe7087178ebc51a5af07812ca6defec922d",
    "dump": "m2",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
@@ -5180,7 +5180,7 @@
   },
   "tn_destroyed_zone_v1": {
    "type": "noise-expression",
-   "sha256": "492da35f150d4527b85448335a52f45602bfe2768ff44376994182fdbe92ca90",
+   "sha256": "ebf41e1827d2539f3405f843da573235ea13b730c2487c2be572f3e642ddd9e6",
    "dump": "m1",
    "slice": "destroyed-europe",
    "registered": "2026-10-30"
@@ -5817,28 +5817,28 @@
   },
   "tn_ab_exclude_v2": {
    "type": "noise-expression",
-   "sha256": "4d490d87be5fcb899294b785a681344a54a03c83b2fe7507eca24eccf3ccbe44",
+   "sha256": "7437b442200b571fe0ab2ab022da305e268bc2d31284e0cae9856552399e33a4",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
   },
   "tn_aux_ab_v2": {
    "type": "noise-expression",
-   "sha256": "828b02187ec055f0623f87769c401420919305cb784afab17dfa95bad8623338",
+   "sha256": "fc27f8668f3af04cf341e2a9608702612764f92e2daee263d83114fa486a8dd2",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
   },
   "tn_climate_grain_v1": {
    "type": "noise-expression",
-   "sha256": "31d0892f90aa4af92b5ebd1f8987e1d3cea4adfb1276b100c9d56468cd81d212",
+   "sha256": "d2328bb4cfe7b3b2728031c3fc3ea7035b27f3ce007ac25445f9e176f55a760b",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
   },
   "tn_moisture_ab_v2": {
    "type": "noise-expression",
-   "sha256": "fd54baf4412176760ce19f3d0444746246b274a853a83e606fb7f72312de7206",
+   "sha256": "714ac14fdfad36cbe0cc9187906cd75ccf22cfdc4086787151021a77489f7ee6",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
@@ -5873,7 +5873,7 @@
   },
   "tn_vtile_bonus_v2": {
    "type": "noise-expression",
-   "sha256": "f3c65a5612ffc743af8160005f9c55ed164fe987c20631c3280f8026f72fd4e9",
+   "sha256": "afe375c80c93e995226ee70667674534e04a4844c89857ee7b8a55ac17c5b976",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
