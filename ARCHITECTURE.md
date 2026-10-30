@@ -1066,6 +1066,9 @@ with space-age, quality, elevated-rails and recycler on) found Vulcanus, Fulgora
 platform generating as without Terra Nauvis once the guard ran, and the inherited keys without it.
 Gated hooks on vanilla tiles would hide them from any other planet that lists them (AB's own comment
 says removing vanilla tile autoplace broke Space Age, R3 3.2). The GUI and play remain smoke step 8.
+`compat-completeness` runs the check as suite rows (`cc_sa`, `cc_sa_more`): an entity-only planet
+difference passes only where a vanilla engine control moves the same chunk (Gleba chunk (-3, 0) loses
+one sunnycomb in any world whose Nauvis differs from vanilla).
 
 ## Performance budgets
 
@@ -1967,6 +1970,26 @@ takes over the Map type fields.
   generation gated at 1.5 at 16 LP (8 LP recorded), exploring in real time against BL by the plan's
   P4 to P6, and a `scriptUpdate` bound against BL (the plan's P15; PERF-08 and
   12:35).
+- **Runner.** Suite rows only (no FG row; the gate re-derives them, and its live samples re-run
+  `cc_t17` and re-time Europe's block, `t15b_m1`): `cc_load` (T13 load and D34), `cc_t13_routes`,
+  `cc_t13_zero` (M4 against BL), `cc_t14`, `cc_t17`, `cc_t12`, `cc_t15d_gen`, `cc_t15d_play`,
+  `cc_t13_mods` (test notes 4.3's 17 rows), `cc_t15_report` (the 16 LP headroom and the island-disc
+  verdict, the next release input), `cc_sa` and `cc_sa_more` (Space Age). Modsets come from the enabled rows
+  of the design notes through `fh.py modset --from-live`; the three disabled rows
+  are never passed. A check makes the pack-sized modsets (M4, M5, M6, BL and their twins, about 1.9
+  GiB each) when it needs them and removes the ones its command made (`ea-cc-` names directly under
+  the workspace's modsets folder) before the next, so at most one is on disk at a time. B1, B2 and B3
+  are ea- twins copied read-only from planning's `ep-r1-earthmaps` and `ep-r2-factorio-world`, every
+  setting written explicitly (G7).
+- **Test mods.** `tools/mods/ea-cc-probe`: a census job (per area tile, entity and decorative names,
+  resource amounts, resources on water, per-chunk digests) and a surfaces job (each surface's planet,
+  keys and the Earth map id read through `calculate_tile_properties`); `t12.lua`, appended to a
+  staged copy of the mod for T12's walker, server saves, storage dumps, bad probe and, with Space Age,
+  planet surfaces. `tools/mods/ea-sa-probe` gains a wide block set (491 chunks per surface) and cargo
+  pod landings in travel mode; `tools/sa_compat.py` gains a runner hook (the command's own runs),
+  variant staging (seed, settings, live mods, blocks) and quick matrices. The timing drivers
+  (`tq1-gen`, `tq2-driver`) and `tools/perf.py` stay unchanged, so every earlier milestone's timed
+  evidence keeps its key.
 
 ### 13. `extras` (part 9, order 0)
 

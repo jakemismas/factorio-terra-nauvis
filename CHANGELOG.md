@@ -591,6 +591,49 @@ versions follow [Semantic Versioning](https://semver.org/).
   missing, 0 extra, 0 one-tile strips); the game's water correction left 25
   of 114,547 scored centres wrong there with the first tables, and the shipped tables, applied to the
   same fix-off tiles, leave 0 of 112,373.
+- Milestone `compat-completeness`: no new feature. The suite rows that prove the mod against the maintainer's
+  full pack, the base game's completeness rules, multiplayer determinism, the section 5 benchmark and
+  Space Age: `cc_load` (T13 and D34: M0 to M6, BAB and BL each load through `dump-data` and `--create`
+  with every mod's checksum line at R5's version, M4 to M6 holding every enabled live mod and none of
+  the three disabled ones, the RSO warning once on M5, factorio-admin-command-center's regeneration
+  off), `cc_t13_routes` (preset route equal to the full-MGS route on M3 to M6, every map),
+  `cc_t13_zero` (a default world on M4 equal to BL's in every preview hash and program),
+  `cc_t13_mods` (test notes 4.3's 17 interaction rows), `cc_t14` (minime's hidden surfaces on M4
+  read the Earth map id as 0 or unrecognized, the unguarded copy beside minime as the positive
+  control; the static walker on M1 and M2), `cc_t17` (every autoplaced vanilla name on every map on M1
+  and M2, the block set calibrated on M0), `cc_t12` (twice, `--threads 1`, 8 LP, and the loopback save
+  and load recipe with its bad probe on M1, M2 and M4), `cc_t15d_gen` and `cc_t15d_play` (T15d
+  against vanilla, EarthMaps and Factorio World: forced generation at the spawn and 4,000 tiles out
+  at 24, 16 and 8 LP, exploring in benchmark mode and in real time, the save pair, steady UPS, a new
+  map's first 120 ticks and startup), `cc_t15_report` (each map's 16 LP headroom and the island-disc
+  verdict, the next release input), and `cc_sa` and `cc_sa_more` (`tools/sa_compat.py` through the runner with
+  its positive control and the engine-residue rule, then other seeds, scales and a chosen city, 491
+  chunks per planet, Alien Biomes beside Space Age, cargo pod landings and the multiplayer recipe with
+  the expansion on). The test-only probe `tools/mods/ea-cc-probe` (a census job, a surfaces job and
+  T12's staged walker); `tools/mods/ea-sa-probe` gains a wide block set and cargo pod landings;
+  `tools/sa_compat.py` gains a runner hook, variant staging and quick matrices. The pack-sized
+  modsets are made per check and removed again. Gate cold and warm wall time: not yet measured (the
+  engine records them).
+- Evidence (draft, each check's run and derive code on its smallest case, game runs through the draft
+  slots, `previews/earth-build/draft-compat-completeness/`): `cc_load` on M0 and M1 passes G1 to G3, every
+  checksum line and the start message (`p2-cc_load-*`; the D34 counts fail only for the kinds not run);
+  `cc_t12` on M1 passes whole: one checksum twice, with `--threads 1` and at 8 LP, 0 of 320 chunks
+  differing, the loopback recipe's three paths on one checksum with equal storage, and the bad probe
+  diverging (`p40-cc_t12-*`); `cc_t14` with minime in a small pack: minime's two hidden surfaces and the
+  probe's control surface read the map id as unrecognized on Nauvis's Earth world, the control reads 1
+  with the guard disabled, and the hook-aware walker holds on M1 and M2 with its three controls found
+  (`p50-cc_t14-*`); `cc_t13_routes` on M3: the preset and full-MGS routes render the same preview on all
+  three maps (`p22-cc_t13_routes-*`); `cc_t13_mods` on a 14-mod pack: the Alien Biomes, Big-Monsters,
+  bobenemies and combat-mechanics-overhaul rows hold (hotspot boxes with hotspots on hold about twice
+  the pack's enemies, 2,218 against 1,148, none in the start area) (`p31-cc_t13_mods-*`); `cc_t15d_gen`
+  times the spawn block of Earth, EarthMaps and Factorio World and re-derives each repetition from its
+  raw files (busy machine: every repetition is discarded for the other drafts' games, as the quiet
+  window requires; read without that reason the per-chunk times give Earth 0.40 of EarthMaps' and 0.17
+  of Factorio World's, UNVERIFIED) (`p20-cc_t15d_gen-*`); `cc_sa`'s judge rebuilt the 2026-10-28 run's
+  report from its raw runs: the positive control holds on all four planets and the residue rule
+  explains Gleba chunk (-3, 0) in the main and the travel comparisons. `cc_t17` fails on every map:
+  the M0 calibration finds all 92 names, and the arid biome (red desert, its trees and decoratives)
+  never generates on an Earth map (`p30-cc_t17-*`; design notes, compat-completeness).
 
 ### Changed
 

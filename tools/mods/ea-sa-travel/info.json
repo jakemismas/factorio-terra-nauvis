@@ -1,0 +1,9 @@
+{
+  "name": "ea-sa-travel",
+  "version": "0.0.1",
+  "title": "Earth build Space Age travel marker (test only)",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test tool, never shipped, with no code: while it is active, ea-sa-probe runs its travel mode, moving a space platform into each planet's orbit so that every planet surface comes from the engine's own creation instead of LuaPlanet.create_surface.",
+  "dependencies": ["base >= 2.1.23"]
+}

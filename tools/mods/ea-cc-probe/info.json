@@ -1,0 +1,9 @@
+{
+  "name": "ea-cc-probe",
+  "version": "0.0.1",
+  "title": "Earth build compat-completeness probe (test only)",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test tool, never shipped. Its jobs, read once in on_init from the runtime-global setting ea-cc-probe-job, force-generate fixed areas of Nauvis and write each area's tile, entity and decorative name counts, resource amounts and per-chunk digests (census), or write every surface's planet, property_expression_names and named tile properties read at the origin (surfaces). Output goes to script-output/ea-cc-probe/.",
+  "dependencies": ["base >= 2.1.23"]
+}

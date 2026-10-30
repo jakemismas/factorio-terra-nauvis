@@ -369,10 +369,21 @@ local function restore_vanilla()
     "re-listed " .. relisted .. " decoratives, extended " .. extended .. " restrictions beside Alien Biomes")
 end
 
--- The great-forests hook on every living tree (the base game's dead and dry trees excepted, S10). Alien
--- Biomes' palms are left out too: their prototypes stay AB's (ARCHITECTURE.md, "Stable hooks"), since the
--- frozen palm table and its dump checks read them raw, and on Earth presets their probability keys name
--- the copies' second versions, which carry the boost.
+-- Whether Nauvis places a prototype: its autoplace names a control Nauvis lists, or Nauvis's autoplace settings
+-- list it. Another planet's trees (Space Age's Vulcanus lichen trees and Gleba plants) keep their prototypes
+-- untouched, so no other planet compiles a hook (never touch other planets; compat-completeness
+-- found the hook moving their programs and placements).
+local function on_nauvis(kind, name, autoplace)
+  local mgs = ((data.raw.planet or {}).nauvis or {}).map_gen_settings or {}
+  local controls = mgs.autoplace_controls or {}
+  local listed = ((mgs.autoplace_settings or {})[kind] or {}).settings or {}
+  return (autoplace.control ~= nil and controls[autoplace.control] ~= nil) or listed[name] ~= nil
+end
+
+-- The great-forests hook on every living tree Nauvis places (the base game's dead and dry trees excepted,
+-- S10). Alien Biomes' palms are left out too: their prototypes stay AB's (ARCHITECTURE.md, "Stable hooks"),
+-- since the frozen palm table and its dump checks read them raw, and on Earth presets their probability
+-- keys name the copies' second versions, which carry the boost.
 local function boost_hooks()
   local skip = {}
   for _, name in ipairs(VAN.dead_trees) do
@@ -383,7 +394,8 @@ local function boost_hooks()
   end
   local names = {}
   for name, tree in pairs(data.raw.tree or {}) do
-    if not skip[name] and tree.autoplace and tree.autoplace.probability_expression ~= nil then
+    if not skip[name] and tree.autoplace and tree.autoplace.probability_expression ~= nil and
+        on_nauvis("entity", name, tree.autoplace) then
       names[#names + 1] = name
     end
   end

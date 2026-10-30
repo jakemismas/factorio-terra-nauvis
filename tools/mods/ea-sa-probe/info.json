@@ -1,0 +1,9 @@
+{
+  "name": "ea-sa-probe",
+  "version": "0.0.1",
+  "title": "Earth build Space Age planet probe (test only)",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test tool, never shipped. At tick 3 it creates every planet's surface through LuaPlanet.create_surface (which raises on_surface_created, as a platform's first arrival does), force-generates a fixed chunk block near the origin and one far block on every planet surface and on Nauvis, and writes per-chunk digests of tiles, entities and decoratives, sampled tile properties and each surface's property_expression_names before and after the mod under test's guard to script-output/ea-sa-probe/. At tick 4 it builds a space platform when the expansion is active. It has no dependency, so it loads before the mod under test and its on_surface_created handler sees what a surface inherited before any guard ran. With the marker mod ea-sa-travel active it runs its travel mode instead: a platform moved into each planet's orbit, so every planet surface comes from the engine's own creation.",
+  "dependencies": ["base >= 2.1.23"]
+}

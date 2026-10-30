@@ -37,6 +37,7 @@ import os
 import random
 import re
 import shutil
+import statistics
 import subprocess
 import sys
 import tempfile
@@ -277,6 +278,18 @@ REGISTRY = [
      # timed walks, a measurement row with no section 6 ratio) would not fit the gate's 10 minutes
      "deterministic_ss": ["bf_slivers", "bf_t11"],
      "timed_ss": [],
+     "oracle_properties": [],
+     "dumps": ["m1", "m2"]},
+    # the full mod pack, the base-game completeness rules, multiplayer determinism, the section 5 benchmark against
+    # both world mods and Space Age (design section 14, milestone 0). No FG row: every check runs against copies of the
+    # 1.9 GiB pack or for hours, so all are suite rows (SS), which the gate re-derives; its live samples re-run T17
+    # (the lightest deterministic row) and re-time Europe's block on the current build (t15b_m1).
+    {"id": "compat-completeness", "part": 8, "order": 0,
+     "fg": [],
+     "ss": ["cc_load", "cc_t13_routes", "cc_t13_zero", "cc_t14", "cc_t17", "cc_t12", "cc_t15d_gen", "cc_t15d_play",
+            "cc_t13_mods", "cc_t15_report", "cc_sa", "cc_sa_more"],
+     "deterministic_ss": ["cc_t17"],
+     "timed_ss": ["t15b_m1"],
      "oracle_properties": [],
      "dumps": ["m1", "m2"]},
 ]
@@ -21897,6 +21910,8 @@ def suite_checks(ctx, mods, sec6):
         de_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     if any(s["id"] == "coast-band-fix" for s in registry_upto(ctx.slice)):
         bf_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "compat-completeness" for s in registry_upto(ctx.slice)):
+        cc_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     return checks
 
 
@@ -26655,6 +26670,1840 @@ def el_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
                                       for k, v in meas.items())
 
     checks["el_edge"] = SuiteCheck("el_edge", lambda: key("el_edge", {"plan": edge_plan}), edge_run, edge_derive)
+
+
+# ================================================================================================ compat-completeness
+#
+# Design section 14 (part 8, milestone 0): the whole mod against the full mod pack, the base-game completeness
+# rules, multiplayer determinism and the section 5 benchmark against both existing world mods, plus Space Age
+#. The milestone ships no
+# feature: every check below is a suite row (SS) whose raw run directories key on its inputs. The live pack comes
+# read-only through `fh.py modset --from-live` from the enabled rows of
+# the design notes, and its three disabled rows are never passed (test notes 4.2; D34). M4,
+# M5, M6, BL and their twins hold about 1.9 GiB of zips each: a check makes them when it needs them and removes
+# the ones this command made (ea- names directly under the workspace's modsets folder) when it is done, so the
+# matrix never holds more than one of them at a time (design section 14). Planning's ep- sets stay untouched: the
+# baselines' mod folders are copied from them read-only into ea- twins.
+
+CC_R5 = REPO / "docs" / "plan" / "research" / "R5-modlist.json"
+CC_DISABLED = ("alien-biomes-tree-compat", "enhanced-shadows", "even-distribution")
+CC_RSO = "rso-mod"
+CC_AB = ("alien-biomes", "alien-biomes-graphics")
+CC_MINIME = ("minime", "Pi-C_lib")                   # T14's control modset: minime and its one hard dependency
+CC_FACC_MOD, CC_FACC_SETTING = "factorio-admin-command-center", "facc-enable-auto-resource-regeneration"
+CC_PROBE = HERE / "mods" / "ea-cc-probe"
+CC_DRIVER = HERE / "mods" / "tq2-driver"
+CC_LOAD_KINDS = ("m0", "m1", "m2", "m3", "m4", "m5", "m6", "bab", "bl")
+CC_ROUTE_KINDS = ("m3", "m4", "m5", "m6")
+CC_BIG = ("m4", "m5", "m6", "bl")
+CC_NO_EARTH = ("m0", "bab", "bl", "b1", "b2", "b3")
+CC_SEEDS = (1000, 1002, 1004)
+CC_PREVIEW = 256
+CC_TICKS = 4                                        # probe scenarios: the job at tick 2, two ticks to spare
+CC_TIMEOUT = 2400                                   # a pack run loads about 1.9 GiB of zips
+CC_LOADING_RE = re.compile(r"Loading mod (.+?) (\d+\.\d+\.\d+) \(")
+CC_CHECKSUM_RE = re.compile(r"Checksum of (.+?): (\d+)")
+CC_PREVIEW_TIME_RE = re.compile(r"Map preview generation time: ([\d.]+) seconds")
+CC_BENCH_RE = re.compile(r"Performed (\d+) updates in ([\d.]+) ms\s+avg: ([\d.]+) ms, min: ([\d.]+) ms, max: ([\d.]+) ms")
+CC_STAMP_RE = re.compile(r"^\s*(\d+\.\d+) ", re.M)
+# T17: the entity types whose autoplaced names count, and what each is called in the criterion
+CC_T17_TYPES = {"resource": "resource", "tree": "tree", "simple-entity": "rock", "fish": "fish",
+                "unit-spawner": "spawner", "turret": "worm"}
+CC_T17_CRESTS = 2                                   # crest blocks per map (the cliff name; ridges are its only cliffs)
+CC_T17_SIDE = 4                                     # chunks a side of each crest block
+# T12: the walk, saves and storage ticks of the loopback recipe (design experiment 8), and the census block set
+CC_T12 = {"start": 60, "period": 30, "steps": 18, "radius": 1, "t1": 240, "t2": 600, "server_timeout": 75}
+CC_T12_AREAS = ((-256, -256, 512, 512), (2048, 1024, 256, 256))
+# T15d (test notes 5.6): blocks relative to each configuration's spawn chunk, in the timer's 16 x 16 chunk
+# geometry (tq2-driver forced; decision-free planner default): just east of the start area (chunks -7..6 are
+# generated by --create) and centred 4,000 tiles east of the spawn; the warm-up chunk as TQ1b's
+CC_T15D_BLOCKS = {"spawn": (START_AREA_CHUNKS, -8), "far": (125 - 8, -8)}
+CC_T15D_WARM = (-64, -48)
+CC_T15D_MASKS = ("MASK24", "MASK16", "MASK8")
+CC_T15D_REPS = 7
+CC_T15D_EXPLORE_REPS = 3
+CC_T15D_UPS = {"ticks": 3600, "reps": 7}
+CC_T15D_START_TICKS = 120
+CC_T15D_PREVIEW = {"size": 1024, "reps": 7}
+CC_T15D_PAIRS = (("m1", "m0"), ("m2", "bab"), ("m4", "bl"), ("m1", "b1"), ("m1", "b3"), ("m2", "b2"))
+CC_T15D_GEN_NAMES = ("m0", "m1", "bab", "m2", "b1", "b2", "b3", "bl", "m4")
+CC_T15D_PLAY_NAMES = ("m0", "m1", "bab", "m2", "b1", "b3", "bl", "m4")
+CC_T12_KINDS = ("m1", "m2", "m4")
+CC_SA_VARIANTS = ("seed1002", "seed1004", "scale1", "scale3", "wide", "ab", "city")
+CC_ISLAND_HEADROOM = 0.03                           # JI-04, review note 11: island discs need this much everywhere
+# T15d's world-mod baselines (test notes 4.1), copied read-only from planning's modsets with every setting
+# written explicitly (G7): B1 EarthMaps 2.1.2 on Europe at scale 6 spawning at London, teleporters on; B2 the same
+# plus Alien Biomes; B3 factorio-world 2.1.6 at its defaults (scale 6, the Flanders spawn, repeat on, small map,
+# safe zone 5). EarthMaps' surface is "Earth" with London at tile (-4137, 363), so its places shift by (-129, +11)
+# chunks (BENCHMARKS.md, "What was compared"); every other configuration spawns at the origin.
+CC_BASELINES = {
+    "b1": {"source": "ep-r1-earthmaps", "folder": "EarthMaps", "ab": False, "surface": "Earth", "spawn": (-129, 11),
+           "settings": ["startup.em_map_scale=6", "startup.em_world_map=Earth - Europe",
+                        "startup.em_spawn_city_europe=Europe, United Kingdom, London",
+                        "startup.em_create_teleporters=true", "runtime-global.em_teleporting_enabled=true"]},
+    "b2": {"source": "ep-r1-earthmaps", "folder": "EarthMaps", "ab": True, "surface": "Earth", "spawn": (-129, 11),
+           "settings": ["startup.em_map_scale=6", "startup.em_world_map=Earth - Europe",
+                        "startup.em_spawn_city_europe=Europe, United Kingdom, London",
+                        "startup.em_create_teleporters=true", "runtime-global.em_teleporting_enabled=true"]},
+    "b3": {"source": "ep-r2-factorio-world", "folder": "factorio-world", "ab": False, "surface": "nauvis",
+           "spawn": (0, 0),
+           "settings": ["runtime-global.map-gen-scale=6", "runtime-global.repeat-map=true",
+                        "runtime-global.safe-zone-size=5", "runtime-global.spawn-position=Custom (fill in x,y below)",
+                        "runtime-global.spawn-x=2064", "runtime-global.spawn-y=406", "runtime-global.use-large-map=false",
+                        "startup.only-apply-to-earth=false"]},
+}
+
+
+def cc_pack():
+    """(enabled names in R5's order, {name: version}, disabled names): the live pack as R5 recorded it."""
+    rows = json.loads(CC_R5.read_text(encoding="utf-8"))
+    return ([r["name"] for r in rows if r.get("enabled")], {r["name"]: r.get("version") for r in rows},
+            [r["name"] for r in rows if not r.get("enabled")])
+
+
+def cc_pack_tag():
+    on, ver, _ = cc_pack()
+    return hashlib.sha256(json.dumps([[n, ver.get(n)] for n in on]).encode()).hexdigest()[:6]
+
+
+def cc_live_names(kind):
+    """The live mods a kind copies (test notes 4.1): M4 and BL the enabled pack without rso-mod (79), M5 with it
+    (80), M6 M4 without Alien Biomes and its graphics (77), M2, BAB and B2 Alien Biomes, M3 M2 plus Cargo Ships and
+    the Oil Rig."""
+    on, _, _ = cc_pack()
+    if kind in ("m4", "bl"):
+        return [n for n in on if n != CC_RSO]
+    if kind == "m5":
+        return list(on)
+    if kind == "m6":
+        return [n for n in on if n != CC_RSO and n not in CC_AB]
+    if kind in ("m2", "bab", "b2"):
+        return list(CC_AB)
+    if kind == "m3":
+        return list(RE_M3_LIVE)
+    if kind == "minime":
+        return list(CC_MINIME)
+    return []
+
+
+def cc_expected_mods(cfg, kind):
+    """Every mod a kind's runs must load (G2 and D34): base, its live mods, Earth where it holds Earth, and the
+    baseline's world mod."""
+    out = ["base"] + cc_live_names(kind)
+    if kind not in CC_NO_EARTH:
+        out.append(cfg["identity"]["id"])
+    if kind in CC_BASELINES:
+        out.append(CC_BASELINES[kind]["folder"])
+    return out
+
+
+def cc_fh_text(ctx, args, timeout=300):
+    """An fh.py subcommand that launches no game (settings --show), with its whole output."""
+    cp = subprocess.run([sys.executable, str(ctx.fh_py)] + [str(a) for a in args], cwd=str(ctx.ws), capture_output=True,
+                        text=True, encoding="utf-8", errors="replace", timeout=timeout, env=ctx.env())
+    return (cp.stdout or "") + (cp.stderr or "")
+
+
+def cc_set(ctx, modset, pairs):
+    if not pairs:
+        return
+    res = ctx.fh_plain(["settings", modset, "--set"] + list(pairs))
+    if not res.startswith("RESULT ok"):
+        raise GateError(f"fh.py settings {modset}: {res}")
+
+
+def cc_modset(ctx, mods, kind, extra=(), lane=None, earth_dir=None):
+    """A compat-completeness modset of `kind` (m0 to m6, bab, bl, b1 to b3, minime: minime and its dependency
+    beside Earth) plus the test mods in `extra`, made once per command and prepared (G7: Earth's settings, the
+    baselines' settings and factorio-admin-command-center's regeneration off, all written explicitly). Its name
+    carries the Earth zip's sha256 prefix (or the staged copy's hash for `earth_dir`) where Earth is in it, the
+    pack's tag where the live pack is, and the extras' hash; `worker` gives a parallel copy."""
+    key = (kind, tuple(str(e) for e in extra), lane, str(earth_dir))
+    made = ctx.shared.setdefault("cc_modsets", {})
+    if key in made:
+        return made[key]
+    live = cc_live_names(kind)
+    adds = list(extra)
+    if kind in CC_BASELINES:
+        b = CC_BASELINES[kind]
+        src = ctx.ws / "test-instance" / "modsets" / b["source"] / b["folder"]
+        if not src.is_dir():
+            raise GateError(f"T15d's baseline {kind} needs {src} (planning's {b['source']}, left untouched)")
+        adds = [src] + adds
+    parts = [kind, cc_pack_tag() if kind in CC_BIG else None, folder_hash(*adds) if adds else None,
+             f"l{lane}" if lane is not None else None]
+    if kind not in CC_NO_EARTH:
+        if earth_dir is not None:
+            parts.append("s" + folder_hash(earth_dir))
+            adds = [earth_dir] + adds
+        else:
+            z = mods.build_zip()
+            parts.append(mods.zip_sha[:8])
+            adds = [z] + adds
+    name = "ea-cc-" + "-".join(p for p in parts if p)
+    existed = (ctx.ws / "test-instance" / "modsets" / name).exists()
+    name = mods.make(name, adds, from_live=live)
+    if not existed and kind in CC_BIG:
+        ctx.shared.setdefault("cc_created", set()).add(name)
+    mods.prepare(name, name)
+    if CC_FACC_MOD in live:
+        cc_set(ctx, name, [f"runtime-global.{CC_FACC_SETTING}=false"])
+    if kind in CC_BASELINES:
+        cc_set(ctx, name, CC_BASELINES[kind]["settings"])
+    made[key] = name
+    return name
+
+
+def cc_drop(ctx, mods, names=None):
+    """Remove the M4-family modsets this command made: about 1.9 GiB each (design section 14). Only names this command
+    created, starting with ea-, directly under the workspace's modsets folder; never another command's or
+    planning's."""
+    created = ctx.shared.setdefault("cc_created", set())
+    root = (ctx.ws / "test-instance" / "modsets").resolve()
+    for name in sorted(created if names is None else set(names) & created):
+        d = (root / name).resolve()
+        if not name.startswith("ea-cc-") or d.parent != root:
+            continue
+        shutil.rmtree(d, ignore_errors=True)
+        created.discard(name)
+        mods.dumps.pop(name, None)
+        for k, v in list(ctx.shared.get("cc_modsets", {}).items()):
+            if v == name:
+                del ctx.shared["cc_modsets"][k]
+        ctx.shared.pop(f"cc_dump:{name}", None)
+
+
+def cc_dump(ctx, mods, modset):
+    """A prepared modset's data-raw-dump.json (its own: with the pack or Alien Biomes the preset values differ)."""
+    k = f"cc_dump:{modset}"
+    if k not in ctx.shared:
+        r = mods.prepare(modset, modset)
+        ctx.shared[k] = json.loads((r.out / "data-raw-dump.json").read_text(encoding="utf-8"))
+    return ctx.shared[k]
+
+
+def cc_mgs(ctx, cfg, dump, mk, label, scale=None, pin=None, extra=None):
+    """A map's preset as `dump` holds it, as a full MGS file (U10: never with --preset), autoplace controls included;
+    the scale pinned when given, the city offset pinned to `pin` (geo tiles: (0, 0) makes geo tiles world tiles) and
+    `extra` redirects merged."""
+    pname, g = map_preset(cfg, mk)
+    pen = dict(preset_pen(dump, pname))
+    if not pen:
+        raise GateError(f"the dump holds no preset {pname}")
+    if scale is not None:
+        pin_scale(cfg, mk, pen, scale)
+    if pin is not None:
+        pen[g["cx"]], pen[g["cy"]] = int(pin[0]), int(pin[1])
+    pen.update(extra or {})
+    body = {"property_expression_names": pen}
+    controls = preset_controls(dump, pname)
+    if controls:
+        body["autoplace_controls"] = controls
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"cc-{label}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def cc_london(cfg):
+    """London's spawn offset at the default scale (B1 spawns at London; Phase 4 and T15b place Europe so)."""
+    return rd_offset(rd_city("europe", "London"), int(cfg["settings"]["scale"]["default_value"]))
+
+
+def cc_job(ctx, modset, spec):
+    def prep():
+        cc_set(ctx, modset, [f"runtime-global.ea-cc-probe-job={spec}"])
+    return prep
+
+
+def cc_areas_text(areas):
+    return ";".join(f"{int(x)},{int(y)},{int(w)},{int(h)}" for x, y, w, h in areas)
+
+
+def cc_census_spec(label, areas, digest=False, tick=2):
+    return f"census:{label}:{tick}:{1 if digest else 0}:{cc_areas_text(areas)}"
+
+
+def cc_read(run_dir, name):
+    f = Path(run_dir) / "script-output" / "ea-cc-probe" / name
+    if not f.exists():
+        raise GateError(f"{run_dir}: the probe wrote no {name}")
+    return json.loads(f.read_text(encoding="utf-8"))
+
+
+def cc_names_seen(census):
+    """{"tile", "decorative": names; "entity": {name: type}} over every area of a census."""
+    out = {"tile": set(), "decorative": set(), "entity": {}}
+    for a in census.get("areas") or []:
+        out["tile"] |= set(a.get("tiles") or {})
+        out["decorative"] |= set(a.get("decoratives") or {})
+        for n, t in (a.get("types") or {}).items():
+            out["entity"][n] = t
+    return out
+
+
+def cc_t17_names(d0):
+    """{category: sorted names}: every name with autoplace on Nauvis in M0's dump (T17): the tiles the planet's
+    autoplace settings list, the entities and decoratives placed_autoplace finds (by type: resource, tree, rock,
+    fish, spawner, worm) and the planet's cliff."""
+    mg = d0["planet"]["nauvis"]["map_gen_settings"]
+    out = {"tile": set(((mg.get("autoplace_settings") or {}).get("tile") or {}).get("settings") or {})}
+    placed = placed_autoplace(d0)
+    for t, n in placed["entity"]:
+        cat = CC_T17_TYPES.get(t)
+        if cat:
+            out.setdefault(cat, set()).add(n)
+    out["decorative"] = {n for _, n in placed["decorative"]}
+    cliff = (mg.get("cliff_settings") or {}).get("name")
+    out["cliff"] = {cliff} if cliff else set()
+    return {k: sorted(v) for k, v in out.items()}
+
+
+def cc_t17_missing(names, seen):
+    """{category: names never seen} of a census against cc_t17_names' list."""
+    out = {}
+    for cat, want in names.items():
+        if cat == "tile":
+            got = seen["tile"]
+        elif cat == "decorative":
+            got = seen["decorative"]
+        else:
+            got = set(seen["entity"])
+        miss = sorted(set(want) - got)
+        if miss:
+            out[cat] = miss
+    return out
+
+
+def cc_t17_blocks(cfg, mk, scale=6):
+    """T17's block set on a map at `scale` with the city offset 0 (geo tiles are world tiles): the map-wide land
+    sample (trees-forests' grid, every climate band and the map's far reaches, where behemoth worms and big nests
+    are), CC_T17_CRESTS crest blocks (ridges are a Terra Nauvis map's only cliffs) and the start area."""
+    out = list(tf_sample_blocks(mk, scale))
+    lines = rd_lines(cfg, rd_table(), mk, scale, (0, 0))
+    side = CC_T17_SIDE * 32
+    crest = []
+    for rid in sorted(lines):
+        for line in lines[rid]:
+            mid = line[len(line) // 2]
+            crest.append((int(mid[0] // 32) * 32 - side // 2, int(mid[1] // 32) * 32 - side // 2, side, side))
+            break
+    step = max(1, len(crest) // CC_T17_CRESTS) if crest else 1
+    out += crest[::step][:CC_T17_CRESTS]
+    out.append((-START_AREA_CHUNKS * 32, -START_AREA_CHUNKS * 32, 2 * START_AREA_CHUNKS * 32,
+                2 * START_AREA_CHUNKS * 32))
+    return out
+
+
+def cc_digest_diff(a, b):
+    """Chunks whose tile, entity or decorative digests differ between two digest censuses of one block set:
+    {"tiles": n, "entities": n, "decoratives": n, "missing": n, "chunks": n}."""
+    out = {"tiles": 0, "entities": 0, "decoratives": 0, "missing": 0, "chunks": 0}
+    for x, y in zip(a.get("areas") or [], b.get("areas") or []):
+        cx, cy = x.get("chunks") or {}, y.get("chunks") or {}
+        for k in set(cx) | set(cy):
+            p, q = cx.get(k), cy.get(k)
+            out["chunks"] += 1
+            if p is None or q is None:
+                out["missing"] += 1
+                continue
+            out["tiles"] += p.get("t") != q.get("t")
+            out["entities"] += (p.get("e"), p.get("en")) != (q.get("e"), q.get("en"))
+            out["decoratives"] += (p.get("d"), p.get("dn")) != (q.get("d"), q.get("dn"))
+    if len(a.get("areas") or []) != len(b.get("areas") or []):
+        out["missing"] += 1
+    return out
+
+
+def cc_loaded(run_dir):
+    """({mod: checksum}, {mod: version}) a run's stdout lists (G2; D34)."""
+    so = stdout_of(run_dir)
+    return dict(CC_CHECKSUM_RE.findall(so)), {n: v for n, v in CC_LOADING_RE.findall(so)}
+
+
+def cc_settings_show(text):
+    """fh.py settings --show's JSON part as {name: value}."""
+    try:
+        d = json.loads(text[text.index("{"):text.rindex("}") + 1])
+    except ValueError:
+        return {}
+    return {n: (v or {}).get("value") for g in d.values() if isinstance(g, dict) for n, v in g.items()}
+
+
+def cc_server(ctx, modset, save, label, timeout, saves, extra=()):
+    """A loopback headless server on an existing save (the plan's server clause), on this command's own server
+    instance and port, its expected server saves copied into the run directory with their sizes and hashes."""
+    inst = ctx.shared.get("cc_server_instance") or f"{ctx.instance}-srv"
+    port = ctx.shared.get("cc_server_port") or SERVER["port"]
+    wd = ctx.ws / "test-instance" / "instances" / inst / "write-data"
+    (wd / "saves").mkdir(parents=True, exist_ok=True)
+    t0 = time.time()
+    ctx.perf.wait_quiet(ctx.deadline or time.time() + 3600)
+    r = ctx.fh(["run", "--instance", inst, "--modset", modset, "--", "--start-server", save, "--server-settings",
+                HERE / "perf-server-settings.json", "--port", str(port), "--bind", "127.0.0.1"] + list(extra),
+               ctx.out / label, timeout=timeout, monitor=True)
+    got = {}
+    for name in saves:
+        f = wd / "saves" / f"{name}.zip"
+        if f.exists() and f.stat().st_mtime >= t0:
+            dst = r.out / f"{name}.zip"
+            shutil.copy2(f, dst)
+            got[name] = {"bytes": dst.stat().st_size, "sha256": sha256_file(dst)}
+    (r.out / "server-saves.json").write_text(json.dumps({"since": t0, "saves": got}, indent=1), encoding="utf-8")
+    if r.mon:
+        r.mon.close()
+    return r.out
+
+
+def cc_stage_t12(ctx, cfg, tag, spec):
+    """A staged test copy of the mod (never shipped) with ea-cc-probe/t12.lua appended to its control.lua and `spec`
+    beside it as cc-spec.lua: T12's walker, server saves and storage dumps run in the mod's own Lua state."""
+    dst = ctx.out / "stage" / f"cc-{tag}" / cfg["identity"]["id"]
+    if dst.exists():
+        shutil.rmtree(dst)
+    shutil.copytree(MOD, dst)
+    ctl = (dst / "control.lua").read_text(encoding="utf-8")
+    probe = (CC_PROBE / "t12.lua").read_text(encoding="utf-8")
+    (dst / "control.lua").write_text(ctl + "\n" + probe, encoding="utf-8", newline="\n")
+    (dst / "cc-spec.lua").write_text("return " + lua_lit(spec) + "\n", encoding="utf-8", newline="\n")
+    return dst
+
+
+def cc_stage_unguarded(ctx, cfg):
+    """T14's positive control: a staged copy whose D33 surface guard returns at once (as spawn-cities' t14_planet)."""
+    dst = ctx.out / "stage" / "cc-unguarded" / cfg["identity"]["id"]
+    if not dst.exists():
+        shutil.copytree(MOD, dst)
+        f = dst / "scripts" / "guards.lua"
+        text = f.read_text(encoding="utf-8")
+        head = "function M.surface_guard(surface)\n"
+        if text.count(head) != 1:
+            raise GateError("scripts/guards.lua has no single surface_guard to disable for T14's control")
+        f.write_text(text.replace(head, head + "  do return 0 end\n"), encoding="utf-8", newline="\n")
+    return dst
+
+
+def cc_bench(run_dir):
+    """The --benchmark summary of a scenario's bench step: updates, ms, avg, min and max ms per tick."""
+    m = CC_BENCH_RE.search(perf_read(Path(run_dir) / "bench" / "stdout.txt"))
+    if not m:
+        return None
+    return {"updates": int(m.group(1)), "ms": float(m.group(2)), "avg": float(m.group(3)), "min": float(m.group(4)),
+            "max": float(m.group(5))}
+
+
+def perf_read(p):
+    p = Path(p)
+    return p.read_text(encoding="utf-8", errors="replace") if p.exists() else ""
+
+
+def cc_log_span(run_dir, sub=""):
+    """Seconds from a game log's first to its last timestamped line (startup and creation wall time, test notes
+    5.6: markers from the log, never the process clock)."""
+    stamps = [float(s) for s in CC_STAMP_RE.findall(perf_read(Path(run_dir) / sub / "factorio-current.log"))]
+    return round(stamps[-1] - stamps[0], 3) if len(stamps) > 1 else None
+
+
+def cc_med(vals):
+    v = [x for x in vals if isinstance(x, (int, float))]
+    return round(statistics.median(v), 4) if v else None
+
+
+def cc_range(vals):
+    v = [x for x in vals if isinstance(x, (int, float))]
+    return [round(min(v), 4), round(max(v), 4)] if v else None
+
+
+def cc_headroom_rows(maps):
+    """Every recorded timed ratio (16 LP 0xffff, 8 LP 0xff) of each map's TQ1b block in the working tree's suite
+    manifests, newest milestone last: [{map, pair, scale, mask, ratio, source}]. The manifests' summaries hold a pair
+    as {<map>: {scale_<s>: {<mask>: {ratio}}}} (or Europe's at the top level, as t15b_m1), the M2 pairs under a key
+    naming m2 or bab."""
+    rows = []
+    for s in REGISTRY:
+        man = SUITES / f"{s['id']}.json"
+        if not man.exists():
+            continue
+        checks = (json.loads(man.read_text(encoding="utf-8")).get("checks") or {})
+        for name, rec in checks.items():
+            if "t15b" not in name or name == "t15b_m0":     # t15b_m0 is P18's M0t against M0t
+                continue
+            summ = rec.get("summary") or {}
+
+            def walk(node, path):
+                if not isinstance(node, dict):
+                    return
+                for k, v in node.items():
+                    if k in (f"{0xFFFF:#x}", f"{0xFF:#x}") and isinstance(v, dict) and isinstance(v.get("ratio"),
+                                                                                              (int, float)):
+                        mk = next((p for p in path if p in maps), "europe")
+                        sc = next((int(p[6:]) for p in path if isinstance(p, str) and p.startswith("scale_")
+                                   and p[6:].isdigit()), None)
+                        pair = "m2/bab" if any("m2" in str(p) or "bab" in str(p) for p in path) else "m1/m0"
+                        rows.append({"map": mk, "pair": pair, "scale": sc, "mask": k, "ratio": float(v["ratio"]),
+                                     "source": f"{s['id']}:{name}:{'/'.join(map(str, path))}"})
+                    else:
+                        walk(v, path + [k])
+            walk(summ, [])
+    return rows
+
+
+@contextlib.contextmanager
+def cc_sa_runner(ctx, sa):
+    """tools/sa_compat.py inside a runner command: its fh.py calls go through this command's runs (the command holds
+    the workspace lock and runs one game at a time, so sa_compat's own quiet wait stands down), on this command's
+    instance."""
+    def runner(args):
+        args = [str(a) for a in args]
+        if args[0] in ("modset", "settings", "compare"):
+            text = cc_fh_text(ctx, args)
+            res = [l for l in text.splitlines() if l.startswith("RESULT ")]
+            return (res[-1] if res else "RESULT none " + text[-300:]), text
+        out = Path(args[args.index("--out") + 1])
+        timeout = int(args[args.index("--timeout") + 1]) if "--timeout" in args else CC_TIMEOUT
+        r = ctx.fh(args, out, timeout=timeout)
+        return r.result, r.text
+    old = (sa.RUNNER, sa.INSTANCE)
+    sa.RUNNER, sa.INSTANCE = runner, f"{ctx.instance}-sa"
+    try:
+        yield sa
+    finally:
+        sa.RUNNER, sa.INSTANCE = old
+
+
+def cc_sa_residue_ok(two, surface, cmp_):
+    """The gate-row note (sa-compat r1): an entity-only difference on a planet passes only where a vanilla engine
+    control (an elevation-only MGS with a vanilla body, no Terra Nauvis) moves the same chunk of the same planet;
+    tiles, decoratives, resources, settings, programs or sampled properties never pass."""
+    if not (cmp_.get("pen_equal") and cmp_.get("props_equal") and cmp_.get("programs_equal") is not False):
+        return False
+    moved = {(b, ch) for lab, v in ((two.get("differences") or {}).get(surface) or {}).items()
+             if lab.endswith("(engine control)") for b, kinds in (v.get("chunks") or {}).items()
+             for ch in kinds.get("entities", [])}
+    mine = set()
+    for b, v in (cmp_.get("blocks") or {}).items():
+        dc = v.get("diff_counts") or {}
+        if set(dc) - {"entities"}:
+            return False
+        mine |= {(b, ch) for ch in (v.get("diff") or {}).get("entities", [])}
+    return bool(mine) and mine <= moved
+
+
+def cc_sa_judge(root, require_control=True):
+    """sa_compat's report rebuilt from the raw runs (never a stored verdict), with every run's G1, every report
+    check, the positive control (where the run has one) and the residue rule on the travel pair."""
+    import sa_compat as sa
+    fails = []
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        sa.main(["report", "--root", str(root)])
+    rep = json.loads((Path(root) / "report.json").read_text(encoding="utf-8"))
+    runs = Path(root) / "runs"
+    for rd in sorted(runs.iterdir()) if runs.is_dir() else []:
+        ok, why = sa.run_ok(rd)
+        if ok is False:
+            fails.append(f"{rd.name}: {why}")
+    c = rep.get("checks") or {}
+    for k, v in c.items():
+        if not v.get("pass"):
+            fails.append(f"sa_compat {k}: fails")
+    two = c.get("2_planets") or {}
+    if require_control:
+        pos = two.get("positive_control") or {}
+        if not pos:
+            fails.append("the run holds no positive control (G6)")
+        for p, per in pos.items():
+            for s, f in per.items():
+                if not (f.get("pen_differs") and f.get("programs_differ")):
+                    fails.append(f"positive control {p}/{s}: the unguarded copy's planet reads no Earth key or "
+                                 f"compiles the same programs (G6): {f}")
+    for line in two.get("leaks") or []:
+        fails.append(f"planet leak: {line}")
+    travel = two.get("travel")
+    for p, tr in (travel.items() if isinstance(travel, dict) else []):
+        for s, cmp_ in (tr.get("comparisons") or {}).items():
+            if cmp_.get("generation_equal") is False and not cc_sa_residue_ok(two, s, cmp_):
+                fails.append(f"travel {p}: {s} differs beyond the engine residue: "
+                             f"{ {b: v.get('diff_counts') for b, v in (cmp_.get('blocks') or {}).items()} }")
+    return rep, fails
+
+
+def cc_rep_from_raw(run, mask):
+    """One T15d repetition re-derived from its run directory and the files beside it (rule 2; rep_from_raw's
+    rules for tq2-driver's forced job): G1, the force time and the block census from script-output/tq2, the block
+    fully generated after the call (EarthMaps' painting may have generated some of it before, so the time divides
+    by the chunks the call generated), the persisted monitor record and the affinity verdict from the watcher's
+    records."""
+    import perf
+    run = Path(run)
+    reasons = list(g1(run))
+    f = perf.parse_forced(run, tag="tq2")
+    c = f.get("census") or {}
+    if c.get("block_generated_after") != 256:
+        reasons.append(f"block not fully generated: {c.get('block_generated_before')} -> {c.get('block_generated_after')}")
+    if f.get("force_ms") is None:
+        reasons.append("no force duration")
+    mon_file = run.parent / f"{run.name}-monitor.json"
+    try:
+        mon = json.loads(mon_file.read_text(encoding="utf-8")) if mon_file.exists() else None
+    except ValueError:
+        mon = None
+    if mon is None:
+        reasons.append(f"no persisted monitor record ({mon_file.name})")
+    else:
+        if mon.get("foreign") or (mon.get("max_games") or 0) > 1 or mon.get("tasklist_after"):
+            reasons.append(f"another game process during or right after the run {mon.get('foreign')}")
+        if mon.get("load_pre") is None or float(mon["load_pre"]) >= perf.LOAD_LIMIT:
+            reasons.append(f"CPU load before the run {mon.get('load_pre')} is not under {perf.LOAD_LIMIT}%")
+        if mon.get("mask") != mask:
+            reasons.append(f"monitor record mask {mon.get('mask')} differs from the run's {mask}")
+    if mask:
+        reasons += ["affinity: " + x for x in affinity_from_raw(run.parent / f"{run.name}-affinity.jsonl", mon_file,
+                                                               run / "bench" / "factorio-current.log", mask)]
+    gen = (c.get("block_generated_after") or 0) - (c.get("block_generated_before") or 0)
+    return {"valid": not reasons, "reasons": reasons, "force_ms": f.get("force_ms"), "generated": gen,
+            "census": {k: c.get(k) for k in CENSUS_KEYS + ("block_generated_before",)}}
+
+CC_HOOK_RE = re.compile(r"^\s*if\(\s*([A-Za-z_][A-Za-z0-9_]*)\s*>\s*0\.5\s*,")
+
+
+def cc_t14_walk(d1, d0, cfg):
+    """T14's static rule with the stable hooks (ARCHITECTURE.md, "Stable hooks on shared prototypes"): t14_walk's
+    references, less those a shared prototype makes only inside its autoplace through a hook, a text of the form
+    if(<Earth gate> > 0.5, ...); the planets, less Nauvis's autoplace settings that only gain names (the hooks
+    register their tiles there). Returns (references, planet differences)."""
+    earth = set(earth_bodies(d1, cfg))
+    refs, _ = t14_walk(d1, d0, cfg)
+    kept = []
+    for r in refs:
+        m = re.match(r"^(\S+) (\S+) references ", r)
+        proto = ((d1.get(m.group(1)) or {}).get(m.group(2)) if m else None)
+        if isinstance(proto, dict) and cc_hooked_only(proto, earth):
+            continue
+        kept.append(r)
+    planets = []
+    p0, p1 = d0.get("planet") or {}, d1.get("planet") or {}
+    for n in sorted(set(p0) | set(p1)):
+        a, b = p1.get(n), p0.get(n)
+        if a == b:
+            continue
+        if n == "nauvis" and isinstance(a, dict) and isinstance(b, dict) and cc_settings_added_only(a, b):
+            continue
+        planets.append(n)
+    return kept, planets
+
+
+def cc_hooked_only(proto, earth):
+    """True when every Earth name a prototype references sits in its autoplace inside a stable hook."""
+    def names_in(o):
+        if isinstance(o, str):
+            return {tok for tok in expr_refs(o) if tok in earth}
+        if isinstance(o, dict):
+            return set().union(set(), *(names_in(v) | ({k} & earth) for k, v in o.items()))
+        if isinstance(o, list):
+            return set().union(set(), *(names_in(v) for v in o))
+        return set()
+    rest = {k: v for k, v in proto.items() if k != "autoplace"}
+    if names_in(rest):
+        return False
+    ap = proto.get("autoplace") or {}
+    for k in ("probability_expression", "richness_expression"):
+        text = ap.get(k)
+        if isinstance(text, str) and names_in(text):
+            m = CC_HOOK_RE.match(text)
+            if not (m and m.group(1) in earth):
+                return False
+    for k, v in (ap.get("local_expressions") or {}).items():
+        if names_in(v):
+            return False
+    return True
+
+
+def cc_settings_added_only(a, b):
+    """True when planet prototype a equals b but for names added to its map gen autoplace settings."""
+    a2, b2 = json.loads(json.dumps(a)), json.loads(json.dumps(b))
+    sa = ((a2.get("map_gen_settings") or {}).get("autoplace_settings") or {})
+    sb = ((b2.get("map_gen_settings") or {}).get("autoplace_settings") or {})
+    for kind in set(sa) | set(sb):
+        ka, kb = (sa.get(kind) or {}).get("settings") or {}, (sb.get(kind) or {}).get("settings") or {}
+        if any(n not in ka or ka[n] != v for n, v in kb.items()):
+            return False
+        for n in set(ka) - set(kb):
+            del ka[n]
+    return a2 == b2
+
+
+def cc_t14_controls(d1, d0, cfg, entry):
+    """cc_t14_walk's positive controls on a copy of the dump: a vanilla-named expression reading an Earth body, a
+    shared prototype's autoplace reading one outside a hook, and a changed Nauvis field other than its autoplace
+    settings must all be found."""
+    out = {}
+    fx = json.loads(json.dumps(d1))
+    fx.setdefault("noise-expression", {})["ea_t14_fixture"] = {"type": "noise-expression", "name": "ea_t14_fixture",
+                                                               "expression": f"1 + {entry}"}
+    tile = next((n for n, t in (fx.get("tile") or {}).items() if isinstance(t, dict) and t.get("autoplace")), None)
+    if tile:
+        fx["tile"][tile]["autoplace"] = dict(fx["tile"][tile]["autoplace"], probability_expression=f"max(0, {entry})")
+    nauvis = (fx.get("planet") or {}).get("nauvis")
+    if nauvis is not None:
+        fx["planet"]["nauvis"] = dict(nauvis, map_seed_offset=12345)
+    refs, planets = cc_t14_walk(fx, d0, cfg)
+    out["a vanilla-named expression reading an Earth body"] = any("ea_t14_fixture" in r for r in refs)
+    out["an autoplace reading an Earth body outside a hook"] = tile is None or any(f"tile {tile} " in r for r in refs)
+    out["a changed Nauvis field"] = nauvis is None or "nauvis" in planets
+    return out
+
+
+
+def cc_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """compat-completeness's suite checks, added to suite_checks' table (design section 14, milestone 0)."""
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    K = cfg["keys"]
+    ident = cfg["identity"]
+    maps = [k for k in cfg["map_order"] if (cfg.get("geography") or {}).get(k)]
+    pname0, mk0, _ = first_preset(cfg)
+    on, ver, off = cc_pack()
+
+    def key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "pack": [[n, ver.get(n)] for n in on], "disabled": off, "extra": extra or {}})
+
+    def cc_preview(ms, label, preset=None, mgs=None):
+        """A 256 px preview at seed 1000 with a pack-sized timeout (a pack run loads about 1.9 GiB of zips)."""
+        return ctx.fh(preview_args(ctx.instance, ms, CC_PREVIEW, mgs=mgs, preset=preset), ctx.out / label,
+                      timeout=CC_TIMEOUT).out
+
+    def earth_world(ms, mk, label, pin=None, scale=None):
+        """The MGS file of a map's preset on the modset's own dump (the full-MGS route T13 proves equal to the
+        preset route)."""
+        return cc_mgs(ctx, cfg, cc_dump(ctx, mods, ms), mk, label, scale=scale, pin=pin)
+
+    # ---------------------------------------------------------------------------------------------- T13, D34
+    # T13 and T16 (SS; D34; M0 to M6, BAB and BL): every modset loads (dump-data and --create) with exit 0 and no
+    # error signature; every mod it holds prints its checksum line (G2) at R5's version; M4 to M6 hold every enabled
+    # live mod (79, plus rso-mod in M5, less Alien Biomes in M6) and Earth; no run passes a disabled live mod; an
+    # Earth world on an Earth modset logs its start message (the preset applied); the M5 world logs the RSO warning
+    # once; factorio-admin-command-center's regeneration reads false after the runs in every modset holding it.
+    def load_run(deadline):
+        dirs = []
+        for kind in CC_LOAD_KINDS:
+            ms = cc_modset(ctx, mods, kind)
+            dump_dir = mods.prepare(ms, ms).out
+            out = ctx.out / f"cc-load-{kind}"
+            r = ctx.fh(create_args(ctx.instance, ms, out / "w.zip", preset=None if kind in CC_NO_EARTH else pname0), out,
+                       timeout=CC_TIMEOUT)
+            (out / "settings-show.json").write_text(json.dumps(cc_settings_show(cc_fh_text(ctx, [
+                "settings", ms, "--show"])), indent=1, sort_keys=True), encoding="utf-8")
+            (out / "modset.json").write_text(json.dumps({"kind": kind, "modset": ms, "mod_list": mods.modlist(ms),
+                                                         "dump_dir": rel_ws(ctx, dump_dir)}, indent=1),
+                                             encoding="utf-8")
+            dirs += [dump_dir, r.out]
+            if kind in CC_BIG:
+                cc_drop(ctx, mods, [ms])
+        return dirs
+
+    def load_derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != 2 * len(CC_LOAD_KINDS):
+            return {}, [f"{len(dirs)} run directories, want {2 * len(CC_LOAD_KINDS)}"], ""
+        for i, kind in enumerate(CC_LOAD_KINDS):
+            dump_dir, create_dir = Path(dirs[2 * i]), Path(dirs[2 * i + 1])
+            fails += g1(dump_dir) + g3(dump_dir) + g1(create_dir) + g3(create_dir)
+            want = cc_expected_mods(cfg, kind)
+            sums, vers = cc_loaded(dump_dir)
+            missing = [m for m in want if m not in sums]
+            extra = sorted(set(sums) - set(want) - {"core"})
+            if missing:
+                fails.append(f"{kind}: no checksum line for {missing[:6]} (G2)")
+            if extra:
+                fails.append(f"{kind}: loads mods it should not: {extra[:6]}")
+            passed = [m for m in CC_DISABLED if m in sums or m in vers]
+            ml = json.loads((create_dir / "modset.json").read_text(encoding="utf-8")).get("mod_list") \
+                if (create_dir / "modset.json").exists() else []
+            passed += [m["name"] for m in ml if m.get("name") in CC_DISABLED and m.get("enabled")]
+            if passed:
+                fails.append(f"{kind}: a disabled live mod was passed: {sorted(set(passed))} (D34)")
+            drift = {m: [vers.get(m), ver.get(m)] for m in cc_live_names(kind)
+                     if m in vers and ver.get(m) and vers[m] != ver[m]}
+            if drift:
+                fails.append(f"{kind}: live mods load at other versions than R5 recorded: {dict(list(drift.items())[:4])}")
+            live = len([m for m in cc_live_names(kind) if m in sums])
+            rec = {"mods": len(sums) - ("core" in sums), "live": live, "drift": drift}
+            if kind not in CC_NO_EARTH:
+                starts = count_lines(log_text(create_dir), message_prefix(cfg, "start"))
+                rec["start_lines"] = starts
+                if not starts:
+                    fails.append(f"{kind}: the Earth world logs no start message: the preset did not apply (G5)")
+            if kind == "m5":
+                n = count_lines(log_text(create_dir), message_prefix(cfg, "rso"))
+                rec["rso_lines"] = n
+                if n != 1:
+                    fails.append(f"m5: the Earth world logs the RSO warning {n} times (want once; TEST-STRATEGY 4.3)")
+            if CC_FACC_MOD in cc_live_names(kind):
+                st = json.loads((create_dir / "settings-show.json").read_text(encoding="utf-8")) \
+                    if (create_dir / "settings-show.json").exists() else {}
+                rec["facc_regeneration"] = st.get(CC_FACC_SETTING)
+                if st.get(CC_FACC_SETTING) is not False:
+                    fails.append(f"{kind}: {CC_FACC_SETTING} reads {st.get(CC_FACC_SETTING)!r} after the runs, not false "
+                                 f"(G7; TEST-STRATEGY 4.2)")
+            meas[kind] = rec
+        for kind, want in (("m4", len(on) - 1), ("m5", len(on)), ("m6", len(on) - 1 - len(CC_AB)), ("bl", len(on) - 1)):
+            got = (meas.get(kind) or {}).get("live")
+            if got != want:
+                fails.append(f"{kind}: {got} live mods load, want {want} (D34: 79 plus Earth, rso-mod in M5)")
+        return meas, fails, "; ".join(f"{k}: {v['mods']} mods" for k, v in meas.items())
+
+    checks["cc_load"] = SuiteCheck("cc_load", lambda: key("cc_load", {"kinds": CC_LOAD_KINDS}), load_run, load_derive)
+
+    # T13 (SS; M3 to M6): on each map the preset route (--preset) and the full-MGS route (the modset's own dump of
+    # the preset) render the same preview, and it differs from the modset's default world (Earth was active, G5)
+    route_plan = [(kind, mk) for kind in CC_ROUTE_KINDS for mk in maps]
+
+    def routes_run(deadline):
+        dirs = []
+        for kind in CC_ROUTE_KINDS:
+            ms = cc_modset(ctx, mods, kind)
+            dirs.append(cc_preview(ms, f"cc-route-{kind}-default"))
+            for mk in maps:
+                pn, _ = map_preset(cfg, mk)
+                dirs.append(cc_preview(ms, f"cc-route-{kind}-{mk}-preset", preset=pn))
+                dirs.append(cc_preview(ms, f"cc-route-{kind}-{mk}-mgs", mgs=earth_world(ms, mk, f"route-{kind}-{mk}")))
+            if kind in CC_BIG:
+                cc_drop(ctx, mods, [ms])
+        return dirs
+
+    def routes_derive(dirs):
+        fails, meas, k = [], {}, 0
+        per = 1 + 2 * len(maps)
+        if len(dirs) != per * len(CC_ROUTE_KINDS):
+            return {}, [f"{len(dirs)} run directories, want {per * len(CC_ROUTE_KINDS)}"], ""
+        for kind in CC_ROUTE_KINDS:
+            base = derive_preview(dirs[k])["images"]
+            fails += g1(dirs[k]) + g3(dirs[k])
+            k += 1
+            for mk in maps:
+                a, b = dirs[k], dirs[k + 1]
+                k += 2
+                fails += g1(a) + g3(a) + g1(b) + g3(b)
+                ia, ib = derive_preview(a)["images"], derive_preview(b)["images"]
+                same, differs = ia == ib, ia != base
+                meas[f"{kind}-{mk}"] = {"routes_equal": same, "differs_from_default": differs}
+                if not same:
+                    fails.append(f"{kind} {mk}: the preset route and the full-MGS route render different previews")
+                if not differs:
+                    fails.append(f"{kind} {mk}: the Earth preview equals the default world's (G5)")
+        return meas, fails, f"{sum(v['routes_equal'] for v in meas.values())} of {len(meas)} routes equal"
+
+    checks["cc_t13_routes"] = SuiteCheck("cc_t13_routes", lambda: key("cc_t13_routes", {"plan": route_plan}),
+                                         routes_run, routes_derive)
+
+    # T13 (SS; zero cost when not chosen; M4 against BL): a default-preset world with Earth in the full pack equals
+    # the pack without Earth in every preview hash at the canonical seeds and in the compiled programs (--verbose);
+    # the positive control, Europe's preset on M4 at seed 1000, must differ from BL's default
+    def zero_run(deadline):
+        dirs = []
+        for kind in ("m4", "bl"):
+            ms = cc_modset(ctx, mods, kind)
+            dirs.append(ctx.fh(["preview", "--instance", ctx.instance, "--modset", ms, "--seed", str(CC_SEEDS[0]),
+                                "--seed-max", str(CC_SEEDS[-1]), "--size", str(CC_PREVIEW), "--", "--verbose"],
+                               ctx.out / f"cc-zero-{kind}", timeout=CC_TIMEOUT).out)
+            if kind == "m4":
+                dirs.append(cc_preview(ms, "cc-zero-m4-europe", preset=pname0))
+            cc_drop(ctx, mods, [ms])
+        return dirs
+
+    def zero_derive(dirs):
+        fails = []
+        if len(dirs) != 3:
+            return {}, [f"{len(dirs)} run directories, want 3"], ""
+        m4, ctl_, bl = (Path(x) for x in dirs)
+        for x in (m4, ctl_, bl):
+            fails += g1(x) + g3(x)
+        a, b = derive_preview(m4, len(CC_SEEDS)), derive_preview(bl, len(CC_SEEDS))
+        same_img = a["images"] == b["images"]
+        same_cx = a["complexity"] == b["complexity"] and bool(a["complexity"])
+        if not same_img:
+            fails.append("M4's default world differs from BL's in a preview hash (T13 zero cost)")
+        if not same_cx:
+            fails.append(f"M4's default programs differ from BL's: {a['complexity']} against {b['complexity']}")
+        e = derive_preview(ctl_)["images"]
+        if e and list(e.values())[0] == b["images"].get(f"{CC_SEEDS[0]}.png"):
+            fails.append("positive control: Europe's preset on M4 renders BL's default world (G5, G6)")
+        return {"images_equal": same_img, "complexity_equal": same_cx, "complexity": a["complexity"]}, fails, \
+            f"M4 default equals BL: images {same_img}, programs {same_cx}"
+
+    checks["cc_t13_zero"] = SuiteCheck("cc_t13_zero", lambda: key("cc_t13_zero"), zero_run, zero_derive)
+
+    # ---------------------------------------------------------------------------------------------- T17
+    # T17 (SS; every map at its defaults, scale 6; M1 and M2): over each map's block set (cc_t17_blocks, city
+    # offset 0) every name with Nauvis autoplace in M0's dump (tiles, resources, trees, rocks, decoratives, fish,
+    # the cliff, spawners and worms) appears at least once; the probe first finds every one of them on M0 over
+    # the union of the maps' block sets (the calibration: a name the block set cannot reach in vanilla fails it)
+    blocks = {mk: cc_t17_blocks(cfg, mk) for mk in maps}
+    union = sorted({a for mk in maps for a in blocks[mk]})
+    t17_plan = [("m0", None)] + [(kind, mk) for mk in maps for kind in ("m1", "m2")]
+
+    def t17_run(deadline):
+        lanes = [[] for _ in range(min(PAR_MAX, len(t17_plan)))]
+        dirs = []
+        for i, (kind, mk) in enumerate(t17_plan):
+            ln = i % len(lanes)
+            ms = cc_modset(ctx, mods, kind, (CC_PROBE,), lane=ln)
+            label = f"t17-{kind}-{mk or 'calibration'}"
+            areas = union if mk is None else blocks[mk]
+            mgs = None if mk is None else earth_world(ms, mk, f"t17-{kind}-{mk}", scale=6, pin=(0, 0))
+            out = ctx.out / f"cc-{label}"
+            lanes[ln].append((cc_job(ctx, ms, cc_census_spec(label, areas)),
+                              scenario_args(lane_instance(ctx, ln), ms, CC_TICKS, SEED, mgs), out, 3600))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def t17_derive(dirs):
+        fails, meas = [], {}
+        names = cc_t17_names(ctx.shared["dump_m0"])
+        if not any(names.values()):
+            return {}, ["M0's dump lists no autoplaced name (exit-0 guard)"], ""
+        for (kind, mk), x in zip(t17_plan, dirs):
+            fails += g1(x) + g3(x)
+            label = f"t17-{kind}-{mk or 'calibration'}"
+            try:
+                seen = cc_names_seen(cc_read(x, f"{label}-census.json"))
+            except GateError as e:
+                fails.append(str(e))
+                continue
+            miss = cc_t17_missing(names, seen)
+            meas[label] = {"missing": miss, "seen": {c: len(set(v) & (set(seen["entity"]) | seen["tile"] |
+                                                                      seen["decorative"])) for c, v in names.items()}}
+            if miss:
+                what = "the block set misses on M0 (calibration)" if mk is None else "never placed"
+                fails.append(f"{label}: {what}: " + "; ".join(f"{c} {v[:6]}" for c, v in miss.items()))
+            if kind == "m2" and not (set(seen["tile"]) - set(names["tile"])):
+                fails.append(f"{label}: no Alien Biomes tile placed: AB did not load (G5)")
+        return meas, fails, "; ".join(f"{k}: {sum(len(v) for v in m['missing'].values())} missing"
+                                      for k, m in meas.items())
+
+    checks["cc_t17"] = SuiteCheck("cc_t17", lambda: key("cc_t17", {"plan": t17_plan, "blocks": blocks}), t17_run,
+                                  t17_derive)
+
+    # ---------------------------------------------------------------------------------------------- T14
+    # T14 (SS; M4 at runtime; M1 and M2 static): in an Earth world on the full pack every surface but Nauvis
+    # (minime's hidden surfaces among them) reads the Earth map id as 0 or unrecognized while Nauvis reads it above
+    # 0 (G5). The positive control is a surface the probe makes with no map gen settings of its own, which inherits
+    # the save's defaults: the guard must strip it on M4 and beside minime alone, and a staged copy whose guard
+    # returns at once must leave it reading the map id (minime passes its own settings to create_surface, so its
+    # surfaces inherit nothing either way: the 2026-10-28 draft run read them as unrecognized with and without the
+    # guard). Static: the walker holds on M1 against M0 and on M2 against BAB with the stable hooks allowed
+    # (cc_t14_walk), and its positive controls are found.
+    t14_keys = [K["map"], K["geo"]]
+    t14_control = "ea-cc-probe-control"
+
+    def t14_run(deadline):
+        spec = f"surfaces:3:{','.join(t14_keys)}:{t14_control}"
+        dirs = []
+        ms4 = cc_modset(ctx, mods, "m4", (CC_PROBE,))
+        mgs4 = earth_world(ms4, mk0, "t14-m4")
+        cc_job(ctx, ms4, spec)()
+        dirs.append(ctx.fh(scenario_args(ctx.instance, ms4, 5, SEED, mgs4), ctx.out / "cc-t14-m4",
+                           timeout=CC_TIMEOUT).out)
+        cc_drop(ctx, mods, [ms4])
+        for tag, earth_dir in (("guarded", None), ("unguarded", cc_stage_unguarded(ctx, cfg))):
+            ms = cc_modset(ctx, mods, "minime", (CC_PROBE,), earth_dir=earth_dir)
+            cc_job(ctx, ms, spec)()
+            dirs.append(ctx.fh(scenario_args(ctx.instance, ms, 5, SEED, earth_world(ms, mk0, f"t14-{tag}")),
+                               ctx.out / f"cc-t14-minime-{tag}", timeout=CC_TIMEOUT).out)
+        return dirs
+
+    def t14_derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != 3:
+            return {}, [f"{len(dirs)} run directories, want 3"], ""
+        mk_key = K["map"]
+        for label, x in zip(("m4", "minime-guarded", "minime-unguarded"), dirs):
+            fails += g1(x) + g3(x)
+            try:
+                rep = cc_read(x, "surfaces.json")
+            except GateError as e:
+                fails.append(str(e))
+                continue
+            surfs = {s["name"]: s for s in rep.get("surfaces") or []}
+            nv = ((surfs.get("nauvis") or {}).get("values") or {}).get(mk_key)
+            if not isinstance(nv, (int, float)) or nv <= 0:
+                fails.append(f"{label}: Nauvis reads {mk_key} as {nv!r}: not an Earth world (G5)")
+            others = {n: ("unrecognized" if mk_key in (s.get("unrecognized") or []) else
+                          (s.get("values") or {}).get(mk_key)) for n, s in surfs.items() if n != "nauvis"}
+            mini = {n: v for n, v in others.items() if "minime" in n.lower()}
+            ctl_ = others.get(t14_control)
+            meas[label] = {"nauvis": nv, "others": others}
+            if not mini:
+                fails.append(f"{label}: no minime surface exists to read (T14 needs minime's hidden surfaces)")
+            if t14_control not in others:
+                fails.append(f"{label}: the probe's control surface is missing")
+            if label == "minime-unguarded":
+                if not (isinstance(ctl_, (int, float)) and ctl_ > 0):
+                    fails.append(f"positive control: with the guard disabled the control surface reads {ctl_!r}, not the "
+                                 f"Earth map id: the check cannot see a leak (G6)")
+            else:
+                bad = {n: v for n, v in others.items() if not (v == "unrecognized" or v == 0)}
+                if bad:
+                    fails.append(f"{label}: surfaces other than Nauvis read the Earth map id: {bad} (D33)")
+        # the static walker on M1 against M0 and on M2 against BAB, with its positive controls
+        _, _, g0 = first_preset(cfg)
+        for label, da, db in (("m1", "dump_m1", "dump_m0"), ("m2", "dump_m2", "dump_bab")):
+            d1, d0 = ctx.shared.get(da), ctx.shared.get(db)
+            if d1 is None or d0 is None:
+                fails.append(f"static {label}: no {da} and {db} dumps")
+                continue
+            refs, planets = cc_t14_walk(d1, d0, cfg)
+            fails += [f"T14 static {label}: {r}" for r in refs[:6]] + [f"T14 static {label}: planet {p}"
+                                                                          for p in planets]
+            for what, ok in cc_t14_controls(d1, d0, cfg, g0["entry"]).items():
+                if not ok:
+                    fails.append(f"T14 static {label}: the positive control was not found: {what} (G6)")
+            meas[f"static-{label}"] = {"references": len(refs), "planets": planets}
+        return meas, fails, (f"M4: Nauvis {(meas.get('m4') or {}).get('nauvis')}, others "
+                             f"{(meas.get('m4') or {}).get('others')}; static walker on M1 and M2")
+
+    checks["cc_t14"] = SuiteCheck("cc_t14", lambda: key("cc_t14", {"keys": t14_keys}), t14_run, t14_derive)
+
+    # ---------------------------------------------------------------------------------------------- T12
+    # T12 (SS; design experiment 8; M1, M2 and M4; Europe's preset at its defaults): the same seed twice gives
+    # identical benchmark checksums and 0 differing tiles, entities and decoratives over a spawn block and the T15b
+    # block (per-chunk digests); --threads 1 against the default and affinity 8 LP against all 24 agree; a loopback
+    # server explores with a walker and saves at t1 and t2, and the t1 save benchmarked to t2 + 1 at 24 and at 8 LP
+    # and the t2 save benchmarked one tick give one checksum and one storage dump; the same recipe on the
+    # bad probe (a tile write from a counter a load resets) must diverge, or it cannot see a desync (G6).
+    T = CC_T12
+    t12_kinds = CC_T12_KINDS
+    t12_route = [[2048 + 64 * k, -2048] for k in range(T["steps"])]
+
+    def t12_spec(label, bad):
+        return {"label": label, "bad": bad, "start": T["start"], "period": T["period"],
+                "walkers": [{"points": t12_route, "radius": T["radius"]}],
+                "saves": [{"tick": T["t1"], "name": f"{label}-a"}, {"tick": T["t2"], "name": f"{label}-b"}],
+                "storage_ticks": [T["t2"] + 1], "report_tick": T["t2"] + 2}
+
+    def masked(args, out, mask, timeout=CC_TIMEOUT):
+        perf = ctx.perf
+        watcher = perf.Watcher(Path(str(out) + "-affinity.jsonl"), mask, ctx.job) if mask else None
+        r = ctx.fh(args, out, timeout=timeout, watcher=watcher, monitor=bool(mask))
+        if watcher:
+            recs, _, _ = watcher.finish()
+            av = perf.affinity_verdict(recs, r.mon, perf.read(r.out / "bench" / "factorio-current.log"), mask)
+            r.out.mkdir(parents=True, exist_ok=True)      # a run fh.py refused leaves no directory
+            (r.out / "affinity.json").write_text(json.dumps(av, indent=1, default=str), encoding="utf-8")
+        if r.mon:
+            r.mon.close()
+        return r
+
+    def t12_run(deadline):
+        perf = ctx.perf
+        outs = []
+        for kind in t12_kinds:
+            ms = cc_modset(ctx, mods, kind, (CC_PROBE,))
+            mgs = earth_world(ms, mk0, f"t12-{kind}")
+            cc_job(ctx, ms, cc_census_spec("t12", CC_T12_AREAS, digest=True))()
+            for tag, extra, mask in (("a", [], None), ("b", [], None), ("t1", ["--", "--threads", "1"], None),
+                                     ("a8", [], perf.MASK8)):
+                outs.append(masked(scenario_args(ctx.instance, ms, CC_TICKS, SEED, mgs) + extra,
+                                   ctx.out / f"cc-t12-{kind}-{tag}", mask).out)
+            if kind in CC_BIG:
+                cc_drop(ctx, mods, [ms])
+            for bad in (False, True):
+                label = f"t12{'bad' if bad else ''}{kind}"
+                stage = cc_stage_t12(ctx, cfg, label, t12_spec(label, bad))
+                rs = cc_modset(ctx, mods, kind, (), earth_dir=stage)
+                save = ctx.out / f"cc-{label}-create" / "s.zip"
+                r0 = ctx.fh(create_args(ctx.instance, rs, save, mgs=earth_world(rs, mk0, f"{label}-world")),
+                            ctx.out / f"cc-{label}-create", timeout=CC_TIMEOUT)
+                srv = cc_server(ctx, rs, save, f"cc-{label}-server", T["server_timeout"], [f"{label}-a", f"{label}-b"])
+                outs += [r0.out, srv]
+                a, b = srv / f"{label}-a.zip", srv / f"{label}-b.zip"
+                for tag, sv, ticks, mask in (("a24", a, T["t2"] - T["t1"] + 1, None),
+                                             ("a8", a, T["t2"] - T["t1"] + 1, perf.MASK8), ("b", b, 1, None)):
+                    outs.append(masked(scenario_args(ctx.instance, rs, ticks, save=sv), ctx.out / f"cc-{label}-{tag}",
+                                       mask).out)
+                if kind in CC_BIG:
+                    cc_drop(ctx, mods, [rs])
+        return outs
+
+    def t12_derive(dirs):
+        fails, meas = [], {}
+        per = 4 + 2 * 5
+        if len(dirs) != per * len(t12_kinds):
+            return {}, [f"{len(dirs)} run directories, want {per * len(t12_kinds)}"], ""
+        for i, kind in enumerate(t12_kinds):
+            ds = [Path(x) for x in dirs[i * per:(i + 1) * per]]
+            a, b, t1, a8 = ds[:4]
+            rec = {}
+            for x in (a, b, t1, a8):
+                fails += g1(x) + g3(x)
+            cs = {n: (load_run_json(x) or {}).get("bench_checksums") for n, x in zip(("a", "b", "t1", "a8"), (a, b, t1, a8))}
+            rec["checksums_equal"] = bool(cs["a"]) and cs["a"] == cs["b"] == cs["t1"] == cs["a8"]
+            if not rec["checksums_equal"]:
+                fails.append(f"{kind}: benchmark checksums differ across twice, --threads 1 and 8 LP: {cs}")
+            try:
+                ca = cc_read(a, "t12-census.json")
+                diffs = {n: cc_digest_diff(ca, cc_read(x, "t12-census.json")) for n, x in (("b", b), ("t1", t1), ("a8", a8))}
+                rec["digest_diffs"] = diffs
+                for n, df in diffs.items():
+                    if df["tiles"] or df["entities"] or df["decoratives"] or df["missing"] or not df["chunks"]:
+                        fails.append(f"{kind}: {n} against the first run: {df} (want 0 differing chunks)")
+            except GateError as e:
+                fails.append(str(e))
+            if not count_lines(log_text(a), message_prefix(cfg, "start")):
+                fails.append(f"{kind}: the world logs no start message: not an Earth world (G5)")
+            av = json.loads((a8 / "affinity.json").read_text(encoding="utf-8")) if (a8 / "affinity.json").exists() else {}
+            if av.get("reasons"):
+                fails.append(f"{kind}: the 8 LP run's affinity did not hold: {av['reasons'][:2]}")
+            for j, bad in enumerate((False, True)):
+                label = f"t12{'bad' if bad else ''}{kind}"
+                create, srv, a24, a8r, bb = ds[4 + 5 * j:4 + 5 * (j + 1)]
+                fails += g1(create)
+                _, f = derive_server(srv, [f"{label}-a", f"{label}-b"])
+                fails += f
+                c3 = {}
+                st = {}
+                for tag, x in (("a24", a24), ("a8", a8r), ("b", bb)):
+                    fails += g1(x)
+                    c3[tag] = (load_run_json(x) or {}).get("bench_checksums")
+                    p = x / "script-output" / "ea-cc-probe" / f"{label}-storage-{T['t2'] + 1}.json"
+                    st[tag] = p.read_text(encoding="utf-8") if p.exists() else None
+                same = bool(c3["a24"]) and c3["a24"] == c3["a8"] == c3["b"]
+                same_st = st["a24"] is not None and st["a24"] == st["a8"] == st["b"]
+                rec["bad" if bad else "recipe"] = {"checksums": c3, "equal": same, "storage_equal": same_st}
+                if not bad and not (same and same_st):
+                    fails.append(f"{kind}: the save and load recipe disagrees (checksums {c3}, storage equal {same_st})")
+                if bad and same:
+                    fails.append(f"{kind}: the bad probe's paths agree: the recipe cannot see a desync (G6)")
+            meas[kind] = rec
+        return meas, fails, "; ".join(f"{k}: twice/threads/8 LP equal {v.get('checksums_equal')}, recipe "
+                                      f"{(v.get('recipe') or {}).get('equal')}, bad probe diverges "
+                                      f"{not (v.get('bad') or {}).get('equal', True)}" for k, v in meas.items())
+
+    checks["cc_t12"] = SuiteCheck("cc_t12", lambda: key("cc_t12", {"t12": T, "areas": CC_T12_AREAS, "kinds": t12_kinds}),
+                                  t12_run, t12_derive)
+
+    # ---------------------------------------------------------------------------------------------- T15d
+    # T15d (SS; design experiment 7; test notes 5.6) in one quiet group per metric: vanilla (M0), Earth (M1),
+    # Alien Biomes (BAB), Earth with it (M2), EarthMaps (B1, B2), Factorio World (B3), the pack (BL) and Earth in it
+    # (M4), every one a timing twin with tq2-driver (its job baked into each save). Earth worlds are Europe's preset
+    # at scale 6 spawning at London (as B1); every place sits relative to the configuration's own spawn chunk.
+    t15 = {"m0": ("m0", "nauvis", (0, 0)), "m1": ("m1", "nauvis", (0, 0)), "bab": ("bab", "nauvis", (0, 0)),
+           "m2": ("m2", "nauvis", (0, 0)), "bl": ("bl", "nauvis", (0, 0)), "m4": ("m4", "nauvis", (0, 0))}
+    for b, spec_ in CC_BASELINES.items():
+        t15[b] = (b, spec_["surface"], spec_["spawn"])
+    gen_names = CC_T15D_GEN_NAMES
+    masks = {"MASK24": MASK24, "MASK16": ctx.perf.MASK16, "MASK8": ctx.perf.MASK8}
+
+    def t15_world(name, ms):
+        kind = t15[name][0]
+        if kind in CC_NO_EARTH:
+            return None
+        return earth_world(ms, mk0, f"t15d-{name}", scale=6, pin=cc_london(cfg))
+
+    def t15_save(name, ms, spec, label):
+        """One untimed save per configuration and job (the job baked in through tq2-mode)."""
+        return make_save_mgs(ctx, mods, ms, "tq2-mode", spec, label, t15_world(name, ms))
+
+    def forced_spec(name, block):
+        _, surf, (sx, sy) = t15[name]
+        bx, by = CC_T15D_BLOCKS[block]
+        return f"forced:{surf}:{sx + bx}:{sy + by}:{sx + CC_T15D_WARM[0]}:{sy + CC_T15D_WARM[1]}:0"
+
+    def timed(ms, save, out, mask, deadline, log, expect=None):
+        """One quiet-window repetition of tq2-driver's forced block (test notes 5.2; t15b's protocol): valid
+        when G1 holds, no other game process ran, the affinity held, the block ended fully generated and its census
+        equals the configuration's first valid one."""
+        perf = ctx.perf
+        watcher = perf.Watcher(Path(str(out) + "-affinity.jsonl"), mask, ctx.job) if mask else None
+        if watcher is not None and not watcher.ready:
+            raise GateError("the affinity watcher did not start")
+        _, load_pre = perf.wait_quiet(deadline, log)
+        r = ctx.fh(["scenario", "--instance", ctx.shared.get("cc_time_instance") or "ea-time", "--modset", ms,
+                    "--save", save, "--ticks", str(T15B["ticks"]), "--", "--threads", str(T15B["threads"])], out,
+                   timeout=CC_TIMEOUT, watcher=watcher, monitor=True)
+        rec = {"out": str(out), "mask": mask, "load_pre": load_pre, "result": r.result, "reasons": []}
+        rec.update(perf.parse_forced(out, tag="tq2"))
+        rec["foreign"] = sorted(r.mon.foreign) if r.mon else []
+        after = perf.tasklist_game()
+        persist_monitor(Path(str(out) + "-monitor.json"), r.mon, mask, load_pre, after)
+        if not r.ok:
+            rec["reasons"].append("fh.py result not ok: " + r.result)
+        if rec["foreign"] or (r.mon and r.mon.max_games > 1) or after:
+            rec["reasons"].append("another game process during or right after the run")
+        c = rec.get("census") or {}
+        if c.get("block_generated_after") != 256:
+            rec["reasons"].append(f"block not fully generated: {c.get('block_generated_before')} -> "
+                                  f"{c.get('block_generated_after')}")
+        if rec.get("force_ms") is None:
+            rec["reasons"].append("no force duration")
+        cs = {k: c.get(k) for k in CENSUS_KEYS + ("block_generated_before",)}
+        if expect is not None and cs != expect:
+            rec["reasons"].append(f"census {cs} differs from the configuration's {expect}")
+        rec["census_key"] = cs
+        if watcher is not None:
+            recs, _, _ = watcher.finish()
+            av = perf.affinity_verdict(recs, r.mon, perf.read(out / "bench" / "factorio-current.log"), mask)
+            rec["affinity"] = av
+            rec["reasons"] += ["affinity: " + x for x in av["reasons"]]
+        if r.mon:
+            r.mon.close()
+        rec["valid"] = not rec["reasons"]
+        Path(str(out) + "-rep.json").write_text(json.dumps(rec, indent=1, default=str), encoding="utf-8")
+        log(rec)
+        return rec
+
+    def gen_run(deadline, names=gen_names, blocks=tuple(CC_T15D_BLOCKS), mask_names=CC_T15D_MASKS,
+                reps=CC_T15D_REPS):
+        """Every configuration's two blocks at 24, 16 and 8 LP, interleaved in rounds rotated by one (test notes
+        5.2 item 4), 7 valid repetitions each."""
+        deadline = max(deadline, time.time() + 6 * 3600)
+        root = ctx.out / "cc-t15d-gen"
+        root.mkdir(parents=True, exist_ok=True)
+        logf = root / "reps.jsonl"
+
+        def log(rec):
+            with open(logf, "a", encoding="utf-8") as f:
+                f.write(json.dumps(rec, default=str) + "\n")
+        # the plan first, so an interrupted group still re-derives
+        (root / "plan.json").write_text(json.dumps({"names": names, "blocks": blocks, "masks": mask_names,
+                                                    "reps": reps, "specs": {f"{n}-{b}": forced_spec(n, b)
+                                                                            for n in names for b in blocks}},
+                                                   indent=1), encoding="utf-8")
+        saves = {}
+        for n in names:
+            ms = cc_modset(ctx, mods, t15[n][0], (CC_DRIVER,))
+            for blk in blocks:
+                saves[(n, blk)] = (ms, t15_save(n, ms, forced_spec(n, blk), f"t15d-{n}-{blk}"))
+        order = [(n, blk, m) for m in mask_names for blk in blocks for n in names]
+        valid = {o: 0 for o in order}
+        census = {}
+        idx, rnd = 0, 0
+        while any(v < reps for v in valid.values()):
+            rot = order[rnd % len(order):] + order[:rnd % len(order)]
+            for n, blk, m in rot:
+                if valid[(n, blk, m)] >= reps:
+                    continue
+                idx += 1
+                ms, save = saves[(n, blk)]
+                rec = timed(ms, save, root / f"r{idx:04d}-{n}-{blk}-{masks[m]:x}", masks[m], deadline, log,
+                            census.get((n, blk)))
+                if rec["valid"]:
+                    census.setdefault((n, blk), rec["census_key"])
+                    valid[(n, blk, m)] += 1
+                if idx > 6 * reps * len(order):
+                    raise GateError("too many discarded repetitions")
+            rnd += 1
+        for n in names:
+            if t15[n][0] in CC_BIG:
+                cc_drop(ctx, mods, [saves[(n, blocks[0])][0]])
+        return [root]
+
+    def gen_derive(dirs):
+        """Per configuration, block and mask the median main-thread time per chunk generated in the call over the
+        valid repetitions (re-read from each repetition's raw record), and the pairs' ratios: M1/M0 and M2/BAB at
+        most 1.5 at 16 and 24 LP, M4/BL at most 1.5 at 16 LP (P15), Earth faster than B1 and B3 per generated chunk
+        at both blocks and both gating masks (D8 as design notes 10:20 reads it); 8 LP recorded."""
+        root = Path(dirs[0])
+        plan = json.loads((root / "plan.json").read_text(encoding="utf-8"))
+        per, raw = {}, {}
+        for run in sorted(x for x in root.iterdir() if x.is_dir() and re.match(r"r\d{4}-", x.name)):
+            m_ = re.match(r"r\d{4}-(.+)-(spawn|far)-([0-9a-f]+)$", run.name)
+            if not m_:
+                continue
+            rec = cc_rep_from_raw(run, int(m_.group(3), 16))
+            if rec["valid"]:
+                raw.setdefault((m_.group(1), m_.group(2)), []).append((int(m_.group(3), 16), rec))
+        for (n, blk), recs in raw.items():
+            # every valid repetition of a configuration and block shares one census (test notes 5.2 item 5)
+            keys = [json.dumps(r["census"], sort_keys=True) for _, r in recs]
+            want = max(set(keys), key=keys.count)
+            for (mask, r), k in zip(recs, keys):
+                gen = r["generated"]
+                if k == want and gen > 0:
+                    per.setdefault((n, blk, mask), []).append(r["force_ms"] / gen)
+        fails, meas = [], {"per_chunk_ms": {}, "ratios": {}}
+        for (n, blk, mask), v in sorted(per.items()):
+            meas["per_chunk_ms"][f"{n}-{blk}-{mask:#x}"] = {"median": cc_med(v), "range": cc_range(v), "reps": len(v)}
+            if len(v) < plan["reps"]:
+                fails.append(f"{n} {blk} at {mask:#x}: {len(v)} valid repetitions, want {plan['reps']}")
+        for a, b in CC_T15D_PAIRS:
+            for blk in plan["blocks"]:
+                for mname in plan["masks"]:
+                    mask = masks[mname]
+                    x = cc_med(per.get((a, blk, mask), []))
+                    y = cc_med(per.get((b, blk, mask), []))
+                    if x is None or y is None:
+                        continue
+                    r = round(x / y, 4)
+                    meas["ratios"][f"{a}/{b}-{blk}-{mask:#x}"] = r
+                    gating = mask in (MASK24, ctx.perf.MASK16)
+                    if (a, b) in (("m1", "m0"), ("m2", "bab")) and gating and r > 1.5:
+                        fails.append(f"{a}/{b} {blk} at {mask:#x}: {r} > 1.5 (P1, P2, P3; ruling 5)")
+                    if (a, b) == ("m4", "bl") and mask == ctx.perf.MASK16 and r > 1.5:
+                        fails.append(f"M4t/BLt {blk} at 16 LP: {r} > 1.5 (P15; PERF-08)")
+                    if b in ("b1", "b3") and gating and r >= 1.0:
+                        fails.append(f"Earth is not faster than {b} per generated chunk at {blk}, {mask:#x}: {r} (D8)")
+        return meas, fails, "; ".join(f"{k} {v}" for k, v in meas["ratios"].items() if k.endswith(f"{0xFFFF:#x}"))
+
+    checks["cc_t15d_gen"] = SuiteCheck("cc_t15d_gen", lambda: key_of({
+        "check": "cc_t15d_gen", "control": ctl, "timing": timing, "build": GAME_BUILD, "blocks": CC_T15D_BLOCKS,
+        "warm": CC_T15D_WARM, "masks": CC_T15D_MASKS, "reps": CC_T15D_REPS, "control_sources": d["control"],
+        "pack": [[n, ver.get(n)] for n in on], "baselines": CC_BASELINES,
+        "sig": [sig(ctx.shared["m1"], "m1"), sig(ctx.shared["m2"], "m2")]}),
+        gen_run, gen_derive)
+
+    # T15d play rows (SS; reported against both world mods; P4 to P7, P15, P17 and P19 gated): exploring in benchmark
+    # mode (TQ2's frontier, --benchmark-verbose all, 16 LP: wholeUpdate, the mapGenerator* sum, scriptUpdate), in real
+    # time on a loopback server (24 LP: ticks over 20 ms, p99 and longest interval), the server save pair (the whole
+    # save and the forced block's increment), steady UPS from the second save (3,600 ticks, 16 LP), a new map's first
+    # 120 ticks with the peak working set, and the data stage and creation wall times from the logs.
+    play_names = CC_T15D_PLAY_NAMES
+    E = EXPLORE
+
+    def explore_spec(name, kind="explore"):
+        _, surf, (sx, sy) = t15[name]
+        return f"{kind}:{surf}:{sx + E['cx0']}:{sy + E['cy']}:{E['R']}:{E['K']}:{E['P']}:{E['D']}:{E['T0']}"
+
+    def st_spec(name):
+        _, surf, (sx, sy) = t15[name]
+        a = START_AREA_CHUNKS
+        return f"st:{surf}:{sx - a}:{sy - a}:{sx + a - 1}:{sy + a - 1}:{CC_T15D_START_TICKS}"
+
+    def play_run(deadline, names=play_names, explore_reps=CC_T15D_EXPLORE_REPS, ups_reps=CC_T15D_UPS["reps"]):
+        deadline = max(deadline, time.time() + 6 * 3600)
+        perf = ctx.perf
+        root = ctx.out / "cc-t15d-play"
+        root.mkdir(parents=True, exist_ok=True)
+        rows = {}
+        for n in names:
+            ms = cc_modset(ctx, mods, t15[n][0], (CC_DRIVER,))
+            rec = {"name": n, "modset": ms}
+            st_save = t15_save(n, ms, st_spec(n), f"t15d-st-{n}")
+            rec["create_s"] = cc_log_span(st_save.parent, "create")
+            rec["dump_s"] = cc_log_span(mods.prepare(ms, ms).out)
+            perf.wait_quiet(deadline)
+            r = ctx.fh(["scenario", "--instance", ctx.instance, "--modset", ms, "--save", st_save, "--ticks",
+                        str(CC_T15D_START_TICKS + 1), "--", "--benchmark-verbose", "all", "--threads",
+                        str(T15B["threads"])], root / f"st-{n}", timeout=CC_TIMEOUT, monitor=True)
+            rec["start_peak_mb"] = r.mon.peak_mb() if r.mon else None
+            if r.mon:
+                r.mon.close()
+            rec["start"] = rel_ws(ctx, r.out)
+            ex_save = t15_save(n, ms, explore_spec(n), f"t15d-ex-{n}")
+            rec["explore"] = []
+            for k in range(explore_reps):
+                perf.wait_quiet(deadline)
+                rr = masked(["scenario", "--instance", ctx.instance, "--modset", ms, "--save", ex_save, "--ticks",
+                             str(E["T0"] + E["K"] * E["P"] + E["D"] + 2), "--", "--benchmark-verbose", "all",
+                             "--threads", str(T15B["threads"])], root / f"ex-{n}-{k}", perf.MASK16)
+                rec["explore"].append(rel_ws(ctx, rr.out))
+            rec["rt"] = []
+            for k in range(RT_REPS):
+                rt_save = t15_save(n, ms, explore_spec(n, "rtexplore"), f"t15d-rt-{n}-{k}")
+                rec["rt"].append(rel_ws(ctx, cc_server(ctx, ms, rt_save, f"cc-t15d-play/rt-{n}-{k}",
+                                                       SERVER["rt_timeout"], ["tq2-rt"])))
+            _, surf, (sx, sy) = t15[n]
+            fb = CC_T15D_BLOCKS["far"]
+            sv_save = t15_save(n, ms, f"save:{surf}:{sx + fb[0]}:{sy + fb[1]}:0", f"t15d-sv-{n}")
+            srv = cc_server(ctx, ms, sv_save, f"cc-t15d-play/save-{n}", SERVER["save_timeout"], ["tq2-pre", "tq2-post"])
+            rec["save"] = rel_ws(ctx, srv)
+            rec["ups"] = []
+            for k in range(ups_reps):
+                perf.wait_quiet(deadline)
+                rr = masked(["scenario", "--instance", ctx.instance, "--modset", ms, "--save", srv / "tq2-post.zip",
+                             "--ticks", str(CC_T15D_UPS["ticks"]), "--", "--threads", str(T15B["threads"])],
+                            root / f"ups-{n}-{k}", perf.MASK16)
+                rec["ups"].append(rel_ws(ctx, rr.out))
+            if n in ("m0", "m1", "bab", "m2"):
+                rec["preview"] = []
+                for k in range(CC_T15D_PREVIEW["reps"]):
+                    perf.wait_quiet(deadline)
+                    pv = ctx.fh(["preview", "--instance", ctx.instance, "--modset", ms, "--seed", str(SEED), "--size",
+                                 str(CC_T15D_PREVIEW["size"])] + (["--map-gen-settings", t15_world(n, ms)]
+                                                                  if t15_world(n, ms) else []) +
+                                ["--", "--threads", str(T15B["threads"])] + (["--verbose"] if k == 0 else []),
+                                root / f"pv-{n}-{k}", timeout=CC_TIMEOUT)
+                    rec["preview"].append(rel_ws(ctx, pv.out))
+            rows[n] = rec
+            (root / "rows.json").write_text(json.dumps(rows, indent=1, default=str), encoding="utf-8")
+            if t15[n][0] in CC_BIG:
+                cc_drop(ctx, mods, [ms])
+        return [root]
+
+    def play_derive(dirs):
+        perf = ctx.perf
+        root = Path(dirs[0])
+        rows = json.loads((root / "rows.json").read_text(encoding="utf-8"))
+        fails, meas = [], {}
+        for n, rec in rows.items():
+            m = {"create_s": rec.get("create_s"), "dump_s": rec.get("dump_s"), "start_peak_mb": rec.get("start_peak_mb")}
+            st = abs_ws(ctx, rec["start"])
+            fails += g1(st)
+            vb = perf.parse_verbose(perf.read(st / "bench" / "stdout.txt"))
+            if vb:
+                w = perf.window_stats(vb, 1, CC_T15D_START_TICKS)
+                m["first_120_ms"] = round(w["columns"]["wholeUpdate"]["sum_ms"], 3) if w else None
+            ex = []
+            for x in rec.get("explore") or []:
+                x = abs_ws(ctx, x)
+                fails += g1(x)
+                vb = perf.parse_verbose(perf.read(x / "bench" / "stdout.txt"))
+                w = perf.window_stats(vb, E["T0"], E["T0"] + E["K"] * E["P"] + E["D"] - 1, E["K"]) if vb else None
+                if w:
+                    ex.append({"whole_mean": w["columns"]["wholeUpdate"]["mean"], "whole_p99": w["columns"]["wholeUpdate"]["p99"],
+                               "script_mean": w["columns"].get("scriptUpdate", {}).get("mean"),
+                               "mapgen_sum_ms": w["mapGenerator_sub_sum_ms"]})
+            m["explore"] = {k: cc_med([e[k] for e in ex]) for k in ("whole_mean", "whole_p99", "script_mean",
+                                                                     "mapgen_sum_ms")} if ex else None
+            rts = []
+            for x in rec.get("rt") or []:
+                x = abs_ws(ctx, x)
+                _, f = derive_server(x, ["tq2-rt"])
+                fails += f
+                _, iv = perf.parse_rt(x)
+                s = perf.interval_stats(iv)
+                if s:
+                    rts.append(s)
+            m["rt"] = {k: cc_med([s[k] for s in rts]) for k in ("over_20ms", "p99", "max")} if rts else None
+            sv, f = derive_server(abs_ws(ctx, rec["save"]), ["tq2-pre", "tq2-post"])
+            fails += f
+            pre, post = ((sv.get("saves") or {}).get(k, {}).get("bytes") for k in ("tq2-pre", "tq2-post"))
+            m["save"] = {"whole": post, "increment": (post - pre) if pre and post else None}
+            ups = []
+            for x in rec.get("ups") or []:
+                x = abs_ws(ctx, x)
+                fails += g1(x)
+                b = cc_bench(x)
+                if b:
+                    ups.append(b["avg"])
+            m["ups"] = {"median": cc_med(ups), "range": cc_range(ups), "reps": len(ups)}
+            if rec.get("preview"):
+                pt = [float(t) for x in rec["preview"] for t in CC_PREVIEW_TIME_RE.findall(stdout_of(abs_ws(ctx, x)))]
+                m["preview_s"] = {"median": cc_med(pt), "range": cc_range(pt)}
+                m["complexity"] = ctx_complexity(abs_ws(ctx, rec["preview"][0]))
+            meas[n] = m
+
+        def get(n, *path):
+            v = meas.get(n)
+            for p in path:
+                v = (v or {}).get(p) if isinstance(v, dict) else None
+            return v
+        lim = {k: (limits.get(k) or {}).get("limit") or {} for k in ("P4", "P5", "P6", "P7", "P15", "P17", "P19")}
+        missing = [k for k, v in lim.items() if not v]
+        if missing:
+            fails.append(f"section 6 limits unreadable: {missing}")
+        for a, b in (("m1", "m0"), ("m2", "bab"), ("m4", "bl")):
+            ra, rb = get(a, "rt"), get(b, "rt")
+            if ra and rb:
+                if lim["P4"].get("max") is not None and ra["over_20ms"] > lim["P4"]["max"]:
+                    fails.append(f"{a}: {ra['over_20ms']} ticks over 20 ms in real time (P4 {lim['P4']['max']})")
+                if rb["p99"] and lim["P5"].get("max") is not None and ra["p99"] / rb["p99"] > lim["P5"]["max"]:
+                    fails.append(f"{a}/{b}: p99 interval {ra['p99']} against {rb['p99']} (P5)")
+                top = lim["P6"].get("M1_ms") if a == "m1" else lim["P6"].get("M2_ms")
+                if top is not None and ra["max"] > top:
+                    fails.append(f"{a}: longest real-time interval {ra['max']} ms (P6 {top} ms; P15 applies M2's to M4)")
+            sa, sb = get(a, "explore", "script_mean"), get(b, "explore", "script_mean")
+            tol = (lim["P15"] if a == "m4" else lim["P7"]).get("delta_ms")
+            if sa is not None and sb is not None and tol is not None and sa - sb > tol:
+                fails.append(f"{a}: scriptUpdate {sa:.4f} ms per tick against {b}'s {sb:.4f} (P7, P15)")
+            ua, ub = get(a, "ups"), get(b, "ups")
+            if ua and ub and ua["range"] and ub["range"] and ua["median"] and ub["median"]:
+                p17 = lim["P17"].get("max")
+                if p17 is not None and ua["median"] / ub["median"] > p17 and ua["range"][0] > ub["range"][1]:
+                    fails.append(f"{a}/{b}: steady {ua['median']} against {ub['median']} ms per tick, ranges apart (P17)")
+            ia, ib = get(a, "save", "increment"), get(b, "save", "increment")
+            if ia and ib and lim["P19"].get("max") is not None and a != "m4" and ia / ib > lim["P19"]["max"]:
+                fails.append(f"{a}/{b}: the forced block's save increment {ia} against {ib} bytes (P19)")
+        for wm in ("b1", "b3"):
+            e, w = get("m1", "rt"), get(wm, "rt")
+            if e and w and not (e["over_20ms"] < w["over_20ms"] and e["p99"] < w["p99"]):
+                fails.append(f"real time against {wm}: {e['over_20ms']} ticks over 20 ms and p99 {e['p99']} against "
+                             f"{w['over_20ms']} and {w['p99']} (D8: fewer and lower)")
+            f1, f2 = get("m1", "first_120_ms"), get(wm, "first_120_ms")
+            if f1 is not None and f2 is not None and not f1 < f2:
+                fails.append(f"a new map's first 120 ticks {f1} ms against {wm}'s {f2} (D8: shorter)")
+            ua, ub = get("m1", "ups"), get(wm, "ups")
+            if ua and ub and ua["range"] and ub["range"] and ua["range"][0] > ub["range"][1]:
+                fails.append(f"steady UPS against {wm}: {ua['range']} lies above {ub['range']} (D8: a tie at worst)")
+        return meas, fails, "; ".join(f"{n}: rt {(v.get('rt') or {}).get('over_20ms')} over 20 ms, ups "
+                                      f"{(v.get('ups') or {}).get('median')}" for n, v in meas.items())
+
+    checks["cc_t15d_play"] = SuiteCheck("cc_t15d_play", lambda: key_of({
+        "check": "cc_t15d_play", "control": ctl, "timing": timing, "build": GAME_BUILD, "explore": EXPLORE,
+        "server": [SERVER, sha256_file(HERE / "perf-server-settings.json")], "ups": CC_T15D_UPS, "control_sources": d["control"],
+        "pack": [[n, ver.get(n)] for n in on], "baselines": CC_BASELINES,
+        "sig": [sig(ctx.shared["m1"], "m1"), sig(ctx.shared["m2"], "m2")]}),
+        play_run, play_derive)
+
+    # T15 (SS; report; JI-04, review note 11): per map the 16 LP headroom under 1.5 from the newest recorded M1t/M0t
+    # and M2t/BABt ratios (the suites' manifests and this milestone's own T15d pairs), 8 LP beside it for the record, and
+    # the island-disc admission verdict: admitted only with at least 0.03 of headroom everywhere at 16 LP. The verdict
+    # is this check's summary in tests/baselines/suites/compat-completeness.json; the design notes takes it as the next release
+    # input.
+    def report_run(deadline):
+        out = ctx.out / "cc-t15-report"
+        out.mkdir(parents=True, exist_ok=True)
+        rows = cc_headroom_rows(maps)
+        gen = (ctx.shared.get("suite_runs") or {}).get("cc_t15d_gen")
+        if not gen:
+            man = SUITES / "compat-completeness.json"
+            rec = ((json.loads(man.read_text(encoding="utf-8")) if man.exists() else {}).get("checks") or {}).get(
+                "cc_t15d_gen") or {}
+            gen = [abs_ws(ctx, x) for x in rec.get("run_dirs") or []]
+        if gen:
+            meas, _, _ = gen_derive(gen)
+            for k, r in (meas.get("ratios") or {}).items():
+                pair, blk, mask = k.split("-")
+                if pair in ("m1/m0", "m2/bab"):
+                    rows.append({"map": "europe", "pair": pair, "scale": 6, "block": f"t15d-{blk}", "mask": mask,
+                                 "ratio": r, "source": "cc_t15d_gen"})
+        (out / "rows.json").write_text(json.dumps(rows, indent=1), encoding="utf-8")
+        return [out]
+
+    def report_derive(dirs):
+        rows = json.loads((Path(dirs[0]) / "rows.json").read_text(encoding="utf-8"))
+        fails, meas = [], {}
+        # the newest row per map, pair, scale, block and mask (rows come in registry order, this milestone's last)
+        newest = {}
+        for r in rows:
+            newest[(r["map"], r["pair"], r.get("scale"), r.get("block", "tq1b"), r["mask"])] = r
+        rows = list(newest.values())
+        for mk in maps:
+            r16 = [r["ratio"] for r in rows if r["map"] == mk and r["mask"] == f"{0xFFFF:#x}"]
+            r8 = [r["ratio"] for r in rows if r["map"] == mk and r["mask"] == f"{0xFF:#x}"]
+            if not r16:
+                fails.append(f"{mk}: no recorded 16 LP ratio to read the headroom from")
+                continue
+            meas[mk] = {"headroom_16lp": round(1.5 - max(r16), 4), "worst_16lp": max(r16),
+                        "headroom_8lp": round(1.5 - max(r8), 4) if r8 else None, "rows": len(r16)}
+        admitted = bool(meas) and len(meas) == len(maps) and all(v["headroom_16lp"] >= CC_ISLAND_HEADROOM
+                                                                 for v in meas.values())
+        meas["island_discs"] = "admitted" if admitted else "not admitted"
+        return meas, fails, (f"16 LP headroom " + ", ".join(f"{k} {v['headroom_16lp']}" for k, v in meas.items()
+                                                             if isinstance(v, dict)) + f"; island discs {meas['island_discs']}")
+
+    checks["cc_t15_report"] = SuiteCheck("cc_t15_report", lambda: key("cc_t15_report"), report_run, report_derive)
+
+    # ---------------------------------------------------------------------------------------------- T13 rows
+    # T13 (SS; test notes 4.3's interaction row of each of the 17 worldgen-touching mods): a census of Europe's
+    # preset at scale 6 spawning at London over the start area, the first onshore hotspots' boxes and the map-wide
+    # land sample, on M4 with hotspots on and off and on M2, with the M4 and BL dumps; rows another check measures
+    # read that check's own derive (cc_load, cc_t14, cc_t15d_gen, cc_t15d_play).
+    H = cfg["toggles"]["hotspots"]
+    s6 = int(cfg["settings"]["scale"]["default_value"])
+    london = cc_london(cfg)
+    hrows, hoffsets, hreg = re_rows()
+    hspots = []
+    for r in re_on(hrows, mk0, onshore=True)[:6]:
+        hu, hv = re_centre_px(cfg, hreg[r["id"]], SEED)
+        x, y = re_world(cfg, mk0, s6, hoffsets, hu, hv, london)
+        hspots.append({"id": r["id"], "x": x, "y": y, "R": re_footprint(cfg, r, s6)})
+    # the first two offshore fields: where the Oil Rig places its wells (the oil row's positive control)
+    offs = []
+    for r in re_on(hrows, mk0, onshore=False)[:2]:
+        hu, hv = re_centre_px(cfg, hreg[r["id"]], SEED)
+        x, y = re_world(cfg, mk0, s6, hoffsets, hu, hv, london)
+        offs.append({"id": r["id"], "x": x, "y": y, "R": re_footprint(cfg, r, s6)})
+    near = (-96, -96, 192, 192)                       # inside RE_START_RADIUS everywhere
+    mod_areas = [near] + [re_box(h["x"], h["y"], h["R"]) for h in hspots] + \
+        [re_box(h["x"], h["y"], h["R"]) for h in offs]
+    mod_areas += [(x0 // 32 * 32 - london[0] // 32 * 32, y0 // 32 * 32 - london[1] // 32 * 32, w, h)
+                  for x0, y0, w, h in tf_sample_blocks(mk0, s6)[:12]]
+    mod_runs = (("m4-on", "m4", True), ("m4-off", "m4", False), ("m2-on", "m2", True))
+
+    def mods_run(deadline):
+        dirs = []
+        for label, kind, hot in mod_runs:
+            ms = cc_modset(ctx, mods, kind, (CC_PROBE,))
+            cc_job(ctx, ms, cc_census_spec(f"mods-{label}", mod_areas))()
+            mgs = cc_mgs(ctx, cfg, cc_dump(ctx, mods, ms), mk0, f"mods-{label}", scale=s6, pin=london,
+                         extra={H["preset_key"]: H["on"] if hot else H["off"]})
+            dirs.append(ctx.fh(scenario_args(ctx.instance, ms, CC_TICKS, SEED, mgs), ctx.out / f"cc-mods-{label}",
+                               timeout=CC_TIMEOUT).out)
+        # the dumps the static rows read, kept as files of this check's evidence
+        for kind in ("m4", "bl"):
+            ms = cc_modset(ctx, mods, kind)
+            src = mods.prepare(ms, ms).out
+            dst = ctx.out / f"cc-mods-dump-{kind}"
+            dst.mkdir(parents=True, exist_ok=True)
+            for f in ("data-raw-dump.json", "run.json", "stdout.txt"):
+                if (src / f).exists():
+                    shutil.copy2(src / f, dst / f)
+            dirs.append(dst)
+        cc_drop(ctx, mods)
+        return dirs
+
+    def other(name):
+        """Another compat-completeness check's derive, from this suite's runs or the manifest's record."""
+        ent = (ctx.shared.get("suite_runs") or {}).get(name)
+        if not ent:
+            man = SUITES / "compat-completeness.json"
+            rec = ((json.loads(man.read_text(encoding="utf-8")) if man.exists() else {}).get("checks") or {}).get(
+                name) or {}
+            ent = [abs_ws(ctx, x) for x in rec.get("run_dirs") or []]
+        if not ent:
+            return None, [f"{name} has no evidence yet"]
+        meas, fails, _ = checks[name].derive_fn(ent)
+        return meas, fails
+
+    def mods_derive(dirs):
+        fails, rows = [], {}
+        if len(dirs) != len(mod_runs) + 2:
+            return {}, [f"{len(dirs)} run directories, want {len(mod_runs) + 2}"], ""
+        cen = {}
+        for (label, _, _), x in zip(mod_runs, dirs):
+            fails += g1(x) + g3(x)
+            try:
+                cen[label] = cc_read(x, f"mods-{label}-census.json")
+            except GateError as e:
+                fails.append(str(e))
+        if len(cen) != len(mod_runs):
+            return {}, fails, ""
+        d4 = json.loads((Path(dirs[-2]) / "data-raw-dump.json").read_text(encoding="utf-8"))
+        dbl = json.loads((Path(dirs[-1]) / "data-raw-dump.json").read_text(encoding="utf-8"))
+        d0 = ctx.shared["dump_m0"]
+        vanilla = cc_t17_names(d0)
+        on4, off4, on2 = cen["m4-on"]["areas"], cen["m4-off"]["areas"], cen["m2-on"]["areas"]
+
+        def total(areas, idx, field, names=None, types=None):
+            n = 0
+            for i in idx:
+                a = areas[i]
+                for k, v in (a.get(field) or {}).items():
+                    if (names is None or k in names) and (types is None or (a.get("types") or {}).get(k) in types):
+                        n += v
+            return n
+        hot = range(1, 1 + len(hspots))
+        sample = range(1 + len(hspots) + len(offs), len(on4))
+        enemies = ("unit-spawner", "turret")
+        pack_enemy = sorted({n for a in on4 for n, t in (a.get("types") or {}).items()
+                             if t in enemies and n not in set(vanilla.get("spawner", [])) | set(vanilla.get("worm", []))})
+        # 1 alien-biomes: on M4 the Earth climate places the same tiles as on M2 (T3 judged M2's)
+        same_tiles = [i for i in range(len(on4)) if (on4[i].get("tiles") or {}) == (on2[i].get("tiles") or {})]
+        rows["alien-biomes"] = {"ok": len(same_tiles) == len(on4), "areas_equal": len(same_tiles), "areas": len(on4),
+                                "zero_cost": "cc_t13_zero (M4 against BL)"}
+        # 2 Big-Monsters and 3 bobenemies: enemies the pack adds appear, stay out of the start area and take the
+        # hotspot multiplier (more of them in the hotspot boxes with hotspots on than off)
+        start_enemies = total(on4, [0], "entities", types=enemies)
+        e_on, e_off = total(on4, hot, "entities", types=enemies), total(off4, hot, "entities", types=enemies)
+        p_on, p_off = total(on4, hot, "entities", names=pack_enemy), total(off4, hot, "entities", names=pack_enemy)
+        p_far = total(on4, sample, "entities", names=pack_enemy)
+        rows["Big-Monsters"] = {"ok": bool(pack_enemy) and p_far + p_on > 0 and start_enemies == 0 and p_on > p_off,
+                                "pack_enemy_names": pack_enemy, "in_sample": p_far, "hotspots_on": p_on,
+                                "hotspots_off": p_off, "start_area_enemies": start_enemies}
+        ebi = "enemy_base_intensity"
+        x4, xbl, x0 = (((dd.get("noise-expression") or {}).get(ebi) or {}).get("expression") for dd in (d4, dbl, d0))
+        rows["bobenemies"] = {"ok": x4 is not None and x4 == xbl and x4 != x0 and e_on > e_off,
+                              "intensity_equals_bl": x4 == xbl, "intensity_changed_from_vanilla": x4 != x0,
+                              "hotspot_enemies_on": e_on, "hotspot_enemies_off": e_off,
+                              "swap_cost": "cc_t15d_gen and cc_t15d_play (M4t against BLt, P15)"}
+        # 4 cargo-ships-oil-rig: offshore oil only on water, crude oil only on land
+        off_all = sum((a.get("entities") or {}).get("offshore-oil", 0) for a in on4)
+        off_wet = sum((a.get("on_water") or {}).get("offshore-oil", 0) for a in on4)
+        crude_wet = sum((a.get("on_water") or {}).get("crude-oil", 0) for a in on4)
+        rows["cargo-ships-oil-rig"] = {"ok": off_all > 0 and off_all == off_wet and crude_wet == 0,
+                                       "offshore_oil": off_all,
+                                       "offshore_oil_on_water": off_wet, "crude_oil_on_water": crude_wet,
+                                       "fields": "re_t8_m3 (M3)"}
+        # 5 combat-mechanics-overhaul: every vanilla resource still appears; its item layer leaves the water tiles
+        # a waterway stands on free of the waterway's own collision layers
+        res_seen = {n for a in on4 for n, t in (a.get("types") or {}).items() if t == "resource"}
+        miss_res = sorted(set(vanilla.get("resource", [])) - res_seen - {"crude-oil"})
+        ww = next((p for t, ps in d4.items() if isinstance(ps, dict) for n, p in ps.items()
+                   if n == "straight-waterway" and isinstance(p, dict)), None)
+        ww_layers = set(((ww or {}).get("collision_mask") or {}).get("layers") or {})
+        clash = {}
+        for tname in ("water", "deepwater", "water-shallow", "water-mud"):
+            t = (d4.get("tile") or {}).get(tname)
+            if t is None:
+                continue
+            both = ww_layers & set(((t.get("collision_mask") or {}).get("layers") or {}))
+            if both:
+                clash[tname] = sorted(both)
+        rows["combat-mechanics-overhaul"] = {"ok": not miss_res and ww is not None and not clash,
+                                             "resources_missing": miss_res, "waterway_found": ww is not None,
+                                             "waterway_clashes": clash}
+        # 7 to 9 CleanedConcrete, dectorio-fork-2-1, RealisticDecorationCleanup: decoratives still generate as on M2
+        dec4 = sum(sum((a.get("decoratives") or {}).values()) for a in on4)
+        dec2 = sum(sum((a.get("decoratives") or {}).values()) for a in on2)
+        names4 = {n for a in on4 for n in (a.get("decoratives") or {})}
+        names2 = {n for a in on2 for n in (a.get("decoratives") or {})}
+        # decoratives still generate at a comparable density (the pack may change which ones: recorded)
+        ok_dec = dec4 > 0 and dec4 >= 0.5 * dec2
+        for m in ("CleanedConcrete", "dectorio-fork-2-1", "RealisticDecorationCleanup"):
+            rows[m] = {"ok": ok_dec, "decoratives_m4": dec4, "decoratives_m2": dec2,
+                       "names_missing_on_m4": sorted(names2 - names4)[:8]}
+        # rows other checks measure
+        lm, lf = other("cc_load")
+        lm = lm or {}
+        rows["rso-mod"] = {"ok": not lf and (lm.get("m5") or {}).get("rso_lines") == 1, "from": "cc_load (M5)"}
+        rows["minime"] = {"ok": not other("cc_t14")[1], "from": "cc_t14 (M4 at runtime)"}
+        for m in ("mining-scars-fork", "nuclear-scorch-decay"):
+            rows[m] = {"ok": not lf and "m4" in lm, "from": "cc_load (M4 loads clean)"}
+        # 13 to 15 biter-cleanup, dynamic-rain, heavy-trucks-autopilot: their per-chunk and per-tick cost is the
+        # pack's, equal with and without Earth: M4t against BLt within P15 (forced generation at 16 LP, and Earth's
+        # scriptUpdate while exploring in benchmark mode)
+        pm, _ = other("cc_t15d_play")
+        gm, _ = other("cc_t15d_gen")
+        r16 = [v for k, v in ((gm or {}).get("ratios") or {}).items() if k.startswith("m4/bl-") and
+               k.endswith(f"{0xFFFF:#x}")]
+        s4 = (((pm or {}).get("m4") or {}).get("explore") or {}).get("script_mean")
+        sb = (((pm or {}).get("bl") or {}).get("explore") or {}).get("script_mean")
+        p15 = ((limits.get("P15") or {}).get("limit") or {})
+        cost = (bool(r16) and max(r16) <= p15.get("max", 1.5) and s4 is not None and sb is not None
+                and s4 - sb <= p15.get("delta_ms", 0.05))
+        for m in ("biter-cleanup", "dynamic-rain", "heavy-trucks-autopilot"):
+            rows[m] = {"ok": cost, "m4_bl_16lp": r16, "script_ms": [s4, sb],
+                       "from": "cc_t15d_gen and cc_t15d_play (M4t against BLt, P15)"}
+        rows[CC_FACC_MOD] = {"ok": not lf and all((lm.get(k) or {}).get("facc_regeneration") is False
+                                                  for k in ("m4", "m5", "m6", "bl")), "from": "cc_load (G7)"}
+        rows["alien-biomes-tree-compat"] = {"ok": not lf, "from": "cc_load (D34: never passed)"}
+        for n, r in rows.items():
+            if not r["ok"]:
+                fails.append(f"T13 interaction row {n}: {dict((k, v) for k, v in r.items() if k != 'ok')}")
+        if len(rows) != 17:
+            fails.append(f"{len(rows)} interaction rows, want the 17 of TEST-STRATEGY 4.3")
+        return rows, fails, f"{sum(r['ok'] for r in rows.values())} of {len(rows)} interaction rows hold"
+
+    checks["cc_t13_mods"] = SuiteCheck("cc_t13_mods", lambda: key("cc_t13_mods", {"areas": mod_areas, "runs": mod_runs}),
+                                       mods_run, mods_derive)
+
+    # ---------------------------------------------------------------------------------------------- Space Age
+    # Space Age (previews/earth-build/sa-compat/r1 passed load, other planets, Nauvis presets and
+    # names on the spawn-cities draft): tools/sa_compat.py's stage, travel pair, matrix and report through this
+    # command's fh.py runs, with its positive control asserted (the unguarded copy's planets read Earth keys and
+    # differ) and the gate-row note held: an entity-only planet difference passes only where a vanilla engine control
+    # moves the same chunk (Gleba chunk (-3, 0) loses one sunnycomb in any world whose Nauvis differs from vanilla).
+    def sa_root(tag):
+        return ctx.out / f"cc-sa-{tag}"
+
+    def sa_run(deadline):
+        import sa_compat as sa
+        root = sa_root("main")
+        z = mods.build_zip()
+        with cc_sa_runner(ctx, sa):
+            for argv in (["stage", "--zip", str(z), "--root", str(root), "--prefix", f"ea-cc-sa-{mods.zip_sha[:8]}"],
+                         ["stage-travel", "--root", str(root)], ["matrix", "--root", str(root)]):
+                sa.main(argv)
+        return [root]
+
+    def sa_judge(root, require_control=True):
+        return cc_sa_judge(root, require_control)
+
+    def sa_derive(dirs):
+        rep, fails = sa_judge(dirs[0])
+        c = rep.get("checks") or {}
+        meas = {k: bool(v.get("pass")) for k, v in c.items()}
+        meas["engine_residue"] = (c.get("2_planets") or {}).get("engine_residue")
+        return meas, fails, "; ".join(f"{k} {'pass' if v else 'FAIL'}" for k, v in meas.items() if isinstance(v, bool))
+
+    checks["cc_sa"] = SuiteCheck("cc_sa", lambda: key("cc_sa", {"sa": sha256_file(HERE / "sa_compat.py")}),
+                                 sa_run, sa_derive)
+
+    # Space Age, what the 2026-10-28 run left unverified (SS): other seeds (1002, 1004), scales (1, 3) and a chosen
+    # spawn city; more than 90 chunks per planet (the probe's wide block set); Alien Biomes beside Space Age; cargo
+    # pods landing on planets the engine created (the travel pair); and multiplayer: T12's loopback save and load
+    # recipe with the expansion on and every planet's surface generating, against its bad probe.
+    city_values = (cfg["settings"]["spawn_city_europe"].get("allowed_values") or [])
+    city = next((v for v in city_values if v not in ("random", "Random", "0")), None)
+    sa_variants = [("seed1002", ["--seed", "1002"], []), ("seed1004", ["--seed", "1004"], []),
+                   ("scale1", [], [f"startup.{cfg['settings']['scale']['name']}=1"]),
+                   ("scale3", [], [f"startup.{cfg['settings']['scale']['name']}=3"]),
+                   ("wide", ["--blocks", "wide"], []), ("ab", ["--live", ",".join(CC_AB)], [])]
+    if city:
+        sa_variants.append(("city", [], [f"startup.{cfg['settings']['spawn_city_europe']['name']}={city}"]))
+    sa_variants = [v for v in sa_variants if v[0] in CC_SA_VARIANTS]
+
+    def more_run(deadline):
+        import sa_compat as sa
+        z = mods.build_zip()
+        dirs = []
+        with cc_sa_runner(ctx, sa):
+            for tag, args, sets in sa_variants:
+                root = sa_root(tag)
+                sa.main(["stage", "--zip", str(z), "--root", str(root), "--prefix",
+                         f"ea-cc-sa{tag}-{mods.zip_sha[:8]}"] + args + sum((["--set", s] for s in sets), []))
+                if tag == "seed1002":
+                    sa.main(["stage-travel", "--root", str(root), "--landing"])
+                sa.main(["matrix", "--root", str(root), "--quick"])
+                dirs.append(root)
+        # multiplayer: the recipe on an Earth world with the expansion on, planets generating on the server
+        spec = dict(t12_spec("t12sa", False), planets_tick=T["start"] + 5)
+        bad = dict(t12_spec("t12sabad", True), planets_tick=T["start"] + 5)
+        for sp in (spec, bad):
+            label = sp["label"]
+            stage = cc_stage_t12(ctx, cfg, label, sp)
+            ms = f"ea-cc-{label}-{folder_hash(stage)}"
+            res = ctx.fh_plain(["modset", ms, "--add", stage, "--expansion", ",".join(sa.EXPANSION)])
+            if not res.startswith("RESULT ok"):
+                raise GateError(f"fh.py modset {ms}: {res}")
+            mods.prepare(ms, ms)
+            save = ctx.out / f"cc-{label}-create" / "s.zip"
+            r0 = ctx.fh(create_args(ctx.instance, ms, save, preset=pname0), ctx.out / f"cc-{label}-create",
+                        timeout=CC_TIMEOUT)
+            srv = cc_server(ctx, ms, save, f"cc-{label}-server", T["server_timeout"], [f"{label}-a", f"{label}-b"])
+            dirs += [r0.out, srv]
+            a, b = srv / f"{label}-a.zip", srv / f"{label}-b.zip"
+            for tag, sv, ticks, mask in (("a24", a, T["t2"] - T["t1"] + 1, None),
+                                         ("a8", a, T["t2"] - T["t1"] + 1, ctx.perf.MASK8), ("b", b, 1, None)):
+                dirs.append(masked(scenario_args(ctx.instance, ms, ticks, save=sv), ctx.out / f"cc-{label}-{tag}",
+                                   mask).out)
+        return dirs
+
+    def more_derive(dirs):
+        fails, meas = [], {}
+        n = len(sa_variants)
+        if len(dirs) != n + 10:
+            return {}, [f"{len(dirs)} run directories, want {n + 10}"], ""
+        for (tag, _, _), root in zip(sa_variants, dirs[:n]):
+            rep, f = sa_judge(root, require_control=False)
+            fails += [f"{tag}: {x}" for x in f]
+            c = rep.get("checks") or {}
+            meas[tag] = {k: bool(v.get("pass")) for k, v in c.items()}
+            if tag == "wide":
+                chunks = max((b.get("chunks") or 0 for cmp_ in ((c.get("2_planets") or {}).get("comparisons") or {})
+                              .values() for s in cmp_.values() if isinstance(s, dict)
+                              for b in (s.get("blocks") or {}).values()), default=0)
+                meas[tag]["largest_block_chunks"] = chunks
+                if chunks <= 90:
+                    fails.append(f"wide: the largest compared block holds {chunks} chunks, not more than 90")
+            if tag == "seed1002":
+                tr = (c.get("2_planets") or {}).get("travel")
+                land = [v.get("tn", {}).get("landings") for v in tr.values()] if isinstance(tr, dict) else []
+                meas[tag]["landings"] = land
+                if not land or not any(land):
+                    fails.append("seed1002: the travel pair recorded no cargo pod landing")
+        for j, bad in enumerate((False, True)):
+            label = "t12sabad" if bad else "t12sa"
+            create, srv, a24, a8r, bb = (Path(x) for x in dirs[n + 5 * j:n + 5 * (j + 1)])
+            fails += g1(create)
+            _, f = derive_server(srv, [f"{label}-a", f"{label}-b"])
+            fails += f
+            c3, st = {}, {}
+            for tag, x in (("a24", a24), ("a8", a8r), ("b", bb)):
+                fails += g1(x)
+                c3[tag] = (load_run_json(x) or {}).get("bench_checksums")
+                p = x / "script-output" / "ea-cc-probe" / f"{label}-storage-{T['t2'] + 1}.json"
+                st[tag] = p.read_text(encoding="utf-8") if p.exists() else None
+            same = bool(c3["a24"]) and c3["a24"] == c3["a8"] == c3["b"]
+            same_st = st["a24"] is not None and st["a24"] == st["a8"] == st["b"]
+            meas[label] = {"checksums": c3, "equal": same, "storage_equal": same_st}
+            rep_ = Path(a24) / "script-output" / "ea-cc-probe" / f"{label}-report.json"
+            if rep_.exists():
+                meas[label]["report"] = json.loads(rep_.read_text(encoding="utf-8"))
+            if not bad and not (same and same_st):
+                fails.append(f"multiplayer with Space Age: the recipe disagrees (checksums {c3}, storage {same_st})")
+            if bad and same:
+                fails.append("multiplayer with Space Age: the bad probe's paths agree (G6)")
+        return meas, fails, "; ".join(f"{k}: {v}" for k, v in meas.items() if k in ("t12sa", "t12sabad"))
+
+    checks["cc_sa_more"] = SuiteCheck("cc_sa_more", lambda: key("cc_sa_more", {
+        "sa": sha256_file(HERE / "sa_compat.py"), "variants": sa_variants, "t12": T}), more_run, more_derive)
 
 
 # ------------------------------------------------------------------------------------------------ commands
