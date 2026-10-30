@@ -2169,8 +2169,11 @@ return {
     -- noise_layer_noise(layer), 6 to 48 tiles at every scale, the same call as grass-1's, so the Tile
     -- program shares it; trees and decoratives keep the plain fields, so placement stays as it was.
     -- The amounts are per unit (aux inside its cap), at full weight cold_span under cold_t and
-    -- hot_span over hot_t and at none between, so temperate land keeps its character. A coarser noise
-    -- only redraws the blobs (the temperate patch noise, 60 tiles and up at scale 6, left razor edges).
+    -- hot_span over hot_t and at none between, so temperate land keeps its character. The weight reads
+    -- the temperature and not its core: read on the core, a cold spot in temperate land took no grain,
+    -- and its edge was a razor arc and straight shards where two fields' contours crossed (Prague,
+    -- Frankfurt). A coarser noise only redraws the blobs (the temperate patch noise, 60 tiles and up at
+    -- scale 6, left razor edges).
     -- Each key's prototype is its plain field, so a preset that names none keeps its program.
     grain = {maps = {atlantic = true, europe = true, olde_world = true}, layer = 19,
              temperature = 3, moisture = 0.09, aux = 0.09,
