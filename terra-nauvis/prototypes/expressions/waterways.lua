@@ -3,7 +3,7 @@
 -- Per map and scale, four named sets from the generated files (tools/build_waterways.py): the rivers,
 -- straits and turning basins (ww), the canals, the dams and the fords. Each reads only its map's geo
 -- tiles in the chain of the geography version that composes them (its `waterways` record), warped and
--- bound here to the locals X, Y, XP, YP and W, so they live in the Tile program alone (firewall rule);
+-- bound here to the locals X, Y, XP, YP, W and B, so they live in the Tile program alone (firewall rule);
 -- that version's
 -- elevation entry (coast.lua) picks the save's scale's ww, canal and dam sets by name through the
 -- folded scale, and its preset points the ford key at the map's ford set for its scale, which the
@@ -66,7 +66,8 @@ end
 -- so the same ground wanders the same way from every spawn. Rivers read X and Y, the whole warp; straits,
 -- canals and dams read XP and YP, each octave at its passage share, so a passage keeps the places the
 -- oracle tests. The warp fades out around the spawn, so a river stays where the river-safe starts measured
--- it. W is the rivers' low-frequency width modulation. Every local reads constants and x, y alone.
+-- it. W is the rivers' low-frequency width modulation, B the fine bank noise of rivers and passages, which
+-- only ever widens, so no floor moves. Every local reads constants and x, y alone.
 local function natural_locals(g)
   local N = cfg.waterways.natural
   local s = cfg.keys.scale
@@ -95,6 +96,8 @@ local function natural_locals(g)
   locals.X, locals.Y = warped(g.gx, rx), warped(g.gy, ry)
   locals.XP, locals.YP = warped(g.gx, px), warped(g.gy, py)
   locals.W = "1 + " .. num(N.width.amplitude) .. " * clamp(" .. noise(N.width.seed1, N.width.wavelength) .. ", -1, 1)"
+  locals.B = "(" .. num(N.bank.amplitude[1]) .. " + " .. num(N.bank.amplitude[2]) .. " * " .. s ..
+    ") * (0.5 + 0.5 * clamp(" .. noise(N.bank.seed1, N.bank.wavelength) .. ", -1, 1))"
   return locals
 end
 

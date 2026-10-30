@@ -35,7 +35,8 @@ evaluations per tile, not per segment. A turning basin is a short wide capsule o
 
 Each scale's file holds four name-free sets, which prototypes/expressions/waterways.lua binds to the
 map's geo tiles through the locals X and Y (the rivers' warped tiles), XP and YP (the passages' lighter
-warp, so a strait or canal keeps the places the oracle tests) and W (the width modulation), and the ponds:
+warp, so a strait or canal keeps the places the oracle tests), W (the width modulation) and B (the fine
+bank noise), and the ponds:
   ww      rivers, straits and basins: per (half-width, depth, frame) class max(depth, slope (d - hw)),
           d the distance in tiles to the class's nearest segment, hw times W on a river, held at the
           river floor; min() over the classes (the elevation the carve allows; the entry takes min() with it)
@@ -680,6 +681,12 @@ def half_width(w, kind, s, width_class=None, real_km=0.0, river_class=None):
     raise ValueError(kind)
 
 
+def bank_reach(w, s):
+    """The fine bank noise's largest move of a bank, in tiles; it only ever widens."""
+    A = w["natural"]["bank"]["amplitude"]
+    return A[0] + A[1] * s
+
+
 def warp_reach(w, s, passage=False):
     """The farthest the shared warp moves a river (or a passage) from its polyline, in tiles: the octaves'
     amplitudes at the scale times the peak of basis noise (config.lua natural.noise_peak)."""
@@ -1185,7 +1192,7 @@ def place_fords(w, geo, s, P, hw, others, fid="", hw_at=None):
             tried += 1
             C, T, _ = point_at(P, a)
             N = np.array([-T[1], T[0]])
-            across = (hw_at(a) if hw_at else hw) * wide + F["margin_tiles"]
+            across = (hw_at(a) if hw_at else hw) * wide + bank_reach(w, s) + F["margin_tiles"]
             # the reach's deviation from the tangent line over the ford's length plus two tiles each way
             # (its vertices there and the stretch's two ends)
             lo_a, hi_a = a - hl - 2, a + hl + 2
@@ -1276,9 +1283,10 @@ def build_scale(cfg, data, geo, s):
     for f in feats:
         if f["kind"] == "river":
             f["widths"], hw_at[f["id"]] = river_widths(w, f, s, geo)
-            f["reach"] = max(f["widths"]) * (1 + w["natural"]["width"]["amplitude"]) + warp_reach(w, s)
+            f["reach"] = (max(f["widths"]) * (1 + w["natural"]["width"]["amplitude"]) + bank_reach(w, s) +
+                          warp_reach(w, s))
         else:
-            f["reach"] = f["hw"] + warp_reach(w, s, True)
+            f["reach"] = f["hw"] + bank_reach(w, s) + warp_reach(w, s, True)
     for f in feats:
         f["basins"] = []
         if f["kind"] == "dam":
@@ -1346,13 +1354,14 @@ def seg_calls(P, frame):
 
 def class_terms(groups, slope, floor=0.0):
     """One term per (half-width, depth, frame) class: max(depth, slope * (sqrt(min of squared distances) -
-    hw)), a river's hw modulated by W and held at the floor (a class under the floor is a source's taper)."""
+    hw - B)), B the fine bank noise, a river's hw modulated by W and held at the floor (a class under the
+    floor is a source's taper)."""
     terms = []
     for (hw, depth, frame), calls in sorted(groups.items()):
         width = g9(hw)
         if frame == "river":
             width = f"{g9(hw)} * W" if hw < floor else f"max({g9(floor)}, {g9(hw)} * W)"
-        terms.append(f"max({g9(depth)}, {g9(slope)} * (sqrt({min_tree(calls)}) - {width}))")
+        terms.append(f"max({g9(depth)}, {g9(slope)} * (sqrt({min_tree(calls)}) - {width} - B))")
     return terms
 
 
@@ -1445,7 +1454,7 @@ def render_lua(cfg, map_key, s, exprs, stats, data_rel, data_sha):
               f"{m['display']} at scale {s}: {seg['river']} river, {seg['strait']} strait, {seg['canal']} canal and "
               f"{seg['dam']} dam segments,",
               f"{stats['fords']} fords, {stats['basins']} turning basins.",
-              "Name-free data: waterways.lua binds the locals X, Y, XP, YP and W to the map's warped geo tiles.",
+              "Name-free data: waterways.lua binds the locals X, Y, XP, YP, W and B to the map's warped tiles.",
               "Never edit by hand: rerun the tool (plan hard rule 9)."]
     out = [f"-- {line}" for line in header]
     out.append("local F = {}")

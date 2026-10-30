@@ -68,6 +68,11 @@
     "amplitude": 0.3,
     "floor_half_tiles": 5.5
    },
+   "bank": {
+    "seed1": 7508,
+    "wavelength": [8, 1],
+    "amplitude": [0.6, 0.15]
+   },
    "profile": {
     "source": 0.7,
     "mouth": 1.35,
@@ -123,8 +128,8 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s1_v1.lua",
-   "sha256": "7695479bc7c09ce5d9cc36340ed30384ec398e8e14946d5132a673e4f1910d57",
-   "bytes": 27549,
+   "sha256": "ec823e05974967493a05040d0b0ece61668bc866235ebe75a3338c7c9afbb75e",
+   "bytes": 27500,
    "stats": {
     "segments": {
      "river": 195,
@@ -151,7 +156,7 @@
      "id": "danube",
      "name": "Danube",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 28,
      "window_tiles": 33,
      "polyline_geo": [
@@ -182,7 +187,7 @@
        "centre": [-230.6916, 199.7044],
        "tangent": [0.954344, -0.298711],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
@@ -190,15 +195,15 @@
        "centre": [-153.1225, 183.5667],
        "tangent": [0.983915, -0.178639],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
-       "arc_tiles": 150.682,
-       "centre": [-108.2403, 195.7978],
+       "arc_tiles": 156.682,
+       "centre": [-102.517, 197.5985],
        "tangent": [0.953898, 0.30013],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 3,
@@ -206,7 +211,7 @@
        "centre": [-54.7098, 212.6404],
        "tangent": [0.953898, 0.30013],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 4,
@@ -214,15 +219,15 @@
        "centre": [20.8084, 211.133],
        "tangent": [0.958504, 0.285079],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 5,
-       "arc_tiles": 310.224,
-       "centre": [46.8459, 218.8771],
+       "arc_tiles": 319.224,
+       "centre": [55.4724, 221.4428],
        "tangent": [0.958504, 0.285079],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 6,
@@ -230,7 +235,7 @@
        "centre": [132.2162, 235.9914],
        "tangent": [0.998085, 0.061865],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 7,
@@ -238,7 +243,7 @@
        "centre": [147.9576, 273.9311],
        "tangent": [-0.088696, 0.996059],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 8,
@@ -246,7 +251,7 @@
        "centre": [151.7259, 335.8187],
        "tangent": [0.604952, 0.796262],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 9,
@@ -254,7 +259,7 @@
        "centre": [188.5708, 351.6091],
        "tangent": [0.974521, 0.224295],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 10,
@@ -262,7 +267,7 @@
        "centre": [245.8363, 371.3026],
        "tangent": [0.997325, 0.073094],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 11,
@@ -270,7 +275,7 @@
        "centre": [319.9862, 397.3576],
        "tangent": [0.735606, 0.677409],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 12,
@@ -278,7 +283,7 @@
        "centre": [376.9692, 414.0649],
        "tangent": [0.996667, 0.081572],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 13,
@@ -286,7 +291,7 @@
        "centre": [427.5219, 417.9879],
        "tangent": [0.99905, -0.043572],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 14,
@@ -294,7 +299,7 @@
        "centre": [487.9103, 403.0957],
        "tangent": [0.973462, -0.228849],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 15,
@@ -302,7 +307,7 @@
        "centre": [549.077, 373.6662],
        "tangent": [0.312294, -0.949985],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 16,
@@ -310,7 +315,7 @@
        "centre": [578.4972, 349.0857],
        "tangent": [0.992848, 0.119382],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -321,7 +326,7 @@
      "id": "dnieper",
      "name": "Dnieper",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 23,
      "window_tiles": 13,
      "polyline_geo": [
@@ -349,7 +354,7 @@
        "centre": [694.8408, -74.7083],
        "tangent": [-0.992567, 0.121698],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 1,
@@ -357,7 +362,7 @@
        "centre": [663.9734, -63.2495],
        "tangent": [-0.627752, 0.778413],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -365,7 +370,7 @@
        "centre": [651.2495, 9.1091],
        "tangent": [0.456474, 0.889737],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 3,
@@ -373,7 +378,7 @@
        "centre": [672.8422, 60.3426],
        "tangent": [-0.348806, 0.937195],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 4,
@@ -381,7 +386,7 @@
        "centre": [674.3706, 119.6367],
        "tangent": [0.661622, 0.749838],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 5,
@@ -389,16 +394,16 @@
        "centre": [716.439, 145.5236],
        "tangent": [0.72485, 0.688907],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 6,
-       "arc_tiles": 411.388,
-       "centre": [792.9998, 177.2697],
+       "arc_tiles": 410.388,
+       "centre": [792.0597, 176.9286],
        "tangent": [0.940027, 0.3411],
        "half_length": 4.0,
-       "half_width": 9.15,
-       "bank_margin_px": 5.68
+       "half_width": 9.9,
+       "bank_margin_px": 5.688
       },
       {
        "interval": 7,
@@ -406,7 +411,7 @@
        "centre": [839.5809, 194.1722],
        "tangent": [0.940027, 0.3411],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 8,
@@ -414,7 +419,7 @@
        "centre": [876.6019, 220.6632],
        "tangent": [-0.096633, 0.99532],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 9,
@@ -422,7 +427,7 @@
        "centre": [848.2071, 247.3904],
        "tangent": [-0.984587, 0.174894],
        "half_length": 4.0,
-       "half_width": 9.15,
+       "half_width": 9.9,
        "bank_margin_px": 6.53
       },
       {
@@ -431,7 +436,7 @@
        "centre": [798.4765, 278.3553],
        "tangent": [-0.970681, 0.24037],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -442,7 +447,7 @@
      "id": "rhine",
      "name": "Rhine",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 16,
      "window_tiles": 17,
      "polyline_geo": [
@@ -471,7 +476,7 @@
        "centre": [-330.9189, 243.4842],
        "tangent": [-0.998274, 0.058722],
        "half_length": 4.0,
-       "half_width": 6.875
+       "half_width": 7.625
       },
       {
        "interval": 1,
@@ -479,23 +484,23 @@
        "centre": [-346.5423, 194.7759],
        "tangent": [0.620428, -0.784264],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
-       "arc_tiles": 169.965,
-       "centre": [-338.3391, 136.1991],
-       "tangent": [-0.961195, -0.275872],
+       "arc_tiles": 157.965,
+       "centre": [-329.5603, 143.0195],
+       "tangent": [-0.496139, -0.868243],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 3,
-       "arc_tiles": 206.706,
-       "centre": [-368.7835, 117.4403],
+       "arc_tiles": 194.706,
+       "centre": [-359.9943, 125.6103],
        "tangent": [-0.732438, -0.680834],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 4,
@@ -503,7 +508,7 @@
        "centre": [-412.1704, 61.3324],
        "tangent": [-0.857168, -0.515037],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 5,
@@ -511,7 +516,7 @@
        "centre": [-447.2186, 51.831],
        "tangent": [-0.992828, 0.119555],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -522,7 +527,7 @@
      "id": "vistula",
      "name": "Vistula",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 11,
      "window_tiles": 49,
      "polyline_geo": [
@@ -548,15 +553,15 @@
        "centre": [220.9863, 126.2525],
        "tangent": [0.972144, -0.234384],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
-       "arc_tiles": 83.812,
-       "centre": [268.0037, 100.2976],
+       "arc_tiles": 84.812,
+       "centre": [268.673, 99.5546],
        "tangent": [0.66929, -0.743001],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -564,7 +569,7 @@
        "centre": [252.6508, 49.8284],
        "tangent": [-0.772693, -0.63478],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 3,
@@ -572,7 +577,7 @@
        "centre": [201.4147, 26.6254],
        "tangent": [-0.959524, -0.281627],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 4,
@@ -580,7 +585,7 @@
        "centre": [155.0341, 10.594],
        "tangent": [-0.88131, -0.472539],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -591,7 +596,7 @@
      "id": "elbe",
      "name": "Elbe",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 8,
      "window_tiles": 33,
      "polyline_geo": [
@@ -616,7 +621,7 @@
        "centre": [-84.5415, 88.0745],
        "tangent": [-0.825896, -0.563823],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
@@ -624,7 +629,7 @@
        "centre": [-154.8163, 48.6844],
        "tangent": [-0.92939, -0.3691],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -632,7 +637,7 @@
        "centre": [-173.9629, 7.6711],
        "tangent": [-0.619361, -0.785106],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 3,
@@ -640,7 +645,7 @@
        "centre": [-238.1504, -18.3814],
        "tangent": [-0.942193, -0.33507],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 4,
@@ -648,7 +653,7 @@
        "centre": [-276.1928, -31.9104],
        "tangent": [-0.942193, -0.33507],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -659,7 +664,7 @@
      "id": "loire",
      "name": "Loire",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 13,
      "window_tiles": 13,
      "polyline_geo": [
@@ -685,7 +690,7 @@
        "centre": [-569.2517, 268.5184],
        "tangent": [-0.328521, -0.944497],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 1,
@@ -693,7 +698,7 @@
        "centre": [-590.9188, 238.0479],
        "tangent": [-0.948683, -0.316228],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -701,7 +706,7 @@
        "centre": [-663.1783, 251.3442],
        "tangent": [-0.974519, 0.224306],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 3,
@@ -709,7 +714,7 @@
        "centre": [-714.5953, 254.8711],
        "tangent": [-0.979091, -0.203423],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 4,
@@ -717,7 +722,7 @@
        "centre": [-773.2073, 259.1122],
        "tangent": [-0.957826, 0.287348],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -728,7 +733,7 @@
      "id": "daugava",
      "name": "Daugava",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 10,
      "window_tiles": 13,
      "polyline_geo": [
@@ -754,7 +759,7 @@
        "centre": [631.5939, -96.137],
        "tangent": [-0.991935, 0.126747],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
@@ -762,7 +767,7 @@
        "centre": [561.6366, -117.8449],
        "tangent": [-0.885589, -0.46447],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -770,7 +775,7 @@
        "centre": [495.074, -130.1833],
        "tangent": [-0.99533, -0.09653],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 3,
@@ -778,7 +783,7 @@
        "centre": [445.8723, -161.2445],
        "tangent": [-0.996249, -0.086534],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 4,
@@ -786,7 +791,7 @@
        "centre": [400.2852, -170.0479],
        "tangent": [-0.951034, -0.309086],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -797,7 +802,7 @@
      "id": "oder",
      "name": "Oder",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 10,
      "window_tiles": 17,
      "polyline_geo": [
@@ -823,7 +828,7 @@
        "centre": [82.5354, 95.8085],
        "tangent": [-0.914087, -0.405519],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
@@ -831,7 +836,7 @@
        "centre": [14.5452, 58.0362],
        "tangent": [-0.935948, -0.352139],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -839,7 +844,7 @@
        "centre": [-20.3903, 43.5403],
        "tangent": [-0.991939, -0.126715],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 3,
@@ -847,7 +852,7 @@
        "centre": [-58.6182, 11.2048],
        "tangent": [-0.701901, -0.712274],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -858,7 +863,7 @@
      "id": "tagus",
      "name": "Tagus",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 7,
      "window_tiles": 13,
      "polyline_geo": [
@@ -883,7 +888,7 @@
        "centre": [-889.3135, 590.0821],
        "tangent": [-0.973313, 0.22948],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
@@ -891,7 +896,7 @@
        "centre": [-957.6718, 593.6825],
        "tangent": [-0.99998, -0.006309],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -899,15 +904,15 @@
        "centre": [-1003.9917, 596.542],
        "tangent": [-0.994099, 0.108479],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 3,
-       "arc_tiles": 224.2,
-       "centre": [-1090.758, 616.9641],
-       "tangent": [-0.729573, 0.683903],
+       "arc_tiles": 213.2,
+       "centre": [-1081.6767, 611.2995],
+       "tangent": [-0.960948, 0.276729],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -918,7 +923,7 @@
      "id": "po",
      "name": "Po",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 9,
      "window_tiles": 13,
      "polyline_geo": [
@@ -939,11 +944,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 36.118,
-       "centre": [-322.9023, 354.8978],
+       "arc_tiles": 41.118,
+       "centre": [-318.0446, 356.0818],
        "tangent": [0.971558, 0.236803],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.9
       },
       {
        "interval": 1,
@@ -951,7 +956,7 @@
        "centre": [-282.5822, 355.4093],
        "tangent": [0.999391, 0.034886],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -959,7 +964,7 @@
        "centre": [-214.9004, 359.1159],
        "tangent": [0.98028, -0.197616],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -970,7 +975,7 @@
      "id": "seine",
      "name": "Seine",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 8,
      "window_tiles": 13,
      "polyline_geo": [
@@ -995,7 +1000,7 @@
        "centre": [-552.3054, 203.5995],
        "tangent": [-0.99266, 0.120941],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.575
       },
       {
        "interval": 1,
@@ -1003,7 +1008,7 @@
        "centre": [-614.7402, 182.2244],
        "tangent": [-0.974213, -0.225629],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -1011,7 +1016,7 @@
        "centre": [-650.0499, 167.1502],
        "tangent": [-0.841466, -0.54031],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -1022,7 +1027,7 @@
      "id": "rhone",
      "name": "Rhone",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 9,
      "window_tiles": 17,
      "polyline_geo": [
@@ -1049,7 +1054,7 @@
        "centre": [-462.5862, 325.1005],
        "tangent": [-0.994207, -0.107482],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 1,
@@ -1057,7 +1062,7 @@
        "centre": [-486.4842, 349.6917],
        "tangent": [-0.028291, 0.9996],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       },
       {
        "interval": 2,
@@ -1065,7 +1070,7 @@
        "centre": [-492.7247, 411.5463],
        "tangent": [-0.247737, 0.968827],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -1076,7 +1081,7 @@
      "id": "ebro",
      "name": "Ebro",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 6,
      "window_tiles": 25,
      "polyline_geo": [
@@ -1101,7 +1106,7 @@
        "centre": [-794.1988, 479.7933],
        "tangent": [0.950591, 0.310446],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
@@ -1109,7 +1114,7 @@
        "centre": [-749.3997, 505.6551],
        "tangent": [0.857078, 0.515187],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -1120,7 +1125,7 @@
      "id": "dniester",
      "name": "Dniester",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 6,
      "window_tiles": 13,
      "polyline_geo": [
@@ -1145,7 +1150,7 @@
        "centre": [562.8175, 213.8758],
        "tangent": [0.895088, 0.445889],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
@@ -1153,7 +1158,7 @@
        "centre": [604.7086, 251.5551],
        "tangent": [0.389911, 0.920853],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -1164,7 +1169,7 @@
      "id": "garonne",
      "name": "Garonne",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 4,
      "window_tiles": 25,
      "polyline_geo": [
@@ -1188,15 +1193,15 @@
        "centre": [-669.0937, 399.7908],
        "tangent": [-0.88904, -0.457829],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.575
       },
       {
        "interval": 1,
-       "arc_tiles": 82.341,
-       "centre": [-709.5293, 378.9677],
-       "tangent": [-0.88904, -0.457829],
+       "arc_tiles": 104.341,
+       "centre": [-726.5246, 365.8156],
+       "tangent": [-0.61154, -0.791214],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -1207,7 +1212,7 @@
      "id": "weser",
      "name": "Weser",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 6,
      "window_tiles": 25,
      "polyline_geo": [
@@ -1232,7 +1237,7 @@
        "centre": [-286.2885, 43.7675],
        "tangent": [-0.75881, -0.651312],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.575
       },
       {
        "interval": 1,
@@ -1240,7 +1245,7 @@
        "centre": [-311.165, -5.9939],
        "tangent": [-0.779957, -0.625834],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -1251,7 +1256,7 @@
      "id": "douro",
      "name": "Douro",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 4,
      "window_tiles": 13,
      "polyline_geo": [
@@ -1275,7 +1280,7 @@
        "centre": [-988.509, 520.206],
        "tangent": [-0.845774, 0.533541],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
@@ -1283,7 +1288,7 @@
        "centre": [-1050.8721, 532.927],
        "tangent": [-0.994711, 0.102715],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -1294,7 +1299,7 @@
      "id": "neman",
      "name": "Neman",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 4,
      "window_tiles": 13,
      "polyline_geo": [
@@ -1318,7 +1323,7 @@
        "centre": [343.2437, -92.6475],
        "tangent": [-0.972498, -0.232909],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       },
       {
        "interval": 1,
@@ -1326,7 +1331,7 @@
        "centre": [283.0814, -93.7223],
        "tangent": [-0.967537, -0.252729],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.9
       }
      ],
      "fords_skipped": [],
@@ -1337,7 +1342,7 @@
      "id": "thames",
      "name": "Thames",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 4,
      "window_tiles": 13,
      "polyline_geo": [
@@ -1361,7 +1366,7 @@
        "centre": [-729.5882, 69.584],
        "tangent": [0.959737, 0.280899],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.575
       }
      ],
      "fords_skipped": [],
@@ -1372,7 +1377,7 @@
      "id": "guadalquivir",
      "name": "Guadalquivir",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 3,
      "window_tiles": 13,
      "polyline_geo": [
@@ -1396,7 +1401,7 @@
        "centre": [-947.3672, 688.9762],
        "tangent": [-0.960056, 0.279809],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.6
       }
      ],
      "fords_skipped": [],
@@ -1407,7 +1412,7 @@
      "id": "don_lower",
      "name": "Don (lower)",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.45,
+     "reach_tiles": 23.2,
      "segments": 4,
      "window_tiles": 13,
      "polyline_geo": [
@@ -1431,7 +1436,7 @@
        "centre": [1114.8291, 252.7833],
        "tangent": [-0.886247, 0.463212],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.575
       }
      ],
      "fords_skipped": [],
@@ -1442,7 +1447,7 @@
      "id": "neva",
      "name": "Neva",
      "hw_tiles": 3.75,
-     "reach_tiles": 22.125,
+     "reach_tiles": 22.875,
      "segments": 2,
      "window_tiles": 13,
      "polyline_geo": [
@@ -1466,8 +1471,8 @@
        "centre": [681.2463, -308.5924],
        "tangent": [-0.936329, 0.351123],
        "half_length": 4.0,
-       "half_width": 6.875,
-       "bank_margin_px": 5.548
+       "half_width": 7.625,
+       "bank_margin_px": 5.511
       }
      ],
      "fords_skipped": [],
@@ -1478,7 +1483,7 @@
      "id": "gibraltar",
      "name": "Strait of Gibraltar",
      "hw_tiles": 5.75,
-     "reach_tiles": 8.334,
+     "reach_tiles": 9.084,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1499,7 +1504,7 @@
      "id": "bosporus",
      "name": "Bosporus",
      "hw_tiles": 3.75,
-     "reach_tiles": 6.334,
+     "reach_tiles": 7.084,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1520,7 +1525,7 @@
      "id": "dardanelles",
      "name": "Dardanelles",
      "hw_tiles": 3.75,
-     "reach_tiles": 6.334,
+     "reach_tiles": 7.084,
      "segments": 6,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1544,7 +1549,7 @@
      "id": "dover",
      "name": "Strait of Dover",
      "hw_tiles": 6.6775,
-     "reach_tiles": 9.261,
+     "reach_tiles": 10.011,
      "segments": 3,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1565,7 +1570,7 @@
      "id": "oresund",
      "name": "Oresund",
      "hw_tiles": 3.75,
-     "reach_tiles": 6.334,
+     "reach_tiles": 7.084,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1586,7 +1591,7 @@
      "id": "great_belt",
      "name": "Great Belt",
      "hw_tiles": 5.75,
-     "reach_tiles": 8.334,
+     "reach_tiles": 9.084,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1607,7 +1612,7 @@
      "id": "little_belt",
      "name": "Little Belt",
      "hw_tiles": 3.75,
-     "reach_tiles": 6.334,
+     "reach_tiles": 7.084,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1631,7 +1636,7 @@
      "id": "messina",
      "name": "Strait of Messina",
      "hw_tiles": 3.75,
-     "reach_tiles": 6.334,
+     "reach_tiles": 7.084,
      "segments": 3,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1652,7 +1657,7 @@
      "id": "kerch",
      "name": "Kerch Strait",
      "hw_tiles": 3.75,
-     "reach_tiles": 6.334,
+     "reach_tiles": 7.084,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1675,7 +1680,7 @@
      "id": "kiel",
      "name": "Kiel Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 6.334,
+     "reach_tiles": 7.084,
      "segments": 8,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1698,7 +1703,7 @@
      "id": "corinth",
      "name": "Corinth Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 6.334,
+     "reach_tiles": 7.084,
      "segments": 6,
      "window_tiles": 1,
      "polyline_geo": [
@@ -1719,7 +1724,7 @@
      "id": "corinth",
      "name": "Isthmus of Corinth",
      "hw_tiles": 1.5,
-     "reach_tiles": 4.084,
+     "reach_tiles": 4.834,
      "segments": 2,
      "window_tiles": null,
      "polyline_geo": [
@@ -1818,11 +1823,11 @@
     }
    ],
    "t1_mask": {
-    "pixels": 323603,
-    "share": 0.079128,
+    "pixels": 334975,
+    "share": 0.081909,
     "thin_water_px": 44561,
-    "thin_water_left_as_land_px": 34388,
-    "reference_land_carved_px": 276431
+    "thin_water_left_as_land_px": 34287,
+    "reference_land_carved_px": 285836
    },
    "starts": {
     "amsterdam": {
@@ -2779,8 +2784,8 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s2_v1.lua",
-   "sha256": "41eb07d4639aec675da84831abf6042e84f146be0f532b4165d60c7de1ba1063",
-   "bytes": 38775,
+   "sha256": "9291671d45d868e87ab48f504e25a450323ba02e189bcde19e68208f6461259f",
+   "bytes": 38912,
    "stats": {
     "segments": {
      "river": 324,
@@ -2807,7 +2812,7 @@
      "id": "danube",
      "name": "Danube",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 49,
      "window_tiles": 33,
      "polyline_geo": [
@@ -2841,7 +2846,7 @@
        "centre": [-459.9402, 398.5651],
        "tangent": [0.944084, -0.329706],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.75
       },
       {
        "interval": 1,
@@ -2849,7 +2854,7 @@
        "centre": [-310.6241, 362.6546],
        "tangent": [0.994761, -0.102228],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -2857,7 +2862,7 @@
        "centre": [-205.925, 396.7574],
        "tangent": [0.955508, 0.294965],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 3,
@@ -2865,7 +2870,7 @@
        "centre": [-104.4163, 428.0932],
        "tangent": [0.955508, 0.294965],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 4,
@@ -2873,7 +2878,7 @@
        "centre": [37.8157, 418.9865],
        "tangent": [0.994155, 0.107963],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 5,
@@ -2881,7 +2886,7 @@
        "centre": [98.5707, 438.2592],
        "tangent": [0.99173, 0.128342],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 6,
@@ -2889,7 +2894,7 @@
        "centre": [255.9505, 470.1795],
        "tangent": [0.999496, -0.031741],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 7,
@@ -2897,7 +2902,7 @@
        "centre": [297.2834, 519.4083],
        "tangent": [-0.310681, 0.950514],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 8,
@@ -2905,7 +2910,7 @@
        "centre": [289.424, 649.6247],
        "tangent": [0.481431, 0.876484],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 9,
@@ -2913,7 +2918,7 @@
        "centre": [347.1394, 699.085],
        "tangent": [0.990845, 0.135006],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 10,
@@ -2921,7 +2926,7 @@
        "centre": [458.9732, 745.3521],
        "tangent": [0.899109, 0.437724],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 11,
@@ -2929,7 +2934,7 @@
        "centre": [620.7458, 776.6411],
        "tangent": [0.789675, 0.613525],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 12,
@@ -2937,7 +2942,7 @@
        "centre": [718.9838, 827.8071],
        "tangent": [0.997817, 0.066046],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 13,
@@ -2945,7 +2950,7 @@
        "centre": [776.2937, 831.6005],
        "tangent": [0.997817, 0.066046],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 14,
@@ -2953,7 +2958,7 @@
        "centre": [924.271, 824.9795],
        "tangent": [0.904445, -0.42659],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 15,
@@ -2961,7 +2966,7 @@
        "centre": [1072.1755, 787.8627],
        "tangent": [0.9336, -0.358318],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 16,
@@ -2969,15 +2974,15 @@
        "centre": [1106.1693, 711.5784],
        "tangent": [0.265516, -0.964106],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 17,
-       "arc_tiles": 2053.529,
-       "centre": [1164.6852, 696.2532],
+       "arc_tiles": 2078.529,
+       "centre": [1188.8379, 702.7069],
        "tangent": [0.966105, 0.25815],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -2988,7 +2993,7 @@
      "id": "dnieper",
      "name": "Dnieper",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 42,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3021,7 +3026,7 @@
        "centre": [1395.6335, -149.1152],
        "tangent": [-0.992701, 0.120598],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 1,
@@ -3029,7 +3034,7 @@
        "centre": [1325.7389, -123.3347],
        "tangent": [-0.498823, 0.866704],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3037,7 +3042,7 @@
        "centre": [1299.4111, 12.5195],
        "tangent": [0.355218, 0.934784],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 3,
@@ -3045,7 +3050,7 @@
        "centre": [1348.5667, 117.0268],
        "tangent": [-0.472873, 0.88113],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 4,
@@ -3053,7 +3058,7 @@
        "centre": [1347.5115, 238.7842],
        "tangent": [0.601877, 0.798589],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 5,
@@ -3061,7 +3066,7 @@
        "centre": [1436.9189, 298.0784],
        "tangent": [0.807913, 0.589301],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 6,
@@ -3069,17 +3074,17 @@
        "centre": [1591.7034, 354.5622],
        "tangent": [0.94494, 0.327243],
        "half_length": 4.0,
-       "half_width": 9.15,
+       "half_width": 10.05,
        "bank_margin_px": 2.34
       },
       {
        "interval": 7,
-       "arc_tiles": 928.882,
-       "centre": [1680.3486, 388.574],
+       "arc_tiles": 930.882,
+       "centre": [1682.1334, 389.4766],
        "tangent": [0.892384, 0.451277],
        "half_length": 4.0,
-       "half_width": 9.15,
-       "bank_margin_px": 3.46
+       "half_width": 10.05,
+       "bank_margin_px": 4.058
       },
       {
        "interval": 8,
@@ -3087,7 +3092,7 @@
        "centre": [1754.2338, 429.8506],
        "tangent": [0.229793, 0.97324],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 9,
@@ -3095,7 +3100,7 @@
        "centre": [1712.8111, 494.4273],
        "tangent": [-0.997587, 0.069429],
        "half_length": 4.0,
-       "half_width": 9.15,
+       "half_width": 10.05,
        "bank_margin_px": 1.906
       },
       {
@@ -3104,7 +3109,7 @@
        "centre": [1563.3624, 566.5269],
        "tangent": [-0.971191, 0.238304],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3115,7 +3120,7 @@
      "id": "rhine",
      "name": "Rhine",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 30,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3141,11 +3146,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 25.694,
-       "centre": [-653.8565, 488.2929],
+       "arc_tiles": 26.694,
+       "centre": [-654.8554, 488.3384],
        "tangent": [-0.998962, 0.045552],
        "half_length": 4.0,
-       "half_width": 6.875
+       "half_width": 7.775
       },
       {
        "interval": 1,
@@ -3153,7 +3158,7 @@
        "centre": [-697.4742, 395.3001],
        "tangent": [0.690328, -0.723497],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3161,15 +3166,15 @@
        "centre": [-654.0389, 289.6358],
        "tangent": [-0.410365, -0.911922],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 3,
-       "arc_tiles": 408.412,
-       "centre": [-723.9182, 245.4642],
+       "arc_tiles": 407.412,
+       "centre": [-723.2627, 246.2194],
        "tangent": [-0.655529, -0.75517],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 4,
@@ -3177,15 +3182,15 @@
        "centre": [-811.796, 131.7219],
        "tangent": [-0.58975, -0.807586],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 5,
-       "arc_tiles": 616.082,
-       "centre": [-866.1097, 105.9639],
+       "arc_tiles": 606.082,
+       "centre": [-856.1788, 107.1375],
        "tangent": [-0.99309, -0.117354],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3196,7 +3201,7 @@
      "id": "vistula",
      "name": "Vistula",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 14,
      "window_tiles": 65,
      "polyline_geo": [
@@ -3224,15 +3229,15 @@
        "centre": [445.069, 253.6827],
        "tangent": [0.974696, -0.223532],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.725
       },
       {
        "interval": 1,
-       "arc_tiles": 189.624,
-       "centre": [551.299, 189.1897],
+       "arc_tiles": 188.624,
+       "centre": [551.0809, 190.1656],
        "tangent": [0.218073, -0.975932],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3240,7 +3245,7 @@
        "centre": [517.7473, 109.4805],
        "tangent": [-0.739487, -0.673171],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 3,
@@ -3248,7 +3253,7 @@
        "centre": [415.8281, 54.8731],
        "tangent": [-0.975519, -0.219915],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 4,
@@ -3256,7 +3261,7 @@
        "centre": [316.341, 27.4436],
        "tangent": [-0.921389, -0.388643],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3267,7 +3272,7 @@
      "id": "elbe",
      "name": "Elbe",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 20,
      "window_tiles": 33,
      "polyline_geo": [
@@ -3297,7 +3302,7 @@
        "centre": [-158.4663, 182.0178],
        "tangent": [-0.903944, -0.427651],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.75
       },
       {
        "interval": 1,
@@ -3305,7 +3310,7 @@
        "centre": [-296.1907, 102.9829],
        "tangent": [-0.993694, -0.112129],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3313,7 +3318,7 @@
        "centre": [-331.1515, 42.4558],
        "tangent": [0.293283, -0.956026],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 3,
@@ -3321,7 +3326,7 @@
        "centre": [-422.6573, -19.1306],
        "tangent": [-0.943158, -0.332346],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 4,
@@ -3329,7 +3334,7 @@
        "centre": [-548.8276, -58.9321],
        "tangent": [-0.880561, -0.473933],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3340,7 +3345,7 @@
      "id": "loire",
      "name": "Loire",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 18,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3368,7 +3373,7 @@
        "centre": [-1134.6513, 537.38],
        "tangent": [-0.195679, -0.980668],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 1,
@@ -3376,7 +3381,7 @@
        "centre": [-1176.7832, 479.7357],
        "tangent": [-0.945351, -0.326054],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3384,7 +3389,7 @@
        "centre": [-1327.2682, 504.1645],
        "tangent": [-0.974715, 0.22345],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 3,
@@ -3392,7 +3397,7 @@
        "centre": [-1422.908, 512.7645],
        "tangent": [-0.932458, -0.361277],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 4,
@@ -3400,7 +3405,7 @@
        "centre": [-1541.6241, 518.231],
        "tangent": [-0.957307, 0.289074],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3411,7 +3416,7 @@
      "id": "daugava",
      "name": "Daugava",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 14,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3438,7 +3443,7 @@
        "centre": [1264.2246, -190.9935],
        "tangent": [-0.991122, 0.132955],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.75
       },
       {
        "interval": 1,
@@ -3446,7 +3451,7 @@
        "centre": [1128.0314, -232.5302],
        "tangent": [-0.881031, -0.473058],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3454,7 +3459,7 @@
        "centre": [985.5609, -260.0382],
        "tangent": [-0.99525, -0.097356],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 3,
@@ -3462,7 +3467,7 @@
        "centre": [897.3107, -320.4969],
        "tangent": [-0.995936, -0.090064],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 4,
@@ -3470,7 +3475,7 @@
        "centre": [806.0421, -337.7742],
        "tangent": [-0.951437, -0.307844],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3481,7 +3486,7 @@
      "id": "oder",
      "name": "Oder",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 18,
      "window_tiles": 33,
      "polyline_geo": [
@@ -3508,7 +3513,7 @@
        "centre": [168.5971, 191.9412],
        "tangent": [-0.895908, -0.444241],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.75
       },
       {
        "interval": 1,
@@ -3516,7 +3521,7 @@
        "centre": [28.6964, 116.6321],
        "tangent": [-0.937931, -0.346823],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3524,7 +3529,7 @@
        "centre": [-39.7323, 86.9025],
        "tangent": [-0.996595, -0.082452],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 3,
@@ -3532,7 +3537,7 @@
        "centre": [-119.9407, 22.2558],
        "tangent": [-0.75097, -0.660336],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3543,7 +3548,7 @@
      "id": "tagus",
      "name": "Tagus",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 13,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3570,7 +3575,7 @@
        "centre": [-1777.719, 1180.7638],
        "tangent": [-0.975898, 0.218228],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.75
       },
       {
        "interval": 1,
@@ -3578,7 +3583,7 @@
        "centre": [-1932.2498, 1188.2362],
        "tangent": [-0.999961, -0.008793],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3586,7 +3591,7 @@
        "centre": [-2006.7532, 1192.9034],
        "tangent": [-0.999735, -0.023027],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 3,
@@ -3594,7 +3599,7 @@
        "centre": [-2178.433, 1232.6073],
        "tangent": [-0.739466, 0.673193],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3605,7 +3610,7 @@
      "id": "po",
      "name": "Po",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 12,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3631,7 +3636,7 @@
        "centre": [-639.4776, 710.9016],
        "tangent": [0.958089, 0.286472],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 1,
@@ -3639,15 +3644,15 @@
        "centre": [-570.0316, 711.584],
        "tangent": [0.999392, 0.034874],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
-       "arc_tiles": 280.435,
-       "centre": [-440.6902, 720.8214],
-       "tangent": [0.969201, -0.246272],
+       "arc_tiles": 302.435,
+       "centre": [-419.3133, 717.2267],
+       "tangent": [0.982179, 0.187948],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3658,7 +3663,7 @@
      "id": "seine",
      "name": "Seine",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 12,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3684,7 +3689,7 @@
        "centre": [-1102.7138, 409.8418],
        "tangent": [-0.983425, 0.181313],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.725
       },
       {
        "interval": 1,
@@ -3692,7 +3697,7 @@
        "centre": [-1224.333, 364.3726],
        "tangent": [-0.984488, -0.175453],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3700,7 +3705,7 @@
        "centre": [-1296.6127, 336.7284],
        "tangent": [-0.84028, -0.542152],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3711,7 +3716,7 @@
      "id": "rhone",
      "name": "Rhone",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 16,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3738,7 +3743,7 @@
        "centre": [-917.194, 651.2572],
        "tangent": [-0.9011, -0.433612],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 1,
@@ -3746,15 +3751,15 @@
        "centre": [-975.7067, 684.9476],
        "tangent": [-0.170388, 0.985377],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
-       "arc_tiles": 332.094,
-       "centre": [-987.9621, 841.3875],
+       "arc_tiles": 333.094,
+       "centre": [-987.6511, 842.3379],
        "tangent": [0.310995, 0.950412],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3765,7 +3770,7 @@
      "id": "ebro",
      "name": "Ebro",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 12,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3791,7 +3796,7 @@
        "centre": [-1586.9019, 958.9623],
        "tangent": [0.96192, 0.273332],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.75
       },
       {
        "interval": 1,
@@ -3799,7 +3804,7 @@
        "centre": [-1499.3662, 1012.2968],
        "tangent": [0.848591, 0.529049],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 2,
@@ -3807,7 +3812,7 @@
        "centre": [-1381.7924, 1050.516],
        "tangent": [0.971959, 0.235151],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3818,7 +3823,7 @@
      "id": "dniester",
      "name": "Dniester",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 7,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3843,7 +3848,7 @@
        "centre": [1127.5211, 429.2157],
        "tangent": [0.894866, 0.446335],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.75
       },
       {
        "interval": 1,
@@ -3851,7 +3856,7 @@
        "centre": [1211.6132, 505.2638],
        "tangent": [0.336258, 0.94177],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3862,7 +3867,7 @@
      "id": "garonne",
      "name": "Garonne",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 5,
      "window_tiles": 49,
      "polyline_geo": [
@@ -3887,7 +3892,7 @@
        "centre": [-1335.3223, 801.3856],
        "tangent": [-0.890625, -0.454739],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       },
       {
        "interval": 1,
@@ -3895,7 +3900,7 @@
        "centre": [-1434.1502, 750.9256],
        "tangent": [-0.890625, -0.454739],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3906,7 +3911,7 @@
      "id": "weser",
      "name": "Weser",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 9,
      "window_tiles": 49,
      "polyline_geo": [
@@ -3927,11 +3932,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 70.859,
-       "centre": [-577.1012, 84.4032],
+       "arc_tiles": 62.859,
+       "centre": [-570.7254, 89.2352],
        "tangent": [-0.79698, -0.604006],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 9.725
       },
       {
        "interval": 1,
@@ -3939,7 +3944,7 @@
        "centre": [-618.9143, -9.9695],
        "tangent": [-0.8098, -0.586706],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3950,7 +3955,7 @@
      "id": "douro",
      "name": "Douro",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 8,
      "window_tiles": 25,
      "polyline_geo": [
@@ -3976,7 +3981,7 @@
        "centre": [-1978.2507, 1043.0565],
        "tangent": [-0.828067, 0.560629],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.725
       },
       {
        "interval": 1,
@@ -3984,7 +3989,7 @@
        "centre": [-2096.188, 1066.7129],
        "tangent": [-0.992334, 0.123584],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -3995,7 +4000,7 @@
      "id": "neman",
      "name": "Neman",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 5,
      "window_tiles": 25,
      "polyline_geo": [
@@ -4020,7 +4025,7 @@
        "centre": [676.6798, -184.1943],
        "tangent": [-0.999995, 0.003203],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.725
       },
       {
        "interval": 1,
@@ -4028,7 +4033,7 @@
        "centre": [566.2691, -186.6989],
        "tangent": [-0.967075, -0.254493],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -4039,7 +4044,7 @@
      "id": "thames",
      "name": "Thames",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 6,
      "window_tiles": 25,
      "polyline_geo": [
@@ -4064,7 +4069,7 @@
        "centre": [-1458.726, 140.1092],
        "tangent": [0.955019, 0.296546],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.05
       }
      ],
      "fords_skipped": [],
@@ -4075,7 +4080,7 @@
      "id": "guadalquivir",
      "name": "Guadalquivir",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 5,
      "window_tiles": 25,
      "polyline_geo": [
@@ -4100,7 +4105,7 @@
        "centre": [-1895.6456, 1379.5428],
        "tangent": [-0.959903, 0.280331],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.725
       }
      ],
      "fords_skipped": [],
@@ -4111,7 +4116,7 @@
      "id": "don_lower",
      "name": "Don (lower)",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 5,
      "window_tiles": 25,
      "polyline_geo": [
@@ -4136,7 +4141,7 @@
        "centre": [2230.3067, 507.9225],
        "tangent": [-0.855869, 0.517192],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.725
       }
      ],
      "fords_skipped": [],
@@ -4147,7 +4152,7 @@
      "id": "neva",
      "name": "Neva",
      "hw_tiles": 3.75,
-     "reach_tiles": 30.78,
+     "reach_tiles": 31.68,
      "segments": 4,
      "window_tiles": 25,
      "polyline_geo": [
@@ -4171,7 +4176,7 @@
        "centre": [1346.075, -614.5749],
        "tangent": [-0.980795, -0.195039],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.75
       }
      ],
      "fords_skipped": [],
@@ -4182,7 +4187,7 @@
      "id": "gibraltar",
      "name": "Strait of Gibraltar",
      "hw_tiles": 5.7871,
-     "reach_tiles": 9.17,
+     "reach_tiles": 10.07,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4204,7 +4209,7 @@
      "id": "bosporus",
      "name": "Bosporus",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.133,
+     "reach_tiles": 8.033,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4225,7 +4230,7 @@
      "id": "dardanelles",
      "name": "Dardanelles",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.133,
+     "reach_tiles": 8.033,
      "segments": 6,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4250,7 +4255,7 @@
      "id": "dover",
      "name": "Strait of Dover",
      "hw_tiles": 13.3549,
-     "reach_tiles": 16.738,
+     "reach_tiles": 17.638,
      "segments": 3,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4271,7 +4276,7 @@
      "id": "oresund",
      "name": "Oresund",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.133,
+     "reach_tiles": 8.033,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4292,7 +4297,7 @@
      "id": "great_belt",
      "name": "Great Belt",
      "hw_tiles": 6.4751,
-     "reach_tiles": 9.858,
+     "reach_tiles": 10.758,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4313,7 +4318,7 @@
      "id": "little_belt",
      "name": "Little Belt",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.133,
+     "reach_tiles": 8.033,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4337,7 +4342,7 @@
      "id": "messina",
      "name": "Strait of Messina",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.133,
+     "reach_tiles": 8.033,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4361,7 +4366,7 @@
      "id": "kerch",
      "name": "Kerch Strait",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.133,
+     "reach_tiles": 8.033,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4384,7 +4389,7 @@
      "id": "kiel",
      "name": "Kiel Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.133,
+     "reach_tiles": 8.033,
      "segments": 9,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4405,7 +4410,7 @@
      "id": "corinth",
      "name": "Corinth Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.133,
+     "reach_tiles": 8.033,
      "segments": 7,
      "window_tiles": 1,
      "polyline_geo": [
@@ -4426,7 +4431,7 @@
      "id": "corinth",
      "name": "Isthmus of Corinth",
      "hw_tiles": 1.5,
-     "reach_tiles": 4.883,
+     "reach_tiles": 5.783,
      "segments": 2,
      "window_tiles": null,
      "polyline_geo": [
@@ -4518,11 +4523,11 @@
     }
    ],
    "t1_mask": {
-    "pixels": 213732,
-    "share": 0.052262,
+    "pixels": 220372,
+    "share": 0.053886,
     "thin_water_px": 44561,
-    "thin_water_left_as_land_px": 35257,
-    "reference_land_carved_px": 182307
+    "thin_water_left_as_land_px": 35209,
+    "reference_land_carved_px": 187957
    },
    "starts": {
     "amsterdam": {
@@ -5121,8 +5126,8 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s3_v1.lua",
-   "sha256": "13553a49be8dc5cd84bbf62853eaf2334821f617fb503e4dd76468fcf450af4a",
-   "bytes": 37851,
+   "sha256": "11bb7b4076a5eee2618b0bfab7b07e703ebf8da6a301a372705fded9a94b3b83",
+   "bytes": 37916,
    "stats": {
     "segments": {
      "river": 314,
@@ -5149,7 +5154,7 @@
      "id": "danube",
      "name": "Danube",
      "hw_tiles": 4.5,
-     "reach_tiles": 39.76,
+     "reach_tiles": 40.81,
      "segments": 51,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5183,7 +5188,7 @@
        "centre": [-691.8497, 597.7756],
        "tangent": [0.943766, -0.330615],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.9
       },
       {
        "interval": 1,
@@ -5191,15 +5196,15 @@
        "centre": [-458.2444, 544.046],
        "tangent": [0.951441, 0.30783],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
-       "arc_tiles": 475.047,
-       "centre": [-306.2153, 593.2336],
+       "arc_tiles": 479.047,
+       "centre": [-302.4095, 594.4649],
        "tangent": [0.951441, 0.30783],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 3,
@@ -5207,7 +5212,7 @@
        "centre": [-164.1147, 639.209],
        "tangent": [0.951441, 0.30783],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 4,
@@ -5215,7 +5220,7 @@
        "centre": [55.227, 627.9437],
        "tangent": [0.99414, 0.108101],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 5,
@@ -5223,7 +5228,7 @@
        "centre": [152.2883, 657.4924],
        "tangent": [0.991991, 0.126306],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 6,
@@ -5231,15 +5236,15 @@
        "centre": [386.89, 704.9348],
        "tangent": [0.999625, -0.027375],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 7,
-       "arc_tiles": 1341.4,
-       "centre": [444.6432, 780.7836],
-       "tangent": [-0.30338, 0.95287],
+       "arc_tiles": 1346.4,
+       "centre": [443.8171, 785.6713],
+       "tangent": [-0.045038, 0.998985],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 8,
@@ -5247,7 +5252,7 @@
        "centre": [436.1175, 977.7061],
        "tangent": [0.477339, 0.878719],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 9,
@@ -5255,15 +5260,15 @@
        "centre": [519.6356, 1048.0381],
        "tangent": [0.990468, 0.13774],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 10,
-       "arc_tiles": 1845.976,
-       "centre": [683.8114, 1115.5103],
+       "arc_tiles": 1849.976,
+       "centre": [687.3952, 1117.287],
        "tangent": [0.895941, 0.444174],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 11,
@@ -5271,7 +5276,7 @@
        "centre": [912.2292, 1150.3474],
        "tangent": [0.788968, 0.614435],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 12,
@@ -5279,7 +5284,7 @@
        "centre": [1060.6866, 1239.928],
        "tangent": [0.997726, 0.067399],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 13,
@@ -5287,7 +5292,7 @@
        "centre": [1226.4617, 1251.1266],
        "tangent": [0.997726, 0.067399],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 14,
@@ -5295,15 +5300,15 @@
        "centre": [1384.5826, 1237.3339],
        "tangent": [0.903951, -0.427636],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 15,
-       "arc_tiles": 2808.294,
-       "centre": [1583.6033, 1190.5755],
+       "arc_tiles": 2809.294,
+       "centre": [1584.5294, 1190.1981],
        "tangent": [0.926066, -0.377362],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 10.85
       },
       {
        "interval": 16,
@@ -5311,7 +5316,7 @@
        "centre": [1654.8447, 1081.3033],
        "tangent": [0.27933, -0.960195],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 10.85
       },
       {
        "interval": 17,
@@ -5319,7 +5324,7 @@
        "centre": [1754.5346, 1046.1696],
        "tangent": [0.965959, 0.258694],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 10.85
       }
      ],
      "fords_skipped": [],
@@ -5330,7 +5335,7 @@
      "id": "dnieper",
      "name": "Dnieper",
      "hw_tiles": 4.5,
-     "reach_tiles": 39.76,
+     "reach_tiles": 40.81,
      "segments": 38,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5362,7 +5367,7 @@
        "centre": [2086.0607, -219.2238],
        "tangent": [-0.988441, 0.151603],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -5370,7 +5375,7 @@
        "centre": [1989.3528, -182.7939],
        "tangent": [-0.540123, 0.841586],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -5378,15 +5383,15 @@
        "centre": [1951.9382, 22.7812],
        "tangent": [0.292504, 0.956264],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 3,
-       "arc_tiles": 637.424,
-       "centre": [2023.8587, 175.725],
+       "arc_tiles": 648.424,
+       "centre": [2020.071, 186.0523],
        "tangent": [-0.344341, 0.938845],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 4,
@@ -5394,7 +5399,7 @@
        "centre": [2018.3653, 351.7553],
        "tangent": [0.628408, 0.777884],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 5,
@@ -5402,7 +5407,7 @@
        "centre": [2094.4323, 406.2523],
        "tangent": [0.954061, 0.299613],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 6,
@@ -5410,17 +5415,17 @@
        "centre": [2387.3235, 535.7286],
        "tangent": [0.938232, 0.346008],
        "half_length": 4.0,
-       "half_width": 9.15,
+       "half_width": 10.2,
        "bank_margin_px": 6.014
       },
       {
        "interval": 7,
-       "arc_tiles": 1433.824,
-       "centre": [2571.8351, 603.7741],
+       "arc_tiles": 1431.824,
+       "centre": [2569.9586, 603.0821],
        "tangent": [0.938232, 0.346008],
        "half_length": 4.0,
-       "half_width": 9.15,
-       "bank_margin_px": 4.888
+       "half_width": 10.2,
+       "bank_margin_px": 4.866
       },
       {
        "interval": 8,
@@ -5428,7 +5433,7 @@
        "centre": [2628.1702, 674.7283],
        "tangent": [-0.105343, 0.994436],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 9,
@@ -5436,8 +5441,8 @@
        "centre": [2572.9633, 739.711],
        "tangent": [-0.995004, 0.099833],
        "half_length": 4.0,
-       "half_width": 9.8,
-       "bank_margin_px": 1.877
+       "half_width": 10.85,
+       "bank_margin_px": 1.869
       },
       {
        "interval": 10,
@@ -5445,7 +5450,7 @@
        "centre": [2320.3877, 854.3064],
        "tangent": [-0.970603, 0.240687],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 10.85
       }
      ],
      "fords_skipped": [],
@@ -5456,7 +5461,7 @@
      "id": "rhine",
      "name": "Rhine",
      "hw_tiles": 4.5,
-     "reach_tiles": 39.76,
+     "reach_tiles": 40.81,
      "segments": 24,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5485,7 +5490,7 @@
        "centre": [-975.3336, 730.4031],
        "tangent": [-0.998833, 0.048297],
        "half_length": 4.0,
-       "half_width": 6.875
+       "half_width": 7.925
       },
       {
        "interval": 1,
@@ -5493,7 +5498,7 @@
        "centre": [-1041.7794, 587.7471],
        "tangent": [0.664108, -0.747636],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -5501,7 +5506,7 @@
        "centre": [-985.2457, 429.3578],
        "tangent": [-0.485643, -0.874157],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 3,
@@ -5509,7 +5514,7 @@
        "centre": [-1081.644, 376.1086],
        "tangent": [-0.714262, -0.699878],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 4,
@@ -5517,15 +5522,15 @@
        "centre": [-1228.5825, 189.4378],
        "tangent": [-0.864774, -0.502161],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 5,
-       "arc_tiles": 972.624,
-       "centre": [-1361.1059, 157.2672],
+       "arc_tiles": 973.624,
+       "centre": [-1362.076, 157.5101],
        "tangent": [-0.970045, 0.242926],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -5536,7 +5541,7 @@
      "id": "vistula",
      "name": "Vistula",
      "hw_tiles": 4.5,
-     "reach_tiles": 39.76,
+     "reach_tiles": 40.81,
      "segments": 23,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5566,15 +5571,15 @@
        "centre": [670.4987, 382.4031],
        "tangent": [0.950195, -0.311655],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.875
       },
       {
        "interval": 1,
-       "arc_tiles": 259.435,
-       "centre": [821.6339, 315.4008],
-       "tangent": [0.691063, -0.722795],
+       "arc_tiles": 267.435,
+       "centre": [825.8448, 308.7159],
+       "tangent": [0.424225, -0.905557],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -5582,7 +5587,7 @@
        "centre": [791.9004, 178.6392],
        "tangent": [-0.828779, -0.559577],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 3,
@@ -5590,7 +5595,7 @@
        "centre": [644.3019, 82.1162],
        "tangent": [-0.999808, -0.019604],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 4,
@@ -5598,7 +5603,7 @@
        "centre": [498.6584, 53.6437],
        "tangent": [-0.955601, -0.294665],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 5,
@@ -5606,7 +5611,7 @@
        "centre": [370.5882, -39.0766],
        "tangent": [0.828328, -0.560243],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 10.85
       }
      ],
      "fords_skipped": [],
@@ -5617,7 +5622,7 @@
      "id": "elbe",
      "name": "Elbe",
      "hw_tiles": 4.5,
-     "reach_tiles": 39.76,
+     "reach_tiles": 40.81,
      "segments": 21,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5645,7 +5650,7 @@
        "centre": [-238.7942, 272.5967],
        "tangent": [-0.902416, -0.430865],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.9
       },
       {
        "interval": 1,
@@ -5653,7 +5658,7 @@
        "centre": [-441.2762, 154.4881],
        "tangent": [-0.993676, -0.112285],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -5661,7 +5666,7 @@
        "centre": [-496.0598, 59.1892],
        "tangent": [0.268533, -0.96327],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 3,
@@ -5669,15 +5674,15 @@
        "centre": [-638.2971, -30.4197],
        "tangent": [-0.942121, -0.335272],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 4,
-       "arc_tiles": 876.306,
-       "centre": [-837.9861, -96.1289],
+       "arc_tiles": 875.306,
+       "centre": [-837.1051, -95.6556],
        "tangent": [-0.880938, -0.473231],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 10.85
       }
      ],
      "fords_skipped": [],
@@ -5688,7 +5693,7 @@
      "id": "loire",
      "name": "Loire",
      "hw_tiles": 4.5,
-     "reach_tiles": 39.76,
+     "reach_tiles": 40.81,
      "segments": 15,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5711,11 +5716,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 142.682,
-       "centre": [-1709.4555, 798.3353],
+       "arc_tiles": 129.682,
+       "centre": [-1704.7984, 810.4725],
        "tangent": [-0.358233, -0.933632],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -5723,7 +5728,7 @@
        "centre": [-1765.3313, 719.3831],
        "tangent": [-0.947876, -0.318638],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -5731,7 +5736,7 @@
        "centre": [-1988.3611, 754.249],
        "tangent": [-0.975574, 0.219669],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 3,
@@ -5739,7 +5744,7 @@
        "centre": [-2142.8705, 767.7166],
        "tangent": [-0.967788, -0.251768],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 4,
@@ -5747,7 +5752,7 @@
        "centre": [-2318.7267, 777.7579],
        "tangent": [-0.966028, 0.258439],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 10.85
       }
      ],
      "fords_skipped": [],
@@ -5758,7 +5763,7 @@
      "id": "daugava",
      "name": "Daugava",
      "hw_tiles": 4.5,
-     "reach_tiles": 39.76,
+     "reach_tiles": 40.81,
      "segments": 14,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5785,7 +5790,7 @@
        "centre": [1898.8881, -286.8278],
        "tangent": [-0.989921, 0.141624],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.9
       },
       {
        "interval": 1,
@@ -5793,7 +5798,7 @@
        "centre": [1688.004, -352.1332],
        "tangent": [-0.906, -0.423278],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -5801,7 +5806,7 @@
        "centre": [1483.8844, -391.2551],
        "tangent": [-0.993377, -0.114898],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 3,
@@ -5809,7 +5814,7 @@
        "centre": [1339.3094, -481.8967],
        "tangent": [-0.994093, -0.108534],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 4,
@@ -5817,7 +5822,7 @@
        "centre": [1215.9952, -505.2904],
        "tangent": [-0.948161, -0.31779],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 10.85
       }
      ],
      "fords_skipped": [],
@@ -5828,7 +5833,7 @@
      "id": "oder",
      "name": "Oder",
      "hw_tiles": 4.5,
-     "reach_tiles": 39.76,
+     "reach_tiles": 40.81,
      "segments": 19,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5855,7 +5860,7 @@
        "centre": [251.5179, 286.9311],
        "tangent": [-0.8956, -0.444861],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.9
       },
       {
        "interval": 1,
@@ -5863,7 +5868,7 @@
        "centre": [43.2245, 174.7709],
        "tangent": [-0.939943, -0.341332],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -5871,7 +5876,7 @@
        "centre": [-58.324, 131.5463],
        "tangent": [-0.992014, -0.12613],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 3,
@@ -5879,7 +5884,7 @@
        "centre": [-180.9576, 32.2793],
        "tangent": [-0.754037, -0.656832],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -5890,7 +5895,7 @@
      "id": "tagus",
      "name": "Tagus",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 8,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5916,7 +5921,7 @@
        "centre": [-2667.1141, 1770.4851],
        "tangent": [-0.976566, 0.215219],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.9
       },
       {
        "interval": 1,
@@ -5924,7 +5929,7 @@
        "centre": [-2893.1095, 1784.8337],
        "tangent": [-0.999288, 0.037731],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -5932,7 +5937,7 @@
        "centre": [-3012.4715, 1789.3406],
        "tangent": [-0.999288, 0.037731],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 3,
@@ -5940,7 +5945,7 @@
        "centre": [-3270.8871, 1850.4751],
        "tangent": [-0.725963, 0.687733],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -5951,7 +5956,7 @@
      "id": "po",
      "name": "Po",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 9,
      "window_tiles": 49,
      "polyline_geo": [
@@ -5977,7 +5982,7 @@
        "centre": [-962.0896, 1066.9926],
        "tangent": [0.981768, 0.190083],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -5985,7 +5990,7 @@
        "centre": [-852.1793, 1071.6744],
        "tangent": [0.999756, -0.022096],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -5993,7 +5998,7 @@
        "centre": [-643.3016, 1078.1824],
        "tangent": [0.986254, -0.165236],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6004,7 +6009,7 @@
      "id": "seine",
      "name": "Seine",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 10,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6030,7 +6035,7 @@
        "centre": [-1655.7451, 614.7701],
        "tangent": [-0.987533, 0.157413],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -6038,7 +6043,7 @@
        "centre": [-1838.1759, 548.8738],
        "tangent": [-0.970393, -0.24153],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -6046,7 +6051,7 @@
        "centre": [-1947.618, 503.5431],
        "tangent": [-0.850427, -0.526092],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6057,7 +6062,7 @@
      "id": "rhone",
      "name": "Rhone",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 15,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6084,7 +6089,7 @@
        "centre": [-1373.0465, 978.2203],
        "tangent": [-0.966462, -0.256811],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -6092,15 +6097,15 @@
        "centre": [-1463.4881, 1037.8051],
        "tangent": [0.067479, 0.997721],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
-       "arc_tiles": 494.141,
-       "centre": [-1480.2802, 1270.0563],
+       "arc_tiles": 493.141,
+       "centre": [-1480.6014, 1269.1093],
        "tangent": [0.321225, 0.947003],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6111,7 +6116,7 @@
      "id": "ebro",
      "name": "Ebro",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 12,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6138,7 +6143,7 @@
        "centre": [-2381.1381, 1438.9186],
        "tangent": [0.957574, 0.288186],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.9
       },
       {
        "interval": 1,
@@ -6146,7 +6151,7 @@
        "centre": [-2250.2025, 1516.4555],
        "tangent": [0.852114, 0.523357],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -6154,7 +6159,7 @@
        "centre": [-2063.8034, 1580.2278],
        "tangent": [0.847611, 0.530618],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6165,7 +6170,7 @@
      "id": "dniester",
      "name": "Dniester",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 7,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6190,7 +6195,7 @@
        "centre": [1689.3773, 642.778],
        "tangent": [0.893828, 0.448411],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.9
       },
       {
        "interval": 1,
@@ -6198,7 +6203,7 @@
        "centre": [1816.0664, 754.6024],
        "tangent": [0.36549, 0.930815],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6209,7 +6214,7 @@
      "id": "garonne",
      "name": "Garonne",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 5,
      "window_tiles": 65,
      "polyline_geo": [
@@ -6234,15 +6239,15 @@
        "centre": [-2002.0621, 1201.8078],
        "tangent": [-0.894368, -0.447331],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       },
       {
        "interval": 1,
-       "arc_tiles": 278.024,
-       "centre": [-2155.399, 1125.1141],
+       "arc_tiles": 276.024,
+       "centre": [-2153.6102, 1126.0088],
        "tangent": [-0.894368, -0.447331],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6253,7 +6258,7 @@
      "id": "weser",
      "name": "Weser",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 16,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6276,11 +6281,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 95.788,
-       "centre": [-850.68, 130.4215],
-       "tangent": [-0.784589, -0.620016],
+       "arc_tiles": 87.788,
+       "centre": [-845.7617, 136.5183],
+       "tangent": [-0.471974, -0.881612],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.875
       },
       {
        "interval": 1,
@@ -6288,7 +6293,7 @@
        "centre": [-911.8416, -2.9603],
        "tangent": [-0.893792, -0.448482],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6299,7 +6304,7 @@
      "id": "douro",
      "name": "Douro",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 7,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6324,7 +6329,7 @@
        "centre": [-2965.9774, 1564.3628],
        "tangent": [-0.847016, 0.531567],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.875
       },
       {
        "interval": 1,
@@ -6332,7 +6337,7 @@
        "centre": [-3154.5505, 1599.5893],
        "tangent": [-0.99721, 0.074641],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6343,7 +6348,7 @@
      "id": "neman",
      "name": "Neman",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 5,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6368,7 +6373,7 @@
        "centre": [1023.7525, -277.845],
        "tangent": [-0.974347, -0.225051],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.875
       },
       {
        "interval": 1,
@@ -6376,7 +6381,7 @@
        "centre": [877.6614, -277.1249],
        "tangent": [-0.999958, 0.009145],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6387,7 +6392,7 @@
      "id": "thames",
      "name": "Thames",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 4,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6411,7 +6416,7 @@
        "centre": [-2186.2721, 210.4126],
        "tangent": [0.992725, 0.120403],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.2
       }
      ],
      "fords_skipped": [],
@@ -6422,7 +6427,7 @@
      "id": "guadalquivir",
      "name": "Guadalquivir",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 4,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6447,7 +6452,7 @@
        "centre": [-2843.7529, 2069.5405],
        "tangent": [-0.957469, 0.288535],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.875
       }
      ],
      "fords_skipped": [],
@@ -6458,7 +6463,7 @@
      "id": "don_lower",
      "name": "Don (lower)",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 4,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6482,7 +6487,7 @@
        "centre": [3345.3165, 759.4945],
        "tangent": [-0.8969, 0.442233],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.875
       }
      ],
      "fords_skipped": [],
@@ -6493,7 +6498,7 @@
      "id": "neva",
      "name": "Neva",
      "hw_tiles": 3.75,
-     "reach_tiles": 39.11,
+     "reach_tiles": 40.16,
      "segments": 3,
      "window_tiles": 49,
      "polyline_geo": [
@@ -6513,11 +6518,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 62.659,
-       "centre": [2021.3522, -923.905],
+       "arc_tiles": 63.659,
+       "centre": [2020.3769, -924.1257],
        "tangent": [-0.975354, -0.220644],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 8.9
       }
      ],
      "fords_skipped": [],
@@ -6528,7 +6533,7 @@
      "id": "gibraltar",
      "name": "Strait of Gibraltar",
      "hw_tiles": 8.6807,
-     "reach_tiles": 12.863,
+     "reach_tiles": 13.913,
      "segments": 3,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6549,7 +6554,7 @@
      "id": "bosporus",
      "name": "Bosporus",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.932,
+     "reach_tiles": 8.982,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6570,7 +6575,7 @@
      "id": "dardanelles",
      "name": "Dardanelles",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.932,
+     "reach_tiles": 8.982,
      "segments": 7,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6595,7 +6600,7 @@
      "id": "dover",
      "name": "Strait of Dover",
      "hw_tiles": 20.0324,
-     "reach_tiles": 24.214,
+     "reach_tiles": 25.264,
      "segments": 3,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6616,7 +6621,7 @@
      "id": "oresund",
      "name": "Oresund",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.932,
+     "reach_tiles": 8.982,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6637,7 +6642,7 @@
      "id": "great_belt",
      "name": "Great Belt",
      "hw_tiles": 9.7127,
-     "reach_tiles": 13.895,
+     "reach_tiles": 14.945,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6658,7 +6663,7 @@
      "id": "little_belt",
      "name": "Little Belt",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.932,
+     "reach_tiles": 8.982,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6680,7 +6685,7 @@
      "id": "messina",
      "name": "Strait of Messina",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.932,
+     "reach_tiles": 8.982,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6704,7 +6709,7 @@
      "id": "kerch",
      "name": "Kerch Strait",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.932,
+     "reach_tiles": 8.982,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6727,7 +6732,7 @@
      "id": "kiel",
      "name": "Kiel Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.932,
+     "reach_tiles": 8.982,
      "segments": 11,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6749,7 +6754,7 @@
      "id": "corinth",
      "name": "Corinth Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 7.932,
+     "reach_tiles": 8.982,
      "segments": 6,
      "window_tiles": 1,
      "polyline_geo": [
@@ -6770,7 +6775,7 @@
      "id": "corinth",
      "name": "Isthmus of Corinth",
      "hw_tiles": 1.5,
-     "reach_tiles": 5.682,
+     "reach_tiles": 6.732,
      "segments": 2,
      "window_tiles": null,
      "polyline_geo": [
@@ -6841,11 +6846,11 @@
     }
    ],
    "t1_mask": {
-    "pixels": 177551,
-    "share": 0.043415,
+    "pixels": 182686,
+    "share": 0.044671,
     "thin_water_px": 44561,
-    "thin_water_left_as_land_px": 35565,
-    "reference_land_carved_px": 150967
+    "thin_water_left_as_land_px": 35521,
+    "reference_land_carved_px": 155281
    },
    "starts": {
     "amsterdam": {
@@ -7350,8 +7355,8 @@
   },
   "4": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s4_v1.lua",
-   "sha256": "517b3071470d3f2e4a02afa9a6c52a38c3ebc0a9ec637a59e73292dc5ab96db6",
-   "bytes": 45641,
+   "sha256": "8af507e829ed942e54401e42291f7babe6da92be0aa22718f9faa102b62e8e22",
+   "bytes": 45744,
    "stats": {
     "segments": {
      "river": 403,
@@ -7378,7 +7383,7 @@
      "id": "danube",
      "name": "Danube",
      "hw_tiles": 6.0,
-     "reach_tiles": 51.015,
+     "reach_tiles": 52.215,
      "segments": 69,
      "window_tiles": 49,
      "polyline_geo": [
@@ -7417,7 +7422,7 @@
        "centre": [-922.0215, 797.0743],
        "tangent": [0.941495, -0.337028],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.025
       },
       {
        "interval": 1,
@@ -7425,7 +7430,7 @@
        "centre": [-612.9931, 724.0754],
        "tangent": [0.96703, 0.254661],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
@@ -7433,7 +7438,7 @@
        "centre": [-423.9053, 790.5985],
        "tangent": [0.973352, 0.229315],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 3,
@@ -7441,7 +7446,7 @@
        "centre": [-191.136, 862.515],
        "tangent": [0.971692, 0.236249],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 4,
@@ -7449,7 +7454,7 @@
        "centre": [68.1332, 836.4228],
        "tangent": [0.996665, 0.081598],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 5,
@@ -7457,7 +7462,7 @@
        "centre": [195.82, 876.8914],
        "tangent": [0.995751, 0.092085],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 6,
@@ -7465,7 +7470,7 @@
        "centre": [503.1899, 940.6245],
        "tangent": [0.999167, -0.040808],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 7,
@@ -7473,7 +7478,7 @@
        "centre": [594.3459, 1032.643],
        "tangent": [-0.360994, 0.932568],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 8,
@@ -7481,7 +7486,7 @@
        "centre": [569.0019, 1281.3611],
        "tangent": [0.468083, 0.883685],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 9,
@@ -7489,15 +7494,15 @@
        "centre": [667.7387, 1394.1369],
        "tangent": [0.9974, 0.072062],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 10,
-       "arc_tiles": 2457.635,
-       "centre": [883.8453, 1475.4738],
+       "arc_tiles": 2458.635,
+       "centre": [884.7353, 1475.9297],
        "tangent": [0.890003, 0.455954],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 11.975
       },
       {
        "interval": 11,
@@ -7505,7 +7510,7 @@
        "centre": [1207.483, 1522.5301],
        "tangent": [0.878853, 0.477092],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 11.975
       },
       {
        "interval": 12,
@@ -7513,7 +7518,7 @@
        "centre": [1401.2757, 1647.7396],
        "tangent": [0.996105, 0.088171],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 11.975
       },
       {
        "interval": 13,
@@ -7521,7 +7526,7 @@
        "centre": [1580.4457, 1663.599],
        "tangent": [0.996105, 0.088171],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       },
       {
        "interval": 14,
@@ -7529,7 +7534,7 @@
        "centre": [1799.7587, 1675.6343],
        "tangent": [0.958929, -0.283647],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       },
       {
        "interval": 15,
@@ -7537,7 +7542,7 @@
        "centre": [2097.4002, 1593.6725],
        "tangent": [0.929843, -0.367956],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       },
       {
        "interval": 16,
@@ -7545,7 +7550,7 @@
        "centre": [2201.5921, 1470.8172],
        "tangent": [-0.062147, -0.998067],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       },
       {
        "interval": 17,
@@ -7553,7 +7558,7 @@
        "centre": [2326.0228, 1390.9613],
        "tangent": [0.959207, 0.282704],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 13.925
       }
      ],
      "fords_skipped": [],
@@ -7564,7 +7569,7 @@
      "id": "dnieper",
      "name": "Dnieper",
      "hw_tiles": 6.0,
-     "reach_tiles": 51.015,
+     "reach_tiles": 52.215,
      "segments": 48,
      "window_tiles": 49,
      "polyline_geo": [
@@ -7599,7 +7604,7 @@
        "centre": [2804.1671, -299.8397],
        "tangent": [-0.992735, 0.120323],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 1,
@@ -7607,7 +7612,7 @@
        "centre": [2651.2133, -246.93],
        "tangent": [-0.468824, 0.883292],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
@@ -7615,7 +7620,7 @@
        "centre": [2597.1415, 20.3533],
        "tangent": [0.303745, 0.952753],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 3,
@@ -7623,7 +7628,7 @@
        "centre": [2697.7793, 232.8243],
        "tangent": [-0.473107, 0.881005],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 4,
@@ -7631,15 +7636,15 @@
        "centre": [2693.1688, 475.8287],
        "tangent": [0.611709, 0.791083],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 5,
-       "arc_tiles": 1237.247,
-       "centre": [2793.7547, 541.6275],
-       "tangent": [0.977968, 0.208757],
+       "arc_tiles": 1334.247,
+       "centre": [2869.5865, 593.1579],
+       "tangent": [0.78393, 0.620849],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 6,
@@ -7647,34 +7652,34 @@
        "centre": [3181.3959, 708.2128],
        "tangent": [0.944192, 0.329394],
        "half_length": 4.0,
-       "half_width": 10.775,
+       "half_width": 11.975,
        "bank_margin_px": 6.161
       },
       {
        "interval": 7,
-       "arc_tiles": 1862.765,
-       "centre": [3363.332, 778.0254],
-       "tangent": [0.886944, 0.461878],
+       "arc_tiles": 1759.765,
+       "centre": [3268.4615, 738.5868],
+       "tangent": [0.944192, 0.329394],
        "half_length": 4.0,
-       "half_width": 11.75,
-       "bank_margin_px": -0.51
+       "half_width": 11.975,
+       "bank_margin_px": -0.359
       },
       {
        "interval": 8,
-       "arc_tiles": 2035.929,
-       "centre": [3509.6321, 856.3167],
+       "arc_tiles": 2036.929,
+       "centre": [3509.7375, 857.3112],
        "tangent": [0.105469, 0.994423],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       },
       {
        "interval": 9,
-       "arc_tiles": 2211.506,
-       "centre": [3437.6251, 988.13],
+       "arc_tiles": 2214.506,
+       "centre": [3434.6345, 988.3667],
        "tangent": [-0.996883, 0.078894],
        "half_length": 4.0,
-       "half_width": 11.75,
-       "bank_margin_px": -1.996
+       "half_width": 12.95,
+       "bank_margin_px": 1.971
       },
       {
        "interval": 10,
@@ -7682,7 +7687,7 @@
        "centre": [3135.5388, 1130.739],
        "tangent": [-0.970648, 0.240504],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 13.925
       }
      ],
      "fords_skipped": [],
@@ -7693,7 +7698,7 @@
      "id": "rhine",
      "name": "Rhine",
      "hw_tiles": 6.0,
-     "reach_tiles": 51.015,
+     "reach_tiles": 52.215,
      "segments": 30,
      "window_tiles": 49,
      "polyline_geo": [
@@ -7724,15 +7729,15 @@
        "centre": [-1303.6114, 975.6911],
        "tangent": [-0.999032, 0.044],
        "half_length": 4.0,
-       "half_width": 6.875
+       "half_width": 8.075
       },
       {
        "interval": 1,
-       "arc_tiles": 396.6,
-       "centre": [-1391.1192, 785.6799],
+       "arc_tiles": 393.6,
+       "centre": [-1393.2032, 787.838],
        "tangent": [0.694651, -0.719347],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
@@ -7740,7 +7745,7 @@
        "centre": [-1309.7015, 574.5146],
        "tangent": [-0.467195, -0.884154],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 3,
@@ -7748,7 +7753,7 @@
        "centre": [-1448.0165, 490.2598],
        "tangent": [-0.661511, -0.749935],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 4,
@@ -7756,15 +7761,15 @@
        "centre": [-1622.3392, 264.4864],
        "tangent": [-0.578429, -0.815733],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 11.975
       },
       {
        "interval": 5,
-       "arc_tiles": 1258.165,
-       "centre": [-1756.4711, 209.3076],
+       "arc_tiles": 1209.165,
+       "centre": [-1707.794, 214.923],
        "tangent": [-0.993412, -0.114601],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       }
      ],
      "fords_skipped": [],
@@ -7775,7 +7780,7 @@
      "id": "vistula",
      "name": "Vistula",
      "hw_tiles": 6.0,
-     "reach_tiles": 51.015,
+     "reach_tiles": 52.215,
      "segments": 28,
      "window_tiles": 49,
      "polyline_geo": [
@@ -7804,7 +7809,7 @@
        "centre": [902.5031, 507.2544],
        "tangent": [0.956293, -0.292411],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 1,
@@ -7812,7 +7817,7 @@
        "centre": [1100.6675, 419.2516],
        "tangent": [0.668322, -0.743872],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
@@ -7820,7 +7825,7 @@
        "centre": [1058.8321, 241.9894],
        "tangent": [-0.864407, -0.502793],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 3,
@@ -7828,7 +7833,7 @@
        "centre": [880.6102, 109.1923],
        "tangent": [-0.999836, 0.018094],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 4,
@@ -7836,7 +7841,7 @@
        "centre": [675.6666, 76.78],
        "tangent": [-0.956624, -0.291324],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 11.975
       },
       {
        "interval": 5,
@@ -7844,7 +7849,7 @@
        "centre": [477.541, -42.1012],
        "tangent": [0.860227, -0.509912],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       }
      ],
      "fords_skipped": [],
@@ -7855,7 +7860,7 @@
      "id": "elbe",
      "name": "Elbe",
      "hw_tiles": 6.0,
-     "reach_tiles": 51.015,
+     "reach_tiles": 52.215,
      "segments": 26,
      "window_tiles": 49,
      "polyline_geo": [
@@ -7884,7 +7889,7 @@
        "centre": [-310.4481, 365.1727],
        "tangent": [-0.921497, -0.388386],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.025
       },
       {
        "interval": 1,
@@ -7892,15 +7897,15 @@
        "centre": [-600.2684, 205.676],
        "tangent": [-0.996612, -0.082245],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
-       "arc_tiles": 651.906,
-       "centre": [-659.1559, 85.0782],
-       "tangent": [0.103823, -0.994596],
+       "arc_tiles": 631.906,
+       "centre": [-667.0881, 103.235],
+       "tangent": [0.454777, -0.890605],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 3,
@@ -7908,7 +7913,7 @@
        "centre": [-824.8153, -31.4982],
        "tangent": [-0.940397, -0.340078],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 11.975
       },
       {
        "interval": 4,
@@ -7916,7 +7921,7 @@
        "centre": [-1068.5813, -99.9427],
        "tangent": [-0.971337, -0.237705],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       }
      ],
      "fords_skipped": [],
@@ -7927,7 +7932,7 @@
      "id": "loire",
      "name": "Loire",
      "hw_tiles": 6.0,
-     "reach_tiles": 51.015,
+     "reach_tiles": 52.215,
      "segments": 18,
      "window_tiles": 49,
      "polyline_geo": [
@@ -7951,11 +7956,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 181.576,
-       "centre": [-2269.7136, 1072.9516],
+       "arc_tiles": 179.576,
+       "centre": [-2269.3222, 1074.9129],
        "tangent": [-0.195691, -0.980666],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 1,
@@ -7963,7 +7968,7 @@
        "centre": [-2348.2502, 959.4589],
        "tangent": [-0.815591, -0.578629],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
@@ -7971,7 +7976,7 @@
        "centre": [-2660.0435, 1009.7278],
        "tangent": [-0.974859, 0.222825],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 3,
@@ -7979,7 +7984,7 @@
        "centre": [-2851.0585, 1023.4701],
        "tangent": [-0.932483, -0.361214],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 11.975
       },
       {
        "interval": 4,
@@ -7987,7 +7992,7 @@
        "centre": [-3086.6118, 1037.501],
        "tangent": [-0.953692, 0.300785],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       }
      ],
      "fords_skipped": [],
@@ -7998,7 +8003,7 @@
      "id": "daugava",
      "name": "Daugava",
      "hw_tiles": 6.0,
-     "reach_tiles": 51.015,
+     "reach_tiles": 52.215,
      "segments": 15,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8025,7 +8030,7 @@
        "centre": [2519.8747, -378.4295],
        "tangent": [-0.987643, 0.156719],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.025
       },
       {
        "interval": 1,
@@ -8033,7 +8038,7 @@
        "centre": [2256.3391, -464.7769],
        "tangent": [-0.87984, -0.475271],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
@@ -8041,7 +8046,7 @@
        "centre": [1983.5131, -518.7242],
        "tangent": [-0.995481, -0.094959],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 11.975
       },
       {
        "interval": 3,
@@ -8049,7 +8054,7 @@
        "centre": [1801.3667, -640.5029],
        "tangent": [-0.99608, -0.088459],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       },
       {
        "interval": 4,
@@ -8057,7 +8062,7 @@
        "centre": [1628.9928, -670.0637],
        "tangent": [-0.951212, -0.308537],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       }
      ],
      "fords_skipped": [],
@@ -8068,7 +8073,7 @@
      "id": "oder",
      "name": "Oder",
      "hw_tiles": 6.0,
-     "reach_tiles": 51.015,
+     "reach_tiles": 52.215,
      "segments": 28,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8093,11 +8098,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 66.8,
-       "centre": [346.0959, 388.4409],
+       "arc_tiles": 75.8,
+       "centre": [338.025, 384.4584],
        "tangent": [-0.896768, -0.442502],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.05
       },
       {
        "interval": 1,
@@ -8105,7 +8110,7 @@
        "centre": [62.4473, 235.3354],
        "tangent": [-0.967108, -0.254367],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.0
       },
       {
        "interval": 2,
@@ -8113,7 +8118,7 @@
        "centre": [-68.439, 175.4335],
        "tangent": [-0.997172, -0.075154],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 11.975
       },
       {
        "interval": 3,
@@ -8121,7 +8126,7 @@
        "centre": [-228.596, 53.4105],
        "tangent": [-0.823977, -0.566623],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 12.95
       }
      ],
      "fords_skipped": [],
@@ -8132,7 +8137,7 @@
      "id": "tagus",
      "name": "Tagus",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 13,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8159,7 +8164,7 @@
        "centre": [-3555.5987, 2360.7907],
        "tangent": [-0.978156, 0.207873],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.05
       },
       {
        "interval": 1,
@@ -8167,7 +8172,7 @@
        "centre": [-3852.3512, 2376.3248],
        "tangent": [-0.999988, -0.004994],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
@@ -8175,7 +8180,7 @@
        "centre": [-4013.3115, 2385.8645],
        "tangent": [-0.999699, -0.024544],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 3,
@@ -8183,7 +8188,7 @@
        "centre": [-4356.514, 2465.1063],
        "tangent": [-0.741644, 0.670794],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8194,7 +8199,7 @@
      "id": "po",
      "name": "Po",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 12,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8216,11 +8221,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 149.471,
-       "centre": [-1286.0675, 1424.2056],
+       "arc_tiles": 152.471,
+       "centre": [-1283.1294, 1424.8116],
        "tangent": [0.979384, 0.202007],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 1,
@@ -8228,7 +8233,7 @@
        "centre": [-1137.4332, 1423.1833],
        "tangent": [0.999372, 0.035442],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
@@ -8236,7 +8241,7 @@
        "centre": [-867.4926, 1437.4453],
        "tangent": [0.96572, -0.259584],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8247,7 +8252,7 @@
      "id": "seine",
      "name": "Seine",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 11,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8273,7 +8278,7 @@
        "centre": [-2205.3196, 819.5346],
        "tangent": [-0.984052, 0.177881],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 1,
@@ -8281,7 +8286,7 @@
        "centre": [-2448.7284, 729.2413],
        "tangent": [-0.983329, -0.181835],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
@@ -8289,7 +8294,7 @@
        "centre": [-2591.4805, 674.582],
        "tangent": [-0.838152, -0.545437],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8300,7 +8305,7 @@
      "id": "rhone",
      "name": "Rhone",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 24,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8330,23 +8335,23 @@
        "centre": [-1835.9118, 1301.5522],
        "tangent": [-0.895828, -0.444401],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 1,
-       "arc_tiles": 329.518,
-       "centre": [-1949.3512, 1357.5646],
+       "arc_tiles": 333.518,
+       "centre": [-1950.0614, 1361.5011],
        "tangent": [-0.177546, 0.984112],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
-       "arc_tiles": 653.188,
-       "centre": [-1978.3618, 1669.3138],
+       "arc_tiles": 654.188,
+       "centre": [-1978.561, 1670.2937],
        "tangent": [-0.199243, 0.97995],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8357,7 +8362,7 @@
      "id": "ebro",
      "name": "Ebro",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 13,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8384,7 +8389,7 @@
        "centre": [-3173.7665, 1916.7459],
        "tangent": [0.849824, 0.527066],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.05
       },
       {
        "interval": 1,
@@ -8392,15 +8397,15 @@
        "centre": [-3001.0022, 2023.8953],
        "tangent": [0.849824, 0.527066],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 2,
-       "arc_tiles": 563.494,
-       "centre": [-2754.1649, 2104.8675],
+       "arc_tiles": 562.494,
+       "centre": [-2755.0191, 2104.3475],
        "tangent": [0.854174, 0.519987],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8411,7 +8416,7 @@
      "id": "dniester",
      "name": "Dniester",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 7,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8432,11 +8437,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 82.624,
-       "centre": [2255.8245, 859.1025],
+       "arc_tiles": 79.624,
+       "centre": [2253.144, 857.7553],
        "tangent": [0.893504, 0.449054],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.05
       },
       {
        "interval": 1,
@@ -8444,7 +8449,7 @@
        "centre": [2421.763, 1006.735],
        "tangent": [0.333049, 0.94291],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8455,7 +8460,7 @@
      "id": "garonne",
      "name": "Garonne",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 5,
      "window_tiles": 97,
      "polyline_geo": [
@@ -8480,7 +8485,7 @@
        "centre": [-2670.6841, 1603.2382],
        "tangent": [-0.889957, -0.456045],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 1,
@@ -8488,7 +8493,7 @@
        "centre": [-2825.4738, 1523.9185],
        "tangent": [-0.889957, -0.456045],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8499,7 +8504,7 @@
      "id": "weser",
      "name": "Weser",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 19,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8527,7 +8532,7 @@
        "centre": [-1122.8625, 182.7775],
        "tangent": [-0.414811, -0.909908],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.025
       },
       {
        "interval": 1,
@@ -8535,7 +8540,7 @@
        "centre": [-1194.8701, 5.0646],
        "tangent": [-0.908549, -0.417779],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8546,7 +8551,7 @@
      "id": "douro",
      "name": "Douro",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 9,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8572,7 +8577,7 @@
        "centre": [-3953.9036, 2084.2913],
        "tangent": [-0.828218, 0.560406],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.025
       },
       {
        "interval": 1,
@@ -8580,7 +8585,7 @@
        "centre": [-4191.7397, 2133.0906],
        "tangent": [-0.993047, 0.117719],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8591,7 +8596,7 @@
      "id": "neman",
      "name": "Neman",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 6,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8616,7 +8621,7 @@
        "centre": [1335.8011, -367.4697],
        "tangent": [-0.999996, 0.002668],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       },
       {
        "interval": 1,
@@ -8624,7 +8629,7 @@
        "centre": [1197.2486, -367.1],
        "tangent": [-0.999996, 0.002668],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8635,7 +8640,7 @@
      "id": "thames",
      "name": "Thames",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 7,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8660,7 +8665,7 @@
        "centre": [-2917.1314, 280.3894],
        "tangent": [0.9523, 0.305163],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.35
       }
      ],
      "fords_skipped": [],
@@ -8671,7 +8676,7 @@
      "id": "guadalquivir",
      "name": "Guadalquivir",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 5,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8692,11 +8697,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 117.024,
-       "centre": [-3790.3414, 2758.7707],
+       "arc_tiles": 118.024,
+       "centre": [-3791.3014, 2759.0508],
        "tangent": [-0.95999, 0.280035],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.025
       }
      ],
      "fords_skipped": [],
@@ -8707,7 +8712,7 @@
      "id": "don_lower",
      "name": "Don (lower)",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 6,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8732,7 +8737,7 @@
        "centre": [4460.1741, 1015.689],
        "tangent": [-0.846919, 0.531722],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.025
       }
      ],
      "fords_skipped": [],
@@ -8743,7 +8748,7 @@
      "id": "neva",
      "name": "Neva",
      "hw_tiles": 4.0,
-     "reach_tiles": 47.44,
+     "reach_tiles": 48.64,
      "segments": 4,
      "window_tiles": 49,
      "polyline_geo": [
@@ -8764,11 +8769,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 84.212,
-       "centre": [2696.1887, -1228.3815],
+       "arc_tiles": 85.212,
+       "centre": [2695.2085, -1228.5797],
        "tangent": [-0.980176, -0.19813],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.05
       }
      ],
      "fords_skipped": [],
@@ -8779,7 +8784,7 @@
      "id": "gibraltar",
      "name": "Strait of Gibraltar",
      "hw_tiles": 11.5743,
-     "reach_tiles": 16.555,
+     "reach_tiles": 17.755,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8800,7 +8805,7 @@
      "id": "bosporus",
      "name": "Bosporus",
      "hw_tiles": 3.75,
-     "reach_tiles": 8.731,
+     "reach_tiles": 9.931,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8821,7 +8826,7 @@
      "id": "dardanelles",
      "name": "Dardanelles",
      "hw_tiles": 3.75,
-     "reach_tiles": 8.731,
+     "reach_tiles": 9.931,
      "segments": 7,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8846,7 +8851,7 @@
      "id": "dover",
      "name": "Strait of Dover",
      "hw_tiles": 26.7098,
-     "reach_tiles": 31.691,
+     "reach_tiles": 32.891,
      "segments": 3,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8867,7 +8872,7 @@
      "id": "oresund",
      "name": "Oresund",
      "hw_tiles": 3.75,
-     "reach_tiles": 8.731,
+     "reach_tiles": 9.931,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8888,7 +8893,7 @@
      "id": "great_belt",
      "name": "Great Belt",
      "hw_tiles": 12.9502,
-     "reach_tiles": 17.931,
+     "reach_tiles": 19.131,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8909,7 +8914,7 @@
      "id": "little_belt",
      "name": "Little Belt",
      "hw_tiles": 3.75,
-     "reach_tiles": 8.731,
+     "reach_tiles": 9.931,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8931,7 +8936,7 @@
      "id": "messina",
      "name": "Strait of Messina",
      "hw_tiles": 3.75,
-     "reach_tiles": 8.731,
+     "reach_tiles": 9.931,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8953,7 +8958,7 @@
      "id": "kerch",
      "name": "Kerch Strait",
      "hw_tiles": 3.75,
-     "reach_tiles": 8.731,
+     "reach_tiles": 9.931,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8976,7 +8981,7 @@
      "id": "kiel",
      "name": "Kiel Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 8.731,
+     "reach_tiles": 9.931,
      "segments": 11,
      "window_tiles": 1,
      "polyline_geo": [
@@ -8998,7 +9003,7 @@
      "id": "corinth",
      "name": "Corinth Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 8.731,
+     "reach_tiles": 9.931,
      "segments": 7,
      "window_tiles": 1,
      "polyline_geo": [
@@ -9021,7 +9026,7 @@
      "id": "corinth",
      "name": "Isthmus of Corinth",
      "hw_tiles": 2.0,
-     "reach_tiles": 6.981,
+     "reach_tiles": 8.181,
      "segments": 2,
      "window_tiles": null,
      "polyline_geo": [
@@ -9085,11 +9090,11 @@
     }
    ],
    "t1_mask": {
-    "pixels": 166952,
-    "share": 0.040824,
+    "pixels": 171598,
+    "share": 0.04196,
     "thin_water_px": 44561,
-    "thin_water_left_as_land_px": 35649,
-    "reference_land_carved_px": 142035
+    "thin_water_left_as_land_px": 35618,
+    "reference_land_carved_px": 145970
    },
    "starts": {
     "amsterdam": {
@@ -9536,8 +9541,8 @@
   },
   "5": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s5_v1.lua",
-   "sha256": "82f1f465f25111c3036d8de067f389b61362321b60540efaa4dd1ee92cf94c69",
-   "bytes": 44743,
+   "sha256": "adf1d828e76c3e892aeb934caf7e3dd338b79e443ec02b5e0d16aa561491b638",
+   "bytes": 44868,
    "stats": {
     "segments": {
      "river": 383,
@@ -9564,7 +9569,7 @@
      "id": "danube",
      "name": "Danube",
      "hw_tiles": 7.5,
-     "reach_tiles": 62.27,
+     "reach_tiles": 63.62,
      "segments": 62,
      "window_tiles": 65,
      "polyline_geo": [
@@ -9602,15 +9607,15 @@
        "centre": [-1152.963, 996.022],
        "tangent": [0.942018, -0.335562],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.175
       },
       {
        "interval": 1,
-       "arc_tiles": 531.765,
-       "centre": [-758.681, 906.9439],
+       "arc_tiles": 523.765,
+       "centre": [-766.4154, 904.8997],
        "tangent": [0.966802, 0.255529],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       },
       {
        "interval": 2,
@@ -9618,7 +9623,7 @@
        "centre": [-513.2606, 993.4528],
        "tangent": [0.956732, 0.29097],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       },
       {
        "interval": 3,
@@ -9626,7 +9631,7 @@
        "centre": [-273.5148, 1066.3664],
        "tangent": [0.956732, 0.29097],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       },
       {
        "interval": 4,
@@ -9634,7 +9639,7 @@
        "centre": [86.8095, 1045.6986],
        "tangent": [0.996735, 0.080741],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 5,
@@ -9642,7 +9647,7 @@
        "centre": [241.8298, 1095.5967],
        "tangent": [0.995386, 0.095948],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 6,
@@ -9650,15 +9655,15 @@
        "centre": [631.4291, 1175.2439],
        "tangent": [0.999277, -0.038023],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 7,
-       "arc_tiles": 2245.0,
-       "centre": [741.466, 1294.5746],
+       "arc_tiles": 2244.0,
+       "centre": [741.814, 1293.6371],
        "tangent": [-0.347955, 0.937511],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.1
       },
       {
        "interval": 8,
@@ -9666,7 +9671,7 @@
        "centre": [709.6319, 1598.0374],
        "tangent": [0.467632, 0.883923],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.1
       },
       {
        "interval": 9,
@@ -9674,7 +9679,7 @@
        "centre": [843.3839, 1742.6451],
        "tangent": [0.997158, 0.075341],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.1
       },
       {
        "interval": 10,
@@ -9682,7 +9687,7 @@
        "centre": [1122.4103, 1852.4667],
        "tangent": [0.890571, 0.454844],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.075
       },
       {
        "interval": 11,
@@ -9690,7 +9695,7 @@
        "centre": [1510.0421, 1904.9932],
        "tangent": [0.783888, 0.620902],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.075
       },
       {
        "interval": 12,
@@ -9698,7 +9703,7 @@
        "centre": [1684.8715, 2060.6891],
        "tangent": [0.999751, -0.022304],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       },
       {
        "interval": 13,
@@ -9706,7 +9711,7 @@
        "centre": [1979.5701, 2079.3234],
        "tangent": [0.996219, 0.086872],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       },
       {
        "interval": 14,
@@ -9714,15 +9719,15 @@
        "centre": [2279.5123, 2083.8156],
        "tangent": [0.869024, -0.494769],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       },
       {
        "interval": 15,
-       "arc_tiles": 4717.824,
-       "centre": [2631.8612, 1987.6897],
+       "arc_tiles": 4718.824,
+       "centre": [2632.7895, 1987.318],
        "tangent": [0.928366, -0.371666],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.025
       },
       {
        "interval": 16,
@@ -9730,7 +9735,7 @@
        "centre": [2751.5687, 1828.1693],
        "tangent": [-0.044882, -0.998992],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.025
       },
       {
        "interval": 17,
@@ -9738,7 +9743,7 @@
        "centre": [2918.3557, 1741.6661],
        "tangent": [0.960623, 0.277857],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.025
       }
      ],
      "fords_skipped": [],
@@ -9749,7 +9754,7 @@
      "id": "dnieper",
      "name": "Dnieper",
      "hw_tiles": 7.5,
-     "reach_tiles": 62.27,
+     "reach_tiles": 63.62,
      "segments": 44,
      "window_tiles": 65,
      "polyline_geo": [
@@ -9783,7 +9788,7 @@
        "centre": [3501.833, -376.2062],
        "tangent": [-0.993497, 0.113858],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 1,
@@ -9791,7 +9796,7 @@
        "centre": [3314.7469, -307.9456],
        "tangent": [-0.531863, 0.846831],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       },
       {
        "interval": 2,
@@ -9799,7 +9804,7 @@
        "centre": [3247.2308, 27.4272],
        "tangent": [0.300196, 0.953878],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 3,
@@ -9807,7 +9812,7 @@
        "centre": [3370.2923, 293.9752],
        "tangent": [-0.452439, 0.891795],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 4,
@@ -9815,50 +9820,50 @@
        "centre": [3363.3232, 590.3785],
        "tangent": [0.606928, 0.794757],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.1
       },
       {
        "interval": 5,
-       "arc_tiles": 1538.059,
-       "centre": [3488.0517, 675.7083],
-       "tangent": [0.974859, 0.222825],
+       "arc_tiles": 1667.059,
+       "centre": [3590.7192, 743.5854],
+       "tangent": [0.784997, 0.619499],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 14.075
       },
       {
        "interval": 6,
-       "arc_tiles": 2077.941,
-       "centre": [3973.6748, 889.9833],
+       "arc_tiles": 2079.941,
+       "centre": [3975.553, 890.6706],
        "tangent": [0.939094, 0.343661],
        "half_length": 4.0,
-       "half_width": 12.725,
+       "half_width": 14.075,
        "bank_margin_px": 6.116
       },
       {
        "interval": 7,
-       "arc_tiles": 2392.706,
-       "centre": [4269.2684, 998.1556],
+       "arc_tiles": 2393.706,
+       "centre": [4270.2075, 998.4992],
        "tangent": [0.939094, 0.343661],
        "half_length": 4.0,
-       "half_width": 13.7,
+       "half_width": 15.05,
        "bank_margin_px": 2.217
       },
       {
        "interval": 8,
-       "arc_tiles": 2538.412,
-       "centre": [4385.9806, 1071.3157],
+       "arc_tiles": 2539.412,
+       "centre": [4386.1008, 1072.3084],
        "tangent": [0.120216, 0.992748],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       },
       {
        "interval": 9,
-       "arc_tiles": 2752.882,
-       "centre": [4299.0335, 1233.9461],
+       "arc_tiles": 2759.882,
+       "centre": [4292.0591, 1234.5441],
        "tangent": [-0.996344, 0.085427],
        "half_length": 4.0,
-       "half_width": 14.675,
-       "bank_margin_px": -1.797
+       "half_width": 16.025,
+       "bank_margin_px": 1.971
       },
       {
        "interval": 10,
@@ -9866,7 +9871,7 @@
        "centre": [3900.8465, 1417.1543],
        "tangent": [-0.970751, 0.24009],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.0
       }
      ],
      "fords_skipped": [],
@@ -9877,7 +9882,7 @@
      "id": "rhine",
      "name": "Rhine",
      "hw_tiles": 7.5,
-     "reach_tiles": 62.27,
+     "reach_tiles": 63.62,
      "segments": 29,
      "window_tiles": 65,
      "polyline_geo": [
@@ -9908,15 +9913,15 @@
        "centre": [-1632.461, 1218.3193],
        "tangent": [-0.998813, 0.048705],
        "half_length": 4.0,
-       "half_width": 6.875
+       "half_width": 8.225
       },
       {
        "interval": 1,
-       "arc_tiles": 502.0,
-       "centre": [-1733.6202, 975.8793],
+       "arc_tiles": 493.0,
+       "centre": [-1739.8502, 982.3745],
        "tangent": [0.692225, -0.721682],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 2,
@@ -9924,15 +9929,15 @@
        "centre": [-1635.0919, 724.8061],
        "tangent": [-0.195143, -0.980775],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.1
       },
       {
        "interval": 3,
-       "arc_tiles": 1020.529,
-       "centre": [-1811.3547, 612.3737],
+       "arc_tiles": 1022.529,
+       "centre": [-1812.6388, 610.8404],
        "tangent": [-0.642079, -0.766638],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.1
       },
       {
        "interval": 4,
@@ -9940,7 +9945,7 @@
        "centre": [-2030.8143, 327.5741],
        "tangent": [-0.58241, -0.812895],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       },
       {
        "interval": 5,
@@ -9948,7 +9953,7 @@
        "centre": [-2200.8486, 260.8594],
        "tangent": [-0.993584, -0.113095],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       }
      ],
      "fords_skipped": [],
@@ -9959,7 +9964,7 @@
      "id": "vistula",
      "name": "Vistula",
      "hw_tiles": 7.5,
-     "reach_tiles": 62.27,
+     "reach_tiles": 63.62,
      "segments": 28,
      "window_tiles": 65,
      "polyline_geo": [
@@ -9988,7 +9993,7 @@
        "centre": [1089.1393, 645.1326],
        "tangent": [0.956295, -0.292402],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.175
       },
       {
        "interval": 1,
@@ -9996,15 +10001,15 @@
        "centre": [1372.4075, 526.1036],
        "tangent": [0.673222, -0.73944],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 2,
-       "arc_tiles": 708.647,
-       "centre": [1324.5114, 302.6562],
+       "arc_tiles": 718.647,
+       "centre": [1315.9126, 297.5512],
        "tangent": [-0.859882, -0.510493],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.1
       },
       {
        "interval": 3,
@@ -10012,7 +10017,7 @@
        "centre": [1081.2493, 136.5952],
        "tangent": [-0.999922, 0.012516],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.075
       },
       {
        "interval": 4,
@@ -10020,15 +10025,15 @@
        "centre": [843.3773, 94.8566],
        "tangent": [-0.956375, -0.292143],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.075
       },
       {
        "interval": 5,
-       "arc_tiles": 1575.412,
-       "centre": [591.1715, -47.765],
-       "tangent": [0.559386, -0.828908],
+       "arc_tiles": 1583.412,
+       "centre": [596.8817, -53.0989],
+       "tangent": [0.855388, -0.517988],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.025
       }
      ],
      "fords_skipped": [],
@@ -10039,7 +10044,7 @@
      "id": "elbe",
      "name": "Elbe",
      "hw_tiles": 7.5,
-     "reach_tiles": 62.27,
+     "reach_tiles": 63.62,
      "segments": 24,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10064,11 +10069,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 143.0,
-       "centre": [-409.1305, 447.3694],
+       "arc_tiles": 124.0,
+       "centre": [-391.6605, 454.8393],
        "tangent": [-0.919474, -0.393151],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 10.175
       },
       {
        "interval": 1,
@@ -10076,15 +10081,15 @@
        "centre": [-748.5309, 256.646],
        "tangent": [-0.996169, -0.087452],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 2,
-       "arc_tiles": 827.882,
-       "centre": [-821.826, 88.2329],
-       "tangent": [0.273066, -0.961995],
+       "arc_tiles": 781.882,
+       "centre": [-836.7185, 131.1794],
+       "tangent": [0.677377, -0.735636],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 13.1
       },
       {
        "interval": 3,
@@ -10092,7 +10097,7 @@
        "centre": [-1040.1456, -42.8578],
        "tangent": [-0.940669, -0.339325],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       },
       {
        "interval": 4,
@@ -10100,7 +10105,7 @@
        "centre": [-1335.3188, -125.5569],
        "tangent": [-0.970726, -0.240191],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.025
       }
      ],
      "fords_skipped": [],
@@ -10111,7 +10116,7 @@
      "id": "loire",
      "name": "Loire",
      "hw_tiles": 7.5,
-     "reach_tiles": 62.27,
+     "reach_tiles": 63.62,
      "segments": 16,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10135,11 +10140,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 230.471,
-       "centre": [-2838.5712, 1336.8496],
+       "arc_tiles": 229.471,
+       "centre": [-2838.3662, 1337.8283],
        "tangent": [-0.205005, -0.978761],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       },
       {
        "interval": 1,
@@ -10147,7 +10152,7 @@
        "centre": [-2932.2263, 1200.619],
        "tangent": [-0.805584, -0.592482],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 2,
@@ -10155,7 +10160,7 @@
        "centre": [-3322.3969, 1260.6888],
        "tangent": [-0.975162, 0.221493],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.075
       },
       {
        "interval": 3,
@@ -10163,7 +10168,7 @@
        "centre": [-3564.6431, 1281.5321],
        "tangent": [-0.954763, -0.297367],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       },
       {
        "interval": 4,
@@ -10171,7 +10176,7 @@
        "centre": [-3856.5637, 1295.4218],
        "tangent": [-0.956076, 0.29312],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.025
       }
      ],
      "fords_skipped": [],
@@ -10182,7 +10187,7 @@
      "id": "daugava",
      "name": "Daugava",
      "hw_tiles": 7.5,
-     "reach_tiles": 62.27,
+     "reach_tiles": 63.62,
      "segments": 15,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10209,7 +10214,7 @@
        "centre": [3150.521, -474.0952],
        "tangent": [-0.988106, 0.153771],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.175
       },
       {
        "interval": 1,
@@ -10217,7 +10222,7 @@
        "centre": [2819.5499, -581.8998],
        "tangent": [-0.883942, -0.467597],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       },
       {
        "interval": 2,
@@ -10225,7 +10230,7 @@
        "centre": [2476.1724, -649.6466],
        "tangent": [-0.995065, -0.09923],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.075
       },
       {
        "interval": 3,
@@ -10233,7 +10238,7 @@
        "centre": [2249.6107, -800.9311],
        "tangent": [-0.995717, -0.092451],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       },
       {
        "interval": 4,
@@ -10241,7 +10246,7 @@
        "centre": [2033.5613, -839.0052],
        "tangent": [-0.950796, -0.309818],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.025
       }
      ],
      "fords_skipped": [],
@@ -10252,7 +10257,7 @@
      "id": "oder",
      "name": "Oder",
      "hw_tiles": 7.5,
-     "reach_tiles": 62.27,
+     "reach_tiles": 63.62,
      "segments": 25,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10281,7 +10286,7 @@
        "centre": [435.2297, 486.6585],
        "tangent": [-0.897129, -0.441768],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.2
       },
       {
        "interval": 1,
@@ -10289,7 +10294,7 @@
        "centre": [69.6712, 291.3457],
        "tangent": [-0.96462, -0.263644],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.1
       },
       {
        "interval": 2,
@@ -10297,7 +10302,7 @@
        "centre": [-86.0759, 218.6038],
        "tangent": [-0.997076, -0.076412],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.075
       },
       {
        "interval": 3,
@@ -10305,7 +10310,7 @@
        "centre": [-288.4832, 65.9827],
        "tangent": [-0.795853, -0.60549],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.05
       }
      ],
      "fords_skipped": [],
@@ -10316,7 +10321,7 @@
      "id": "tagus",
      "name": "Tagus",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 13,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10343,15 +10348,15 @@
        "centre": [-4444.993, 2950.5136],
        "tangent": [-0.978096, 0.208155],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.2
       },
       {
        "interval": 1,
-       "arc_tiles": 544.765,
-       "centre": [-4894.236, 2972.0515],
-       "tangent": [-0.986372, 0.164528],
+       "arc_tiles": 463.765,
+       "centre": [-4813.4113, 2970.0849],
+       "tangent": [-0.999998, -0.002163],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 2,
@@ -10359,7 +10364,7 @@
        "centre": [-5018.7445, 2981.9758],
        "tangent": [-0.999886, -0.015081],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 3,
@@ -10367,7 +10372,7 @@
        "centre": [-5443.7606, 3079.1112],
        "tangent": [-0.741459, 0.670998],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       }
      ],
      "fords_skipped": [],
@@ -10378,7 +10383,7 @@
      "id": "po",
      "name": "Po",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 11,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10400,11 +10405,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 176.588,
-       "centre": [-1617.8851, 1777.5101],
+       "arc_tiles": 187.588,
+       "centre": [-1607.1025, 1779.6862],
        "tangent": [0.980237, 0.197829],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 1,
@@ -10412,7 +10417,7 @@
        "centre": [-1421.9189, 1778.8944],
        "tangent": [0.999388, 0.034977],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 2,
@@ -10420,7 +10425,7 @@
        "centre": [-1084.0696, 1796.3134],
        "tangent": [0.969131, -0.246545],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       }
      ],
      "fords_skipped": [],
@@ -10431,7 +10436,7 @@
      "id": "seine",
      "name": "Seine",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 11,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10457,7 +10462,7 @@
        "centre": [-2759.5125, 1024.4121],
        "tangent": [-0.984948, 0.172851],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 1,
@@ -10465,15 +10470,15 @@
        "centre": [-3062.4943, 911.3456],
        "tangent": [-0.982035, -0.188697],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 2,
-       "arc_tiles": 717.647,
-       "centre": [-3244.3268, 840.1949],
+       "arc_tiles": 716.647,
+       "centre": [-3243.4845, 840.734],
        "tangent": [-0.842207, -0.539154],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       }
      ],
      "fords_skipped": [],
@@ -10484,7 +10489,7 @@
      "id": "rhone",
      "name": "Rhone",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 21,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10513,7 +10518,7 @@
        "centre": [-2294.0618, 1627.4839],
        "tangent": [-0.911108, -0.412168],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 1,
@@ -10521,7 +10526,7 @@
        "centre": [-2436.9757, 1696.5973],
        "tangent": [-0.180865, 0.983508],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 2,
@@ -10529,7 +10534,7 @@
        "centre": [-2472.0117, 2082.3973],
        "tangent": [-0.175908, 0.984407],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.125
       }
      ],
      "fords_skipped": [],
@@ -10540,7 +10545,7 @@
      "id": "ebro",
      "name": "Ebro",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 13,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10563,11 +10568,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 113.412,
-       "centre": [-3964.453, 2397.8249],
+       "arc_tiles": 112.412,
+       "centre": [-3965.304, 2397.2996],
        "tangent": [0.850925, 0.525288],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.2
       },
       {
        "interval": 1,
@@ -10575,15 +10580,15 @@
        "centre": [-3749.9199, 2530.2592],
        "tangent": [0.850925, 0.525288],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 2,
-       "arc_tiles": 701.118,
-       "centre": [-3445.4064, 2629.5859],
+       "arc_tiles": 700.118,
+       "centre": [-3446.2599, 2629.0647],
        "tangent": [0.853436, 0.521198],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       }
      ],
      "fords_skipped": [],
@@ -10594,7 +10599,7 @@
      "id": "dniester",
      "name": "Dniester",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 7,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10619,7 +10624,7 @@
        "centre": [2817.669, 1072.6875],
        "tangent": [0.893032, 0.449993],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.2
       },
       {
        "interval": 1,
@@ -10627,7 +10632,7 @@
        "centre": [3027.0043, 1258.2118],
        "tangent": [0.341024, 0.940054],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       }
      ],
      "fords_skipped": [],
@@ -10638,7 +10643,7 @@
      "id": "garonne",
      "name": "Garonne",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 8,
      "window_tiles": 97,
      "polyline_geo": [
@@ -10663,15 +10668,15 @@
        "centre": [-3337.1519, 2002.2499],
        "tangent": [-0.897664, -0.440681],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 1,
-       "arc_tiles": 413.706,
-       "centre": [-3547.5748, 1898.9491],
+       "arc_tiles": 417.706,
+       "centre": [-3551.1655, 1897.1864],
        "tangent": [-0.897664, -0.440681],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       }
      ],
      "fords_skipped": [],
@@ -10682,7 +10687,7 @@
      "id": "weser",
      "name": "Weser",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 19,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10706,11 +10711,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 116.647,
-       "centre": [-1398.1995, 257.4968],
-       "tangent": [0.032241, -0.99948],
+       "arc_tiles": 182.647,
+       "centre": [-1430.5315, 205.1008],
+       "tangent": [-0.801055, -0.598591],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 10.5
       },
       {
        "interval": 1,
@@ -10718,7 +10723,7 @@
        "centre": [-1497.0878, 4.8355],
        "tangent": [-0.90511, -0.425178],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       }
      ],
      "fords_skipped": [],
@@ -10729,7 +10734,7 @@
      "id": "douro",
      "name": "Douro",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 9,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10755,7 +10760,7 @@
        "centre": [-4944.9015, 2606.5967],
        "tangent": [-0.832109, 0.554612],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.175
       },
       {
        "interval": 1,
@@ -10763,7 +10768,7 @@
        "centre": [-5243.1634, 2666.231],
        "tangent": [-0.99309, 0.117359],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       }
      ],
      "fords_skipped": [],
@@ -10774,7 +10779,7 @@
      "id": "neman",
      "name": "Neman",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 6,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10799,7 +10804,7 @@
        "centre": [1699.0823, -459.6574],
        "tangent": [-0.999998, 0.002162],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       },
       {
        "interval": 1,
@@ -10807,7 +10812,7 @@
        "centre": [1492.1416, -459.21],
        "tangent": [-0.999998, 0.002162],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       }
      ],
      "fords_skipped": [],
@@ -10818,7 +10823,7 @@
      "id": "thames",
      "name": "Thames",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 7,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10839,11 +10844,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 196.471,
-       "centre": [-3639.5656, 351.9783],
+       "arc_tiles": 190.471,
+       "centre": [-3645.3118, 350.2515],
        "tangent": [0.957694, 0.287789],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.5
       }
      ],
      "fords_skipped": [],
@@ -10854,7 +10859,7 @@
      "id": "guadalquivir",
      "name": "Guadalquivir",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 6,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10879,7 +10884,7 @@
        "centre": [-4733.4215, 3444.5437],
        "tangent": [-0.963652, 0.267159],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.175
       }
      ],
      "fords_skipped": [],
@@ -10890,7 +10895,7 @@
      "id": "don_lower",
      "name": "Don (lower)",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 5,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10915,7 +10920,7 @@
        "centre": [5576.3639, 1264.8951],
        "tangent": [-0.87862, 0.477522],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.175
       }
      ],
      "fords_skipped": [],
@@ -10926,7 +10931,7 @@
      "id": "neva",
      "name": "Neva",
      "hw_tiles": 5.0,
-     "reach_tiles": 57.395,
+     "reach_tiles": 58.745,
      "segments": 4,
      "window_tiles": 65,
      "polyline_geo": [
@@ -10951,7 +10956,7 @@
        "centre": [3347.3684, -1541.0491],
        "tangent": [-0.980648, -0.195781],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.15
       }
      ],
      "fords_skipped": [],
@@ -10962,7 +10967,7 @@
      "id": "gibraltar",
      "name": "Strait of Gibraltar",
      "hw_tiles": 14.4678,
-     "reach_tiles": 20.248,
+     "reach_tiles": 21.598,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -10984,7 +10989,7 @@
      "id": "bosporus",
      "name": "Bosporus",
      "hw_tiles": 3.75,
-     "reach_tiles": 9.53,
+     "reach_tiles": 10.88,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11005,7 +11010,7 @@
      "id": "dardanelles",
      "name": "Dardanelles",
      "hw_tiles": 3.75,
-     "reach_tiles": 9.53,
+     "reach_tiles": 10.88,
      "segments": 7,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11030,7 +11035,7 @@
      "id": "dover",
      "name": "Strait of Dover",
      "hw_tiles": 33.3873,
-     "reach_tiles": 39.167,
+     "reach_tiles": 40.517,
      "segments": 3,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11051,7 +11056,7 @@
      "id": "oresund",
      "name": "Oresund",
      "hw_tiles": 4.0469,
-     "reach_tiles": 9.827,
+     "reach_tiles": 11.177,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11072,7 +11077,7 @@
      "id": "great_belt",
      "name": "Great Belt",
      "hw_tiles": 16.1878,
-     "reach_tiles": 21.968,
+     "reach_tiles": 23.318,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11093,7 +11098,7 @@
      "id": "little_belt",
      "name": "Little Belt",
      "hw_tiles": 3.75,
-     "reach_tiles": 9.53,
+     "reach_tiles": 10.88,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11115,7 +11120,7 @@
      "id": "messina",
      "name": "Strait of Messina",
      "hw_tiles": 3.75,
-     "reach_tiles": 9.53,
+     "reach_tiles": 10.88,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11137,7 +11142,7 @@
      "id": "kerch",
      "name": "Kerch Strait",
      "hw_tiles": 4.5528,
-     "reach_tiles": 10.333,
+     "reach_tiles": 11.683,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11160,7 +11165,7 @@
      "id": "kiel",
      "name": "Kiel Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 9.53,
+     "reach_tiles": 10.88,
      "segments": 11,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11182,7 +11187,7 @@
      "id": "corinth",
      "name": "Corinth Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 9.53,
+     "reach_tiles": 10.88,
      "segments": 8,
      "window_tiles": 1,
      "polyline_geo": [
@@ -11205,7 +11210,7 @@
      "id": "corinth",
      "name": "Isthmus of Corinth",
      "hw_tiles": 2.5,
-     "reach_tiles": 8.28,
+     "reach_tiles": 9.63,
      "segments": 2,
      "window_tiles": null,
      "polyline_geo": [
@@ -11269,11 +11274,11 @@
     }
    ],
    "t1_mask": {
-    "pixels": 161338,
-    "share": 0.039451,
+    "pixels": 165308,
+    "share": 0.040422,
     "thin_water_px": 44561,
-    "thin_water_left_as_land_px": 35690,
-    "reference_land_carved_px": 137270
+    "thin_water_left_as_land_px": 35661,
+    "reference_land_carved_px": 140707
    },
    "starts": {
     "amsterdam": {
@@ -11700,8 +11705,8 @@
   },
   "6": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s6_v1.lua",
-   "sha256": "98ae458f6be5f3c6d095a3d6029f1d17bb6553c257369401eee8c1f039de57c2",
-   "bytes": 40101,
+   "sha256": "d962560c4c88a6a6c43382839563f816d4118201ef2cdfdbc3947ecd222287e6",
+   "bytes": 40204,
    "stats": {
     "segments": {
      "river": 319,
@@ -11728,7 +11733,7 @@
      "id": "danube",
      "name": "Danube",
      "hw_tiles": 9.0,
-     "reach_tiles": 72.55,
+     "reach_tiles": 74.05,
      "segments": 51,
      "window_tiles": 97,
      "polyline_geo": [
@@ -11764,7 +11769,7 @@
        "centre": [-1382.6032, 1196.8268],
        "tangent": [0.944422, -0.328735],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.3
       },
       {
        "interval": 1,
@@ -11772,7 +11777,7 @@
        "centre": [-930.209, 1086.7345],
        "tangent": [0.994704, -0.10278],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       },
       {
        "interval": 2,
@@ -11780,7 +11785,7 @@
        "centre": [-609.7121, 1188.3891],
        "tangent": [0.951702, 0.307024],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       },
       {
        "interval": 3,
@@ -11788,7 +11793,7 @@
        "centre": [-324.4815, 1280.4062],
        "tangent": [0.951702, 0.307024],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       },
       {
        "interval": 4,
@@ -11796,7 +11801,7 @@
        "centre": [111.6285, 1257.1898],
        "tangent": [0.996858, 0.079209],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.225
       },
       {
        "interval": 5,
@@ -11804,7 +11809,7 @@
        "centre": [306.7027, 1316.6153],
        "tangent": [0.991338, 0.131337],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.225
       },
       {
        "interval": 6,
@@ -11812,15 +11817,15 @@
        "centre": [768.9194, 1410.9276],
        "tangent": [0.999682, -0.025213],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.225
       },
       {
        "interval": 7,
-       "arc_tiles": 2673.8,
-       "centre": [892.9689, 1553.6783],
+       "arc_tiles": 2682.8,
+       "centre": [890.2152, 1562.2466],
        "tangent": [-0.305975, 0.95204],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.2
       },
       {
        "interval": 8,
@@ -11828,23 +11833,23 @@
        "centre": [870.0488, 1949.5982],
        "tangent": [0.47447, 0.880272],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.2
       },
       {
        "interval": 9,
-       "arc_tiles": 3318.859,
-       "centre": [1034.625, 2096.5416],
+       "arc_tiles": 3328.859,
+       "centre": [1044.5235, 2097.9631],
        "tangent": [0.989846, 0.142142],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.175
       },
       {
        "interval": 10,
-       "arc_tiles": 3671.953,
-       "centre": [1350.283, 2222.4099],
+       "arc_tiles": 3688.953,
+       "centre": [1365.5004, 2229.9883],
        "tangent": [0.895139, 0.445787],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.175
       },
       {
        "interval": 11,
@@ -11852,7 +11857,7 @@
        "centre": [1826.4527, 2302.0594],
        "tangent": [0.787423, 0.616412],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.15
       },
       {
        "interval": 12,
@@ -11860,7 +11865,7 @@
        "centre": [2134.8338, 2481.8177],
        "tangent": [0.997601, 0.069231],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.15
       },
       {
        "interval": 13,
@@ -11868,7 +11873,7 @@
        "centre": [2457.3639, 2504.2004],
        "tangent": [0.997601, 0.069231],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.15
       },
       {
        "interval": 14,
@@ -11876,7 +11881,7 @@
        "centre": [2773.579, 2478.7619],
        "tangent": [0.880735, -0.47361],
        "half_length": 4.0,
-       "half_width": 16.625
+       "half_width": 18.125
       },
       {
        "interval": 15,
@@ -11884,7 +11889,7 @@
        "centre": [3243.7323, 2351.1337],
        "tangent": [0.927252, -0.374439],
        "half_length": 4.0,
-       "half_width": 16.625
+       "half_width": 18.125
       },
       {
        "interval": 16,
@@ -11892,15 +11897,15 @@
        "centre": [3312.8944, 2156.5133],
        "tangent": [0.288589, -0.957453],
        "half_length": 4.0,
-       "half_width": 17.6
+       "half_width": 19.1
       },
       {
        "interval": 17,
-       "arc_tiles": 6242.588,
-       "centre": [3567.2107, 2108.5193],
+       "arc_tiles": 6194.588,
+       "centre": [3520.8334, 2096.144],
        "tangent": [0.966193, 0.257819],
        "half_length": 4.0,
-       "half_width": 17.6
+       "half_width": 19.1
       }
      ],
      "fords_skipped": [],
@@ -11911,7 +11916,7 @@
      "id": "dnieper",
      "name": "Dnieper",
      "hw_tiles": 9.0,
-     "reach_tiles": 72.55,
+     "reach_tiles": 74.05,
      "segments": 36,
      "window_tiles": 97,
      "polyline_geo": [
@@ -11943,23 +11948,23 @@
        "centre": [4200.617, -450.5698],
        "tangent": [-0.993484, 0.113975],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       },
       {
        "interval": 1,
-       "arc_tiles": 471.894,
-       "centre": [3982.5636, -369.8348],
+       "arc_tiles": 472.894,
+       "centre": [3982.0279, -368.9904],
        "tangent": [-0.535687, 0.844417],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       },
       {
        "interval": 2,
-       "arc_tiles": 978.435,
-       "centre": [3938.7226, 101.2502],
-       "tangent": [0.626484, 0.779434],
+       "arc_tiles": 923.435,
+       "centre": [3907.4575, 56.7309],
+       "tangent": [0.273943, 0.961746],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       },
       {
        "interval": 3,
@@ -11967,7 +11972,7 @@
        "centre": [4047.9004, 354.5786],
        "tangent": [-0.346887, 0.937907],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.225
       },
       {
        "interval": 4,
@@ -11975,7 +11980,7 @@
        "centre": [4035.3964, 701.6078],
        "tangent": [0.616588, 0.787286],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.2
       },
       {
        "interval": 5,
@@ -11983,7 +11988,7 @@
        "centre": [4195.6794, 815.6468],
        "tangent": [0.956318, 0.29233],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.2
       },
       {
        "interval": 6,
@@ -11991,15 +11996,15 @@
        "centre": [4804.829, 1083.0554],
        "tangent": [0.938031, 0.346553],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.15
       },
       {
        "interval": 7,
-       "arc_tiles": 2870.647,
-       "centre": [5146.5701, 1209.3106],
+       "arc_tiles": 2871.647,
+       "centre": [5147.5081, 1209.6572],
        "tangent": [0.938031, 0.346553],
        "half_length": 4.0,
-       "half_width": 15.65,
+       "half_width": 17.15,
        "bank_margin_px": 4.946
       },
       {
@@ -12008,16 +12013,16 @@
        "centre": [5256.2042, 1359.5556],
        "tangent": [-0.101977, 0.994787],
        "half_length": 4.0,
-       "half_width": 16.625
+       "half_width": 18.125
       },
       {
        "interval": 9,
-       "arc_tiles": 3271.259,
-       "centre": [5155.2337, 1481.416],
+       "arc_tiles": 3270.259,
+       "centre": [5156.222, 1481.2637],
        "tangent": [-0.988334, 0.152301],
        "half_length": 4.0,
-       "half_width": 16.625,
-       "bank_margin_px": -1.996
+       "half_width": 18.125,
+       "bank_margin_px": 0.086
       },
       {
        "interval": 10,
@@ -12025,7 +12030,7 @@
        "centre": [4628.326, 1712.5987],
        "tangent": [-0.970909, 0.239447],
        "half_length": 4.0,
-       "half_width": 17.6
+       "half_width": 19.1
       }
      ],
      "fords_skipped": [],
@@ -12036,7 +12041,7 @@
      "id": "rhine",
      "name": "Rhine",
      "hw_tiles": 9.0,
-     "reach_tiles": 72.55,
+     "reach_tiles": 74.05,
      "segments": 24,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12065,19 +12070,19 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 93.082,
-       "centre": [-1979.6242, 1462.3429],
+       "arc_tiles": 70.082,
+       "centre": [-1956.6559, 1461.1353],
        "tangent": [-0.998621, 0.052507],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 9.35
       },
       {
        "interval": 1,
-       "arc_tiles": 593.4,
-       "centre": [-2078.4975, 1171.1672],
+       "arc_tiles": 592.4,
+       "centre": [-2079.1636, 1171.913],
        "tangent": [0.66611, -0.745853],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       },
       {
        "interval": 2,
@@ -12085,15 +12090,15 @@
        "centre": [-1970.8927, 856.4331],
        "tangent": [-0.504458, -0.863436],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.2
       },
       {
        "interval": 3,
-       "arc_tiles": 1249.235,
-       "centre": [-2208.125, 708.2887],
+       "arc_tiles": 1246.235,
+       "centre": [-2205.9821, 710.3882],
        "tangent": [-0.714309, -0.699831],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.175
       },
       {
        "interval": 4,
@@ -12101,7 +12106,7 @@
        "centre": [-2470.5182, 372.3719],
        "tangent": [-0.859212, -0.511619],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.15
       },
       {
        "interval": 5,
@@ -12109,7 +12114,7 @@
        "centre": [-2654.6092, 313.2598],
        "tangent": [-0.992938, -0.118635],
        "half_length": 4.0,
-       "half_width": 16.625
+       "half_width": 18.125
       }
      ],
      "fords_skipped": [],
@@ -12120,7 +12125,7 @@
      "id": "vistula",
      "name": "Vistula",
      "hw_tiles": 9.0,
-     "reach_tiles": 72.55,
+     "reach_tiles": 74.05,
      "segments": 22,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12144,11 +12149,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 191.729,
-       "centre": [1348.6756, 763.6185],
+       "arc_tiles": 178.729,
+       "centre": [1336.3255, 767.6775],
        "tangent": [0.950008, -0.312227],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       },
       {
        "interval": 1,
@@ -12156,15 +12161,15 @@
        "centre": [1642.8293, 633.174],
        "tangent": [0.669965, -0.742393],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       },
       {
        "interval": 2,
-       "arc_tiles": 875.376,
-       "centre": [1561.6169, 341.2262],
-       "tangent": [-0.633238, -0.773957],
+       "arc_tiles": 839.376,
+       "centre": [1590.8584, 362.0424],
+       "tangent": [-0.827225, -0.56187],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.2
       },
       {
        "interval": 3,
@@ -12172,7 +12177,7 @@
        "centre": [1295.8133, 165.5568],
        "tangent": [-0.99991, -0.013427],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.175
       },
       {
        "interval": 4,
@@ -12180,7 +12185,7 @@
        "centre": [1002.4471, 109.5183],
        "tangent": [-0.955948, -0.293537],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.15
       },
       {
        "interval": 5,
@@ -12188,7 +12193,7 @@
        "centre": [747.1092, -80.6847],
        "tangent": [0.829304, -0.558797],
        "half_length": 4.0,
-       "half_width": 17.6
+       "half_width": 19.1
       }
      ],
      "fords_skipped": [],
@@ -12199,7 +12204,7 @@
      "id": "elbe",
      "name": "Elbe",
      "hw_tiles": 9.0,
-     "reach_tiles": 72.55,
+     "reach_tiles": 74.05,
      "segments": 22,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12228,7 +12233,7 @@
        "centre": [-474.4685, 547.5131],
        "tangent": [-0.903876, -0.427794],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.3
       },
       {
        "interval": 1,
@@ -12236,7 +12241,7 @@
        "centre": [-894.8591, 308.5348],
        "tangent": [-0.993583, -0.113104],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.225
       },
       {
        "interval": 2,
@@ -12244,7 +12249,7 @@
        "centre": [-995.0261, 133.9496],
        "tangent": [0.276206, -0.961098],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.2
       },
       {
        "interval": 3,
@@ -12252,15 +12257,15 @@
        "centre": [-1281.9022, -62.0773],
        "tangent": [-0.941331, -0.337485],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.15
       },
       {
        "interval": 4,
-       "arc_tiles": 1752.612,
-       "centre": [-1674.1343, -189.9245],
+       "arc_tiles": 1751.612,
+       "centre": [-1673.2534, -189.4513],
        "tangent": [-0.880935, -0.473237],
        "half_length": 4.0,
-       "half_width": 17.6
+       "half_width": 19.1
       }
      ],
      "fords_skipped": [],
@@ -12271,7 +12276,7 @@
      "id": "loire",
      "name": "Loire",
      "hw_tiles": 9.0,
-     "reach_tiles": 72.55,
+     "reach_tiles": 74.05,
      "segments": 15,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12294,19 +12299,19 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 233.365,
-       "centre": [-3399.3624, 1646.2795],
+       "arc_tiles": 234.365,
+       "centre": [-3399.7193, 1645.3453],
        "tangent": [-0.356947, -0.934125],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       },
       {
        "interval": 1,
-       "arc_tiles": 495.753,
-       "centre": [-3536.2879, 1437.8731],
+       "arc_tiles": 483.753,
+       "centre": [-3524.9102, 1441.687],
        "tangent": [-0.948148, -0.317829],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 13.25
       },
       {
        "interval": 2,
@@ -12314,7 +12319,7 @@
        "centre": [-3984.2119, 1511.4655],
        "tangent": [-0.975657, 0.219302],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.175
       },
       {
        "interval": 3,
@@ -12322,15 +12327,15 @@
        "centre": [-4284.2319, 1536.0452],
        "tangent": [-0.96566, -0.259811],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.15
       },
       {
        "interval": 4,
-       "arc_tiles": 1650.294,
-       "centre": [-4642.7109, 1558.1753],
+       "arc_tiles": 1643.294,
+       "centre": [-4635.9572, 1556.3348],
        "tangent": [-0.964817, 0.262921],
        "half_length": 4.0,
-       "half_width": 16.625
+       "half_width": 18.125
       }
      ],
      "fords_skipped": [],
@@ -12341,7 +12346,7 @@
      "id": "daugava",
      "name": "Daugava",
      "hw_tiles": 9.0,
-     "reach_tiles": 72.55,
+     "reach_tiles": 74.05,
      "segments": 12,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12363,19 +12368,19 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 75.529,
-       "centre": [3851.9514, -582.4908],
+       "arc_tiles": 120.529,
+       "centre": [3807.2379, -577.421],
        "tangent": [-0.993633, 0.112661],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 11.3
       },
       {
        "interval": 1,
-       "arc_tiles": 598.0,
-       "centre": [3361.5927, -710.3021],
+       "arc_tiles": 576.0,
+       "centre": [3381.4941, -700.9247],
        "tangent": [-0.904608, -0.426244],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.225
       },
       {
        "interval": 2,
@@ -12383,7 +12388,7 @@
        "centre": [2976.8298, -780.7521],
        "tangent": [-0.993359, -0.115053],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.175
       },
       {
        "interval": 3,
@@ -12391,7 +12396,7 @@
        "centre": [2694.8162, -959.4915],
        "tangent": [-0.993966, -0.109686],
        "half_length": 4.0,
-       "half_width": 15.65
+       "half_width": 17.15
       },
       {
        "interval": 4,
@@ -12399,7 +12404,7 @@
        "centre": [2444.1226, -1006.5378],
        "tangent": [-0.949104, -0.314962],
        "half_length": 4.0,
-       "half_width": 17.6
+       "half_width": 19.1
       }
      ],
      "fords_skipped": [],
@@ -12410,7 +12415,7 @@
      "id": "oder",
      "name": "Oder",
      "hw_tiles": 9.0,
-     "reach_tiles": 72.55,
+     "reach_tiles": 74.05,
      "segments": 19,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12438,7 +12443,7 @@
        "centre": [524.6269, 585.1095],
        "tangent": [-0.895681, -0.444698],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.325
       },
       {
        "interval": 1,
@@ -12446,7 +12451,7 @@
        "centre": [87.7882, 350.5135],
        "tangent": [-0.939429, -0.342744],
        "half_length": 4.0,
-       "half_width": 13.7
+       "half_width": 15.2
       },
       {
        "interval": 2,
@@ -12454,7 +12459,7 @@
        "centre": [-115.1981, 264.3035],
        "tangent": [-0.991463, -0.130391],
        "half_length": 4.0,
-       "half_width": 14.675
+       "half_width": 16.175
       },
       {
        "interval": 3,
@@ -12462,7 +12467,7 @@
        "centre": [-362.627, 63.9803],
        "tangent": [-0.754168, -0.656681],
        "half_length": 4.0,
-       "half_width": 16.625
+       "half_width": 18.125
       }
      ],
      "fords_skipped": [],
@@ -12473,7 +12478,7 @@
      "id": "tagus",
      "name": "Tagus",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 7,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12498,7 +12503,7 @@
        "centre": [-5333.3238, 3541.5325],
        "tangent": [-0.977461, 0.211118],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.35
       },
       {
        "interval": 1,
@@ -12506,7 +12511,7 @@
        "centre": [-5773.1376, 3569.7363],
        "tangent": [-0.999318, 0.036918],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.3
       },
       {
        "interval": 2,
@@ -12514,15 +12519,15 @@
        "centre": [-6023.8607, 3578.9988],
        "tangent": [-0.999318, 0.036918],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       },
       {
        "interval": 3,
-       "arc_tiles": 1320.2,
-       "centre": [-6525.0234, 3691.3245],
+       "arc_tiles": 1345.2,
+       "centre": [-6543.3439, 3708.335],
        "tangent": [-0.732821, 0.680422],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.225
       }
      ],
      "fords_skipped": [],
@@ -12533,7 +12538,7 @@
      "id": "po",
      "name": "Po",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 9,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12555,11 +12560,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 246.706,
-       "centre": [-1905.4859, 2138.9207],
+       "arc_tiles": 225.706,
+       "centre": [-1926.1398, 2135.1238],
        "tangent": [0.983519, 0.180805],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.65
       },
       {
        "interval": 1,
@@ -12567,15 +12572,15 @@
        "centre": [-1693.2678, 2144.219],
        "tangent": [0.99974, -0.022783],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.65
       },
       {
        "interval": 2,
-       "arc_tiles": 866.306,
-       "centre": [-1291.5489, 2157.8974],
+       "arc_tiles": 863.306,
+       "centre": [-1294.504, 2158.4147],
        "tangent": [0.985019, -0.172445],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       }
      ],
      "fords_skipped": [],
@@ -12586,7 +12591,7 @@
      "id": "seine",
      "name": "Seine",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 10,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12612,15 +12617,15 @@
        "centre": [-3312.3866, 1230.8031],
        "tangent": [-0.988056, 0.154097],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.65
       },
       {
        "interval": 1,
-       "arc_tiles": 574.588,
-       "centre": [-3634.5852, 1109.3423],
+       "arc_tiles": 622.588,
+       "centre": [-3681.1733, 1097.7857],
        "tangent": [-0.970584, -0.240762],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       },
       {
        "interval": 2,
@@ -12628,7 +12633,7 @@
        "centre": [-3891.2856, 1009.285],
        "tangent": [-0.849954, -0.526857],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       }
      ],
      "fords_skipped": [],
@@ -12639,7 +12644,7 @@
      "id": "rhone",
      "name": "Rhone",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 15,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12662,11 +12667,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 261.812,
-       "centre": [-2767.4525, 1951.7014],
+       "arc_tiles": 262.812,
+       "centre": [-2768.416, 1951.4336],
        "tangent": [-0.963472, -0.267807],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.65
       },
       {
        "interval": 1,
@@ -12674,15 +12679,15 @@
        "centre": [-2925.9727, 2081.4632],
        "tangent": [0.075641, 0.997135],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.3
       },
       {
        "interval": 2,
-       "arc_tiles": 994.282,
-       "centre": [-2954.1941, 2544.6741],
+       "arc_tiles": 990.282,
+       "centre": [-2955.3327, 2540.8396],
        "tangent": [0.284631, 0.958637],
        "half_length": 4.0,
-       "half_width": 12.725
+       "half_width": 14.225
       }
      ],
      "fords_skipped": [],
@@ -12693,7 +12698,7 @@
      "id": "ebro",
      "name": "Ebro",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 13,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12716,27 +12721,27 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 122.294,
-       "centre": [-4769.9506, 2873.6903],
+       "arc_tiles": 124.294,
+       "centre": [-4768.0902, 2874.4245],
        "tangent": [0.930191, 0.367077],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.35
       },
       {
        "interval": 1,
-       "arc_tiles": 437.235,
-       "centre": [-4499.3125, 3033.9684],
+       "arc_tiles": 436.235,
+       "centre": [-4500.1646, 3033.4451],
        "tangent": [0.852113, 0.523358],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.3
       },
       {
        "interval": 2,
-       "arc_tiles": 842.741,
-       "centre": [-4130.3253, 3159.6931],
+       "arc_tiles": 841.741,
+       "centre": [-4131.1744, 3159.165],
        "tangent": [0.849171, 0.528118],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       }
      ],
      "fords_skipped": [],
@@ -12747,7 +12752,7 @@
      "id": "dniester",
      "name": "Dniester",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 7,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12768,11 +12773,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 78.435,
-       "centre": [3343.0553, 1268.2754],
+       "arc_tiles": 124.435,
+       "centre": [3384.1406, 1288.9634],
        "tangent": [0.89316, 0.449739],
        "half_length": 4.0,
-       "half_width": 6.875
+       "half_width": 9.35
       },
       {
        "interval": 1,
@@ -12780,7 +12785,7 @@
        "centre": [3633.7238, 1512.0175],
        "tangent": [0.364838, 0.931071],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       }
      ],
      "fords_skipped": [],
@@ -12791,7 +12796,7 @@
      "id": "garonne",
      "name": "Garonne",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 11,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12819,15 +12824,15 @@
        "centre": [-3999.4621, 2407.7909],
        "tangent": [-0.924952, -0.380084],
        "half_length": 4.0,
-       "half_width": 9.15
+       "half_width": 10.65
       },
       {
        "interval": 1,
-       "arc_tiles": 494.047,
-       "centre": [-4251.6838, 2280.094],
+       "arc_tiles": 571.047,
+       "centre": [-4322.38, 2249.5809],
        "tangent": [-0.918132, -0.396275],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 12.275
       }
      ],
      "fords_skipped": [],
@@ -12838,7 +12843,7 @@
      "id": "weser",
      "name": "Weser",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 17,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12866,7 +12871,7 @@
        "centre": [-1672.8635, 339.0673],
        "tangent": [-0.172708, -0.984973],
        "half_length": 4.0,
-       "half_width": 7.85
+       "half_width": 9.35
       },
       {
        "interval": 1,
@@ -12874,7 +12879,7 @@
        "centre": [-1821.2401, -4.2679],
        "tangent": [-0.891992, -0.45205],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       }
      ],
      "fords_skipped": [],
@@ -12885,7 +12890,7 @@
      "id": "douro",
      "name": "Douro",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 6,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12910,7 +12915,7 @@
        "centre": [-5933.1751, 3130.8667],
        "tangent": [-0.847481, 0.530825],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.325
       },
       {
        "interval": 1,
@@ -12918,7 +12923,7 @@
        "centre": [-6276.5109, 3197.7865],
        "tangent": [-0.997222, 0.074489],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       }
      ],
      "fords_skipped": [],
@@ -12929,7 +12934,7 @@
      "id": "neman",
      "name": "Neman",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 5,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12954,7 +12959,7 @@
        "centre": [2045.5925, -555.4103],
        "tangent": [-0.974292, -0.225291],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.325
       },
       {
        "interval": 1,
@@ -12962,7 +12967,7 @@
        "centre": [1771.3351, -553.3957],
        "tangent": [-0.999956, 0.009345],
        "half_length": 4.0,
-       "half_width": 10.775
+       "half_width": 12.275
       }
      ],
      "fords_skipped": [],
@@ -12973,7 +12978,7 @@
      "id": "thames",
      "name": "Thames",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 5,
      "window_tiles": 97,
      "polyline_geo": [
@@ -12994,11 +12999,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 216.165,
-       "centre": [-4381.6871, 417.3559],
+       "arc_tiles": 231.165,
+       "centre": [-4366.9788, 420.2997],
        "tangent": [0.980554, 0.19625],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       }
      ],
      "fords_skipped": [],
@@ -13009,7 +13014,7 @@
      "id": "guadalquivir",
      "name": "Guadalquivir",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 4,
      "window_tiles": 97,
      "polyline_geo": [
@@ -13034,7 +13039,7 @@
        "centre": [-5680.7073, 4138.5276],
        "tangent": [-0.957155, 0.289575],
        "half_length": 4.0,
-       "half_width": 8.825
+       "half_width": 10.325
       }
      ],
      "fords_skipped": [],
@@ -13045,7 +13050,7 @@
      "id": "don_lower",
      "name": "Don (lower)",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 5,
      "window_tiles": 97,
      "polyline_geo": [
@@ -13070,7 +13075,7 @@
        "centre": [6692.2641, 1519.7597],
        "tangent": [-0.891405, 0.453207],
        "half_length": 4.0,
-       "half_width": 9.8
+       "half_width": 11.3
       }
      ],
      "fords_skipped": [],
@@ -13081,7 +13086,7 @@
      "id": "neva",
      "name": "Neva",
      "hw_tiles": 6.0,
-     "reach_tiles": 67.675,
+     "reach_tiles": 69.175,
      "segments": 4,
      "window_tiles": 97,
      "polyline_geo": [
@@ -13105,7 +13110,7 @@
        "centre": [4016.2438, -1851.8764],
        "tangent": [-0.983381, -0.181552],
        "half_length": 4.0,
-       "half_width": 11.75
+       "half_width": 13.25
       }
      ],
      "fords_skipped": [],
@@ -13116,7 +13121,7 @@
      "id": "gibraltar",
      "name": "Strait of Gibraltar",
      "hw_tiles": 17.3614,
-     "reach_tiles": 23.94,
+     "reach_tiles": 25.44,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13138,7 +13143,7 @@
      "id": "bosporus",
      "name": "Bosporus",
      "hw_tiles": 3.75,
-     "reach_tiles": 10.329,
+     "reach_tiles": 11.829,
      "segments": 3,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13159,7 +13164,7 @@
      "id": "dardanelles",
      "name": "Dardanelles",
      "hw_tiles": 3.75,
-     "reach_tiles": 10.329,
+     "reach_tiles": 11.829,
      "segments": 7,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13184,7 +13189,7 @@
      "id": "dover",
      "name": "Strait of Dover",
      "hw_tiles": 40.0648,
-     "reach_tiles": 46.644,
+     "reach_tiles": 48.144,
      "segments": 3,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13205,7 +13210,7 @@
      "id": "oresund",
      "name": "Oresund",
      "hw_tiles": 4.8563,
-     "reach_tiles": 11.435,
+     "reach_tiles": 12.935,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13226,7 +13231,7 @@
      "id": "great_belt",
      "name": "Great Belt",
      "hw_tiles": 19.4253,
-     "reach_tiles": 26.004,
+     "reach_tiles": 27.504,
      "segments": 2,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13247,7 +13252,7 @@
      "id": "little_belt",
      "name": "Little Belt",
      "hw_tiles": 3.75,
-     "reach_tiles": 10.329,
+     "reach_tiles": 11.829,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13272,7 +13277,7 @@
      "id": "messina",
      "name": "Strait of Messina",
      "hw_tiles": 3.75,
-     "reach_tiles": 10.329,
+     "reach_tiles": 11.829,
      "segments": 5,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13294,7 +13299,7 @@
      "id": "kerch",
      "name": "Kerch Strait",
      "hw_tiles": 5.4634,
-     "reach_tiles": 12.042,
+     "reach_tiles": 13.542,
      "segments": 4,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13317,7 +13322,7 @@
      "id": "kiel",
      "name": "Kiel Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 10.329,
+     "reach_tiles": 11.829,
      "segments": 11,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13339,7 +13344,7 @@
      "id": "corinth",
      "name": "Corinth Canal",
      "hw_tiles": 3.75,
-     "reach_tiles": 10.329,
+     "reach_tiles": 11.829,
      "segments": 8,
      "window_tiles": 1,
      "polyline_geo": [
@@ -13362,7 +13367,7 @@
      "id": "corinth",
      "name": "Isthmus of Corinth",
      "hw_tiles": 3.0,
-     "reach_tiles": 9.579,
+     "reach_tiles": 11.079,
      "segments": 2,
      "window_tiles": null,
      "polyline_geo": [
@@ -13447,11 +13452,11 @@
     }
    ],
    "t1_mask": {
-    "pixels": 156232,
-    "share": 0.038202,
+    "pixels": 159852,
+    "share": 0.039087,
     "thin_water_px": 44561,
-    "thin_water_left_as_land_px": 35707,
-    "reference_land_carved_px": 132535
+    "thin_water_left_as_land_px": 35672,
+    "reference_land_carved_px": 135616
    },
    "starts": {
     "amsterdam": {
