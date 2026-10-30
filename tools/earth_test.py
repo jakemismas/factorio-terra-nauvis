@@ -13466,6 +13466,11 @@ def row_ww_dump_facts(ctx, mods, sec6, row, cache):
                 transfer = f"min(if(cv > 0, {K['scale']} * cv + {o}, {K['scale']} * cv - {o}), {gv['far']})"
                 inner = inner.replace(transfer, gv["shore"])
                 want.pop("cv", None)
+            if gv.get("lakes") and nsp and not prev_v.get("lakes"):
+                # edge-and-lakes: the inland lakes term reads the lakes body through the switch, local lk
+                lakes = nsp["inland_lakes"]
+                inner = inner.replace(f", {lakes})", ", lk)")
+                want["lk"] = f"if({gv['lakes']} > {ww_num(H['threshold'])}, {lakes}, inf)"
             on = f"{K['canals']} > {ww_num(H['threshold'])}"
             want.update({"dam": f"if({on}, -inf, {ww_by_scale(cfg, vsets['dams'])})",
                          "carve": ww_by_scale(cfg, vsets["ww"]),
@@ -24151,7 +24156,8 @@ EL_SCALES = (1, 6)               # the suite's scales: the band is in reference 
 EL_WINDOW = 1024                 # tiles a side of an edge or inland preview window
 EL_SPAWN_WINDOW = 256            # tiles a side of the spawn window (inside the inland lakes' start exclusion)
 EL_EDGE_INSET = 128              # tiles of the edge window beyond the box (G5: they read deep water)
-EL_EDGE_RUNS = 2                 # edge windows per map: the longest box-touching runs of reference land
+EL_EDGE_RUNS = 2                 # edge windows per map: the longest box-touching run of each side, longest first
+EL_MIN_RUN_PX = 32               # a side's run shorter than this gets no window (an islet the box cuts)
 EL_MIN_WATER_PX = 4              # the band's water edge never closer to the box than this (px)
 EL_MAX_REACH_PX = 20             # nor deeper than this: the nearest land the box does not cut lies at 22 px
 EL_MASK_SHARE = 0.02             # T1: the edge band mask stays at most 2 percent of a map
@@ -24350,7 +24356,13 @@ def el_edge_windows(cfg, mk, s, off):
         runs += [(int(b - a + 1), side, int(a), int(b)) for a, b in zip(starts, ends)]
     out = []
     half = EL_WINDOW // 2
-    for n, side, a, b in sorted(runs, reverse=True)[:EL_EDGE_RUNS]:
+    # the longest run of each side the box cuts, longest first: Europe's bottom and right edges, the
+    # Atlantic's and Old World's right edge (the left edge's Aleutian islet holds no line the mask spans)
+    best = {}
+    for r in sorted(runs, reverse=True):
+        best.setdefault(r[1], r)
+    picked = [r for r in sorted(best.values(), reverse=True) if r[0] >= EL_MIN_RUN_PX][:EL_EDGE_RUNS]
+    for n, side, a, b in picked:
         mid = (a + b) // 2
         if side in ("top", "bottom"):
             x, _ = el_world(cfg, mk, s, off, mid, 0)
