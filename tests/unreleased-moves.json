@@ -56,9 +56,6 @@
   "tn_canals_atlantic_s1_v4": [
    "88d21894d14ef6efab84f1bc562b436dd50a7771d5a7882dad55858579778325"
   ],
-  "tn_canals_atlantic_s1_v5": [
-   "56580c2d5c8d25d0d93ec230c1c1e523d1ddbf625098a0d525bf6cabc77663ff"
-  ],
   "tn_canals_atlantic_s2_v1": [
    "cfb6993006dc6a4f15e89c6bee74dee97547ab0532ad6a03c7c7c3a2ed0194f0",
    "d844ca1c3cb49160c6de615716debc1fdd3186f88138ae992f525a896125d3af"
@@ -73,9 +70,6 @@
   ],
   "tn_canals_atlantic_s2_v4": [
    "6c0f29932cd2d0c25c03efcfb3cf265384547f70e21c1b1cc40a884089b31217"
-  ],
-  "tn_canals_atlantic_s2_v5": [
-   "e5df567c53c3fb28a16eaa3cd9fd83958c1ed97508c4ae23748a331e042da770"
   ],
   "tn_canals_atlantic_s3_v1": [
    "ec8df1512745ee571ecb6fd8b21bf8c0564e2f3c9c37de0df243be437897f55b",
@@ -92,9 +86,6 @@
   "tn_canals_atlantic_s3_v4": [
    "835cf065065741f01f5c468aff3e58fc8994e035d19aaac69453a9ec34406989"
   ],
-  "tn_canals_atlantic_s3_v5": [
-   "e42f97b55c74209e862e71a931f88785ceabbb502f5e77776bb704e0abcf7048"
-  ],
   "tn_canals_atlantic_s4_v1": [
    "b91bebe1d4c460e654ec9cc988c7e86d6ec46c314439e15169d45eba62f7e614",
    "9e67372a08e424843d907cff95f088f7dff771c07334092a61126121500de021"
@@ -109,9 +100,6 @@
   ],
   "tn_canals_atlantic_s4_v4": [
    "123f8210f611e3222a266a913b5484969730e26f5df520a8ea6391c908d95a8f"
-  ],
-  "tn_canals_atlantic_s4_v5": [
-   "6015bbf01951aa94e67e83799e6e9a6488184902d175cf16c197d4ddcb6db965"
   ],
   "tn_canals_atlantic_s5_v1": [
    "e56da57b5bf29aa70da0b6b9ed74dc6334d2b92e7f2ffcbb455f04f14739d99c",
@@ -128,9 +116,6 @@
   "tn_canals_atlantic_s5_v4": [
    "0e2d3d84255be80790247d5b1465e80503acc17c32f74a347672f34296c42a3f"
   ],
-  "tn_canals_atlantic_s5_v5": [
-   "73b50a42fdc8a140c08b5e8dcc150db1062a3551e472788ec6ca532157e71da4"
-  ],
   "tn_canals_atlantic_s6_v1": [
    "cb1bebe17cf018bcc5a1479c1270d8b4d18820d044848fabd6b2c29791bf8730",
    "4748cc656b33ce4dadda51e1ce1f3dec3491733cfcdf2ff3fd7261d986ceeac1"
@@ -146,9 +131,6 @@
   "tn_canals_atlantic_s6_v4": [
    "add606b99fd744a816b38c0a4029367c3bd54fbf664ac1034562ee62eb7ef906"
   ],
-  "tn_canals_atlantic_s6_v5": [
-   "41bef96975cdc2a27c9fccbde8d1a338a3ea8b0ea01eecc1ddc59f642152ccef"
-  ],
   "tn_canals_europe_s1_v1": [
    "9c789870bf4fb6c924e70bcb6a3c6b7af3a2e3a66edd88553edf24390e7d0492",
    "613d46c315608957c266df8ed9886715d39ff469217f807abc9f31825004cdfc"
@@ -160,9 +142,6 @@
   "tn_canals_europe_s1_v3": [
    "cd0502b20955c160c3859ab14ee3cf0f83a4fd5691ea1a148fb9c9e9cf01ba13",
    "0e7942b7a968c72726ba5daeb8e51a3d6a77e1ecc5a5596fda67cc413397a24f"
-  ],
-  "tn_canals_europe_s1_v4": [
-   "32cb3fdf42b5bf26e2e7e6f47ab5093d2e7547868f766b6ef462acf3f4a735ef"
   ],
   "tn_canals_europe_s2_v1": [
    "ce602f6c596ce07ac53639e4a4ee6b538a187f32e40d0d90bd9465a3a8d0c43e",
@@ -176,9 +155,6 @@
    "33783d3db22615941ab2bd0b8e5c02fadb9d31b61e9e1126d826687eaea8d953",
    "b4d40747052fbc72ec69a2f2d796dfff4abb66d2248cb58a0b9e0557ce925d58"
   ],
-  "tn_canals_europe_s2_v4": [
-   "2c8e26565cfb2a9721655b1ec4d58088a3b1df5ddc28dd2e7e2d369b8ec80f73"
-  ],
   "tn_canals_europe_s3_v1": [
    "0ad58d6886cd66635774afc5f85c3dc82295785dbad04ed431b7e9a3c6d97667",
    "e8890f87f2ff7a92b1220068a142fc1ab44eefd21a044d8384d9ce87ab8eb8b2"
@@ -190,9 +166,6 @@
   "tn_canals_europe_s3_v3": [
    "b6515ef93f8b10f89a432af1e95765be8237d1b7deea3fbeefcdd4908654b428",
    "3bd7f41c0f0448ec9ad8fe5bce603f6d8c8704b5758ee724ea967ccd98f2c75a"
-  ],
-  "tn_canals_europe_s3_v4": [
-   "bbedc27948ca04bfe97649f166e90eae0f4444c594400c33f9e1072a96f30628"
   ],
   "tn_canals_europe_s4_v1": [
    "b8e33824e853fa7817dafbc0b660b33dfb70a882f3edf4210ac2b1dd2ae61be5",
@@ -206,9 +179,6 @@
    "7b5aee929d1e9e69fd67ae46dc8cd5cc08952f702909a2d54ff445564c2dc3ab",
    "90f2f2ea69c0bc477b38e168902d7553f3fc66b1446d277f61ea66b34123b0d6"
   ],
-  "tn_canals_europe_s4_v4": [
-   "4bc56bdd1e32561414502efffe4b61d3b838557a66e3384cbe1d29986dcf7457"
-  ],
   "tn_canals_europe_s5_v1": [
    "1fa22b6a1308687f79a81eb49e9661ac4671f1b559ffbb4a11228da9b5f0d54f",
    "48d7872628f9c165133a1d6a270c399e4a79e0dfd536cbbfc245930cd551d6e9"
@@ -221,9 +191,6 @@
    "b50bca8f8066b7f0e56ef19898ef36ba1f0c345aa91ac3d599b1d174a6dcc6f2",
    "52b629c8f96fd96162a13c942e2d0edc3ee892f2efb982d098ef565196d2d4b0"
   ],
-  "tn_canals_europe_s5_v4": [
-   "a0d73eb5e8cd35d0e617c7ef382747f1e178353fe6cda220d6bb1911d573a62b"
-  ],
   "tn_canals_europe_s6_v1": [
    "3e8316e16f0a1f49d46bc5a630eb470159a07647ed4e003bc0e0bc015f50d449",
    "4a489dfde10c744a4f49620e30429caec714a97532b4f490ddafcb8016c8517e"
@@ -235,9 +202,6 @@
   "tn_canals_europe_s6_v3": [
    "ba1f4e51267898967a8ff8b2f91e38b7cd0cb393f516c42fee13c7df6b8250ab",
    "c6bae7995aec32f37d68a0eda0b7682a23adea9efb1210514fdeb98649a886a0"
-  ],
-  "tn_canals_europe_s6_v4": [
-   "dcbe0bfe053564f075561ed4d88f295617accbd97da973fa4867c9174d71fab0"
   ],
   "tn_canals_olde_world_s1_v1": [
    "f1b7e14db31e2e9635a385eb13e2e1204c483c43fd35c72300722ae1d471969b",
@@ -254,9 +218,6 @@
   "tn_canals_olde_world_s1_v4": [
    "f70a241a54a8cb06ce06e83d02bc0ae3d2bc9034b374544325e6ca6af568a528"
   ],
-  "tn_canals_olde_world_s1_v5": [
-   "30efba137e372ede4da62518e15aea15c7ef603ae884ea0e06609e1157d5142b"
-  ],
   "tn_canals_olde_world_s2_v1": [
    "07cb7d5c7271a7c90545fb96cea333d839ea577d3d17fc2db5562985ac7de927",
    "dcfdef9ded654f83372161c9d5e579a17ddaf75b8e51ba01af6b61833cb0566b"
@@ -271,9 +232,6 @@
   ],
   "tn_canals_olde_world_s2_v4": [
    "396d81090a607d23e2563e0a7efde3048af91bf4b527673e4c32963a5c8f7a68"
-  ],
-  "tn_canals_olde_world_s2_v5": [
-   "35c5616452e3908bf01421ef638b916e0738c70a3f65f482679ae9b5ebbedf14"
   ],
   "tn_canals_olde_world_s3_v1": [
    "9264490dc267fd444d288f78396388a307162c8fd0605c4551b7380ce3c658ef",
@@ -290,9 +248,6 @@
   "tn_canals_olde_world_s3_v4": [
    "783b7ed8e19b4a319e2094e253dc709cf1687088d25977ba656b0d47d9a3358b"
   ],
-  "tn_canals_olde_world_s3_v5": [
-   "fb005bbf4a337f4aa759417d974678dc50cbff8bc01cf84c332aeea82698369b"
-  ],
   "tn_canals_olde_world_s4_v1": [
    "e5029923a4e8370fc75f6e820ce67b12cf1756060ccfa7a94ee54ad9a51931cb",
    "40d8840998a7f3d5cb6902338ee01be959f42e933a455b955cfe54aec3759aae"
@@ -307,9 +262,6 @@
   ],
   "tn_canals_olde_world_s4_v4": [
    "201fa2fc8ff283a37021af8ea5df32d52c0ec85867d7af2402eb8c06a631affa"
-  ],
-  "tn_canals_olde_world_s4_v5": [
-   "42859db01b98fb49600b92ea629e9f3673bf1761f0339d414f64b9bac295389d"
   ],
   "tn_canals_olde_world_s5_v1": [
    "1a2f1d216e0e6255acfc306a44e456ee103b8f6eb3110147671fe361c8f99362",
@@ -326,9 +278,6 @@
   "tn_canals_olde_world_s5_v4": [
    "f120f81eca2ba26adc86006978d35efcd8a6cd4c50cd6ac69cb2caa89294e67b"
   ],
-  "tn_canals_olde_world_s5_v5": [
-   "05d2fef40bc9ab15b9cb522526bf735215b1099ac133c59231bc1d9324ae07da"
-  ],
   "tn_canals_olde_world_s6_v1": [
    "1768a80e8160d6e5baee40936fb3fe9a66f166f52049dc81f3c167504cb82fc2",
    "952e24e89f74ab25c4dd5597b59c027f90d029245d2db36c8d0dadc6e92e5be4"
@@ -343,9 +292,6 @@
   ],
   "tn_canals_olde_world_s6_v4": [
    "c132d9543e4ddd24cf49b322dbc8fb2528c80b1c4ed18590ae3b8b6206c915a4"
-  ],
-  "tn_canals_olde_world_s6_v5": [
-   "a8bbe5975abcc7e27e41f199da3d4ec7cd6a7f5d271415fc2d0ad61a2f8309b4"
   ],
   "tn_city_pool_europe_v1": [
    "f75b0c87f85f37fba9e0943b40677863f5d98a03778f79e406be2f38d66601ea"
@@ -474,9 +420,6 @@
   "tn_dams_atlantic_s1_v4": [
    "4a47c0e539f20247256759aec55c6635d150dc7ae88a879bd8cd04885432ea04"
   ],
-  "tn_dams_atlantic_s1_v5": [
-   "36ce272a70315770967fcff17ddda8d81c09fa66b60f3b7f67cc5292669d9980"
-  ],
   "tn_dams_atlantic_s2_v1": [
    "cd3581b3bcd0ae907267627f726efa356280593c5ef8f9febb5fba444a880567",
    "3bbd2deb12146040539d93c5d192697a36e97d39a8040cc767d3ae48b6fc9518"
@@ -491,9 +434,6 @@
   ],
   "tn_dams_atlantic_s2_v4": [
    "a63194c0818b7f3c9c537d523e2c85509526fcaad4d8da5a907b4e2975190a75"
-  ],
-  "tn_dams_atlantic_s2_v5": [
-   "81bfa3b42a94e52ceed85aac30775a1227c7dd9ff0ebbec8cc4af9dea7079abe"
   ],
   "tn_dams_atlantic_s3_v1": [
    "efca8ff9a82eb93a0477bc96f46ec1fb7b76722a49092d3cf5c8c17bc7845429",
@@ -510,9 +450,6 @@
   "tn_dams_atlantic_s3_v4": [
    "c7a5e9cf2ee18940e68e63b7338c28102059f357e37a78c3a18a7d56c1975498"
   ],
-  "tn_dams_atlantic_s3_v5": [
-   "24a30d458791c97be3b98cbb0f0acdbebc6ba7c6105cb1bd5effa6d337c0e630"
-  ],
   "tn_dams_atlantic_s4_v1": [
    "e3c1a9930442f0c97aa7e9c5030769d9ed27ff2659f94bcfcced81d5b0c43656",
    "e2b20c4c15a80b00025d248a023fed8438ad84dd10c5278800ef230f24d3dc7f"
@@ -527,9 +464,6 @@
   ],
   "tn_dams_atlantic_s4_v4": [
    "f1d88d587127a0ba1e6837e03467d72384cae5ea2d461710444c88ac5a8743f0"
-  ],
-  "tn_dams_atlantic_s4_v5": [
-   "8c0b6482606157ab49120dcdd29f12cbad0800d39749db0f3cef793d4ba42643"
   ],
   "tn_dams_atlantic_s5_v1": [
    "fac6d93ef5ebf22ec7e8a27b99caf1f07a0432715aa6cd003774b1e0e048d5df",
@@ -546,9 +480,6 @@
   "tn_dams_atlantic_s5_v4": [
    "8bdbf0fe8f58eb7020d1970c4d4482193b0827a7659d4d063fec6a8df99098c8"
   ],
-  "tn_dams_atlantic_s5_v5": [
-   "bbb1c7dc0d9b667e8efe0b81eb675121c3ef0f334c4f54e67fc90a3c737ef5c7"
-  ],
   "tn_dams_atlantic_s6_v1": [
    "0e0b7b7e50fa07b409786c72e6499e0def0b03167dccb263895c8b68584cb7b8",
    "31b82d8ce77674b217f31add3f35d25dd7a02ac1e4dc902deb67ba0ae6ff2027"
@@ -564,9 +495,6 @@
   "tn_dams_atlantic_s6_v4": [
    "8d90d82c53e424b06ead0d06f84776e07398de14bad9c11068e3cdf37e085232"
   ],
-  "tn_dams_atlantic_s6_v5": [
-   "6552c604f9c924482cfd3ebfa1f5ae43cbc8a5533b45c3d7d65ffe6b2b2c85fc"
-  ],
   "tn_dams_europe_s1_v1": [
    "0227c03496b47476a647ba19b944d8efafc2f87d614f567de521b2bbd9c61b8a",
    "c0a6a9942769a3c473272e9313ae5805f8c005375272202dba210dabfe90f148"
@@ -578,9 +506,6 @@
   "tn_dams_europe_s1_v3": [
    "6ba4651135e51f91765876d03af30f88ae8e38f29be11f929ce76779eb88466a",
    "af67e805ca6a714e3a566023aaf9aa05370862f20a949005644ca29f362ae2d3"
-  ],
-  "tn_dams_europe_s1_v4": [
-   "dd2767aaaef7a59702b52f7d225c168e15ed3079030c9e2bd5f2a567876a60d1"
   ],
   "tn_dams_europe_s2_v1": [
    "46a0d3de865db20cea34fd6697f414a837b803e2c217025c2b3ef5e6d1a57675",
@@ -594,9 +519,6 @@
    "dd41fdda0d01a5a0153d983674e09b9c84aa27aca18270619d72434794c5ad7b",
    "f26cca0ebd8f6859d9de85113f0f487a5e2acc9578965d4fbd79310f804f8d8b"
   ],
-  "tn_dams_europe_s2_v4": [
-   "9e3ec8773827d62290f9d3c8c1db2f279b49f47db997f2465a9600c43239328d"
-  ],
   "tn_dams_europe_s3_v1": [
    "40f84d2917236c733bdd8bbde4f8aa09f5a7805c8dce7b323e620bc1844694e3",
    "0bb62b0673cdd51f1a490a9beb0bcf0244913a87f7dca2509660a3a69540e7e3"
@@ -608,9 +530,6 @@
   "tn_dams_europe_s3_v3": [
    "944f534209575250479158b09b92b72f8f3b713130b6f8c00957daeddf43fc76",
    "4956c9481f3a2b2a3175e4727fdbf9cc5b10e446229cb1a8a37985724dcb5b66"
-  ],
-  "tn_dams_europe_s3_v4": [
-   "d4f48d31dd8cc5f511b0be66cbffaafa5b1355c2e86be6f14cec528961acc8df"
   ],
   "tn_dams_europe_s4_v1": [
    "771a80f8eaa02e19bfab51063506e5ed3968672e5a4b196034a2e9faaf7c8f28",
@@ -624,9 +543,6 @@
    "3ef88c5521135ce08b0cef9c04bea970fa827329ba59bd7edf534458c59520a4",
    "031950bbd5f41065e69f5e2fcf37fd5943850db8c67da703685611b103d7e70c"
   ],
-  "tn_dams_europe_s4_v4": [
-   "a154c9b22653c1016e8ad7cdf8d41a770dda481f7ea3e04eb3623038ea7fe9ab"
-  ],
   "tn_dams_europe_s5_v1": [
    "a9de43029a94444d4e10032a1cd312a9eb4f87a17b6553400f82b6cc92c42428",
    "391d568da06e1a9093fb0180d05be57b0c458085bb97cfb245baaf8cff9fec8f"
@@ -639,9 +555,6 @@
    "da02b0c1d3838a5b93c5e9d084cd66a70e7c7dd14debac76a7dc4d418f9f2b1b",
    "ae0cbf1d3a94568edca151650fd65abfb9e62d99c4003897cd06e4d24c305968"
   ],
-  "tn_dams_europe_s5_v4": [
-   "681f8d7b26c5bf693cd817b1aa9bb3fcfee6b5c6fea96fe490f1b067156b3ae4"
-  ],
   "tn_dams_europe_s6_v1": [
    "0ec865f75b4c10ac63dfbd431f05bdf599324a6f5e0d5400be1f3a6ff76a3f71",
    "c9e856616f379a6dc6506e4f938d120d54e98b3daf2b0e5c46754ad66bb77462"
@@ -653,9 +566,6 @@
   "tn_dams_europe_s6_v3": [
    "b790168ecca7f861e3d1eb7b2aca6a77f6ffa0c92cba2d6c00fefe16f3dfeefb",
    "9709a9df550279b6a796f404cc61f11f1d6ebd595411322e9c136abd78fbdf94"
-  ],
-  "tn_dams_europe_s6_v4": [
-   "7175edc0efe0c81e8ab4ee1905edb2d39e4b442068b5e8dd67dd6ec32f77585a"
   ],
   "tn_dams_olde_world_s1_v1": [
    "a35e14696775d934aa838a6b6a54df688c87cb76e98b857dd888ab99be7bc39b",
@@ -672,9 +582,6 @@
   "tn_dams_olde_world_s1_v4": [
    "7b19af2a6e29833e11a07ee8494dca77512a3808de4f3519b44e6c14a73150c7"
   ],
-  "tn_dams_olde_world_s1_v5": [
-   "d682cc5c41bd10039362c9622586830bec56b5ba93c81f14b0ce794e61f774be"
-  ],
   "tn_dams_olde_world_s2_v1": [
    "69ee636f129e7ab484ae191f0e6980c8cc4401e4f493cf54cfc6b6f63f5651de",
    "ac721ab8f9bebdbbc8ad2cff926d49178f4641698b5d7be44916da1da6ea3e6c"
@@ -689,9 +596,6 @@
   ],
   "tn_dams_olde_world_s2_v4": [
    "884bc0abaf63e99673d6edce91579fe519aabf8b15280eb2206108c797df71eb"
-  ],
-  "tn_dams_olde_world_s2_v5": [
-   "518e44454f7f34a583cc3d3b01d11f077bf32c719b27246352167c6c1a41173f"
   ],
   "tn_dams_olde_world_s3_v1": [
    "5b91d0f43ab55bbe2c3ff88f78104a1dcc4087bb5765d34b7b12b698446a0b17",
@@ -708,9 +612,6 @@
   "tn_dams_olde_world_s3_v4": [
    "2ba707ea3415af4a7a47972d9299fecc4b10b87a89e83dd180f7b067780bf96f"
   ],
-  "tn_dams_olde_world_s3_v5": [
-   "32bf311dc3c779103e398a3295ff0d7931c50be309ceb1f3593fea130b992c19"
-  ],
   "tn_dams_olde_world_s4_v1": [
    "dd59a4d5bac0f6792f1b254a6804bc1c62142bcd822b975543447bea43bf93e3",
    "bab9c03ba09036e152d5bc357b5c9df96a425b97b7128d79ece19380a0dbb1c5"
@@ -725,9 +626,6 @@
   ],
   "tn_dams_olde_world_s4_v4": [
    "ab9ba685b31dc69e06bed687164f18b614889da81a280e2732c72236ea95496a"
-  ],
-  "tn_dams_olde_world_s4_v5": [
-   "dc532ea67f482f41ace51f223d4e15e2b786c809db3621ba411576ddff0632f3"
   ],
   "tn_dams_olde_world_s5_v1": [
    "9194c942a5eca82f24e2f7ead2e2dae56adb69ea403bcd08bcdde8acb046d632",
@@ -744,9 +642,6 @@
   "tn_dams_olde_world_s5_v4": [
    "de5abf57ece287e469a6a11010d9e255151682be2be41373e373197e30da2804"
   ],
-  "tn_dams_olde_world_s5_v5": [
-   "b95da1039125a7d12000faad8c96a0d0102f273a2bea391607f2d4b10109b4aa"
-  ],
   "tn_dams_olde_world_s6_v1": [
    "2faea638edee078bcf96f4fc6825e45c22c3d4ff77a1340136b6654ab41e5526",
    "dcbdd7b4ebe11d2b21b58fa2695a771c49b726a4b9465c03aa3fc8b220ddb7b7"
@@ -761,9 +656,6 @@
   ],
   "tn_dams_olde_world_s6_v4": [
    "8a3f3e0b7d9eba466b98d2d8b95a83680a623c35661e867c1786b5b7d0eff7ea"
-  ],
-  "tn_dams_olde_world_s6_v5": [
-   "3101f38cfbfa28c7f563e976543daf78a9db745521dbf25aec6780da635cbe2d"
   ],
   "tn_depth_keep_brenner_v1": [
    "6b1c87e36d3f93797d0101f60ebb81380b925dd5bf84b9e03e3f01f9b4ff6968"
@@ -858,9 +750,6 @@
   "tn_elevation_atlantic_v5": [
    "6ee6d41b08f691994bff2a25303da0f02bd21a539698f254049dc644f919c619"
   ],
-  "tn_elevation_atlantic_v6": [
-   "0d2475ec810a29119d2d0f336798b0de4616e6c5926247d0ba3690fc5d32e531"
-  ],
   "tn_elevation_europe_v1": [
    "517e1b8b240ac0ea23c506d5878b3a025b2f4fee070df168c4f9d34ad297e1a0"
   ],
@@ -876,9 +765,6 @@
   "tn_elevation_europe_v5": [
    "ae15b01d8b81f3d1c558c360edabac6ee267eb169bdb7c1e6c811d50a132634c"
   ],
-  "tn_elevation_europe_v6": [
-   "e9f598dd6b77243a3ab607574a00db8200d49af7f8778da80b691f08e3ad5d85"
-  ],
   "tn_elevation_olde_world_v1": [
    "d327f16a821dea0c692de5569efed8f57c4a15a30892126feeb84cefade6febc"
   ],
@@ -893,9 +779,6 @@
   ],
   "tn_elevation_olde_world_v5": [
    "241a4e4bf56484bbc5666d6ffacd000367f710130347d97f72560167a265e5f6"
-  ],
-  "tn_elevation_olde_world_v6": [
-   "5bc8687b40c22ce334d542633af9e9239b122d99fa264411595be349531bfceb"
   ],
   "tn_far_atlantic_v1": [
    "e4d768264532f1231889baa996c0c18f55dea955f6c1c05b6514ac8dfe771c25"
@@ -966,9 +849,6 @@
   "tn_fords_atlantic_s1_v4": [
    "7fa940b05ce5d80e221e4bcee3b208414ccae3275922c4baf06858da028c8af8"
   ],
-  "tn_fords_atlantic_s1_v5": [
-   "8c9496c899615d11f93479cf71c6fc7835dc9ac879d993d0ea4adc605d93e967"
-  ],
   "tn_fords_atlantic_s2_v1": [
    "ba102b7c1c998c632297a327146fc6d6ac9cd038294eabd9a7e33879477d8da3",
    "229b6b99bc3e307af48248ddbbab114cf740e152daeec74f30912631f9efe2d6"
@@ -983,9 +863,6 @@
   ],
   "tn_fords_atlantic_s2_v4": [
    "f4e761c8c68b8ac4e3e9fd5ee00b221d56a30145f19494c58fee0a40a4f79180"
-  ],
-  "tn_fords_atlantic_s2_v5": [
-   "5d83e9d55bd44179d37b7e9386600b3bdef24b97ed8eb6f61130cd2aa995e244"
   ],
   "tn_fords_atlantic_s3_v1": [
    "1bff381097958195f17d0fcbc83b88f42f8b45ff8d972e6713190f975a2ef3b2",
@@ -1002,9 +879,6 @@
   "tn_fords_atlantic_s3_v4": [
    "cf16a536ec43e3c31c68dded794a3b9a50be5b57706d16c189f70a3bf2b95788"
   ],
-  "tn_fords_atlantic_s3_v5": [
-   "e9c3d0b986239b1371f4b6f0dbd7f22cfcddce66f2015f3d5f4e0b89604f881e"
-  ],
   "tn_fords_atlantic_s4_v1": [
    "5866f0e4bb190258b3d727875550e94a8f17d97a6ad13d526e6b65b6fbfa49ec",
    "70ac0cb27662fa783c59bd18e866578ee74ace4de05dfd516de1c351e196fafd"
@@ -1019,9 +893,6 @@
   ],
   "tn_fords_atlantic_s4_v4": [
    "291d20f13ccb716550bff5a9bef3c028099610bf356179b90e09ad3bea9ba0d1"
-  ],
-  "tn_fords_atlantic_s4_v5": [
-   "d803e8a361c6234de5d9ad0b306d95122077ba0fb6b39911a01eab38cc1587b2"
   ],
   "tn_fords_atlantic_s5_v1": [
    "2f34ae7e0f48fbb88d180ca31832be48e5a32eb8c3af0af59eac86e9957e9dea",
@@ -1038,9 +909,6 @@
   "tn_fords_atlantic_s5_v4": [
    "f7dd7514db2681add9ecfc0daa63a35d7ad980cbad813886f17762a2b4c0b293"
   ],
-  "tn_fords_atlantic_s5_v5": [
-   "311d776ca4c8cbb5bbd507909704e23435b5ae203f0f06481f6a1d5661e6aee8"
-  ],
   "tn_fords_atlantic_s6_v1": [
    "c4116f6ee7fd1221760fc2afeb4df75cbd8113055e1e21b005cf910971147328",
    "2828ef48257d8ef1b57b742ed1b6697fcd451a3eff7117792288b1bcdfaea2c1"
@@ -1056,9 +924,6 @@
   "tn_fords_atlantic_s6_v4": [
    "150042b42f91f66ebc4cb526a2d4b2e6dcc6c76f2e0127e28c327be51d9e4823"
   ],
-  "tn_fords_atlantic_s6_v5": [
-   "f0c23a267828052a5796b7e8577a4e882f7e30d3a7fe5ea52d98f27ceb36553a"
-  ],
   "tn_fords_europe_s1_v1": [
    "16de2eee9d4a8049e2f9f3eafa969dc32a964afbb8e5a0c6df17f883c4a610c0",
    "ac043aac027d3540c1a005a1af6815cf3aaaa4310e7da353783db8f6581ecb6b"
@@ -1070,9 +935,6 @@
   "tn_fords_europe_s1_v3": [
    "1019a0cbe10c05eca159b9cf8298766916ffb21f2d9afe3c3987787cb59d297a",
    "72b80c1a712dbc40cebe41f4d1779fdbb2105f61528261a75f709afe81c6d89b"
-  ],
-  "tn_fords_europe_s1_v4": [
-   "20eeeb37e1df79d674ed176b09d3b7284ce067cde685e2cf22c47c8dfcbe324b"
   ],
   "tn_fords_europe_s2_v1": [
    "f2f4a299dc50969d80b858a982a74827d47bc688e13ce0f53da93e88a1687630",
@@ -1086,9 +948,6 @@
    "e28ed26fa4fd50116196657714699cd3ec140ebd061685f2c2f865ab54e7641b",
    "4c607ce91c5ec91b30d34c10e4038f1bab234e96e000625076c217f22e42f51a"
   ],
-  "tn_fords_europe_s2_v4": [
-   "bce8f96d10c73951199d0cab5651f1d451bcc1bdb2c7c7796959d9d9fc88e62d"
-  ],
   "tn_fords_europe_s3_v1": [
    "1db356a8758562c9f780b7306dd39024f21c93dd511507395221e4b21fec16ab",
    "f5103de34d55aca85a64369dd0aa15119b8109147b0920c34a17005c3a0cf9dd"
@@ -1100,9 +959,6 @@
   "tn_fords_europe_s3_v3": [
    "e51862dd019d3c2fb336426f63de5699f575de6ba6fa863420e8d9e33aa02190",
    "cc15b8f1018d7277a032cf733415f9400fb1472445cef5fbfa4759528239a3fa"
-  ],
-  "tn_fords_europe_s3_v4": [
-   "c87e4f65ee06e648012ed50144de5d7cab212542751594ed4153eba27e4c4cd4"
   ],
   "tn_fords_europe_s4_v1": [
    "a5da6b47973a4571abc595e5388724e5d218a30309c551d7e6b9c58401ef5ddc",
@@ -1116,9 +972,6 @@
    "110f816825f767635b89dee62f2861f0619d8ae97506de2359a53cd26a2314e1",
    "f20dbf0348e09eba4ac41e4a5c9d4a63b96b2558e0bb618facbffd24ab9fa3e3"
   ],
-  "tn_fords_europe_s4_v4": [
-   "520627e0aef815a54782b308a109725e933cb11e1acb38dd5b82f085503f904f"
-  ],
   "tn_fords_europe_s5_v1": [
    "742aafe70bd0c97705c741cab9dbb8cb9815349045b0538d36ff3266e14686a7",
    "7b1fd4d1a25ddce094c3ca1bf0ed2bd748de6080cef029c7fc81133958cab27f"
@@ -1131,9 +984,6 @@
    "90e7ad9c5c082ded91863358ad3d4678bb21551acbd73db65a5aa21eb9d5ee3d",
    "519452e56129d944cf4545c8f592ff3e29e21f6d4d86ad1782ffc86bcb6780d0"
   ],
-  "tn_fords_europe_s5_v4": [
-   "d9fccdfc6845db73c272a5e38056e9119ee974a362b54219174ad18224a5e1d9"
-  ],
   "tn_fords_europe_s6_v1": [
    "d3dc0ee2bee2e16611f8056075965a990fc07b14cbc83e8e234edb8700e42a26",
    "d3923e4477a1c64f3c9b3596ab5ecad73cea0fa3c3921489dc2f8be33bb89971"
@@ -1145,9 +995,6 @@
   "tn_fords_europe_s6_v3": [
    "18883028f8b7bcd869256e63f6a4f8530c213f87585f2e8aa0da15bf37c06fdb",
    "1c4644dc1ccea2ae83c1806f4dd84a738cdd6fc5d96f9cccd6eebea76bd472ed"
-  ],
-  "tn_fords_europe_s6_v4": [
-   "505f3c624c8c0004413b2e87543a06f8743f05a553e2fcf2b051c4339646a079"
   ],
   "tn_fords_olde_world_s1_v1": [
    "5065bb72b1b72badcf18f2c9786adb687ef63310bdcaac10f9ecf0b235a66481",
@@ -1164,9 +1011,6 @@
   "tn_fords_olde_world_s1_v4": [
    "a01b1383636b9b82c4cb58c8810b1139fc90f8ee424e5742661a70b4396bce14"
   ],
-  "tn_fords_olde_world_s1_v5": [
-   "2c01ac7a65e6c29739362ddee23446abdf034ca81f0e62cf6dbe6434889e4ea1"
-  ],
   "tn_fords_olde_world_s2_v1": [
    "782e31e5dcc10e205cc6a4b497c2fd4a2c6871d00657e93737fd97a6acfb565a",
    "1dcaa811596f57228922e83f3db5bd86a3fc83902637fe0adb0881b84967f54f"
@@ -1181,9 +1025,6 @@
   ],
   "tn_fords_olde_world_s2_v4": [
    "97ffef5e7e808c9a90ed26456c8c8839087ce909bccd03067823ba9b2c01bf78"
-  ],
-  "tn_fords_olde_world_s2_v5": [
-   "1e228699896f49ca98084f3c446f194ab848f72d5bb56b7a78bb3a1c7a750432"
   ],
   "tn_fords_olde_world_s3_v1": [
    "46977f46b0c188af37a5a9579ec9d2c41108ec6800bb24936baf6f838c8519a0",
@@ -1200,9 +1041,6 @@
   "tn_fords_olde_world_s3_v4": [
    "03c21b6e276e39ece8cca0235e181e26323b540a8759330d61834c7c40d388bd"
   ],
-  "tn_fords_olde_world_s3_v5": [
-   "f9d737c1dd764e12e4de8bb4d155f57c410030a64e84b88678f6ea33fddf0b4c"
-  ],
   "tn_fords_olde_world_s4_v1": [
    "f98bf862e28083796d36880ced8e2e68ac8c2da0aac1a9046fbaf717cb60c6ee",
    "09d2697ffd0fdacb8edfc2b46e2246f79d0793c7e9c4d6497c87a392f1f98d5b"
@@ -1217,9 +1055,6 @@
   ],
   "tn_fords_olde_world_s4_v4": [
    "67ba0f55516917b90c934b7b6802e2eb1c257638b01e0418f267be0cb55f728c"
-  ],
-  "tn_fords_olde_world_s4_v5": [
-   "b659b090459f96151e664d3a2be9779ff688572cfcd8d94b27d630ccd338a7d1"
   ],
   "tn_fords_olde_world_s5_v1": [
    "6e0d2324f16e2adee54fe488c4b3d757f490abe92539466e6e4b2cef2c4890cd",
@@ -1236,9 +1071,6 @@
   "tn_fords_olde_world_s5_v4": [
    "48aa8e4c84d49c1160e6f0fb9e6391efcf8bf0ca216754e66b3da143e9f95b4d"
   ],
-  "tn_fords_olde_world_s5_v5": [
-   "46074e7dc0517d6bf532bdfcdf3d16d3c40b3db1ab75655fcb4e09e0e349cc89"
-  ],
   "tn_fords_olde_world_s6_v1": [
    "d66f75b69fef460a2416155e31af1ad9ed1213b7606b4c8a2b8cdc452b3b78fb",
    "be17991f224efca588b6ac4082a079c117d981e41d33ace5b299b6ad57cd0fdd"
@@ -1253,9 +1085,6 @@
   ],
   "tn_fords_olde_world_s6_v4": [
    "6407abc3a1c4f2225b1e1c61e45995190dfb39b23d5dab831136e7875c5a6a33"
-  ],
-  "tn_fords_olde_world_s6_v5": [
-   "5ab0160c47d097acbef17715c2a2c93ffb86eeddfbadd81ac6a9dd57593a20d5"
   ],
   "tn_geo_atlantic_v1": [
    "377495d9fdfed8a292f4a4119a7af441244a60432f659b376bdd91afa2c18759",
@@ -1409,8 +1238,26 @@
   "tn_gy_olde_world_v5": [
    "30309f308bbaaef3907595f2a1ba010155dd2dcea71bfcc693bbc826eda9027d"
   ],
-  "tn_inland_lakes_atlantic_v1": [
-   "41d1edf6cea4a3964dc090e3cc1dff862424e33c2c2bfdd0a1c3e6b751ca5b00"
+  "tn_hs_coal_v1": [
+   "74f2fc50e4016381c97adcab97a19bb7981bcd49081e80a2d5501a05e5048075"
+  ],
+  "tn_hs_copper_ore_v1": [
+   "d6a1e17885a124ca33545255291423c70e3f3fa7499edd4a97e9f8eeab3c38a2"
+  ],
+  "tn_hs_crude_oil_v1": [
+   "5c2dbbe8250dcb25c4852e7c6684358960e12142a8f4051ce97138a0a2c4cd9e"
+  ],
+  "tn_hs_iron_ore_v1": [
+   "8e403f1947609f3744320aa8d9723cf9405922c80acb9c2c157cfa370d900bda"
+  ],
+  "tn_hs_offshore_oil_v1": [
+   "22de09a38b6379f933087552c2c448c33f9f46c79f9512fc2f23dc1cec1e495a"
+  ],
+  "tn_hs_stone_v1": [
+   "c839a95da2a88388dfd811cbde1006ba37bd46362c187d43dda4efe7932dbc5b"
+  ],
+  "tn_hs_uranium_ore_v1": [
+   "4b146fc52a5ffdc71ac604cef75999e9777f75a746aafb4a3f1ce0bafc5bf334"
   ],
   "tn_inland_lakes_europe_v1": [
    "e3126751070519c1ec4549bac2638596ebfb241c4b6a258ee4afd0a542523627"
@@ -1423,12 +1270,6 @@
   ],
   "tn_inland_lakes_europe_v4": [
    "4bdefc7ab3d02f8ebfc32df8bd92f0fa3f32ced44e6a51cf54e063b310049adb"
-  ],
-  "tn_inland_lakes_europe_v5": [
-   "a8bd5d149c042a1da7cfb16e1fda0ac20ed36e9b1e12d2eadbb31818b9a6ada6"
-  ],
-  "tn_inland_lakes_olde_world_v1": [
-   "7c6a931f1ce74ab0cf86ce340e30a032fdb91e6cb61d49caa1c9783a0fa275ef"
   ],
   "tn_land_coarse_atlantic_v1": [
    "74fcaa7eebf96381e7b0fe30c9b5e77b153a3240cb33f34c2bd68f3f4b8af894",
@@ -1620,14 +1461,8 @@
   "tn_shore_olde_world_v3": [
    "b58bc4e6cc7f75202768dc32bc16dd3d372322923582d8315b29a3bdfd6d0a99"
   ],
-  "tn_spawn_lake_atlantic_v1": [
-   "f7f8705ce082bace76626a387d40adeaa1e9817ba4f5803667f53db8fd93099d"
-  ],
-  "tn_spawn_lake_europe_v1": [
-   "f64a8eaa1e0c4a06746d3eb697fb1347f9f2b958bf6e58437f76a6027db7e52d"
-  ],
-  "tn_spawn_lake_olde_world_v1": [
-   "95bab0390d9972ddc82e1943bff92cb4f5f694b3b45c6a4dd34c7f1c3208d816"
+  "tn_shore_olde_world_v4": [
+   "e2f3fad986d4e81f6905b6f9898b44222c98926af6a16ca1bbf41858682eedeb"
   ],
   "tn_start_mask_v1": [
    "61280740c824f816d617db71eb4d02083586072cfcd3e42671dabd086c082a03"
@@ -1795,9 +1630,6 @@
   "tn_ww_atlantic_s1_v4": [
    "1f4e62b0452f2dcd0c6b211dfba5e75dc9d728c299ef31c00ed35f4b7a680678"
   ],
-  "tn_ww_atlantic_s1_v5": [
-   "a2b51d34c77057b4fb700cba4af533e65c14c2518786fd6aa09786aeb6f52afc"
-  ],
   "tn_ww_atlantic_s2_v1": [
    "4bcb7db36d1f74c109986f36ae9a8e1795fb477f880120e30f6b9115d22b6c8f",
    "83353f493c9722d2988017bfceb34a1a5c572cfaa0deebbf5004603bd46fc8b9"
@@ -1812,9 +1644,6 @@
   ],
   "tn_ww_atlantic_s2_v4": [
    "8d2bc412520de566e284d454209c7aad3dbd0817691f866ada7bd4fc74a55c60"
-  ],
-  "tn_ww_atlantic_s2_v5": [
-   "c2543eac2e5b7145d523a19d02a74c8143d14359b0b6b6bbc48bfcac0be3d9de"
   ],
   "tn_ww_atlantic_s3_v1": [
    "53c0fa423d5b89a4ed361685f88961ee71a129a0cf82e0f71815e7236a9222fd",
@@ -1831,9 +1660,6 @@
   "tn_ww_atlantic_s3_v4": [
    "78427f8fbad5a2bef3dfdf14b93dd7ff3af63eaa0a9e3542cbdda746b3c54e9c"
   ],
-  "tn_ww_atlantic_s3_v5": [
-   "61cc130f147c0c60902ad0fa22457c8d47e5d80a1e63f9945cdc874060948f87"
-  ],
   "tn_ww_atlantic_s4_v1": [
    "1d2772ac476a626e4404ada10fd122e6d684a8057c2b77e368ed4ebdc7256db2",
    "eb6b92efe142bd5737a37a44710cf73f02c876708e31171bd793626c096183a6"
@@ -1848,9 +1674,6 @@
   ],
   "tn_ww_atlantic_s4_v4": [
    "5bab3d86d95bd111503fa44aee9085f92bca186d8965ae61ea96891982409728"
-  ],
-  "tn_ww_atlantic_s4_v5": [
-   "15ee9603bc2f58206eb5b54016a20169102c571aa3bcd440a861d58132206486"
   ],
   "tn_ww_atlantic_s5_v1": [
    "ff4d2389778137650dfd6dc451a51f0a87dd887f5300a8ac322a17666d9a1d00",
@@ -1867,9 +1690,6 @@
   "tn_ww_atlantic_s5_v4": [
    "12b14d2bcdd4a6a552ba53129e7a399a95f0bcd4fe2c5f71146837020fcffb4c"
   ],
-  "tn_ww_atlantic_s5_v5": [
-   "3727bac298d2fc1503be3624b6ed0c44f6e9a4946727a121fe58872303cf0b6b"
-  ],
   "tn_ww_atlantic_s6_v1": [
    "028b9007a2ce26d6b81211b2990ad1a377560f3f6069bffa4d555cc8e233cf04",
    "feafb7d3a78d3e9406e5456c79769abb27a47cbd753dea5e4a6f2d3a44501848"
@@ -1885,9 +1705,6 @@
   "tn_ww_atlantic_s6_v4": [
    "789f1a21de8c20d16809a2e086b93246f8aa4172418cd897b9ae4cad3a59b638"
   ],
-  "tn_ww_atlantic_s6_v5": [
-   "2456d605ad96258271391fdf72ea69f0f36b1386446e85bd983bf7103f906050"
-  ],
   "tn_ww_europe_s1_v1": [
    "a3e98dafd14bc4c424cea8358e51b42b4e333a8a1f011a79ce50c13234fc07a1",
    "1bf677a737f72fe8dcc9c55a1575da06547c9e0894cb361736e8162f3ddf2c98"
@@ -1899,9 +1716,6 @@
   "tn_ww_europe_s1_v3": [
    "a9b5ad619c36ddea26bceb1bccdc543deccc0929705f6c912be24f24015465e6",
    "e06c586796496c2a83f94e30df11094dc6fd34b2f4f9a6c5152ae7cba8a056a0"
-  ],
-  "tn_ww_europe_s1_v4": [
-   "134191241d48ad6015f21c586ad7f975fb99cfd66e9eecb2e25ddcda5da13971"
   ],
   "tn_ww_europe_s2_v1": [
    "a53ca4a305e14a9ec0aa1656763df762c08465a4a89ca133f2c4c7c5154930e1",
@@ -1915,9 +1729,6 @@
    "0c915a79add1ea404d272bcdd6cda332663a55b97c4ce29bc37daf6c97344d55",
    "7deb3fdd8894d395e061c6acd4bc1519cb4dc6810b045eb716fb0de53aaeb5f1"
   ],
-  "tn_ww_europe_s2_v4": [
-   "287093aeb2eed294d841f5c92d0092a0df2f34906d877d7e5a185e63ce81a908"
-  ],
   "tn_ww_europe_s3_v1": [
    "80359910e9d4661300cb260ffd3c7d4b60c54b5bec6f24bcdfd379afb4af684d",
    "ffb6107ebd29aca9851e924271948f9085139d2f47e90701a7ecb9fa5785fd6a"
@@ -1929,9 +1740,6 @@
   "tn_ww_europe_s3_v3": [
    "8c5f5b65fe459a1e49c76935a9e6c677ab1b86af9a4fb7970d9a22a035fe1344",
    "677d75beb1b73958dc7b3c83988622bf3337190a108a2df9df0e445fc5fe1272"
-  ],
-  "tn_ww_europe_s3_v4": [
-   "f5390c312a75179991857af80d8158e7446fd77db738054602e568ca1ed6e049"
   ],
   "tn_ww_europe_s4_v1": [
    "f5422717f113ff864fa0a8d4c9644d244d739e647005cb8347836d035c02e5fa",
@@ -1945,9 +1753,6 @@
    "48230040c6b16812df1da94c06bcb98be5cf6083358aa523635da03d9e150ec5",
    "fb63e758909064e4831182ec3a36600e2ce7f6e76598c089381f270b9658a8c2"
   ],
-  "tn_ww_europe_s4_v4": [
-   "0ef5b82b24014075050b61b93999b2aee1165b60e726f9b3f5b3f9aa61561a1c"
-  ],
   "tn_ww_europe_s5_v1": [
    "81e4908db716016f47afb461f963e1adc7b783e9b3d0dc5b856856d673124ede",
    "fb27fd4bf3c39f8fa333c232dc4d83b66d25c16cb555a8321020471d3a167440"
@@ -1960,9 +1765,6 @@
    "fbe4512263181823ab918eba227c06c760c3dd629ef44c91657e41ad220cbdf0",
    "22c7287dc4e58a80101348e917e6172f27a750167f77c56adffb85f8a99177dd"
   ],
-  "tn_ww_europe_s5_v4": [
-   "c5315ddd47c77e606fd3c427ce16f14964816d8f9c455fd74a032be52f3cfeb1"
-  ],
   "tn_ww_europe_s6_v1": [
    "5b7ebb449b629a1ec5a2d463def1678ef723ddcba34f4405272b5da854721487",
    "8f0fddc1651f8e1d5e17ace8092e70954f3cf89a34d7c0139534aca775511b6b"
@@ -1974,9 +1776,6 @@
   "tn_ww_europe_s6_v3": [
    "1bd0d41b1e4d057231b4aafe92e62ea5a4acde4dee019ba44008370ce6fd5154",
    "6914858ea554fda98a2113afcb09dcad647a7f78cdfbf457d12ee8620e3f7347"
-  ],
-  "tn_ww_europe_s6_v4": [
-   "a0230495b32187984ac1eaa214a0f3e39e5d108988ef163308168d81f6417890"
   ],
   "tn_ww_olde_world_s1_v1": [
    "44e24c58490a72cc66017e494e6849d017329ea40fd4b45e7b7c8cdb1fb9a04d",
@@ -1993,9 +1792,6 @@
   "tn_ww_olde_world_s1_v4": [
    "372412c3fd03c071d42f00c720daa98f2639f41e500dbf5accf7f7683e59e073"
   ],
-  "tn_ww_olde_world_s1_v5": [
-   "334650c026ae10450717c6f6f2524b72f20142e9435647112dd028b9ed34179d"
-  ],
   "tn_ww_olde_world_s2_v1": [
    "f4af0ab3f71a22054095681f07851617421c96c7c2309830e021f44d9dd608a3",
    "650011e0478a6a6c7da06fcf12118162b1c023ef8b762043ff8782d91612dd20"
@@ -2010,9 +1806,6 @@
   ],
   "tn_ww_olde_world_s2_v4": [
    "693ebe6087d1049284151d9e4ee71345c51e87bb292b89c0a604325aaf3c082b"
-  ],
-  "tn_ww_olde_world_s2_v5": [
-   "e80ead7e1b5bccd3f451d58474667f5216f99d6235c64000988263f179f82f7c"
   ],
   "tn_ww_olde_world_s3_v1": [
    "c4c2f85ff083d47f9060b16329578ce46b875c89dfe4e746bf594f28bee8b116",
@@ -2029,9 +1822,6 @@
   "tn_ww_olde_world_s3_v4": [
    "9d385c705c58abdf9e5244538a8126cb256ed98a83de190c3cbd7a63bbfce8d0"
   ],
-  "tn_ww_olde_world_s3_v5": [
-   "7e6f27c7449f9fa6deb7f6a4e1571bc89f7aacc5f9dba09b458e237797ccc000"
-  ],
   "tn_ww_olde_world_s4_v1": [
    "51cdb60818f7d8294d6ae9715a409ec0fde1ab79a69ee75feb60b57aec71c1e7",
    "a68eb79cc9c88b2527f434ba8c12b05044cfd03d2efb0475a5ac9aae110dc618"
@@ -2046,9 +1836,6 @@
   ],
   "tn_ww_olde_world_s4_v4": [
    "ff628be297eaac88a81165fb6faa1934b9e5c93495c47fe37c22cb66a76be932"
-  ],
-  "tn_ww_olde_world_s4_v5": [
-   "ee3cd97a58759a654b890cad76ef2dfcbc25da7573b0017fe7e1ed516e7429d4"
   ],
   "tn_ww_olde_world_s5_v1": [
    "80f4b15e461fea303a40c33c978b04d77b33df73ec74e3973c0af081503cb421",
@@ -2065,9 +1852,6 @@
   "tn_ww_olde_world_s5_v4": [
    "1fb502820126dd14a0f001fdba2b403767fc4bdcf59cc3692124b2184428b3be"
   ],
-  "tn_ww_olde_world_s5_v5": [
-   "a042dd06e042d31c70725f08853f43fb6b2c2fa08d82a463798c8d6d2b2a8182"
-  ],
   "tn_ww_olde_world_s6_v1": [
    "d98cbe105f99dbffc417411671f6d4f8bf8b290fac184e912609a1e427c4a74d",
    "d0f1267158bdfb1f7290cbbeedf2ebcb95eb5210c888b87803b23ab3103fd39b"
@@ -2082,9 +1866,6 @@
   ],
   "tn_ww_olde_world_s6_v4": [
    "1e912c3d98152dd15754fb667a54817deace7892f4aa464f62751e0d1f80e5c6"
-  ],
-  "tn_ww_olde_world_s6_v5": [
-   "17f1184727e31238ca0227fd0136ce2d3cdaaac25a0b16d3e3454b4cf8ee687f"
   ]
  }
 }

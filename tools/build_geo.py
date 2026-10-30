@@ -1257,6 +1257,15 @@ def waterway_footprint(cfg, mref, map_key, s, margin_tiles):
         r0, r1 = max(int(math.floor(cy - h)), 0), min(int(math.ceil(cy + h)), mref.H - 1)
         if c1 >= c0 and r1 >= r0:
             mask[r0:r1 + 1, c0:c1 + 1] = True
+    # the river ponds the entry fills with land (build_waterways.py river_ponds): the handler must not dig
+    # them back out of the reference
+    for p in rec.get("ponds") or []:
+        cx, cy = (p["centre"][0] - ox) / s - 0.5, (p["centre"][1] - oy) / s - 0.5
+        h = (p["radius"] + margin_tiles) / s + reach
+        c0, c1 = max(int(math.floor(cx - h)), 0), min(int(math.ceil(cx + h)), mref.W - 1)
+        r0, r1 = max(int(math.floor(cy - h)), 0), min(int(math.ceil(cy + h)), mref.H - 1)
+        if c1 >= c0 and r1 >= r0:
+            mask[r0:r1 + 1, c0:c1 + 1] = True
     return mask, sha256_file(mp)
 
 
