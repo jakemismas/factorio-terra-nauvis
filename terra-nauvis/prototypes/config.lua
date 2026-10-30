@@ -1757,6 +1757,8 @@ return {
     --     fit, tip at the very source over taper_tiles {a, b} = a + b s, on a step_tiles grid.
     --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide.
     --   deloop: a river's hooks cut, tools/build_waterways.py deloop.
+    --   runs: a river's segments over max_px reference px take a vertex every step_px, off their line by
+    --     amplitude step_px times least to 1, on alternating sides (tools/build_waterways.py break_runs).
     --   spawn_fade: the warp is 0 within inner_tiles of the spawn and whole beyond outer_tiles.
     --   ponds: water components of the coast fit of at most max_px px within reach_px of a river's cells take
     --     land, height at the centre and 0 margin_px beyond the component's farthest pixel.
@@ -1772,6 +1774,7 @@ return {
       profile = {source = 0.7, mouth = 1.35, tip = 0.55, taper_tiles = {10, 30}, step_tiles = 0.75},
       basin = {half_length_tiles = 8, radius_tiles = 12},
       deloop = {gap_px = 8, arc_px = 30, reach_px = 400},
+      runs = {max_px = 60, step_px = 36, amplitude = 0.2, least = 0.4},
       spawn_fade = {inner_tiles = 40, outer_tiles = 200},
       ponds = {max_px = 32, reach_px = 3, margin_px = 1.5, height = 20},
     },

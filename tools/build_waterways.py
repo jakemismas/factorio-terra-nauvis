@@ -26,9 +26,9 @@ carve where the coast fit reads that centre (U2).
 A river's course is natural at three steps. Here
 its out-and-back hooks are cut (deloop), it is smoothed by at least smoothing.min_window_px reference px,
 which also loses most of the raster's octilinear stairs, it is simplified with a tolerance that follows
-its bends (bend_tolerance), so bends stay curves and straight reaches pay for few segments, and each
-segment takes a half-width from the river's profile, narrow at the source and wide at the coast
-(river_widths). In the
+its bends (bend_tolerance), so bends stay curves and straight reaches pay for few segments, its longest
+straight segments take bends (break_runs), and each segment takes a half-width from the river's profile,
+narrow at the source and wide at the coast (river_widths). In the
 mod, waterways.lua warps the coordinates every set reads by one shared noise field and modulates the
 width by one low-frequency noise, so the banks wander and stop being parallel for a few noise
 evaluations per tile, not per segment. A turning basin is a short wide capsule on the river, not a square.
@@ -939,6 +939,28 @@ def bend_tolerance(Sm, tol, S, s):
     return np.clip(eps, min(least, tol), tol)
 
 
+def break_runs(P, R, s, fid):
+    """A river's segments longer than max_px reference px broken into bends: interior vertices every step_px,
+    each off the segment's line by up to amplitude step_px on alternating sides, by a hash of the river,
+    segment and vertex. The raster draws some reaches dead straight (the Lena at 127E, 1,637 tiles at scale
+    6): a warp of a few dozen tiles leaves such a reach a wobbly straight line, and only the course can bend."""
+    np = _np()
+    out = [P[0]]
+    step = R["step_px"] * s
+    for i, (a, b) in enumerate(zip(P[:-1], P[1:])):
+        u = b - a
+        L = float(np.hypot(u[0], u[1]))
+        if L > R["max_px"] * s:
+            n = max(int(round(L / step)), 2)
+            N = np.array([-u[1], u[0]]) / L
+            for k in range(1, n):
+                h = hashlib.sha256(f"{fid}:{i}:{k}".encode("ascii")).digest()[0] / 255
+                side = 1 if (k + hashlib.sha256(f"{fid}:{i}".encode("ascii")).digest()[0]) % 2 else -1
+                out.append(a + u * (k / n) + N * side * R["amplitude"] * step * (R["least"] + (1 - R["least"]) * h))
+        out.append(b)
+    return np.asarray(out, float)
+
+
 def kept_simplify(Q, cells, keep, tol, tight, step):
     """Douglas-Peucker of a passage at `tol`, its kept cells held within `tight` tiles: the course
     `cells` (px cells, in order; Q is their centres in tiles) is resampled piece by piece between the
@@ -1048,7 +1070,8 @@ def shaped(w, feature, kind, s, geo, tol=None, hw=None):
         if v == 0:
             break
     win, Sm, Pf, runs_f = chosen
-    P = dedupe(snap(dp_tolerances(Sm, bend_tolerance(Sm, tol, w["smoothing"], s)) + [ox, oy], grid))
+    P = dp_tolerances(Sm, bend_tolerance(Sm, tol, w["smoothing"], s)) + [ox, oy]
+    P = dedupe(snap(break_runs(P, w["natural"]["runs"], s, feature["id"]), grid))
     v, worst, runs = turn_windows(P, bw, lim)
     # where the smoothed centreline itself still fails, its sharpest vertex of each failing stretch
     # (S4: the Rhine and the Garonne at scale 6)
