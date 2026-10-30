@@ -637,9 +637,42 @@ local function extend_axis(q, dx, dy)
   end
 end
 
+-- The land near written land on a world lattice reaching past the chunk (config.lua bandfix.smooth.corners), each
+-- node grown over reach steps: a node's value depends only on nodes within reach of it, all of them read by every
+-- chunk that holds the node, so chunks agree along their borders.
+local function shared_lattice(surface)
+  local step, reach = SM.lattice_tiles, CORNERS.reach
+  local margin = reach + 1
+  local n = floor(CT / step) + 1 + 2 * margin
+  local cells = {}
+  for j = 0, n - 1 do
+    for i = 0, n - 1 do
+      local t = surface.get_tile(X0 + (i - margin) * step, Y0 + (j - margin) * step)
+      if t.valid and not NONLAND_SET[t.name] and t.name ~= "out-of-map" then
+        cells[j * n + i] = t.name
+      end
+    end
+  end
+  for _ = 1, reach do
+    local grown = {}
+    for j = 0, n - 1 do
+      for i = 0, n - 1 do
+        local k = j * n + i
+        grown[k] = cells[k] or (i > 0 and cells[k - 1]) or (i < n - 1 and cells[k + 1]) or
+          (j > 0 and cells[k - n]) or (j < n - 1 and cells[k + n]) or nil
+      end
+    end
+    cells = grown
+  end
+  return cells, n, step, margin
+end
+
 -- The land tile for written land: the nearest land on a lattice of the chunk's generated tiles, so a written
 -- strip carries on the ground beside it; FALLBACK in a chunk whose lattice holds no land.
 local function land_lattice(surface)
+  if CORNERS then
+    return shared_lattice(surface)
+  end
   local step, n = SM.lattice_tiles, floor(CT / SM.lattice_tiles) + 1
   local cells, found = {}, 0
   for j = 0, n - 1 do
@@ -652,9 +685,7 @@ local function land_lattice(surface)
     end
   end
   local total = n * n
-  local pass = 0
-  while found > 0 and found < total and not (CORNERS and pass >= CORNERS.reach) do
-    pass = pass + 1
+  while found > 0 and found < total do
     local grown = {}
     for j = 0, n - 1 do
       for i = 0, n - 1 do
@@ -669,7 +700,7 @@ local function land_lattice(surface)
       found = found + 1
     end
   end
-  return cells, n, step
+  return cells, n, step, 0
 end
 
 -- The land tile for a chunk whose lattice holds no land: the first land on rings of samples around it, inside the
@@ -731,16 +762,23 @@ local RECS = {}
 -- Step 6: one set_tiles call; written land takes the ground around it, and written water is deep in an open-sea
 -- pixel, so a false island sinks into the open sea without a pale patch.
 local function write(surface)
-  local cells, n, step
+  local cells, n, step, margin
   for q = 1, NW do
     local lx, ly = QX[q], QY[q]
     local idx = ly * CT + lx
     local name = WDEEP[idx] and B.new_deep or B.new_water
     if WLAND[idx] then
       if not cells then
-        cells, n, step = land_lattice(surface)
+        cells, n, step, margin = land_lattice(surface)
       end
-      name = cells[floor((ly + step / 2) / step) * n + floor((lx + step / 2) / step)] or
+      local rx, ry = lx, ly
+      if CORNERS then
+        -- read the lattice a little off the tile, so no 4 x 4 block of a node shows
+        local x, y = X0 + lx, Y0 + ly
+        rx = lx + step * WOBBLE[y % WP * WP + x % WP]
+        ry = ly + step * WOBBLE[(y + WP_Y) % WP * WP + (x + WP_X) % WP]
+      end
+      name = cells[(floor((ry + step / 2) / step) + margin) * n + floor((rx + step / 2) / step) + margin] or
         (CORNERS and corner_ground(surface, lx, ly)) or chunk_ground(surface)
     end
     local rec = RECS[q]
