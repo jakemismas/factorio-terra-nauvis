@@ -2369,6 +2369,9 @@ return {
       score = 50, shallow_score = 300, shallow_depth = 1.5, start_clear_tiles = 64,
       pool = {name = CT.MARSH_POOL, cut = 0.3, cut_per_weight = 1, wavelength_px = 3, octaves = 2, persistence = 0.5,
               seed1 = 7606},
+      -- the tile scores' marsh ground: the weight frayed by the pool noise, already in the Tile program,
+      -- so the edge wanders with the pools and is no razor line beside the climate grain
+      edge = "(" .. RG_MARSH_W .. " + 0.2 * " .. CT.MARSH_POOL .. ")",
     },
     palm = {body = CT.PALM_CONST, value = 1, reads = "elevation",
             table = "prototypes.generated.palms_ab_v1", local_prefix = "palm_", neutral = ZERO, tolerance = 1e-9,

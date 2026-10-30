@@ -60,8 +60,8 @@ def(MS.pool.name, noise(MS.pool))
 -- alone (with -inf there, water-mud covered the band wherever the lean failed: draft render
 -- pv-m2-s1-eu-1); at and above the band's top, below its bottom where the lean fails, on water and
 -- inside marshes -inf. The lean still reaches below the band's bottom, on its cold side.
-local function vanilla_bonus(t)
-  return "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
+local function vanilla_bonus(t, marsh)
+  return "if(" .. marsh .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
     ", if(elevation > 0, " .. num(V.bonus) .. ", -inf), -inf), if(elevation > 0, if(" .. t .. " >= " ..
     num(X.temperate_below) .. ", -inf, if(1 - abs(" .. t .. " - " .. num(V.lean_t) .. ") / " .. num(V.lean_span) ..
     " + patch + " .. num(V.fine) .. " * " .. MS.pool.name .. " - " .. num(V.lean_cut) .. " > 0, " .. num(V.bonus) ..
@@ -69,7 +69,7 @@ local function vanilla_bonus(t)
 end
 local PATCH = {patch = "clamp(" .. num(V.patch.amplitude) .. " * " .. noise(V.patch) .. ", " .. num(-V.patch.clamp) ..
   ", " .. num(V.patch.clamp) .. ")"}
-def(V.body, vanilla_bonus("temperature"), PATCH)
+def(V.body, vanilla_bonus("temperature", MARSH_W), PATCH)
 
 -- A wild belt (config.lua climate.tile_belts) lies out of the temperate band whatever its temperature:
 -- the band tests read the temperature lifted past the band's top there, so neither the vanilla bonus nor
@@ -97,12 +97,12 @@ def(S.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. nu
 -- Inside a marsh the tiles open up to AB's wet ground, but not to its alien palette: a dry belt's red
 -- lift can carry aux past the climate's cap there (the Volga delta went purple), and vanilla's bonus
 -- body takes that ground instead, since with nothing else open AB's water-mud would flood it.
-local function exclusion(t)
+local function exclusion(t, marsh)
   return "if(" .. t .. " >= " .. num(X.temperate_from) .. ", if(" .. t .. " < " .. num(X.temperate_below) ..
-    ", if(" .. MARSH_W .. " > " .. num(X.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
+    ", if(" .. marsh .. " > " .. num(X.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
     ", -inf, 0), -inf), 0), 0)"
 end
-def(X.body, exclusion("temperature"))
+def(X.body, exclusion("temperature", MARSH_W))
 
 -- The grain's tile copies (config.lua climate.grain): each key is its plain field, and the bonus and
 -- exclusion versions read the temperature copy, so the temperate band's edge frays with the tiles. Tile
@@ -112,9 +112,8 @@ if mods["alien-biomes"] then
   for field, key in pairs(GK) do
     def(key, field)
   end
-  def(cfg.climate.grain.veg_key, "temperature")
-  def(V.body_grain, vanilla_bonus("band_t"), {patch = PATCH.patch, band_t = band_t(GK.temperature, WILD_TILE)})
-  def(X.body_grain, exclusion("band_t"), {band_t = band_t(GK.temperature, WILD_TILE)})
+  def(V.body_grain, vanilla_bonus(GK.temperature, MS.edge), PATCH)
+  def(X.body_grain, exclusion(GK.temperature, MS.edge))
 end
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut

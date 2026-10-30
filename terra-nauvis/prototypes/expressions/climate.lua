@@ -246,11 +246,16 @@ if AB then
   def(N.ab.temperature, "clamp(" .. N.core .. " + " .. noise(T.noise, "(var('control:hot:frequency') + " ..
     "var('control:cold:frequency')) / 2") .. " + " .. num(TA.shift_per_unit) .. " * (var('control:hot:size') - " ..
     "var('control:cold:size')), " .. num(TA.min) .. ", " .. num(TA.max) .. ")")
-  local function ab_moisture(extra)
+  -- The marsh's lift is a step at the marsh cut, not a ramp up the weight: rising through the vanilla
+  -- tiles' moisture bands, the ramp drew them as a dark rim of one width round every marsh (a tide line).
+  -- It starts above Alien Biomes' mid band wherever the frayed edge passes, or its beige sand rims the pools.
+  local function ab_moisture(extra, edge)
+    local cut = num(cfg.tiles.vanilla.marsh_cut)
     return "clamp(max(" .. moisture_mean() .. " + " .. moisture_spread(false) .. extra .. " + " ..
-      num(M.ab_bias) .. " * var('control:moisture:bias'), " .. num(M.marsh) .. " * " .. MARSH_W .. "), 0, 1)"
+      num(M.ab_bias) .. " * var('control:moisture:bias'), if(" .. edge .. " > " .. cut .. ", " .. num(M.marsh) ..
+      " * max(" .. MARSH_W .. ", " .. cut .. "), 0)), 0, 1)"
   end
-  def(N.ab.moisture, ab_moisture(""))
+  def(N.ab.moisture, ab_moisture("", MARSH_W))
   -- Natural aux stays under ab_cap, below AB's alien palette, whatever the spread; dry temperate land
   -- lifts toward vanilla red desert, a lift that is 0 wherever the AB temperature lies outside the
   -- exclusion band, so no alien AB colour can follow it.
@@ -277,7 +282,7 @@ if AB then
     num(G.layer) .. ")")
   def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. ", max(" .. T2 .. ", " ..
     num(T.ab.max) .. "))")
-  def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field))
+  def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field, cfg.tiles.marsh.edge))
   def(GN.aux, ab_aux(" + " .. num(G.aux) .. " * " .. GN.field))
 end
 
