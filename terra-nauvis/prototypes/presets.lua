@@ -143,7 +143,7 @@ end
 local function tree_names()
   local TR = cfg.trees
   local R = TR.restore
-  local out = {[TR.boost.key] = cfg.regions.names.tree_mult}
+  local out = {[TR.boost.key] = cfg.regions.names.tree_mult, [TR.boost.lift] = TR.boost.lift_body}
   if AB then
     for _, n in pairs(R.trees) do
       out[n.p] = n.body

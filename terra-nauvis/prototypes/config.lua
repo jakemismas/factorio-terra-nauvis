@@ -385,6 +385,8 @@ local OW_SETS2 = {ww = CT.OW_WW2, canals = CT.OW_CANALS2, dams = CT.OW_DAMS2, fo
 local TFN = {
   K_FORESTS_ON = NOISE .. "forests_on",
   K_TREE_MULT = NOISE .. "tree_mult",
+  K_TREE_LIFT = NOISE .. "tree_lift",
+  TF_LIFT = NOISE .. "tree_lift_v1",
   TF_VTEMP = NOISE .. "temperature_vanilla_v1",
   TF_VTREE_R = NOISE .. "vtree_r_v1",
   TF_VDECO = NOISE .. "vdeco_v1",
@@ -1528,7 +1530,7 @@ return {
                  CT.PALM_A_R_KEY, CT.PALM_B_P_KEY, CT.PALM_B_R_KEY,
                  -- trees-forests: the great-forests gate and multiplier key, and with Alien Biomes the restored
                  -- vanilla trees', rocks' and decoratives' keys
-                 TFN.K_FORESTS_ON, TFN.K_TREE_MULT,
+                 TFN.K_FORESTS_ON, TFN.K_TREE_MULT, TFN.K_TREE_LIFT,
                  TF_TREES["tree-01"].p, TF_TREES["tree-01"].r, TF_TREES["tree-02"].p, TF_TREES["tree-02"].r,
                  TF_TREES["tree-02-red"].p, TF_TREES["tree-02-red"].r, TF_TREES["tree-03"].p, TF_TREES["tree-03"].r,
                  TF_TREES["tree-04"].p, TF_TREES["tree-04"].r, TF_TREES["tree-05"].p, TF_TREES["tree-05"].r,
@@ -1847,7 +1849,7 @@ return {
     -- copies are (trees.lua).
     {
       release = "0.1.0",
-      names = {TFN.K_FORESTS_ON, TFN.K_TREE_MULT, TFN.TF_VTEMP, TFN.TF_VTREE_R, TFN.TF_VDECO, TFN.PALM_A_P2,
+      names = {TFN.K_FORESTS_ON, TFN.K_TREE_MULT, TFN.K_TREE_LIFT, TFN.TF_LIFT, TFN.TF_VTEMP, TFN.TF_VTREE_R, TFN.TF_VDECO, TFN.PALM_A_P2,
       TFN.PALM_B_P2,
                TF_TREES["tree-01"].p, TF_TREES["tree-01"].r, TF_TREES["tree-01"].body,
                TF_TREES["tree-02"].p, TF_TREES["tree-02"].r, TF_TREES["tree-02"].body,
@@ -2668,21 +2670,33 @@ return {
       desert_heat = 12,
       noise = {amplitude = 6, wavelength_px = 40, octaves = 3, persistence = 0.6, seed1 = 7602},
       ab = {shift_per_unit = 20.8333333, min = -20, max = 99},
-      fallback = {scale = 0.45, min = -20, max = 50},
+      -- taiga: before the scale, a core from
+      -- treeline_t up to plateau is lifted to plateau, so the boreal belt sits inside the vanilla cold
+      -- trees' 0 to 15 band; below treeline_t it falls by slope per unit, so the tundra and the arctic
+      -- stay treeless (core -20 maps to -10 before the scale)
+      fallback = {scale = 0.45, min = -20, max = 50, taiga = {plateau = 10, treeline_t = -16, slope = 5}},
     },
     moisture = {
       base = 0.68, equatorial = 0.12, equatorial_lat = 4, equatorial_ramp = 8, dry = 0.55, marsh = 0.9,
       noise = {amplitude = 0.32, wavelength_px = 40, octaves = 3, persistence = 0.6, seed1 = 7603},
-      spread = {dry = 0.7, cold = 0.35},
+      spread = {dry = 0.7, cold = 0.55},
       ab_bias = 2.2,
-      fallback = {cap_base = 0.26, cap_per_t = 0.6, cap_t = 40, bias = 1},
+      -- north: the boreal belt is moist (the vanilla cold trees want 0.4 to 0.8): the cap rises to wet
+      -- from core wet_from_t to wet_full_t, falls to frozen from core frozen_from_t to frozen_full_t,
+      -- and a floor (full at core floor_full_t, none from floor_from_t) keeps sand, light dirt and
+      -- dry dirt out of the north
+      fallback = {cap_base = 0.26, cap_per_t = 0.6, cap_t = 40, bias = 1,
+                  north = {wet = 0.64, wet_from_t = 20, wet_full_t = 10, frozen = 0.45, frozen_from_t = -16,
+                           frozen_full_t = -20, floor = 0.42, floor_from_t = 12, floor_full_t = 4}},
     },
     aux = {
       base = 0.35,
       noise = {amplitude = 0.2, wavelength_px = 48, octaves = 3, persistence = 0.6, seed1 = 7604},
       ab_bias = 2.2, ab_cap = 0.5,
       red = {lift = 0.5, t_lo = 25, t_hi = 65, ramp = 5},
-      fallback = {cold_aux = 0.45, cold_cap = 0.55, dry_pull = 0.15, bias = 1},
+      -- cold_span: the aux pull and cap reach full strength cold_span below climate.cold.t (sooner than
+      -- the moisture spread's cold), so the boreal belt keeps grass-2, beach sand and red desert out
+      fallback = {cold_aux = 0.3, cold_cap = 0.45, cold_span = 12, dry_pull = 0.15, bias = 1},
     },
     -- the coldness the fallback's pulls and spread read: 0 at core cold.t and warmer, 1 at
     -- cold.t - cold.span and colder
@@ -2799,6 +2813,11 @@ return {
   --             layer's multiplier (regions.names.tree_mult: 1 + forest boost 2 times the forest sum, S10).
   --             The base game's dead and dry trees are left alone (prototypes/tables/vanilla.lua, S10),
   --             and so are Alien Biomes' palm prototypes (tiles.palm.copies' trees stay AB's)
+  --             The lift is added to the probability
+  --             before the multiplier: its key's prototype holds lift_off and Earth presets name lift_body,
+  --             lift_per_sum times the forest sum times the boreal weight (0 at climate core
+  --             boreal_from_t and warmer, 1 at boreal_full_t and colder), so the boreal great forests fill
+  --             the gaps between vanilla's tree patches while every other forest keeps the multiplier alone
   --   palm      on Earth presets with Alien Biomes the palms read their Earth copies (tiles.palm), so each
   --             palm's probability key names its second version, the boost's formula around the
   --             registered first
@@ -2812,7 +2831,9 @@ return {
   --             deco_on; the vanilla decoratives and dead trees AB restricts to its tiles get the vanilla land
   --             tiles appended
   trees = {
-    boost = {gate = TFN.K_FORESTS_ON, gate_off = "0", key = TFN.K_TREE_MULT, key_off = "1", cap = 1},
+    boost = {gate = TFN.K_FORESTS_ON, gate_off = "0", key = TFN.K_TREE_MULT, key_off = "1", cap = 1,
+             lift = TFN.K_TREE_LIFT, lift_off = "0", lift_body = TFN.TF_LIFT, lift_per_sum = 0.25,
+             boreal_from_t = 18, boreal_full_t = 10},
     palm = {{key = CT.PALM_A_P_KEY, body = TFN.PALM_A_P2, base = CT.PALM_A_P},
             {key = CT.PALM_B_P_KEY, body = TFN.PALM_B_P2, base = CT.PALM_B_P}},
     temperature = TFN.TF_VTEMP,
