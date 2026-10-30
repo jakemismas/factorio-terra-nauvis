@@ -8,7 +8,7 @@
   "checkpoint_sha256": "f28272b9d304191e074c25db1878fceb8057e37c876244535fa429a7817e594e",
   "land_sha256": "7a7af0b11aeb8e21f84adbdf965f94f800789435ce228572267c45dd87e20e57",
   "thinwater_sha256": "a06d773279ab91a958d268feacfb12f6fd2f2435a69a38609b33b68b5da77a70",
-  "bandfix_config_sha256": "aa33c127c37165b0d239a02b34970c7ad21f5afd22827ee0f0848d335bbdc6ae",
+  "bandfix_config_sha256": "ed71d932cbe15d1e1488ef96b2db366c48656ed284ff975c45b3e07833c3864d",
   "coast_detail": [
    0.45,
    1
@@ -34,7 +34,7 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s1_v1.lua",
-   "sha256": "765c3ee04742aba915bcb1eeb0fbfd851635350bdd1fd806b84c2e240cf3988a",
+   "sha256": "958066b831a3294b91b8c6497699f97dd288d7044fc710016d32c93b98e2a661",
    "bytes": 32946,
    "data_bytes_with_shared": 806286,
    "k_pixels_this_scale": 1033685,
@@ -42,7 +42,7 @@
    "fill_pixels": 1010549,
    "masked_kplus_pixels": 31479,
    "footprint_pixels": 257344,
-   "waterway_manifest_sha256": "4f5d39032f4fc9801133afe1ac7c0623f3136108813c79425c56480b4ee78b65",
+   "waterway_manifest_sha256": "eb46536a0dec5084895152f52d06ae325cddda5a0c3a64326673f223308651f9",
    "f32_sensitive_tiles": 2954,
    "s12_rule": {
     "chunks": 51888,
@@ -79,7 +79,7 @@
   },
   "2": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s2_v1.lua",
-   "sha256": "d800e20471e2f7af535075d7d960aa27411c3ddad2ed7a7b9a8206cdca0c1de9",
+   "sha256": "48e663bd6e9ef4b7aaab50f10a63b5346565326dc1804dcf25931e7d0af9e483",
    "bytes": 29108,
    "data_bytes_with_shared": 802448,
    "k_pixels_this_scale": 812198,
@@ -87,7 +87,7 @@
    "fill_pixels": 208625,
    "masked_kplus_pixels": 19780,
    "footprint_pixels": 130517,
-   "waterway_manifest_sha256": "4f5d39032f4fc9801133afe1ac7c0623f3136108813c79425c56480b4ee78b65",
+   "waterway_manifest_sha256": "eb46536a0dec5084895152f52d06ae325cddda5a0c3a64326673f223308651f9",
    "f32_sensitive_tiles": 10490,
    "s12_rule": {
     "chunks": 205692,
@@ -124,7 +124,7 @@
   },
   "3": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s3_v1.lua",
-   "sha256": "55fb1d11d290d230d7f88af47d66567c1a00965602a9127d2d286662c9c3f62a",
+   "sha256": "03e5f1289fc3610f77373b6e2112d911fa980c7a3df37d4d7cfdc35d7211d21e",
    "bytes": 28100,
    "data_bytes_with_shared": 801440,
    "k_pixels_this_scale": 737093,
@@ -132,7 +132,7 @@
    "fill_pixels": 11230,
    "masked_kplus_pixels": 15853,
    "footprint_pixels": 97674,
-   "waterway_manifest_sha256": "4f5d39032f4fc9801133afe1ac7c0623f3136108813c79425c56480b4ee78b65",
+   "waterway_manifest_sha256": "eb46536a0dec5084895152f52d06ae325cddda5a0c3a64326673f223308651f9",
    "f32_sensitive_tiles": 20975,
    "s12_rule": {
     "chunks": 463100,
@@ -169,7 +169,7 @@
   },
   "4": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s4_v1.lua",
-   "sha256": "704ffbbcded9222b7c721b9a20448b0f2444923d47cd324360c6492a5477620f",
+   "sha256": "785ba12688b6ec6f8e08b6361b11f895d2143e9d127ea93d373fe9b0a7bc3e94",
    "bytes": 28174,
    "data_bytes_with_shared": 801514,
    "k_pixels_this_scale": 700735,
@@ -177,7 +177,7 @@
    "fill_pixels": 11235,
    "masked_kplus_pixels": 14997,
    "footprint_pixels": 86653,
-   "waterway_manifest_sha256": "4f5d39032f4fc9801133afe1ac7c0623f3136108813c79425c56480b4ee78b65",
+   "waterway_manifest_sha256": "eb46536a0dec5084895152f52d06ae325cddda5a0c3a64326673f223308651f9",
    "f32_sensitive_tiles": 37484,
    "s12_rule": {
     "chunks": 821304,
@@ -214,7 +214,7 @@
   },
   "5": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s5_v1.lua",
-   "sha256": "4a6a6b9f02901f68d8f18ff1ede14d1e3138bfa3c5a6ebcb493ca049bb2cd949",
+   "sha256": "08e2884b66034cbff6257fd9d3c3f37cfd4c8ce8187e318c37e839edf6000e53",
    "bytes": 27906,
    "data_bytes_with_shared": 801246,
    "k_pixels_this_scale": 677901,
@@ -222,7 +222,7 @@
    "fill_pixels": 11244,
    "masked_kplus_pixels": 14423,
    "footprint_pixels": 80407,
-   "waterway_manifest_sha256": "4f5d39032f4fc9801133afe1ac7c0623f3136108813c79425c56480b4ee78b65",
+   "waterway_manifest_sha256": "eb46536a0dec5084895152f52d06ae325cddda5a0c3a64326673f223308651f9",
    "f32_sensitive_tiles": 56065,
    "s12_rule": {
     "chunks": 1281428,
@@ -259,7 +259,7 @@
   },
   "6": {
    "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s6_v1.lua",
-   "sha256": "4a3a2d3f362df365a59b248fc5d349e30583f673298cd3cefd06e3fbf2f0ee87",
+   "sha256": "7e10551097ab8570e76ae49a2be285b59b9fa0e5c887c65cd6722ccac8976baf",
    "bytes": 27759,
    "data_bytes_with_shared": 801099,
    "k_pixels_this_scale": 663876,
@@ -267,7 +267,7 @@
    "fill_pixels": 11243,
    "masked_kplus_pixels": 13716,
    "footprint_pixels": 76204,
-   "waterway_manifest_sha256": "4f5d39032f4fc9801133afe1ac7c0623f3136108813c79425c56480b4ee78b65",
+   "waterway_manifest_sha256": "eb46536a0dec5084895152f52d06ae325cddda5a0c3a64326673f223308651f9",
    "f32_sensitive_tiles": 80753,
    "s12_rule": {
     "chunks": 1846836,
