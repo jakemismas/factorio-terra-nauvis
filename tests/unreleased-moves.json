@@ -287,9 +287,6 @@
   "tn_canals_olde_world_s6_v4": [
    "c132d9543e4ddd24cf49b322dbc8fb2528c80b1c4ed18590ae3b8b6206c915a4"
   ],
-  "tn_city_pool_europe_v1": [
-   "f75b0c87f85f37fba9e0943b40677863f5d98a03778f79e406be2f38d66601ea"
-  ],
   "tn_crest_atlantic_v1": [
    "9babc0d305e30dbd3b369e1a22881a2b0f4e131bdd175b8eb68b058a63736113"
   ],
@@ -644,27 +641,6 @@
   ],
   "tn_dams_olde_world_s6_v4": [
    "8a3f3e0b7d9eba466b98d2d8b95a83680a623c35661e867c1786b5b7d0eff7ea"
-  ],
-  "tn_depth_keep_brenner_v1": [
-   "6b1c87e36d3f93797d0101f60ebb81380b925dd5bf84b9e03e3f01f9b4ff6968"
-  ],
-  "tn_depth_keep_dukla_v1": [
-   "c5b8debb245d67808f5562c2b89f29abcfc68924937255c076c1d4f2ae2a1c4a"
-  ],
-  "tn_depth_keep_gotthard_v1": [
-   "47be37e815f7ab0d5aa0053b40b2de7778dbecc1ce840526c73d40395718dc4c"
-  ],
-  "tn_depth_keep_kiel_canal_v1": [
-   "7ab676f465114bb351cdb91e2eca35af4e5b4ffd1229384177ce1c028e739b8e"
-  ],
-  "tn_depth_keep_semmering_v1": [
-   "8b3651c873ba10e8d3529d2a3542d6a628c73458deddeae3756f09bf812b252a"
-  ],
-  "tn_depth_keep_south_foreland_england_v1": [
-   "e6ea4902673d8f02dde34aad8e312ec2733f23b7c649811a6b2b21280a79b584"
-  ],
-  "tn_destroyed_sd_v1": [
-   "7bfb3d8c20a138d26547d7cee15d1a2fe160881a60c47585091de073d8fa0033"
   ],
   "tn_detail_atlantic_v1": [
    "21dc7ac120af646f58fddf47e6a728143e23fd22871635eabc97cf537dbbdabe"
@@ -1310,28 +1286,6 @@
   "tn_region_v_v1": [
    "9ac4c96c3cdc5673b02eceb02285b14c737b85b25828acccdfe46997bab1f743"
   ],
-  "tn_sd_destroyed_europe_v1": [
-   "2030e8cee27b4edfe831d5e0c325b10fbdc8a4279edf3984ff6cb2c672cc555e",
-   "f55d0dab5e7f9c9f885f6f377ef739ee41a03002894c5e384a0cf1f340e4781d"
-  ],
-  "tn_sd_keep_brenner_v1": [
-   "1ac211d1d5c05d6e4741c4e68824c01c1c707d3243e86d8bb7064724fd243275"
-  ],
-  "tn_sd_keep_dukla_v1": [
-   "470e6c32d952496eee805fd899053d31c3878bbe6e67076acdbac224a448635c"
-  ],
-  "tn_sd_keep_gotthard_v1": [
-   "a4b71697e7f84e1075e4357182004f94726ff7df48f62c3ef2472adc42a6d2f7"
-  ],
-  "tn_sd_keep_kiel_canal_v1": [
-   "df8776f3b1184b191b790652426e161be13f3eafe233f3941094ff657d0fbcdf"
-  ],
-  "tn_sd_keep_semmering_v1": [
-   "046e89d11d970f8308a63ae2aeaea5e9575d6a1e6dcb49b9dd80a4518e069bae"
-  ],
-  "tn_sd_keep_south_foreland_england_v1": [
-   "5ed8386472e33dd57f9a9ac932832f5194430706bbdc1d42047a26b212b47c35"
-  ],
   "tn_shore_atlantic_v1": [
    "e608f870d0b6da0dece99bc76da03792c523b2c95195a45cd3f126c8a2f250e8"
   ],
@@ -1455,24 +1409,6 @@
   ],
   "tn_v_olde_world_v5": [
    "e94aec4f638043b4850c8ecda21933da5b920575e9f56794f46920035326bf6e"
-  ],
-  "tn_w_keep_brenner_v1": [
-   "7876818e8e6157860e4144705a39aac34900117df55a1124235206a4a84d2a71"
-  ],
-  "tn_w_keep_dukla_v1": [
-   "e0c0c2117266a891fb1b89928846a9563f446b242aadecee69daf4a7f20a066a"
-  ],
-  "tn_w_keep_gotthard_v1": [
-   "07ec4639262e6f5f14d7e2376557f6fa833355e3c9ae9df714727881f8e4c5e0"
-  ],
-  "tn_w_keep_kiel_canal_v1": [
-   "aa60e3b9db0e42df6ca966ae06eafff0c4e9c8e2e5fc0dabd8d8531a690e620d"
-  ],
-  "tn_w_keep_semmering_v1": [
-   "2c1dcdf782f4acdbd0594798ed8693508fc7d545b8a7e9ed9504e11002da9d44"
-  ],
-  "tn_w_keep_south_foreland_england_v1": [
-   "16d2d061433d876c51c47e5761d272c010279b98562bf96402a54d19e03bf384"
   ],
   "tn_ww_atlantic_s1_v1": [
    "5a8a977d75bd61f896a65b3bc33537a2acfef1755675c39a3dcd6ec9b694637a",
