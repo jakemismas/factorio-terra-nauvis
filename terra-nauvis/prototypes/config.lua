@@ -1147,6 +1147,21 @@ return {
       {seed1 = 7102, frequency = 2, weight = 0.5},
       {seed1 = 7103, frequency = 4, weight = 0.25},
     },
+    -- The coast warp (the maintainer's rule of 2026-10-30 10:05: a land coast is one crisp line). Added to a coast fit
+    -- of few terms per pixel, the lattice detail is a dithered halo: Old World's and Atlantic's fits cross
+    -- zero at a median slope of 0.75 and 0.6 per px (Europe 1.46, their 5th percentile about 0.2), so a
+    -- detail of 0.45 flips the sign of c up to 2 px either side of the coast, in speckles 1 px wide.
+    -- The geographies listed read their fit at warped coordinates instead and their detail body is 0: u
+    -- and v each add these terms, amplitude_px * basis_noise at wavelength_px reference px, geo-locked
+    -- through the city offset. That moves the coast by the same bounded distance at any slope, so its
+    -- roughness stays one line. The noise calls are 4 against the detail's 3.
+    warp = {
+      geographies = {17, 18},
+      u = {{seed1 = 7411, wavelength_px = 5, amplitude_px = 0.45},
+           {seed1 = 7413, wavelength_px = 1.2, amplitude_px = 0.22}},
+      v = {{seed1 = 7412, wavelength_px = 5, amplitude_px = 0.45},
+           {seed1 = 7414, wavelength_px = 1.2, amplitude_px = 0.22}},
+    },
     far_floor = -100,
     edge_water = -1,
     edge_min_scale = 3,

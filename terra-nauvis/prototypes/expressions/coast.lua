@@ -9,8 +9,11 @@
 -- share. The generated files are name-free data, so a later version's fit and coarse bodies bind the
 -- same files to its own chain (config.lua's fits).
 --
--- Composition (a version without a term's field leaves its step out):
---   c = fit + detail                       reference pixels; the detail is 0 at pixel centres
+-- Composition (europe-coast's version 1; spawn-cities' version 2 adds steps 4 and 7; waterways'
+-- versions add steps 5 and 6 around the rest; climate-tiles' versions compose the shore body in
+-- place of step 2; later milestones add their steps under the entry's next version):
+--   c = fit + detail                       reference pixels; the detail is 0 at pixel centres; a version
+--                                          with a coast warp reads fit(warped u, v) with a detail of 0
 --   e = scale * c + if(c > 0, o, -o)       the sign offset: the tile class is the sign of c; a version
 --                                          with a shore body (climate-tiles) reads it instead:
 --                                          min(gain * c + if(c > 0, o, -o), far) with a land and a
@@ -72,11 +75,8 @@ local function def(name, expression, locals)
   return E[#E]
 end
 
--- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain. The
--- game parses every body's text at startup (about 0.5 us a byte) and expands every noise-function call
--- there, so each map carries its fit once: one geography version per map until the first release
---.
-local function fit_body(name, file, g)
+-- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain.
+local function fit_body(name, file, g, u, v)
   local fit = FILES[file]
   if not fit then
     error("no generated fit is loaded from " .. tostring(file) .. " for " .. name)
@@ -85,9 +85,19 @@ local function fit_body(name, file, g)
   for k, v in pairs(fit.locals) do
     L[k] = v
   end
-  L.U = g.u
-  L.V = g.v
+  L.U = u or g.u
+  L.V = v or g.v
   def(name, fit.expression, L)
+end
+
+-- Whether a geography version reads its fit at warped coordinates (config.lua coast.warp).
+local function warps(g)
+  for _, id in ipairs(C.warp.geographies) do
+    if id == g.geo_id then
+      return true
+    end
+  end
+  return false
 end
 
 -- One geography version of a map: its chain, fit bodies, detail, box and elevation entry. Returns
@@ -106,7 +116,23 @@ local function version(m, g)
   def(g.v, "(" .. g.gy .. " - " .. corner .. ") / " .. s .. " + " .. num(m.hr))
 
   -- The coast fit (Tile only) and the coarse land field, the one land field outside Tile.
-  fit_body(g.geo, g.fits.geo, g)
+  -- A version with a coast warp (config.lua coast.warp) reads its fit at warped coordinates; the coarse
+  -- field stays on the plain chain, so the warp reaches Tile only.
+  local warp = warps(g)
+  if warp then
+    local function warped(base, terms)
+      local parts = {base}
+      for _, o in ipairs(terms) do
+        parts[#parts + 1] = num(o.amplitude_px) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
+          num(o.seed1) .. ", input_scale = 1 / (" .. num(o.wavelength_px) .. " * " .. s .. "), offset_x = " ..
+          g.cx .. ", offset_y = " .. g.cy .. "}"
+      end
+      return table.concat(parts, " + ")
+    end
+    fit_body(g.geo, g.fits.geo, g, warped(g.u, C.warp.u), warped(g.v, C.warp.v))
+  else
+    fit_body(g.geo, g.fits.geo, g)
+  end
   fit_body(g.land_coarse, g.fits.land_coarse, g)
 
   -- Lattice detail: each octave's lattice holds every pixel centre (basis noise is 0 there; its
@@ -120,8 +146,13 @@ local function version(m, g)
       num(o.seed1) .. ", input_scale = " .. num(o.frequency) .. " / " .. s .. ", offset_x = " .. off_x ..
       ", offset_y = " .. off_y .. "}"
   end
-  def(g.detail, num(C.detail_amplitude_px) .. " * clamp(" .. table.concat(octaves, " + ") .. ", " ..
-    num(-C.detail_clamp) .. ", " .. num(C.detail_clamp) .. ")")
+  -- A warp version's roughness is the warp, so its detail is 0: the name stays, a role every version fills.
+  if warp then
+    def(g.detail, "0")
+  else
+    def(g.detail, num(C.detail_amplitude_px) .. " * clamp(" .. table.concat(octaves, " + ") .. ", " ..
+      num(-C.detail_clamp) .. ", " .. num(C.detail_clamp) .. ")")
+  end
 
   -- The far-field box: d is the signed distance in tiles to the edge of the map's extent, the
   -- W s x H s tiles its raster covers (>= 0 inside); beyond it everything is deep water, at any
