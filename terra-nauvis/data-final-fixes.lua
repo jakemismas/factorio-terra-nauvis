@@ -526,7 +526,10 @@ local function ridge_wrappers()
           "version wraps; its ore keeps no ridge clearance")
     end
   end
-  data:extend(E)
+  -- data:extend refuses an empty list, and a mod that replaces the base ores leaves this one empty
+  if #E > 0 then
+    data:extend(E)
+  end
   point_presets(keys)
 end
 
