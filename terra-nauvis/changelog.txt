@@ -72,9 +72,10 @@ Date: 2026-10-30
     - Where a map's edge cuts through land (North Africa and Russia on Europe, the far east of
       Siberia on the Atlantic and Old World maps), the land sinks into deep water a little inside
       the edge along a wavy coast that changes with the map seed, instead of a straight cut.
-    - Destroyed Europe startup setting (default off, needs Alien Biomes): from the Gironde and Brittany
-      to Warsaw, the heart of Europe becomes Alien Biomes' volcanic ground, hotter toward the middle,
-      its edges changing with the map seed; Britain, Denmark, the Kiel Canal and the mountain passes
+    - Destroyed Europe startup setting (default off, needs Alien Biomes): from France to Warsaw and
+      from the North Sea across Switzerland and Austria to Ljubljana and down Italy to about Rome,
+      the heart of Europe becomes Alien Biomes' volcanic ground, hotter toward the middle, its
+      outline different on every map seed; Britain, Denmark, the Kiel Canal and the Carpathians
       stay outside, and the start area stays normal. A random spawn city never lands inside the
       zone. Without Alien Biomes nothing changes, and the game warns at the start and each player
       who joins.
