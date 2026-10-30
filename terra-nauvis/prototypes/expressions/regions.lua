@@ -361,8 +361,8 @@ for _, r in ipairs(T.rows) do
   end
   if r.layer == "marsh" then
     local amplitude, width = marsh_edge(r)
-    def(nm.sd, "(" .. text .. ") + " .. num(MH.rough_gain) .. " * " .. N.rough .. " + " .. num(amplitude) .. " * " ..
-      N.marsh_rough, L)
+    def(nm.sd, "(" .. text .. ") + " .. num(MH.rough_gain) .. " * " .. N.rough .. " + " .. num(amplitude) .. " * (" ..
+      N.marsh_rough .. " + " .. num(MH.bias) .. ")", L)
     def(nm.w, weight(nm.sd, width))
   else
     def(nm.sd, "(" .. text .. ") + " .. N.rough, L)

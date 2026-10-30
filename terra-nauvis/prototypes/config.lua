@@ -1757,10 +1757,11 @@ return {
     -- row's ramp widens to ramp_share of its radius, at most ramp_cap_px and never under ramp.width_px,
     -- so the pools thin out into dry ground across the band instead of stopping at a line. Marsh rows
     -- are the Tile program's only readers of the region noise, so these two octaves cost that program
-    -- little. A marsh's reach is the row's radius plus 1.7 times its amplitude, the most basis noise
-    -- reaches.
+    -- little. bias leans the noise outward, so a small delta's seed rarely sinks it below the marsh cut
+    -- (the Danube delta vanished at seed 1002 without it). A marsh's reach is the row's radius plus about
+    -- 2 times its amplitude, the most basis noise and the bias reach.
     marsh = {wavelength_px = 24, octaves = 2, persistence = 0.5, seed1 = 7804, share = 0.6, cap_px = 24,
-             rough_gain = 2, ramp_share = 0.6, ramp_cap_px = 24},
+             bias = 0.35, rough_gain = 2, ramp_share = 0.6, ramp_cap_px = 24},
     share_hundredths = 100,
     octave_shift_px = 10000.37,
     max_arguments = 255,
