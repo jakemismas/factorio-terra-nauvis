@@ -6,6 +6,19 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Old World's and Atlantic's coasts are crisp lines: their geography versions read the coast fit at
+  warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
+  of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is
+  unchanged (`coast.warp`; design notes 2026-10-30 13:30, a development branch).
+- Exact coastlines acts on Old World and Atlantic and is on by default, visible in the settings menu.
+  Atlantic gains K+ tables. The handler queries only wrong tiles, evicts its row cache one row at a
+  time, and writes along a blurred, wobbling reference instead of the raster's stairs; written land
+  takes the ground around it and false islands sink into deep water.
+- `tools/build_geo.py emit --map <map> --bandfix --masks-only` rewrites the mask tables from the
+  committed K+ table in about a minute, for a change that moves waterways only.
+
 ## [0.1.0] - 2026-10-30
 
 First release of Terra Nauvis, for Factorio 2.1. This summary is the whole release at a glance; the

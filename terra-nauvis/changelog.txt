@@ -80,9 +80,10 @@ Date: 2026-10-30
       stay outside, and the start area stays normal. A random spawn city never lands inside the
       zone. Without Alien Biomes nothing changes, and the game warns at the start and each player
       who joins.
-    - Exact coastlines startup setting (default off, hidden in this version): on a map it acts on,
-      each new chunk's coast snaps to the reference wherever the noise misses it by half a reference
-      pixel or more. It acts on no map yet, so it stays out of the settings menu until one passes.
+    - Exact coastlines startup setting (default on): on Atlantic and Old World each new chunk's coast
+      snaps to the reference wherever the noise misses it by half a reference pixel or more, so
+      fjords, bays and islets the noise cannot hold come back as rounded natural shores. The map
+      preview still shows the noise coast, and land made from sea stays bare.
     - City markers map setting (default off, changeable in a running game): the map view names every
       city of a Terra Nauvis world's map where it lies; switching it off removes them.
   Compatibility:

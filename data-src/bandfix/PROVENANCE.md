@@ -24,3 +24,11 @@ re-emits the tables twice and compares each byte for byte with the committed fil
 versions; the handler skips the edge band on them). The emitter reads that list only to check the
 map's membership, so the tables are unchanged: both manifests' `bandfix_config_sha256` was re-stamped
 to the new group (the old digest recomputes exactly from the new group with the old lists).
+
+2026-10-30, a development branch: Old World's and Atlantic's tables are built with the coast warp's reach in place
+of the lattice detail's bound (`inputs.warp_reach_px`), `bandfix.tables` lists each map's one geography,
+and Atlantic has tables. A manifest's `bandfix_config_sha256` was re-stamped after handler-only keys of the
+group moved (`maps`, `new_deep`, `smooth`, `ground_rings`), which feed no table. The shipped rule's pricing
+still counts S12's band, not the blurred write rule, so it is an estimate. After a change that moves
+waterways only, `build_geo.py emit --map <map> --bandfix --masks-only` rewrites the mask tables from the
+committed K+ table, byte-identical to a full emission.
