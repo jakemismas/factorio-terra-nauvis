@@ -1165,9 +1165,11 @@ return {
     -- through the city offset. That moves the coast by the same bounded distance at any slope, so its
     -- roughness stays one line. The noise calls are 4 against the detail's 3. water_gain multiplies their
     -- shore body's water gain, so the shallows' width, set by the fit's slope, reads like Europe's rim.
+    -- Europe joined the list for its cold coasts: on white ground the lattice detail read as a dark spray 10 to
+    -- 20 tiles wide off Norway and the Baltic. Its steeper fit keeps the shallows thin at a lower gain.
     warp = {
-      geographies = {17, 18},
-      water_gain = 2.5,
+      geographies = {14, 17, 18},
+      water_gain = {[14] = 1.5, [17] = 2.5, [18] = 2.5},
       u = {{seed1 = 7411, wavelength_px = 5, amplitude_px = 0.45},
            {seed1 = 7413, wavelength_px = 1.2, amplitude_px = 0.22}},
       v = {{seed1 = 7412, wavelength_px = 5, amplitude_px = 0.45},

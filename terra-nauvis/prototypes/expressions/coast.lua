@@ -94,13 +94,16 @@ local function fit_body(name, file, g, fit_u, fit_v)
 end
 
 -- Whether a geography version reads its fit at warped coordinates (config.lua coast.warp).
-local function warps(g)
-  for _, id in ipairs(C.warp.geographies) do
+local function listed(ids, g)
+  for _, id in ipairs(ids) do
     if id == g.geo_id then
       return true
     end
   end
   return false
+end
+local function warps(g)
+  return listed(C.warp.geographies, g)
 end
 
 -- One geography version of a map: its chain, fit bodies, detail, box and elevation entry. Returns
@@ -203,11 +206,9 @@ local function version(m, g)
       b = "clamp(d / " .. s .. " + warp - " .. num(B.width_px) .. ", " .. num(-C.transfer_clamp_px) .. ", " ..
         num(C.transfer_clamp_px) .. ")",
     }
-    for _, id in ipairs(B.fold_geographies) do
-      if id == g.geo_id then
-        locals.warp_sum = sum
-        locals.warp = num(B.warp_px) .. " * clamp(2 * clamp(warp_sum, -1, 1) - warp_sum, -1, 1)"
-      end
+    if listed(B.fold_geographies, g) then
+      locals.warp_sum = sum
+      locals.warp = num(B.warp_px) .. " * clamp(2 * clamp(warp_sum, -1, 1) - warp_sum, -1, 1)"
     end
     local o = num(C.transfer_offset)
     local band
@@ -242,7 +243,7 @@ local function version(m, g)
     def(g.shore, "min(if(cv > 0, gl * cv + " .. o .. ", gw * cv - " .. o .. "), " .. g.far .. ")",
       {cv = cv,
        gl = "max(" .. num(SH.land.min) .. ", " .. num(SH.land.per_scale) .. " * " .. s .. ")",
-       gw = (warp and num(C.warp.water_gain) .. " * " or "") ..
+       gw = (warp and num(C.warp.water_gain[g.geo_id]) .. " * " or "") ..
          "max(" .. num(SH.water.min) .. ", " .. num(SH.water.per_scale) .. " * " .. s .. ")"})
     text, locals = g.shore, {}
   end
