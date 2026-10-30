@@ -1649,11 +1649,10 @@ takes over the Map type fields.
   - *Cuts as data.* `data-src/waterways/<map>.json` keeps APPROVALS 7's adopted rows whole; its `cuts`
     give per scale the tolerance and the number of rivers carved from the top of the list (the
     plan's cut order); the T16 data-src row holds them to Europe's rivers and raised tolerances.
-  - *Spawn moves.* The manifests' `starts` hold each city's move and bank half-planes per scale, and
-    `build_waterways.py` emits the same per map as name-free data,
-    `prototypes/generated/starts_<map>_v1.lua`: `moves[city][scale] = {dx, dy}` and
-    `banks[city][scale] = {{nx, ny, c}, ...}`, keyed by the spawn-city setting's values, the moved
-    spawn's side being `nx x + ny y + c >= 0` in world tiles with the moved spawn at (0, 0). They
+  - *Spawn moves.* The manifests' `starts` hold each city's move and bank half-planes per scale
+    (`move = {dx, dy}`, `banks = {{nx, ny, c}, ...}`), the moved spawn's side being
+    `nx x + ny y + c >= 0` in world tiles with the moved spawn at (0, 0). The per-map Lua files that
+    once carried them were removed unread. They would
     join spawn-cities' mechanism under those bodies' next versions, each registered and named by
     every preset: the city fold adds the city's move to its offset (an if() chain over the city
     index and the folded scale, as the spawn bearings are read, so it folds to constants), and the

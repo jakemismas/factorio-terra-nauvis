@@ -67,6 +67,17 @@ compatibility and known limits are in README.md, and the changelog players see i
   `guards.map_type_geography` names the version whose entry the world reads. The cliff reset and
   the D12 warning stay Earth-only, and a world that is neither gets nothing.
 
+- Spawn correctness: a world made from the Atlantic or Old World Map type entry
+  alone reads the layer chain's offset fallbacks (`tn_cx/cy_<map>_v2`), which now name the city fold
+  as the presets bake them, so its offshore stamp sits on the spawn's ground (Map type and preset
+  worlds sample alike at Frankfurt, Aachen and Moscow on Old World and Prague on Atlantic; before,
+  the chain was 28,266 tiles off at Frankfurt). Destroyed Europe's random pool is now defined for
+  Atlantic (`tn_city_pool_atlantic_v1`) and Old World (`tn_city_pool_olde_world_v1`), and Old World's
+  zone list adds Frankfurt and Aachen, which lie inside the polygon (zone depth 719 and 704 tiles at
+  scale 6, Prague 699): 20 Old World seeds with the zone on spawned outside it, and a 400-seed sweep
+  per map picked no zone city. The four fallbacks are re-registered and the two pools registered
+  from the M1 dump.
+
 - Milestone `europe-coast`: Europe's real coastline at map scales 1 to 6. `tools/build_geo.py`
   emits S1-fit's one-sided tent model as name-free generated Lua within 120 columns:
   `geo_europe_v1.lua` (8,192 tents plus the recorded T1-e local refit of 66 level-0 tents over the
@@ -790,6 +801,10 @@ compatibility and known limits are in README.md, and the changelog players see i
 
 ### Removed
 
+- The river-safe starts files `prototypes/generated/starts_<map>_v1.lua`: no code read them, and Old
+  World's file still held Prague's old grid point and lacked Frankfurt, Aachen and Moscow.
+  `build_waterways.py` no longer emits them; the manifests keep each city's per-scale start record.
+  Prague at scale 1 and 6 spawns with no water within 12 tiles.
 - The placeholder Terra Nauvis: Europe preset, its two noise bodies, its config group and every
   placeholder text; the gate's `ab_placeholder` row passes noting its retirement.
 - The chained G9 guard (snapshot and check, part chaining, the stale build-log check, the journal)
