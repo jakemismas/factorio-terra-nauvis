@@ -662,25 +662,28 @@ def _hinge_obj(f, c, y, valid, m, lamv):
     return float((valid * v * v).sum(dtype=np.float64) + (lamv * c * c).sum())
 
 
-def _newton(B, c, y, valid, m, lam, steps, tol, maxit, log):
+def _newton(B, c, y, valid, m, lam, steps, tol, maxit, log, wgt=None):
+    """wgt: the per-pixel weights of a region-weighted fit (0 on thin water), or None, where every
+    valid pixel weighs 1 and the arithmetic is S1-fit's unchanged."""
     import numpy as np
     lamv = lam * B.precond()
+    wv = valid if wgt is None else wgt
     f = B.forward(c)
-    J = _hinge_obj(f, c, y, valid, m, lamv)
+    J = _hinge_obj(f, c, y, wv, m, lamv)
     iters = 0
     for s in range(steps):
         a = ((y * f) < m) & valid
-        cn, it = _pcg(B, c, a, (y * m).astype(np.float32), lam, tol, maxit)
+        cn, it = _pcg(B, c, a if wgt is None else a * wgt, (y * m).astype(np.float32), lam, tol, maxit)
         iters += it
         fn = B.forward(cn)
-        Jn = _hinge_obj(fn, cn, y, valid, m, lamv)
+        Jn = _hinge_obj(fn, cn, y, wv, m, lamv)
         if Jn > J:
             # f is linear in c, so a damped step is the same blend of both evaluations
             best = (Jn, fn, cn)
             for step in (0.5, 0.25, 0.125):
                 ft = f + step * (fn - f)
                 ct = c + step * (cn - c)
-                Jt = _hinge_obj(ft, ct, y, valid, m, lamv)
+                Jt = _hinge_obj(ft, ct, y, wv, m, lamv)
                 if Jt < best[0]:
                     best = (Jt, ft, ct)
                 if Jt < J:
@@ -720,8 +723,50 @@ def tile_estimate(desc):
     return round(a * terms + b * desc["factors"] + g * desc["row_groups"] + z)
 
 
-def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, through=8192):
-    """S1-fit's greedy fit at native resolution, resumable (see the section comment above)."""
+def region_box_px(mref, box):
+    """(r0, r1, c0, c1): the reference pixels whose centres lie in a box of (lon0, lon1, lat0, lat1)
+    degrees in the map's own frame (its georeference), clipped to the raster."""
+    import math
+    lon0, lon1, lat0, lat1 = (float(x) for x in box[:4])
+    u0, v0 = mref.lonlat_to_uv(min(lon0, lon1), max(lat0, lat1))
+    u1, v1 = mref.lonlat_to_uv(max(lon0, lon1), min(lat0, lat1))
+    c0, c1 = max(0, math.ceil(u0 - 0.5)), min(mref.W, math.floor(u1 - 0.5) + 1)
+    r0, r1 = max(0, math.ceil(v0 - 0.5)), min(mref.H, math.floor(v1 - 0.5) + 1)
+    return r0, r1, c0, c1
+
+
+def region_weights(mref, valid, regions):
+    """The per-pixel weights of a region-weighted fit: 1 on every valid pixel, times the largest
+    multiplier of the region boxes holding the pixel centre, and 0 on thin water."""
+    import numpy as np
+    mult = np.ones(valid.shape, np.float32)
+    for r in regions:
+        r0, r1, c0, c1 = region_box_px(mref, r)
+        np.maximum(mult[r0:r1, c0:c1], np.float32(r[4]), out=mult[r0:r1, c0:c1])
+    mult *= valid
+    return mult
+
+
+def parse_region(text):
+    """'lon0,lon1,lat0,lat1,weight' (degrees in the map's frame; weight above 0)."""
+    parts = [float(x) for x in text.split(",")]
+    if len(parts) != 5 or parts[4] <= 0:
+        raise argparse.ArgumentTypeError("a region is lon0,lon1,lat0,lat1,weight with weight above 0")
+    return parts
+
+
+def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, through=8192, regions=None,
+        start_from=None):
+    """S1-fit's greedy fit at native resolution, resumable (see the section comment above).
+
+    regions: optional boxes [lon0, lon1, lat0, lat1, weight] that multiply the fit's per-pixel
+    weight (the hinge objective, the refits and the greedy scores), so the terms concentrate on
+    those coasts. Off by default, which keeps S1-fit's arithmetic and the recorded fits unchanged;
+    when on, the boxes join the fit's params, so a resume with other boxes is refused.
+
+    start_from: optional checkpoint of the same reference (an earlier fit's growth step) whose terms
+    and coefficients the growth continues from, instead of the least-squares start at nmin terms;
+    its name, sha256 and terms join the params."""
     import time
     import numpy as np
     import earthgeo as eg
@@ -735,7 +780,13 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
         logf.write(line + "\n")
         logf.flush()
 
-    P = FIT_PARAMS
+    P = dict(FIT_PARAMS)
+    if regions:
+        P["region_weights"] = [[float(x) for x in r] for r in regions]
+    if start_from:
+        start_from = Path(start_from)
+        P["start_from"] = {"checkpoint": start_from.name, "sha256": sha256_file(start_from),
+                           "terms": int(len(load_model(start_from)[2]))}
     t0 = time.time()
     mref = eg.MapRef(map_key)
     H, W = mref.H, mref.W
@@ -758,6 +809,8 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
     filled = land | thin
     valid = ~thin
     n_valid = int(valid.sum())
+    wgt = region_weights(mref, valid, regions) if regions else None
+    wv = valid if wgt is None else wgt
     y = np.where(filled, np.int8(1), np.int8(-1))
     t = saturated_sdf(filled, P["D"])
     del filled, land, thin
@@ -787,6 +840,17 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
             log(f"resumed after {done} terms from {last['checkpoint']}; the model field recomputed")
         del t
         t = None
+    elif start_from:
+        meta, idx, coef = load_model(start_from)
+        if [list(s) for s in meta["shapes"]] != [list(s) for s in B.shape]:
+            raise SystemExit("RESULT fail the start checkpoint's grid shapes differ from this reference's")
+        B.idx = [np.asarray(a, np.int64) for a in idx]
+        c = coef
+        done = int(len(coef))
+        f = B.forward(c)
+        log(f"starting after {done} terms from {start_from.name}")
+        del t
+        t = None
     first = done == 0
     reached = next((p["terms_target"] for p in state["points"] if p["sample_agreement"] >= stop_agreement), None)
     ran = 0
@@ -802,19 +866,19 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
             break
         ts = time.time()
         if first:
-            R = valid * t
+            R = wv * t
         else:
             act_px = ((y * f) < marg) & valid
-            R = act_px * (y * marg - f)
+            R = (act_px if wgt is None else act_px * wgt) * (y * marg - f)
             del act_px
         lv, fl = B.top_candidates(R, N - B.n())
         del R
         c = B.add(lv, fl, c)
         cg_ls = 0
         if first:
-            c, cg_ls = _pcg(B, c, valid, t, P["lam"], P["tol"], P["maxit"])
+            c, cg_ls = _pcg(B, c, wv, t, P["lam"], P["tol"], P["maxit"])
         f = None
-        c, f, J, cg_h = _newton(B, c, y, valid, marg, P["lam"], P["newton"], P["tol"], P["maxit"], log)
+        c, f, J, cg_h = _newton(B, c, y, valid, marg, P["lam"], P["newton"], P["tol"], P["maxit"], log, wgt)
         if first:
             t = None
             first = False
@@ -889,36 +953,63 @@ def curve(map_key, work, min_sample, only=None):
     return doc
 
 
-def adopt(map_key, work, version=1):
+def adopt(map_key, work, version=1, checkpoint=None, keep_coarse=False):
     """Copy the shipped checkpoints (the smallest at or above FIT_BAR, and the 256-term one) and the
-    curve into data-src/fits/<map>/ and write its fit.json; the emitter reads only that folder."""
+    curve into data-src/fits/<map>/ and write its fit.json; the emitter reads only that folder.
+
+    checkpoint: ship this evaluated checkpoint of the work folder instead of the bar rule's (a
+    region-weighted fit is chosen on its region's coasts, not on the global bar). keep_coarse: keep
+    the folder's coarse land field (fit.json's land_coarse body and its checkpoint, byte for byte)
+    and move the curve that records it to curve-base.json, for a fit grown from that earlier fit's
+    checkpoint (fit --start-from), whose own curve starts above 256 terms."""
     import shutil
     work = Path(work)
     doc = json.loads((work / "curve.json").read_text(encoding="utf-8"))
     pts = [p for p in doc["points"] if "t1" in p]
-    ship = next((p for p in sorted(pts, key=lambda p: p["terms"]) if p["t1"]["agreement"] >= FIT_BAR), None)
-    if ship is None:
-        raise SystemExit(f"RESULT fail no evaluated checkpoint of {map_key} reaches {FIT_BAR}")
-    coarse = next((p for p in pts if p["terms_target"] == COARSE_TERMS), None)
-    if coarse is None:
-        raise SystemExit(f"RESULT fail the {COARSE_TERMS}-term checkpoint of {map_key} is not evaluated")
+    if checkpoint:
+        ship = next((p for p in pts if p["checkpoint"] == checkpoint), None)
+        if ship is None:
+            raise SystemExit(f"RESULT fail {checkpoint} is not an evaluated checkpoint of {work}")
+    else:
+        ship = next((p for p in sorted(pts, key=lambda p: p["terms"]) if p["t1"]["agreement"] >= FIT_BAR), None)
+        if ship is None:
+            raise SystemExit(f"RESULT fail no evaluated checkpoint of {map_key} reaches {FIT_BAR}")
     dst = FITS / map_key
     dst.mkdir(parents=True, exist_ok=True)
-    for p in (ship, coarse):
-        shutil.copyfile(work / p["checkpoint"], dst / p["checkpoint"])
-    _write_json(dst / "curve.json", doc)
     import tnconfig
     label = tnconfig.load()["maps"][map_key]["display"]
+    if keep_coarse:
+        old = fit_spec(map_key)["bodies"]["land_coarse"]
+        if not (dst / old["checkpoint"]).exists():
+            raise SystemExit(f"RESULT fail keep-coarse: {dst / old['checkpoint']} is missing")
+        base = json.loads((dst / "curve.json").read_text(encoding="utf-8"))
+        coarse = next((p for p in base["points"] if p["checkpoint"] == old["checkpoint"] and "t1" in p), None)
+        if coarse is None:
+            raise SystemExit(f"RESULT fail keep-coarse: the folder's curve does not record {old['checkpoint']}")
+        _write_json(dst / "curve-base.json", base)
+        coarse_body = old
+    else:
+        coarse = next((p for p in pts if p["terms_target"] == COARSE_TERMS), None)
+        if coarse is None:
+            raise SystemExit(f"RESULT fail the {COARSE_TERMS}-term checkpoint of {map_key} is not evaluated")
+        shutil.copyfile(work / coarse["checkpoint"], dst / coarse["checkpoint"])
+        coarse_body = {"checkpoint": coarse["checkpoint"], "file": f"land_coarse_{map_key}_v{version}.lua",
+                       "note": f"{label}'s coarse land field, the {COARSE_TERMS}-tent checkpoint of the same fit"}
+    shutil.copyfile(work / ship["checkpoint"], dst / ship["checkpoint"])
+    _write_json(dst / "curve.json", doc)
+    if checkpoint and doc["params"].get("region_weights"):
+        geo_note = f"{label}'s coast fit, region weighted"
+    elif checkpoint:
+        geo_note = f"{label}'s coast fit, the chosen checkpoint"
+    else:
+        geo_note = f"{label}'s coast fit, the smallest checkpoint at or above {FIT_BAR}"
     spec = {"format": "tn-fit/1", "map": map_key,
             "note": f"Which checkpoint each generated body of {label} is emitted from (tools/build_geo.py). "
                     "See PROVENANCE.md.",
             # each note heads its generated file, so it stays short (the file's 120-column rule)
             "bodies": {"geo": {"checkpoint": ship["checkpoint"], "file": f"geo_{map_key}_v{version}.lua",
-                               "note": f"{label}'s coast fit, the smallest checkpoint at or above {FIT_BAR}"},
-                       "land_coarse": {"checkpoint": coarse["checkpoint"],
-                                       "file": f"land_coarse_{map_key}_v{version}.lua",
-                                       "note": f"{label}'s coarse land field, the {COARSE_TERMS}-tent checkpoint "
-                                               "of the same fit"}}}
+                               "note": geo_note},
+                       "land_coarse": coarse_body}}
     _write_json(dst / "fit.json", spec)
     return {"geo": ship, "land_coarse": coarse}
 
@@ -1740,6 +1831,11 @@ def main(argv=None):
     p.add_argument("--max-steps", type=int, help="run at most this many growth steps now (resume later)")
     p.add_argument("--through", type=int, default=8192,
                    help="always run through this term count (the curve compares the shipped checkpoint with it)")
+    p.add_argument("--region", type=parse_region, action="append",
+                   help="lon0,lon1,lat0,lat1,weight: multiply the fit's weight on the pixels of this box (degrees "
+                        "in the map's own frame; repeatable, overlaps take the largest); off by default")
+    p.add_argument("--start-from", help="continue the growth from this checkpoint of the same reference (an "
+                                        "earlier fit's growth step) instead of the least-squares start")
     p = sub.add_parser("curve")
     p.add_argument("--map", required=True)
     p.add_argument("--work")
@@ -1748,10 +1844,14 @@ def main(argv=None):
     p = sub.add_parser("adopt")
     p.add_argument("--map", required=True)
     p.add_argument("--work")
+    p.add_argument("--checkpoint", help="ship this evaluated checkpoint of the work folder instead of the "
+                                        "smallest at or above the bar")
+    p.add_argument("--keep-coarse", action="store_true",
+                   help="keep the folder's coarse land field (for a fit grown with fit --start-from)")
     a = ap.parse_args(argv)
     if a.cmd == "fit":
         st = fit(a.map, a.work or default_work(a.map), a.nmax, a.stop_agreement, a.extra_steps, a.max_steps,
-                 a.through)
+                 a.through, a.region, a.start_from)
         last = st["points"][-1] if st["points"] else {}
         print(f"RESULT ok fit {a.map} steps={len(st['points'])} terms={last.get('terms')} "
               f"agreement={last.get('sample_agreement')}")
@@ -1763,7 +1863,7 @@ def main(argv=None):
         print(f"RESULT ok curve {a.map} evaluated={n} of {len(doc['points'])}")
         return 0
     if a.cmd == "adopt":
-        rep = adopt(a.map, a.work or default_work(a.map))
+        rep = adopt(a.map, a.work or default_work(a.map), checkpoint=a.checkpoint, keep_coarse=a.keep_coarse)
         print(json.dumps({k: {"checkpoint": v["checkpoint"], "terms": v["terms"], "t1": v["t1"]["agreement"]}
                           for k, v in rep.items()}, indent=1))
         print(f"RESULT ok adopted {rep['geo']['checkpoint']} and {rep['land_coarse']['checkpoint']}")
