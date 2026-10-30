@@ -257,10 +257,10 @@
   },
   "tn_geo_olde_world_v1": {
    "type": "noise-expression",
-   "sha256": "d3ae0d1fdb25f92d86f02ab08dbb73958156563f79eceef95d635b40a6bebf55",
+   "sha256": "11ccb05dd1bd47a72b64294d86dff3b3b590dfed36545bf60d6fc4f85114b310",
    "dump": "m1",
    "slice": "olde-world-atlantic",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_land_coarse_atlantic_v1": {
    "type": "noise-expression",

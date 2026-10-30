@@ -4,9 +4,10 @@
  "note": "Which checkpoint each generated body of Old World is emitted from (tools/build_geo.py). See PROVENANCE.md.",
  "bodies": {
   "geo": {
-   "checkpoint": "model-4096.npz",
+   "checkpoint": "model-8192.npz",
    "file": "geo_olde_world_v1.lua",
-   "note": "Old World's coast fit, the smallest checkpoint at or above 0.991"
+   "note": "Old World's coast fit, region weighted",
+   "budget_terms": 8192
   },
   "land_coarse": {
    "checkpoint": "model-256.npz",

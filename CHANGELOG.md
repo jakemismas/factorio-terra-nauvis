@@ -707,6 +707,10 @@ versions follow [Semantic Versioning](https://semver.org/).
 - The startup setting Exact coastlines (`terra-nauvis-exact-coast`) is hidden (`hidden = true`,
   default still off, the handler and its tables kept): `bandfix.maps` is empty, so it acts on no
   map and a visible switch would mislead. settings.lua now passes a setting's `hidden` field.
+- Old World's coasts of Britain, Ireland, the Channel, Denmark and the Baltic: its coast fit grows from
+  4,096 to 8,192 terms with Europe weighted 16 times, so the new terms go to Europe's coasts (Europe
+  box agreement 0.973 to 0.988, worst coast error in Britain 10.5 to 3.5 px); the rest of the map
+  keeps its coast and the coarse land field is unchanged.
 - Live-profile protection is fh.py isolation alone (the decision, 2026-10-27 16:19 and
   23:47; design notes 2026-10-28 00:45): G1 (RESULT `ok`, `isolated=yes`, `errors=0`) is the only
   live-profile protection, and copying the built zip into the live mods folder is allowed.
