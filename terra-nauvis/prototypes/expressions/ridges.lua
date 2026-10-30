@@ -274,8 +274,8 @@ local function add_opening(O, m, pts, o, wide)
     O.terms[#O.terms + 1] = "(" .. slot .. ") * (abs(" .. pv .. " * " .. num(tx) .. " - " .. pu .. " * " .. num(ty) ..
       ") * " .. S .. " < " .. num(reach) .. ")"
     -- the collar: the ridge stands whole round the slot, so a pass reads as a doorway and not one more gap
-    O.keeps[#O.keeps + 1] = "clamp(1 - (" .. pu .. " * " .. pu .. " + " .. pv .. " * " .. pv .. ") * " .. scale2 .. " / " ..
-      num(RD.collar_tiles ^ 2) .. ", 0, 1)"
+    O.keeps[#O.keeps + 1] = "clamp(1 - (" .. pu .. " * " .. pu .. " + " .. pv .. " * " .. pv .. ") * " .. scale2 ..
+      " / " .. num(RD.collar_tiles ^ 2) .. ", 0, 1)"
   end
 end
 

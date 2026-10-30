@@ -64,11 +64,12 @@ Date: 2026-10-30
       around them, while trees still follow the climate.
     - With Alien Biomes, the base game's trees, rocks, decals and plants grow again on the vanilla
       ground of Terra Nauvis worlds, beside Alien Biomes' own.
-    - Ridges startup setting, on by default: cliff ridges along 16 mountain ranges, the only cliffs
-      on a Terra Nauvis map, with passes at their historic crossings, a gap at least every 400 km
-      and none across the starting area; ore never lies on a ridge. The cliffs sliders do not
-      change them, and a world started with cliffs at none gets its ridges back beyond the
-      starting area.
+    - Ridges startup setting, on by default: messy bands of cliffs along 16 mountain ranges, the only
+      cliffs on a Terra Nauvis map. A ridge wanders round its range, runs wider where the real
+      mountain is taller, breaks into runs of many lengths and frays out at its ends, with passes
+      at the historic crossings, a gap at least every 400 km and no cliffs across the starting
+      area. The cliffs sliders do not change them, and a world started with cliffs at none gets
+      its ridges back beyond the starting area.
     - Where a map's edge cuts through land (North Africa and Russia on Europe, the far east of
       Siberia on the Atlantic and Old World maps), the land sinks into deep water a little inside
       the edge along a wavy coast that changes with the map seed, instead of a straight cut.

@@ -1307,7 +1307,8 @@ return {
   --   cliffiness   the cliffiness of a ridge cell; 0 inside an opening and inside the ridge-free start
   --   pass_tiles   an opening's cliffiness gap along the crest (APPROVALS 5: at least 12, for 8 tiles
   --              clear; S5 measured 16 clear from a 16-tile gap, but a 16-tile slot read 7.5 at Verecke
-  --              on the milestone's T6, at the limit, and the wander shears a slot by up to a third), reach_tiles
+  --              on the milestone's T6, at the limit, and the wander shears a slot by up to a third: 24 read 7.5
+  --              on a diagonal crest, the limit again, so 28), reach_tiles
   --              its least half-length across, reach_margin_tiles how far it outreaches the half-width;
   --              tip_tiles how far past a crest's end vertex an opening there reaches
   --   edge_tiles, edge_reach_tiles   a range cut by a map's edge with no pass on that map: no ridge cell
@@ -1353,7 +1354,7 @@ return {
     gaps = {noise = {{seed1 = 7509, wavelength = 128, amplitude = 1}, {seed1 = 7510, wavelength = 40, amplitude = 0.6}},
             threshold = -0.5, thin_tiles = 22, thin_gain = 1.8, collar_gain = 3},
     cliffiness = 10,
-    pass_tiles = 24,
+    pass_tiles = 28,
     reach_tiles = 32,
     reach_margin_tiles = 32,
     collar_tiles = 72,
