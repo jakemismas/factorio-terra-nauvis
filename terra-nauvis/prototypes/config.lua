@@ -1500,7 +1500,12 @@ return {
     target = {fade_from = 150, fade_span = 300, double_from = 300, double_span = 1300, rich_offset = 1000,
               rich_span = 2600, per_km2 = 1000000, reference_strength = 2, reference_factor = 2,
               density_floor = 15},
-    blob = {name = REN.HS_BLOB, seed1 = 7302, mean = 1 / 3, divisor = 7,
+    -- A row's bodies of ore (equal round spots on a blue-noise grid read as polka
+    -- dots): half the candidates carry nothing and the rest share the amount by a squared uniform, so a
+    -- few large bodies stand among small ones; mean 1 over all candidates, so a row's amount holds on
+    -- average. The blob reaches past each cone's rim, which is what lets an outline leave the circle.
+    size = {keep = 0.5, power = 2, gain = 6},
+    blob = {name = REN.HS_BLOB, seed1 = 7302, mean = 1 / 3, divisor = 3.5,
             octaves = {{input_scale = 1 / 8, output_scale = 1}, {input_scale = 1 / 24, output_scale = 1},
                        {input_scale = 1 / 64, output_scale = 1.5}}},
     resources = {

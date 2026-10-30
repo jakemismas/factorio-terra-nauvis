@@ -185,7 +185,7 @@ local function map_spot(h, rows, i, L)
     cap[#cap + 1] = start .. " * (" .. footprint(r) .. " - " .. sr .. ")"
   end
   local q = "q" .. i
-  L[q] = "hs_each * " .. sum(qty, "0") .. " * hs_land"
+  L[q] = "hs_each * " .. sum(qty, "0") .. " * hs_land * hs_size"
   local radius_cap = #cap == 1 and cap[1] or ("max(" .. table.concat(cap, ", ") .. ")")
   local spacing = "if(" .. S .. " > " .. num(SP.fine_scale) .. ", " .. num(SP.spacing) .. ", " ..
     num(SP.spacing_fine) .. ")"
@@ -221,6 +221,10 @@ for _, h in ipairs(HC.resources) do
   -- reads, so a region's spots go first to its most inland (for a field the farthest offshore)
   -- candidates (config hotspots.land_px)
   L.hs_each = control(h.resource, "size") .. " * " .. distance_factor
+  -- per candidate: its share of the row's amount (config hotspots.size), so the spots stop being equal
+  local Z = HC.size
+  L.hs_size = num(Z.gain) .. " * clamp((random_penalty{x = x, y = y, source = 1, amplitude = 1, seed = " ..
+    num(h.seed1) .. "} - " .. num(Z.keep) .. ") / " .. num(1 - Z.keep) .. ", 0, 1) ^ " .. num(Z.power)
   if h.sea then
     L.hs_land = "(" .. K.land_coarse .. " < " .. num(-HC.sea_px) .. ")"
     L.hs_grade = "clamp(-(" .. minus(K.land_coarse, -HC.sea_px) .. ") / " .. num(HC.land_grade_px) .. ", 0, 1)"
@@ -232,8 +236,7 @@ for _, h in ipairs(HC.resources) do
   local unit = TG.per_km2 / h.spots_per_km2 * h.base_density * h.mean_size
   local q_ref = TG.reference_strength * unit * TG.reference_factor / HC.patches
   local height = SP.cone_factor * q_ref ^ SP.cube_root / (math.pi * h.rq * h.rq)
-  def(N.v, "hs_spot + (" .. B.name .. " - " .. num(B.mean) .. ") * " .. num(height / B.divisor) .. " * (hs_spot > 0)",
-    L)
+  def(N.v, "hs_spot + (" .. B.name .. " - " .. num(B.mean) .. ") * " .. num(height / B.divisor), L)
   local size = "(" .. control(h.resource, "size") .. " > 0)"
   local richness = control(h.resource, "richness")
   if h.fluid then
