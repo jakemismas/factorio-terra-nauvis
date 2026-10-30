@@ -67,6 +67,9 @@ Date: 2026-10-28
       stay outside, and the start area stays normal. A random spawn city never lands inside the
       zone. Without Alien Biomes nothing changes, and the game warns at the start and each player
       who joins.
+    - Exact coastlines startup setting (default off): on a map it acts on, each new chunk's coast
+      snaps to the reference wherever the noise misses it by half a reference pixel or more. In this
+      version it acts on no map yet.
   Changes:
     - With Alien Biomes enabled the Terra Nauvis presets are not offered yet (its palms would read
       the fine coast); the Map type entries are. A world made from a preset that later loads

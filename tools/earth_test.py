@@ -264,6 +264,21 @@ REGISTRY = [
      "timed_ss": ["de_t15b"],
      "oracle_properties": ["destroyed_zone"],
      "dumps": ["m1", "m2"]},
+    # Exact coastlines (design section 13, milestone 1; test notes 5.9): the band-fix key behind the startup
+    # setting, the only per-chunk handler and its K+ tables. FG: the setting's facts and the tables decode
+    # (bf_dump_facts); with the key absent no handler and the base world, with it on the rule's writes and a
+    # clean recheck (bf_off). SS: the offline pricing (bf_price), the four flip checks (bf_t15 timed, bf_t12,
+    # bf_t1c, bf_t1d), the S13 slivers, the T11 flip through the setting, T5 with the fix on and the per-map
+    # outcome against config.lua's bandfix.maps (bf_outcome).
+    {"id": "coast-band-fix", "part": 7, "order": 1,
+     "fg": ["bf_dump_facts", "bf_off"],
+     "ss": ["bf_price", "bf_t15", "bf_t12", "bf_t1c", "bf_t1d", "bf_slivers", "bf_t11", "bf_t5", "bf_outcome"],
+     # the live sample's pools: bf_price (Old World alone re-emits for about 10 minutes) and bf_t15 (four
+     # timed walks, a measurement row with no section 6 ratio) would not fit the gate's 10 minutes
+     "deterministic_ss": ["bf_slivers", "bf_t11"],
+     "timed_ss": [],
+     "oracle_properties": [],
+     "dumps": ["m1", "m2"]},
 ]
 
 
@@ -796,6 +811,9 @@ LIMIT_CONSUMERS = {
     "P7": "derive_walker_pair: Earth scriptUpdate per tick over M0's in benchmark mode (suite check walker_m1)",
     "P19": "derive_save_pair: the forced block's save increment over the comparator's (save_m1, M1 over M0; "
            "from climate-tiles save_m2, M2 over BAB)",
+    "P8": "bf_suite_checks' bf_t15: the band-fix handler's time per generated chunk at 16 LP on each flip-checked "
+          "configuration, a measurement row whose outcome bf_outcome holds bandfix.maps to (ruling 9)",
+    "P9": "bf_suite_checks' bf_t15: the band-fix handler's time per tick, max and p99, at 16 LP, two walkers, as P8",
 }
 
 
@@ -2621,9 +2639,9 @@ def section6_controls(main):
     out["every 6.2 row in force through europe-coast has an enforcing check"] = (not unenforced_limits(ec),
                                                                                   unenforced_limits(ec))
     # a row that first comes into force in a later milestone, before its consumer lands
-    cb = parse_section6(main, "coast-band-fix")
-    out["a row in force with no enforcing check fails closed (coast-band-fix's P8 before its consumer lands)"] = (
-        "P8" in unenforced_limits(cb), unenforced_limits(cb)[:3])
+    cb = parse_section6(main, "compat-completeness")
+    out["a row in force with no enforcing check fails closed (compat-completeness' P15 before its consumer lands)"] = (
+        "P15" in unenforced_limits(cb), unenforced_limits(cb)[:3])
     ct = parse_section6(main, "climate-tiles")
     out["every 6.2 row in force through climate-tiles has an enforcing check (P2 on M2)"] = (
         not unenforced_limits(ct), unenforced_limits(ct))
@@ -19960,6 +19978,1107 @@ def de_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
     return checks
 
 
+# ------------------------------------------------------------------------------------------------ coast-band-fix
+#
+# Exact coastlines (design section 13, milestone 1; test notes 5.9; decisions 9 and 10): the per-save band-fix key
+# behind the startup setting, the only per-chunk handler (terra-nauvis/scripts/bandfix.lua) and its K+ tables
+# (tools/build_geo.py --bandfix). The four flip checks are measurement rows: each records its outcome per
+# configuration and fails only when it could not measure; bf_outcome holds config.lua's bandfix.maps to the
+# maps whose four checks all passed. Every game-backed row reads the handler's writes against the rule's
+# Python mirror (build_geo.BandfixRule) on a fix-off dump of the same chunks, so a write the rule does not
+# make, or a write it makes that the game skipped, fails the row whatever the outcome.
+
+BF_AREA = 512                 # T1 (c) and (d): each configuration's dumped squares, tiles a side
+BF_AREAS = 4                  # squares per configuration, on its densest K chunks
+BF_WALK = {"period": 30, "steps": 60, "radius": 1, "start": 60, "drain": 300}
+BF_T12 = {"start": 60, "t1": 240, "t2": 600, "server_timeout": 75}
+BF_FG_AREA = 256              # bf_off: the coastal square the FG row dumps
+BF_S13_SCALE = 6              # the S13-bandfix areas (spikes/S13-bandfix/README.md), lon and lat boxes
+BF_S13 = {"london": (-1.57, 2.22, 49.76, 53.55), "copenhagen": (10.63, 14.43, 53.79, 57.58),
+          "sognefjord": (4.35, 8.14, 59.24, 63.03), "cyclades": (23.20, 26.99, 35.06, 38.86)}
+BF_S13_SIZE = 1024
+BF_T11_TICKS = 4
+BF_PROBE = HERE / "mods" / "ea-bf-probe"
+BF_OTHER = {"name": "ea-bf-other", "tick": 1}  # bf_off: the second surface of design constraint 4's control
+
+_BF_RULES = {}
+
+
+def bf_cfg(cfg):
+    B = cfg.get("bandfix")
+    if not B:
+        raise GateError("config.lua has no bandfix group (coast-band-fix)")
+    return B
+
+
+def bf_configs(cfg):
+    """The flip checks' configurations [(map key, scale)] in map order (config.lua bandfix.checks)."""
+    B = bf_cfg(cfg)
+    return [(mk, int(B["checks"][mk]["scale"])) for mk in cfg["map_order"] if mk in (B.get("checks") or {})]
+
+
+def bf_rule(mk, s):
+    import build_geo
+    k = (mk, int(s))
+    if k not in _BF_RULES:
+        _BF_RULES[k] = build_geo.BandfixRule(mk, s)
+    return _BF_RULES[k]
+
+
+def bf_lua_maps(maps):
+    return "{" + ", ".join(json.dumps(m) for m in maps) + "}"
+
+
+def stage_bf_copy(ctx, cfg, tag, spec=None, maps=None):
+    """A staged test copy of the mod (never shipped): ea-bf-probe's probe.lua appended to its control.lua with
+    `spec` beside it as bf-spec.lua (the probe runs in the mod's own Lua state), and with `maps` the copy's
+    config.lua lists those maps in bandfix.maps (so the setting route bakes the key there)."""
+    dst = ctx.out / "stage" / f"bf-{tag}" / cfg["identity"]["id"]
+    if dst.exists():
+        shutil.rmtree(dst)
+    shutil.copytree(MOD, dst)
+    if spec is not None:
+        probe = (BF_PROBE / "probe.lua").read_text(encoding="utf-8")
+        ctl = (dst / "control.lua").read_text(encoding="utf-8")
+        (dst / "control.lua").write_text(ctl + "\n" + probe, encoding="utf-8", newline="\n")
+        (dst / "bf-spec.lua").write_text("return " + lua_lit(spec) + "\n", encoding="utf-8", newline="\n")
+    if maps is not None:
+        cp = dst / "prototypes" / "config.lua"
+        text = cp.read_text(encoding="utf-8")
+        pat = re.compile(r"(\n  bandfix = \{\n(?:    [^\n]*\n)*?    maps = )\{[^}]*\}")
+        new, n = pat.subn(lambda m: m.group(1) + bf_lua_maps(maps), text, count=1)
+        if n != 1:
+            raise GateError("the staged copy's config.lua has no bandfix.maps line to set")
+        cp.write_text(new, encoding="utf-8", newline="\n")
+    return dst
+
+
+def bf_modset(ctx, mods, tag, spec=None, maps=None, dump=True, extra=()):
+    """A modset holding a staged copy of the mod (with the probe when `spec` is given) in place of the zip,
+    plus ep-s8-dump; named by the Earth zip's sha256 prefix and the copy's hash, prepared (G7)."""
+    stage = stage_bf_copy(ctx, mods.cfg, tag, spec, maps)
+    mods.build_zip()
+    adds = [stage] + ([HERE / "mods" / "ep-s8-dump"] if dump else []) + list(extra)
+    ms = mods.make(f"ea-{tag}-{mods.zip_sha[:8]}-{folder_hash(*adds)}", adds)
+    mods.prepare(ms, tag)
+    return ms
+
+
+def bf_set(ctx, mods, modset, on):
+    name = mods.cfg["settings"][bf_cfg(mods.cfg)["setting"]]["name"]
+    res = ctx.fh_plain(["settings", modset, "--set", f"startup.{name}={'true' if on else 'false'}"])
+    if not res.startswith("RESULT ok"):
+        raise GateError(f"fh.py settings {modset}: {res}")
+
+
+def bf_pen(ctx, cfg, mk, s, on, label, cliffs=True):
+    """A map's preset as the M1 dump holds it, at scale s, with the city offset pinned to 0 (geo tiles are world
+    tiles) and the band-fix key set (on) or absent (off), as a full MGS file (U10: never with --preset)."""
+    B = bf_cfg(cfg)
+    pname, g = map_preset(cfg, mk)
+    pen = dict(preset_pen(ctx.shared["dump_m1"], pname))
+    if not pen:
+        raise GateError(f"the M1 dump holds no preset {pname}")
+    pin_scale(cfg, mk, pen, s)
+    pen[g["cx"]], pen[g["cy"]] = 0, 0
+    pen.pop(B["key"], None)
+    if on:
+        pen[B["key"]] = B["on"]
+    body = {"property_expression_names": pen}
+    if not cliffs:
+        body["cliff_settings"] = NO_CLIFFS
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"bf-{label}-{mk}-s{int(s)}-{'on' if on else 'off'}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def bf_chunk_weights(mk, s):
+    """{(chunk x, chunk y): K tiles} on the map's own chunk grid (city offset 0) at scale s: where the handler
+    has the most to read and write (the walkers' routes and the T1 squares)."""
+    import numpy as np
+    rule = bf_rule(mk, s)
+    CT = int(rule.B["chunk_tiles"])
+    acc = {}
+    for r, (c0, row) in rule.rows.items():
+        ks = np.nonzero(np.isin(row, list(rule.k)))[0]
+        if not len(ks):
+            continue
+        y0 = s * (r - rule.hr)
+        for c in (ks + c0).tolist():
+            x0 = s * (c - rule.wr)
+            for cy in range(y0 // CT, (y0 + s - 1) // CT + 1):
+                for cx in range(x0 // CT, (x0 + s - 1) // CT + 1):
+                    acc[(cx, cy)] = acc.get((cx, cy), 0) + s * s
+    return acc
+
+
+def bf_spawn_clear(cfg, x0, y0, n):
+    """Whether an n-tile square keeps clear of the spawn keep disc and the start area (generated before
+    on_init; its chunks would not show the requested order)."""
+    R = max(int(bf_cfg(cfg)["spawn_keep_tiles"]), START_AREA_CHUNKS * 32 + 64)
+    return x0 > R or y0 > R or x0 + n < -R or y0 + n < -R
+
+
+def bf_squares(cfg, mk, s, count, size):
+    """`count` chunk-aligned squares of `size` tiles on the densest K chunks, apart from each other and from
+    the start area, in a fixed order (densest first)."""
+    w = bf_chunk_weights(mk, s)
+    CT = int(bf_cfg(cfg)["chunk_tiles"])
+    k = size // CT
+    sums = {}
+    for (cx, cy), v in w.items():
+        bx, by = cx - cx % k, cy - cy % k
+        sums[(bx, by)] = sums.get((bx, by), 0) + v
+    out = []
+    for (bx, by), _ in sorted(sums.items(), key=lambda kv: (-kv[1], kv[0])):
+        x0, y0 = bx * CT, by * CT
+        if not bf_spawn_clear(cfg, x0, y0, size):
+            continue
+        if any(abs(x0 - a) < size * 2 and abs(y0 - b) < size * 2 for a, b, _, _ in out):
+            continue
+        out.append((x0, y0, size, size))
+        if len(out) == count:
+            break
+    return out
+
+
+def bf_routes(cfg, mk, s, steps):
+    """Two walkers' routes (PERF-04): the 2 x steps densest K chunks, split at their median x, each half
+    visited west to east by nearest neighbour; points are chunk centres in world tiles."""
+    w = bf_chunk_weights(mk, s)
+    CT = int(bf_cfg(cfg)["chunk_tiles"])
+    top = sorted(w.items(), key=lambda kv: (-kv[1], kv[0]))
+    pts = [c for c, _ in top if bf_spawn_clear(cfg, c[0] * CT, c[1] * CT, CT)][:2 * steps]
+    pts.sort()
+    halves = [pts[:len(pts) // 2], pts[len(pts) // 2:]]
+    routes = []
+    for half in halves:
+        left = sorted(half)
+        if not left:
+            routes.append([])
+            continue
+        path = [left.pop(0)]
+        while left:
+            cx, cy = path[-1]
+            i = min(range(len(left)), key=lambda q: ((left[q][0] - cx) ** 2 + (left[q][1] - cy) ** 2, left[q]))
+            path.append(left.pop(i))
+        routes.append([[cx * CT + CT // 2, cy * CT + CT // 2] for cx, cy in path])
+    return routes
+
+
+def bf_area_classes(dump, tile_protos):
+    """Per dumped area: (area, names, player-blocking water, kept water) arrays, the handler's classes: water
+    is a tile with the water_tile and player layers that an autoplace places (T1's water), kept water one
+    with water_tile but not player (fords and marsh water, never written)."""
+    import numpy as np
+    import dump_render
+    out = []
+    for a in dump.get("areas") or []:
+        pal, ix = dump_render.decode_tiles(a)
+        info = {t["name"]: set(t.get("layers") or []) for t in a["tiles"]["info"]}
+        wet = np.array([("water_tile" in info[n] and "player" in info[n] and
+                         bool((tile_protos.get(n) or {}).get("autoplace"))) for n in pal], bool)
+        kept = np.array([("water_tile" in info[n] and "player" not in info[n]) for n in pal], bool)
+        out.append((a["area"], np.array(pal)[ix], wet[ix], kept[ix]))
+    return out
+
+
+def bf_slivers(wet):
+    """Tiles whose class differs from both neighbours along x or both along y (S13-bandfix's slivers)."""
+    import numpy as np
+    p = np.pad(wet, 1, mode="edge")
+    c = p[1:-1, 1:-1]
+    return ((p[1:-1, :-2] != c) & (p[1:-1, 2:] != c)) | ((p[:-2, 1:-1] != c) & (p[2:, 1:-1] != c))
+
+
+def bf_judge(cfg, mk, s, off, on, footprint=None):
+    """The handler against its rule on one configuration's dumped squares (fix off, fix on; the same
+    chunks generated in the same order): the tiles the rule writes from the off tiles must be exactly the
+    tiles that changed, each to its target class; then T1 on the on tiles at scored pixel centres (thin
+    water, the scale's waterway footprints, kept water and the spawn keep disc masked, U13), the coast's
+    maximum deviation over every wrong tile, and the slivers among the written tiles."""
+    import numpy as np
+    import build_geo
+    import earthgeo as eg
+    rule = bf_rule(mk, s)
+    mref = mref_of(mk)
+    cls = build_geo.ref_classes(mref)
+    if footprint is None:
+        footprint, _ = build_geo.waterway_footprint(cfg, mref, mk, s, float(rule.B["mask_margin_tiles"]))
+    CT = int(rule.B["chunk_tiles"])
+    r2 = int(rule.B["spawn_keep_tiles"]) ** 2
+    nb = [tuple(x) for x in rule.B["neighbours"]]
+    t = {"tiles": 0, "changed": 0, "expected": 0, "missing": 0, "extra": 0, "wrong_class": 0, "slivers_written": 0,
+         "fill_pixels_written": 0, "fill_pixels_left_partial": 0, "centres": 0, "centres_wrong": 0,
+         "centres_wrong_off": 0, "wrong_tiles_scored": 0, "max_deviation_px": 0.0, "deviation_over_half": 0}
+    for (area, n0, w0, k0), (area1, n1, w1, k1) in zip(off, on):
+        if area != area1:
+            raise GateError(f"bf_judge: the off and on dumps hold different areas ({area} against {area1})")
+        x0, y0, w, h = area["x0"], area["y0"], area["w"], area["h"]
+        if x0 % CT or y0 % CT or w % CT or h % CT:
+            raise GateError(f"bf_judge: area {area} is not chunk-aligned")
+        exp = np.zeros((h, w), np.int8)
+        for cy in range(y0 // CT, (y0 + h) // CT):
+            for cx in range(x0 // CT, (x0 + w) // CT):
+                ly0, lx0 = cy * CT - y0, cx * CT - x0
+                sub = (slice(ly0, ly0 + CT), slice(lx0, lx0 + CT))
+                for lx, ly, land in rule.chunk(cx, cy, w0[sub], k0[sub]):
+                    exp[ly0 + ly, lx0 + lx] = 2 if land else 1
+        changed = n0 != n1
+        E = exp > 0
+        t["tiles"] += int(n0.size)
+        t["changed"] += int(changed.sum())
+        t["expected"] += int(E.sum())
+        t["missing"] += int((E & ~changed).sum())
+        t["extra"] += int((changed & ~E).sum())
+        t["wrong_class"] += int((E & changed & ((exp == 2) == w1)).sum())
+        t["slivers_written"] += int((bf_slivers(w1) & changed).sum())
+        X, Y = np.meshgrid(np.arange(x0, x0 + w), np.arange(y0, y0 + h))
+        c, r = X // s + mref.wr, Y // s + mref.hr
+        i, j = X % s, Y % s
+        inside = (c >= 0) & (c < mref.W) & (r >= 0) & (r < mref.H)
+        cc, rr = np.clip(c, 0, mref.W - 1), np.clip(r, 0, mref.H - 1)
+        ref = cls[rr, cc]
+        fp = footprint[rr, cc] & inside
+        disc = X * X + Y * Y < r2
+        ok = inside & (ref != 2) & ~fp & ~k1 & ~disc
+        centre = (i == s // 2) & (j == s // 2)
+        sc = ok & centre
+        t["centres"] += int(sc.sum())
+        t["centres_wrong"] += int((sc & ((ref == 1) == w1)).sum())
+        t["centres_wrong_off"] += int((sc & ((ref == 1) == w0)).sum())
+        # the coast's deviation at every wrong tile: the distance from its sample point to the nearest square of
+        # its generated class among its pixel's 8 neighbours (0.5 px or more: none of them is that class)
+        bad = ok & ((ref == 1) == w1)
+        t["wrong_tiles_scored"] += int(bad.sum())
+        du, dv = (i - s // 2) / s, (j - s // 2) / s
+        for yy, xx in zip(*np.nonzero(bad)):
+            best = None
+            want_land = not bool(w1[yy, xx])
+            for dc, dr in nb:
+                pc, pr = int(cc[yy, xx]) + dc, int(rr[yy, xx]) + dr
+                land = 0 <= pc < mref.W and 0 <= pr < mref.H and cls[pr, pc] == 1
+                if land == want_land:
+                    dx = max(0.0, abs(du[yy, xx] - dc) - 0.5)
+                    dy = max(0.0, abs(dv[yy, xx] - dr) - 0.5)
+                    dd = math.hypot(dx, dy)
+                    best = dd if best is None else min(best, dd)
+            dev = 0.5 if best is None else best
+            t["max_deviation_px"] = max(t["max_deviation_px"], round(dev, 4))
+            if dev >= 0.5:
+                t["deviation_over_half"] += 1
+        # fill pixels: a written fill pixel holds its reference class on every tile of the square but kept water
+        sym = np.vectorize(rule.sym)(cc, rr)
+        isk = np.isin(sym, list(rule.k)) & inside
+        for pc, pr in {(int(a), int(b)) for a, b in zip(cc[isk & E], rr[isk & E])}:
+            land = rule.sym(pc, pr) in rule.landish
+            m = rule.mask(pc, pr, land)
+            if not rule.thin[m]:
+                continue
+            sel = (cc == pc) & (rr == pr) & inside & ~k1
+            t["fill_pixels_written"] += 1
+            if bool((w1[sel] == land).any()):
+                t["fill_pixels_left_partial"] += 1
+    t["agreement"] = round(1 - t["centres_wrong"] / max(1, t["centres"]), 6)
+    t["agreement_off"] = round(1 - t["centres_wrong_off"] / max(1, t["centres"]), 6)
+    return t
+
+
+def bf_judge_fails(label, t):
+    """Failures that mean the handler did not follow its rule (never a measurement's outcome)."""
+    out = []
+    if not t["tiles"]:
+        out.append(f"{label}: no dumped tiles")
+    if t["missing"] or t["extra"] or t["wrong_class"]:
+        out.append(f"{label}: the game's writes differ from the rule: {t['missing']} missing, {t['extra']} extra, "
+                   f"{t['wrong_class']} to the wrong class (of {t['expected']} expected)")
+    return out
+
+
+def bf_locale(cfg):
+    """[mod-setting-name] and [mod-setting-description] of the band-fix setting (the locale file)."""
+    import tn_static
+    name = cfg["settings"][bf_cfg(cfg)["setting"]]["name"]
+    merged = {}
+    for f in sorted((MOD / "locale" / "en").glob("*.cfg")):
+        secs, _ = tn_static.parse_cfg(f.read_text(encoding="utf-8"), f.name)
+        for sec, kv in secs.items():
+            merged.setdefault(sec, {}).update(kv)
+    return (merged.get("mod-setting-name") or {}).get(name), (merged.get("mod-setting-description") or {}).get(name)
+
+
+def bf_setting_findings(cfg, dump, settings_dump):
+    """T16 (FG; TST-18) and the band-fix facts of one dump: the setting is a startup bool defaulting to false
+, named "Exact coastlines", its tooltip naming exactly the maps it acts on; no other
+    band-fix or per-map key setting; no preset bakes the key at the default, the key has no prototype and its
+    on value names a defined body; only flip-checked maps have tables, and the setting acts on none other."""
+    B = bf_cfg(cfg)
+    s = cfg["settings"][B["setting"]]
+    fails = []
+    got = {n: v for group in settings_dump.values() if isinstance(group, dict) for n, v in group.items()}
+    rec = got.get(s["name"])
+    if not rec:
+        fails.append(f"the settings dump holds no {s['name']}")
+    else:
+        if rec.get("type") != "bool-setting" or rec.get("setting_type") != "startup":
+            fails.append(f"{s['name']} is {rec.get('setting_type')} {rec.get('type')}, not a startup bool-setting")
+        if rec.get("default_value") is not False:
+            fails.append(f"{s['name']} defaults to {rec.get('default_value')!r}; DECISIONS 13:45 adopted off")
+    prefix = cfg["identity"]["setting_prefix"]
+    stem = s["name"][len(prefix):] if s["name"].startswith(prefix) else s["name"]
+    others = sorted(n for n in got if n != s["name"] and n.startswith(prefix) and
+                    (stem in n or "bandfix" in n or "band-fix" in n or n.endswith(B["key"])))
+    if others:
+        fails.append(f"other band-fix or per-map key settings exist: {others}")
+    label, tip = bf_locale(cfg)
+    if label != "Exact coastlines":
+        fails.append(f"the setting's locale name is {label!r}, not 'Exact coastlines'")
+    tip = tip or ""
+    for mk in cfg["map_order"]:
+        named = f"Terra Nauvis: {cfg['maps'][mk]['display']}" in tip
+        if named != (mk in (B.get("maps") or [])):
+            fails.append(f"the tooltip {'names' if named else 'does not name'} {mk}, which the setting "
+                         f"{'does not act' if named else 'acts'} on")
+    if not B.get("maps") and "no map" not in tip:
+        fails.append("the setting acts on no map, and its tooltip does not say so ('no map')")
+    pres = (dump.get("map-gen-presets") or {}).get("default") or {}
+    for k in cfg["preset_order"]:
+        pname = cfg["presets"][k]["name"]
+        pen = ((pres.get(pname) or {}).get("basic_settings") or {}).get("property_expression_names") or {}
+        if B["key"] in pen:
+            fails.append(f"preset {pname} bakes {B['key']} with the setting at its default (off)")
+    ne = dump.get("noise-expression") or {}
+    if B["key"] in ne:
+        fails.append(f"{B['key']} has a prototype: an absent key must mean off, read by control code only")
+    if B["on"] not in ne:
+        fails.append(f"the key's on value {B['on']} names no defined noise expression")
+    checked = B.get("checks") or {}
+    for mk in sorted(set(B.get("maps") or []) | set(B.get("tables") or {})):
+        if mk not in checked:
+            fails.append(f"config.lua lists {mk} for the band fix, which runs no flip check")
+    return fails
+
+
+def row_bf_dump_facts(ctx, mods, sec6, row, cache):
+    """T16 (FG; settings; TST-18) on the M1 dump, plus the shipped K+ tables: every map with
+    tables decodes in the rule's mirror at every offered scale, its table matches the map's raster size."""
+    cfg = mods.cfg
+    d1 = ctx.shared["dump_m1"]
+    r1 = mods.dumps.get(ctx.shared["m1"])
+    sd = json.loads((r1.out / "mod-settings-dump.json").read_text(encoding="utf-8")) if r1 else {}
+    row.fails += bf_setting_findings(cfg, d1, sd)
+    B = bf_cfg(cfg)
+    n = 0
+    for mk in B.get("tables") or {}:
+        for s in cfg["scales"]["values"]:
+            try:
+                bf_rule(mk, s)
+                n += 1
+            except SystemExit as e:
+                row.fails.append(f"{mk} scale {s}: {e}")
+    row.detail = (f"{cfg['settings'][B['setting']]['name']}: startup bool, default false, 'Exact coastlines', tooltip "
+                  f"naming {B.get('maps') or 'no map'}; no preset bakes {B['key']} at the default; {n} K+ tables decode")
+
+
+def row_bf_off(ctx, mods, sec6, row, cache):
+    """T11, T16 (FG): with the key absent no handler is registered (the probe calls script.get_event_handler in
+    the mod's own Lua state) and the world equals the base (the same build with the band fix stubbed out), in
+    tiles and entities over a coastal square of Europe at scale 6, and so does a save the base made (no key, no
+    band-fix state in storage) loaded by this build, the update case; the positive control: with the key on the
+    handler is registered, the square differs, and a recheck of its chunks finds nothing left to write.
+    Design constraint 4 rides on the same runs: a second surface with Nauvis's own settings, key included,
+    generates the square's chunks, and differs from Nauvis on 0 tiles with the key absent and on exactly the
+    tiles the handler wrote on Nauvis with it on."""
+    cfg = mods.cfg
+    mk, s = bf_configs(cfg)[0][0], BF_S13_SCALE
+    (x0, y0, w, h), = bf_squares(cfg, mk, s, 1, BF_FG_AREA)
+    CT = int(bf_cfg(cfg)["chunk_tiles"])
+    chunks = [[cx, cy] for cy in range(y0 // CT, (y0 + h) // CT) for cx in range(x0 // CT, (x0 + w) // CT)]
+    spec = {"label": "bfoff", "report_tick": 3, "recheck": chunks, "other": BF_OTHER}
+    ms = bf_modset(ctx, mods, "bfoff", spec)
+    base = bf_modset(ctx, mods, "bfbase", dict(spec, label="bfbase", neutral=True))
+    area = f"{x0},{y0},{w},{h}"
+    key, newest = common_key(ctx, "bf_off", {"ms": [mods.manifest(ms), mods.manifest(base)], "area": area,
+                                             "dump": ctx.shared.get("dump_m1_sha"), "runs": 5})
+    plan = [("off", ms, False), ("base", base, False), ("on", ms, True)]
+
+    def live():
+        outs = []
+        for label, m, on in plan:
+            dump_settings(ctx, m, ctx.instance, label="bfoff", areas=area, types=ROUTE_TYPES)()
+            outs.append(ctx.fh(scenario_args(ctx.instance, m, 4, SEED, bf_pen(ctx, cfg, mk, s, on, "fg")),
+                               ctx.out / f"bf-off-{label}").out)
+        save = ctx.out / "bf-off-create" / "base.zip"
+        outs.append(ctx.fh(create_args(ctx.instance, base, save, mgs=bf_pen(ctx, cfg, mk, s, False, "fg")),
+                           save.parent).out)
+        dump_settings(ctx, ms, ctx.instance, label="bfoff", areas=area, types=ROUTE_TYPES)()
+        outs.append(ctx.fh(scenario_args(ctx.instance, ms, 4, save=save), ctx.out / "bf-off-update").out)
+        return outs
+
+    def derive(dirs):
+        fails = []
+        if len(dirs) != 5:
+            return {}, [f"{len(dirs)} run directories, want 5"], ""
+        for i, x in enumerate(dirs):
+            fails += g1(x) + (g3(x) if i != 3 else [])
+        reps = [bf_report(x, lab) for x, lab in zip(dirs, ("bfoff", "bfbase", "bfoff"))]
+        upd = bf_report(dirs[4], "bfoff")
+        dumps = [read_dump(x, "bfoff") for x in (dirs[0], dirs[1], dirs[2], dirs[4])]
+        off, bas, on = (bf_area_classes(dp, ctx.shared["dump_m1"].get("tile") or {}) for dp in dumps[:3])
+        t_off, t_base, t_on, t_upd = (area_tiles(dp) for dp in dumps)
+        same = t_off == t_base and area_entities(dumps[0]) == area_entities(dumps[1])
+        same_upd = t_upd == t_base and area_entities(dumps[3]) == area_entities(dumps[1])
+        if upd.get("registered") is not False:
+            fails.append(f"a save the base made, loaded by this build: on_chunk_generated has a handler "
+                         f"({upd.get('registered')!r})")
+        if upd.get("state") not in (False, "none"):
+            fails.append(f"a save the base made, loaded by this build: its band-fix state is {upd.get('state')!r}")
+        if not same_upd:
+            fails.append("a save the base made, loaded by this build: the square differs from the base")
+        if reps[0].get("registered") is not False:
+            fails.append(f"key absent: on_chunk_generated has a handler ({reps[0].get('registered')!r})")
+        if reps[0].get("state") not in (False, "none"):
+            fails.append(f"key absent: the save's band-fix state is {reps[0].get('state')!r}")
+        if not same:
+            fails.append("key absent: the world differs from the build with the band fix stubbed out")
+        if reps[2].get("registered") is not True:
+            fails.append("key on (positive control): no on_chunk_generated handler")
+        diff = sum(1 for a, b in zip(t_off, t_on) if a != b)
+        if not diff:
+            fails.append("key on (positive control): the square equals the key-absent world: the check sees nothing")
+        if reps[2].get("pending") != 0 or reps[2].get("rechecked") != len(chunks):
+            fails.append(f"key on: a recheck of {reps[2].get('rechecked')} chunks would write {reps[2].get('pending')} "
+                         f"tiles (want 0 of {len(chunks)}: idempotent)")
+        o_off, o_on = reps[0].get("other") or {}, reps[2].get("other") or {}
+        if o_off.get("differs") != 0:
+            fails.append(f"key absent: the second surface differs from Nauvis on {o_off.get('differs')!r} tiles of the "
+                         f"square (want 0, else the control cannot tell a write from other terrain)")
+        if (o_on.get("events") or 0) < len(chunks) or o_on.get("written") != 0 or o_on.get("differs") != diff:
+            fails.append(f"key on: the handler saw {o_on.get('events')!r} chunk events on the second surface, says it "
+                         f"wrote {o_on.get('written')!r} tiles there, and the surfaces differ on {o_on.get('differs')!r} "
+                         f"tiles (want at least {len(chunks)} events, 0 written, {diff} differing: Nauvis alone)")
+        t = bf_judge(cfg, mk, s, off, on)
+        fails += bf_judge_fails(f"{mk} scale {s}", t)
+        meas = {"registered_off": reps[0].get("registered"), "registered_on": reps[2].get("registered"),
+                "base_equal": same, "tiles_written_on": diff, "recheck_pending": reps[2].get("pending"),
+                "update_registered": upd.get("registered"), "update_base_equal": same_upd,
+                "other_off": o_off, "other_on": o_on, "judge": t}
+        return meas, fails, (f"{mk} scale {s} square {area}: key absent: no handler, world equal to the stubbed base "
+                             f"{same}; a base save loaded: no handler, equal {same_upd}; key on: handler, {diff} tiles "
+                             f"written as the rule says, recheck {reps[2].get('pending')}; second surface: "
+                             f"{o_on.get('written')!r} written, {o_on.get('differs')!r} tiles differ")
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+# The probe's timer lines: "<tick> <events> <chunks written> <tiles written> Duration: <ms>ms". The parser lives
+# here, not in tools/perf.py, whose sha256 keys every timed row's evidence (the M0 rows' timing machinery).
+BF_TIMER_RE = re.compile(r"^(\d+) (\d+) (\d+) (\d+) Duration: ([\d.]+)ms", re.M)
+
+
+def bf_timer(run_dir, label):
+    """[(tick, events, chunks written, tiles written, ms)] from the probe's timer file."""
+    f = Path(run_dir) / "script-output" / "ea-bf-probe" / f"{label}-timer.txt"
+    text = f.read_text(encoding="utf-8", errors="replace") if f.exists() else ""
+    return [(int(a), int(b), int(c), int(d), float(e)) for a, b, c, d, e in BF_TIMER_RE.findall(text)]
+
+
+def bf_report(run_dir, label):
+    f = Path(run_dir) / "script-output" / "ea-bf-probe" / f"{label}-report.json"
+    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+
+
+def bf_limit(limits, pid, default):
+    """A 6.2 row's bar in ms (P8, P9: "0.24 ms", "2 ms"), parsed from main's plan; `default` when the row is
+    not in force (a suite run through an earlier milestone)."""
+    rec = ((limits or {}).get(pid) or {}).get("limit") or {}
+    v = rec.get("max_ms")
+    return float(v) if isinstance(v, (int, float)) else default
+
+
+def bf_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """coast-band-fix's suite checks, added to suite_checks' table (design section 13, milestone 1; test notes 5.9)."""
+    import build_geo
+    import earthgeo as eg
+    import nav
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    B = bf_cfg(cfg)
+    confs = bf_configs(cfg)
+    dump_sha = ctx.shared.get("dump_m1_sha")
+    tiles_m1 = ctx.shared["dump_m1"].get("tile") or {}
+    CT = int(B["chunk_tiles"])
+
+    def base_key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "dump": dump_sha, "extra": extra or {}})
+
+    def suite_dirs(name, deadline):
+        """Another check's run directories from this suite run, or from the manifest while its key matches."""
+        ent = (ctx.shared.get("suite_runs") or {}).get(name)
+        if not ent:
+            man = SUITES / "coast-band-fix.json"
+            rec = ((json.loads(man.read_text(encoding="utf-8")) if man.exists() else {}).get("checks") or {}).get(
+                name) or {}
+            if rec.get("key") == checks[name].key_fn() and rec.get("run_dirs"):
+                ent = [abs_ws(ctx, x) for x in rec["run_dirs"]]
+        return ent or checks[name].run_fn(deadline)
+
+    def dump_pair(tag, mk, s, squares, ms=None, extra_states=()):
+        """One fix-off and one fix-on scenario per configuration over `squares`, in two workers."""
+        ms = ms or probe_modset(ctx, mods, f"{tag}m1")
+        ms2 = probe_modset(ctx, mods, f"{tag}m1b")
+        area = ";".join(f"{x},{y},{w},{h}" for x, y, w, h in squares)
+        lanes, outs = [[], []], []
+        for ln, (state, m) in enumerate((("off", ms), ("on", ms2))):
+            out = ctx.out / f"{tag}-{mk}-s{s}-{state}"
+            prep = dump_settings(ctx, m, lane_instance(ctx, ln), label="bf", areas=area, types=ROUTE_TYPES)
+            lanes[ln].append((prep, scenario_args(lane_instance(ctx, ln), m, 4, SEED,
+                                                  bf_pen(ctx, cfg, mk, s, state == "on", tag)), out, 1800))
+            outs.append(out)
+        run_lanes(ctx, lanes)
+        return outs
+
+    def judged(mk, s, off_dir, on_dir):
+        off = bf_area_classes(read_dump(off_dir, "bf"), tiles_m1)
+        on = bf_area_classes(read_dump(on_dir, "bf"), tiles_m1)
+        return bf_judge(cfg, mk, s, off, on)
+
+    # T1 (SS; offline, first; design experiment 10): S12's method on the shipped bases, re-emitted from the
+    # committed inputs into a scratch folder: byte-identical to the committed tables, and the pricing at scales 1,
+    # 3 and 6 per map (share of chunks corrected, tiles per written chunk: mean, p95 and max, K+ data size)
+    def price_run(deadline):
+        out = ctx.out / "bf-price"
+        out.mkdir(parents=True, exist_ok=True)
+        recs = {}
+        for mk in B.get("tables") or {}:
+            rec = build_geo.emit_bandfix(mk, out / mk, manifest=False, log=ctx.say)
+            (out / f"price-{mk}.json").write_text(json.dumps(rec, indent=1), encoding="utf-8")
+            recs[mk] = rec
+        return [out]
+
+    def price_derive(dirs):
+        fails, meas = [], {}
+        out = Path(dirs[0])
+        for mk in B.get("tables") or {}:
+            f = out / f"price-{mk}.json"
+            if not f.exists():
+                fails.append(f"{mk}: no pricing record")
+                continue
+            rec = json.loads(f.read_text(encoding="utf-8"))
+            for name in build_geo.bandfix_files(mk, B, cfg["scales"]["values"]):
+                a, b = out / mk / name, build_geo.BANDFIX_GENERATED / name
+                if not a.exists() or not b.exists() or a.read_bytes() != b.read_bytes():
+                    fails.append(f"{name}: a fresh emission differs from the committed table")
+            man = json.loads((REPO / "data-src" / "bandfix" / f"manifest-{mk}.json").read_text(encoding="utf-8"))
+            meas[mk] = {"shared_bytes": rec["shared"]["bytes"], "scales": {}}
+            for s in build_geo.BANDFIX_PRICE_SCALES:
+                r = rec["scales"][str(s)]
+                if man["scales"][str(s)]["s12_rule"] != r["s12_rule"]:
+                    fails.append(f"{mk} scale {s}: the committed manifest's pricing differs from a fresh emission")
+                meas[mk]["scales"][str(s)] = {"s12_rule": r["s12_rule"], "shipped_rule": r["shipped_rule"],
+                                              "kplus_bytes": r["data_bytes_with_shared"]}
+        return meas, fails, "; ".join(
+            f"{mk}: " + ", ".join(f"s{s} {v['s12_rule']['share'] * 100:.2f} % of chunks, "
+                                  f"{v['s12_rule']['tiles_per_touched_chunk']['mean']}/"
+                                  f"{v['s12_rule']['tiles_per_touched_chunk']['p95']}/"
+                                  f"{v['s12_rule']['tiles_per_touched_chunk']['max']} tiles, {v['kplus_bytes']} B"
+                                  for s, v in m["scales"].items()) for mk, m in meas.items())
+
+    checks["bf_price"] = SuiteCheck("bf_price", lambda: base_key("bf_price"), price_run, price_derive)
+
+    # T15 (SS; measured; flip check a; each configuration; 16 LP with 8 LP recorded; two walkers through the
+    # densest K chunks, PERF-04): the handler timed in the mod's own Lua state (the probe's LuaProfiler around
+    # it), benchmark mode, ticks back to back; P8 is the handler time per generated chunk, P9 the handler time
+    # per tick, max and p99 over the ticks that delivered chunks. A measurement row: over a limit is the map's
+    # outcome (no fix there), never a failure; a run that cannot be measured fails.
+    p8 = bf_limit(limits, "P8", 0.24)
+    p9 = bf_limit(limits, "P9", 2.0)
+    t15_plan = []
+    for mk, s in confs:
+        routes = bf_routes(cfg, mk, s, BF_WALK["steps"])
+        spec = {"label": f"t15{mk}", "timer": True, "start": BF_WALK["start"], "period": BF_WALK["period"],
+                "walkers": [{"points": r, "radius": BF_WALK["radius"]} for r in routes],
+                "report_tick": BF_WALK["start"] + BF_WALK["steps"] * BF_WALK["period"] + BF_WALK["drain"]}
+        t15_plan.append((mk, s, spec))
+
+    def t15_run(deadline):
+        outs = []
+        perf = ctx.perf
+        for mk, s, spec in t15_plan:
+            ms = bf_modset(ctx, mods, f"bft15{mk}", spec, dump=False)
+            r0 = ctx.fh(scenario_args(ctx.instance, ms, 1, SEED, bf_pen(ctx, cfg, mk, s, True, "t15")),
+                        ctx.out / f"bf-t15-save-{mk}")
+            save = r0.out / "scenario.zip"
+            for mask in (perf.MASK16, perf.MASK8):
+                perf.wait_quiet(deadline)
+                watcher = perf.Watcher(ctx.out / f"bf-t15-{mk}-{mask:#x}-affinity.jsonl", mask, ctx.job)
+                r = ctx.fh(["scenario", "--instance", "ea-time", "--modset", ms, "--save", save, "--ticks",
+                            str(spec["report_tick"] + 2), "--", "--benchmark-verbose", "all", "--threads",
+                            str(T15B["threads"])], ctx.out / f"bf-t15-{mk}-{mask:#x}", timeout=1200, watcher=watcher,
+                           monitor=True)
+                after = perf.tasklist_game()
+                recs, _, _ = watcher.finish()
+                log_text = perf.read(r.out / "bench" / "factorio-current.log")
+                (r.out / "affinity.json").write_text(json.dumps(perf.affinity_verdict(recs, r.mon, log_text, mask),
+                                                                indent=1, default=str), encoding="utf-8")
+                persist_monitor(r.out.parent / f"{r.out.name}-monitor.json", r.mon, mask, None, after)
+                if r.mon:
+                    r.mon.close()
+                outs.append(r.out)
+        return outs
+
+    def t15_derive(dirs):
+        import perf
+        fails, meas = [], {}
+        if len(dirs) != 2 * len(t15_plan):
+            return {}, [f"{len(dirs)} timed runs, want {2 * len(t15_plan)}"], ""
+        for n, (mk, s, spec) in enumerate(t15_plan):
+            rec = {}
+            for x, mask in zip(dirs[2 * n:2 * n + 2], (perf.MASK16, perf.MASK8)):
+                x = Path(x)
+                f = g1(x)
+                mon_file = x.parent / f"{x.name}-monitor.json"
+                f += [f"{mk} {mask:#x} affinity: {y}" for y in affinity_from_raw(
+                    x.parent / f"{x.name}-affinity.jsonl", mon_file, x / "bench" / "factorio-current.log", mask)]
+                rep = bf_report(x, spec["label"])
+                rows = bf_timer(x, spec["label"])
+                if rep.get("walk_generated") != rep.get("walk_chunks") or not rows:
+                    f.append(f"{mk} {mask:#x}: the walk generated {rep.get('walk_generated')} of "
+                             f"{rep.get('walk_chunks')} chunks, {len(rows)} timed ticks")
+                fails += f
+                ms_ = [r[4] for r in rows]
+                ev = sum(r[1] for r in rows)
+                per_chunk = sum(ms_) / ev if ev else None
+                st = {"ticks": len(rows), "events": ev, "chunks_written": sum(r[2] for r in rows),
+                      "tiles_written": sum(r[3] for r in rows),
+                      "ms_per_generated_chunk": round(per_chunk, 5) if per_chunk is not None else None,
+                      "tick_max_ms": round(max(ms_), 4) if ms_ else None,
+                      "tick_p99_ms": round(perf.pct(ms_, 0.99), 4) if ms_ else None}
+                rec[f"{mask:#x}"] = st
+            g = rec.get(f"{perf.MASK16:#x}") or {}
+            rec["passes"] = bool(g.get("ms_per_generated_chunk") is not None and g["ms_per_generated_chunk"] <= p8
+                                 and g.get("tick_max_ms") is not None and g["tick_max_ms"] <= p9)
+            rec["limits"] = {"P8": p8, "P9": p9}
+            meas[f"{mk}-s{s}"] = rec
+        return meas, fails, "; ".join(
+            f"{k}: 16 LP {v.get(f'{0xFFFF:#x}', {}).get('ms_per_generated_chunk')} ms per chunk (P8 {p8}), tick max "
+            f"{v.get(f'{0xFFFF:#x}', {}).get('tick_max_ms')} ms (P9 {p9}), p99 {v.get(f'{0xFFFF:#x}', {}).get('tick_p99_ms')};"
+            f" 8 LP {v.get(f'{0xFF:#x}', {}).get('ms_per_generated_chunk')} / {v.get(f'{0xFF:#x}', {}).get('tick_max_ms')};"
+            f" check (a) {'passes' if v['passes'] else 'fails'}" for k, v in meas.items())
+
+    checks["bf_t15"] = SuiteCheck("bf_t15", lambda: key_of({"check": "bf_t15", "sig": sig(ctx.shared["m1"], "m1"),
+                                                            "mod": d["mod"], "test_mods": d["test_mods"],
+                                                            "timing": timing, "walk": BF_WALK, "build": GAME_BUILD,
+                                                            "plan": [(m, s) for m, s, _ in t15_plan]}),
+                                  t15_run, t15_derive)
+
+    # T12 (SS; measured; flip check b; each configuration): host at 24 LP, client at 8 LP, emulated headless
+    # (design note 12): a loopback server explores with the walkers and saves at t1 and t2; the t1 save
+    # benchmarked t2 - t1 + 1 ticks at 24 and at 8 LP and the t2 save 1 tick must give one checksum, and the
+    # storage the probe writes at t2 + 1 must be equal on every path; the same recipe on the bad
+    # probe (a write from a counter a load resets) must diverge, or the recipe cannot see a desync.
+    T = BF_T12
+
+    def t12_spec(mk, s, label, bad=False):
+        routes = bf_routes(cfg, mk, s, (T["t2"] - T["start"]) // BF_WALK["period"])
+        return {"label": label, "bad": bad, "start": T["start"], "period": BF_WALK["period"],
+                "walkers": [{"points": r, "radius": BF_WALK["radius"]} for r in routes],
+                "saves": [{"tick": T["t1"], "name": f"{label}-a"}, {"tick": T["t2"], "name": f"{label}-b"}],
+                "storage_ticks": [T["t2"] + 1], "report_tick": T["t2"] + 2}
+
+    def t12_run(deadline):
+        outs = []
+        perf = ctx.perf
+        for mk, s in confs:
+            for bad in (False, True):
+                label = f"t12{'bad' if bad else ''}{mk}"
+                spec = t12_spec(mk, s, label, bad)
+                ms = bf_modset(ctx, mods, f"bf{label}", spec, dump=False)
+                r0 = ctx.fh(create_args(ctx.instance, ms, ctx.out / f"bf-{label}-create" / "s.zip",
+                                        mgs=bf_pen(ctx, cfg, mk, s, True, "t12")), ctx.out / f"bf-{label}-create")
+                srv = server_run_save(ctx, ms, ctx.out / f"bf-{label}-create" / "s.zip", f"bf-{label}-server",
+                                      T["server_timeout"], [f"{label}-a", f"{label}-b"])
+                outs += [r0.out, srv]
+                a, b = srv / f"{label}-a.zip", srv / f"{label}-b.zip"
+                for tag, save, ticks, mask in (("a24", a, T["t2"] - T["t1"] + 1, None),
+                                               ("a8", a, T["t2"] - T["t1"] + 1, perf.MASK8),
+                                               ("b", b, 1, None)):
+                    watcher = perf.Watcher(ctx.out / f"bf-{label}-{tag}-affinity.jsonl", mask, ctx.job) if mask else None
+                    r = ctx.fh(scenario_args(ctx.instance, ms, ticks, save=save), ctx.out / f"bf-{label}-{tag}",
+                               timeout=900, watcher=watcher, monitor=bool(mask))
+                    if watcher:
+                        watcher.finish()
+                    if r.mon:
+                        r.mon.close()
+                    outs.append(r.out)
+        return outs
+
+    def t12_derive(dirs):
+        fails, meas = [], {}
+        per = 5
+        if len(dirs) != per * 2 * len(confs):
+            return {}, [f"{len(dirs)} run directories, want {per * 2 * len(confs)}"], ""
+        k = 0
+        for mk, s in confs:
+            rec = {}
+            for bad in (False, True):
+                label = f"t12{'bad' if bad else ''}{mk}"
+                create, srv, a24, a8, b = (Path(x) for x in dirs[k:k + per])
+                k += per
+                fails += g1(create)
+                sv, f = derive_server(srv, [f"{label}-a", f"{label}-b"])
+                fails += f
+                cs = {}
+                for tag, x in (("a24", a24), ("a8", a8), ("b", b)):
+                    fails += g1(x)
+                    cs[tag] = (load_run_json(x) or {}).get("bench_checksums")
+                st = {}
+                for tag, x in (("a24", a24), ("a8", a8), ("b", b)):
+                    p = x / "script-output" / "ea-bf-probe" / f"{label}-storage-{T['t2'] + 1}.json"
+                    st[tag] = p.read_text(encoding="utf-8") if p.exists() else None
+                same = bool(cs["a24"]) and cs["a24"] == cs["a8"] == cs["b"]
+                same_storage = st["a24"] is not None and st["a24"] == st["a8"] == st["b"]
+                rec["bad" if bad else "good"] = {"checksums": cs, "equal": same, "storage_equal": same_storage}
+            rec["passes"] = rec["good"]["equal"] and rec["good"]["storage_equal"]
+            if rec["bad"]["equal"]:
+                fails.append(f"{mk}: the bad probe's paths agree: the recipe cannot see a desync (G6)")
+            meas[f"{mk}-s{s}"] = rec
+        return meas, fails, "; ".join(f"{k}: host 24 LP and client 8 LP checksums equal {v['good']['equal']}, storage "
+                                      f"equal {v['good']['storage_equal']}, bad probe diverges {not v['bad']['equal']}; "
+                                      f"check (b) {'passes' if v['passes'] else 'fails'}" for k, v in meas.items())
+
+    checks["bf_t12"] = SuiteCheck("bf_t12", lambda: base_key("bf_t12", {"t12": BF_T12, "walk": BF_WALK}), t12_run,
+                                  t12_derive)
+
+    # T1 (SS; measured; flip check c; each configuration; dumped tiles): the fix on, BF_AREAS squares of BF_AREA
+    # tiles on the configuration's densest K chunks: 100 percent at scored pixel centres and the coast's maximum
+    # deviation under half a pixel (T1-b), U13's masks; the game's writes must be the rule's exactly.
+    c_plan = [(mk, s, bf_squares(cfg, mk, s, BF_AREAS, BF_AREA)) for mk, s in confs]
+
+    def c_run(deadline):
+        outs = []
+        for mk, s, sq in c_plan:
+            outs += dump_pair("bfc", mk, s, sq)
+        return outs
+
+    def c_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != 2 * len(c_plan):
+            return {}, fails + [f"{len(dirs)} dumps, want {2 * len(c_plan)}"], ""
+        for n, (mk, s, sq) in enumerate(c_plan):
+            t = judged(mk, s, dirs[2 * n], dirs[2 * n + 1])
+            fails += bf_judge_fails(f"{mk} scale {s}", t)
+            if not t["centres"] or not t["centres_wrong_off"]:
+                fails.append(f"{mk} scale {s}: {t['centres']} scored centres, {t['centres_wrong_off']} wrong with the fix "
+                             f"off: the squares show nothing to fix (G6)")
+            t["passes"] = t["centres_wrong"] == 0 and t["deviation_over_half"] == 0
+            t["squares"] = sq
+            meas[f"{mk}-s{s}"] = t
+        return meas, fails, "; ".join(f"{k}: {v['agreement'] * 100:.3f} % of {v['centres']} scored pixel centres (fix off "
+                                      f"{v['agreement_off'] * 100:.3f} %), max deviation {v['max_deviation_px']} px, "
+                                      f"{v['deviation_over_half']} tiles at half a pixel or more; check (c) "
+                                      f"{'passes' if v['passes'] else 'fails'}" for k, v in meas.items())
+
+    checks["bf_t1c"] = SuiteCheck("bf_t1c", lambda: base_key("bf_t1c", {"plan": c_plan}), c_run, c_derive)
+
+    # T1, T3 (SS; measured; flip check d; each configuration): does the base's replication (the fit, exact at every
+    # tile's sample point) predict the game outside the uncertain band? Uncertain: the lattice detail may flip the
+    # tile (|fit| within the margin) or the game's water correction may reach it (a tile of the other possible class
+    # within bandfix.correction_tiles). On the fix-off squares of (c) and on the same squares of the detail-off build
+    # (the detail body a constant 0, where only F32_SENSITIVE and the correction stay uncertain): 0 mismatches.
+    def d_run(deadline):
+        outs = list(suite_dirs("bf_t1c", deadline))
+        stage = stage_constant(ctx, cfg, [v["detail"] for vs in tnconfig.geography_versions(cfg).values() for v in vs],
+                               "0", "bfdetail")
+        ms = mods.with_mods("bfdetail", [HERE / "mods" / "ep-s8-dump", stage])
+        mods.prepare(ms, "bfdetail")
+        for mk, s, sq in c_plan:
+            area = ";".join(f"{x},{y},{w},{h}" for x, y, w, h in sq)
+            dump_settings(ctx, ms, ctx.instance, label="bf", areas=area, types="")()
+            outs.append(ctx.fh(scenario_args(ctx.instance, ms, 4, SEED, bf_pen(ctx, cfg, mk, s, False, "d")),
+                               ctx.out / f"bfd-{mk}-s{s}-detailoff").out)
+        return outs
+
+    def predict(mk, s, area, margin, corr):
+        """(predicted wet, uncertain) per tile of an area from the fit alone."""
+        import numpy as np
+        mref = mref_of(mk)
+        spec = build_geo.fit_spec(mk)
+        meta, idx, coef = build_geo.load_model(build_geo.FITS / mk / spec["bodies"]["geo"]["checkpoint"])
+        key_ = ("bfgrid", mk)
+        if key_ not in ctx.shared:
+            ctx.shared[key_] = (np.pad(build_geo.level0_grid(meta, idx, coef), ((1, 0), (1, 0))),
+                                build_geo.edge_lines(meta, idx, coef))
+        Gp, lines = ctx.shared[key_]
+        x0, y0, w, h = area["x0"], area["y0"], area["w"], area["h"]
+        X, Y = np.meshgrid(np.arange(x0, x0 + w), np.arange(y0, y0 + h))
+        u = X / s + mref.wr - (s // 2) / s
+        v = Y / s + mref.hr - (s // 2) / s
+        cu, rv = np.floor(u).astype(int), np.floor(v).astype(int)
+        fu, fv = u - cu, v - rv
+        G = Gp[1:, 1:]
+
+        def g(rr, cc):
+            return G[np.clip(rr, 0, G.shape[0] - 1), np.clip(cc, 0, G.shape[1] - 1)].astype(float)
+        f = (1 - fv) * ((1 - fu) * g(rv, cu) + fu * g(rv, cu + 1)) + fv * ((1 - fu) * g(rv + 1, cu) + fu * g(rv + 1, cu + 1))
+        inside = (cu >= 0) & (rv >= 0) & (cu < mref.W) & (rv < mref.H)
+        pw = f <= 0
+        may_w = build_geo.dilate_tiles(f <= margin, corr)
+        may_l = build_geo.dilate_tiles(f >= -margin, corr)
+        unc = (may_w & may_l) | ~inside
+        return pw, unc
+
+    def d_derive(dirs):
+        import numpy as np
+        fails, meas = [], {}
+        n2 = 2 * len(c_plan)
+        if len(dirs) != n2 + len(c_plan):
+            return {}, [f"{len(dirs)} dumps, want {n2 + len(c_plan)}"], ""
+        C = cfg["coast"]
+        margin = float(C["detail_amplitude_px"]) * float(C["detail_clamp"]) + float(B["float_margin_px"])
+        corr = int(B["correction_tiles"])
+        for n, (mk, s, sq) in enumerate(c_plan):
+            rec = {}
+            mref = mref_of(mk)
+            fp, _ = build_geo.waterway_footprint(cfg, mref, mk, s, float(B["mask_margin_tiles"]))
+            for tag, x, m in (("real", dirs[2 * n], margin), ("detail_off", dirs[n2 + n], float(B["float_margin_px"]))):
+                fails += g1(x) + g3(x)
+                tot = {"tiles": 0, "uncertain": 0, "mismatch": 0}
+                for area, _, wet, kept in bf_area_classes(read_dump(x, "bf"), tiles_m1):
+                    pw, unc = predict(mk, s, area, m, corr)
+                    X, Y = np.meshgrid(np.arange(area["x0"], area["x0"] + area["w"]),
+                                       np.arange(area["y0"], area["y0"] + area["h"]))
+                    c, r = X // s + mref.wr, Y // s + mref.hr
+                    cc, rr = np.clip(c, 0, mref.W - 1), np.clip(r, 0, mref.H - 1)
+                    judge = ~unc & ~kept & ~fp[rr, cc]
+                    tot["tiles"] += int(judge.sum())
+                    tot["uncertain"] += int(unc.sum())
+                    tot["mismatch"] += int((judge & (pw != wet)).sum())
+                rec[tag] = tot
+            rec["passes"] = rec["real"]["mismatch"] == 0 and rec["detail_off"]["mismatch"] == 0
+            if not rec["real"]["tiles"]:
+                fails.append(f"{mk} scale {s}: no tile outside the uncertain band was judged")
+            meas[f"{mk}-s{s}"] = rec
+        return meas, fails, "; ".join(f"{k}: real build {v['real']['mismatch']} of {v['real']['tiles']} judged tiles "
+                                      f"mispredicted, detail off {v['detail_off']['mismatch']} of "
+                                      f"{v['detail_off']['tiles']}; check (d) {'passes' if v['passes'] else 'fails'}"
+                                      for k, v in meas.items())
+
+    checks["bf_t1d"] = SuiteCheck("bf_t1d", lambda: base_key("bf_t1d", {"plan": c_plan}), d_run, d_derive)
+
+    # T1 (SS; S13-bandfix): the four S13 areas on Europe at scale 6, the fix on and off: the fixed
+    # tiles hold no land or water strip one tile wide, every written fill pixel holds its reference class whole,
+    # and the writes are the rule's.
+    mk_eu = cfg["presets"][cfg["preset_order"][0]]["map"]
+    mref_eu = mref_of(mk_eu)
+    s13 = []
+    for name, (l0, l1, b0, b1) in BF_S13.items():
+        (x, y), _ = mref_eu.lonlat_to_tile((l0 + l1) / 2, (b0 + b1) / 2, BF_S13_SCALE)
+        s13.append((int(round((x - BF_S13_SIZE / 2) / CT)) * CT, int(round((y - BF_S13_SIZE / 2) / CT)) * CT,
+                    BF_S13_SIZE, BF_S13_SIZE))
+
+    def sl_derive(dirs):
+        fails = []
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        t = judged(mk_eu, BF_S13_SCALE, dirs[0], dirs[1])
+        fails += bf_judge_fails("the S13 areas", t)
+        if t["slivers_written"]:
+            fails.append(f"the fixed tiles hold {t['slivers_written']} tiles of one-tile-wide strips (want 0)")
+        if t["fill_pixels_left_partial"]:
+            fails.append(f"{t['fill_pixels_left_partial']} written fill pixels are not their reference class whole")
+        if not t["changed"]:
+            fails.append("the fix wrote nothing in the S13 areas (G6)")
+        t["areas"] = dict(zip(BF_S13, s13))
+        return t, fails, (f"S13 areas at scale {BF_S13_SCALE}: {t['changed']} tiles written as the rule says, "
+                          f"{t['slivers_written']} one-tile strips among them, {t['fill_pixels_written']} fill pixels "
+                          f"written whole ({t['fill_pixels_left_partial']} partial); pixel centres "
+                          f"{t['agreement'] * 100:.3f} % (off {t['agreement_off'] * 100:.3f} %)")
+
+    checks["bf_slivers"] = SuiteCheck("bf_slivers", lambda: base_key("bf_slivers", {"areas": s13}),
+                                      lambda deadline: dump_pair("bfsl", mk_eu, BF_S13_SCALE, s13), sl_derive)
+
+    # T11 (SS): through the setting itself on a test copy whose config.lua lets it act on Europe (no
+    # map passed yet in the shipped config): created with Exact coastlines on and loaded with it off, the world
+    # keeps its key, still registers the handler and matches fresh A in probe chunks generated after the load;
+    # created off and loaded on, it never registers the handler and matches its own fresh A.
+    pname_eu, _ = map_preset(cfg, mk_eu)
+    (px0, py0, pw_, ph_), = bf_squares(cfg, mk_eu, BF_S13_SCALE, 1, BF_FG_AREA)
+    t11_area = f"{px0},{py0},{pw_},{ph_}"
+
+    def t11_run(deadline):
+        spec = {"label": "t11", "report_tick": 3}
+        ms = bf_modset(ctx, mods, "bft11", spec, maps=[mk_eu])
+        set_scale(ctx, mods, ms, BF_S13_SCALE)
+        outs = []
+        for created in (True, False):
+            tag = "on" if created else "off"
+            bf_set(ctx, mods, ms, created)
+            save = ctx.out / f"bf-t11-create-{tag}" / f"{tag}.zip"
+            outs.append(ctx.fh(create_args(ctx.instance, ms, save, preset=pname_eu), save.parent).out)
+            for load_on in (created, not created):
+                bf_set(ctx, mods, ms, load_on)
+                dump_settings(ctx, ms, ctx.instance, label="t11", areas=t11_area, types=ROUTE_TYPES)()
+                outs.append(ctx.fh(scenario_args(ctx.instance, ms, BF_T11_TICKS, save=save),
+                                   ctx.out / f"bf-t11-{tag}-loaded-{'on' if load_on else 'off'}").out)
+        return outs
+
+    def t11_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x)
+        if len(dirs) != 6:
+            return {}, fails + [f"{len(dirs)} run directories, want 6"], ""
+        for n, created in enumerate((True, False)):
+            tag = "on" if created else "off"
+            fresh, flipped = dirs[3 * n + 1], dirs[3 * n + 2]
+            rf, rx = bf_report(fresh, "t11"), bf_report(flipped, "t11")
+            tf, tx = area_tiles(read_dump(fresh, "t11")), area_tiles(read_dump(flipped, "t11"))
+            diff = sum(1 for a, b in zip(tf, tx) if a != b) if len(tf) == len(tx) else -1
+            want_key = B["on"] if created else None
+            rec = {"key_fresh": rf.get("key"), "key_flipped": rx.get("key"), "registered_fresh": rf.get("registered"),
+                   "registered_flipped": rx.get("registered"), "tiles": len(tf), "differ": diff}
+            meas[f"created-{tag}"] = rec
+            if rx.get("key") != want_key or rf.get("key") != want_key:
+                fails.append(f"created {tag}: the surface's key reads {rf.get('key')!r} and {rx.get('key')!r} after the "
+                             f"flip (want {want_key!r})")
+            if rx.get("registered") is not created or rf.get("registered") is not created:
+                fails.append(f"created {tag}: the handler is registered {rf.get('registered')} fresh and "
+                             f"{rx.get('registered')} after the flip (want {created})")
+            if diff != 0 or not tf:
+                fails.append(f"created {tag}: loaded under the flipped setting, {diff} of {len(tf)} probe tiles differ "
+                             f"from its own fresh world")
+        return meas, fails, ("created on, loaded off: keeps the key, handler registered, probe square equal to fresh A; "
+                             "created off, loaded on: no key, no handler, probe square equal to its own fresh A")
+
+    checks["bf_t11"] = SuiteCheck("bf_t11", lambda: base_key("bf_t11", {"area": t11_area}), t11_run, t11_derive)
+
+    # T5 (SS; TST-06): Europe's waterways at scale 1 with the fix on: no corridor, canal, dam or basin tile is
+    # written (the waterway probe's rasters of every feature, fix on against off), and T5 holds on the fix-on
+    # rasters (each river reaches its sea end, each strait and canal runs end to end through its channel).
+    t5_mk, t5_s = mk_eu, 1
+    jobs = corridor_jobs(t5_mk, t5_s, ("river", "strait", "canal"))
+
+    def t5_run(deadline):
+        outs = []
+        for on in (False, True):
+            ms = ww_probe_modset(ctx, mods, f"bft5{int(on)}", jobs)
+            pen = ww_pen(ctx, cfg, t5_mk, t5_s, True, {B["key"]: B["on"]} if on else None, label=f"bft5{int(on)}")
+            ticks = max([WW_PROBE_TICKS] + [j.get("deadline_ticks", 0) + 10 for j in jobs])
+            outs.append(ctx.fh(scenario_args(ctx.instance, ms, ticks, SEED, pen), ctx.out / f"bf-t5-{int(on)}",
+                               timeout=3600).out)
+        return outs
+
+    def t5_derive(dirs):
+        import numpy as np
+        import build_waterways as bw
+        fails, meas = [], {"features": 0, "written": 0, "in_footprints": 0}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        feats = {f"{f['kind']}-{f['id']}": f for f in ww_scale(t5_mk, t5_s)["features"]}
+        allf = list(ww_scale(t5_mk, t5_s)["features"])
+        for job in jobs:
+            f = feats[job["name"]]
+            n0, l0, i0, x0, y0 = nav_raster(dirs[0], job["name"])
+            n1, l1, i1, x1, y1 = nav_raster(dirs[1], job["name"])
+            if (x0, y0) != (x1, y1) or i0.shape != i1.shape:
+                fails.append(f"{job['name']}: the off and on rasters cover different windows")
+                continue
+            names0, names1 = np.array(n0)[i0], np.array(n1)[i1]
+            changed = names0 != names1
+            Yy, Xx = np.mgrid[y0:y0 + i0.shape[0], x0:x0 + i0.shape[1]].astype(float)
+            foot = np.zeros(i0.shape, bool)
+            for g in allf:
+                foot |= bw.band_tiles(Xx, Yy, np.asarray(g["polyline_geo"], float), g["hw_tiles"] + 1)
+            meas["features"] += 1
+            meas["written"] += int(changed.sum())
+            meas["in_footprints"] += int((changed & foot).sum())
+            water = nav.layer_mask(n1, l1, i1, "water_tile")
+            P = f["polyline_geo"]
+            a, b = nav.to_cell(x1, y1, P[0]), nav.to_cell(x1, y1, P[-1])
+            k = square_of(cfg, f)
+            if not nav.connected_disc(water, a, b, k):
+                fails.append(f"{t5_mk} scale {t5_s} with the fix on: {f['kind']} {f['id']} has no {k}-tile channel")
+        if meas["in_footprints"]:
+            fails.append(f"the fix wrote {meas['in_footprints']} tiles inside waterway footprints (want 0)")
+        return meas, fails, (f"{t5_mk} scale {t5_s}: {meas['features']} features, the fix wrote {meas['written']} tiles "
+                             f"in their windows, {meas['in_footprints']} inside a footprint; T5 channels hold with it on")
+
+    checks["bf_t5"] = SuiteCheck("bf_t5", lambda: base_key("bf_t5", {"jobs": len(jobs)}), t5_run, t5_derive)
+
+    # T13, T16 (SS, TST-03 and 13:45): the setting acts per map exactly as the rule says.
+    # A map passes when all four checks passed on its configuration; bandfix.maps must list exactly those, Atlantic
+    # (never checked) never; with the setting on, a test copy listing every checked map bakes the key on exactly
+    # those maps' presets and the shipped copy on exactly bandfix.maps; the default stays false (design notes 13:45
+    # superseded "true when one map passed"); every acting map's check (c) carries T1-b; the design notes records the
+    # outcome per map and the milestone's CHANGELOG entry opens with it.
+    def outcome_run(deadline):
+        outs = []
+        for name in ("bf_t15", "bf_t12", "bf_t1c", "bf_t1d"):
+            outs += list(suite_dirs(name, deadline))
+        for tag, maps in (("shipped", None), ("all", [mk for mk, _ in confs])):
+            ms = bf_modset(ctx, mods, f"bfout{tag}", None, maps=maps, dump=False)
+            bf_set(ctx, mods, ms, True)
+            outs.append(ctx.fh(["dump-data", "--instance", ctx.instance, "--modset", ms],
+                               ctx.out / f"bf-outcome-dump-{tag}").out)
+        return outs
+
+    def outcome_derive(dirs):
+        fails = []
+        parts = {}
+        rest = list(dirs)
+        for name in ("bf_t15", "bf_t12", "bf_t1c", "bf_t1d"):
+            nrun = {"bf_t15": 2 * len(confs), "bf_t12": 10 * len(confs), "bf_t1c": 2 * len(confs),
+                    "bf_t1d": 3 * len(confs)}[name]
+            got, rest = rest[:nrun], rest[nrun:]
+            m, f, _ = checks[name].derive_fn(got)
+            fails += [f"{name}: {x}" for x in f]
+            parts[name] = m
+        passed = []
+        out = {}
+        for mk, s in confs:
+            k = f"{mk}-s{s}"
+            res = {name: bool((parts.get(name) or {}).get(k, {}).get("passes")) for name in parts}
+            out[mk] = dict(res, scale=s, all=all(res.values()))
+            if all(res.values()):
+                passed.append(mk)
+        want = [mk for mk in cfg["map_order"] if mk in passed]
+        if list(B.get("maps") or []) != want:
+            fails.append(f"config.lua bandfix.maps is {B.get('maps')}, the four checks passed on {want} (ruling 9)")
+        if cfg["settings"][B["setting"]]["default_value"] is not False:
+            fails.append("the setting's default is not false (DECISIONS 13:45)")
+        for tag, x, acting in (("shipped", rest[0], list(B.get("maps") or [])),
+                               ("all", rest[1], [mk for mk, _ in confs])):
+            fails += g1(x)
+            dd = json.loads((Path(x) / "data-raw-dump.json").read_text(encoding="utf-8"))
+            pres = (dd.get("map-gen-presets") or {}).get("default") or {}
+            for kk in cfg["preset_order"]:
+                p = cfg["presets"][kk]
+                pen = ((pres.get(p["name"]) or {}).get("basic_settings") or {}).get("property_expression_names") or {}
+                if (pen.get(B["key"]) == B["on"]) != (p["map"] in acting):
+                    fails.append(f"setting on ({tag} copy): preset {p['name']} {'bakes' if B['key'] in pen else 'lacks'} "
+                                 f"the key, want {'it' if p['map'] in acting else 'none'}")
+        dec = (REPO / "DECISIONS.md").read_text(encoding="utf-8")
+        if not re.search(r"^## .*outcome.*\(coast-band-fix\)\s*$", dec, re.M):
+            fails.append("DECISIONS.md holds no coast-band-fix entry headed with the per-map outcome")
+        chg = (REPO / "CHANGELOG.md").read_text(encoding="utf-8")
+        m_ = re.search(r"^- Slice `coast-band-fix` \(#\d+\): (.*)$", chg, re.M)
+        if not m_ or "Exact coastlines" not in m_.group(1):
+            fails.append("the slice's CHANGELOG entry does not open with the per-map Exact coastlines outcome")
+        return out, fails, "; ".join(f"{mk} (scale {v['scale']}): " + ", ".join(
+            f"{n.split('_')[1]} {'pass' if v[n] else 'fail'}" for n in ("bf_t15", "bf_t12", "bf_t1c", "bf_t1d"))
+            + f" -> {'acts' if v['all'] else 'no fix'}" for mk, v in out.items())
+
+    checks["bf_outcome"] = SuiteCheck("bf_outcome", lambda: base_key("bf_outcome", {
+        "parts": [checks[n].key_fn() for n in ("bf_t15", "bf_t12", "bf_t1c", "bf_t1d")]}), outcome_run, outcome_derive)
+
+
 ROW_FUNCS = {
     "static": row_static, "plan_main": row_plan_main, "section6": row_section6,
     "frozen": row_frozen, "data_src": row_data_src, "offline_selftests": row_offline_selftests,
@@ -19990,6 +21109,8 @@ ROW_FUNCS = {
     "re_dump_facts": row_re_dump_facts, "re_t4_fg": row_re_t4_fg,
     # destroyed-europe
     "de_dump_facts": row_de_dump_facts, "de_pool": row_de_pool,
+    # coast-band-fix
+    "bf_dump_facts": row_bf_dump_facts, "bf_off": row_bf_off,
 }
 
 
@@ -20774,6 +21895,8 @@ def suite_checks(ctx, mods, sec6):
         el_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     if any(s["id"] == "destroyed-europe" for s in registry_upto(ctx.slice)):
         de_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "coast-band-fix" for s in registry_upto(ctx.slice)):
+        bf_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     return checks
 
 

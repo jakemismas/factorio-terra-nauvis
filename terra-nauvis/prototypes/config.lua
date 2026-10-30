@@ -697,6 +697,14 @@ local DE = {
   pool_europe = NOISE .. "city_pool_europe_v1",
 }
 
+-- Exact coastlines (milestone coast-band-fix): the per-save name switch a map's preset carries, set to the
+-- neutral body tn_one, only when the startup setting is on and that map passed all four flip checks
+--. Absent means off, and no prototype defines it: control code alone reads it. One table, as
+-- the destroyed-europe names are (Lua's 200 locals per function).
+local BFN = {
+  K = NOISE .. "bandfix",
+}
+
 return {
   identity = {
     id = ID,
@@ -846,10 +854,16 @@ return {
       name = ID .. "-destroyed-europe", type = "bool-setting", setting_type = "startup", default_value = false,
       order = "c-f",
     },
+    -- Exact coastlines (milestone coast-band-fix and 13:45, default off, a per-world opt-in):
+    -- a new world's preset bakes the band-fix key from it, for the maps bandfix.maps lists.
+    exact_coast = {
+      name = ID .. "-exact-coast", type = "bool-setting", setting_type = "startup", default_value = false,
+      order = "c-g",
+    },
   },
   setting_order = {"scale", "spawn_city_europe", "spawn_city_atlantic", "spawn_city_olde_world", "canals",
                    "great_forests", "ridges", "hotspots", "inland_lakes",
-                   "destroyed_europe"},
+                   "destroyed_europe", "exact_coast"},
 
   -- Map-gen presets, sorted right after Default ("a") and before Rich resources ("b") (S13).
   -- withheld_with lists the mods whose presence withholds a preset (presets.lua defines no such
@@ -894,6 +908,8 @@ return {
     inland_lakes = ELN.K_INLAND_LAKES,
     -- destroyed-europe: the zone toggle
     destroyed = DE.K,
+    -- coast-band-fix: the band-fix key (no prototype; control only)
+    bandfix = BFN.K,
   },
 
   -- Each map's geography (ARCHITECTURE.md, "Map type entries"): map_type_order, the order of the
@@ -1391,7 +1407,9 @@ return {
                  -- edge-and-lakes: the inland lakes switch and the new versions' city offset names
                  ELN.K_INLAND_LAKES, ELN.EU6_CX, ELN.EU6_CY, ELN.AT5_CX, ELN.AT5_CY, ELN.OW5_CX, ELN.OW5_CY,
                  -- destroyed-europe: the zone toggle (temperature and the city numbers are listed above)
-                 DE.K},
+                 DE.K,
+                 -- coast-band-fix: the band-fix key, on presets whose map the setting acts on
+                 BFN.K},
 
   -- The fine field per map (design constraint 3): map key -> {every version's elevation entry and
   -- every term only it reads}. The constant-coast twin turns each into a constant; no Entity,
@@ -2591,5 +2609,65 @@ return {
       rocks = TF_ROCKS, rock_off = "0",
       decoratives = TF_DECO, deco_off = "-inf", deco_body = TFN.TF_VDECO, deco_on = "0",
     },
+  },
+
+  -- Exact coastlines (milestone coast-band-fix; ARCHITECTURE.md, "Control stage"; S12, S13-bandfix; design notes
+  -- 07:05, 12:35 and 13:45). On a save whose Nauvis surface carries the key, scripts/bandfix.lua's
+  -- on_chunk_generated handler rewrites, where the generated land or water is wrong, the tiles of the K
+  -- pixels of the save's map and scale: scored reference pixels (not thin water) outside every waterway,
+  -- canal, dam and ford footprint that hold a tile the coast fit may misclassify at least half a
+  -- reference pixel from the reference coast (S12's closed band rule). tools/build_geo.py emits each
+  -- map's K+ table (K and its 8 neighbours) per scale into scripts/generated/ and prices it in
+  -- data-src/bandfix/.
+  --   setting, key, on  the startup bool, the per-save name switch and its value when on: a map's preset
+  --       carries the key only when the setting is on and the map is listed in maps; absent means off
+  --   maps  the maps whose four flip checks passed (decision 9; test notes 5.9), in map order; none
+  --       until the milestone suite measures them, so the setting acts on no map yet. Atlantic, never priced
+  --       (S12), is never listed
+  --   checks  each flip-checked map's measured configuration, its scale
+  --   tables  per map with K+ tables: the geography ids (tn_geo) they serve. They follow the coast fit, the
+  --       reference and the waterway footprints, so a later geography that keeps all three may be listed:
+  --       every version with a waterways record binds version 1's fit and waterway files to its own chain
+  --       (Europe 5, 8 and 11, Old World 7, 10 and 13), and its coast class is the fit's sign
+  --   float_margin_px  float32 slack over the lattice detail's bound (coast.detail_amplitude_px times
+  --       coast.detail_clamp): a tile counts as possibly wrong unless the fit alone is right by more
+  --   correction_tiles  the game's own tile stage grows water so every water tile lies in a 2 x 2 block of
+  --       water (measured on Europe at scale 6: no generated water tile outside one, 1,078 tiles the fit
+  --       makes land for sure turned water, every one within 2 tiles of possible water), so a tile also
+  --       counts as possibly wrong while a tile of the other possible class lies within this many tiles
+  --   mask_margin_tiles  waterway, canal, dam and basin footprints grow by this many tiles before they mask
+  --       pixels; a ford spans its carve plus waterways.ford.margin_tiles
+  --   spawn_keep_tiles  no tile within this radius of the spawn (world 0, 0) is written, so spawn-cities'
+  --       start land guarantee and the spawn tile keep what the noise draws
+  --   fill  K pixels whose band region holds no 2 x 2 block of tiles (an islet or a channel narrower than
+  --       a pixel) are written whole instead of as a one-tile line; the tool marks them
+  --   new_water, land_fallback  the tile a written water tile gets; written land copies the chunk's first
+  --       land tile, or land_fallback in a chunk that holds none
+  --   row_cache  decoded table rows a peer keeps in memory (a cache of shipped data, never game state)
+  --   encoding  each table row is its first column, then runs (length - 1) * #symbol_order + symbol index
+  --       (0-based in symbol_order), every number a varint of varint_base digits written in alphabet (a
+  --       digit at or above varint_base continues the number); a decoded row is one symbol character per
+  --       pixel: none (outside K+), water, land, a K pixel of either class (band), a fill pixel of either
+  --       class, thin water, and a pixel of either class inside a waterway footprint (masked)
+  bandfix = {
+    setting = "exact_coast", key = BFN.K, on = ONE,
+    maps = {},
+    checks = {europe = {scale = 1}, olde_world = {scale = 6}},
+    tables = {europe = {geographies = {5, 8, 11, 14}}, olde_world = {geographies = {7, 10, 13, 16}}},
+    version = 1,
+    float_margin_px = 0.01,
+    correction_tiles = 2,
+    mask_margin_tiles = 3,
+    spawn_keep_tiles = 24,
+    chunk_tiles = 32,
+    row_cache = 2048,
+    new_water = "water", land_fallback = "sand-1",
+    neighbours = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}},
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+    varint_base = 32,
+    symbols = {none = "a", water = "b", land = "c", water_k = "d", land_k = "e", water_fill = "f",
+               land_fill = "g", thin = "h", water_masked = "i", land_masked = "j"},
+    symbol_order = {"none", "water", "land", "water_k", "land_k", "water_fill", "land_fill", "thin",
+                    "water_masked", "land_masked"},
   },
 }

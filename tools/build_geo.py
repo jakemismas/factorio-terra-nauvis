@@ -923,12 +923,808 @@ def adopt(map_key, work, version=1):
     return {"geo": ship, "land_coarse": coarse}
 
 
+# ------------------------------------------------------------------------------------------------ band fix
+#
+# Exact coastlines (milestone coast-band-fix; the design notes section 13; S12's method on the shipped bases;
+# the S13-bandfix spike's rule). Per map that config.lua's bandfix.tables lists and per offered scale, the
+# K+ table terra-nauvis/scripts/bandfix.lua reads (scripts/generated/bandfix_<map>_s<k>_v<n>.lua) and
+# the pricing in data-src/bandfix/manifest-<map>.json.
+#
+# The rule, in the coordinate chain's frame (U2): tile offset i of pixel c at scale s samples the fit at
+# u = c + (i - floor(s / 2)) / s, inside pixel c's square. Its band is the set of neighbour squares of
+# the other class (thin water and the area outside the raster count as water) closer than half a pixel
+# to that point (S12's closed rule: exactly half a pixel is outside the band). A K pixel is a scored
+# pixel (not thin water) outside every waterway, canal, dam and basin footprint (grown by
+# bandfix.mask_margin_tiles) holding a tile outside its band that the coast fit may misclassify: the
+# game adds the lattice detail (|detail| <= coast.detail_amplitude_px * coast.detail_clamp, 0 at pixel
+# centres) to the fit, which no offline model reproduces (S1-cloud), so a tile is possibly wrong unless
+# the fit alone is right by more than that bound plus bandfix.float_margin_px. K+ is K and its 8
+# neighbours, whose classes the band needs. A K pixel whose band region holds no 2 x 2 block of tiles
+# (an islet or a channel narrower than a pixel) is a fill pixel, written whole.
+#
+# The model is piecewise bilinear on the level-0 grid (a level-k tent is bilinear on every level-0 cell),
+# so the fit at a sample point is the bilinear interpolation of the uncropped level-0 grid; left of
+# column 0 and above row 0 only node 0 of each level reaches, and those strips are summed level by level.
+# The pricing (S12's Table 1 measures) counts the tiles the band rule writes when the fit alone decides
+# (detail 0), on the map's own chunk grid with the city offset 0; S12 left out the waterway masks and the
+# fills, which the shipped-rule columns include.
+
+BANDFIX_EMITTER = 1
+BANDFIX_FORMAT = "tn-bandfix-manifest/1"
+BANDFIX_GENERATED = REPO / "terra-nauvis" / "scripts" / "generated"
+BANDFIX_DATA = REPO / "data-src" / "bandfix"
+BANDFIX_PRICE_SCALES = (1, 3, 6)        # the scales the plan's T1 (offline, first) re-prices
+TQ1B_MS_PER_WRITTEN_CHUNK = 0.34        # S12's only timing input (TQ1b, 24 LP), for the estimate column only
+F32_SENSITIVE = 0.005                   # |fit| under this may change class in float32 (S12: drift <= 3.0e-3)
+ROW_BAND = 128                          # pixel rows per vectorized band
+
+
+def bandfix_cfg(cfg=None):
+    import tnconfig
+    cfg = cfg or tnconfig.load()
+    B = cfg.get("bandfix")
+    if not B:
+        raise SystemExit("RESULT fail config.lua has no bandfix group")
+    return cfg, B
+
+
+def bandfix_file(map_key, s, version):
+    return f"bandfix_{map_key}_s{int(s)}_v{int(version)}.lua"
+
+
+def ref_classes(mref):
+    """int8 per reference pixel: 0 water, 1 land, 2 thin water (unscored; water for the band)."""
+    import numpy as np
+    cls = np.zeros((mref.H, mref.W), np.int8)
+    cls[mref.land] = 1
+    cls[mref.thin] = 2
+    return cls
+
+
+def other_masks(cls, neighbours):
+    """uint8 per pixel: bit b set where neighbour b (config order) is of the other class; thin water and
+    the area outside the raster count as water."""
+    import numpy as np
+    H, W = cls.shape
+    landish = np.zeros((H + 2, W + 2), bool)
+    landish[1:-1, 1:-1] = cls == 1
+    me = landish[1:-1, 1:-1]
+    out = np.zeros((H, W), np.uint8)
+    for b, (dc, dr) in enumerate(neighbours):
+        nb = landish[1 + dr:1 + dr + H, 1 + dc:1 + dc + W]
+        out |= ((nb != me).astype(np.uint8) << b)
+    return out
+
+
+def reach_lut(s, neighbours):
+    """(s, s) uint8: bit b set where neighbour b's square lies closer than half a pixel to the sample point
+    of tile offset (i, j) inside its pixel; exact integers in units of 1 / (2 s) px (S12's band_lut; the
+    handler builds the same table)."""
+    import numpy as np
+    half = s // 2
+
+    def g(d, k):
+        d2 = 2 * (k - half)
+        if d == 0:
+            return 0
+        if d == 1:
+            return s - d2
+        return d2 + s
+    lut = np.zeros((s, s), np.uint8)
+    for j in range(s):
+        for i in range(s):
+            m = 0
+            for b, (dc, dr) in enumerate(neighbours):
+                gx, gy = g(dc, i), g(dr, j)
+                if gx * gx + gy * gy < s * s:
+                    m |= 1 << b
+            lut[j, i] = m
+    return lut
+
+
+def thin_lut(s, reach):
+    """bool[256]: True where the band region of a pixel with that other-class mask holds no 2 x 2 block of
+    tiles, so the band rule alone could draw a strip one tile wide there (a fill pixel)."""
+    import numpy as np
+    out = np.zeros(256, bool)
+    for m in range(256):
+        R = (reach & m) == 0
+        if s < 2:
+            out[m] = True
+            continue
+        block = R[:-1, :-1] & R[:-1, 1:] & R[1:, :-1] & R[1:, 1:]
+        out[m] = not bool(block.any())
+    return out
+
+
+def level0_grid(meta, idx, coef):
+    """The model at every level-0 node, uncropped ((Eh + 1) x (Ew + 1) float32), by 2x prolongations."""
+    import numpy as np
+    K = meta["K"]
+    offs = [0]
+    for a in idx:
+        offs.append(offs[-1] + len(a))
+    G = np.zeros(meta["shapes"][K], np.float32)
+    G.ravel()[idx[K]] += coef[offs[K]:offs[K + 1]].astype(np.float32)
+    for k in range(K - 1, -1, -1):
+        G = _prolong(G)
+        if len(idx[k]):
+            G.ravel()[idx[k]] += coef[offs[k]:offs[k + 1]].astype(np.float32)
+    return G
+
+
+def edge_lines(meta, idx, coef):
+    """Per level: the coefficients of node column 0 and node row 0 (float64), all a point left of
+    column 0 or above row 0 reads."""
+    import numpy as np
+    out = []
+    off = 0
+    for k, a in enumerate(idx):
+        nh, nw = meta["shapes"][k]
+        c = coef[off:off + len(a)]
+        off += len(a)
+        col0, row0 = np.zeros(nh), np.zeros(nw)
+        j, i = np.divmod(a, nw)
+        col0[j[i == 0]] = c[i == 0]
+        row0[i[j == 0]] = c[j == 0]
+        out.append((col0, row0))
+    return out
+
+
+def _interp1(arr, x):
+    import numpy as np
+    x = np.asarray(x, float)
+    i0 = np.floor(x).astype(np.int64)
+    t = x - i0
+    n = len(arr)
+    a = np.where((i0 >= 0) & (i0 < n), arr[np.clip(i0, 0, n - 1)], 0.0)
+    b = np.where((i0 + 1 >= 0) & (i0 + 1 < n), arr[np.clip(i0 + 1, 0, n - 1)], 0.0)
+    return (1 - t) * a + t * b
+
+
+def edge_values(lines, u, v):
+    """The model exactly at points with u < 0 or v < 0 (each level's node 0 alone reaches there)."""
+    import numpy as np
+    u, v = np.asarray(u, float), np.asarray(v, float)
+    out = np.zeros(np.broadcast(u, v).shape)
+    for k, (col0, row0) in enumerate(lines):
+        h = float(1 << k)
+        wu = np.where(u < 0, 1 + u / h, 0.0)
+        wv = np.where(v < 0, 1 + v / h, 0.0)
+        left = (u < 0) & (v >= 0)
+        top = (v < 0) & (u >= 0)
+        corner = (u < 0) & (v < 0)
+        out = out + np.where(left, wu * _interp1(col0, v / h), 0.0)
+        out = out + np.where(top, wv * _interp1(row0, u / h), 0.0)
+        out = out + np.where(corner, wu * wv * col0[0], 0.0)
+    return out
+
+
+def fit_band(Gp, lines, s, i, j, r0, n, W):
+    """The fit (float64, n x W) at tile offset (i, j) of pixel rows r0 .. r0 + n - 1, every column. Gp is
+    the level-0 grid padded by one zero row and column at the top and left."""
+    import numpy as np
+    half = s // 2
+    du, dv = (i - half) / s, (j - half) / s
+    ca = 0 if du >= 0 else -1
+    ra = 0 if dv >= 0 else -1
+    wu = du if du >= 0 else 1 + du
+    wv = dv if dv >= 0 else 1 + dv
+    rs, cs = r0 + ra + 1, ca + 1
+    g00 = Gp[rs:rs + n, cs:cs + W].astype(np.float64)
+    g01 = Gp[rs:rs + n, cs + 1:cs + 1 + W].astype(np.float64)
+    g10 = Gp[rs + 1:rs + 1 + n, cs:cs + W].astype(np.float64)
+    g11 = Gp[rs + 1:rs + 1 + n, cs + 1:cs + 1 + W].astype(np.float64)
+    f = (1 - wv) * ((1 - wu) * g00 + wu * g01) + wv * ((1 - wu) * g10 + wu * g11)
+    if du < 0:
+        rows = np.arange(r0, r0 + n, dtype=float) + dv
+        f[:, 0] = edge_values(lines, np.full(n, du), rows)
+    if dv < 0 and r0 == 0:
+        cols = np.arange(W, dtype=float) + du
+        f[0, :] = edge_values(lines, cols, np.full(W, dv))
+    return f
+
+
+def waterway_footprint(cfg, mref, map_key, s, margin_tiles):
+    """bool per pixel: within (half-width + margin) tiles of any waterway, canal or dam centreline, or of a
+    turning basin, at scale s, pixel by pixel conservatively (a pixel's sample points lie within half a
+    diagonal of its centre), from the committed waterway manifest (both canal states)."""
+    import math
+    import numpy as np
+    import build_waterways as bw
+    mp = bw.DATA / f"manifest-{map_key}.json"
+    mask = np.zeros((mref.H, mref.W), bool)
+    if not mp.exists():
+        return mask, None
+    M = json.loads(mp.read_text(encoding="utf-8"))
+    rec = (M.get("scales") or {}).get(str(int(s)))
+    if rec is None:
+        return mask, sha256_file(mp)
+    geo = bw.MapGeo(cfg, map_key)
+    ox, oy = geo.offset(s)
+    reach = math.sqrt(2) / 2
+    for f in rec["features"]:
+        P = (np.asarray(f["polyline_geo"], float) - [ox, oy]) / s - 0.5
+        bw.band_into(mask, P, (f["hw_tiles"] + margin_tiles) / s + reach)
+    half = bw.ww_cfg(cfg)["basin_tiles"] / 2
+    for b in rec.get("basins") or []:
+        cx, cy = (b["centre"][0] - ox) / s - 0.5, (b["centre"][1] - oy) / s - 0.5
+        h = (half + margin_tiles) / s + reach
+        c0, c1 = max(int(math.floor(cx - h)), 0), min(int(math.ceil(cx + h)), mref.W - 1)
+        r0, r1 = max(int(math.floor(cy - h)), 0), min(int(math.ceil(cy + h)), mref.H - 1)
+        if c1 >= c0 and r1 >= r0:
+            mask[r0:r1 + 1, c0:c1 + 1] = True
+    return mask, sha256_file(mp)
+
+
+def chunk_axis(n_px, radius, s, offset, chunk):
+    """(per pixel index, the chunk index of its tile at `offset`, from 0; the chunk count) on one axis of
+    the map's own chunk grid at scale s (city offset 0: geo tiles are world tiles)."""
+    import numpy as np
+    first = (-radius * s) // chunk
+    last = ((n_px - radius) * s - 1) // chunk
+    t = s * (np.arange(n_px, dtype=np.int64) - radius) + offset
+    return t // chunk - first, int(last - first + 1)
+
+
+def dilate_tiles(A, k):
+    """bool array grown by k tiles in Chebyshev distance (separable: rows, then columns)."""
+    import numpy as np
+    if k <= 0:
+        return A.copy()
+    H, W = A.shape
+    P = np.pad(A, ((0, 0), (k, k)))
+    R = np.zeros_like(A)
+    for d in range(2 * k + 1):
+        R |= P[:, d:d + W]
+    P = np.pad(R, ((k, k), (0, 0)))
+    out = np.zeros_like(A)
+    for d in range(2 * k + 1):
+        out |= P[d:d + H, :]
+    return out
+
+
+def bandfix_pass1(cfg, B, mref, cls, om, Gp, lines, s, mask, scored, L, margin):
+    """One scale, first pass, on the tile grid of a band of pixel rows at a time: the possibly-wrong pixels
+    (K without the masks: a scored pixel holding a tile outside its band whose class the fit and the
+    lattice detail may get wrong, or that the game's water correction may turn, a tile of the other
+    possible class lying within bandfix.correction_tiles) and S12's pricing counts on the map's own chunk
+    grid (the band rule's writes with the fit alone deciding, every scored pixel)."""
+    import numpy as np
+    H, W = cls.shape
+    reach = reach_lut(s, [tuple(x) for x in B["neighbours"]])
+    chunk = int(B["chunk_tiles"])
+    corr = int(B["correction_tiles"])
+    halo = -(-corr // s)
+    K = np.zeros((H, W), bool)
+    rowc = [chunk_axis(H, mref.hr, s, j, chunk) for j in range(s)]
+    colc = [chunk_axis(W, mref.wr, s, i, chunk) for i in range(s)]
+    ncx, ncy = colc[0][1], rowc[0][1]
+    nchunks = ncx * ncy
+    s12 = np.zeros(nchunks, np.int64)
+    w2l = np.zeros(nchunks, np.int64)
+    sens = 0
+    rows_per = max(4, min(ROW_BAND, (1 << 22) // (s * s * W)))
+    for r0 in range(0, H, rows_per):
+        n = min(rows_per, H - r0)
+        ra, rb = max(0, r0 - halo), min(H, r0 + n + halo)
+        m_ = rb - ra
+        F = np.empty((m_ * s, W * s), np.float32)
+        OUT = np.empty((m_ * s, W * s), bool)
+        own = slice(r0 - ra, r0 - ra + n)
+        sl = slice(r0, r0 + n)
+        sc, Lb = scored[sl], L[sl]
+        for j in range(s):
+            crow = rowc[j][0][sl][:, None] * ncx
+            for i in range(s):
+                f = fit_band(Gp, lines, s, i, j, ra, m_, W)
+                F[j::s, i::s] = f
+                out = (om[ra:rb] & reach[j, i]) == 0
+                OUT[j::s, i::s] = out
+                fo, oo = f[own], out[own]
+                wr_ = sc & oo & ((fo > 0) != Lb)
+                flat = crow + colc[i][0][None, :]
+                s12 += np.bincount(flat[wr_], minlength=nchunks)
+                w2l += np.bincount(flat[wr_ & Lb], minlength=nchunks)
+                sens += int((sc & oo & (np.abs(fo) < F32_SENSITIVE)).sum())
+        may_water = dilate_tiles(F <= margin, corr)
+        may_land = dilate_tiles(F >= -margin, corr)
+        Lt = np.repeat(np.repeat(L[ra:rb], s, axis=0), s, axis=1)
+        St = np.repeat(np.repeat(scored[ra:rb], s, axis=0), s, axis=1)
+        Kt = St & OUT & np.where(Lt, may_water, may_land)
+        Kp = Kt.reshape(m_, s, W, s).any(axis=(1, 3))
+        K[sl] = Kp[own]
+    return {"K": K, "reach": reach, "rowc": rowc, "colc": colc, "ncx": ncx, "nchunks": nchunks, "s12": s12,
+            "w2l": w2l, "f32_sensitive_tiles": sens}
+
+
+def bandfix_pass2(B, cls, om, Gp, lines, s, Keff, fill, L, P):
+    """One scale, second pass: the shipped rule's writes with the fit alone deciding (detail 0): the
+    scale's writable K pixels, outside the band or whole for a fill pixel; and the chunks it reads."""
+    import numpy as np
+    H, W = cls.shape
+    reach, rowc, colc, ncx, nchunks = P["reach"], P["rowc"], P["colc"], P["ncx"], P["nchunks"]
+    shipped = np.zeros(nchunks, np.int64)
+    dirty = np.zeros(nchunks, bool)
+    for r0 in range(0, H, ROW_BAND):
+        n = min(ROW_BAND, H - r0)
+        sl = slice(r0, r0 + n)
+        Kb, Fb, Lb, omb = Keff[sl], fill[sl], L[sl], om[sl]
+        if not Kb.any():
+            continue
+        for j in range(s):
+            crow = rowc[j][0][sl][:, None] * ncx
+            for i in range(s):
+                flat = crow + colc[i][0][None, :]
+                dirty[np.unique(flat[Kb])] = True
+                f = fit_band(Gp, lines, s, i, j, r0, n, W)
+                out = (omb & reach[j, i]) == 0
+                wr_ = Kb & (out | Fb) & ((f > 0) != Lb)
+                shipped += np.bincount(flat[wr_], minlength=nchunks)
+    return shipped, dirty
+
+
+def chunk_stats(counts, nchunks, w2l=None):
+    import numpy as np
+    t = counts[counts > 0]
+    rec = {"chunks": int(nchunks), "touched": int(len(t)), "share": round(len(t) / nchunks, 6) if nchunks else 0.0,
+           "tiles_written": int(counts.sum()),
+           "tiles_per_touched_chunk": {"mean": round(float(t.mean()), 2) if len(t) else 0.0,
+                                       "p95": int(np.percentile(t, 95, method="higher")) if len(t) else 0,
+                                       "max": int(t.max()) if len(t) else 0},
+           "est_ms_per_generated_chunk": round(len(t) / nchunks * TQ1B_MS_PER_WRITTEN_CHUNK, 4) if nchunks else 0.0}
+    if w2l is not None:
+        rec["water_to_land_tiles"] = int(w2l.sum())
+        rec["land_to_water_tiles"] = int(counts.sum() - w2l.sum())
+        rec["touched_with_water_to_land"] = int(((counts > 0) & (w2l > 0)).sum())
+    return rec
+
+
+def varint(v, alphabet, base):
+    out = []
+    v = int(v)
+    while v >= base:
+        out.append(alphabet[base + v % base])
+        v //= base
+    out.append(alphabet[v])
+    return "".join(out)
+
+
+def dilate8(K):
+    import numpy as np
+    H, W = K.shape
+    out = K.copy()
+    pad = np.zeros((H + 2, W + 2), bool)
+    pad[1:-1, 1:-1] = K
+    for dr in (-1, 0, 1):
+        for dc in (-1, 0, 1):
+            out |= pad[1 + dr:1 + dr + H, 1 + dc:1 + dc + W]
+    return out
+
+
+def shared_symbols(cls, K, Kp, B):
+    """uint8 per pixel: the shared table's symbol index (0-based in bandfix.symbol_order): none outside
+    K+, then water, land, a K pixel of either class, thin water."""
+    import numpy as np
+    at = {role: n for n, role in enumerate(B["symbol_order"])}
+    sym = np.full(cls.shape, at["none"], np.uint8)
+    land, water = cls == 1, cls == 0
+    sym[Kp & water] = at["water"]
+    sym[Kp & land] = at["land"]
+    sym[Kp & (cls == 2)] = at["thin"]
+    sym[K & water] = at["water_k"]
+    sym[K & land] = at["land_k"]
+    return sym
+
+
+def encode_runs(values, keep, nsym, B):
+    """{row: payload} of every row holding a `keep` pixel: its first column, then one varint per run of
+    equal values over the row's span, (length - 1) * nsym + value."""
+    import numpy as np
+    alpha, base = B["alphabet"], int(B["varint_base"])
+    out = {}
+    for r in np.nonzero(keep.any(axis=1))[0].tolist():
+        nz = np.nonzero(keep[r])[0]
+        c0, c1 = int(nz[0]), int(nz[-1])
+        seg = values[r, c0:c1 + 1].astype(np.int16)
+        cut = np.nonzero(np.diff(seg))[0] + 1
+        starts = np.concatenate([[0], cut])
+        ends = np.concatenate([cut, [len(seg)]])
+        parts = [varint(c0, alpha, base)]
+        for a, b in zip(starts.tolist(), ends.tolist()):
+            parts.append(varint((b - a - 1) * nsym + int(seg[a]), alpha, base))
+        out[int(r)] = "".join(parts)
+    return out
+
+
+def decode_runs(payload, nsym, B):
+    """(first column, values) of one payload: encode_runs' inverse, for the round trip."""
+    alpha, base = B["alphabet"], int(B["varint_base"])
+    dec = {ch: n for n, ch in enumerate(alpha)}
+    vals, v, mul = [], 0, 1
+    for ch in payload:
+        d = dec[ch]
+        if d >= base:
+            v += (d - base) * mul
+            mul *= base
+        else:
+            vals.append(v + d * mul)
+            v, mul = 0, 1
+    out = []
+    for x in vals[1:]:
+        out += [x % nsym] * (x // nsym + 1)
+    return vals[0], out
+
+
+def round_trip(rows, values, keep, nsym, B, what):
+    """Every payload decodes to the values over its span, and no row holding a `keep` pixel lacks one."""
+    import numpy as np
+    for r, payload in rows.items():
+        c0, vals = decode_runs(payload, nsym, B)
+        if vals != values[r, c0:c0 + len(vals)].tolist() or keep[r, :c0].any() or keep[r, c0 + len(vals):].any():
+            raise SystemExit(f"RESULT fail {what}: row {r} does not round-trip")
+    missing = sorted(set(np.nonzero(keep.any(axis=1))[0].tolist()) - set(rows))
+    if missing:
+        raise SystemExit(f"RESULT fail {what}: rows {missing[:5]} hold pixels but no payload")
+
+
+def lua_long_lines(text, first, last, width=MAX_COLUMNS):
+    """A Lua string literal of `text` (no quote, backslash or space in it) broken anywhere with \\z."""
+    out, cur, pos = [], first + '"', 0
+    while True:
+        rest = text[pos:]
+        if len(cur) + len(rest) + 1 + len(last) <= width:
+            out.append(cur + rest + '"' + last)
+            return out
+        room = width - len(cur) - 2
+        out.append(cur + rest[:room] + "\\z")
+        pos += room
+        cur = "  "
+
+
+def render_rows(header, rows, meta):
+    out = [f"-- {line}" for line in header]
+    out.append("local R = {}")
+    for r in sorted(rows):
+        out += lua_long_lines(rows[r], f"R[{r}] = ", "")
+    fields = ", ".join(f"{k} = {v}" for k, v in meta.items())
+    out.append(f"return {{rows = R, {fields}}}")
+    for line in out:
+        if len(line) > MAX_COLUMNS:
+            raise ValueError(f"line of {len(line)} columns: {line[:60]!r}")
+    return "\n".join(out) + "\n"
+
+
+def bandfix_shared_file(map_key, version):
+    return f"bandfix_{map_key}_v{int(version)}.lua"
+
+
+def _write_lf(p, text):
+    with open(p, "w", encoding="utf-8", newline="\n") as f:
+        f.write(text)
+
+
+def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None, log=print):
+    """The map's shared K+ table and its per-scale mask tables, byte-reproducible, and the manifest with
+    S12's pricing measures and the shipped rule's, per scale."""
+    import numpy as np
+    import earthgeo as eg
+    import time
+    cfg, B = bandfix_cfg()
+    if map_key not in (B.get("tables") or {}):
+        raise SystemExit(f"RESULT fail config.lua bandfix.tables lists no K+ tables for {map_key}")
+    scales = [int(s) for s in (scales or cfg["scales"]["values"])]
+    spec = fit_spec(map_key)
+    ck = FITS / map_key / spec["bodies"]["geo"]["checkpoint"]
+    meta, idx, coef = load_model(ck)
+    mref = eg.MapRef(map_key)
+    cls = ref_classes(mref)
+    nb = [tuple(x) for x in B["neighbours"]]
+    om = other_masks(cls, nb)
+    Gp = np.pad(level0_grid(meta, idx, coef), ((1, 0), (1, 0)))
+    lines = edge_lines(meta, idx, coef)
+    C = cfg["coast"]
+    margin = float(C["detail_amplitude_px"]) * float(C["detail_clamp"]) + float(B["float_margin_px"])
+    scored, L = cls != 2, cls == 1
+    rel_ck = ck.relative_to(REPO).as_posix()
+    label = cfg["maps"][map_key]["display"]
+    inputs = {"checkpoint": rel_ck, "checkpoint_sha256": sha256_file(ck),
+              "land_sha256": sha256_file(mref.land_path), "thinwater_sha256": sha256_file(mref.thin_path),
+              "bandfix_config_sha256": hashlib.sha256(json.dumps(B, sort_keys=True).encode()).hexdigest(),
+              "coast_detail": [C["detail_amplitude_px"], C["detail_clamp"]], "margin_px": round(margin, 6)}
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    P1, masks, t = {}, {}, {}
+    K = np.zeros(cls.shape, bool)
+    for s in scales:
+        t0 = time.time()
+        masks[s], ww_sha = waterway_footprint(cfg, mref, map_key, s, float(B["mask_margin_tiles"]))
+        masks[s] &= scored
+        P1[s] = bandfix_pass1(cfg, B, mref, cls, om, Gp, lines, s, masks[s], scored, L, margin)
+        P1[s]["ww_sha"] = ww_sha
+        K |= P1[s]["K"]
+        t[s] = time.time() - t0
+    Kp = dilate8(K)
+    order = B["symbol_order"]
+    nsym = len(order)
+    sym = shared_symbols(cls, K, Kp, B)
+    rows = encode_runs(sym, Kp, nsym, B)
+    round_trip(rows, sym, Kp, nsym, B, f"{map_key} shared table")
+    kpix, kplus = int(K.sum()), int(Kp.sum())
+    shared_name = bandfix_shared_file(map_key, B["version"])
+    header = [f"Generated by tools/build_geo.py (band fix emitter {BANDFIX_EMITTER}) from {rel_ck}",
+              f"(sha256 {inputs['checkpoint_sha256']})",
+              f"and data-src/earthmaps/{map_key}-land.png and -thinwater.png.",
+              f"{label}: {kpix} K pixels (every offered scale's), {kplus} K+ pixels in {len(rows)} rows.",
+              "Name-free data: scripts/bandfix.lua reads it with config.lua's bandfix group.",
+              "Never edit by hand: rerun the tool (plan hard rule 9)."]
+    sp = out_dir / shared_name
+    _write_lf(sp, render_rows(header, rows, {"format": BANDFIX_EMITTER, "width": mref.W, "height": mref.H,
+                                             "k_pixels": kpix}))
+    rec = {"format": BANDFIX_FORMAT, "tool": "tools/build_geo.py", "emitter_version": BANDFIX_EMITTER,
+           "map": map_key, "inputs": inputs,
+           "rule": {"band": "closed: a sample point at least half a reference pixel from every other-class square "
+                            "is outside the band (S12)",
+                    "k": "a scored pixel holding a tile outside the band whose fit lies within margin_px of the "
+                         "wrong side, or within correction_tiles of a tile that may be of the other class (the game "
+                         "grows water into 2 x 2 blocks), at some offered scale; the scale's waterway footprint "
+                         "masks it there",
+                    "fill": "a K pixel whose band region at the save's scale holds no 2 x 2 block of tiles is "
+                            "written whole; the handler decides it from the shared table",
+                    "pricing": "S12's measures: the band rule's writes with the fit alone deciding (detail 0), "
+                               "every scored pixel, no masks, the map's own chunk grid (city offset 0)",
+                    "shipped": "the shipped rule's writes with the fit alone deciding: K pixels outside the "
+                               "scale's masks, fill pixels whole"},
+           "shared": {"file": f"terra-nauvis/scripts/generated/{shared_name}", "sha256": sha256_file(sp),
+                      "bytes": sp.stat().st_size, "payload_chars": sum(len(p) for p in rows.values()),
+                      "rows": len(rows), "k_pixels": kpix, "kplus_pixels": kplus},
+           "scales": {}}
+    for s in scales:
+        t0 = time.time()
+        reach = P1[s]["reach"]
+        thin = thin_lut(s, reach)
+        M = masks[s] & Kp
+        Keff = K & ~masks[s]
+        fill = Keff & thin[om]
+        shipped, dirty = bandfix_pass2(B, cls, om, Gp, lines, s, Keff, fill, L, P1[s])
+        bits = M.astype(np.uint8)
+        mrows = encode_runs(bits, M, 2, B)
+        round_trip(mrows, bits, M, 2, B, f"{map_key} s{s} masks")
+        name = bandfix_file(map_key, s, B["version"])
+        mheader = [f"Generated by tools/build_geo.py (band fix emitter {BANDFIX_EMITTER}) from",
+                   f"data-src/waterways/manifest-{map_key}.json (sha256 {P1[s]['ww_sha']})",
+                   f"and {shared_name}.",
+                   f"{label} at scale {s}: {int(M.sum())} K+ pixels inside a waterway, canal, dam or basin footprint",
+                   f"in {len(mrows)} rows (runs of open 0 and masked 1 over each row's span).",
+                   "Name-free data: scripts/bandfix.lua reads it with config.lua's bandfix group.",
+                   "Never edit by hand: rerun the tool (plan hard rule 9)."]
+        p = out_dir / name
+        _write_lf(p, render_rows(mheader, mrows, {"format": BANDFIX_EMITTER, "scale": s, "width": mref.W,
+                                                  "height": mref.H, "masked_pixels": int(M.sum())}))
+        nchunks = P1[s]["nchunks"]
+        srec = {"file": f"terra-nauvis/scripts/generated/{name}", "sha256": sha256_file(p), "bytes": p.stat().st_size,
+                "data_bytes_with_shared": p.stat().st_size + rec["shared"]["bytes"],
+                "k_pixels_this_scale": int(P1[s]["K"].sum()), "k_pixels_writable": int(Keff.sum()),
+                "fill_pixels": int(fill.sum()), "masked_kplus_pixels": int(M.sum()),
+                "footprint_pixels": int(masks[s].sum()), "waterway_manifest_sha256": P1[s]["ww_sha"],
+                "f32_sensitive_tiles": P1[s]["f32_sensitive_tiles"],
+                "s12_rule": chunk_stats(P1[s]["s12"], nchunks, P1[s]["w2l"]),
+                "shipped_rule": chunk_stats(shipped, nchunks),
+                "chunks_read": {"chunks": int(dirty.sum()), "share": round(float(dirty.mean()), 6)},
+                "seconds": round(t[s] + time.time() - t0, 1)}
+        rec["scales"][str(s)] = srec
+        log(f"{map_key} s{s}: K {srec['k_pixels_this_scale']} (writable {srec['k_pixels_writable']}, fill "
+            f"{srec['fill_pixels']}); S12 rule {srec['s12_rule']['share']:.4f} of {nchunks} chunks "
+            f"{srec['s12_rule']['tiles_per_touched_chunk']}; shipped {srec['shipped_rule']['share']:.4f} "
+            f"{srec['shipped_rule']['tiles_per_touched_chunk']}; read {srec['chunks_read']['share']:.4f}; "
+            f"mask file {srec['bytes']} B [{srec['seconds']}s]")
+    log(f"{map_key} shared table: K {kpix}, K+ {kplus}, {rec['shared']['bytes']} B")
+    if manifest:
+        BANDFIX_DATA.mkdir(parents=True, exist_ok=True)
+        _write_json(BANDFIX_DATA / f"manifest-{map_key}.json", rec)
+    return rec
+
+
+TABLE_ROW_RE = None
+
+
+def read_bandfix_table(path):
+    """(rows {row: payload}, fields {name: number}) of a generated band-fix table file, parsed from its
+    Lua text (the R[...] lines with their backslash-z continuations, then the return line)."""
+    import re
+    global TABLE_ROW_RE
+    if TABLE_ROW_RE is None:
+        TABLE_ROW_RE = re.compile(r'^R\[(\d+)\] = "(.*)$')
+    rows, cur, buf = {}, None, []
+    fields = {}
+    for line in Path(path).read_text(encoding="utf-8").split("\n"):
+        if cur is not None:
+            text = line.lstrip(" ")
+            if text.endswith("\\z"):
+                buf.append(text[:-2])
+            else:
+                buf.append(text[:-1])
+                rows[cur] = "".join(buf)
+                cur = None
+            continue
+        m = TABLE_ROW_RE.match(line)
+        if m:
+            text = m.group(2)
+            if text.endswith("\\z"):
+                cur, buf = int(m.group(1)), [text[:-2]]
+            else:
+                rows[int(m.group(1))] = text[:-1]
+        elif line.startswith("return {rows = R"):
+            for k, v in re.findall(r"(\w+) = (-?\d+)", line):
+                fields[k] = int(v)
+    return rows, fields
+
+
+class BandfixRule:
+    """The handler's rule (terra-nauvis/scripts/bandfix.lua) in Python, read from the committed tables, so
+    a check can compute the exact tiles the game must write from a fix-off dump of the same chunks."""
+
+    def __init__(self, map_key, scale, generated=BANDFIX_GENERATED):
+        import numpy as np
+        cfg, B = bandfix_cfg()
+        self.cfg, self.B, self.s = cfg, B, int(scale)
+        m = cfg["maps"][map_key]
+        self.W, self.H, self.wr, self.hr = m["width_px"], m["height_px"], m["wr"], m["hr"]
+        shared, sf = read_bandfix_table(Path(generated) / bandfix_shared_file(map_key, B["version"]))
+        masks, mf = read_bandfix_table(Path(generated) / bandfix_file(map_key, scale, B["version"]))
+        if sf.get("width") != self.W or sf.get("height") != self.H or mf.get("scale") != self.s:
+            raise SystemExit(f"RESULT fail the {map_key} tables do not match config.lua's map or scale {scale}")
+        order = B["symbol_order"]
+        self.at = {role: n for n, role in enumerate(order)}
+        nsym = len(order)
+        self.rows = {}
+        for r, payload in shared.items():
+            c0, vals = decode_runs(payload, nsym, B)
+            row = np.array(vals, np.uint8)
+            if r in masks:
+                m0, bits = decode_runs(masks[r], 2, B)
+                b = np.array(bits, bool)
+                seg = row[m0 - c0:m0 - c0 + len(b)]
+                land = np.isin(seg, [self.at["land"], self.at["land_k"]])
+                water = np.isin(seg, [self.at["water"], self.at["water_k"]])
+                seg[b & land] = self.at["land_masked"]
+                seg[b & water] = self.at["water_masked"]
+            self.rows[r] = (c0, row)
+        nb = [tuple(x) for x in B["neighbours"]]
+        self.nb = nb
+        self.reach = reach_lut(self.s, nb)
+        self.thin = thin_lut(self.s, self.reach)
+        self.landish = {self.at["land"], self.at["land_k"], self.at["land_masked"]}
+        self.k = {self.at["water_k"], self.at["land_k"]}
+        self.open = {self.at[r] for r in ("water", "land", "water_k", "land_k")}
+
+    def sym(self, c, r):
+        e = self.rows.get(r)
+        if e is None:
+            return self.at["none"]
+        c0, row = e
+        k = c - c0
+        return int(row[k]) if 0 <= k < len(row) else self.at["none"]
+
+    def land(self, c, r):
+        if c < 0 or r < 0 or c >= self.W or r >= self.H:
+            return False
+        return self.sym(c, r) in self.landish
+
+    def mask(self, c, r, me):
+        m = 0
+        for b, (dc, dr) in enumerate(self.nb):
+            if self.land(c + dc, r + dr) != me:
+                m |= 1 << b
+        return m
+
+    def chunk(self, chx, chy, wet, kept, cx=0, cy=0):
+        """The writes [(lx, ly, land)] of one chunk, in the handler's order, from its generated classes:
+        wet[ly][lx] (player-blocking water) and kept[ly][lx] (water a player walks), 32 x 32."""
+        s, CT = self.s, int(self.B["chunk_tiles"])
+        r2 = int(self.B["spawn_keep_tiles"]) ** 2
+        gx0, gy0 = chx * CT + cx, chy * CT + cy
+        c0, c1 = gx0 // s + self.wr, (gx0 + CT - 1) // s + self.wr
+        r0, r1 = gy0 // s + self.hr, (gy0 + CT - 1) // s + self.hr
+        if not any(self.sym(c, r) in self.k for r in range(r0, r1 + 1) for c in range(c0, c1 + 1)):
+            return []
+        x0, y0 = chx * CT, chy * CT
+        dx = x0 if x0 > 0 else (-(x0 + CT - 1) if x0 + CT - 1 < 0 else 0)
+        dy = y0 if y0 > 0 else (-(y0 + CT - 1) if y0 + CT - 1 < 0 else 0)
+        near = dx * dx + dy * dy < r2
+
+        def spawn_kept(lx, ly):
+            return near and (x0 + lx) ** 2 + (y0 + ly) ** 2 < r2
+        wrote = {}
+        queue = []
+        pm = {}
+        for ly in range(CT):
+            gy = gy0 + ly
+            r, j = gy // s + self.hr, gy % s
+            for lx in range(CT):
+                gx = gx0 + lx
+                c, i = gx // s + self.wr, gx % s
+                code = self.sym(c, r)
+                if code not in self.k:
+                    continue
+                land = code in self.landish
+                if kept[ly][lx] or bool(wet[ly][lx]) != land or spawn_kept(lx, ly):
+                    continue
+                if (c, r) not in pm:
+                    pm[(c, r)] = self.mask(c, r, land)
+                m = pm[(c, r)]
+                if self.thin[m] or (m & int(self.reach[j, i])) == 0:
+                    wrote[(lx, ly)] = land
+                    queue.append((lx, ly))
+
+        def post_wet(lx, ly):
+            if (lx, ly) in wrote:
+                return not wrote[(lx, ly)]
+            return bool(wet[ly][lx])
+
+        def open_class(lx, ly):
+            gx, gy = gx0 + lx, gy0 + ly
+            code = self.sym(gx // s + self.wr, gy // s + self.hr)
+            return (code in self.landish) if code in self.open else None
+        q = 0
+        while q < len(queue):
+            lx, ly = queue[q]
+            for dx_, dy_ in ((1, 0), (0, 1)):
+                w = post_wet(lx, ly)
+                ax, ay, bx, by = lx + dx_, ly + dy_, lx - dx_, ly - dy_
+                a_in = 0 <= ax < CT and 0 <= ay < CT
+                b_in = 0 <= bx < CT and 0 <= by < CT
+                if (a_in and post_wet(ax, ay) == w) or (b_in and post_wet(bx, by) == w):
+                    continue
+                for nx, ny, inside in ((ax, ay, a_in), (bx, by, b_in)):
+                    if inside and (nx, ny) not in wrote and not kept[ny][nx] and not spawn_kept(nx, ny) \
+                            and open_class(nx, ny) == (not w):
+                        wrote[(nx, ny)] = not w
+                        queue.append((nx, ny))
+                        break
+            q += 1
+        return [(lx, ly, wrote[(lx, ly)]) for lx, ly in queue]
+
+
+def bandfix_files(map_key, B, scales):
+    return [bandfix_shared_file(map_key, B["version"])] + [bandfix_file(map_key, s, B["version"]) for s in scales]
+
+
+def check_bandfix(map_key, scales=None):
+    """T16: two emissions byte-identical to each other and to the committed tables (every offered scale:
+    the shared table is the union over them)."""
+    cfg, B = bandfix_cfg()
+    scales = [int(s) for s in cfg["scales"]["values"]]
+    fails = []
+    with tempfile.TemporaryDirectory(prefix="tn-bandfix-") as td:
+        runs = []
+        for n in range(2):
+            d = Path(td) / f"run{n}"
+            emit_bandfix(map_key, d, manifest=False, scales=scales, log=lambda *_: None)
+            runs.append(d)
+        for name in bandfix_files(map_key, B, scales):
+            a, b = (runs[0] / name).read_bytes(), (runs[1] / name).read_bytes()
+            committed = BANDFIX_GENERATED / name
+            if a != b:
+                fails.append(f"{name}: two emissions differ")
+            if not committed.exists():
+                fails.append(f"{name}: no committed file")
+            elif committed.read_bytes() != a:
+                fails.append(f"{name}: the committed file differs from a fresh emission (rerun build_geo.py emit "
+                             f"--bandfix)")
+    return fails
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     for name in ("emit", "check", "offline"):
         p = sub.add_parser(name)
         p.add_argument("--map", required=True)
+        if name in ("emit", "check"):
+            p.add_argument("--bandfix", action="store_true",
+                           help="the Exact coastlines K+ tables and their pricing instead of the fit bodies")
+            p.add_argument("--scales", help="comma list of scales (default: every offered scale)")
     p = sub.add_parser("refit-islands")
     p.add_argument("--map", required=True)
     p.add_argument("--src", default="model-8192.npz")
@@ -972,6 +1768,19 @@ def main(argv=None):
                           for k, v in rep.items()}, indent=1))
         print(f"RESULT ok adopted {rep['geo']['checkpoint']} and {rep['land_coarse']['checkpoint']}")
         return 0
+    scales = [int(x) for x in a.scales.split(",")] if getattr(a, "scales", None) else None
+    if a.cmd == "emit" and a.bandfix:
+        rec = emit_bandfix(a.map, scales=scales)
+        print(f"RESULT ok emitted {[r['file'] for r in rec['scales'].values()]} and "
+              f"data-src/bandfix/manifest-{a.map}.json")
+        return 0
+    if a.cmd == "check" and a.bandfix:
+        fails = check_bandfix(a.map, scales)
+        for f in fails:
+            print(f"FAIL {f}")
+        print(f"RESULT {'ok' if not fails else 'fail'} failed={len(fails)} two band-fix emissions byte-identical to "
+              f"the committed tables")
+        return 0 if not fails else 1
     if a.cmd == "emit":
         rec = emit(a.map)
         print(json.dumps(rec, indent=1))

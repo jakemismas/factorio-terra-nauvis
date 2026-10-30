@@ -561,6 +561,36 @@ versions follow [Semantic Versioning](https://semver.org/).
   `destroyed` key) and validate checks them. Climate-tiles' dump facts expect the next Alien Biomes
   temperature in every M2 preset, and the oracle control that turns trees-forests live keeps every later
   registry milestone live.
+- Milestone `coast-band-fix`: Exact coastlines acts on no map yet: Europe at scale 1 and Old World at
+  scale 6 await the four flip checks (handler time, desync, fidelity, prediction) in the milestone suite,
+  and Atlantic, never priced, gets none. The startup setting Exact
+  coastlines (`terra-nauvis-exact-coast`, bool, default off: design notes 13:45), whose tooltip names the
+  maps it acts on; the per-save name switch `tn_bandfix` (`tn_one`), which a map's preset bakes only
+  when the setting is on and config.lua's `bandfix.maps` lists the map, absent meaning off;
+  `scripts/bandfix.lua`, the only per-chunk handler, registered from the save's own key in on_init and
+  on_load and acting on Nauvis alone: the wrong tiles of the K pixels outside the half-pixel band (S12's
+  closed rule), fill pixels whole and one-tile strips widened, never kept water,
+  waterway footprints or the spawn keep disc; its drift line; `tools/build_geo.py emit --bandfix` with
+  the offline pricing on the shipped bases (S12's method, the plan's T1 first) and one K+ table per map
+  for every scale plus per-scale mask tables in `scripts/generated/`, priced in `data-src/bandfix/`; the
+  rule's Python mirror (`build_geo.BandfixRule`); the T16 data-src rows for the tables; the FG rows
+  `bf_dump_facts` and `bf_off` and the suite checks `bf_price`, `bf_t15`, `bf_t12`, `bf_t1c`, `bf_t1d`,
+  `bf_slivers`, `bf_t11`, `bf_t5` and `bf_outcome`, with the test-only probe `tools/mods/ea-bf-probe`.
+  Gate cold and warm wall time: not yet measured (the build records them).
+- Evidence (draft, offline and on its own isolated instance,
+  `previews/earth-build/draft-coast-band-fix/`): re-priced on the shipped bases with S12's method (band
+  rule, fit alone, every scored pixel), Europe (8,258 terms) corrects 30.51, 12.80 and 6.98 percent of
+  its chunks at scales 1, 3 and 6 with 26.3, 33.2 and 49.8 tiles per corrected chunk (p95 76, 102 and
+  168; max 200, 334 and 515), as S12 priced the 8,192-term base; Old World's shipped 4,096-term base
+  corrects 11.52, 4.62 and 2.69 percent with 74.9, 153.1 and 248.7 tiles (p95 214, 468 and 776; max 561,
+  1,005 and 1,024), heavier per chunk than S12's 8,192-term estimate (62.0, 123.7, 203.3), which raises
+  check (a)'s risk there; the K+ data is one K+ table per map, Europe 195,976 bytes and Old World
+  748,965, plus per-scale mask tables of 64,605 and 171,918 bytes over the six scales (1,181,464 bytes
+  for both maps, against about 5.2 MB as per-scale K+ tables). In game, the handler wrote exactly the
+  tiles of its rule's mirror (1,212 in a Copenhagen square, 58,342 in the four S13 areas at scale 6, 0
+  missing, 0 extra, 0 one-tile strips); the game's water correction left 25
+  of 114,547 scored centres wrong there with the first tables, and the shipped tables, applied to the
+  same fix-off tiles, leave 0 of 112,373.
 
 ### Changed
 

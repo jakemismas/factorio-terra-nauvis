@@ -788,6 +788,11 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     de = cfg.get("destroyed")
     if ab and de and de.get("names"):
         pen["temperature"] = de["names"]["temperature"]
+    # coast-band-fix (presets.lua bandfix_names, last): the band-fix key where the setting is on at its
+    # default and acts on the map
+    bf = cfg.get("bandfix")
+    if bf and cfg["settings"][bf["setting"]]["default_value"] and map_key in (bf.get("maps") or []):
+        pen[bf["key"]] = bf["on"]
     return pen
 
 

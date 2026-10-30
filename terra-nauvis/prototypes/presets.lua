@@ -71,6 +71,11 @@
 -- toggle is off; and with the toggle on and the spawn city at random a version with a spawn record
 -- bakes the map's random pool as the city number, so random never lands on a city the zone covers
 -- (APPROVALS 10).
+--
+-- From coast-band-fix a preset also bakes the band-fix key, a name switch to tn_one, when the startup
+-- setting Exact coastlines is on and its map passed all four flip checks (config.lua bandfix.maps,
+-- decision 9); otherwise the key is absent, which means off. No expression reads it: scripts/bandfix.lua
+-- reads it from the save's own surface, so a world keeps it for life.
 local cfg = require("prototypes.config")
 
 local K = cfg.keys
@@ -233,6 +238,21 @@ local function toggle_values(map_key)
   return out
 end
 
+-- The band-fix key on a map's preset (coast-band-fix): set only when the setting is on and the map is
+-- one the setting acts on.
+local function bandfix_names(map_key)
+  local BF = cfg.bandfix
+  local out = {}
+  if BF and settings.startup[cfg.settings[BF.setting].name].value then
+    for _, m in ipairs(BF.maps) do
+      if m == map_key then
+        out[BF.key] = BF.on
+      end
+    end
+  end
+  return out
+end
+
 -- The property_expression_names one geography version's preset bakes under the current startup
 -- settings (tools/tnconfig.py baked_names mirrors it). A version with a spawn record also bakes the
 -- distance redirect (vanilla's starting ore and enemy-free start follow the spawn through it, S7),
@@ -240,8 +260,9 @@ end
 -- version also bakes the climate and tile keys (climate_names), from trees-forests the tree keys
 -- after them (tree_names: a palm's probability key names its second version), and from ridges the
 -- cliff properties and the map's ridge keys (ridge_values), from resources-enemies a version with
--- an offshore stamp its stamp key (stamp_values), and from destroyed-europe the Alien Biomes temperature's
--- next version and, with the zone on and the city at random, the map's random pool (destroyed_values).
+-- an offshore stamp its stamp key (stamp_values), from destroyed-europe the Alien Biomes temperature's
+-- next version and, with the zone on and the city at random, the map's random pool (destroyed_values),
+-- and from coast-band-fix the band-fix key where the setting acts on the map (bandfix_names).
 local function baked(map_key, v)
   local names = {
     [K.elevation] = v.entry,
@@ -284,6 +305,9 @@ local function baked(map_key, v)
     names[k] = value
   end
   for k, value in pairs(destroyed_values(map_key, v, names)) do
+    names[k] = value
+  end
+  for k, value in pairs(bandfix_names(map_key)) do
     names[k] = value
   end
   return names

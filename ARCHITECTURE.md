@@ -94,12 +94,13 @@ so the `prototypes/` and `scripts/` rows below are `terra-nauvis/prototypes/...`
 | `terra-nauvis/prototypes/expressions/ridges.lua` | `cliff_elevation` and `cliffiness` from the ranges table: per map the squared crest distance (`tn_crest_<map>_v<n>`), the openings (`tn_openings_<map>_v<n>`) and the Entity-side crest band (`tn_band_<map>_v<n>`); the shared effective crest distance, ridge-free start disc, cliff properties and ore clearance; the toggle's neutral pair `tn_one` and `tn_zero` unless waterways defined them first | slider-proof, contour units (S5); the per-map bodies read only their map's chain and the scale (firewall-clean); the toggle never multiplies (U5) | 8 |
 | `terra-nauvis/prototypes/expressions/destroyed.lua` | Destroyed-zone consumers: the zone `tn_destroyed_zone_v1` (the region layer's zone depth cut by the start disc, the zone's own start mask), its heat and the Alien Biomes temperature's next version `tn_temperature_ab_v2`; the random pool is spawn.lua's (`tn_city_pool_<map>_v1`), its switch presets.lua's | firewall-clean, as the region layer is | 10 |
 | `terra-nauvis/prototypes/expressions/waterways.lua` | Loads the generated waterway sets per map and scale (locals X and Y bound to the geo tiles of the geography version that composes them, its `waterways` record), the hook gate `tn_on` and ford key `tn_fords` prototypes, the canals switch's neutral bodies, and the entry composition `coast.lua` wraps around the rest of that version's composition | the sets reach Tile only (firewall names); the ford set through the `water-shallow` hook alone | 4 |
-| `terra-nauvis/prototypes/generated/` | `geo_<map>_v<n>.lua`, `land_coarse_<map>_v<n>.lua`, `waterways_<map>_s<k>_v<n>.lua` (with the ford sets), `bandfix_<map>_v<n>.lua` | machine-written; the header records tool version and input sha256; name-free data (the tents read the locals `U` and `V`, which `coast.lua` binds to the map's chain), every line within 120 columns through Lua 5.2's backslash-z continuation; never hand-edited; one file per released version | 1, 3, 4, 11 |
+| `terra-nauvis/prototypes/generated/` | `geo_<map>_v<n>.lua`, `land_coarse_<map>_v<n>.lua`, `waterways_<map>_s<k>_v<n>.lua` (with the ford sets) | machine-written; the header records tool version and input sha256; name-free data (the tents read the locals `U` and `V`, which `coast.lua` binds to the map's chain), every line within 120 columns through Lua 5.2's backslash-z continuation; never hand-edited; one file per released version | 1, 3, 4, 11 |
 | `terra-nauvis/prototypes/tables/` | `cities`, `hotspots`, `ranges`, `canals`, `regions` (the forest and marsh rows among them), `destroyed`: approval data in degrees, with sources; hotspot rows take the adopted centre (`lat`, `lon` in `approvals-data.json`), which decision 16 moved inland for one hotspot | versioned by release (copy-on-write after a release) | per milestone |
 | `terra-nauvis/scripts/start.lua` | `on_init`: world detection, storage, D29 message, cliff "none" reset, D12 and D32 warnings stored through `guards.record_warning` for the per-player path (section "Guards", stored records) | | 2, 8 |
 | `terra-nauvis/scripts/guards.lua` | Missing-name guard, drift line, the Map type notice, D33 surface guard, per-player notice, RSO and Destroyed Europe warnings (`on_player_created`); `record_warning`, the one writer of the stored warnings, and the validated readers of every stored record | owns `storage.earth.warnings`, `storage.earth.sent` and `storage.map_type.sent` (T16 storage row) | 1, 2 |
 | `terra-nauvis/scripts/markers.lua` | D28 city markers | no per-chunk event | 13 |
 | `terra-nauvis/scripts/bandfix.lua` | Tolerance-band coast fix | the only per-chunk handler | 11 |
+| `terra-nauvis/scripts/generated/` | `bandfix_<map>_v<n>.lua` (the map's K+ table, every scale) and `bandfix_<map>_s<k>_v<n>.lua` (each scale's waterway masks over it), from `tools/build_geo.py emit --bandfix` | machine-written control-stage data, name-free, every line within 120 columns, never hand-edited; the header records the inputs' sha256 and `data-src/bandfix/manifest-<map>.json` the outputs' (T16 data-src row); a data path for the literal rule (T16 design rules) | 11 |
 | `tools/earth_test.py` | Runner: `gate --through <milestone-id>` (each milestone's testCommand, under 10 minutes; `--cold` ignores the FG cache to time the cold gate; the FG rows of every milestone up to `<milestone-id>`, and the suite evidence of every milestone the gate lands, `<milestone-id>` with each earlier milestone of its group that no reference ref has landed (`gate_evidence_slices` over `pending_slices`), each held to its own manifest, never a landed milestone's, with the live sample drawn over all their checks and a deterministic one compared exactly with its re-derived evidence; design notes 2026-10-29 11:05), `suite <milestone-id>` (full variants into the content-hash cache; `--only <check>`), `install-check`, `baseline`, `freeze` and `static` commands (`suite` and `freeze` write the milestone's frozen snapshot into its suite manifest; the frozen row holds the registry to the earlier milestones' snapshots and the offline bodies of `tools/tnlua.py` to the game's dump); the milestone registry (FG rows, SS checks, live-sample pools, oracle properties and the dumps the frozen row reads, per milestone: one module-level literal, which `tnfrozen.runner_registry` reads for CI and the release build, and the only source of the dump labels a `tests/frozen.json` record may name) | finds fh.py through `FACTORIO_WS` (default `%FACTORIO_WS%`) and refuses to run a game-launching command without it; `static` launches nothing and needs neither, so CI runs it; validates every milestone id (`SLICE_ID` and the registry) before it builds any path and keeps each output directory inside its output root; never writes tracked files while gating, and writes state and tracked files atomically (temp file plus replace); trusts no verdict file, only cache entries whose key it recomputes, each key covering what its check measures (the M0 timing rows: vanilla program signatures, the driver mods, the timing machinery, fh.py, the build and the record format); re-derives suite evidence from raw outputs alone: each timed repetition's validity from its run directory, the affinity watcher's records and the persisted monitor reads (never the runner's `reps.jsonl` verdicts, only cross-checked), the walker's affinity the same way, the server saves' sizes from the files, and the game self-test by replaying a copy of its stored runs (`game_selftest.py --replay`, which launches nothing); parses every cell of the plan's section 6 (6.2 limits bound by program, modset and map; 6.3 allocations per modset and map, "every other milestone" included) and fails closed on one it cannot read; a 6.2 From cell naming no milestone (P3) is in force from the first milestone, and a row in force that no check of the runner consumes (`LIMIT_CONSUMERS`) fails the section6 row; rule 5's extra group of 7 reps per config for a timed ratio within 0.03 of a limit, decided pooled (in the gate only when it fits the budget, else it fails closed naming the ratio); the workspace lock around every command that launches the game, every game launch while the command holds it, and G1 on every run, a run that may have left its instance stopping the command (`tnguard.run_breach`); fh.py isolation is the only live-profile protection, so no guard snapshot or check brackets a command (G9 retired, design notes 2026-10-28) | 0 |
 | `tools/build_spawn.py` | Spawn bearings emitter (`spawn-cities`): `emit` writes the bearings file the newest geography version's spawn record names (`prototypes/generated/spawn_<map>_v<n>.lua`: per city and scale, from the land component holding the city in the reference land raster, the spawn lake's bearing, and the starting-ore bias bearing, width and on flag chosen by the share of starting patches left off that land over a fixed draw of random spot-noise candidate layouts, scored with the start mask as the game evaluates it from the coarse checkpoint) from the raster, the city table and the map's coarse checkpoint; `check` (the gate's `sc_dump_facts`) re-emits twice and compares byte for byte with the committed file | name-free data; numpy imported by the gate's rows only, never by `static` | 2 |
 | `tools/build_geo.py` | Tents emitter and fitter: `emit`, `check` (two emissions byte-identical to the committed files), `refit-islands` (the recorded T1-e local refit), `offline` (T1 of the checkpoints), `fit` (S1-fit's fitter, ported operation for operation, resumable from a work folder outside the repo), `curve` (t1_metrics' T1 of the fit's checkpoints) and `adopt` (the shipped checkpoints and the curve into `data-src/fits/<map>/`, with `fit.json`) | reproducible emission (Build-time data flow); a fit resumes after its newest completed growth step and reproduces an uninterrupted run; numpy imported by the gate's `geo_emit` row only, never by `static` | 1, 3 |
@@ -880,12 +881,12 @@ Rules:
 | Event | Script | Work |
 |---|---|---|
 | `on_init` | start, guards, markers | Earth world means the Nauvis surface's `property_expression_names` holds `tn_geo`; never decided from `settings.startup` or a noise fallback. A Map-type-only world (the surface names any version of a map's elevation entry for `elevation` and holds no `tn_geo`; milestone 1): log the Map type notice, record the world and its fallback values in `storage.map_type`, run the D33 sweep (Terra Nauvis's own values only) and stop. Other non-Earth worlds: stop (the D33 sweep runs and touches nothing there). Earth: fill `storage.earth` (schema, map, scale, city, geo, toggles) from those values with `tonumber`; read the resolved city index with `calculate_tile_properties` at (0, 0), because the random pick folds in float32 and Lua cannot recompute it (S7: seed 4294967295 gave city 8, the integer hash city 1); set the D29 intro through `remote.call("freeplay", "set_custom_intro_message", ...)` when that interface exists, plus a log line; cliff "none" reset (ridges on and `nauvis_cliff` size 0: write size 1 back with a whole-table assignment and log it; S5 restored 330 of 330 cliffs); D32 RSO warning when `script.active_mods["rso-mod"]` (log `RSO-WARNING` and a localised print, S11); D12 warning when Destroyed Europe was requested without AB (`on_init` runs under the creating settings); both stored through `guards.record_warning` as `{key, args}` records in `storage.earth.warnings` for the per-player path (section "Guards", stored records); D33 sweep; markers if their setting is on; band-fix flag from the save's own key (milestone 11) |
-| `on_load` | control | re-register the band-fix handler when `storage.earth.bandfix`; never writes storage (mod-dev rule 9) |
-| `on_configuration_changed` | guards | missing-name guard (Earth worlds); drift line (Earth and Map-type-only worlds); withheld-preset warning (Earth worlds, milestone 1; also at `on_init` for a world made beside a withholding mod); D33 sweep; storage schema migration written to be harmless on storage that `on_init` built (mod-dev rule 6) |
+| `on_load` | bandfix | re-register the band-fix handler when `storage.earth.bandfix`; never writes storage (mod-dev rule 9) |
+| `on_configuration_changed` | guards, bandfix | missing-name guard (Earth worlds); drift line (Earth and Map-type-only worlds; the band-fix key's own line from `scripts/bandfix.lua`, for maps the setting acts on); withheld-preset warning (Earth worlds, milestone 1; also at `on_init` for a world made beside a withholding mod); D33 sweep; storage schema migration written to be harmless on storage that `on_init` built (mod-dev rule 6) |
 | `on_surface_created` | guards | D33 guard on the new surface (it fires inside `LuaPlanet.create_surface`, S11) |
 | `on_player_created` | guards | send each stored message to the new player once: the Map type notice on a Map-type-only world (milestone 1), and on an Earth world each warning in `storage.earth.warnings` it has not had (`storage.earth.sent` counts them; every record's shape checked first, section "Guards", stored records), the withheld-preset warning (milestone 1), RSO (D32) and Destroyed Europe without AB (D12): S11 found that `game.print` in `on_init` reaches no player. Tested on a loopback server with a scripted player, a route still UNVERIFIED (Conflicts, item 15) |
 | `on_runtime_mod_setting_changed` | markers | D28 markers on or off |
-| `on_chunk_generated` | bandfix | registered only when `storage.earth.bandfix` (milestone 11) |
+| `on_chunk_generated` | bandfix | registered only when `storage.earth.bandfix`, which `on_init` records from the Nauvis surface's band-fix key (milestone 11); acts on the Nauvis surface only |
 | `on_chunk_deleted`, `on_surface_cleared`, `on_surface_deleted` | bandfix | only if the band fix keeps per-chunk keys (worldgen-runtime rule 1) |
 
 Never registered: `on_tick`, `on_nth_tick`, `on_chunk_charted`, or any other per-tick or per-chunk
@@ -1902,31 +1903,45 @@ takes over the Map type fields.
 
 ### 11. `coast-band-fix` (part 7, order 1)
 
-- **Introduces.** `scripts/bandfix.lua` and `bandfix_<map>_v<n>.lua`: one reference raster per map,
-  which serves every scale and noise release, plus a dirty-chunk list per scale that is coupled to
-  the geography release and keyed by `tn_geo` (S12: Europe 97.6 KB of raster and 1.1 to 11.0 KB
-  of lists at scales 1 to 6; Olde World 526.7 KB and 6.2 to 48.8 KB). The handler also skips the
-  waterway, lake and dam masks, which are coupled to the waterway release. The player-facing startup
-  setting Exact coastlines (`terra-nauvis-exact-coast`, bool), whose tooltip names
-  the maps it acts on.
-- **Contract.** `on_chunk_generated` is registered only when the save carries the band-fix key. The
-  key is a per-save name switch, baked like every other world value: a map's preset
-  carries it only when Exact coastlines is on and that map passed all four checks, and
-  absent means off, so adding the milestone never touches old saves and changing the setting never
-  touches an existing save. The setting's `default_value` is true exactly when at least one map
-  passed, so its default stays "on only where the four flip checks pass" until the maintainer rules on it
-  after seeing the S13-bandfix renders with and without the fix. The handler acts on Nauvis only
-  and is a pure function of chunk position, the chunk's generated tiles and the shipped data. It rewrites only
-  tiles whose reference pixel lies at least half a pixel from the reference coast where the noise is
-  wrong, in one `set_tiles` call per chunk, never outside the chunk (worldgen-runtime rule 8), and
-  idempotently: S1-hybrid's whole-pixel ancestor was exact on 29,241 of 29,241 tiles, a second pass
-  wrote 0 tiles, and generation order did not matter. The band rule reads "at least half a pixel":
-  the strict "more than" leaves 82 percent of Europe's wrong pixel centres and fails check (c) (S12).
-  Known costs: the preview shows only the noise; 42 to 50 percent of written tiles turn water into
-  land, which stays bare (S12); `set_tiles` destroys colliding entities placed by earlier handlers
-  (worldgen-runtime). Estimated average 0.104 ms per generated chunk on Europe at scale 1 (S12); the
-  open risk is (a)'s 2 ms tick limit, since an Olde World chunk at scale 6 writes 203 tiles on average
-  and up to a whole chunk (S12, UNVERIFIED in game).
+- **Introduces.** `scripts/bandfix.lua`, the only per-chunk handler, and its generated data in
+  `scripts/generated/` (`tools/build_geo.py emit --map <map> --bandfix`, priced in `data-src/bandfix/`):
+  per map that config.lua's `bandfix.tables` lists (Europe and Olde World; Atlantic, never priced, has
+  none) one K+ table, `bandfix_<map>_v<n>.lua`, that serves every offered scale, and per scale one mask
+  table, `bandfix_<map>_s<k>_v<n>.lua`, holding the K+ pixels inside that scale's waterway, canal, dam
+  and basin footprints. A K pixel is a scored reference pixel (not thin water) holding a tile outside
+  its half-pixel band that the coast fit may misclassify at some offered scale: the fit alone (exact at
+  every tile's sample point) lies within the lattice detail's bound of the wrong side, or a tile of the
+  other possible class lies within `bandfix.correction_tiles`, because the game's tile stage grows
+  water into 2 x 2 blocks; K+ adds the 8 neighbours whose classes the band needs. One shared table
+  instead of one per scale cuts what every peer loads at startup about fivefold (design notes,
+  coast-band-fix). The player-facing startup setting Exact coastlines (`terra-nauvis-exact-coast`,
+  bool, default false: design notes 13:45), whose tooltip names the maps it acts on; config.lua's
+  `bandfix` group holds the key, the maps it acts on (`maps`, the flip checks' outcome), the checked
+  configurations, the tables and every constant the handler and the tool share.
+- **Contract.** `on_chunk_generated` is registered only when the save carries the band-fix key: on_init
+  records the save's state from its own Nauvis surface (`storage.earth.bandfix`: surface index, map,
+  scale, geography and the city offset read once with `calculate_tile_properties`) and registers from
+  it, and on_load registers from that record alone, so a save made without the key never registers
+  the handler whatever the setting says later. The key is a per-save name switch, baked like every
+  other world value: a map's preset carries it only when Exact coastlines is on and
+  the map is listed in `bandfix.maps` (all four checks passed); absent means off. The
+  handler acts on the Nauvis surface only (by index; Space Age planets that inherit the key are never
+  touched) and is a pure function of chunk position, the chunk's generated tiles and the shipped data:
+  a chunk without a K pixel returns before reading a tile; else it reads the chunk's player-blocking
+  water and its kept water (water tiles a player walks: fords and marsh water, never written) once and
+  writes, in one `set_tiles` call without tile correction, every tile of an unmasked K pixel whose
+  generated class differs from its pixel's and that lies outside its band (S12's closed rule) or in a
+  fill pixel (a band region holding no 2 x 2 block of tiles: an islet or channel narrower than a
+  pixel, written whole, design notes 13:45), outside the spawn keep disc (`bandfix.spawn_keep_tiles`:
+  spawn-cities' start land guarantee); a written tile that would stand as a strip one tile wide takes
+  its in-chunk neighbour of the same reference class along. It reads and writes its own chunk only,
+  so generation order does not matter, and a repeated delivery writes nothing. Inland lakes lie
+  coast_px pixels inside the fit's coast, where no pixel is K, so no lake tile is ever a candidate;
+  the spawn lake near a coast is the one residual. The drift line reports
+  a save whose key differs from what the setting now bakes for its map. Known costs: the preview
+  shows only the noise; written land stays bare; `set_tiles` destroys colliding entities placed by
+  earlier handlers (worldgen-runtime); the tables (1.18 MB for both maps) load on every peer
+  whether a key is on or off.
 - **Acceptance**. Checks (a) to
   (d) run on Europe at scale 1 and on Olde World at scale 6, timed at 16 LP with 8 LP recorded, and
   on M2 for a map whose Alien Biomes geography `climate-tiles` moved to tents 4,096 (design notes
@@ -1934,7 +1949,8 @@ takes over the Map type fields.
   (b) a clean loopback desync run, host at 24 LP and client at 8 LP (a determinism check across
   thread counts, not a timed threshold), with the `storage` diff; (c) dumped-tile T1 of 100 percent
   at scored pixel centres with max deviation at most 0.5 px; (d) the base's float32 replication
-  predicts the game outside the band. They are measurement rows: the milestone passes when every check
+  predicts the game outside the band: outside the tiles where the lattice detail or the game's water
+  correction may decide. They are measurement rows: the milestone passes when every check
   is measured and recorded and the setting acts on a map exactly when all four pass for that map. A
   failing measurement keeps that map without the fix and is not a halt. Atlantic, never
   priced (S12), never gets the key. The design notes report the outcome per map, for the decision on

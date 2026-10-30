@@ -8,18 +8,26 @@
 -- and the D33 surface guard on every new surface and as a sweep in on_init and on_configuration_changed
 -- (surfaces made inside an on_init raise no event, S11). Milestone destroyed-europe adds to the start the
 -- D12 warning (Destroyed Europe on without Alien Biomes), stored like the RSO warning for every created
--- player. Nothing is registered conditionally, so on_load has nothing to restore.
+-- player. Milestone coast-band-fix adds Exact coastlines: after world detection on_init records
+-- the save's band-fix key, and on_init and on_load register scripts/bandfix.lua's on_chunk_generated
+-- handler from that record only (a save without the key registers nothing, the one conditional
+-- registration); its drift line joins on_configuration_changed.
 local guards = require("scripts.guards")
 local start = require("scripts.start")
+local bandfix = require("scripts.bandfix")
 
 script.on_init(function()
   guards.on_init()
   start.on_init()
+  bandfix.on_init()
   guards.sweep_surfaces()
 end)
 
+script.on_load(bandfix.on_load)
+
 script.on_configuration_changed(function(data)
   guards.on_configuration_changed(data)
+  bandfix.on_configuration_changed(data)
   guards.sweep_surfaces()
 end)
 

@@ -59,7 +59,9 @@ ALLOWED_EVENTS = {"on_surface_created", "on_player_created", "on_runtime_mod_set
 BANDFIX_EVENTS = {"on_chunk_generated", "on_chunk_deleted", "on_surface_cleared", "on_surface_deleted"}
 BANDFIX_FILE = "scripts/bandfix.lua"
 SCRIPT_LIFECYCLE = {"on_init", "on_load", "on_configuration_changed"}
-DATA_LUA = ("prototypes/config.lua", "prototypes/tables/", "prototypes/generated/")
+# Data files, exempt from the literal rule: config, the approval tables and every generated file, the
+# control stage's band-fix tables among them (coast-band-fix: terra-nauvis/scripts/generated/).
+DATA_LUA = ("prototypes/config.lua", "prototypes/tables/", "prototypes/generated/", "scripts/generated/")
 
 
 # ------------------------------------------------------------------------------------------------ helpers
@@ -1636,6 +1638,83 @@ def data_src_findings(repo=REPO):
     if ((cfg.get("tiles") or {}).get("palm") or {}).get("table"):
         import build_palms
         out += [f"palm table: {x}" for x in build_palms.check(cfg)]
+    out += bandfix_data_findings(repo, cfg)
+    return out
+
+
+def bandfix_data_findings(repo, cfg):
+    """The band-fix tables (milestone coast-band-fix): data-src/bandfix/ re-hashes to its PROVENANCE.md; each
+    map config.lua's bandfix.tables lists has a manifest whose recorded inputs are the committed fit
+    checkpoint, rasters, waterway manifest and bandfix group, and whose generated files are committed with
+    the recorded sha256; every map bandfix.maps lists has tables, Atlantic never does, and each tables
+    map's newest geography version (the one its preset names) is one its tables serve."""
+    import hashlib
+    out = []
+    B = cfg.get("bandfix")
+    bd = repo / "data-src" / "bandfix"
+    if not B:
+        return out
+    if not bd.is_dir():
+        return ["config.lua has a bandfix group, but data-src/bandfix/ is missing"]
+    bprov = provenance_hashes(bd / "PROVENANCE.md") if (bd / "PROVENANCE.md").exists() else {}
+    if not bprov:
+        out.append("data-src/bandfix has no PROVENANCE.md table")
+    names = sorted(p.name for p in bd.iterdir() if p.is_file() and p.name != "PROVENANCE.md")
+    for name in names:
+        if name not in bprov:
+            out.append(f"data-src/bandfix/{name} is not in its PROVENANCE.md")
+        elif sha256_file(bd / name) != bprov[name]:
+            out.append(f"data-src/bandfix/{name} sha256 differs from its PROVENANCE.md")
+    for name in bprov:
+        if name not in names:
+            out.append(f"data-src/bandfix/PROVENANCE.md lists {name}, which is missing")
+    tables = B.get("tables") or {}
+    for mk in B.get("maps") or []:
+        if mk not in tables:
+            out.append(f"config.lua bandfix.maps lists {mk}, which has no K+ tables (bandfix.tables)")
+    checked = B.get("checks") or {}
+    for mk in sorted(set(B.get("maps") or []) | set(tables)):
+        if mk not in checked:
+            out.append(f"config.lua lists {mk} for the band fix, which runs no flip check (bandfix.checks; Atlantic "
+                       f"was never priced, S12)")
+    digest = hashlib.sha256(json.dumps(B, sort_keys=True).encode()).hexdigest()
+    for mk, spec in tables.items():
+        mp = bd / f"manifest-{mk}.json"
+        if not mp.exists():
+            out.append(f"config.lua bandfix.tables lists {mk}, but data-src/bandfix/manifest-{mk}.json is missing")
+            continue
+        M = load_json(mp)
+        g = tnconfig.geography(cfg).get(mk) or {}
+        if g.get("geo_id") not in (spec.get("geographies") or []):
+            out.append(f"{mk}'s geography {g.get('geo_id')} is not one its band-fix tables serve "
+                       f"({spec.get('geographies')}): re-emit the tables and list it")
+        inp = M.get("inputs") or {}
+        ck = repo / (inp.get("checkpoint") or "-")
+        fit = load_json(repo / "data-src" / "fits" / mk / "fit.json")
+        want_ck = f"data-src/fits/{mk}/{fit['bodies']['geo']['checkpoint']}"
+        if inp.get("checkpoint") != want_ck or not ck.exists() or sha256_file(ck) != inp.get("checkpoint_sha256"):
+            out.append(f"manifest-{mk}.json was built from {inp.get('checkpoint')}, not the shipped fit {want_ck}")
+        em = repo / "data-src" / "earthmaps"
+        for kind, field in (("land", "land_sha256"), ("thinwater", "thinwater_sha256")):
+            if sha256_file(em / f"{mk}-{kind}.png") != inp.get(field):
+                out.append(f"manifest-{mk}.json was built from another {mk}-{kind}.png")
+        if inp.get("bandfix_config_sha256") != digest:
+            out.append(f"manifest-{mk}.json was built under another config.lua bandfix group: re-emit the tables")
+        ww = repo / "data-src" / "waterways" / f"manifest-{mk}.json"
+        files = [M.get("shared") or {}] + list((M.get("scales") or {}).values())
+        for rec in files:
+            f = repo / (rec.get("file") or "-")
+            if not f.exists():
+                out.append(f"manifest-{mk}.json names {rec.get('file')}, which is missing")
+            elif sha256_file(f) != rec.get("sha256"):
+                out.append(f"{rec.get('file')} sha256 differs from manifest-{mk}.json (rerun build_geo.py emit "
+                           f"--bandfix)")
+        for s, rec in (M.get("scales") or {}).items():
+            if ww.exists() and rec.get("waterway_manifest_sha256") != sha256_file(ww):
+                out.append(f"manifest-{mk}.json scale {s} was built from another waterway manifest")
+        have = sorted(int(s) for s in (M.get("scales") or {}))
+        if have != sorted(int(s) for s in cfg["scales"]["values"]):
+            out.append(f"manifest-{mk}.json holds scales {have}, not every offered scale")
     return out
 
 

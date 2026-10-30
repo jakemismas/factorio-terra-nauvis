@@ -76,6 +76,12 @@
    "type": "bool-setting",
    "setting_type": "startup",
    "default_value": false
+  },
+  "exact_coast": {
+   "source": "SPRINT-1-PLAN.md section 13, slice coast-band-fix: terra-nauvis-exact-coast (startup, bool, default off: DECISIONS 2026-10-27 13:45, a per-world opt-in; Jake's ruling on the default after the S13-bandfix renders flips it, a data edit)",
+   "type": "bool-setting",
+   "setting_type": "startup",
+   "default_value": false
   }
  },
  "numeric_literals_allowed": [0, 1, 2]
