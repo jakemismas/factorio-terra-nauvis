@@ -68,7 +68,6 @@ SHARE_HOTSPOT = 0.0
 THIN_AREA_PER_PERIMETER_PX = 25.0
 FOREST_BOOST = 1            # a row's relative great-forest strength (S10 open question 4: default 1)
 ENEMY_MULT = 4              # APPROVALS 1b: enemy-base probability times 4 inside a hotspot's disc
-MAX_SHARE = 3               # the destroyed zone's warp runs past the shared warp; every other row's is at most 1
 LAYERS = ("destroyed", "forest", "marsh", "hotspot")
 SHAPES = ("disc", "polygon", "path")
 MAX_COLUMNS = 120           # tools/lint/luacheckrc.lua max_line_length
@@ -540,8 +539,8 @@ def row_problems(r):
         out.append(f"layer {r.get('layer')!r}")
     if r.get("shape") not in SHAPES:
         out.append(f"shape {r.get('shape')!r}")
-    if not isinstance(r.get("warp"), (int, float)) or not 0 <= r["warp"] <= MAX_SHARE:
-        out.append(f"warp {r.get('warp')!r} is not a share in [0, {MAX_SHARE}]")
+    if not isinstance(r.get("warp"), (int, float)) or not 0 <= r["warp"] <= tnconfig.REGION_MAX_SHARE:
+        out.append(f"warp {r.get('warp')!r} is not a share in [0, {tnconfig.REGION_MAX_SHARE}]")
     if not isinstance(r.get("maps"), list) or not r["maps"]:
         out.append("maps is not a list of map keys")
     if r.get("shape") in ("disc", "path") and not (isinstance(r.get("radius_km"), (int, float)) and r["radius_km"] > 0):

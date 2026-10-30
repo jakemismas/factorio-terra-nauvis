@@ -293,8 +293,8 @@ local function seeded_polygon(pts, r, qu, qv)
     L["qy" .. s] = "dv" .. s .. " - t" .. s .. " * " .. ey
     L["sl" .. s] = "if(abs(" .. ey .. ") < " .. num(JT.flat_px) .. ", 0, " .. ex .. " / " .. ey .. ")"
     d2s[#d2s + 1] = "qx" .. s .. " * qx" .. s .. " + qy" .. s .. " * qy" .. s
-    cross[#cross + 1] = "((" .. qv .. " < av" .. s .. ") != (" .. qv .. " < av" .. e .. ")) * (" .. qu .. " < au" .. s ..
-      " + dv" .. s .. " * sl" .. s .. ")"
+    cross[#cross + 1] = "((" .. qv .. " < av" .. s .. ") != (" .. qv .. " < av" .. e .. ")) * (" .. qu .. " < au" ..
+      s .. " + dv" .. s .. " * sl" .. s .. ")"
   end
   L.d2 = joined("min", d2s, nil)
   L.inside = "(" .. table.concat(cross, " + ") .. ") % 2"

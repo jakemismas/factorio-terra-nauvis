@@ -573,6 +573,7 @@ def geography(cfg):
 # build_zip.py --release) sees each one: a row name derives from config.lua through its stem and
 # suffix (design constraint 5), and a row edit stays a data edit of the table (D13).
 
+REGION_MAX_SHARE = 3                               # the destroyed zone's warp runs past the shared warp
 REGION_TABLE = "prototypes/tables/regions.lua"     # relative to the mod folder, as `files` spells it
 REGION_ROW_KINDS = ("sd", "w", "depth")            # every row's signed distance, weight and depth
 REGION_CENTRE_KINDS = ("hu", "hv")                 # a hotspot disc's jittered centre
@@ -594,7 +595,8 @@ def region_table_path(cfg):
 def region_table_rows(cfg):
     """The region table's rows (the table beside cfg's config.lua), read with the pure-data loader;
     each row is a keyed table with an id (lower-case letters and digits joined by single underscores,
-    unique), a layer, a shape and a warp share in [0, 1]. The parse is cached by the file's sha256."""
+    unique), a layer, a shape and a warp share in [0, REGION_MAX_SHARE]. The parse is cached by the file's
+    sha256."""
     p = region_table_path(cfg)
     try:
         raw = p.read_bytes()
@@ -614,8 +616,8 @@ def region_table_rows(cfg):
             seen.add(rid)
             w = r.get("warp")
             if not isinstance(r.get("layer"), str) or not isinstance(r.get("shape"), str) or \
-                    isinstance(w, bool) or not isinstance(w, (int, float)) or not 0 <= w <= 1:
-                raise ConfigError(f"{p}: row {rid} needs a layer, a shape and a warp share in [0, 1]")
+                    isinstance(w, bool) or not isinstance(w, (int, float)) or not 0 <= w <= REGION_MAX_SHARE:
+                raise ConfigError(f"{p}: row {rid} needs a layer, a shape and a warp share in [0, {REGION_MAX_SHARE}]")
         _TABLES[key] = rows
     return _TABLES[key]
 
