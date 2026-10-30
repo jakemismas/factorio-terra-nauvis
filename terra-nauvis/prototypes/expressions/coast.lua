@@ -80,11 +80,20 @@ end
 -- A version's chain class: its generated file and its city offset. The offset is what the version's
 -- preset bakes for its offset names and what their frozen fallbacks hold (presets.lua; tn_cx_europe_v2
 -- to v6 all name the one city fold, Atlantic's and Old World's v1 to v5 are all 0), so in every world
--- that reads a version, every version of its class reads equal geo tiles.
+-- that reads a version, every version of its class reads equal geo tiles. A landed version
+-- (config.lua landed_geographies) is a class of its own: its records never change.
+local LANDED = {}
+for _, id in ipairs(cfg.landed_geographies or {}) do
+  LANDED[id] = true
+end
+
 local function chain_class(file, g)
   local o = g.city_offset
   if not (o and o[1] ~= nil and o[2] ~= nil) then
     error("geography version " .. tostring(g.entry) .. " has no city offset")
+  end
+  if LANDED[g.geo_id] then
+    return file .. "|landed|" .. tostring(g.geo_id)
   end
   return file .. "|" .. tostring(o[1]) .. "|" .. tostring(o[2])
 end

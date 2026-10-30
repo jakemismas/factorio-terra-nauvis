@@ -737,12 +737,14 @@ compatibility and known limits are in README.md, and the changelog players see i
 ### Changed
 
 - Startup: each repeated geography body is defined once per chain class. Versions of
-  a map with the same city offset (Europe 2 to 6 on the city fold; Atlantic and Old World 1 to 5 at
+  a map with the same city offset (Europe 3 to 6 on the city fold; Atlantic and Old World 1 to 5 at
   0) read equal geo tiles in every world, so the newest version of a class keeps the coast fit,
-  coarse land field and waterway sets and every older one names them (coast.lua, waterways.lua). The
-  dumped noise text drops from 13.5 MB to 5.25 MB and "Time to load mods" from 9.95 s to 3.55 s
-  (median of three on a loaded machine, game at high priority; vanilla 0.42 s), about 6.85 s to
-  2.4 s on a quiet one. 240 bodies re-registered from a fresh M1 dump; 24 previews of the three
+  coarse land field and waterway sets and every older one names them (coast.lua, waterways.lua);
+  the versions landed on main (geography 1 and 2) keep their own. The dumped noise text drops from
+  13.5 MB to 5.64 MB and "Time to load mods" from 8.24 s to 3.22 s (median of six alternating runs,
+  game at high priority, on a machine other work kept busy; vanilla 0.46 s), about 6.85 s to 2.7 s
+  on a quiet one, short of the 2 s target. 238 bodies re-registered from
+  a fresh M1 dump; 24 previews of the three
   maps at scales 1 and 6 (two preset windows each and an old Map type entry) are pixel-identical
   with unchanged Tile, Entity and Cliff complexity on every preset.
 - The startup setting Exact coastlines (`terra-nauvis-exact-coast`) is hidden (`hidden = true`,

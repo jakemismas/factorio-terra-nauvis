@@ -159,10 +159,10 @@
   },
   "tn_geo_europe_v2": {
    "type": "noise-expression",
-   "sha256": "c5924efa794fbd6ec06cbaf62a9825254b5b8eb28c28b9b533769fcc8f9579cd",
+   "sha256": "49d307e8618b7d0f983b9da4fbe2ce58cdac0b7bdc249344ae83cf3ce603ebd0",
    "dump": "m1",
    "slice": "spawn-cities",
-   "registered": "2026-10-30"
+   "registered": "2026-10-29"
   },
   "tn_gx_europe_v2": {
    "type": "noise-expression",
@@ -187,10 +187,10 @@
   },
   "tn_land_coarse_europe_v2": {
    "type": "noise-expression",
-   "sha256": "8b8d6d072ec3227f2e3752abe3dcfb867ce997d99bbd159422cabb0c909f456d",
+   "sha256": "7660e5d5a296d9f9e8c786628a8edb53df9a4b8e096b2d1138fa245abadcf72a",
    "dump": "m1",
    "slice": "spawn-cities",
-   "registered": "2026-10-30"
+   "registered": "2026-10-29"
   },
   "tn_spawn_bias_europe_v1": {
    "type": "noise-expression",

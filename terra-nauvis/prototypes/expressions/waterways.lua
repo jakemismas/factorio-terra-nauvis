@@ -61,11 +61,20 @@ end
 
 -- A version's chain class: its map and its city offset, which its preset bakes for its offset names
 -- and their frozen fallbacks hold, so every version of a class reads equal geo tiles in every world
--- that reads one of them (coast.lua's chain_class; every version of a map binds the same files).
+-- that reads one of them (coast.lua's chain_class; every version of a map binds the same files). A
+-- landed version (config.lua landed_geographies) is a class of its own: its records never change.
+local LANDED = {}
+for _, id in ipairs(cfg.landed_geographies or {}) do
+  LANDED[id] = true
+end
+
 local function chain_class(key, g)
   local o = g.city_offset
   if not (o and o[1] ~= nil and o[2] ~= nil) then
     error("geography version " .. tostring(g.entry) .. " has no city offset")
+  end
+  if LANDED[g.geo_id] then
+    return key .. "|landed|" .. tostring(g.geo_id)
   end
   return key .. "|" .. tostring(o[1]) .. "|" .. tostring(o[2])
 end

@@ -1010,6 +1010,12 @@ return {
   -- integer and keeps it for good, so no two maps or versions share one, and release_registry
   -- names each with its map, which is how control code resolves a save's tn_geo (ARCHITECTURE.md,
   -- "Release versioning policy", rule 4; tnconfig's id-space check).
+  --
+  -- landed_geographies: the geography releases landed on main (europe-coast's 1, spawn-cities' 2),
+  -- whose registered records the landed suites' snapshots hold. Each keeps its own fit and waterway
+  -- bodies; every other version names the body of the newest version of its chain class (coast.lua,
+  -- waterways.lua; design notes 2026-10-30 09:40).
+  landed_geographies = {1, 2},
   geography = {
     europe = {
       map_type_order = "3000-tn-a",
