@@ -1351,7 +1351,7 @@ return {
     stretch_floor = 0.4,
     fray = {{seed1 = 7508, wavelength = 34, amplitude = 0.25}},
     gaps = {noise = {{seed1 = 7509, wavelength = 128, amplitude = 1}, {seed1 = 7510, wavelength = 40, amplitude = 0.6}},
-            threshold = -0.5, thin_tiles = 20, thin_gain = 1.2, collar_gain = 3},
+            threshold = -0.5, thin_tiles = 22, thin_gain = 1.8, collar_gain = 3},
     cliffiness = 10,
     pass_tiles = 24,
     reach_tiles = 32,

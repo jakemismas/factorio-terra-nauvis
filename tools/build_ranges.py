@@ -7,8 +7,10 @@
 
 Rows (APPROVALS 5 and 06:45), from data-src/approvals/approvals-data.json (which
 ranges and passes are adopted, each pass's arc along its crest, the pass-free stretches and the
-unnamed-gap rule) and the design notes (the crest polylines it measured):
+unnamed-gap rule), the design notes (the crest polylines it measured) and
+data-src/ridges/vertex-heights.json (each crest vertex's height):
   crest   every range approvals-data.json lists (16), as R7b's crest polyline in degrees
+  heights one per crest vertex, in metres: a ridge runs wider where its mountain is taller
   pass    every adopted pass (54 of 56: Khyber and Bolan stand on no listed range and are dropped),
           at the crest point approvals-data.json's arc_km names: the point serving it, which
           build_approvals.py placed (the nearest crest point, the crest's end for Derbent, the crest
