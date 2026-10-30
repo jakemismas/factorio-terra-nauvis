@@ -2534,23 +2534,18 @@
  "cuts_rule": "the plan's waterway cut order (SPRINT-1-PLAN.md section 6.3; ARCHITECTURE.md, 'Performance budgets'): per scale, the Douglas-Peucker tolerance up in whole tiles to at most one reference pixel (s tiles), then rivers out from the bottom of this list, never one of Europe's 22, until the map's Tile row fits P10 minus the later reserves of 6.3; tolerance_tiles and rivers (the count carved from the top of the list) override config.lua's tolerance and the whole list at that scale; DECISIONS.md (waterways) records each with its runs",
  "cuts": {
   "2": {
-   "tolerance_tiles": 2,
    "rivers": 24
   },
   "3": {
-   "tolerance_tiles": 3,
    "rivers": 22
   },
   "4": {
-   "tolerance_tiles": 4,
    "rivers": 22
   },
   "5": {
-   "tolerance_tiles": 5,
    "rivers": 22
   },
   "6": {
-   "tolerance_tiles": 6,
    "rivers": 22
   }
  }

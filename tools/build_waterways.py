@@ -25,8 +25,10 @@ carve where the coast fit reads that centre (U2).
 
 A river's course is natural at three steps. Here
 its out-and-back hooks are cut (deloop), it is smoothed by at least smoothing.min_window_px reference px,
-which also loses most of the raster's octilinear stairs and of the segments, and each segment takes a
-half-width from the river's profile, narrow at the source and wide at the coast (river_widths). In the
+which also loses most of the raster's octilinear stairs, it is simplified with a tolerance that follows
+its bends (bend_tolerance), so bends stay curves and straight reaches pay for few segments, and each
+segment takes a half-width from the river's profile, narrow at the source and wide at the coast
+(river_widths). In the
 mod, waterways.lua warps the coordinates every set reads by one shared noise field and modulates the
 width by one low-frequency noise, so the banks wander and stop being parallel for a few noise
 evaluations per tile, not per segment. A turning basin is a short wide capsule on the river, not a square.
@@ -874,6 +876,28 @@ def dp_tolerances(pts, eps):
     return pts[keep]
 
 
+def bend_tolerance(Sm, tol, S, s):
+    """A Douglas-Peucker tolerance per point of a smoothed river: at most kink_degrees of turn at a shipped
+    vertex of a bend of radius R (R (1 - cos(kink / 2)) tiles), between the scale's least_tiles and tol. So a
+    bend stays a curve, which one fixed tolerance leaves a corner, and a gentle reach takes long segments,
+    which the warp hides and each of which costs per tile. R reads the turn over bend_tiles each way, held
+    over the bend so its whole length keeps the tight tolerance."""
+    np = _np()
+    from scipy import ndimage as ni
+    P = np.asarray(Sm, float)
+    k = min(int(S["bend_tiles"]), (len(P) - 1) // 2)
+    least = S["least_tiles"][s - 1]
+    if k < 1:
+        return np.full(len(P), float(tol))
+    a, b = P[k:-k] - P[:-2 * k], P[2 * k:] - P[k:-k]
+    turn = np.abs((np.arctan2(b[:, 1], b[:, 0]) - np.arctan2(a[:, 1], a[:, 0]) + np.pi) % (2 * np.pi) - np.pi)
+    kappa = np.zeros(len(P))
+    kappa[k:-k] = turn / k
+    kappa = ni.maximum_filter1d(kappa, size=2 * k + 1)
+    eps = (1 - math.cos(math.radians(S["kink_degrees"]) / 2)) / np.maximum(kappa, 1e-6)
+    return np.clip(eps, min(least, tol), tol)
+
+
 def kept_simplify(Q, cells, keep, tol, tight, step):
     """Douglas-Peucker of a passage at `tol`, its kept cells held within `tight` tiles: the course
     `cells` (px cells, in order; Q is their centres in tiles) is resampled piece by piece between the
@@ -983,7 +1007,7 @@ def shaped(w, feature, kind, s, geo, tol=None, hw=None):
         if v == 0:
             break
     win, Sm, Pf, runs_f = chosen
-    P = dedupe(snap(dp_simplify(Sm, tol) + [ox, oy], grid))
+    P = dedupe(snap(dp_tolerances(Sm, bend_tolerance(Sm, tol, w["smoothing"], s)) + [ox, oy], grid))
     v, worst, runs = turn_windows(P, bw, lim)
     # where the smoothed centreline itself still fails, its sharpest vertex of each failing stretch
     # (S4: the Rhine and the Garonne at scale 6)

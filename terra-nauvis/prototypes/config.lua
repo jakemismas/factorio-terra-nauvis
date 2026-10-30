@@ -1708,9 +1708,13 @@ return {
   --     + margin, s / 2); a dam max(dam.floor_tiles, dam.per_scale s).
   --   depth: the carve's floor, plain water in vanilla and Alien Biomes for rivers and canals,
   --     deepwater for straits (S4); slope: elevation per tile from the carve's edge.
-  --   tolerance_tiles: Douglas-Peucker per scale (review note 8); smoothing: S4's box windows in
-  --     tiles, tried smallest first until the smoothed centreline (simplified at fine_tolerance_tiles)
-  --     obeys the bend rule, for rivers; the drawn_kinds (straits and canals, sea passages the coast
+  --   tolerance_tiles: Douglas-Peucker per scale (review note 8; raised by the decision of 2026-10-30:
+  --     the warp hides the vertices on a gentle reach, and every segment costs per tile); a river's bends
+  --     take less, down to the scale's smoothing.least_tiles, so no vertex turns by more than kink_degrees
+  --     where the curve allows it (bend_tiles: the arm of the curvature estimate); smoothing: S4's box windows in
+  --     tiles, tried smallest first from min_window_px reference px until the smoothed centreline (simplified
+  --     at fine_tolerance_tiles) obeys the bend rule, for rivers; the drawn_kinds (straits and canals, sea
+  --     passages the coast
   --     fit fills as land) keep their drawn course unsmoothed, their R7b points (a strait's waypoints
   --     and narrowest point, a canal's route vertices) held within their half-width less one tile;
   --     bend: R4's rule, no window_tiles
@@ -1730,9 +1734,10 @@ return {
     depth = {river = -2.2, strait = -6, canal = -2.2},
     slope = 4,
     dam = {floor_tiles = 1.5, per_scale = 0.5},
-    tolerance_tiles = {2, 2, 2, 3, 3, 3},
-    smoothing = {windows = {1, 5, 9, 13, 17, 25, 33, 49, 65, 97}, passes = 3, step_tiles = 1, min_window_px = 8,
-                 fine_tolerance_tiles = 0.5, drawn_kinds = {"strait", "canal"}},
+    tolerance_tiles = {2, 3, 6, 8, 10, 12},
+    smoothing = {windows = {1, 5, 9, 13, 17, 25, 33, 49, 65, 97}, passes = 3, step_tiles = 1, min_window_px = 12,
+                 fine_tolerance_tiles = 0.5, drawn_kinds = {"strait", "canal"}, kink_degrees = 30, bend_tiles = 8,
+                 least_tiles = {2, 1.5, 1, 1, 1, 1}},
     bend = {window_tiles = 17, limit_degrees = 90},
     basin_tiles = 30,
     ford = {every_px = 60, length_tiles = 8, margin_tiles = 2, bank_tiles = 3, score = 10000, jitter = 0.3},
