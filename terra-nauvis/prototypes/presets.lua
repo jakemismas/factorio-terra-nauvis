@@ -28,19 +28,21 @@
 -- region-layer Alien Biomes' palms read elevation in the Entity program, so beside them a preset
 -- would have carried its fine field there (design constraint 3). climate-tiles ships the palm switch
 -- (design note 9) and empties the lists. Its fallbacks stay defined, so the map's Map type
--- entry still works there. Withholding reaches new worlds only: scripts/guards.lua warns a preset
--- world that later loads beside such a mod.
+-- entry still works there. Withholding reached new worlds only: scripts/guards.lua warned a preset
+-- world that later loaded beside such a mod, and a save made before the switch keeps its palms on
+-- its fine field for life (ARCHITECTURE.md, "Alien Biomes"; design notes 2026-10-29 18:40).
 --
 -- From climate-tiles each preset also redirects temperature, moisture and aux to the Earth climate,
 -- the Alien Biomes variant when alien-biomes is loaded and the fallback otherwise (climate.lua), and
--- points the marsh keys at their bodies; with Alien Biomes it points the 19 vanilla tile keys at the
--- shared bonus body, the exclusion key at its body and each palm's probability and richness keys at
--- its Earth copy (trees.lua, built from the frozen Alien Biomes table on every load, so the name is
--- never dangling), which reads the palm constant where AB reads elevation and closes the palm leak
--- (ARCHITECTURE.md, design constraint S-3; design note 9); data-final-fixes.lua points a
--- palm's keys at the neutral body when the installed palm differs from the table. AB keys exist only
--- with AB loaded (ARCHITECTURE.md, "Module map"); without AB the marsh grass key gives grass-1
--- between the marsh pools instead (APPROVALS 8).
+-- points the marsh keys at their bodies and each palm's probability and richness keys at its Earth
+-- copy (trees.lua, built from the frozen Alien Biomes table on every load, so the name is never
+-- dangling), which reads the palm constant where AB reads elevation and closes the palm leak
+-- (ARCHITECTURE.md, design constraint S-3; design note 9), with or without Alien Biomes, so a
+-- world that gains it later meets the switch too; with Alien Biomes it also points the 19 vanilla
+-- tile keys at the shared bonus body and the exclusion key at its body, and data-final-fixes.lua
+-- points a palm's keys at the neutral body when the installed palm differs from the table. Every
+-- other AB key exists only with AB loaded (ARCHITECTURE.md, "Module map"); without AB the marsh grass
+-- key gives grass-1 between the marsh pools instead (APPROVALS 8).
 --
 -- From trees-forests each preset also bakes the great-forests gate from its setting (a toggle) and
 -- points the multiplier key at the region layer's multiplier; with Alien Biomes it points the restored
@@ -102,14 +104,16 @@ local function climate_names()
     [TL.marsh.water_mud.key] = TL.marsh.water_mud.body,
     [TL.marsh.water_shallow.key] = TL.marsh.water_shallow.body,
   }
+  -- The palm keys with Alien Biomes loaded or not: a world made without it that gains it later
+  -- places its palms from the copies too, never from the fine field.
+  for _, c in ipairs(TL.palm.copies) do
+    out[c.key] = c.body
+  end
   if AB then
     for _, t in ipairs(TL.vanilla.tiles) do
       out[TL.vanilla.keys[t]] = TL.vanilla.body
     end
     out[TL.exclude.key] = TL.exclude.body
-    for _, c in ipairs(TL.palm.copies) do
-      out[c.key] = c.body
-    end
   else
     out[TL.marsh.grass.key] = TL.marsh.grass.body
   end

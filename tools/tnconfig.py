@@ -685,10 +685,11 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     the map's tn_map id, the scale, the version's tn_geo id, its city offset under its own names,
     and vanilla's water-slider readers at their default-slider values (D15); with a spawn record
     also the distance redirect, the map's city number and the spawn lake and bias keys; from
-    climate-tiles the climate redirects and the marsh keys, and with ab=True (Alien Biomes loaded,
-    the M2 dump) the AB climate variant, the vanilla tile keys, the exclusion key and the palm keys,
-    else the fallback climate and the marsh grass key; from trees-forests the tree keys; from ridges the
-    cliff properties, the map's ridge keys and the Earth ores' wrapper keys."""
+    climate-tiles the climate redirects, the marsh keys and the palm keys (with or without Alien
+    Biomes), and with ab=True (Alien Biomes loaded, the M2 dump) the AB climate variant, the vanilla
+    tile keys and the exclusion key, else the fallback climate and the marsh grass key; from
+    trees-forests the tree keys; from ridges the cliff properties, the map's ridge keys and the Earth
+    ores' wrapper keys."""
     K, m = cfg["keys"], cfg["maps"][map_key]
     pen = {K["elevation"]: version["entry"], K["start_mask"]: version["start_mask"],
            K["land_coarse"]: version["land_coarse"], K["map"]: m["id"], K["scale"]: int(scale),
@@ -717,12 +718,13 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
             pen[prop] = variant[prop]
         for k in ("water_mud", "water_shallow"):
             pen[tl["marsh"][k]["key"]] = tl["marsh"][k]["body"]
+        # the palm keys with AB loaded or not
+        for c in tl["palm"]["copies"]:
+            pen[c["key"]] = c["body"]
         if ab:
             for tile in tl["vanilla"]["tiles"]:
                 pen[tl["vanilla"]["keys"][tile]] = tl["vanilla"]["body"]
             pen[tl["exclude"]["key"]] = tl["exclude"]["body"]
-            for c in tl["palm"]["copies"]:
-                pen[c["key"]] = c["body"]
         else:
             pen[tl["marsh"]["grass"]["key"]] = tl["marsh"]["grass"]["body"]
     # the tree keys (trees-forests; presets.lua tree_names), after the climate keys: the multiplier key at

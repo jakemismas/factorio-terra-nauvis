@@ -9,6 +9,9 @@
 -- constant is the palm band's middle (AB's palms grow from elevation 0 to 2), so on Earth presets palms
 -- follow climate and sand alone (design note 6); every other world keeps AB's own palms,
 -- untouched. A Map type pick sets no key, so its palms read the fine field (Contradictions item 15).
+-- Every Earth preset bakes the keys with or without Alien Biomes, so a world that gains AB later
+-- meets the switch too; a save made before the switch names no key and keeps AB's own palms on its
+-- fine field for life.
 --
 -- The copies are registered bodies, so they are built from Earth's own data, never from the installed
 -- Alien Biomes: the generated table (config.lua tiles.palm.table, tools/build_palms.py) freezes Alien

@@ -15325,7 +15325,8 @@ def ct_band_variety(cfg, vals, label):
 
 def row_ct_dump_facts(ctx, mods, sec6, row, cache):
     """T13, T16 (FG; D13 and D14 dump facts; climate-tiles): on M1 and M2 every preset's redirects equal
-    config.lua's (the fallback climate on M1, the Alien Biomes variant and the AB-only keys on M2), and
+    config.lua's (the palm keys on both, so a world made without AB meets the palm switch when it gains
+    AB; the fallback climate on M1, the Alien Biomes variant and the AB-only keys on M2), and
     no M2 redirect target reads the property it replaces (A-3); water-shallow and water-mud carry no
     player collision layer; their hooks are exactly the gated texts, outermost, and Nauvis lists both,
     so without AB the mod autoplaces them for Earth presets only; with AB each vanilla land tile and

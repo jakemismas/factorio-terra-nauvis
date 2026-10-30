@@ -754,7 +754,8 @@ return {
   -- offered beside Alien Biomes again. Withholding acted on new worlds only: a world made from a
   -- preset that later loads beside a listed mod still names its fine field, so control code warns
   -- once and records it while a list names that mod (scripts/guards.lua; design notes 2026-10-28 07:20,
-  -- a preset save beside Alien Biomes).
+  -- a preset save beside Alien Biomes). A save made before the switch keeps its palms on its fine
+  -- field for life: no load writes the palm keys into it.
   presets = {
     europe = {name = ID .. "-europe", map = "europe", order = "a-tn-a", withheld_with = {}},
     atlantic = {name = ID .. "-atlantic", map = "atlantic", order = "a-tn-b", withheld_with = {}},
@@ -1149,7 +1150,7 @@ return {
   -- version's own city offset names join it; tnconfig checks every key a version's preset bakes is
   -- here): the missing-name guard, T14 and the Nauvis-only surface guard read it, which strips
   -- exactly these keys from every other surface (D33). From climate-tiles also the climate redirects,
-  -- the marsh keys, and with Alien Biomes the vanilla tile keys, the exclusion key and the palm keys
+  -- the marsh keys, the palm keys, and with Alien Biomes the vanilla tile keys and the exclusion key
   -- (absent keys are by design on a world without AB).
   preset_keys = {"elevation", "starting_resources_lake_mask", K_LAND_COARSE, K_MAP, K_SCALE, K_GEO, EU_CX, EU_CY,
                  "water_level", "segmentation_multiplier", "nauvis_segmentation_multiplier",
@@ -2156,8 +2157,10 @@ return {
   --             (score) + the grass key, its own score off: the key's body gives +bonus on land inside
   --             marshes (marsh_cut), 0 elsewhere (with AB the vanilla tile keys keep vanilla out of
   --             marshes, so AB's wetland grass lies between the pools)
-  --   palm      with Alien Biomes: Earth presets point each AB palm's entity:<tree>:probability and
-  --             :richness keys at Earth copies of its expressions with every local expression, the
+  --   palm      with or without Alien Biomes (so a world that gains it later meets the switch too;
+  --             design notes 2026-10-29 18:40): Earth presets point each AB palm's
+  --             entity:<tree>:probability and :richness keys at Earth copies of its expressions with
+  --             every local expression, the
   --             constant where AB reads elevation (the richness too: its locals are in its scope, so
   --             the isolation walk reads them with it)
   --. ARCHITECTURE.md's hook form (a key whose prototype
