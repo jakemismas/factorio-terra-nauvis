@@ -256,14 +256,16 @@ if AB then
       " * max(" .. MARSH_W .. ", " .. cut .. "), 0)), 0, 1)"
   end
   def(N.ab.moisture, ab_moisture("", MARSH_W))
-  -- Natural aux stays under ab_cap, below AB's alien palette, whatever the spread; dry temperate land
+  -- Natural aux stays under ab_cap, below AB's alien palette, whatever the spread: it folds back at the
+  -- cap instead of stopping there, because a hard stop pins every high aux to one value, and on dry land
+  -- that value is dry-dirt's box alone, a flat brown plain hundreds of tiles wide. Dry temperate land
   -- lifts toward vanilla red desert, a lift that is 0 wherever the AB temperature lies outside the
   -- exclusion band, so no alien AB colour can follow it.
   local R = A.red
-  local function ab_aux(extra, over)
-    return "clamp(min(" .. num(A.base) .. " + " .. noise(A.noise, AFREQ) .. extra .. ", " .. num(A.ab_cap) .. ") + " ..
-      (over or "") .. num(R.lift) .. " * " .. N.dry .. " * clamp((" .. N.ab.temperature .. " - " .. num(R.t_lo) ..
-      ") / " ..
+  local function ab_aux(extra)
+    return "clamp(" .. num(A.ab_cap) .. " - abs(" .. num(A.base) .. " + " .. noise(A.noise, AFREQ) .. extra .. " - " ..
+      num(A.ab_cap) .. ") + " ..
+      num(R.lift) .. " * " .. N.dry .. " * clamp((" .. N.ab.temperature .. " - " .. num(R.t_lo) .. ") / " ..
       num(R.ramp) .. ", 0, 1) * clamp((" .. num(R.t_hi) .. " - " .. N.ab.temperature .. ") / " .. num(R.ramp) ..
       ", 0, 1) + " .. num(A.ab_bias) .. " * var('control:aux:bias'), 0, 1)"
   end
