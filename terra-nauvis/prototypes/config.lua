@@ -628,12 +628,12 @@ return {
       name = ID .. "-destroyed-europe", type = "bool-setting", setting_type = "startup", default_value = false,
       order = "c-f",
     },
-    -- Exact coastlines (milestone coast-band-fix and 13:45, default off, a per-world opt-in):
-    -- a new world's preset bakes the band-fix key from it, for the maps bandfix.maps lists. Hidden while
-    -- bandfix.maps is empty (first release): it acts on no map, so a visible switch would mislead.
+    -- Exact coastlines (milestone coast-band-fix; on by default since the order of 2026-10-30:
+    -- Old World's and Atlantic's coasts need it to reach Europe's): a new world's preset bakes the band-fix
+    -- key from it, for the maps bandfix.maps lists.
     exact_coast = {
-      name = ID .. "-exact-coast", type = "bool-setting", setting_type = "startup", default_value = false,
-      order = "c-g", hidden = true,
+      name = ID .. "-exact-coast", type = "bool-setting", setting_type = "startup", default_value = true,
+      order = "c-g",
     },
     -- City markers (milestone extras; APPROVALS 1a, D28, default off): runtime-global, so any admin can switch
     -- it in a running game; on, the map view shows every city of the world's map (scripts/markers.lua).
@@ -1154,9 +1154,11 @@ return {
     -- The geographies listed read their fit at warped coordinates instead and their detail body is 0: u
     -- and v each add these terms, amplitude_px * basis_noise at wavelength_px reference px, geo-locked
     -- through the city offset. That moves the coast by the same bounded distance at any slope, so its
-    -- roughness stays one line. The noise calls are 4 against the detail's 3.
+    -- roughness stays one line. The noise calls are 4 against the detail's 3. water_gain multiplies their
+    -- shore body's water gain, so the shallows' width, set by the fit's slope, reads like Europe's rim.
     warp = {
       geographies = {17, 18},
+      water_gain = 2.5,
       u = {{seed1 = 7411, wavelength_px = 5, amplitude_px = 0.45},
            {seed1 = 7413, wavelength_px = 1.2, amplitude_px = 0.22}},
       v = {{seed1 = 7412, wavelength_px = 5, amplitude_px = 0.45},
@@ -2047,9 +2049,15 @@ return {
   --       start land guarantee and the spawn tile keep what the noise draws
   --   fill  K pixels whose band region holds no 2 x 2 block of tiles (an islet or a channel narrower than
   --       a pixel) are written whole instead of as a one-tile line; the tool marks them
-  --   new_water, land_fallback  the tile a written water tile gets; written land copies the chunk's first
-  --       land tile, or land_fallback in a chunk that holds none
-  --   row_cache  decoded table rows a peer keeps in memory (a cache of shipped data, never game state)
+  --   new_water, new_deep, land_fallback  the tile a written water tile gets, the one it gets in a pixel with
+  --       no land among its 8 neighbours; written land copies the chunk's first land tile, or land_fallback in
+  --       a chunk that holds none
+  --   smooth  the write rule at scales from min_scale up: the reference blurred by a quadratic B-spline must read
+  --       the pixel's class by at least threshold + wobble * a smooth tile noise (3/4 is half a pixel from a
+  --       straight coast); in a fill pixel it reads within thin of its value at the pixel's centre, a blob. octaves
+  --       name the noise's cells per period_tiles and weights
+  --   row_cache  decoded table rows a peer keeps in memory, the oldest evicted one at a time (a cache of
+  --       shipped data, never game state): at scale 6 they span 12,288 tiles north to south
   --   encoding  each table row is its first column, then runs (length - 1) * #symbol_order + symbol index
   --       (0-based in symbol_order), every number a varint of varint_base digits written in alphabet (a
   --       digit at or above varint_base continues the number); a decoded row is one symbol character per
@@ -2057,9 +2065,10 @@ return {
   --       class, thin water, and a pixel of either class inside a waterway footprint (masked)
   bandfix = {
     setting = "exact_coast", key = BFN.K, on = ONE,
-    maps = {},
-    checks = {europe = {scale = 1}, olde_world = {scale = 6}},
-    tables = {europe = {geographies = {14}}, olde_world = {geographies = {18}}},
+    maps = {"atlantic", "olde_world"},
+    checks = {europe = {scale = 1}, atlantic = {scale = 4}, olde_world = {scale = 6}},
+    tables = {europe = {geographies = {5, 8, 11, 14}}, atlantic = {geographies = {17}},
+              olde_world = {geographies = {18}}},
     version = 1,
     float_margin_px = 0.01,
     correction_tiles = 2,
@@ -2067,7 +2076,9 @@ return {
     spawn_keep_tiles = 24,
     chunk_tiles = 32,
     row_cache = 2048,
-    new_water = "water", land_fallback = "sand-1",
+    new_water = "water", new_deep = "deepwater", land_fallback = "sand-1",
+    smooth = {min_scale = 3, threshold = 0.72, wobble = 0.22, thin = 0.35, period_tiles = 64,
+              octaves = {{cells = 4, weight = 1}, {cells = 12, weight = 0.6}}},
     neighbours = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}},
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
     varint_base = 32,

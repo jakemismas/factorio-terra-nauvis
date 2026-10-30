@@ -1913,17 +1913,18 @@ takes over the Map type fields.
 
 - **Introduces.** `scripts/bandfix.lua`, the only per-chunk handler, and its generated data in
   `scripts/generated/` (`tools/build_geo.py emit --map <map> --bandfix`, priced in `data-src/bandfix/`):
-  per map that config.lua's `bandfix.tables` lists (Europe and Olde World; Atlantic, never priced, has
-  none) one K+ table, `bandfix_<map>_v<n>.lua`, that serves every offered scale, and per scale one mask
+  per map that config.lua's `bandfix.tables` lists (all three) one K+ table,
+  `bandfix_<map>_v<n>.lua`, that serves every offered scale, and per scale one mask
   table, `bandfix_<map>_s<k>_v<n>.lua`, holding the K+ pixels inside that scale's waterway, canal, dam
   and basin footprints. A K pixel is a scored reference pixel (not thin water) holding a tile outside
   its half-pixel band that the coast fit may misclassify at some offered scale: the fit alone (exact at
-  every tile's sample point) lies within the lattice detail's bound of the wrong side, or a tile of the
+  every tile's sample point) lies within the lattice detail's bound of the wrong side (on a map with a
+  coast warp, the other class lies within the warp's reach), or a tile of the
   other possible class lies within `bandfix.correction_tiles`, because the game's tile stage grows
   water into 2 x 2 blocks; K+ adds the 8 neighbours whose classes the band needs. One shared table
   instead of one per scale cuts what every peer loads at startup about fivefold (design notes,
   coast-band-fix). The player-facing startup setting Exact coastlines (`terra-nauvis-exact-coast`,
-  bool, default false: design notes 13:45), whose tooltip names the maps it acts on; config.lua's
+  bool, default true since the order of 2026-10-30), whose tooltip names the maps it acts on; config.lua's
   `bandfix` group holds the key, the maps it acts on (`maps`, the flip checks' outcome), the checked
   configurations, the tables and every constant the handler and the tool share.
 - **Contract.** `on_chunk_generated` is registered only when the save carries the band-fix key: on_init
@@ -1935,14 +1936,17 @@ takes over the Map type fields.
   the map is listed in `bandfix.maps` (all four checks passed); absent means off. The
   handler acts on the Nauvis surface only (by index; Space Age planets that inherit the key are never
   touched) and is a pure function of chunk position, the chunk's generated tiles and the shipped data:
-  a chunk without a K pixel returns before reading a tile; else it reads the chunk's player-blocking
-  water and its kept water (water tiles a player walks: fords and marsh water, never written) once and
-  writes, in one `set_tiles` call without tile correction, every tile of an unmasked K pixel whose
-  generated class differs from its pixel's and that lies outside its band (S12's closed rule) or in a
-  fill pixel (a band region holding no 2 x 2 block of tiles: an islet or channel narrower than a
-  pixel, written whole, design notes 13:45), outside the spawn keep disc (`bandfix.spawn_keep_tiles`:
+  a chunk without a K pixel returns before reading a tile; else one tile query per run of K pixels of one
+  kind finds the tiles of the wrong class (kept water, the water tiles a player walks, fords and marsh
+  water, is never among them), and it writes, in one `set_tiles` call without tile correction, each
+  such tile whose pixel's class the reference, blurred by a quadratic B-spline, reads there by more
+  than `bandfix.smooth`'s threshold and its wobble: half a pixel from a straight coast, as S12's closed
+  rule, with a rounded, wavering line in place of the raster's stairs (S12's rule itself below
+  `smooth.min_scale`); a fill pixel (a band region holding no 2 x 2 block of tiles: an islet or channel
+  narrower than a pixel, design notes 13:45) is drawn as a blob around its centre. Tiles of an open-sea
+  pixel become deep water. Nothing is written inside the spawn keep disc (`bandfix.spawn_keep_tiles`:
   spawn-cities' start land guarantee); a written tile that would stand as a strip one tile wide takes
-  its in-chunk neighbour of the same reference class along. It reads and writes its own chunk only,
+  its neighbour of the same reference class along. It reads and writes its own chunk only,
   so generation order does not matter, and a repeated delivery writes nothing. Inland lakes lie
   coast_px pixels inside the fit's coast, where no pixel is K, so no lake tile is ever a candidate;
   the spawn lake near a coast is the one residual. The drift line reports
@@ -2085,10 +2089,9 @@ Items 1 to 9 are settled; each keeps its record. Items 10 to 22 are open.
     design notes why none exists, and smoke step 4 then carries the per-player warnings. UNVERIFIED.
 16. **Rivers through start areas.** `waterways` chooses how spawn, lake and starting ore
     stay on one bank (composition, "No river cuts a start area") and records it in design notes.
-17. **Band fix on Atlantic.** The flip checks run on Europe at scale 1 and on Olde World at
-    scale 6; Atlantic has no priced fit (S12) and no measurement, so Exact coastlines never acts on
-    it. The setting's default awaits the decision after the S13-bandfix renders
-    (the design notes).
+17. **Band fix on Atlantic (superseded).** the order of 2026-10-30 enables Exact coastlines on Old
+    World and Atlantic, on by default, on light checks in place of the flip checks (design notes
+    2026-10-30, a development branch); Europe keeps its noise coast.
 18. **The Map type route.** A Map type entry picked alone follows the startup
     settings at every load and compiles the fine field in the Entity program through vanilla's
     starting-ore mask and, with AB, AB's palms (section "Map type entries"); its cost is

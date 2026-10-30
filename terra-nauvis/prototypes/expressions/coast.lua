@@ -217,7 +217,8 @@ local function version(m, g)
     def(g.shore, "min(if(cv > 0, gl * cv + " .. o .. ", gw * cv - " .. o .. "), " .. g.far .. ")",
       {cv = cv,
        gl = "max(" .. num(SH.land.min) .. ", " .. num(SH.land.per_scale) .. " * " .. s .. ")",
-       gw = "max(" .. num(SH.water.min) .. ", " .. num(SH.water.per_scale) .. " * " .. s .. ")"})
+       gw = (warp and num(C.warp.water_gain) .. " * " or "") ..
+         "max(" .. num(SH.water.min) .. ", " .. num(SH.water.per_scale) .. " * " .. s .. ")"})
     text, locals = g.shore, {}
   end
   -- A version with a spawn record (spawn-cities) adds step 4, the start land guarantee, and step 7,
