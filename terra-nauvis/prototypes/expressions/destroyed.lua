@@ -1,9 +1,10 @@
 -- Destroyed Europe (ARCHITECTURE.md, "Region layer" and milestone contract 10; milestone destroyed-europe;
 -- APPROVALS 10; D12; S3 section 6; R3 7.1).
 --
--- The zone reads one region-layer interface name, tn_destroyed_depth: R7b's 14-vertex polygon less its six
--- exclusion rows (the Kiel Canal, Semmering, Dukla, Gotthard, Brenner and South Foreland), in tiles, its
--- edges moving with the seed on the shared warp (S10 design (d)). No region formula lives here (the static
+-- The zone reads one region-layer interface name, tn_destroyed_depth: the outline of
+-- data-src/approvals/destroyed-zone.json less its keep rows (Britain, Denmark and the Carpathians), in tiles.
+-- Each seed moves the outline's vertices and warps its edges harder than the shared warp, the same way on
+-- every map. No region formula lives here (the static
 -- regions row fails one outside regions.lua). The zone is cut by the start disc around the spawn, which the
 -- spawn shift keeps at the origin on every map, so every spawn city, the zone's included, starts on normal
 -- ground with normal trees (T7). Its heat climbs from a heat-1 rim to a core that mixes Alien Biomes' four

@@ -9,7 +9,8 @@
 --   row.depth .. id .. suffix   the same signed distance in tiles
 -- A hotspot row's disc sits at its adopted centre moved per seed by up to its jitter radius (S6's
 -- linear fold of map_seed: constants only, so it folds the same on every peer); row.hu and row.hv
--- name that centre. Each layer's rows on a map make the layer's aggregates, the interface consumers
+-- name that centre. The destroyed zone's polygon moves each vertex by the same fold (seeded_polygon).
+-- Each layer's rows on a map make the layer's aggregates, the interface consumers
 -- read (names in config.lua regions.names):
 --   destroyed_sd, _w, _depth          min(max(include sd), -exclude sd, ...): exclusion rows (warp 0)
 --                                     keep protected features out of the zone whatever the warp does
@@ -266,6 +267,40 @@ local function polygon(pts, qu, qv)
   return "(2 * inside - 1) * sqrt(d2)", L
 end
 
+-- A polygon whose every vertex moves per seed by up to its own jitter radius: polygon()'s formulas with the
+-- vertices and edges as locals, which are constants per save and fold, so the program costs what a fixed
+-- polygon of as many vertices costs. Each vertex has its own multipliers, so a seed moves the vertices
+-- independently. An edge whose two ends land on one row has no crossing, so its slope is never read.
+local function seeded_polygon(pts, r, qu, qv)
+  local L, d2s, cross, n = {}, {}, {}, #pts
+  for i, p in ipairs(pts) do
+    local s = tostring(i)
+    local reach = r.vertex_jitter_km[i] / R.km_per_px / math.sqrt(2)
+    local step = i * JT.vertex_step
+    L["au" .. s] = jittered(p[1], (JT.mult_x + step) % 1, r.vertex_phase[i], reach)
+    L["av" .. s] = jittered(p[2], (JT.mult_y + step) % 1, r.vertex_phase[i], reach)
+  end
+  for i = 1, n do
+    local s, e = tostring(i), tostring(i % n + 1)
+    local ex, ey = "ex" .. s, "ey" .. s
+    L[ex] = "au" .. e .. " - au" .. s
+    L[ey] = "av" .. e .. " - av" .. s
+    L["du" .. s] = qu .. " - au" .. s
+    L["dv" .. s] = qv .. " - av" .. s
+    L["t" .. s] = "clamp((du" .. s .. " * " .. ex .. " + dv" .. s .. " * " .. ey .. ") / (" .. ex .. " * " .. ex ..
+      " + " .. ey .. " * " .. ey .. "), 0, 1)"
+    L["qx" .. s] = "du" .. s .. " - t" .. s .. " * " .. ex
+    L["qy" .. s] = "dv" .. s .. " - t" .. s .. " * " .. ey
+    L["sl" .. s] = "if(abs(" .. ey .. ") < " .. num(JT.flat_px) .. ", 0, " .. ex .. " / " .. ey .. ")"
+    d2s[#d2s + 1] = "qx" .. s .. " * qx" .. s .. " + qy" .. s .. " * qy" .. s
+    cross[#cross + 1] = "((" .. qv .. " < av" .. s .. ") != (" .. qv .. " < av" .. e .. ")) * (" .. qu .. " < au" .. s ..
+      " + dv" .. s .. " * sl" .. s .. ")"
+  end
+  L.d2 = joined("min", d2s, nil)
+  L.inside = "(" .. table.concat(cross, " + ") .. ") % 2"
+  return "(2 * inside - 1) * sqrt(d2)", L
+end
+
 local function path(pts, r, qu, qv)
   local L = lines(pts, qu, qv, false)
   return num(r) .. " - sqrt(d2)", L
@@ -303,7 +338,9 @@ for _, r in ipairs(T.rows) do
       local u, v = to_px(ll[1], ll[2])
       pts[i] = {u, v}
     end
-    if r.shape == "polygon" then
+    if r.vertex_jitter_km then
+      text, L = seeded_polygon(pts, r, qu, qv)
+    elseif r.shape == "polygon" then
       text, L = polygon(pts, qu, qv)
     else
       text, L = path(pts, r.radius_km / R.km_per_px, qu, qv)

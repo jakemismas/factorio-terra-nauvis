@@ -549,8 +549,8 @@ Tile scores that must lose return `-inf`, never a small or negative number (nois
 
 Every per-region quantity comes from one layer, built by `prototypes/expressions/regions.lua` from
 the rows of `prototypes/tables/regions.lua`, which `tools/build_regions.py` writes from
-`approvals-data.json` and R7b (the destroyed polygon with its exclusion rows, the adopted forests,
-marshes and hotspots; design notes, region-layer). Design (d) won S10: exact discs, polygons and buffered
+`approvals-data.json`, `destroyed-zone.json` and R7b (the destroyed outline with its keep rows, the
+adopted forests, marshes and hotspots; design notes, region-layer). Design (d) won S10: exact discs, polygons and buffered
 paths on one shared domain warp. For 20 Europe regions read in full it cost Tile 13,372 and Entity
 11,840 (vanilla 10,068 and 8,549) and drew the approved polygons with IoU 1.0. The runner-up, (b) a
 Voronoi of region centres (Tile 11,200, Entity 9,668), turns polygons into discs (shape match 0.20 to
@@ -560,7 +560,9 @@ outlines (S10 1.7).
 - **Rows.** Each row has an id, a layer (destroyed, forest, marsh, hotspot), a shape (a disc with
   lat, lon and radius in km, or a polygon or buffered path with lat and lon vertices), a warp share,
   the maps that adopt it, and a boost (forests) or a biter multiplier, jitter radius and phase
-  (hotspots). Exclusion rows (`mode = "exclude"`, warp 0) keep protected features out of the zone.
+  (hotspots). Exclusion rows (`mode = "exclude"`, warp 0) keep Britain, Denmark and the Carpathians
+  out of the zone at every seed, and the destroyed polygon carries a jitter radius and phase per
+  vertex.
   The table is tool-written, so an approval edit is an edit of `approvals-data.json` and a rerun of
   `build_regions.py emit`; the static `regions` row re-emits it and fails on any difference. S10's
   Spessart row added a forest with no code file changed; `rl_locality` repeats that test in a staged
@@ -587,13 +589,11 @@ outlines (S10 1.7).
   `x + 960`), which is why the octaves are built one by one. A seed's soft edges are therefore one
   field in geography: the zone is bit-identical on all three maps and at scales 1 and 6, and a spawn
   city never changes it.
-- **Warp shares.** The destroyed polygon 1; forest discs 0.25; thin forest outlines (area over
+- **Warp shares.** The destroyed polygon 2.5; forest discs 0.25; thin forest outlines (area over
   perimeter under 25 px: the Carpathian, Dinaric and Hyrcanian outlines) 0.4, the other outlines 1;
-  marshes 0 (deltas and coasts stay put, roughness only); exclusion rows and hotspots 0. Six exclusion
-  rows cut the destroyed zone: the Kiel Canal as a 25 km buffered path, and Semmering, Dukla,
-  Gotthard, Brenner and South Foreland as 20 km discs (S10's rule: every protected feature outside the
-  polygon within 75 km of it). They kept all 100 protected points outside at every seed for Tile +377
-  (S10 section 3).
+  marshes 0 (deltas and coasts stay put, roughness only); exclusion rows and hotspots 0. Three
+  exclusion rows cut the destroyed zone, one straight buffered path each: Britain (205 km), Denmark
+  with the Kiel Canal, the Belts and Scania (255 km), and the Carpathian crest (70 km).
 - **Hotspot rows.** Each adopted hotspot is a disc row of radius r at its adopted centre (APPROVALS
   2, which moves one inland under decision 16) plus S6's jitter of up to j = r/2: the centre
   `tn_hu_<id>_v1`, `tn_hv_<id>_v1` (region-frame px) moves per axis by

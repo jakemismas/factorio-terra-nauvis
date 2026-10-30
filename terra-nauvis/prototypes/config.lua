@@ -1486,9 +1486,9 @@ return {
   -- Destroyed Europe (milestone destroyed-europe; ARCHITECTURE.md milestone contract 10; APPROVALS 10; S3 section 6;
   -- R3 7.1). prototypes/expressions/destroyed.lua builds, from the region layer's interface names only:
   --   zone   min(tn_destroyed_depth, d - max(start.radius_tiles, starting_area_radius)) in tiles, d the
-  --          distance to the spawn, so the zone is positive inside R7b's polygon less its six exclusion rows
-  --          (S10 design (d): the edges move with the seed) and never inside the start disc, where every
-  --          spawn city keeps normal ground and trees (T7); the zone's own start mask, d read from
+  --          distance to the spawn, so the zone is positive inside its seeded outline less its keep rows
+  --          (regions.lua seeded_polygon: vertices and edges move with the seed) and never inside the start
+  --          disc, where every spawn city keeps normal ground and trees (T7); the zone's own start mask, d read from
   --          start.distance (the spawn distance body every spawn record names)
   --   heat   where the zone is positive, clamp(rim + min(per_tile * zone, ramp) + noise, rim, cap) in Alien
   --          Biomes units: a heat-1 rim (100 to 120) that climbs within ramp / per_tile tiles to a core
@@ -1674,7 +1674,8 @@ return {
     octave_shift_px = 10000.37,
     max_arguments = 255,
     forest_boost = 2,
-    jitter = {mult_x = 0.6180339887, mult_y = 0.4142135624, mult_high = 0.569840291, high_bits = 65536},
+    jitter = {mult_x = 0.6180339887, mult_y = 0.4142135624, mult_high = 0.569840291, high_bits = 65536,
+              vertex_step = 0.7548776662, flat_px = 0.001},
     names = {
       suffix = RG_V,
       row = {sd = NOISE .. "sd_", w = NOISE .. "w_", depth = NOISE .. "depth_", hu = NOISE .. "hu_",

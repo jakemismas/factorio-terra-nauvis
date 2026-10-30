@@ -2,6 +2,7 @@
 -- Written by tools/build_regions.py (writer 1) from
 --   data-src/approvals/approvals-data.json sha256 33ce91d5e5303fb47825d52593e942d22f2d16e7f03b3d11cab4fd97eaa24c5a
 --   docs/plan/research/R7b-geography.json sha256 480c9f20e0a33decc79786b2c4b7a38fe3b8ba8d8b5d8706783f11d913be7729
+--   data-src/approvals/destroyed-zone.json sha256 8113d3185fb1c2ea552c4568a9c20de40c2c8d1f45a00f0ebfd7cdfaa9c9a8fe
 -- Never edit by hand: an approval edit is an edit of approvals-data.json, then
 -- `python tools/build_regions.py emit`; the static gate row re-emits this file and fails on a difference.
 --
@@ -12,58 +13,51 @@
 -- include, or exclude to keep a protected feature out of the zone); shape (disc: lat, lon,
 -- radius_km; polygon: latlon vertices; path: latlon and radius_km, buffered); warp (the row's share
 -- of the shared domain warp); maps (the maps that adopt it); boost (forest strength); mult, resource,
--- jitter_km and phase (hotspot: biter multiplier, resource, jitter radius and the phase of its fold).
+-- jitter_km and phase (hotspot: biter multiplier, resource, jitter radius and the phase of its fold);
+-- vertex_jitter_km and vertex_phase (a seeded polygon: each vertex's jitter radius and fold phase).
 -- Degrees throughout; sizes in km at regions.km_per_px (config.lua).
 return {
   rows = {
     {
-      id = "destroyed_europe", layer = "destroyed", mode = "include", shape = "polygon", warp = 1,
+      id = "destroyed_europe", layer = "destroyed", mode = "include", shape = "polygon", warp = 2.5,
       maps = {"europe", "atlantic", "olde_world"},
       latlon = {
-        {45.6, -1.6}, {48.4, -5.4}, {51.0072, 1.4786}, {53.5, 4.6}, {53.75, 8.7}, {55.3, 17}, {54.45, 19.6},
-        {54.36, 23.1}, {52.0766, 23.6161}, {49.7833, 22.7667}, {49.55, 17.85}, {47.8333, 16.75}, {47.5833, 9.4667},
-        {46.45, 6.55},
+        {43.45, -2.1}, {48.4, -5.4}, {51.0072, 1.4786}, {53.5, 4.6}, {53.75, 8.7}, {55.3, 17}, {54.36, 23.1},
+        {52.0766, 23.6161}, {49.7833, 22.7667}, {49.55, 17.85}, {45.55, 15}, {45.3, 13.4}, {42.2, 14.7}, {41.35, 12.8},
+        {41.25, 9.6}, {42.35, 3.3},
       },
-      source = "approvals-data.json destroyed_europe_polygon (APPROVALS 10; R7b destroyed_europe)",
+      vertex_jitter_km = {
+        80, 50, 40, 60, 30, 90, 110, 110, 70, 50, 70, 40, 90, 100, 80, 70,
+      },
+      vertex_phase = {
+        0.437112688, 0.151615411, 0.154371397, 0.844856607, 0.475944679, 0.481420007, 0.746452696, 0.796097949,
+        0.320134982, 0.808700745, 0.284323369, 0.456894025, 0.408658231, 0.33418846, 0.534147954, 0.26615482,
+      },
+      source = "destroyed-zone.json vertices (Jake's ruling of 2026-10-30 10:05)",
     },
     {
-      id = "keep_kiel_canal", layer = "destroyed", mode = "exclude", shape = "path", warp = 0, radius_km = 25,
+      id = "keep_britain", layer = "destroyed", mode = "exclude", shape = "path", warp = 0, radius_km = 205,
       maps = {"europe", "atlantic", "olde_world"},
       latlon = {
-        {53.88937, 9.13653}, {53.98838, 9.28512}, {54.14027, 9.34224}, {54.21388, 9.5841}, {54.28238, 9.63961},
-        {54.35821, 9.78246}, {54.34082, 9.94224}, {54.36572, 10.14463},
+        {51.6, -4.8}, {52.6, 0.9},
       },
-      source = "R7b-geography.json canals kiel route_polyline, 6.3 km outside (S10 3)",
+      source = "destroyed-zone.json keep keep_britain",
     },
     {
-      id = "keep_brenner", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0, lat = 47.0033,
-      lon = 11.5075, radius_km = 20,
+      id = "keep_denmark", layer = "destroyed", mode = "exclude", shape = "path", warp = 0, radius_km = 255,
       maps = {"europe", "atlantic", "olde_world"},
-      source = "R7b-geography.json passes brenner, 72.2 km outside (S10 3)",
+      latlon = {
+        {56.2, 9.2}, {57.2, 14.5},
+      },
+      source = "destroyed-zone.json keep keep_denmark",
     },
     {
-      id = "keep_gotthard", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0, lat = 46.5562,
-      lon = 8.5678, radius_km = 20,
+      id = "keep_carpathians", layer = "destroyed", mode = "exclude", shape = "path", warp = 0, radius_km = 70,
       maps = {"europe", "atlantic", "olde_world"},
-      source = "R7b-geography.json passes gotthard, 70.3 km outside (S10 3)",
-    },
-    {
-      id = "keep_semmering", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0, lat = 47.6325,
-      lon = 15.8297, radius_km = 20,
-      maps = {"europe", "atlantic", "olde_world"},
-      source = "R7b-geography.json passes semmering, 18.8 km outside (S10 3)",
-    },
-    {
-      id = "keep_dukla", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0, lat = 49.418, lon = 21.696,
-      radius_km = 20,
-      maps = {"europe", "atlantic", "olde_world"},
-      source = "R7b-geography.json passes dukla, 34.9 km outside (S10 3)",
-    },
-    {
-      id = "keep_south_foreland_england", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0,
-      lat = 51.1436, lon = 1.3736, radius_km = 20,
-      maps = {"europe", "atlantic", "olde_world"},
-      source = "R7b-geography.json straits dover endpoint south_foreland_england, 18.3 km outside (S10 3)",
+      latlon = {
+        {49.35, 19.4}, {49, 23.2},
+      },
+      source = "destroyed-zone.json keep keep_carpathians",
     },
     {
       id = "bialowieza", layer = "forest", shape = "disc", warp = 0.25, boost = 1, lat = 52.75, lon = 23.95,

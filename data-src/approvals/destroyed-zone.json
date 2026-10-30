@@ -1,0 +1,30 @@
+{
+ "ruling": "Jake, 2026-10-30 10:05: the zone stretches from France to Ljubljana and down to about Rome, and differs every seed. This file supersedes approvals-data.json destroyed_europe_polygon as the zone's outline; north of the Alps it keeps the approved polygon's coverage.",
+ "warp_share": 2.5,
+ "vertices": [
+  {"id": "biscay", "lat": 43.45, "lon": -2.1, "jitter_km": 80, "anchor": "Bay of Biscay off the French border"},
+  {"id": "ushant", "lat": 48.4, "lon": -5.4, "jitter_km": 50, "anchor": "approved vertex B, offshore W of Ushant"},
+  {"id": "dover", "lat": 51.0072, "lon": 1.4786, "jitter_km": 40, "anchor": "approved vertex C, Strait of Dover midline"},
+  {"id": "texel", "lat": 53.5, "lon": 4.6, "jitter_km": 60, "anchor": "approved vertex D, North Sea NW of Texel"},
+  {"id": "german_bight", "lat": 53.75, "lon": 8.7, "jitter_km": 30, "anchor": "approved vertex E"},
+  {"id": "baltic", "lat": 55.3, "lon": 17.0, "jitter_km": 90, "anchor": "approved vertex F"},
+  {"id": "suwalki", "lat": 54.36, "lon": 23.1, "jitter_km": 110, "anchor": "approved vertex H"},
+  {"id": "bug", "lat": 52.0766, "lon": 23.6161, "jitter_km": 110, "anchor": "approved vertex I"},
+  {"id": "galicia", "lat": 49.7833, "lon": 22.7667, "jitter_km": 70, "anchor": "approved vertex J"},
+  {"id": "moravia", "lat": 49.55, "lon": 17.85, "jitter_km": 50, "anchor": "approved vertex K"},
+  {"id": "slovenia", "lat": 45.55, "lon": 15.0, "jitter_km": 70, "anchor": "SE of Ljubljana, on the Croatian border"},
+  {"id": "istria", "lat": 45.3, "lon": 13.4, "jitter_km": 40, "anchor": "Adriatic W of Istria"},
+  {"id": "adriatic", "lat": 42.2, "lon": 14.7, "jitter_km": 90, "anchor": "Adriatic off Pescara"},
+  {"id": "rome", "lat": 41.35, "lon": 12.8, "jitter_km": 100, "anchor": "Tyrrhenian Sea S of Rome"},
+  {"id": "corsica", "lat": 41.25, "lon": 9.6, "jitter_km": 80, "anchor": "Strait of Bonifacio, S of Corsica"},
+  {"id": "lion", "lat": 42.35, "lon": 3.3, "jitter_km": 70, "anchor": "Gulf of Lion off the French border"}
+ ],
+ "keep": [
+  {"id": "keep_britain", "radius_km": 205, "latlon": [[51.6, -4.8], [52.6, 0.9]],
+   "why": "Britain stays outside at every seed: a band whose south edge runs along the Channel coast"},
+  {"id": "keep_denmark", "radius_km": 255, "latlon": [[56.2, 9.2], [57.2, 14.5]],
+   "why": "Denmark, the Kiel Canal, the Belts and Scania stay outside at every seed"},
+  {"id": "keep_carpathians", "radius_km": 70, "latlon": [[49.35, 19.4], [49.0, 23.2]],
+   "why": "The Carpathian crest and its passes stay outside at every seed"}
+ ]
+}
