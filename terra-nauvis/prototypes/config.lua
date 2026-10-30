@@ -1171,9 +1171,12 @@ return {
   -- r tiles out (rings every `ring_step` tiles, about `arc_step` tiles apart on a ring, at least
   -- `min_ring_points`) whose disc of r + `land_margin` tiles is all reached land and holds no
   -- resource within r + `ore_margin`. r is the disc that holds the amount at `density` per tile,
-  -- shrunk by `shrink` down to `min_radius` when nothing fits. An ore whose control size is 0 and
-  -- every world with rso-mod active (RSO places starting ore itself) are left alone. Scripted ore
-  -- never shows in a map preview.
+  -- shrunk by `shrink` down to `min_radius` when nothing fits. An ore whose control size is 0 is left
+  -- alone. Beside RSO the pass runs the same way on what RSO placed, read after RSO's on_init (the
+  -- `? rso-mod` dependency orders it first), so it adds only where RSO's own start fell short
+  --; with `rso_start` off, RSO's
+  -- "Ore in starting area", the player asked for no ore there and the whole pass stands down. Scripted
+  -- ore never shows in a map preview.
   start_ore = {
     ores = {
       {resource = "iron-ore", reference = 368000, density = 540},
@@ -1181,7 +1184,7 @@ return {
       {resource = "coal", reference = 266000, density = 890},
       {resource = "stone", reference = 159000, density = 750},
     },
-    rso = "rso-mod",
+    rso_start = "rso-ore-in-start-area",
     resource_type = "resource",
     water_layer = "water_tile",
     grid = 160,
