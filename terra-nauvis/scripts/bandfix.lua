@@ -21,8 +21,8 @@
 --      region holds no 2 x 2 block of tiles (an islet or a channel narrower than a pixel) is drawn as a blob
 --      around its centre, whatever the blur reads there; below smooth.min_scale the rule is
 --      S12's closed rule. Land of an open-sea pixel (no land around it) becomes deep water, and where the chunk
---      writes anything, so do those pixels' shallow tiles, so a false island sinks without a pale patch or a
---      ghost of its shallows. A chunk with no such tile returns here;
+--      writes anything, so do those pixels' shallow tiles; in a chunk left with no land, all shallow tiles reading
+--      open sea do; so a false island sinks without a pale patch or a ghost of its shallows;
 --   5. the classes of the written tiles' bounding box are read once: a written tile that would stand as a
 --      strip one tile wide takes its neighbour in the box along, when that neighbour belongs to the same
 --      reference class;
@@ -537,20 +537,41 @@ local function scan_run(surface, q)
   end
 end
 
--- Where the chunk writes: the shallow tiles of its open-sea pixels go deep too.
+-- The shallow tiles in AREA that read open sea go deep.
+local function sink_area(surface)
+  local list = surface.find_tiles_filtered(F_SHALLOW)
+  for k = 1, #list do
+    local p = list[k].position
+    local lx, ly = p.x - X0, p.y - Y0
+    local idx = ly * CT + lx
+    if WROTE[idx] ~= stamp and sea_at(GX0 + lx, GY0 + ly) and not kept_by_spawn(lx, ly) then
+      mark_write(idx, lx, ly, false, true)
+    end
+  end
+end
+
+-- Where the chunk writes, the shallow tiles of its open-sea pixels go deep too. In a chunk left with no land, every
+-- shallow tile that reads open sea does, written or not: the rim of a false spit outlives the spit.
 local function sink_shallows(surface)
-  for q = 1, NRUN do
-    if not RL[q] then
-      run_area(q)
-      local list = surface.find_tiles_filtered(F_SHALLOW)
-      for k = 1, #list do
-        local p = list[k].position
-        local lx, ly = p.x - X0, p.y - Y0
-        if sea_at(GX0 + lx, GY0 + ly) and not kept_by_spawn(lx, ly) then
-          mark_write(ly * CT + lx, lx, ly, false, true)
-        end
+  local sunk, wrote_land = 0, false
+  for q = 1, NW do
+    if WLAND[QY[q] * CT + QX[q]] then
+      wrote_land = true
+    else
+      sunk = sunk + 1
+    end
+  end
+  if NW > 0 then
+    for q = 1, NRUN do
+      if not RL[q] then
+        run_area(q)
+        sink_area(surface)
       end
     end
+  end
+  AREA[1][1], AREA[1][2], AREA[2][1], AREA[2][2] = X0, Y0, X0 + CT, Y0 + CT
+  if not wrote_land and surface.count_tiles_filtered(F_LAND) <= sunk then
+    sink_area(surface)
   end
 end
 
@@ -693,10 +714,10 @@ local function plan_chunk(surface, chx, chy)
   for q = 1, NRUN do
     scan_run(surface, q)
   end
+  sink_shallows(surface)
   if NW == 0 then
     return
   end
-  sink_shallows(surface)
   local x0, x1, y0, y1 = CT, -1, CT, -1
   for q = 1, NW do
     local lx, ly = QX[q], QY[q]
