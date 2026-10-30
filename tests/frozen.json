@@ -2266,7 +2266,7 @@
   },
   "tn_sd_destroyed_europe_v1": {
    "type": "noise-expression",
-   "sha256": "f55d0dab5e7f9c9f885f6f377ef739ee41a03002894c5e384a0cf1f340e4781d",
+   "sha256": "b58c3eb9a89535319d81f8038d079fdf32b15a4a7fe2ebef68f15bc64b0a3822",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
