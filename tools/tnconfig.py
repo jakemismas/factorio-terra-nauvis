@@ -337,7 +337,10 @@ VERSION_FIELDS = set(GEOGRAPHY_NAMES) | {"geo_id", "city_offset", "start_mask", 
 # (resources-enemies), the map-qualified per-save key of the map's offshore field stamp, which its entry
 # composes last (a Map type fallback mirroring the hotspots setting; the stamp body reads the layer
 # chain, so it is no version's own).
-OPTIONAL_VERSION_FIELDS = {"spawn", "waterways", "shore", "fields"}
+# (edge-and-lakes) `edge`, true when the version's far-field box carries the soft map edge
+# (coast.edge_band), and `lakes`, the per-save inland lakes switch its entry reads its inland lakes
+# through (a toggle's preset key; only with a spawn record).
+OPTIONAL_VERSION_FIELDS = {"spawn", "waterways", "shore", "fields", "edge", "lakes"}
 # A waterways record: per kind, the set names by scale. The sets read the version's chain, so they are
 # its own: a later version that composes the waterways names sets of its own, and config.lua's
 # waterways.sets[map] is the record of the map's newest version that has one.
@@ -485,6 +488,14 @@ def geography_versions(cfg):
                 raise ConfigError(f"config.lua {where}.shore must be a noise name (the version's shore body)")
             if "fields" in v and (not isinstance(v["fields"], str) or not v["fields"]):
                 raise ConfigError(f"config.lua {where}.fields must be a noise name (the map's offshore stamp key)")
+            if "edge" in v and (v["edge"] is not True or not isinstance(((cfg.get("coast") or {}).get("edge_band")),
+                                                                       dict)):
+                raise ConfigError(f"config.lua {where}.edge must be true, with coast.edge_band defined")
+            if "lakes" in v:
+                keys = {t.get("preset_key") for t in (cfg.get("toggles") or {}).values() if isinstance(t, dict)}
+                if not isinstance(v["lakes"], str) or v["lakes"] not in keys or "spawn" not in v:
+                    raise ConfigError(f"config.lua {where}.lakes must be a toggle's preset key, on a version with a "
+                                      f"spawn record (the inland lakes switch)")
             for n in GEOGRAPHY_NAMES + ("start_mask",):
                 if not isinstance(v[n], str) or not v[n]:
                     raise ConfigError(f"config.lua {where}.{n} must be a noise name")

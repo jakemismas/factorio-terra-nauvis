@@ -64,6 +64,12 @@
    "type": "bool-setting",
    "setting_type": "startup",
    "default_value": true
+  },
+  "inland_lakes": {
+   "source": "Jake's ruling of 2026-10-29 17:50 on the first playtest (no random lakes, only the lake at the chosen spawn city; DECISIONS, edge-and-lakes): startup, bool, default off",
+   "type": "bool-setting",
+   "setting_type": "startup",
+   "default_value": false
   }
  },
  "numeric_literals_allowed": [0, 1, 2]

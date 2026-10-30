@@ -605,6 +605,85 @@ local EU_SETS3 = {ww = REN.EU_WW3, canals = REN.EU_CANALS3, dams = REN.EU_DAMS3,
 local AT_SETS3 = {ww = REN.AT_WW3, canals = REN.AT_CANALS3, dams = REN.AT_DAMS3, fords = REN.AT_FORDS3}
 local OW_SETS3 = {ww = REN.OW_WW3, canals = REN.OW_CANALS3, dams = REN.OW_DAMS3, fords = REN.OW_FORDS3}
 
+-- The soft map edge and the inland lakes switch (milestone edge-and-lakes
+-- 2026-10-29 16:05 and 17:50). Each map's next geography version: its far-field box sinks land into
+-- deep water across a noise-warped band just inside the extent (coast.edge_band), so a coast the box
+-- cuts reads as a wavy coastline, and (a version with a spawn record) its inland lakes compose only
+-- when the per-save switch tn_inland_lakes names tn_one. Every name the version's own but the spawn
+-- bodies that read no chain: Europe's version 6 and Atlantic's and Old World's version 5.
+-- edge-and-lakes' names (one table: the 200-local limit)
+local ELN = {
+  K_INLAND_LAKES = NOISE .. "inland_lakes",
+  EU6_ENTRY = NOISE .. "elevation_europe_v6",
+  EU6_GEO = NOISE .. "geo_europe_v6",
+  EU6_LAND_COARSE = NOISE .. "land_coarse_europe_v6",
+  EU6_DETAIL = NOISE .. "detail_europe_v6",
+  EU6_FAR = NOISE .. "far_europe_v6",
+  EU6_GX = NOISE .. "gx_europe_v6",
+  EU6_GY = NOISE .. "gy_europe_v6",
+  EU6_U = NOISE .. "u_europe_v6",
+  EU6_V = NOISE .. "v_europe_v6",
+  EU6_CX = NOISE .. "cx_europe_v6",
+  EU6_CY = NOISE .. "cy_europe_v6",
+  EU6_LAKES = NOISE .. "inland_lakes_europe_v5",
+  EU6_SHORE = NOISE .. "shore_europe_v3",
+  AT5_ENTRY = NOISE .. "elevation_atlantic_v5",
+  AT5_GEO = NOISE .. "geo_atlantic_v5",
+  AT5_LAND_COARSE = NOISE .. "land_coarse_atlantic_v5",
+  AT5_DETAIL = NOISE .. "detail_atlantic_v5",
+  AT5_FAR = NOISE .. "far_atlantic_v5",
+  AT5_GX = NOISE .. "gx_atlantic_v5",
+  AT5_GY = NOISE .. "gy_atlantic_v5",
+  AT5_U = NOISE .. "u_atlantic_v5",
+  AT5_V = NOISE .. "v_atlantic_v5",
+  AT5_CX = NOISE .. "cx_atlantic_v5",
+  AT5_CY = NOISE .. "cy_atlantic_v5",
+  AT5_SHORE = NOISE .. "shore_atlantic_v3",
+  OW5_ENTRY = NOISE .. "elevation_olde_world_v5",
+  OW5_GEO = NOISE .. "geo_olde_world_v5",
+  OW5_LAND_COARSE = NOISE .. "land_coarse_olde_world_v5",
+  OW5_DETAIL = NOISE .. "detail_olde_world_v5",
+  OW5_FAR = NOISE .. "far_olde_world_v5",
+  OW5_GX = NOISE .. "gx_olde_world_v5",
+  OW5_GY = NOISE .. "gy_olde_world_v5",
+  OW5_U = NOISE .. "u_olde_world_v5",
+  OW5_V = NOISE .. "v_olde_world_v5",
+  OW5_CX = NOISE .. "cx_olde_world_v5",
+  OW5_CY = NOISE .. "cy_olde_world_v5",
+  OW5_SHORE = NOISE .. "shore_olde_world_v3",
+  EU_WW4 = {NOISE .. "ww_europe_s1_v4", NOISE .. "ww_europe_s2_v4", NOISE .. "ww_europe_s3_v4",
+            NOISE .. "ww_europe_s4_v4", NOISE .. "ww_europe_s5_v4", NOISE .. "ww_europe_s6_v4"},
+  EU_CANALS4 = {NOISE .. "canals_europe_s1_v4", NOISE .. "canals_europe_s2_v4", NOISE .. "canals_europe_s3_v4",
+                NOISE .. "canals_europe_s4_v4", NOISE .. "canals_europe_s5_v4", NOISE .. "canals_europe_s6_v4"},
+  EU_DAMS4 = {NOISE .. "dams_europe_s1_v4", NOISE .. "dams_europe_s2_v4", NOISE .. "dams_europe_s3_v4",
+              NOISE .. "dams_europe_s4_v4", NOISE .. "dams_europe_s5_v4", NOISE .. "dams_europe_s6_v4"},
+  EU_FORDS4 = {NOISE .. "fords_europe_s1_v4", NOISE .. "fords_europe_s2_v4", NOISE .. "fords_europe_s3_v4",
+               NOISE .. "fords_europe_s4_v4", NOISE .. "fords_europe_s5_v4", NOISE .. "fords_europe_s6_v4"},
+  AT_WW4 = {NOISE .. "ww_atlantic_s1_v4", NOISE .. "ww_atlantic_s2_v4", NOISE .. "ww_atlantic_s3_v4",
+            NOISE .. "ww_atlantic_s4_v4", NOISE .. "ww_atlantic_s5_v4", NOISE .. "ww_atlantic_s6_v4"},
+  AT_CANALS4 = {NOISE .. "canals_atlantic_s1_v4", NOISE .. "canals_atlantic_s2_v4",
+                NOISE .. "canals_atlantic_s3_v4", NOISE .. "canals_atlantic_s4_v4",
+                NOISE .. "canals_atlantic_s5_v4", NOISE .. "canals_atlantic_s6_v4"},
+  AT_DAMS4 = {NOISE .. "dams_atlantic_s1_v4", NOISE .. "dams_atlantic_s2_v4", NOISE .. "dams_atlantic_s3_v4",
+              NOISE .. "dams_atlantic_s4_v4", NOISE .. "dams_atlantic_s5_v4", NOISE .. "dams_atlantic_s6_v4"},
+  AT_FORDS4 = {NOISE .. "fords_atlantic_s1_v4", NOISE .. "fords_atlantic_s2_v4", NOISE .. "fords_atlantic_s3_v4",
+               NOISE .. "fords_atlantic_s4_v4", NOISE .. "fords_atlantic_s5_v4", NOISE .. "fords_atlantic_s6_v4"},
+  OW_WW4 = {NOISE .. "ww_olde_world_s1_v4", NOISE .. "ww_olde_world_s2_v4", NOISE .. "ww_olde_world_s3_v4",
+            NOISE .. "ww_olde_world_s4_v4", NOISE .. "ww_olde_world_s5_v4", NOISE .. "ww_olde_world_s6_v4"},
+  OW_CANALS4 = {NOISE .. "canals_olde_world_s1_v4", NOISE .. "canals_olde_world_s2_v4",
+                NOISE .. "canals_olde_world_s3_v4", NOISE .. "canals_olde_world_s4_v4",
+                NOISE .. "canals_olde_world_s5_v4", NOISE .. "canals_olde_world_s6_v4"},
+  OW_DAMS4 = {NOISE .. "dams_olde_world_s1_v4", NOISE .. "dams_olde_world_s2_v4",
+              NOISE .. "dams_olde_world_s3_v4", NOISE .. "dams_olde_world_s4_v4",
+              NOISE .. "dams_olde_world_s5_v4", NOISE .. "dams_olde_world_s6_v4"},
+  OW_FORDS4 = {NOISE .. "fords_olde_world_s1_v4", NOISE .. "fords_olde_world_s2_v4",
+               NOISE .. "fords_olde_world_s3_v4", NOISE .. "fords_olde_world_s4_v4",
+               NOISE .. "fords_olde_world_s5_v4", NOISE .. "fords_olde_world_s6_v4"},
+}
+local EU_SETS4 = {ww = ELN.EU_WW4, canals = ELN.EU_CANALS4, dams = ELN.EU_DAMS4, fords = ELN.EU_FORDS4}
+local AT_SETS4 = {ww = ELN.AT_WW4, canals = ELN.AT_CANALS4, dams = ELN.AT_DAMS4, fords = ELN.AT_FORDS4}
+local OW_SETS4 = {ww = ELN.OW_WW4, canals = ELN.OW_CANALS4, dams = ELN.OW_DAMS4, fords = ELN.OW_FORDS4}
+
 return {
   identity = {
     id = ID,
@@ -739,9 +818,16 @@ return {
     hotspots = {
       name = ID .. "-hotspots", type = "bool-setting", setting_type = "startup", default_value = true, order = "c-a",
     },
+    -- Inland lakes (milestone edge-and-lakes): spawn-cities'
+    -- sparse random inland lakes. Off leaves the spawn lake at the chosen city, the rivers and the real
+    -- lakes of the coast fit as the only fresh water. Baked per save through the toggle tn_inland_lakes.
+    inland_lakes = {
+      name = ID .. "-inland-lakes", type = "bool-setting", setting_type = "startup", default_value = false,
+      order = "c-e",
+    },
   },
   setting_order = {"scale", "spawn_city_europe", "spawn_city_atlantic", "spawn_city_olde_world", "canals",
-                   "great_forests", "ridges", "hotspots"},
+                   "great_forests", "ridges", "hotspots", "inland_lakes"},
 
   -- Map-gen presets, sorted right after Default ("a") and before Rich resources ("b") (S13).
   -- withheld_with lists the mods whose presence withholds a preset (presets.lua defines no such
@@ -782,6 +868,8 @@ return {
     -- resources-enemies: the hotspots toggle, each map's offshore stamp key and the enemy property
     hotspots = REN.K_HOTSPOTS, enemy = "enemy_base_probability",
     fields = {europe = REN.EU_FIELDS_KEY, atlantic = REN.AT_FIELDS_KEY, olde_world = REN.OW_FIELDS_KEY},
+    -- edge-and-lakes: the inland lakes switch (a toggle)
+    inland_lakes = ELN.K_INLAND_LAKES,
   },
 
   -- Each map's geography (ARCHITECTURE.md, "Map type entries"): map_type_order, the order of the
@@ -950,6 +1038,40 @@ return {
           -- hotspots setting; the stamp body reads the layer chain, resources.lua).
           fields = REN.EU_FIELDS_KEY,
         },
+        {
+          -- Version 6 (edge-and-lakes): version 5's composition with the soft map edge in its far-field
+          -- box (edge = true: coast.edge_band) and its inland lakes read through the inland lakes switch
+          -- (lakes: the per-save toggle key, a Map type fallback mirroring the setting), so with the
+          -- switch on its lakes are version 5's to the tile and with it off only the spawn lake, the
+          -- waterways and the coast fit's own water remain. Every name its own but the spawn bodies
+          -- that read no chain.
+          geo_id = 14,
+          entry = ELN.EU6_ENTRY,
+          geo = ELN.EU6_GEO, land_coarse = ELN.EU6_LAND_COARSE, detail = ELN.EU6_DETAIL, far = ELN.EU6_FAR,
+          gx = ELN.EU6_GX, gy = ELN.EU6_GY, u = ELN.EU6_U, v = ELN.EU6_V,
+          cx = ELN.EU6_CX, cy = ELN.EU6_CY, city_offset = {EU_CITY_CX, EU_CITY_CY},
+          start_mask = START_MASK2,
+          fits = {geo = EU_GEO_FILE, land_coarse = EU_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = ELN.EU6_CX, map_qualified = true, frozen = true},
+            {name = ELN.EU6_CY, map_qualified = true, frozen = true},
+            {name = EU_CITY, map_qualified = true},
+            {name = K_CANALS, map_qualified = false},
+            {name = REN.EU_FIELDS_KEY, map_qualified = true},
+            {name = ELN.K_INLAND_LAKES, map_qualified = false},
+          },
+          spawn = {
+            city_setting = "spawn_city_europe", city = EU_CITY, city_index = EU_CITY_INDEX,
+            spawn_lake = EU_SPAWN_LAKE, spawn_bias = EU_SPAWN_BIAS, inland_lakes = ELN.EU6_LAKES,
+            start_land = START_LAND, distance = DISTANCE, bearings = EU_SPAWN_FILE,
+          },
+          waterways = EU_SETS4,
+          shore = ELN.EU6_SHORE,
+          fields = REN.EU_FIELDS_KEY,
+          edge = true,
+          lakes = ELN.K_INLAND_LAKES,
+        },
       },
     },
     -- Atlantic and Old World (milestone olde-world-atlantic): version 1 of each, the map's own fit at
@@ -1037,6 +1159,30 @@ return {
           -- hotspots setting; the stamp body reads the layer chain, resources.lua).
           fields = REN.AT_FIELDS_KEY,
         },
+        {
+          -- Version 5 (edge-and-lakes): version 4's composition with the soft map edge in its far-field
+          -- box (coast.edge_band). This version has no spawn record, so no inland lakes to switch; the
+          -- version that adds the map's spawn composes them through the lakes switch as Europe's
+          -- version 6 does. Every name its own.
+          geo_id = 15,
+          entry = ELN.AT5_ENTRY,
+          geo = ELN.AT5_GEO, land_coarse = ELN.AT5_LAND_COARSE, detail = ELN.AT5_DETAIL, far = ELN.AT5_FAR,
+          gx = ELN.AT5_GX, gy = ELN.AT5_GY, u = ELN.AT5_U, v = ELN.AT5_V,
+          cx = ELN.AT5_CX, cy = ELN.AT5_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = AT_GEO_FILE, land_coarse = AT_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = ELN.AT5_CX, map_qualified = true, frozen = true},
+            {name = ELN.AT5_CY, map_qualified = true, frozen = true},
+            {name = K_CANALS, map_qualified = false},
+            {name = REN.AT_FIELDS_KEY, map_qualified = true},
+          },
+          waterways = AT_SETS4,
+          shore = ELN.AT5_SHORE,
+          fields = REN.AT_FIELDS_KEY,
+          edge = true,
+        },
       },
     },
     olde_world = {
@@ -1119,6 +1265,28 @@ return {
           -- hotspots setting; the stamp body reads the layer chain, resources.lua).
           fields = REN.OW_FIELDS_KEY,
         },
+        {
+          -- Version 5 (edge-and-lakes): as Atlantic's version 5, the soft map edge in its far-field box;
+          -- no spawn record, so no inland lakes to switch yet. Every name its own.
+          geo_id = 16,
+          entry = ELN.OW5_ENTRY,
+          geo = ELN.OW5_GEO, land_coarse = ELN.OW5_LAND_COARSE, detail = ELN.OW5_DETAIL, far = ELN.OW5_FAR,
+          gx = ELN.OW5_GX, gy = ELN.OW5_GY, u = ELN.OW5_U, v = ELN.OW5_V,
+          cx = ELN.OW5_CX, cy = ELN.OW5_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = OW_GEO_FILE, land_coarse = OW_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = ELN.OW5_CX, map_qualified = true, frozen = true},
+            {name = ELN.OW5_CY, map_qualified = true, frozen = true},
+            {name = K_CANALS, map_qualified = false},
+            {name = REN.OW_FIELDS_KEY, map_qualified = true},
+          },
+          waterways = OW_SETS4,
+          shore = ELN.OW5_SHORE,
+          fields = REN.OW_FIELDS_KEY,
+          edge = true,
+        },
       },
     },
   },
@@ -1195,7 +1363,9 @@ return {
                  "entity:iron-ore:richness", "entity:copper-ore:richness", "entity:coal:richness",
                  "entity:stone:richness", "entity:uranium-ore:richness", "entity:crude-oil:richness",
                  "enemy_base_probability", REN.K_HOTSPOTS, REN.EU_FIELDS_KEY, REN.AT_FIELDS_KEY, REN.OW_FIELDS_KEY,
-                 "entity:offshore-oil:probability", "entity:offshore-oil:richness"},
+                 "entity:offshore-oil:probability", "entity:offshore-oil:richness",
+                 -- edge-and-lakes: the inland lakes switch and the new versions' city offset names
+                 ELN.K_INLAND_LAKES, ELN.EU6_CX, ELN.EU6_CY, ELN.AT5_CX, ELN.AT5_CY, ELN.OW5_CX, ELN.OW5_CY},
 
   -- The fine field per map (design constraint 3): map key -> {every version's elevation entry and
   -- every term only it reads}. The constant-coast twin turns each into a constant; no Entity,
@@ -1224,7 +1394,14 @@ return {
               REN.EU_CANALS3[6],
               REN.EU_DAMS3[1], REN.EU_DAMS3[2], REN.EU_DAMS3[3], REN.EU_DAMS3[4], REN.EU_DAMS3[5], REN.EU_DAMS3[6],
               REN.EU_FORDS3[1], REN.EU_FORDS3[2], REN.EU_FORDS3[3], REN.EU_FORDS3[4], REN.EU_FORDS3[5],
-              REN.EU_FORDS3[6],},
+              REN.EU_FORDS3[6],
+              ELN.EU6_ENTRY, ELN.EU6_GEO, ELN.EU6_DETAIL, ELN.EU6_FAR, ELN.EU6_LAKES, ELN.EU6_SHORE,
+              ELN.EU_WW4[1], ELN.EU_WW4[2], ELN.EU_WW4[3], ELN.EU_WW4[4], ELN.EU_WW4[5], ELN.EU_WW4[6],
+              ELN.EU_CANALS4[1], ELN.EU_CANALS4[2], ELN.EU_CANALS4[3], ELN.EU_CANALS4[4], ELN.EU_CANALS4[5],
+              ELN.EU_CANALS4[6],
+              ELN.EU_DAMS4[1], ELN.EU_DAMS4[2], ELN.EU_DAMS4[3], ELN.EU_DAMS4[4], ELN.EU_DAMS4[5], ELN.EU_DAMS4[6],
+              ELN.EU_FORDS4[1], ELN.EU_FORDS4[2], ELN.EU_FORDS4[3], ELN.EU_FORDS4[4], ELN.EU_FORDS4[5],
+              ELN.EU_FORDS4[6],},
     atlantic = {AT_ENTRY, AT_GEO, AT_DETAIL, AT_FAR,
                 AT2_ENTRY, AT2_GEO, AT2_DETAIL, AT2_FAR,
                 AT_WW[1], AT_WW[2], AT_WW[3], AT_WW[4], AT_WW[5], AT_WW[6],
@@ -1243,7 +1420,14 @@ return {
                 REN.AT_CANALS3[6],
                 REN.AT_DAMS3[1], REN.AT_DAMS3[2], REN.AT_DAMS3[3], REN.AT_DAMS3[4], REN.AT_DAMS3[5], REN.AT_DAMS3[6],
                 REN.AT_FORDS3[1], REN.AT_FORDS3[2], REN.AT_FORDS3[3], REN.AT_FORDS3[4], REN.AT_FORDS3[5],
-                REN.AT_FORDS3[6],},
+                REN.AT_FORDS3[6],
+                ELN.AT5_ENTRY, ELN.AT5_GEO, ELN.AT5_DETAIL, ELN.AT5_FAR, ELN.AT5_SHORE,
+                ELN.AT_WW4[1], ELN.AT_WW4[2], ELN.AT_WW4[3], ELN.AT_WW4[4], ELN.AT_WW4[5], ELN.AT_WW4[6],
+                ELN.AT_CANALS4[1], ELN.AT_CANALS4[2], ELN.AT_CANALS4[3], ELN.AT_CANALS4[4], ELN.AT_CANALS4[5],
+                ELN.AT_CANALS4[6],
+                ELN.AT_DAMS4[1], ELN.AT_DAMS4[2], ELN.AT_DAMS4[3], ELN.AT_DAMS4[4], ELN.AT_DAMS4[5], ELN.AT_DAMS4[6],
+                ELN.AT_FORDS4[1], ELN.AT_FORDS4[2], ELN.AT_FORDS4[3], ELN.AT_FORDS4[4], ELN.AT_FORDS4[5],
+                ELN.AT_FORDS4[6],},
     olde_world = {OW_ENTRY, OW_GEO, OW_DETAIL, OW_FAR,
                   OW2_ENTRY, OW2_GEO, OW2_DETAIL, OW2_FAR,
                   OW_WW[1], OW_WW[2], OW_WW[3], OW_WW[4], OW_WW[5], OW_WW[6],
@@ -1262,7 +1446,15 @@ return {
                   REN.OW_CANALS3[6],
                   REN.OW_DAMS3[1], REN.OW_DAMS3[2], REN.OW_DAMS3[3], REN.OW_DAMS3[4], REN.OW_DAMS3[5], REN.OW_DAMS3[6],
                   REN.OW_FORDS3[1], REN.OW_FORDS3[2], REN.OW_FORDS3[3], REN.OW_FORDS3[4], REN.OW_FORDS3[5],
-                  REN.OW_FORDS3[6],},
+                  REN.OW_FORDS3[6],
+                  ELN.OW5_ENTRY, ELN.OW5_GEO, ELN.OW5_DETAIL, ELN.OW5_FAR, ELN.OW5_SHORE,
+                  ELN.OW_WW4[1], ELN.OW_WW4[2], ELN.OW_WW4[3], ELN.OW_WW4[4], ELN.OW_WW4[5], ELN.OW_WW4[6],
+                  ELN.OW_CANALS4[1], ELN.OW_CANALS4[2], ELN.OW_CANALS4[3], ELN.OW_CANALS4[4], ELN.OW_CANALS4[5],
+                  ELN.OW_CANALS4[6],
+                  ELN.OW_DAMS4[1], ELN.OW_DAMS4[2], ELN.OW_DAMS4[3], ELN.OW_DAMS4[4], ELN.OW_DAMS4[5],
+                  ELN.OW_DAMS4[6],
+                  ELN.OW_FORDS4[1], ELN.OW_FORDS4[2], ELN.OW_FORDS4[3], ELN.OW_FORDS4[4], ELN.OW_FORDS4[5],
+                  ELN.OW_FORDS4[6],},
   },
 
   -- Per geography release: {release = <version>, map = <map key>, geography = <tn_geo id>, names =
@@ -1555,6 +1747,60 @@ return {
                REN.ORE_URANIUM_P2, REN.ORE_URANIUM_R, REN.ORE_OIL_P2, REN.ORE_OIL_R, REN.OFFSHORE_P, REN.OFFSHORE_R},
       files = {"prototypes/tables/hotspots.lua"},
     },
+    -- The soft map edge and the inland lakes switch (milestone edge-and-lakes): each map's next geography
+    -- version, every name its own. The switch's prototype is a Map type fallback that mirrors the
+    -- inland lakes setting, so no row registers it (U3's one exemption).
+    {
+      release = "0.1.0",
+      map = "europe",
+      geography = 14,
+      names = {
+               ELN.EU6_GX, ELN.EU6_GY, ELN.EU6_U, ELN.EU6_V, ELN.EU6_GEO, ELN.EU6_LAND_COARSE, ELN.EU6_DETAIL,
+               ELN.EU6_FAR,
+               ELN.EU6_ENTRY, ELN.EU6_CX, ELN.EU6_CY, ELN.EU6_LAKES, ELN.EU6_SHORE,
+               ELN.EU_WW4[1], ELN.EU_WW4[2], ELN.EU_WW4[3], ELN.EU_WW4[4], ELN.EU_WW4[5], ELN.EU_WW4[6],
+               ELN.EU_CANALS4[1], ELN.EU_CANALS4[2], ELN.EU_CANALS4[3], ELN.EU_CANALS4[4], ELN.EU_CANALS4[5],
+               ELN.EU_CANALS4[6],
+               ELN.EU_DAMS4[1], ELN.EU_DAMS4[2], ELN.EU_DAMS4[3], ELN.EU_DAMS4[4], ELN.EU_DAMS4[5], ELN.EU_DAMS4[6],
+               ELN.EU_FORDS4[1], ELN.EU_FORDS4[2], ELN.EU_FORDS4[3], ELN.EU_FORDS4[4], ELN.EU_FORDS4[5],
+               ELN.EU_FORDS4[6]},
+      files = {EU_GEO_FILE, EU_LAND_COARSE_FILE, EU_SPAWN_FILE,
+               EU_WW_FILES[1], EU_WW_FILES[2], EU_WW_FILES[3], EU_WW_FILES[4], EU_WW_FILES[5], EU_WW_FILES[6]},
+    },
+    {
+      release = "0.1.0",
+      map = "atlantic",
+      geography = 15,
+      names = {
+               ELN.AT5_GX, ELN.AT5_GY, ELN.AT5_U, ELN.AT5_V, ELN.AT5_GEO, ELN.AT5_LAND_COARSE, ELN.AT5_DETAIL,
+               ELN.AT5_FAR,
+               ELN.AT5_ENTRY, ELN.AT5_CX, ELN.AT5_CY, ELN.AT5_SHORE,
+               ELN.AT_WW4[1], ELN.AT_WW4[2], ELN.AT_WW4[3], ELN.AT_WW4[4], ELN.AT_WW4[5], ELN.AT_WW4[6],
+               ELN.AT_CANALS4[1], ELN.AT_CANALS4[2], ELN.AT_CANALS4[3], ELN.AT_CANALS4[4], ELN.AT_CANALS4[5],
+               ELN.AT_CANALS4[6],
+               ELN.AT_DAMS4[1], ELN.AT_DAMS4[2], ELN.AT_DAMS4[3], ELN.AT_DAMS4[4], ELN.AT_DAMS4[5], ELN.AT_DAMS4[6],
+               ELN.AT_FORDS4[1], ELN.AT_FORDS4[2], ELN.AT_FORDS4[3], ELN.AT_FORDS4[4], ELN.AT_FORDS4[5],
+               ELN.AT_FORDS4[6]},
+      files = {AT_GEO_FILE, AT_LAND_COARSE_FILE,
+               AT_WW_FILES[1], AT_WW_FILES[2], AT_WW_FILES[3], AT_WW_FILES[4], AT_WW_FILES[5], AT_WW_FILES[6]},
+    },
+    {
+      release = "0.1.0",
+      map = "olde_world",
+      geography = 16,
+      names = {
+               ELN.OW5_GX, ELN.OW5_GY, ELN.OW5_U, ELN.OW5_V, ELN.OW5_GEO, ELN.OW5_LAND_COARSE, ELN.OW5_DETAIL,
+               ELN.OW5_FAR,
+               ELN.OW5_ENTRY, ELN.OW5_CX, ELN.OW5_CY, ELN.OW5_SHORE,
+               ELN.OW_WW4[1], ELN.OW_WW4[2], ELN.OW_WW4[3], ELN.OW_WW4[4], ELN.OW_WW4[5], ELN.OW_WW4[6],
+               ELN.OW_CANALS4[1], ELN.OW_CANALS4[2], ELN.OW_CANALS4[3], ELN.OW_CANALS4[4], ELN.OW_CANALS4[5],
+               ELN.OW_CANALS4[6],
+               ELN.OW_DAMS4[1], ELN.OW_DAMS4[2], ELN.OW_DAMS4[3], ELN.OW_DAMS4[4], ELN.OW_DAMS4[5], ELN.OW_DAMS4[6],
+               ELN.OW_FORDS4[1], ELN.OW_FORDS4[2], ELN.OW_FORDS4[3], ELN.OW_FORDS4[4], ELN.OW_FORDS4[5],
+               ELN.OW_FORDS4[6]},
+      files = {OW_GEO_FILE, OW_LAND_COARSE_FILE,
+               OW_WW_FILES[1], OW_WW_FILES[2], OW_WW_FILES[3], OW_WW_FILES[4], OW_WW_FILES[5], OW_WW_FILES[6]},
+    },
   },
 
   -- Elevation composition tunables (ARCHITECTURE.md, "Elevation composition"; S9's values):
@@ -1584,6 +1830,28 @@ return {
     far_floor = -100,
     edge_water = -1,
     edge_min_scale = 3,
+    -- The soft map edge (milestone edge-and-lakes): a version with
+    -- edge = true replaces its box's inside (inf, and the edge_water ring) with a second coast, the
+    -- version's own transfer of b = clamp(d / tn_scale + warp - width_px, -transfer_clamp_px,
+    -- transfer_clamp_px), d the box distance in tiles, so land sinks into deep water where b < 0 with
+    -- the same beach and deepwater profile as a real coast. warp = warp_px * clamp(sum of the octaves,
+    -- -1, 1), each octave a basis noise in geo tiles with its own seed1 and wavelength in reference px,
+    -- so the cut reads as a wavy coastline that moves with the map seed. The band's water edge lies
+    -- between width_px - warp_px and width_px + warp_px reference px inside the box: never closer than
+    -- 4 px, so every land column the box cuts ends in water before it, and never deeper than 20 px,
+    -- short of the nearest land the box does not cut (Cyprus 22 px, Alaska 24 px, Ireland and Stewart
+    -- Island 25 px; design notes, edge-and-lakes). T1 masks reference land within width_px + warp_px + 1
+    -- px of the box (mask_px).
+    edge_band = {
+      width_px = 12,
+      warp_px = 8,
+      mask_px = 21,
+      octaves = {
+        {seed1 = 7401, wavelength_px = 32, weight = 1},
+        {seed1 = 7402, wavelength_px = 12, weight = 0.5},
+        {seed1 = 7403, wavelength_px = 4, weight = 0.25},
+      },
+    },
   },
 
   -- The start mask: vanilla's starting_resources_lake_mask with the map's coarse land
@@ -1932,8 +2200,14 @@ return {
     -- map's offshore stamp key follows the same setting (presets.lua).
     hotspots = {setting = "hotspots", preset_key = REN.K_HOTSPOTS, default = true, mechanism = "name switch",
                 on = ONE, off = ZERO, maps = {"europe", "atlantic", "olde_world"}},
+    -- Inland lakes (milestone edge-and-lakes): a name switch read by a version with a lakes field through a
+    -- folded if(), so off compiles to the spawn lake alone (the spot noise is never evaluated) and on to
+    -- the previous version's composition (U5). Every map lists it: a map's version without a spawn
+    -- record bakes it unread.
+    inland_lakes = {setting = "inland_lakes", preset_key = ELN.K_INLAND_LAKES, default = false,
+                    mechanism = "name switch", on = ONE, off = ZERO, maps = {"europe", "atlantic", "olde_world"}},
   },
-  toggle_order = {"canals", "great_forests", "ridges", "hotspots"},
+  toggle_order = {"canals", "great_forests", "ridges", "hotspots", "inland_lakes"},
 
   -- Stable hooks on shared prototypes (ARCHITECTURE.md, "Stable hooks"): if(gate > threshold, on
   -- branch, off value), whose outermost if() folds away on worlds without the gate. The gate's
@@ -1974,7 +2248,7 @@ return {
   --     with clear_tiles of land around it; radius_tiles is the start area the bank masks cover.
   waterways = {
     version = 1,
-    sets = {europe = EU_SETS3, atlantic = AT_SETS3, olde_world = OW_SETS3},
+    sets = {europe = EU_SETS4, atlantic = AT_SETS4, olde_world = OW_SETS4},
     floor_tiles = 7, two_way_tiles = 11, margin_tiles = 0.25,
     river_k = {major = 3, minor = 2},
     km_per_px = 2.471,

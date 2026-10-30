@@ -24,9 +24,14 @@
 --   e = min(e, far)                        deep water beyond the map's extent (D15), and from scale 3
 --                                          a ring of plain water on its outermost tiles, so deep
 --                                          water starts 1 tile beyond it (deepwater borders only
---                                          water in the game)
+--                                          water in the game); a version with an edge band
+--                                          (edge-and-lakes) reads a second coast inside the extent
+--                                          instead, a noise-warped band 4 to 20 reference px in
+--                                          from the box where land sinks into deep water
 --   e = max(e, land)                       the start land guarantee (a version with a spawn record)
---   e = min(e, lake, inland)               the spawn lake and the version's inland lakes (the same)
+--   e = min(e, lake, inland)               the spawn lake and the version's inland lakes (the same);
+--                                          a version with a lakes field (edge-and-lakes) reads the
+--                                          inland lakes through the per-save switch, inf when off
 --   elevation = min(max(e, dams), carves)  a version with waterways: the canals-off dams, then the
 --                                          rivers, straits, basins and open canals, each set picked by
 --                                          the folded scale (waterways.lua); dams come after the lakes
@@ -131,8 +136,40 @@ local function version(m, g)
     g.gy .. " + " .. s .. " * " .. num(m.hr) .. ", " ..
     s .. " * " .. num(m.height_px - m.hr) .. " - 1 - " .. g.gy .. ")"
   local ring = "min(1, floor(" .. s .. " / " .. num(C.edge_min_scale) .. "))"
-  def(g.far, "if(d < 0, " .. num(C.far_floor) .. ", if(d < ring, " .. num(C.edge_water) .. ", inf))",
-    {d = d, ring = ring})
+  if g.edge then
+    -- The soft map edge (edge-and-lakes; config.lua coast.edge_band): inside the extent a second coast
+    -- at the noise-warped band, the version's own transfer of b, its reference px beyond the band's
+    -- water edge, so land sinks into deep water where b < 0 and land farther in keeps its elevation
+    -- (b at the clamp reads at least any land the coast reads). Every box tile is water, so the ring
+    -- is not needed.
+    local B = C.edge_band
+    local octaves = {}
+    for _, oc in ipairs(B.octaves) do
+      octaves[#octaves + 1] = num(oc.weight) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
+        num(oc.seed1) .. ", input_scale = " .. num(1) .. " / (" .. num(oc.wavelength_px) .. " * " .. s ..
+        "), offset_x = " .. g.cx .. ", offset_y = " .. g.cy .. "}"
+    end
+    local locals = {
+      d = d,
+      warp = num(B.warp_px) .. " * clamp(" .. table.concat(octaves, " + ") .. ", -1, 1)",
+      b = "clamp(d / " .. s .. " + warp - " .. num(B.width_px) .. ", " .. num(-C.transfer_clamp_px) .. ", " ..
+        num(C.transfer_clamp_px) .. ")",
+    }
+    local o = num(C.transfer_offset)
+    local band
+    if g.shore then
+      local SH = cfg.shore
+      locals.gl = "max(" .. num(SH.land.min) .. ", " .. num(SH.land.per_scale) .. " * " .. s .. ")"
+      locals.gw = "max(" .. num(SH.water.min) .. ", " .. num(SH.water.per_scale) .. " * " .. s .. ")"
+      band = "if(b > 0, gl * b + " .. o .. ", gw * b - " .. o .. ")"
+    else
+      band = "if(b > 0, " .. s .. " * b + " .. o .. ", " .. s .. " * b - " .. o .. ")"
+    end
+    def(g.far, "if(d < 0, " .. num(C.far_floor) .. ", " .. band .. ")", locals)
+  else
+    def(g.far, "if(d < 0, " .. num(C.far_floor) .. ", if(d < ring, " .. num(C.edge_water) .. ", inf))",
+      {d = d, ring = ring})
+  end
 
   -- The elevation entry: the sign-offset transfer of the clamped coast field, then the far field.
   -- Never name a local e, pi or inf: the built-in constants win over locals (S9).
@@ -160,7 +197,15 @@ local function version(m, g)
   -- named waterway still cuts the guarantee, and no lake reopens a dammed isthmus.
   local sp = g.spawn
   if sp then
-    text = "min(max(" .. text .. ", " .. sp.start_land .. "), " .. sp.spawn_lake .. ", " .. sp.inland_lakes .. ")"
+    -- A version with a lakes field (edge-and-lakes) reads its inland lakes through the per-save switch,
+    -- a folded if() on the toggle's tn_one or tn_zero: on, the term is the lakes body as before; off,
+    -- it folds to inf and the spot noise is never evaluated (U5).
+    local lakes = sp.inland_lakes
+    if g.lakes then
+      locals.lk = "if(" .. g.lakes .. " > " .. num(cfg.hooks.threshold) .. ", " .. sp.inland_lakes .. ", inf)"
+      lakes = "lk"
+    end
+    text = "min(max(" .. text .. ", " .. sp.start_land .. "), " .. sp.spawn_lake .. ", " .. lakes .. ")"
   end
   if g.waterways then
     local ww_locals
