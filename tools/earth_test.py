@@ -3683,7 +3683,9 @@ def row_ab_withheld(ctx, mods, sec6, row, cache):
     plain one. Positive control: the same dump walked with each withheld preset's own redirects
     (config.lua's table at the default scale) must reach the fine field from an Entity root (the
     palm path), so withholding is what keeps the constraint and the row would see a preset that
-    slipped through. Withholding reaches new worlds only, so the save route is warned: a preset
+    slipped through; with nothing withheld (climate-tiles' palm switch), each preset defined there
+    walked without its palm keys, the names a save made before the switch carries, must reach it
+    instead. Withholding reaches new worlds only, so the save route is warned: a preset
     world made on M1 and loaded beside AB logs the withheld-preset warning exactly once, and loaded
     on M1, or on M1 with an unrelated mod added (a configuration change without a withholding mod),
     it logs none; an Earth world made beside AB from the preset's full map-gen-settings file (a
@@ -3765,6 +3767,20 @@ def row_ab_withheld(ctx, mods, sec6, row, cache):
                 fails.append(f"positive control: {pn}'s redirects reach no firewall name in the AB dump: the row could "
                              f"not tell a withheld preset from a harmless one (has Alien Biomes changed? then "
                              f"withholding may be lifted with a DECISIONS entry)")
+        # with nothing withheld (climate-tiles' palm switch) the control walks each preset defined there
+        # without its palm keys, the names a save made before the switch carries, which must reach the fine
+        # field through the palms: the row still tells a palm-keyed preset from a leaking one (design notes
+        # 2026-10-29 18:40)
+        palm_keys = {c["key"] for c in (((cfg.get("tiles") or {}).get("palm") or {}).get("copies") or [])}
+        for pn in ([] if withheld else sorted(walked)):
+            rep = walk_roots(dump, {k: v for k, v in preset_pen(dump, pn).items() if k not in palm_keys}, fw)
+            h = rep["entity"]["hits"] + rep["decorative"]["hits"] + rep["cliff"]["hits"]
+            hits += h
+            ex = ex or rep["entity"]["example"] or rep["decorative"]["example"] or []
+            if not h:
+                fails.append(f"positive control: {pn} without its palm keys {sorted(palm_keys)} reaches no firewall "
+                             f"name in the AB dump: the row could not tell a palm-keyed preset from a leaking one "
+                             f"(has Alien Biomes changed?)")
         # the Map-type-only world beside AB: the withheld notice, once, and never the plain one
         preset_name = ("map-gen-preset-name", pname)
         n_wh = count_lines(log_text(dc), render_message(cfg, "notice_withheld", preset_name))
@@ -3795,7 +3811,8 @@ def row_ab_withheld(ctx, mods, sec6, row, cache):
                 "warning": dict(zip(cases, got))}
         return meas, fails, (f"with {', '.join(live)} (live copies): presets {sorted(withheld)} withheld, none in the "
                              f"dump; presets defined there {sorted(walked) or 'none'}, 0 firewall paths; Map type "
-                             f"entries and fallbacks defined; control: the withheld redirects reach the fine field in "
+                             f"entries and fallbacks defined; control: the "
+                             f"{'withheld' if withheld else 'palm-less'} redirects reach the fine field in "
                              f"{hits} paths, e.g. {' > '.join(ex[-4:])}; the Map-type-only world logs the withheld "
                              f"notice {n_wh} time(s); the preset save loaded beside AB logs the withheld-preset "
                              f"warning {got[1]} time(s), on M1 {got[2]} and {got[3]}, the Earth world made beside AB "
