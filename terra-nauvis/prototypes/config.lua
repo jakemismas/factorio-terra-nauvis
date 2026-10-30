@@ -2222,10 +2222,11 @@ return {
   --             own): the gate's prototype holds gate_off and Earth presets bake the great-forests toggle;
   --             the key's prototype holds key_off (a neutral multiplier) and Earth presets name the region
   --             layer's multiplier (regions.names.tree_mult: 1 + forest boost 2 times the forest sum, S10).
-  --             The base game's dead and dry trees are left alone (prototypes/tables/vanilla.lua, S10)
-  --   palm      on Earth presets with Alien Biomes the palms read their Earth copies (tiles.palm), which the
-  --             hook on AB's own prototypes never reaches: each palm's probability key names its second
-  --             version, the boost's formula around the registered first
+  --             The base game's dead and dry trees are left alone (prototypes/tables/vanilla.lua, S10),
+  --             and so are Alien Biomes' palm prototypes (tiles.palm.copies' trees stay AB's)
+  --   palm      on Earth presets with Alien Biomes the palms read their Earth copies (tiles.palm), so each
+  --             palm's probability key names its second version, the boost's formula around the
+  --             registered first
   --   restore   with Alien Biomes, the base game's living trees, rocks and decals AB takes off Nauvis,
   --             rebuilt from prototypes/tables/vanilla.lua: each behind the gate keys.on with its key, whose
   --             prototype holds the off value and which Earth presets point at its body, restricted to the

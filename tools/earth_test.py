@@ -16761,6 +16761,30 @@ def tf_gate(cfg, name):
     return f"{name} > {ww_num(cfg['hooks']['threshold'])}"
 
 
+def tf_palm_trees(cfg):
+    """Alien Biomes' palms (tiles.palm.copies' trees): the great-forests hook leaves their prototypes AB's,
+    because the frozen palm table and climate-tiles' dump checks read them raw (data-final-fixes.lua
+    boost_hooks); on Earth presets their probability keys name the copies' second versions instead."""
+    return {c["tree"] for c in cfg["tiles"]["palm"]["copies"]}
+
+
+def tf_bodies(cfg):
+    """Every noise expression trees.lua defines beyond climate-tiles' palm copies: the gate and multiplier
+    key, the vanilla-scale temperature, the restored trees' keys and bodies, the shared richness body, the
+    rocks' keys and bodies, the re-listed decoratives' keys and their body, and the palms' second versions.
+    trees.lua defines all of them on every load, with or without Alien Biomes."""
+    TR = cfg["trees"]
+    B, R = TR["boost"], TR["restore"]
+    out = [B["gate"], B["key"], TR["temperature"], R["richness"], R["deco_body"]]
+    for n in R["trees"].values():
+        out += [n["p"], n["r"], n["body"]]
+    for n in R["rocks"].values():
+        out += [n["key"], n["body"]]
+    out += list(R["decoratives"].values())
+    out += [p["body"] for p in TR["palm"]]
+    return list(dict.fromkeys(out))
+
+
 def tf_boost_text(cfg, own):
     """The great-forests hook around a tree's own probability (trees.lua M.boost)."""
     B = cfg["trees"]["boost"]
@@ -16799,7 +16823,8 @@ def tf_hook_change(cfg, t, n, earth, base):
     forests' stable hooks alone: a living tree's probability wrapped in the great-forests hook; beside
     Alien Biomes a restored vanilla tree, rock or decal rebuilt behind tn_on from vanilla.lua (restricted
     to vanilla land, the trees under the boost too), a re-listed decorative's (score) + key behind tn_on
-    with vanilla land as its restriction, and an AB restriction with the vanilla land tiles appended."""
+    with vanilla land as its restriction, and an AB restriction with the vanilla land tiles appended. Alien
+    Biomes' palms take no hook (tf_palm_trees), so any change to one fails."""
     TR = cfg["trees"]
     R = TR["restore"]
     V = tf_vanilla()
@@ -16808,6 +16833,8 @@ def tf_hook_change(cfg, t, n, earth, base):
     if a != b or not isinstance(ea, dict):
         return False
     dead = set(V["dead_trees"])
+    if t == "tree" and n in tf_palm_trees(cfg):
+        return False
     if t == "tree":
         if n in R["trees"] and not ba:
             row = next((r for r in V["trees"] if r["tree"] == n), None)
@@ -16901,6 +16928,12 @@ def tf_controls():
         not tf_hook_change(cfg, "tree", "dry-tree", dict(dead0, autoplace={"probability_expression":
                                                                            tf_boost_text(cfg, "x"),
                                                                            "tile_restriction": ["a"]}), dead0), "")
+    palm = sorted(tf_palm_trees(cfg))[0]
+    palm0 = {"type": "tree", "name": palm, "autoplace": {"control": "trees", "probability_expression": "p"}}
+    palm1 = {"type": "tree", "name": palm, "autoplace": {"control": "trees",
+                                                         "probability_expression": tf_boost_text(cfg, "p")}}
+    out["trees: a boosted Alien Biomes palm fails (its prototype stays AB's)"] = (
+        not tf_hook_change(cfg, "tree", palm, palm1, palm0), palm)
     p0 = {"map_gen_settings": {"autoplace_settings": {"entity": {"settings": {"iron-ore": {}}},
                                                       "tile": {"settings": {"water": {}}}}}}
     p1 = {"map_gen_settings": {"autoplace_settings": {"entity": {"settings": {"iron-ore": {}, "huge-rock": {}}},
@@ -17462,13 +17495,15 @@ def row_tf_dump_facts(ctx, mods, sec6, row, cache):
     """T16, T13 (FG; D13 dump facts; trees-forests): on M1 and M2 the great-forests gate and multiplier key
     hold their off values (0 and 1); every living tree's probability is exactly the great-forests hook
     around its comparator's own (M0's, BAB's, or the restored tree's gated key), outermost, reading the
-    gate and tn_tree_mult only, and the dead and dry trees are not boosted; every preset points the key at
-    the region layer's multiplier; with Alien Biomes each restored vanilla tree, rock and decal is rebuilt
-    from vanilla.lua behind tn_on on vanilla land, each body is vanilla.lua's text (the restored trees'
-    with the vanilla-scale temperature), every vanilla.lua text equals the base game's own in M0's dump (a
-    game update changes them), Nauvis lists the restored rocks and decoratives, the re-listed decoratives
-    carry their gated hook, the AB-restricted ones the vanilla land tiles, and the palms' second versions
-    are the boost around their first; without AB nothing is restored."""
+    gate and tn_tree_mult only, and the dead and dry trees and Alien Biomes' palms are not boosted (the
+    palms stay AB's for the frozen palm table); every preset points the key at the region layer's
+    multiplier; with Alien Biomes each restored vanilla tree, rock and decal is rebuilt from vanilla.lua
+    behind tn_on on vanilla land, each body is vanilla.lua's text (the restored trees' with the vanilla-
+    scale temperature), every vanilla.lua text equals the base game's own in M0's dump (a game update
+    changes them), Nauvis lists the restored rocks and decoratives, the re-listed decoratives carry their
+    gated hook, the AB-restricted ones the vanilla land tiles, and the palms' second versions are the
+    boost around their first on M1 and M2; every body trees.lua defines exists on M1 and M2 alike (they
+    are defined on every load, and frozen.json registers them from M1); without AB nothing is restored."""
     cfg = mods.cfg
     d0, d1, d2, db = (ctx.shared.get(k) for k in ("dump_m0", "dump_m1", "dump_m2", "dump_bab"))
     if any(x is None for x in (d0, d1, d2, db)):
@@ -17479,6 +17514,7 @@ def row_tf_dump_facts(ctx, mods, sec6, row, cache):
     B, R = TR["boost"], TR["restore"]
     V = tf_vanilla()
     dead = set(V["dead_trees"])
+    palms = tf_palm_trees(cfg)
     boosted = {}
     for label, d, base, ab in (("M1", d1, d0, False), ("M2", d2, db, True)):
         ne = d.get("noise-expression") or {}
@@ -17493,9 +17529,10 @@ def row_tf_dump_facts(ctx, mods, sec6, row, cache):
             own_b = (((base.get("tree") or {}).get(n) or {}).get("autoplace") or {}).get("probability_expression")
             if text in (None, ""):
                 continue
-            if n in dead:
+            if n in dead or n in palms:
                 if own_b is not None and text != own_b:
-                    fails.append(f"{label}: the dead tree {n} carries {str(text)[:60]!r}, want its own autoplace")
+                    what = "the dead tree" if n in dead else "the Alien Biomes palm"
+                    fails.append(f"{label}: {what} {n} carries {str(text)[:60]!r}, want its own autoplace")
                 continue
             own = tf_restore_text(cfg, R["trees"][n]["p"], R["tree_off"]) if ab and n in R["trees"] and \
                 own_b is None else tf_lua_text(own_b) if own_b is not None else None
@@ -17549,11 +17586,18 @@ def row_tf_dump_facts(ctx, mods, sec6, row, cache):
             fails.append(f"M2: {R['rocks'][r_['name']]['body']} is not vanilla.lua's {r_['name']}")
     if str((ne2.get(R["richness"]) or {}).get("expression")) != V["tree_richness"]:
         fails.append(f"M2: {R['richness']} is not the base game's tree richness")
+    ne1 = d1.get("noise-expression") or {}
     for p in TR["palm"]:
-        if (ne2.get(p["body"]) or {}).get("expression") != tf_boost_text(cfg, p["base"]):
-            fails.append(f"M2: {p['body']} is not the boost around {p['base']}")
-        if p["body"] in (d1.get("noise-expression") or {}):
-            fails.append(f"M1: {p['body']} exists without Alien Biomes")
+        for label, ne in (("M1", ne1), ("M2", ne2)):
+            if (ne.get(p["body"]) or {}).get("expression") != tf_boost_text(cfg, p["base"]):
+                fails.append(f"{label}: {p['body']} is not the boost around {p['base']} (defined on every load)")
+    # trees.lua defines every body on every load: present on M1 and M2 with the same generation fields
+    for name in tf_bodies(cfg):
+        b1, b2 = ne1.get(name), ne2.get(name)
+        if b1 is None or b2 is None:
+            fails.append(f"{name} is missing on {'M1' if b1 is None else 'M2'}: trees.lua defines it on every load")
+        elif body_hash(b1) != body_hash(b2):
+            fails.append(f"{name} differs between M1 and M2: its body never follows the installed mods")
     ms2 = (((d2.get("planet") or {}).get("nauvis") or {}).get("map_gen_settings") or {}).get("autoplace_settings") or {}
     for r_ in V["rocks"]:
         kind = "entity" if r_["type"] == "simple-entity" else "decorative"
@@ -17582,7 +17626,8 @@ def row_tf_dump_facts(ctx, mods, sec6, row, cache):
             fails.append(f"M1: {r_['name']}'s autoplace changed without Alien Biomes")
     row.detail = (f"the great-forests hook on {boosted.get('M1')} living trees on M1 and {boosted.get('M2')} on M2, "
                   f"reading {B['gate']} and {B['key']} only; {len(V['trees'])} trees, {len(V['rocks'])} rocks and "
-                  f"decals rebuilt and {len(V['relist'])} decoratives re-listed beside AB from vanilla.lua")
+                  f"decals rebuilt and {len(V['relist'])} decoratives re-listed beside AB from vanilla.lua; AB's palms "
+                  f"unhooked; {len(tf_bodies(cfg))} trees.lua bodies equal on M1 and M2")
 
 
 def row_tf_t3(ctx, mods, sec6, row, cache):

@@ -253,8 +253,8 @@ end
 -- autoplace or takes them off Nauvis, so each is rebuilt from prototypes/tables/vanilla.lua behind the gate
 -- tn_on with its key (trees.lua), restricted to the vanilla land tiles so AB's land keeps AB's own, and
 -- listed on Nauvis where the base game lists it (trees ride the trees control). Then the great-forests
--- hook on every living tree, every world (ARCHITECTURE.md, "Stable hooks"): its outermost if() is the
--- forests gate, so on every world without an Earth preset each tree compiles its own autoplace.
+-- hook on every living tree but AB's palms, every world (ARCHITECTURE.md, "Stable hooks"): its outermost
+-- if() is the forests gate, so on every world without an Earth preset each tree compiles its own autoplace.
 local TR = cfg.trees
 local VAN = require("prototypes.tables.vanilla")
 local TREES = require("prototypes.expressions.trees")
@@ -369,15 +369,21 @@ local function restore_vanilla()
     "re-listed " .. relisted .. " decoratives, extended " .. extended .. " restrictions beside Alien Biomes")
 end
 
--- The great-forests hook on every living tree (the base game's dead and dry trees excepted, S10).
+-- The great-forests hook on every living tree (the base game's dead and dry trees excepted, S10). Alien
+-- Biomes' palms are left out too: their prototypes stay AB's (ARCHITECTURE.md, "Stable hooks"), since the
+-- frozen palm table and its dump checks read them raw, and on Earth presets their probability keys name
+-- the copies' second versions, which carry the boost.
 local function boost_hooks()
-  local dead = {}
+  local skip = {}
   for _, name in ipairs(VAN.dead_trees) do
-    dead[name] = true
+    skip[name] = true
+  end
+  for _, c in ipairs(PALM.copies) do
+    skip[c.tree] = true
   end
   local names = {}
   for name, tree in pairs(data.raw.tree or {}) do
-    if not dead[name] and tree.autoplace and tree.autoplace.probability_expression ~= nil then
+    if not skip[name] and tree.autoplace and tree.autoplace.probability_expression ~= nil then
       names[#names + 1] = name
     end
   end

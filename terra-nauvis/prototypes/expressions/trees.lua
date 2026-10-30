@@ -26,9 +26,10 @@
 -- hook folds to the tree's own autoplace; Earth presets bake the gate from the great-forests setting and
 -- name the region layer's multiplier in the key (1 + forest boost 2 times the forest sum; the region
 -- formula lives in regions.lua alone, D13). A multiplier keeps the climate in charge: where a tree's
--- own probability is 0 or below, the boost adds nothing (S10). On Earth presets the palms read their
--- copies, so each palm's probability key names a second version that is the same formula around the
--- registered first; the richness keys keep the first versions.
+-- own probability is 0 or below, the boost adds nothing (S10). Alien Biomes' palm prototypes carry no
+-- hook (they stay AB's, so the frozen palm table and its checks read them raw): on Earth presets the
+-- palms read their copies, so each palm's probability key names a second version that is the same
+-- formula around the registered first; the richness keys keep the first versions.
 --
 -- The restored base game beside Alien Biomes (trees-forests; S3 section 5; R3 3.4 items 3 to 6): AB nils
 -- the autoplace of the 15 living vanilla trees and of the vanilla rocks and decals. data-final-fixes.lua
