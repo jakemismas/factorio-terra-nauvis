@@ -77,8 +77,31 @@ local function def(name, expression, locals)
   return E[#E]
 end
 
--- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain.
+-- A version's chain class: its generated file and its city offset. The offset is what the version's
+-- preset bakes for its offset names and what their frozen fallbacks hold (presets.lua; tn_cx_europe_v2
+-- to v6 all name the one city fold, Atlantic's and Old World's v1 to v5 are all 0), so in every world
+-- that reads a version, every version of its class reads equal geo tiles.
+local function chain_class(file, g)
+  local o = g.city_offset
+  if not (o and o[1] ~= nil and o[2] ~= nil) then
+    error("geography version " .. tostring(g.entry) .. " has no city offset")
+  end
+  return file .. "|" .. tostring(o[1]) .. "|" .. tostring(o[2])
+end
+
+-- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain, once
+-- per chain class. The game parses every body's text at startup (about 0.5 us a byte), and six
+-- versions per map each carrying the same fit cost 13.5 MB of noise text and about 7 s of "Time to
+-- load mods". The first version of a class keeps the body; a later one
+-- names it, which reads the same values in every world that reads it. A noise-function called per
+-- version saves nothing: the game expands every call at startup.
+local REP = {}
 local function fit_body(name, file, g)
+  local key = chain_class(file, g)
+  if REP[key] then
+    def(name, REP[key])
+    return
+  end
   local fit = FILES[file]
   if not fit then
     error("no generated fit is loaded from " .. tostring(file) .. " for " .. name)
@@ -90,6 +113,7 @@ local function fit_body(name, file, g)
   L.U = g.u
   L.V = g.v
   def(name, fit.expression, L)
+  REP[key] = name
 end
 
 -- One geography version of a map: its chain, fit bodies, detail, box and elevation entry. Returns

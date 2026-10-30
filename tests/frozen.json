@@ -901,21 +901,21 @@
   },
   "tn_geo_atlantic_v2": {
    "type": "noise-expression",
-   "sha256": "e3bc28a909902413f9432fd1dee3a04c0de5933876bbc724a55a78a4368efa95",
+   "sha256": "7887094bb291d8a59a380439df3bc64cd1633d820c78eb029cbccf74f224ba18",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_europe_v3": {
    "type": "noise-expression",
-   "sha256": "205f071daec79912d4822f670c452ad32c2d0768e371329b227f921d8d3ee6bc",
+   "sha256": "e0d8723be5f9a85f54390fd4ada87d67ed857236942f6edfda9e9916b2567cd7",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_olde_world_v2": {
    "type": "noise-expression",
-   "sha256": "78a958ac7d33e003d8d2aace416dc5de775420c2e7337045182ffe9c53ad61bb",
+   "sha256": "0a8b44224caadc626cc9f3c838605f24ba478e1cd233473da4c0f5fede263375",
    "dump": "m1",
    "slice": "waterways",
    "registered": "2026-10-30"
@@ -971,24 +971,24 @@
   },
   "tn_land_coarse_atlantic_v2": {
    "type": "noise-expression",
-   "sha256": "17b5f99665434b4a8068cc6ead653a8dd89fa4c399d6441e1315e6ff6cc29604",
+   "sha256": "21e754035f4e99f493f81363df8ceab38d75727dc72f996eb18aa4f7c1abb1a7",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_land_coarse_europe_v3": {
    "type": "noise-expression",
-   "sha256": "624b0e602e8314f85c3da2c85996e5077dee27f02041e6dcca4e2618cf832eed",
+   "sha256": "3d2f56cb94b693e7023de0682a36c58ea383f161952761dccaad0b379fb1ec07",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_land_coarse_olde_world_v2": {
    "type": "noise-expression",
-   "sha256": "360f3aa9b637eb4997b39cf956aef3d4030e8dd2c8b1551db7def1c66bcec9fd",
+   "sha256": "95945a5ab6018b0aed38eb9bb37fbf69e1dcb72bb1009725a10c2b29c05f8c99",
    "dump": "m1",
    "slice": "waterways",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_u_atlantic_v2": {
    "type": "noise-expression",
@@ -4786,129 +4786,129 @@
   },
   "tn_canals_atlantic_s1_v2": {
    "type": "noise-expression",
-   "sha256": "f76dadc9d21a900e5eade64e1df0733df523ee88205f820b999e7cfc8b2d479e",
+   "sha256": "d4c9df8ccd6cfb94f8f1437d05633272a7e89543f52ee3d29e69c8c66d9cd479",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s2_v2": {
    "type": "noise-expression",
-   "sha256": "d74dda8203ead64b0d66bfb3e2373c0d05a322c6f2a5dfb3ba0da1ebc8f320de",
+   "sha256": "578bfa557b63df24b155cf065bcb6284518cc4737e5a78eca21f50d86caa138c",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s3_v2": {
    "type": "noise-expression",
-   "sha256": "ae512eecee594b41cfa202c2a53de173e8a6565c9cf642fdf1b489ca721a47a1",
+   "sha256": "f208d422ab2ae08a296fea2a96b8ee965bb936b70ca8088300b1b5431e350d6e",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s4_v2": {
    "type": "noise-expression",
-   "sha256": "65309a88fc60daa027d8a6c1b724656ee181b3e9c0ec263e7f2c6d2ffb4bd692",
+   "sha256": "e93e5bda901bb2229ad0238de0c339516c932e0a17eefab3c3e17a7661b20384",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s5_v2": {
    "type": "noise-expression",
-   "sha256": "0102377f67a8821c6eec71a81bf46bca5e121cdc5aa17e885b385802408b2696",
+   "sha256": "bb0ffe561dc5f3f4092ae63b6c32abdf725f2ce7d34e011975eb493fbe115085",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s6_v2": {
    "type": "noise-expression",
-   "sha256": "2da9984f02adad036adcab343cd12a1058bbe9abd329938e09fbc8cd4a55194f",
+   "sha256": "edb59cbfc3cdf35ac96d53cdf1b1189d22bdd48c487b308eddff3efadf46f728",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s1_v2": {
    "type": "noise-expression",
-   "sha256": "f7f05c99fb1c6b27db2db6f7f19ce5e7994bed3e6a8822b99e673accf0e4d7e1",
+   "sha256": "34b235eca6a10f0a125f28094e5fb9b48268de50958c1d49cef7f39b54bd4048",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s2_v2": {
    "type": "noise-expression",
-   "sha256": "b61a87b9315ec2af8aea41cfe18879365f48a633a93823ba4f3b91e59d37d8aa",
+   "sha256": "927225f6f88c56385b3aefa3acb5c3f2764e2d9c1fe3d660789b4714fad4762e",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s3_v2": {
    "type": "noise-expression",
-   "sha256": "5041318c969b803496f6e8387b1199f3fab550936a2d11084421eb0aa94e538f",
+   "sha256": "8e3f62e70beaa143c973bcb2aef39a255cebc5d4ffebad714544f7211b894e48",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s4_v2": {
    "type": "noise-expression",
-   "sha256": "ff27ef799fac792fbece12484f0d187017322dd7b074fa1bb4a5e670d8218b9d",
+   "sha256": "ddec5cc1074b2adff0a430b99227a293d701aa958463502a0c7eddf8b776e15f",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s5_v2": {
    "type": "noise-expression",
-   "sha256": "c909a6dd2a5b075e82e1f809604e2c4dcf7747b7060fbdc594077821bcbc09db",
+   "sha256": "bd721d1af9796c3c312bb6d81251cc6093f848f472f540381102fb47e645f751",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s6_v2": {
    "type": "noise-expression",
-   "sha256": "336c67fb879e17cf798350b42a4d13e5080d498d67d9ef0a0f07e778cb75f9b8",
+   "sha256": "2c1529ada56fcfd715b2ab4e4cf2d654fc4762ba11769d1ca39b52242a6fa553",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s1_v2": {
    "type": "noise-expression",
-   "sha256": "98f0b655d7aeeac24aefae6d675fad03ff35316de0ddf33fcff718494abc1e85",
+   "sha256": "068180789e8a374383db937e3e519de3de680732b50313aee662300971c00a44",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s2_v2": {
    "type": "noise-expression",
-   "sha256": "024f76fb3d23128e10f2b993dde0c06d36c672c49797f3cda57cb7e3b12d89f0",
+   "sha256": "348de9f46a8770c46d293342454e8a1416af0b624bb069d7a86b3fcf638c725f",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s3_v2": {
    "type": "noise-expression",
-   "sha256": "8b30d8dc20df9d84369f5f8532dca68af295ed37684873fb37096b7ae7f3024e",
+   "sha256": "1c40aacd51eebb801635ec5e03e5481628699c4439d3ccd7caf34eadf48ff9e0",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s4_v2": {
    "type": "noise-expression",
-   "sha256": "6303c7b23beff5d6f29f67a42c4f13ec1cf3c7fb9c9fb4816fdb76388f42237e",
+   "sha256": "de1f40e3d98419aefffffab90f11465d08877fde77d1cdc8791a40b400b66da1",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s5_v2": {
    "type": "noise-expression",
-   "sha256": "e059f5f2bf41306650a35e8ea64f583b2152cdbc2408d537dd2499881152cedb",
+   "sha256": "b715cb8aec1a0c2cdd6dba735b705798b16fa4fe5e464c882e49e7c4f7b9bfc9",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s6_v2": {
    "type": "noise-expression",
-   "sha256": "a1386fbb6146cd714dabc9e7a87b8b14287f41f268c163abbfecdfd26a2bb491",
+   "sha256": "2eb1b1ec393cafc8d7754454c4bacc71062002acafc53f5b8b094683c023ea0f",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_cx_atlantic_v3": {
    "type": "noise-expression",
@@ -4954,129 +4954,129 @@
   },
   "tn_dams_atlantic_s1_v2": {
    "type": "noise-expression",
-   "sha256": "caeb6b36c429f2685c100102c0479b626ce4a958f8ce32e5e13f643bdb9d803d",
+   "sha256": "50843e662dc6ed9251cbe5977dde29812a5ed7de78bd687a2853cd25275c50b5",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s2_v2": {
    "type": "noise-expression",
-   "sha256": "16722f2a5a2eb28704e755a95f726b3d8850157546c42e8a6339af678eab5318",
+   "sha256": "f249c7f946c8f04be35c938ae12f44e95ff5a0786f25368774968a0b7628039b",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s3_v2": {
    "type": "noise-expression",
-   "sha256": "d88f3844f49d7fa98b13fb6647ecc98e4ba293217be5d6359f5c32e0cd721708",
+   "sha256": "06348c11d988c5d9ec85eecbcfb1b5ade458eb6a1f4afe2a560954ef61c4d047",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s4_v2": {
    "type": "noise-expression",
-   "sha256": "48747e17a57dab9e152a69a4150db8529c0e4e187ff63f13c60169dc91d04a6d",
+   "sha256": "8a95794f95960dc006bccae98044992e2e96b6d96fd5e1209e97dfae156575a3",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s5_v2": {
    "type": "noise-expression",
-   "sha256": "bc664cc03f0bb13e06f5f151d0d5d70b0075f6045f4fdb255109b0494dacc3e9",
+   "sha256": "c7f00a5d3adf01f16e54c4df658240523b979a3b3897400f4c44115ebcbf18bf",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s6_v2": {
    "type": "noise-expression",
-   "sha256": "c335fd1e4c482a54534e38ba78828fadbbd6a6916ff08bb9b10d2d0792607b08",
+   "sha256": "83505768597b33152928afb010b19ee9bbb84e4d4036ffeb6174d46980237a4c",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s1_v2": {
    "type": "noise-expression",
-   "sha256": "0d582b5b65845d28f3b5a6e9b5fd7b22c7fdaecf781d9d1659cd449e35a2cc6c",
+   "sha256": "4edab34650dfa2544dc665a89f0edc1a90b1f6f2b0581f155da8be7fa851bec6",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s2_v2": {
    "type": "noise-expression",
-   "sha256": "cbd2da11496b27a7fdd48d3d42acac6c99d501db20f06e3bee50b0af50b0f50c",
+   "sha256": "85d24508c236a4ac172687e791d11817d83db0d3c5e5dc3f2086ad1b018fda92",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s3_v2": {
    "type": "noise-expression",
-   "sha256": "83f3f1ee9b8fda3e493b8cd52497af6e1e5e3a0e406e7989c64c03801fd13a9b",
+   "sha256": "4195bb36feae5ad3886dbe06057702fb08b7f9d70ef2133348086b16aae43264",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s4_v2": {
    "type": "noise-expression",
-   "sha256": "ad205f00ac58e69c40d66a74c744f256fd2b7fe1ae9df0b7b15a07df172a0693",
+   "sha256": "d58955a59ce42fbc5cdc7d3b8c82f432f83e7557ef9dbd8ab7447a93652dd6e5",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s5_v2": {
    "type": "noise-expression",
-   "sha256": "0bee8ff0c892ba31a2b793bc609a1011313daa8fcaff6f802f7babe134b299ae",
+   "sha256": "3e9d53b00efd991770f9795a4ce0a4d8b32dc90ac3c9f0bd69894fd8cebb403f",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s6_v2": {
    "type": "noise-expression",
-   "sha256": "e23bdd2b03fbb79bc134b87842410bafd4455333585c7d0d7d7f7fb40585c2b3",
+   "sha256": "c6b8834d9d6c221ff34be8719a36c9fe5274c8f628915b808770afa2c478d4b1",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s1_v2": {
    "type": "noise-expression",
-   "sha256": "d4910a6aa0164c2578c6c2b97a8abad7b8f9901708a30cfcd997a1feb9967e58",
+   "sha256": "d9c592312e42905a491939ab455261153d7d5e9fe71fced80adb10ae965ed491",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s2_v2": {
    "type": "noise-expression",
-   "sha256": "68822222f60fc1ae2321189168d7c34b27225650c91dab2b5238ebafe9072a67",
+   "sha256": "5d0d1e867ad252c0188a00a8e9a5911dabc04e8f6ee35e8df0181025ac6019bb",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s3_v2": {
    "type": "noise-expression",
-   "sha256": "3525aa49169b00c239e9daeb31c2e217050ec41e5612d65ece188ce9bd55a34c",
+   "sha256": "887947651080b2a6163ccdc832e946c94cbf077e94da40e41caa41878ac07e7d",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s4_v2": {
    "type": "noise-expression",
-   "sha256": "e6964e36b28f8991fb584c9213d116196e1ef437c02419d74c5116e900f3139e",
+   "sha256": "e80edfdf021d17b95e405ecb3853f15a0d87200beee55933fdd37bdce692abbf",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s5_v2": {
    "type": "noise-expression",
-   "sha256": "1ef9cb047d915bd2454ecd9b6789b375a367614cf36726f6bb274a09ea5aabce",
+   "sha256": "81212268333355400aa81a5b7f43f192de71a4a28aa57ae232c485f2b908c7d8",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s6_v2": {
    "type": "noise-expression",
-   "sha256": "8c8d19eec9be7dda6e5a4075f79214311462e231fa009d85654b66c691504a77",
+   "sha256": "c5af9fd6d73cdf766b5a2cb653f3b59b570ccb72ed1c8004ebcdb82e5893db8e",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_detail_atlantic_v3": {
    "type": "noise-expression",
@@ -5150,147 +5150,147 @@
   },
   "tn_fords_atlantic_s1_v2": {
    "type": "noise-expression",
-   "sha256": "43f98d677a5b731072b8f21607d0460ea4b658731cfaa2ec607f5b46bded407b",
+   "sha256": "6cc24e0786095062447959c2a5ceda6fafbbf49efbab681d6df1384360996d12",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s2_v2": {
    "type": "noise-expression",
-   "sha256": "924f1cc71e7dbe3e36f2e15e219e77f15cbfd91176362a8efd05f79a9d1a1736",
+   "sha256": "2839f15b4c5b7fbc7cd343c0c9420953906aa04b3fbd872134220b3797eb8bbf",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s3_v2": {
    "type": "noise-expression",
-   "sha256": "627527b34b01c15d51ec1dd2dfee64a91a464a6f181f77525b1652aa2eed13a8",
+   "sha256": "0ccf0f92d561004b90e6fcda9eb778a785cd4f12fedcaa3d2e6d9d27c1f5a242",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s4_v2": {
    "type": "noise-expression",
-   "sha256": "2d89ad22eb4ab53abfecd31618d6ec217ac543d71dff7835a9a8bdee2bfb3329",
+   "sha256": "7834c8c432ab521ad42368bed1cda7ac24137350dd1f73c4529dc0e51a2cc289",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s5_v2": {
    "type": "noise-expression",
-   "sha256": "8a4a90a601739c813e23217fb2d008490a4ceaa261d32260e2e21f707ab19305",
+   "sha256": "a4b44300b328375d4986e4c362670bd6d3a07ff3469f8684ed220ab02f8dcd26",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s6_v2": {
    "type": "noise-expression",
-   "sha256": "876f5453df6ffd2397d7170429e01af1eaf9750e4b00ff5868b03b9a5b8ec85a",
+   "sha256": "c2230a51d42155d928eb462ebd1489102fafcf0d8593fdd24f06d594b378ac85",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s1_v2": {
    "type": "noise-expression",
-   "sha256": "3a5e1bacef3e798c743704b2f629013c255cc062e077d43c1bbc7004b9e9db31",
+   "sha256": "c97cb3d54f648fd91960e17f551bf44923d1eb0cd6cd7e913ca46b3d94a365e0",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s2_v2": {
    "type": "noise-expression",
-   "sha256": "29716ccdd9b52298683644224a346da76100f2bbc185b63db1c0771076345e07",
+   "sha256": "93b53fc4ecf9ccb9786d88bdd5adbc013e44a92311fbca8cc501ebc4709a5178",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s3_v2": {
    "type": "noise-expression",
-   "sha256": "7c01bebb86a910f593379798256b53647e96603950a67c51a6fb5520f2c123bc",
+   "sha256": "8f532c281bd69c7928e9ef93390188da3e049c2203dc4ecfd4ac7c5ac53c5392",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s4_v2": {
    "type": "noise-expression",
-   "sha256": "c06bc64c5c94d0fd971b97b4c4bf9a5b04f9925ce45bccfe5ff6ebb062aee12e",
+   "sha256": "f7f1a2d0101269e1e9e9167aa56a08e8c85d599aaa456c8c8b627627283fd9dc",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s5_v2": {
    "type": "noise-expression",
-   "sha256": "05bf34ce0c8bc25ea955b3704e96dc67ed7259d682d1aa4c1538d61a14bbe1b6",
+   "sha256": "4c3ad642ccd6bec4ebc8064a76ab39f902f38dddb8ffb158a2e49e9a36c7c408",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s6_v2": {
    "type": "noise-expression",
-   "sha256": "c1f266d19b8e701e936ba5aeca4a2167e2a11e114019bb5aca45af3e7e42ce89",
+   "sha256": "3d50723b214d1b51ed571be23c1b5ffec5e50b2a6f57725f480defe41ddee6f2",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s1_v2": {
    "type": "noise-expression",
-   "sha256": "a7c95ba60ac98e8cf582c2ef0e44c104c81230a913b25433cb20a6deedbac044",
+   "sha256": "ef7d57d3f43e7f0c3c6f3bcbeeb6efa775efb3ad67bc2de0f9b2902046821d0c",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s2_v2": {
    "type": "noise-expression",
-   "sha256": "57b0ac33f6ec05e2f8e2997c9f1ffa5b8198907cb89f6ad1d9b4f4ce6a30737f",
+   "sha256": "238e564edfe400e9b9c1fda44bacd402f1a732394b008826cb5ccf5799eadb2e",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s3_v2": {
    "type": "noise-expression",
-   "sha256": "43c58738798c05bc4395779af480d1937b9aec704ea72d83db7aa87f7ffa71e9",
+   "sha256": "ae476cfed95d716965a95311f6166448bd2f8647ddf5e271317c15af7b49dff8",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s4_v2": {
    "type": "noise-expression",
-   "sha256": "6c07e3441a1bef6aeb94558eb4372dca3d7fdeed93fdc3fcd26b330e2c01713c",
+   "sha256": "c7b268a868fa585222cfed1eaf37219a0ba233d04cff77d16488174e2b4a8f35",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s5_v2": {
    "type": "noise-expression",
-   "sha256": "fa9d02dbc5a3414c42ef0da11ca5830b8247fd682e3507cfaf1fa2f7690a2c39",
+   "sha256": "6f3a93dec92562896e984a1b2bbc9dc19d8a7702cb77219f648cfe9412cf4de5",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s6_v2": {
    "type": "noise-expression",
-   "sha256": "9a8606cc8a9a0618ede97a6bbaeef40ab089fbb855503465a885a7953df5e85c",
+   "sha256": "a17e42e71d04c64dbddf1c403c62eacf7e95bd0120821e9b5ac2795c9e3b19e0",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
   },
   "tn_geo_atlantic_v3": {
    "type": "noise-expression",
-   "sha256": "17304ff816c16f6e33639b677fddc5f8ac2932d1709d2e2580d7b46d57424ad4",
+   "sha256": "b82d02507b2bcc6a4454b7a4e54744a0a2675112eafb23fd047ae458e7a08ce6",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_europe_v4": {
    "type": "noise-expression",
-   "sha256": "019a9896de6a13981887ef0a813f5cf394b9ef0004b1f20f296e4dffa2f5237d",
+   "sha256": "e91fc330227a211ac48ba40c791acf3118ed6a16ad6c7972cc2ab899d6af5b82",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_olde_world_v3": {
    "type": "noise-expression",
-   "sha256": "800321af0678e33e5cb34d42688ed4e712fe67196445cc7a0052666926ddf644",
+   "sha256": "468dd43c044f451434d35fdb400eaabe549f7b3e33e877763729af6086d69636",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
@@ -5346,24 +5346,24 @@
   },
   "tn_land_coarse_atlantic_v3": {
    "type": "noise-expression",
-   "sha256": "cbe2ab503efc851c25f3b1510be18b33eae031c3fd7c06eb84884609269f7a8d",
+   "sha256": "bce76513f5d6b0fd8bc8b1c04dff5cc734f3992b7273336194fb009cdf3329ab",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_land_coarse_europe_v4": {
    "type": "noise-expression",
-   "sha256": "12910036492ffcda6d24df9bacca07726dee9b25816c16aab171669945af929b",
+   "sha256": "b5f041171842bbd7429680dfba3139d42701715e10fc33e12c5afb02af7e91b8",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_land_coarse_olde_world_v3": {
    "type": "noise-expression",
-   "sha256": "cfb6f3346d1edae36f3884047f5fded799cb12af72fae04cd1a387c7967c963f",
+   "sha256": "fb21f75eb8501d067406ff66ad7a34fb2753f811e18f5f22e416204b296a4260",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_lat_v1": {
    "type": "noise-expression",
@@ -5682,129 +5682,129 @@
   },
   "tn_ww_atlantic_s1_v2": {
    "type": "noise-expression",
-   "sha256": "eb3b2cdab7ddb63b9f148e54c4e599bfafff85795b3fc2f4a53625a3eeb8b4b2",
+   "sha256": "d9332d64d63d0019e5d6b8410ef769b3d5840680be80b905fbc4a3e7411dcea1",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s2_v2": {
    "type": "noise-expression",
-   "sha256": "75b2dae4361f28865d866b0bac09178dee15b9d1022a24e4a8355b56f94d73e8",
+   "sha256": "6ff2f17db6f25d34f6a78eae35459ae82b3ab3ed5a43012edcbe2146ea37709a",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s3_v2": {
    "type": "noise-expression",
-   "sha256": "3db868bec27d63481fb5e8860fde57a4f819584783c8ef3f2fc8ece3f1208636",
+   "sha256": "41272bf6c08ae2b1b3e4f37568f95ea4b302939b99f02343e9ab9d63954b571e",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s4_v2": {
    "type": "noise-expression",
-   "sha256": "a69d531acac54e9d27883e4e0d810eab94d1ec0882e8f7333e94802a8e2deb22",
+   "sha256": "66f1e01b175385fc1d919a6377f496dff538226e8b79d092fe44f0089dc23484",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s5_v2": {
    "type": "noise-expression",
-   "sha256": "a06964a0f614ae63aa1a8767716ba1fecc3b82f9ffe24fd5ea86333591d6bee8",
+   "sha256": "4c4c5b1ab17f854551b6e2cb119e15335ff29a97bcd7b53a678a5226b597df8d",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s6_v2": {
    "type": "noise-expression",
-   "sha256": "b77df941e49d752398cec4485c10fc2c1ed250e752f61f65294e8e7c3fbdf510",
+   "sha256": "bfef48802f398ef68fd7ccd725dfc0c4e3f3bee58d39c043998797c39c887075",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s1_v2": {
    "type": "noise-expression",
-   "sha256": "6b77e2bde53d11ff36ab47c21d7808126e4118e17e07679693b37e1a364e5214",
+   "sha256": "accbef9cea77c6c306148eecfb69c0c531e5036709710f9e0c459a9466d11def",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s2_v2": {
    "type": "noise-expression",
-   "sha256": "ff1cd8ede78c97708b87ec8ec313c97a3cf1b99df7aecdcf034875f1eed100ec",
+   "sha256": "2cf8e73bfba3962b68b3246af0591169a29b853affefc23bf348055911ef7a0e",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s3_v2": {
    "type": "noise-expression",
-   "sha256": "effe94a15951c733c34b43ec0c58c771aff7999382a96c0357b439a185d1b564",
+   "sha256": "95a2aed356586142c602698ccc4616f5eefa038881376bf8128cde0bfcbbf827",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s4_v2": {
    "type": "noise-expression",
-   "sha256": "e17d02452d9df3df9dc70336ec64e2392bff38a38a258244680c518a8e9a7c07",
+   "sha256": "08ba557ebd56a7ef7ced01d253d584e5ee775d989e01daa59abea44cf2b44cb1",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s5_v2": {
    "type": "noise-expression",
-   "sha256": "a09fc1ea35c00d0cc0bbea62a4481fb4ec63d4dcec78d1695752b96944c8a69e",
+   "sha256": "69d0081a544e937ef2bfd3a1a4f526a451513cdf8917c9c0af33b77cc1959047",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s6_v2": {
    "type": "noise-expression",
-   "sha256": "0b15416edef9d740482a7a381bec2ac71f85b78eb006e626c0a800e4ad202f93",
+   "sha256": "2f537de81f9d669d4ae8b97bc8615d8d00ecb30a08f0618f02500f63d0ac69d7",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s1_v2": {
    "type": "noise-expression",
-   "sha256": "8314528bccaa3be0a5d66a41ad302a2b36539ee05482f1b32e18b97e861c8cd0",
+   "sha256": "2864abfd48d9bdb3ce7efcec131a8cb8a070a020d22852c9a5ecf21a2e4c53ea",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s2_v2": {
    "type": "noise-expression",
-   "sha256": "2a222dab8b958cb652cec02eb171d88b51edd4b4149176d324893e4746216ca2",
+   "sha256": "1428fd2fe8982b69f2a56b8ce7644652b1a66510c8cb5b45e8ca45be5bc4de75",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s3_v2": {
    "type": "noise-expression",
-   "sha256": "68b27ba1a2a59c83769337d0f1c88665f93eea7f3793f465767016c6bd72187e",
+   "sha256": "d67afbda024ecbdbf86dc2509101b49022933e5e2f21afb2a00ada3969f4722f",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s4_v2": {
    "type": "noise-expression",
-   "sha256": "f7ce1c6dd16b81a3d3de1deb99e702ce6a54ab710ee17c085598aeb90b12a80e",
+   "sha256": "982f6245883f373edee9bb2846fd800695be948c665965fa2b398edf531407ce",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s5_v2": {
    "type": "noise-expression",
-   "sha256": "69476013a99db38070eea1464b77f98fdb841f3981ba17a4f5f2536e9d08c7b2",
+   "sha256": "1cedf7fe15e9a80488e6f66377dcce2057a3115343c336eff2e028127173a4f9",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s6_v2": {
    "type": "noise-expression",
-   "sha256": "c498820de353510aa202099ff29f799b046f1bbbb073708ee2b343162b21af17",
+   "sha256": "02c91c15fb691692f156d7e101d8510fd97ea62f4601c30ac526ccf47cb40e41",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_aux_ab_v1": {
    "type": "noise-expression",
@@ -6564,129 +6564,129 @@
   },
   "tn_canals_atlantic_s1_v3": {
    "type": "noise-expression",
-   "sha256": "7b0360a74f02f8e4f8e91c0dae37ecb114d31a4cec57cd151ac396f8c344e0f3",
+   "sha256": "eb247c3dfeecb99ec98c6d941e9c3944ec19bd593da5fa57103f77540ec62506",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s2_v3": {
    "type": "noise-expression",
-   "sha256": "e6469b0b39348cbfc5cd445ecc9433caf14f60dfc44607798bbc962967adbae1",
+   "sha256": "7b61fdbb148c3a8b5da95ed8b57a236f6f7ae83fe98eaac146c9b89396e9a658",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s3_v3": {
    "type": "noise-expression",
-   "sha256": "5dc48aed3cf9c0129c95ad9e10950b2dc4765fa256e885c2adb28df7988efb56",
+   "sha256": "350403fd64e35637438e25c0fe07d61a8a0e37db676e3ea2f31dfd917c5738b3",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s4_v3": {
    "type": "noise-expression",
-   "sha256": "1e2e137cf6b7693601906efdd21e864c0b8e3b730fe86afcca8ef19849bb8a6a",
+   "sha256": "05eb3233d687cddc95a7c76d8e66d4d9a6e9c7092ff240af3c0a6e87183273d3",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s5_v3": {
    "type": "noise-expression",
-   "sha256": "62dec9cc5c710c02bbfc65dcb4aaffc53fc83e3e0dacb74f8b5486cd758b744e",
+   "sha256": "3bb802995b1a5f55c7868ecb27d4ee82d135fe4cbf8fe51d56c342cd4d3653b2",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s6_v3": {
    "type": "noise-expression",
-   "sha256": "c3bc72947c2503a2b0dc95586729352a9916993154c7cf4333bd8a0d1ad64e8e",
+   "sha256": "0fa7319c6a61935cf15107cad71500ff6bcf0262c1aebfcc84d8d45581978ed9",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s1_v3": {
    "type": "noise-expression",
-   "sha256": "0e7942b7a968c72726ba5daeb8e51a3d6a77e1ecc5a5596fda67cc413397a24f",
+   "sha256": "0615d6c2052c2264f1cb29890cc040582ae462713a5bcc727a85fb8d2edcf835",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s2_v3": {
    "type": "noise-expression",
-   "sha256": "b4d40747052fbc72ec69a2f2d796dfff4abb66d2248cb58a0b9e0557ce925d58",
+   "sha256": "9d5db0290b88b2580fb9f07f082a9d385560c7bafbcbb4782d66d2cc1ddd8a01",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s3_v3": {
    "type": "noise-expression",
-   "sha256": "3bd7f41c0f0448ec9ad8fe5bce603f6d8c8704b5758ee724ea967ccd98f2c75a",
+   "sha256": "c36b90575a3155f6b378e80b4ea3836aa52d385bb4485ff9f74a22ea5fb77a8d",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s4_v3": {
    "type": "noise-expression",
-   "sha256": "90f2f2ea69c0bc477b38e168902d7553f3fc66b1446d277f61ea66b34123b0d6",
+   "sha256": "a7fc55ba352db966b67357967fdfff9175a3220a0e6db89ece1a5e435a72f2fe",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s5_v3": {
    "type": "noise-expression",
-   "sha256": "52b629c8f96fd96162a13c942e2d0edc3ee892f2efb982d098ef565196d2d4b0",
+   "sha256": "f12ff884a6c6711c56b0005b3d5996e81c6425fb80878063e337b7002e6a350d",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s6_v3": {
    "type": "noise-expression",
-   "sha256": "c6bae7995aec32f37d68a0eda0b7682a23adea9efb1210514fdeb98649a886a0",
+   "sha256": "17a7bfe1406d70122699eb7d938d7580933ccc20adaa14a99e2e7b154bb3115f",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s1_v3": {
    "type": "noise-expression",
-   "sha256": "98a9197edc9c3b209e5aceda97b9996f62e0e6638d23387b9c4eeecd5cf95aa1",
+   "sha256": "0c9d862d534440c86152a8d849687cee8065a95f26cfffed4018c9ead2c71471",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s2_v3": {
    "type": "noise-expression",
-   "sha256": "aaa306a3d2c3023ce1ff5b2787574af795c2f424aa58c45e8d672f8c5d93c949",
+   "sha256": "b6636ee0bf8458a1b065c683668380c03dbf505346a8a278df7e00b33f3203a8",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s3_v3": {
    "type": "noise-expression",
-   "sha256": "09e74d7e74833480d1e8213cb3f994e7253c02b797b5b2709edf1ee924a6bd58",
+   "sha256": "a0ea1d24be062219f6d0eb75dfe598c6fe195f7e4066d2b942a66721e9c0fc8c",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s4_v3": {
    "type": "noise-expression",
-   "sha256": "277b02cc2a08def86a27cc0ecf9aeafd9a5a695bbf96efae56974a81e3184b80",
+   "sha256": "15f4e714566c9d8847c034bd96ce8f2c27c628cd26bb19aecf5b52bc9dc39138",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s5_v3": {
    "type": "noise-expression",
-   "sha256": "84856534ac5e830f870686a9d8727c0e0eb5b0fceb9dda4cd20e3ce83875ac85",
+   "sha256": "e60dbb925aee46d729a8683b51f18ef31a6c7485e3304d548e7aa8e880c32a20",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s6_v3": {
    "type": "noise-expression",
-   "sha256": "426fe9265baa97ebfaedaf4da52f0ffbe2a320cc4ff08c84ab24b64378d2b6a8",
+   "sha256": "498543035d7859dd05f674471b9f9b918e095e976abd321258ed165f598c7862",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_cx_atlantic_v4": {
    "type": "noise-expression",
@@ -6732,129 +6732,129 @@
   },
   "tn_dams_atlantic_s1_v3": {
    "type": "noise-expression",
-   "sha256": "53fc43d8225e5b95c3f2772a29ab7c1352d3d14996500d9e8e3e043dfa18ad95",
+   "sha256": "364cdd1f123ca6ffc269327c82cb8c28ef65621210e63e0516338ae3b783da94",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s2_v3": {
    "type": "noise-expression",
-   "sha256": "67593dd524e82881b1e38f2f892dc901e31d6aafb3c7508f1b6afd6d2380dfbf",
+   "sha256": "99b7db02635e7cea67ecfa7291c9461f8294928690e09911dad15e2598b0f262",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s3_v3": {
    "type": "noise-expression",
-   "sha256": "59d8c73f980d737d86fb0dbbf057f78f53eb841b4ff926409f0713f34ad980a7",
+   "sha256": "bc079ff76510aa2c5b865ad70651f1c5bdf7a03726af76bd917b25431989eac0",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s4_v3": {
    "type": "noise-expression",
-   "sha256": "cd48b58404ac0fd308820e98e2c6a131bbbd72ab8d9e2c1ec19266db8d338e40",
+   "sha256": "e7b5d3139fcb714affaa98562fb988aae152f7e39298c4164f2ee52f73a6d406",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s5_v3": {
    "type": "noise-expression",
-   "sha256": "65f72c7afd1c5e3bc9baa493e8598f495efe3e85412ff8b3f19b382f6ef309eb",
+   "sha256": "e3ca17fb6102259a06c550a7935ff8e23e063334299f993a12aab70a4f05e559",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s6_v3": {
    "type": "noise-expression",
-   "sha256": "71c7f7dfa85df1a7cc97a3240f0183469e3c018c04bdbfd7dc5b061ba3008c57",
+   "sha256": "cd7989dbce21ea139897f324f69a23266c8d6b318d008230b9d3df454270a038",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s1_v3": {
    "type": "noise-expression",
-   "sha256": "af67e805ca6a714e3a566023aaf9aa05370862f20a949005644ca29f362ae2d3",
+   "sha256": "5410287e4922cf2d12d9e2e8ac96eb3e824a9f1456d18359444511ba555f01fb",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s2_v3": {
    "type": "noise-expression",
-   "sha256": "f26cca0ebd8f6859d9de85113f0f487a5e2acc9578965d4fbd79310f804f8d8b",
+   "sha256": "7833aedc98710470476ad70bb56817e41fa168b21ba93ff1d6b75471512a2ba6",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s3_v3": {
    "type": "noise-expression",
-   "sha256": "4956c9481f3a2b2a3175e4727fdbf9cc5b10e446229cb1a8a37985724dcb5b66",
+   "sha256": "b615abab63c48e425ac731fba7c9a7597db0f510678c6ea43c14caa0d9f54264",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s4_v3": {
    "type": "noise-expression",
-   "sha256": "031950bbd5f41065e69f5e2fcf37fd5943850db8c67da703685611b103d7e70c",
+   "sha256": "7a687eed8ad1c1f9376c51dabbbba08857c7a7e47500248d4c3550aa778e780a",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s5_v3": {
    "type": "noise-expression",
-   "sha256": "ae0cbf1d3a94568edca151650fd65abfb9e62d99c4003897cd06e4d24c305968",
+   "sha256": "8e3e7806558af1dd1f5ca792cc957bc5b48d6987794cb3034bc1dfc7fff0f847",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s6_v3": {
    "type": "noise-expression",
-   "sha256": "9709a9df550279b6a796f404cc61f11f1d6ebd595411322e9c136abd78fbdf94",
+   "sha256": "df388c64e8fc2ad1789fc5047b3a6ffae1f09ec580fa664750b63ac1b9215e30",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s1_v3": {
    "type": "noise-expression",
-   "sha256": "ea8223231542c5450605f4b49560ac7c312c06c00a279989c084157b119cc015",
+   "sha256": "bfbd6d454fc8bcb48a2ff9508eaf2c2333613fffef21c88a1984820ca9d884b5",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s2_v3": {
    "type": "noise-expression",
-   "sha256": "a2d0ebd79c0afad26b542f48d7125e88529abd8f978f89b5774ec074db4ba85e",
+   "sha256": "fb2836401761f5950ad5bc253491ed5b4902d122a9c4e2c130785aaade85f817",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s3_v3": {
    "type": "noise-expression",
-   "sha256": "19f4a21cc3bc3843192a56569e59cdedabb40f614b3642ee5fd4ca959bc0d41c",
+   "sha256": "498aaf375b86e6b161a26fd6533c0d84f226b48e4626a3333ec815a7338a65dc",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s4_v3": {
    "type": "noise-expression",
-   "sha256": "8bce89fcd6674dc89d9b633301537bdb5f877530ea4e112c4e4a6f69bfd44374",
+   "sha256": "e796fff7daf289f38fb3ee79b1bdb418a8e469f7b5380295b6004b37b06382a1",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s5_v3": {
    "type": "noise-expression",
-   "sha256": "f926138651b07dd660c6ed30bfdb3928d09630512ebfcb687e5110cdb3e69e89",
+   "sha256": "06cb0503ce3be1c9a97785a33d7a1ae7b0163bf403d67a427eb09c9e08fbbfdc",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s6_v3": {
    "type": "noise-expression",
-   "sha256": "b37d95a03e5d6b9bf1595755021457dc37c64d762edc2987cb50f37524c1474b",
+   "sha256": "43d271b20f252074b102fa247a27a8cd297370a43241e7420dae80ed9fa735b5",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_detail_atlantic_v4": {
    "type": "noise-expression",
@@ -6956,147 +6956,147 @@
   },
   "tn_fords_atlantic_s1_v3": {
    "type": "noise-expression",
-   "sha256": "ec101e11d785fb324db1d6a8f24ac2b6176bda5a0b4765476eb041565d4166d2",
+   "sha256": "5ba7d8414db3f4578f88bdfd272a81e06792fcb4781a6e5bb207b328ad77e94c",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s2_v3": {
    "type": "noise-expression",
-   "sha256": "4805e0fac46c70efddeaff6d4d3e34349cb9336d5fa9d311aef2a51e36a7de2b",
+   "sha256": "0fcb4bb28b3d80471f45b3dbe7ab8331ac8f3a20855f37e26a51b5b77052443c",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s3_v3": {
    "type": "noise-expression",
-   "sha256": "66c6c7d5262c065e712b1835a75d04ee595eb651471ab316e88b2e5c615f6ad9",
+   "sha256": "a7c0b63db9881d4c9e3102bfb0f61c2abeb949d79897d782ff9d4e3a8029ab14",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s4_v3": {
    "type": "noise-expression",
-   "sha256": "d059c8e2bfb9bb0eb52e00ee92257b1678277799d8da5a12330f18b3dda29c29",
+   "sha256": "e920c1144320deceea6d094d22207527ac063fd900692697c1122a625ac4c69d",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s5_v3": {
    "type": "noise-expression",
-   "sha256": "5ebcdd11a797ef05ae52afcd4b3bbd6719a4b367ba34bb30a724e5a385d2de63",
+   "sha256": "2353a73c55e9fa003137bbe4ddbee4fe11dfd0f90d40fe100313fe4c6032f109",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s6_v3": {
    "type": "noise-expression",
-   "sha256": "128f941f332703328bf79fb9e89f5a3847def131bf72e11ee917ce569d081742",
+   "sha256": "7683b02f48e3afa8b71cfe26c02368e734374ae8e2e9b9c616f8a2b8672defa6",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s1_v3": {
    "type": "noise-expression",
-   "sha256": "72b80c1a712dbc40cebe41f4d1779fdbb2105f61528261a75f709afe81c6d89b",
+   "sha256": "d1560a667f8bf905b7909777f566efbac281f1880609df996db6f1c30f79db22",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s2_v3": {
    "type": "noise-expression",
-   "sha256": "4c607ce91c5ec91b30d34c10e4038f1bab234e96e000625076c217f22e42f51a",
+   "sha256": "a53312dbdd5eff83fb07a8abfbcc282ea58362088d898bf932327de98a8a812e",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s3_v3": {
    "type": "noise-expression",
-   "sha256": "cc15b8f1018d7277a032cf733415f9400fb1472445cef5fbfa4759528239a3fa",
+   "sha256": "0aec09b1bcc2d456a92acfca26774ec2353db73409fcb819f34b0606689ad1dc",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s4_v3": {
    "type": "noise-expression",
-   "sha256": "f20dbf0348e09eba4ac41e4a5c9d4a63b96b2558e0bb618facbffd24ab9fa3e3",
+   "sha256": "88038dc26eecc517c2291eff7dac5e47e52b7fe65ec97e6aa030646f3248b816",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s5_v3": {
    "type": "noise-expression",
-   "sha256": "519452e56129d944cf4545c8f592ff3e29e21f6d4d86ad1782ffc86bcb6780d0",
+   "sha256": "966fdfb51a54bf136949d23ea3641939df0cfc03d6a929cc842c75b3a92f1f74",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s6_v3": {
    "type": "noise-expression",
-   "sha256": "1c4644dc1ccea2ae83c1806f4dd84a738cdd6fc5d96f9cccd6eebea76bd472ed",
+   "sha256": "d7a4896f011ae593b1723b83fab60e2f1f8443012b1505227e31547c36e70ff3",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s1_v3": {
    "type": "noise-expression",
-   "sha256": "e84c353204894cea9e3a78718dd61382500f3964aa55cce6e66950d059011206",
+   "sha256": "8fc85397a67f3cfbc43b28e38389a14c36d87f4d8306e6fcf69ccef8808b8088",
    "dump": "m1",
    "slice": "resources-enemies",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s2_v3": {
    "type": "noise-expression",
-   "sha256": "c337ec4a4fcdc91f1c75b3e6d00d1d0121d26f04b7d678506b407a4dc324a977",
+   "sha256": "55483f4dc789db900b6bfef6d991fdb4514f0f588058371e4b35da4ad7f099ac",
    "dump": "m1",
    "slice": "resources-enemies",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s3_v3": {
    "type": "noise-expression",
-   "sha256": "45d2b98faca41d68f20ea8d92644e24e365d848f0eff4d1761e021daa8129549",
+   "sha256": "69c7a9b5d5abbc72f7881a65c86c360cf3ca50d393fdb591b2ab6c86ce58ad26",
    "dump": "m1",
    "slice": "resources-enemies",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s4_v3": {
    "type": "noise-expression",
-   "sha256": "f0f7d9eb8f027f499c048e7283a4bb51fda09271f2595b72fbd737c52adec4e0",
+   "sha256": "bc9a0994a36a83db04daadce2f5a50db77cbc49a781606f9683fc3a6d86c4e28",
    "dump": "m1",
    "slice": "resources-enemies",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s5_v3": {
    "type": "noise-expression",
-   "sha256": "12385c4bf20796ee30635782bced3c6deb26665a2932a395704c1087ce1ec52e",
+   "sha256": "fb8d7a615b30e5c6acdcb4cc81409c878236a70e14a3ce621f57294549b3b2eb",
    "dump": "m1",
    "slice": "resources-enemies",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s6_v3": {
    "type": "noise-expression",
-   "sha256": "6b9f8033da73f7a8f07cec88bdffc2ec5bd729c14ad5a3396f5a15302ad50349",
+   "sha256": "a6a8141cdc4b5c0081a1f34752e9922dabc72845e1c1dd20188854a2132bf6c7",
    "dump": "m1",
    "slice": "resources-enemies",
    "registered": "2026-10-30"
   },
   "tn_geo_atlantic_v4": {
    "type": "noise-expression",
-   "sha256": "00f6a439d42a756b649a35083d94eba5e3cb7f76a6c1689635aa9612a429473e",
+   "sha256": "24db24f61b847a356d33bbf8de54f7ec92ac9e843c067f054ca2a664f6b46533",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_europe_v5": {
    "type": "noise-expression",
-   "sha256": "06b464fd94cdce47032d68448baf4abdeeda14933d649e39f62884e5bbfa0603",
+   "sha256": "a49ca9c20fab52d9eeb2393286ffa565a1bee26d4dcaa9ff45f5ee1386c75ce1",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_olde_world_v4": {
    "type": "noise-expression",
-   "sha256": "42c62382fccb845b148f81c8233febeb39cad8a50518e25aded7cdf4ec45d622",
+   "sha256": "3cae1d12339fcc1cb87108bcdf5cb4d626126982e67063773a44236386183247",
    "dump": "m1",
    "slice": "resources-enemies",
    "registered": "2026-10-30"
@@ -7306,24 +7306,24 @@
   },
   "tn_land_coarse_atlantic_v4": {
    "type": "noise-expression",
-   "sha256": "e3689a2bc8221fc2a04a7abfd44d0337cde88b62be509d3fc7bd2266a80d2de8",
+   "sha256": "b2965992dee356503fa4f221a7b272d8830aac0914a7f2824b062e3218633ca6",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_land_coarse_europe_v5": {
    "type": "noise-expression",
-   "sha256": "4269a0f23ac3e07fa64503de404ad58e235dd531089ef419659824016bc2bce5",
+   "sha256": "0a06d71f0e5aa0a0097abfa1c9ebb2481d99cd20c3eef20d2bb3fb5595264efd",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_land_coarse_olde_world_v4": {
    "type": "noise-expression",
-   "sha256": "c0f0813ceecd771838b128681392f3394338c8a61bc1c8b1fb229e240cec3df3",
+   "sha256": "5424e25c7075e9d1816e348282dadfbed7f4ebd5d18184fa6e2b70c3a08d012a",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ore_coal_p_v2": {
    "type": "noise-expression",
@@ -7488,129 +7488,129 @@
   },
   "tn_ww_atlantic_s1_v3": {
    "type": "noise-expression",
-   "sha256": "4b63ef604825657a375d74439352c7cce88cd29e58c749d7192fb46d64fd2015",
+   "sha256": "c798ab2ac014c0e3059e3d6d02f222d45c531a71a6466d60d712638311e062ef",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s2_v3": {
    "type": "noise-expression",
-   "sha256": "d810e269c98d77619b6bcab020a91e25581d5194ad740ce9558604a73673216d",
+   "sha256": "043ccf885cc5d643e7720753014622a3488cf865f0bb3d9ad86ea95ec15b9d68",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s3_v3": {
    "type": "noise-expression",
-   "sha256": "f0f3afa93e85494194b2b44bfdc4fca65c8a6a2d985a87fe61402d0ea1221511",
+   "sha256": "50ed23bcebf7a678d2d243da38e82efc3667b64058533b6f173b46ba3fda4439",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s4_v3": {
    "type": "noise-expression",
-   "sha256": "218cf1f1c449bf970914ba4eb0218314bc538b1c67f51306606f52628ae33250",
+   "sha256": "eb7cc258e3b67f17d91d6d28ac24d8a709d06d6742d55782bf6fae58d8635b4d",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s5_v3": {
    "type": "noise-expression",
-   "sha256": "31f0e16c4ece61f4ff65ca9a5c297ca366d21b96050cf68ef15a37895a607be7",
+   "sha256": "579296541da540d430acc49a33a3716ea751b3f57c4c8ad1ac0f0f95c1113f53",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s6_v3": {
    "type": "noise-expression",
-   "sha256": "5f90a8a7d95e4f44e013434a69d16f50e5f9636244c7296506e8d6e8e96e931f",
+   "sha256": "67c760481431f37e88b52b6edd8f98c5821b629f005cbdf49640e9bf04f5b4ef",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s1_v3": {
    "type": "noise-expression",
-   "sha256": "e06c586796496c2a83f94e30df11094dc6fd34b2f4f9a6c5152ae7cba8a056a0",
+   "sha256": "a259b611152beb1574d247b517d095e081a63683cf9d709e035bd294736158d0",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s2_v3": {
    "type": "noise-expression",
-   "sha256": "7deb3fdd8894d395e061c6acd4bc1519cb4dc6810b045eb716fb0de53aaeb5f1",
+   "sha256": "f5dea8b0355c1b00b51b71ca5e5299f7416dfbade6cdda7f4a3808240b333b31",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s3_v3": {
    "type": "noise-expression",
-   "sha256": "677d75beb1b73958dc7b3c83988622bf3337190a108a2df9df0e445fc5fe1272",
+   "sha256": "4335d7a466b9fcfe942e153755b2977bf3895c7b43ed3fabdeddf927a700413c",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s4_v3": {
    "type": "noise-expression",
-   "sha256": "fb63e758909064e4831182ec3a36600e2ce7f6e76598c089381f270b9658a8c2",
+   "sha256": "115bd9c284836127257daeb9d8780821512fd8ea2d97c4ae7458b77d77b36f45",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s5_v3": {
    "type": "noise-expression",
-   "sha256": "22c7287dc4e58a80101348e917e6172f27a750167f77c56adffb85f8a99177dd",
+   "sha256": "d908862a2b8d2bed911cab3f4a20ce7057a167e0a015d8070060d96ffbed49ae",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s6_v3": {
    "type": "noise-expression",
-   "sha256": "6914858ea554fda98a2113afcb09dcad647a7f78cdfbf457d12ee8620e3f7347",
+   "sha256": "bcbed9d964d68d32b717b9b1d16861c9f5b688c6d10e011399151c68ee1705f3",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s1_v3": {
    "type": "noise-expression",
-   "sha256": "15ec9fb746acf0cd0621fb278463437c91f2d07410625c004b0f1d2d4ed21d6b",
+   "sha256": "c2af2aa4df9fb86aed2b38f18a31ec738a1ffa9b21bb57eacd56c3a985c9ca4a",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s2_v3": {
    "type": "noise-expression",
-   "sha256": "7e56c9ec24f1462a0ba0808801d0a3a0991e144e14a43de85709f45f86c4c4a9",
+   "sha256": "39067e96e98679133404024648ff2cf7121dde5287c7b49cfb008e8b5f4fa785",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s3_v3": {
    "type": "noise-expression",
-   "sha256": "5c3f72297d748c693cb8f9991edf5dc8fbafa0935cb19334d9bedd03126a5903",
+   "sha256": "cca7b3c69928fb392d37ac4c5abc95a869edef83643281b8b69c4a7b0d15d561",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s4_v3": {
    "type": "noise-expression",
-   "sha256": "e8256efb4ff106c4f396ebb6aa0975fa636ec415ea487729c64649a797fb1fcd",
+   "sha256": "f8ca10171446dd2909fe065b6d6829ea1d0adb2476fd8637e990985107728cff",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s5_v3": {
    "type": "noise-expression",
-   "sha256": "54bb7fe24da7ab768422bdf9a2128b7766d140fad8486a2738c8ff9ee7a5ba9d",
+   "sha256": "cc035b5ad9071badad1fa04bc6ae105f89e98c2f92f1d4ffe53e126756a98547",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s6_v3": {
    "type": "noise-expression",
-   "sha256": "fe8ef6b8fed8cdfefe2c8db1a6f0564dda2ffb7fa86ed404baf5c67ce075c304",
+   "sha256": "f659dba35d7c0e2908c8ff21622c5b1474336517bb32a56bd9e1cb40ecf38057",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_offshore_p_v1": {
    "type": "noise-expression",
@@ -7630,129 +7630,129 @@
   },
   "tn_canals_atlantic_s1_v4": {
    "type": "noise-expression",
-   "sha256": "88d21894d14ef6efab84f1bc562b436dd50a7771d5a7882dad55858579778325",
+   "sha256": "b9d5baba5e7156d21f19a72a5090209ddfec5865926c690f76e03f9022a52309",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s2_v4": {
    "type": "noise-expression",
-   "sha256": "6c0f29932cd2d0c25c03efcfb3cf265384547f70e21c1b1cc40a884089b31217",
+   "sha256": "a538239515498bd0e14c2201852efa44d5e0569f0c7b0e76a7b0186f7d361a4f",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s3_v4": {
    "type": "noise-expression",
-   "sha256": "835cf065065741f01f5c468aff3e58fc8994e035d19aaac69453a9ec34406989",
+   "sha256": "ca261efbb78f6263e0929229647b706610eb7c48eadb82a1205f011cf0e480d6",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s4_v4": {
    "type": "noise-expression",
-   "sha256": "123f8210f611e3222a266a913b5484969730e26f5df520a8ea6391c908d95a8f",
+   "sha256": "3619d0dac888e99164a5dc2b9293b8ecd62bafabbf32eec51d686d328dfe1733",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s5_v4": {
    "type": "noise-expression",
-   "sha256": "0e2d3d84255be80790247d5b1465e80503acc17c32f74a347672f34296c42a3f",
+   "sha256": "ef73b211ec41e075f581078714d63c7feaeda6ef43fe54984b195dec33795726",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s6_v4": {
    "type": "noise-expression",
-   "sha256": "add606b99fd744a816b38c0a4029367c3bd54fbf664ac1034562ee62eb7ef906",
+   "sha256": "30f18aa1ac204b370aaf98ee43a0f96adc719479cce89de338cab0411f2c8d4c",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s1_v4": {
    "type": "noise-expression",
-   "sha256": "32cb3fdf42b5bf26e2e7e6f47ab5093d2e7547868f766b6ef462acf3f4a735ef",
+   "sha256": "add04b3b7ab157df8987f3afde03d92de502386715d55b32528633b6f63ea11d",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s2_v4": {
    "type": "noise-expression",
-   "sha256": "2c8e26565cfb2a9721655b1ec4d58088a3b1df5ddc28dd2e7e2d369b8ec80f73",
+   "sha256": "5180f4c98f5df46f8221efc5467b162065d1dfef625f4df0e7c3453b30cad5e2",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s3_v4": {
    "type": "noise-expression",
-   "sha256": "bbedc27948ca04bfe97649f166e90eae0f4444c594400c33f9e1072a96f30628",
+   "sha256": "cdaba70ea9a03d5bfc6d3a60b37dcce02fe6739035fcacb823db0d9e9823f223",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s4_v4": {
    "type": "noise-expression",
-   "sha256": "4bc56bdd1e32561414502efffe4b61d3b838557a66e3384cbe1d29986dcf7457",
+   "sha256": "f9270e8ba5850a2baf44c66d6637d34892e629ded630b0acca62f8bf0f9a5869",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s5_v4": {
    "type": "noise-expression",
-   "sha256": "a0d73eb5e8cd35d0e617c7ef382747f1e178353fe6cda220d6bb1911d573a62b",
+   "sha256": "4941e1bd22ac7c6a635eca1bfa6f07ff09f2e758acb3dc295f38e0e1fe6befe3",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_europe_s6_v4": {
    "type": "noise-expression",
-   "sha256": "dcbe0bfe053564f075561ed4d88f295617accbd97da973fa4867c9174d71fab0",
+   "sha256": "65c67b5f2e5da3de5dfb2714f4c9926ee959cea8b76e68419c87886b30b8fe70",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s1_v4": {
    "type": "noise-expression",
-   "sha256": "f70a241a54a8cb06ce06e83d02bc0ae3d2bc9034b374544325e6ca6af568a528",
+   "sha256": "146bfc5ba54d875e2db59d3491bfdf894a9f258cdf314fb1bd2dd6593a89ea26",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s2_v4": {
    "type": "noise-expression",
-   "sha256": "396d81090a607d23e2563e0a7efde3048af91bf4b527673e4c32963a5c8f7a68",
+   "sha256": "f06441c5a6d9d6b8c720290c7ef29d5a87b826ef276470256954a53ae15f5dc6",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s3_v4": {
    "type": "noise-expression",
-   "sha256": "783b7ed8e19b4a319e2094e253dc709cf1687088d25977ba656b0d47d9a3358b",
+   "sha256": "86c1e1dfdbea0ab8b84575bd916f78b092df17a1b9984b85fd085747d0e4b0a3",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s4_v4": {
    "type": "noise-expression",
-   "sha256": "201fa2fc8ff283a37021af8ea5df32d52c0ec85867d7af2402eb8c06a631affa",
+   "sha256": "89d00a57d0fc2ed8a1324e0497aedca955507374b9011660619f6a9cb6ed22f1",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s5_v4": {
    "type": "noise-expression",
-   "sha256": "f120f81eca2ba26adc86006978d35efcd8a6cd4c50cd6ac69cb2caa89294e67b",
+   "sha256": "84975841453d2ab8b4259ebf83b9921b1bac2fa4e727068d5ededf238586009c",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_olde_world_s6_v4": {
    "type": "noise-expression",
-   "sha256": "c132d9543e4ddd24cf49b322dbc8fb2528c80b1c4ed18590ae3b8b6206c915a4",
+   "sha256": "471d61c9cd09e6ac95b485de471a10e7465b8649351800deda38a51a1b9dac97",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_cx_atlantic_v5": {
    "type": "noise-expression",
@@ -7798,129 +7798,129 @@
   },
   "tn_dams_atlantic_s1_v4": {
    "type": "noise-expression",
-   "sha256": "4a47c0e539f20247256759aec55c6635d150dc7ae88a879bd8cd04885432ea04",
+   "sha256": "d5bbc4ff137c35ed6101207243f4815330f4cc591da518d55c4af4d9e6895c77",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s2_v4": {
    "type": "noise-expression",
-   "sha256": "a63194c0818b7f3c9c537d523e2c85509526fcaad4d8da5a907b4e2975190a75",
+   "sha256": "d0efae6693da04e27e7f64f65ecbdf9548f34de6a99f2490c7c3cac5881c42e7",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s3_v4": {
    "type": "noise-expression",
-   "sha256": "c7a5e9cf2ee18940e68e63b7338c28102059f357e37a78c3a18a7d56c1975498",
+   "sha256": "cb65452193180932766cb8c5f550bf03b264f71a4bdf36cccf16ebb0e861219b",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s4_v4": {
    "type": "noise-expression",
-   "sha256": "f1d88d587127a0ba1e6837e03467d72384cae5ea2d461710444c88ac5a8743f0",
+   "sha256": "2d84b4180d2a0f0e7a4e26e03965359acadd35a3b5ceb7c8389997e7b86c8114",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s5_v4": {
    "type": "noise-expression",
-   "sha256": "8bdbf0fe8f58eb7020d1970c4d4482193b0827a7659d4d063fec6a8df99098c8",
+   "sha256": "50f4aa61086da0a89f426c90c2368b98a47a95b4f753f356ecde567e44251920",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s6_v4": {
    "type": "noise-expression",
-   "sha256": "8d90d82c53e424b06ead0d06f84776e07398de14bad9c11068e3cdf37e085232",
+   "sha256": "957db13f653e14dfe6400d3d163b3155932b5248b356a1c8620b3bc8c005c18e",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s1_v4": {
    "type": "noise-expression",
-   "sha256": "dd2767aaaef7a59702b52f7d225c168e15ed3079030c9e2bd5f2a567876a60d1",
+   "sha256": "322f8ca184c172fac51377db17dd05b4c7615a6ef2a99525171503d4c38c54e8",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s2_v4": {
    "type": "noise-expression",
-   "sha256": "9e3ec8773827d62290f9d3c8c1db2f279b49f47db997f2465a9600c43239328d",
+   "sha256": "ca6f12b2b3ea8aad4c0630ad65ccce5cbb452ef47d87e5873f2c57f94bb8b0fe",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s3_v4": {
    "type": "noise-expression",
-   "sha256": "d4f48d31dd8cc5f511b0be66cbffaafa5b1355c2e86be6f14cec528961acc8df",
+   "sha256": "97e6af3fd2324fdebbe9c787d8d62ce652446a9095db57ee3a5ed2fb16376716",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s4_v4": {
    "type": "noise-expression",
-   "sha256": "a154c9b22653c1016e8ad7cdf8d41a770dda481f7ea3e04eb3623038ea7fe9ab",
+   "sha256": "67bc58d99f65e10a230a4c02308bbd779e07e992308e16aa90d0e562087f298b",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s5_v4": {
    "type": "noise-expression",
-   "sha256": "681f8d7b26c5bf693cd817b1aa9bb3fcfee6b5c6fea96fe490f1b067156b3ae4",
+   "sha256": "e8f6b47ec16beb9bdc746db73187297544e7f63e2fa7a27e7e543516b8052092",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_europe_s6_v4": {
    "type": "noise-expression",
-   "sha256": "7175edc0efe0c81e8ab4ee1905edb2d39e4b442068b5e8dd67dd6ec32f77585a",
+   "sha256": "bfe131f612868d3c295dde81d189c502cb963ff84b1e8ba3e4d3b11b29c2135e",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s1_v4": {
    "type": "noise-expression",
-   "sha256": "7b19af2a6e29833e11a07ee8494dca77512a3808de4f3519b44e6c14a73150c7",
+   "sha256": "7e7060e9df4e59168ef0df512958d6b78efbfb1a878ded055655d67e9539c154",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s2_v4": {
    "type": "noise-expression",
-   "sha256": "884bc0abaf63e99673d6edce91579fe519aabf8b15280eb2206108c797df71eb",
+   "sha256": "b45beea493ca2749a6ca30a31e8f1c84ecde51b3a9679baaf4c23e7b48e618ae",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s3_v4": {
    "type": "noise-expression",
-   "sha256": "2ba707ea3415af4a7a47972d9299fecc4b10b87a89e83dd180f7b067780bf96f",
+   "sha256": "1db56c905bad6af48d916c560a7a76a239fa382a430445fe5127efedd06f5e8b",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s4_v4": {
    "type": "noise-expression",
-   "sha256": "ab9ba685b31dc69e06bed687164f18b614889da81a280e2732c72236ea95496a",
+   "sha256": "057377968909129dc904bebbfddf8d85e1840dbf76bd79c098a03e429136d2ed",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s5_v4": {
    "type": "noise-expression",
-   "sha256": "de5abf57ece287e469a6a11010d9e255151682be2be41373e373197e30da2804",
+   "sha256": "339e1b765955297c9d4c9e1839455b0b70b4d5878d21db0ebad9db09a6e32a82",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_dams_olde_world_s6_v4": {
    "type": "noise-expression",
-   "sha256": "8a3f3e0b7d9eba466b98d2d8b95a83680a623c35661e867c1786b5b7d0eff7ea",
+   "sha256": "94b6b64b8f4a5e3b685a9111a41092a06208878db7cb4597cbb294757a14ee6a",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_detail_atlantic_v5": {
    "type": "noise-expression",
@@ -7987,147 +7987,147 @@
   },
   "tn_fords_atlantic_s1_v4": {
    "type": "noise-expression",
-   "sha256": "7fa940b05ce5d80e221e4bcee3b208414ccae3275922c4baf06858da028c8af8",
+   "sha256": "1ae3778bf2b52b1d3bbf1a9827427d1acf1f4e56b642c5e5537509fa376f717a",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s2_v4": {
    "type": "noise-expression",
-   "sha256": "f4e761c8c68b8ac4e3e9fd5ee00b221d56a30145f19494c58fee0a40a4f79180",
+   "sha256": "4d1ba84f636f68fcc0a7374769d3308c48e6cceb56729599793e2940f7aee43a",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s3_v4": {
    "type": "noise-expression",
-   "sha256": "cf16a536ec43e3c31c68dded794a3b9a50be5b57706d16c189f70a3bf2b95788",
+   "sha256": "5bcf89398d85c59b8c81b5512720bf6513fbc90636522ec6722d3657baf901ae",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s4_v4": {
    "type": "noise-expression",
-   "sha256": "291d20f13ccb716550bff5a9bef3c028099610bf356179b90e09ad3bea9ba0d1",
+   "sha256": "2ee69baaa2503e13942878dea742be5088aa64db40fc5fd9808fce4f138692a1",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s5_v4": {
    "type": "noise-expression",
-   "sha256": "f7dd7514db2681add9ecfc0daa63a35d7ad980cbad813886f17762a2b4c0b293",
+   "sha256": "e04f90096d911f0b3695a850e1c55e6962fbf2c94b4a62a92806562ab1a80ab3",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_atlantic_s6_v4": {
    "type": "noise-expression",
-   "sha256": "150042b42f91f66ebc4cb526a2d4b2e6dcc6c76f2e0127e28c327be51d9e4823",
+   "sha256": "22fd73d9d4656a912068046508d7e943cdae8ebc74b596d0c483716560697aea",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s1_v4": {
    "type": "noise-expression",
-   "sha256": "20eeeb37e1df79d674ed176b09d3b7284ce067cde685e2cf22c47c8dfcbe324b",
+   "sha256": "fa2a5011b5770a46570e251e5eb6ffb3995d596de085ef739830c72c1db884fb",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s2_v4": {
    "type": "noise-expression",
-   "sha256": "bce8f96d10c73951199d0cab5651f1d451bcc1bdb2c7c7796959d9d9fc88e62d",
+   "sha256": "c1e038db4e11f229e0d455980e046c9e9aa65504e56e8852cca40fd724c5cbb8",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s3_v4": {
    "type": "noise-expression",
-   "sha256": "c87e4f65ee06e648012ed50144de5d7cab212542751594ed4153eba27e4c4cd4",
+   "sha256": "74003fb7b8d4447be8c91c1d82e6cf94dd39f9fb4a97b3cc41be5fdd18c9d431",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s4_v4": {
    "type": "noise-expression",
-   "sha256": "520627e0aef815a54782b308a109725e933cb11e1acb38dd5b82f085503f904f",
+   "sha256": "a5d19eea23d2a3f21cafbb2ec3808b7934868c64aee928222f964514aad1a38b",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s5_v4": {
    "type": "noise-expression",
-   "sha256": "d9fccdfc6845db73c272a5e38056e9119ee974a362b54219174ad18224a5e1d9",
+   "sha256": "0bdcb119857909250c91e4630d64e6d2dbc0f3ae915b9c170f2aa2598430b542",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s6_v4": {
    "type": "noise-expression",
-   "sha256": "505f3c624c8c0004413b2e87543a06f8743f05a553e2fcf2b051c4339646a079",
+   "sha256": "0c777fe021936b35209b1473750f78669c88627d8b181a1442e64a1b18c96e84",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s1_v4": {
    "type": "noise-expression",
-   "sha256": "a01b1383636b9b82c4cb58c8810b1139fc90f8ee424e5742661a70b4396bce14",
+   "sha256": "2246ca62873b712954c8faeab21215182dd37ad263e3344860e1ac90691580df",
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s2_v4": {
    "type": "noise-expression",
-   "sha256": "97ffef5e7e808c9a90ed26456c8c8839087ce909bccd03067823ba9b2c01bf78",
+   "sha256": "4e0a4735b1c059335aad0367bf844b722813b627a2b88178ba8b2f085e6a0d52",
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s3_v4": {
    "type": "noise-expression",
-   "sha256": "03c21b6e276e39ece8cca0235e181e26323b540a8759330d61834c7c40d388bd",
+   "sha256": "3fac9f094ed0f41e54a25cf892c7b1b9e415e66123f96b8fccb54d58fa02f366",
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s4_v4": {
    "type": "noise-expression",
-   "sha256": "67ba0f55516917b90c934b7b6802e2eb1c257638b01e0418f267be0cb55f728c",
+   "sha256": "01f44f3fbf3975ad41d2a3e89e1cf1383748705f5f9508f5d39a3015d27bc576",
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s5_v4": {
    "type": "noise-expression",
-   "sha256": "48aa8e4c84d49c1160e6f0fb9e6391efcf8bf0ca216754e66b3da143e9f95b4d",
+   "sha256": "33ad9a86f8d00543107f2eec3a0a18f6fc8362b900d6df73f85e0c8aeb3b2c50",
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-30"
   },
   "tn_fords_olde_world_s6_v4": {
    "type": "noise-expression",
-   "sha256": "6407abc3a1c4f2225b1e1c61e45995190dfb39b23d5dab831136e7875c5a6a33",
+   "sha256": "dc15c89a110bd06a8791e3da56d9e5ed515565dcc62a16d6c12cbcb6fa6983e3",
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-30"
   },
   "tn_geo_atlantic_v5": {
    "type": "noise-expression",
-   "sha256": "d79d3ac710d5037cdb47d9ede4066569bf574c2f4fd151b0f214f5f3bbcf8e56",
+   "sha256": "28f655dedc40b2d0801128fe92fd5dbb02c0ad08cf996191e2e4033d50989067",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_europe_v6": {
    "type": "noise-expression",
-   "sha256": "919cbb0332cf94cd50110f1ac4734970671fdcfe2dc8ea6fe30076f139112841",
+   "sha256": "34466edb86deb03ddc76408d4826eea58fd70268b65e4b18e33cc80e3f25e413",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_geo_olde_world_v5": {
    "type": "noise-expression",
-   "sha256": "035c18c21f18a35ae6ed341a89765fe19ddc45b9301d78f1bb52e5ea3b6b7b44",
+   "sha256": "5558fb7f59f7769fbf5f85fd2c2427b72945e7b2e4ed82ec98e6563c5feecad9",
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-30"
@@ -8183,24 +8183,24 @@
   },
   "tn_land_coarse_atlantic_v5": {
    "type": "noise-expression",
-   "sha256": "641d146b5312b04da69843a8efd1ee755efc400d560a8eb9cf7f888123902f3e",
+   "sha256": "d2f8ace572ca562748276fff676551925f6ab782efbc990b30d8deb651098804",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_land_coarse_europe_v6": {
    "type": "noise-expression",
-   "sha256": "83cc7b69bdf440396a376f6f14006f4772f915f21e981549335748b8792280e7",
+   "sha256": "b79ccb830c6716b5a9fb4b296c62ebc51d7b891ee211fa4de1091d47f39dfb29",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_land_coarse_olde_world_v5": {
    "type": "noise-expression",
-   "sha256": "62b98740840bde049b82d02e1986e3552a67b1cfbc9d6dc54deeff4dc85a497f",
+   "sha256": "7285b63b4a44e01d7cc7ff4954da18d7fa30fe5520c459d7dab173ec1a252790",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_shore_atlantic_v3": {
    "type": "noise-expression",
@@ -8267,129 +8267,129 @@
   },
   "tn_ww_atlantic_s1_v4": {
    "type": "noise-expression",
-   "sha256": "1f4e62b0452f2dcd0c6b211dfba5e75dc9d728c299ef31c00ed35f4b7a680678",
+   "sha256": "4e08ef754170caaafabd4f25a4e460f8ead3569dedb3afbc2504272cc0e64173",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s2_v4": {
    "type": "noise-expression",
-   "sha256": "8d2bc412520de566e284d454209c7aad3dbd0817691f866ada7bd4fc74a55c60",
+   "sha256": "4a8c5eb9eb8a7ea51047497cfa3d9ce759e08a8e804b9df96e9624bddef1048b",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s3_v4": {
    "type": "noise-expression",
-   "sha256": "78427f8fbad5a2bef3dfdf14b93dd7ff3af63eaa0a9e3542cbdda746b3c54e9c",
+   "sha256": "89639eae5588d52518a4a69950666edc009172b9b849dfdeb077f21aca0bbec1",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s4_v4": {
    "type": "noise-expression",
-   "sha256": "5bab3d86d95bd111503fa44aee9085f92bca186d8965ae61ea96891982409728",
+   "sha256": "a5cf6e1d4e50dd3b1405ade763a3d4f425520c401de63a7587a1550bba193249",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s5_v4": {
    "type": "noise-expression",
-   "sha256": "12b14d2bcdd4a6a552ba53129e7a399a95f0bcd4fe2c5f71146837020fcffb4c",
+   "sha256": "ee0baa601f57f1a4ed869fcfaf6866f6976bfe195ae301a7e1da79f777179bb6",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_atlantic_s6_v4": {
    "type": "noise-expression",
-   "sha256": "789f1a21de8c20d16809a2e086b93246f8aa4172418cd897b9ae4cad3a59b638",
+   "sha256": "f481212c013fc6af9c985886eb968f4c3234bab0de8037a4165a8bab2c3ebbda",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s1_v4": {
    "type": "noise-expression",
-   "sha256": "134191241d48ad6015f21c586ad7f975fb99cfd66e9eecb2e25ddcda5da13971",
+   "sha256": "1750f140da8684b31ee46b16cc756bc6afcf6fa266051d75529b86107da68a9f",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s2_v4": {
    "type": "noise-expression",
-   "sha256": "287093aeb2eed294d841f5c92d0092a0df2f34906d877d7e5a185e63ce81a908",
+   "sha256": "e9f75599cab56c11f06c238d02b3f65ce9fec7f785ebf2e7080a36a3fc78ae73",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s3_v4": {
    "type": "noise-expression",
-   "sha256": "f5390c312a75179991857af80d8158e7446fd77db738054602e568ca1ed6e049",
+   "sha256": "9ddfb6d329ee48d846f235561de48f63fb7728d2a92f002513b0361ba6d49e2c",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s4_v4": {
    "type": "noise-expression",
-   "sha256": "0ef5b82b24014075050b61b93999b2aee1165b60e726f9b3f5b3f9aa61561a1c",
+   "sha256": "5a1401462ddaf2dcd2588aa2b71452bf56189500a57c5355d40271fac5bf9f89",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s5_v4": {
    "type": "noise-expression",
-   "sha256": "c5315ddd47c77e606fd3c427ce16f14964816d8f9c455fd74a032be52f3cfeb1",
+   "sha256": "2ffd36833f2f78da24989a748224ef07b1fbe023e2677dd367ed26e0ba8ee225",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_europe_s6_v4": {
    "type": "noise-expression",
-   "sha256": "a0230495b32187984ac1eaa214a0f3e39e5d108988ef163308168d81f6417890",
+   "sha256": "783277e293ebec0bfce3bfc98779909cb57a1f292c2606f347411fd1b4ab3b1a",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s1_v4": {
    "type": "noise-expression",
-   "sha256": "372412c3fd03c071d42f00c720daa98f2639f41e500dbf5accf7f7683e59e073",
+   "sha256": "3e85b2cc0efadd8838494db63342776a127b493d436043150f80b1c06a0e323c",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s2_v4": {
    "type": "noise-expression",
-   "sha256": "693ebe6087d1049284151d9e4ee71345c51e87bb292b89c0a604325aaf3c082b",
+   "sha256": "b32a46ed5588997b19aa0422598c092970da0b040ab2a61a03deed8c1e90e6d5",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s3_v4": {
    "type": "noise-expression",
-   "sha256": "9d385c705c58abdf9e5244538a8126cb256ed98a83de190c3cbd7a63bbfce8d0",
+   "sha256": "6a54ac2839e4b6bdfd677346058668f1522eb46d03acb03fc06229ecd8cfaf29",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s4_v4": {
    "type": "noise-expression",
-   "sha256": "ff628be297eaac88a81165fb6faa1934b9e5c93495c47fe37c22cb66a76be932",
+   "sha256": "47296cd721195d2d991da25027c7c8d3f4042a003977654be2528f7bc40120dc",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s5_v4": {
    "type": "noise-expression",
-   "sha256": "1fb502820126dd14a0f001fdba2b403767fc4bdcf59cc3692124b2184428b3be",
+   "sha256": "084ae4b3c5392bf400f5c24222065a4e9e97f0f1feab5b46aafbdb9bb1f9fcb2",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ww_olde_world_s6_v4": {
    "type": "noise-expression",
-   "sha256": "1e912c3d98152dd15754fb667a54817deace7892f4aa464f62751e0d1f80e5c6",
+   "sha256": "311a2a36a246b76e4574fa0ebea7a1006b98a90ad7c926331fd4a9f6b59370e6",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_city_pool_europe_v1": {
    "type": "noise-expression",
