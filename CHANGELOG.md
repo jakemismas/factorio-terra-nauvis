@@ -530,6 +530,14 @@ versions follow [Semantic Versioning](https://semver.org/).
   as `edge_band_share`), T2's seed comparisons mask it too, T3's far-field row reads the band at the
   box, and spawn-cities' T3 inland-lake rows run with the switch on. The runner's rows:
   `el_dump_facts` and `el_offline` in the gate; `el_lakes` and `el_edge` in the suite.
+- Evidence (draft, isolated fh.py runs of this build against the draft base at seed 1000,
+  `previews/earth-build/edge-and-lakes/r2/`): Tile +208 on every map with the switch on (Atlantic scale 4
+  110,555, Old World scale 6 107,763, Europe scale 6 111,012; +67 on Europe with it off), Entity and Cliff
+  unchanged; at the box every box-cut land line ends in water 4 px before it, the band's water edge 4.2 to
+  20.3 px in, the previous version identical beyond the 21 px mask; switch off equals the neutral lakes
+  body and switch on the previous version tile for tile in an inland window (2,119 lake tiles between
+  them), and the spawn window is identical in all three. The edge band mask is 1.25 percent of Europe and
+  under 0.01 percent of the other maps. The gate, the suite and the baseline are the build's.
 
 ### Changed
 
