@@ -123,7 +123,7 @@ local CT = {
   CL_LON = NOISE .. "lon_v1",
   CL_DRY = NOISE .. "dry_v1",
   CL_CORE = NOISE .. "t_core_v1",
-  CL_SHIFT = NOISE .. "climate_shift_v1",
+  CL_MEANDER = NOISE .. "climate_meander_v1",
   CL_T_AB = NOISE .. "temperature_ab_v1",
   CL_M_AB = NOISE .. "moisture_ab_v1",
   CL_A_AB = NOISE .. "aux_ab_v1",
@@ -162,6 +162,7 @@ local CT = {
   AB_EXCLUDE = NOISE .. "ab_exclude",
   AB_EXCLUDE_BODY = NOISE .. "ab_exclude_v1",
   MARSH_MUD = NOISE .. "marsh_water_mud",
+  MARSH_POOL = NOISE .. "marsh_pool_v1",
   MARSH_MUD_BODY = NOISE .. "marsh_water_mud_v1",
   MARSH_SHALLOW = NOISE .. "marsh_water_shallow",
   MARSH_SHALLOW_BODY = NOISE .. "marsh_water_shallow_v1",
@@ -963,16 +964,14 @@ return {
     -- controls, so they exist only with Alien Biomes and are registered from the M2 dump.
     {
       release = "0.1.0",
-      names = {CT.CL_LAT, CT.CL_LON, CT.CL_DRY, CT.CL_CORE, CT.CL_SHIFT, CT.CL_T_AB, CT.CL_M_AB, CT.CL_A_AB,
-               CT.CL_GRAIN, CT.CL_T_AB_G, CT.CL_M_AB_G, CT.CL_A_AB_G, CT.CL_T_FB,
+      names = {CT.CL_LAT, CT.CL_LON, CT.CL_MEANDER, CT.CL_DRY, CT.CL_CORE, CT.CL_T_AB, CT.CL_M_AB, CT.CL_A_AB, CT.CL_T_FB,
       CT.CL_M_FB, CT.CL_A_FB,
                CT.VT_GRASS_1, CT.VT_GRASS_2, CT.VT_GRASS_3, CT.VT_GRASS_4, CT.VT_DRY_DIRT, CT.VT_DIRT_1, CT.VT_DIRT_2,
                CT.VT_DIRT_3,
                CT.VT_DIRT_4, CT.VT_DIRT_5, CT.VT_DIRT_6, CT.VT_DIRT_7, CT.VT_SAND_1, CT.VT_SAND_2, CT.VT_SAND_3,
                CT.VT_RED_0, CT.VT_RED_1,
-               CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.VT_BONUS_G, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY,
-               CT.AB_EXCLUDE_BODY_G, CT.K_TILE_T, CT.K_TILE_M, CT.K_TILE_A, CT.MARSH_MUD,
-               CT.MARSH_MUD_BODY, CT.MARSH_SHALLOW,
+               CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY, CT.MARSH_MUD,
+               CT.MARSH_POOL, CT.MARSH_MUD_BODY, CT.MARSH_SHALLOW,
                CT.MARSH_SHALLOW_BODY, CT.MARSH_GRASS, CT.MARSH_GRASS_BODY},
     },
     -- The palm switch (climate-tiles): the constant and the copies of Alien Biomes 0.8.0's palm autoplace,
@@ -1829,11 +1828,10 @@ return {
   climate = {
     -- the pixel centre in reference pixels (lat_top_edge - (v + centre_px) / px_per_degree)
     centre_px = 0.5,
-    meander = {degrees = 0.6, wavelength_px = 360, seed1 = 7601},
-    -- The city offset folded into a seed1 shift (tiles modulo `modulus`, x times `stride` plus y): each
-    -- spawn city's climate noise gets its own seed (climate.lua). The largest value stays under 2^24, so
-    -- float32 holds it exactly.
-    city_shift = {modulus = 4093, stride = 257},
+    -- The latitude meander's noise is one named field, and the dry belts read it again at their own
+    -- reach: a belt is a latitude and longitude box, whose edge ran dead straight for thousands of tiles
+    -- on the map view until it wandered by about this many degrees (no new noise, one more use of it).
+    meander = {name = CT.CL_MEANDER, degrees = 0.6, wavelength_px = 360, seed1 = 7601, dry_lat = 3, dry_lon = 4},
     temperature = {
       ref_lat = 54, ref_t = 25, per_degree = 2.2, min = -20, cap = 78,
       continental = {t = 6, lon_start = 15, lon_span = 45, lat_start = 35, lat_span = 10},
@@ -1970,6 +1968,10 @@ return {
       body = CT.VT_BONUS, body_grain = CT.VT_BONUS_G,
       bonus = 10, lean_t = 45, lean_span = 30, lean_cut = 0.5,
       patch = {amplitude = 0.36, clamp = 0.45, wavelength_px = 10, octaves = 3, persistence = 0.5, seed1 = 7605},
+      -- the patch's finest octave is 10 px (60 tiles at scale 6), so where it failed the lean the hole in
+      -- the bonus showed as a smooth oval of Alien Biomes ground; the marsh pool noise, already in the
+      -- Tile program, carries the edge down to 3 px at no cost
+      fine = 0.15,
       -- marsh ground starts where the lifted moisture has cleared Alien Biomes' mid band (0.4 to 0.6, its
       -- beige and grey dirt): at 0.5 those tiles ran round every marsh as a one-width rim
       marsh_cut = 0.68,
@@ -1988,7 +1990,8 @@ return {
       water_shallow = {key = CT.MARSH_SHALLOW, off = "-inf", body = CT.MARSH_SHALLOW_BODY},
       grass = {tile = "grass-1", key = CT.MARSH_GRASS, off = "0", body = CT.MARSH_GRASS_BODY, bonus = 10},
       score = 50, shallow_score = 300, shallow_depth = 1.5, start_clear_tiles = 64,
-      pool = {cut = 0.3, cut_per_weight = 1, wavelength_px = 3, octaves = 2, persistence = 0.5, seed1 = 7606},
+      pool = {name = CT.MARSH_POOL, cut = 0.3, cut_per_weight = 1, wavelength_px = 3, octaves = 2, persistence = 0.5,
+              seed1 = 7606},
     },
     palm = {body = CT.PALM_CONST, value = 1, reads = "elevation",
             table = "prototypes.generated.palms_ab_v1", local_prefix = "palm_", neutral = ZERO, tolerance = 1e-9,

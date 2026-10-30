@@ -45,6 +45,9 @@ def(MS.water_mud.key, MS.water_mud.off)
 def(MS.water_shallow.key, MS.water_shallow.off)
 def(MS.grass.key, MS.grass.off)
 
+-- The marsh pool noise, one named field: the pools read it and the vanilla bonus's edge reads it too.
+def(MS.pool.name, noise(MS.pool))
+
 -- The vanilla bonus: S3's lean, 1 at lean_t falling to 0 lean_span away, plus clamped patch noise,
 -- gives +bonus on land below the band's top (temperate_below: the lean plus patch passes up to about
 -- 73.5, inside the hot band and D11's desert bin, where AB's tiles score at most about 1.5, so the
@@ -56,7 +59,8 @@ def(MS.grass.key, MS.grass.off)
 def(V.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) .. ", " ..
   num(V.bonus) .. ", -inf), if(elevation > 0, if(temperature >= " ..
   num(X.temperate_below) .. ", -inf, if(1 - abs(temperature - " .. num(V.lean_t) .. ") / " .. num(V.lean_span) ..
-  " + patch - " .. num(V.lean_cut) .. " > 0, " .. num(V.bonus) .. ", if(temperature >= " .. num(X.temperate_from) ..
+  " + patch + " .. num(V.fine) .. " * " .. MS.pool.name .. " - " .. num(V.lean_cut) .. " > 0, " .. num(V.bonus) ..
+  ", if(temperature >= " .. num(X.temperate_from) ..
   ", 0, -inf))), -inf))",
   {patch = "clamp(" .. num(V.patch.amplitude) .. " * " .. noise(V.patch) .. ", " .. num(-V.patch.clamp) .. ", " ..
     num(V.patch.clamp) .. ")"})
@@ -76,7 +80,7 @@ local P = MS.pool
 def(MS.water_mud.body, "if(elevation > 0, if(distance > " .. num(MS.start_clear_tiles) .. ", if(" .. MARSH_W ..
   " > " .. num(V.marsh_cut) .. ", if(pool + " .. num(P.cut_per_weight) .. " * " .. MARSH_W .. " - " ..
   num(P.cut + P.cut_per_weight) .. " > 0, " .. num(MS.score) .. ", -inf), -inf), -inf), -inf)",
-  {pool = noise(P)})
+  {pool = P.name})
 def(MS.water_shallow.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(elevation < 0, if(elevation > " ..
   num(-MS.shallow_depth) .. ", " .. num(MS.shallow_score) .. ", -inf), -inf), -inf)")
 -- Without Alien Biomes: grass-1 between the pools (APPROVALS 8), +bonus on land inside marshes, 0

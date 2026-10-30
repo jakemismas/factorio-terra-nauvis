@@ -114,10 +114,11 @@ end
 -- Latitude and longitude in degrees at the tile's reference pixel; the latitude meanders by one basis
 -- noise octave, so climate fronts wander instead of running along rows.
 local MD = C.meander
+def(MD.name, "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(MD.seed1) .. ", input_scale = 1 / (" ..
+  num(MD.wavelength_px) .. " * " .. K.scale .. "), output_scale = 1}")
 def(N.lat, by_map(function(X)
   return num(X.m.lat_top_edge) .. " - (" .. X.g.v .. " + " .. num(C.centre_px) .. ") / " .. num(PPD)
-end) .. " + " .. num(MD.degrees) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(MD.seed1) ..
-  ", input_scale = 1 / (" .. num(MD.wavelength_px) .. " * " .. K.scale .. "), output_scale = 1}")
+end) .. " + " .. num(MD.degrees) .. " * " .. MD.name)
 def(N.lon, by_map(function(X)
   return num(X.m.lon_left_edge) .. " + (" .. X.g.u .. " + " .. num(C.centre_px) .. ") / " .. num(PPD)
 end))
@@ -127,8 +128,8 @@ def(N.dry, by_map(function(X)
   local parts = {}
   for _, b in ipairs(C.dry_belts) do
     if overlaps(b.lat, X.lat) and overlaps(b.lon, X.lon) then
-      parts[#parts + 1] = ramp_in(N.lat, b.lat[1], b.lat[2], b.ramp[1]) .. " * " ..
-        ramp_in(N.lon, b.lon[1], b.lon[2], b.ramp[2])
+      parts[#parts + 1] = ramp_in("dry_lat", b.lat[1], b.lat[2], b.ramp[1]) .. " * " ..
+        ramp_in("dry_lon", b.lon[1], b.lon[2], b.ramp[2])
     end
   end
   if #parts == 0 then
@@ -138,7 +139,8 @@ def(N.dry, by_map(function(X)
     return parts[1]
   end
   return "max(" .. table.concat(parts, ", ") .. ")"
-end))
+end), {dry_lat = N.lat .. " + " .. num(MD.dry_lat) .. " * " .. MD.name,
+       dry_lon = N.lon .. " + " .. num(MD.dry_lon) .. " * " .. MD.name})
 
 -- The temperature core in Alien Biomes units, before noise and sliders.
 local CT = T.continental
