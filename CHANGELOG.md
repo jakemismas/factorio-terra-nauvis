@@ -398,14 +398,16 @@ versions follow [Semantic Versioning](https://semver.org/).
   baked per save through the hook gate `tn_forests_on`): every living tree's own probability under
   the great-forests hook `if(tn_forests_on > 0.5, min(1, (own) * tn_tree_mult), own)` on every world,
   which Earth presets point at the region layer's multiplier for the 16 adopted forests (boost 2, S10),
-  the base game's dead and dry trees left alone, and the palms' second probability versions carrying
-  the boost around climate-tiles' copies; beside Alien Biomes the base game's 15 living trees, its
-  rocks and its decals rebuilt from `prototypes/tables/vanilla.lua` (the 2.1.23 texts) behind `tn_on`,
+  the base game's dead and dry trees and Alien Biomes' palm prototypes left alone, and the palms'
+  second probability versions carrying the boost around climate-tiles' copies; beside Alien Biomes
+  the base game's 15 living trees, its rocks and its decals rebuilt from `prototypes/tables/vanilla.lua`
+  (the 2.1.23 texts) behind `tn_on`,
   each with its key and Earth body (the trees on the vanilla-scale Earth temperature) and restricted
   to vanilla land, the 11 vanilla decoratives AB takes off Nauvis re-listed behind the same gate, and
   the AB-restricted vanilla decoratives and dead trees extended onto vanilla land; 85 bodies
-  registered in `tests/frozen.json` (2 from the M2 dump); the zero-cost comparison letting the folded
-  tree hooks join Entity's parsed counts (operations, registers and complexity identical); the dump
+  registered in `tests/frozen.json`, all from the M1 dump (trees.lua defines each on every load); the
+  zero-cost comparison letting the folded tree hooks join Entity's parsed counts (operations,
+  registers and complexity identical); the dump
   facts and the FG forest-membership row; the T10 forest (every forest judged at every seed, ring
   ratios reported), save (M0 and BAB per generated chunk reported), climate and scatter, T17 (with its
   M0 calibration), T4 (every row at three seeds, frequency by patch texture), T3, palms, D27, T11, V4
