@@ -7,6 +7,8 @@
 --                               edge roughness
 --   row.w .. id .. suffix       the membership weight clamp(mid + sd / width, 0, 1), the soft edge
 --   row.depth .. id .. suffix   the same signed distance in tiles
+-- A marsh row's signed distance also reads the marsh outline noise and its weight a wider ramp (config.lua
+-- regions.marsh), so no marsh shows its exact disc or path.
 -- A hotspot row's disc sits at its adopted centre moved per seed by up to its jitter radius (S6's
 -- linear fold of map_seed: constants only, so it folds the same on every peer); row.hu and row.hv
 -- name that centre. The destroyed zone's polygon moves each vertex by the same fold (seeded_polygon).

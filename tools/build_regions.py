@@ -17,8 +17,9 @@ protected features beside the destroyed zone), by the rules of S10's tuned table
               crest outside at every seed
   forest      every adopted forest: R7b's outline as a polygon, else a disc of its equivalent radius;
               share 0.25 for discs, 0.4 for thin outlines, 1 for the rest; boost 1
-  marsh       every adopted marsh by APPROVALS 8's extent: a box, a buffered coast line or a disc of
-              its equivalent radius; warp share 0 (deltas and coasts stay put; roughness only)
+  marsh       every adopted marsh by APPROVALS 8's extent: a box walked as a bent path, a buffered coast
+              line or a disc of its equivalent radius; warp share 0 (deltas and coasts stay put; the edge
+              comes from the marsh outline noise of regions.lua)
   hotspot     every adopted hotspot as a disc of its radius r at its adopted centre, jittered per
               seed by up to j = r / 2 in the data stage (S6's linear fold, a phase per row), warp 0,
               biter multiplier 4 (APPROVALS 1b)
