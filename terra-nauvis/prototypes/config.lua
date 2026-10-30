@@ -767,6 +767,8 @@ local DE = {
   heat = NOISE .. "destroyed_heat_v1",
   temperature = NOISE .. "temperature_ab_v2",
   pool_europe = NOISE .. "city_pool_europe_v1",
+  pool_atlantic = NOISE .. "city_pool_atlantic_v1",
+  pool_olde_world = NOISE .. "city_pool_olde_world_v1",
 }
 
 -- Exact coastlines (milestone coast-band-fix): the per-save name switch a map's preset carries, set to the
@@ -2065,7 +2067,7 @@ return {
     -- the M2 dump; each pool reads its map's city fold hash and prototypes/tables/destroyed.lua.
     {
       release = "0.1.0",
-      names = {DE.zone, DE.heat, DE.temperature, DE.pool_europe},
+      names = {DE.zone, DE.heat, DE.temperature, DE.pool_europe, DE.pool_atlantic, DE.pool_olde_world},
       files = {"prototypes/tables/destroyed.lua"},
     },
   },
@@ -2433,7 +2435,7 @@ return {
   --          city number, so the first fold reads it and resolves it as a chosen city (APPROVALS 10)
   destroyed = {
     names = {zone = DE.zone, heat = DE.heat, temperature = DE.temperature},
-    pools = {europe = DE.pool_europe},
+    pools = {europe = DE.pool_europe, atlantic = DE.pool_atlantic, olde_world = DE.pool_olde_world},
     start = {radius_tiles = 150, distance = DISTANCE},
     heat = {rim = 100.5, per_tile = 0.49, ramp = 30, cap = 149.5,
             noise = {amplitude = 20, wavelength_tiles = 96, octaves = 3, persistence = 0.5, seed1 = 7901}},

@@ -5271,8 +5271,12 @@ def row_ec_dump_facts(ctx, mods, sec6, row, cache):
             bad.append(f"{label}: the preset bakes scale {p.get(K['scale'])}, want {want_scale}")
         # an older version's fallbacks, valued as that version's own preset bakes them (the layer chain's
         # that a stamp reads among them)
+        # the layer chain offset names excepted: they hold what the newest version's preset points them
+        # at (presets.lua chain_fallback), so a Map-type-only world's layers follow its spawn
+        chain_fb = tnconfig.layer_chain_names(cfg, mk, tnconfig.geography_versions(cfg)[mk][-1])
         for v in older:
-            vb = tnconfig.baked_names(cfg, mk, v, want_scale)
+            vb = dict(tnconfig.baked_names(cfg, mk, v, want_scale))
+            vb.update({n: val for n, val in chain_fb.items() if n in vb})
             for e in v["fallbacks"]:
                 body = (dump.get("noise-expression") or {}).get(e["name"])
                 if body is None or body.get("expression") != baked_text(vb[e["name"]]):
@@ -13619,8 +13623,8 @@ def row_ww_dump_facts(ctx, mods, sec6, row, cache):
 
 
 def row_ww_emit(ctx, mods, sec6, row, cache):
-    """T16 (FG): tools/build_waterways.py regenerates all 18 waterway files and each map's river-safe
-    starts file twice, each byte-identical to the committed file; each committed manifest records its
+    """T16 (FG): tools/build_waterways.py regenerates all 18 waterway files twice, each byte-identical
+    to the committed file (the river-safe starts live in the manifests only, no file); each committed manifest records its
     files' sha256; the rivers equal APPROVALS 7's adopted rows (JI-03). numpy is imported here only, as
     geo_emit does."""
     import build_waterways
@@ -13630,17 +13634,17 @@ def row_ww_emit(ctx, mods, sec6, row, cache):
     row.fails += build_waterways.river_findings(cfg)
     n = 0
     for mk in maps:
-        recs = [ww_scale(mk, s) for s in cfg["scales"]["values"]] + [ww_manifest(mk).get("starts_file") or {}]
+        recs = [ww_scale(mk, s) for s in cfg["scales"]["values"]]
         for rec in recs:
             if not rec.get("file"):
-                row.fails.append(f"manifest-{mk}.json records no starts file (rerun build_waterways.py emit)")
+                row.fails.append(f"manifest-{mk}.json records no waterway file (rerun build_waterways.py emit)")
                 continue
             p = REPO / rec["file"]
             n += 1
             if not p.exists() or sha256_file(p) != rec["sha256"]:
                 row.fails.append(f"{rec['file']}: its sha256 is not the one manifest-{mk}.json records")
-    row.detail = (f"build_waterways.py check: {n} files (the waterway sets and each map's river-safe starts), two "
-                  f"emissions byte-identical; rivers bound to APPROVALS 7")
+    row.detail = (f"build_waterways.py check: {n} waterway files, two emissions byte-identical; rivers bound to "
+                  f"APPROVALS 7")
 
 
 def ww_t3_places(mk, scale):
@@ -14417,8 +14421,8 @@ def ww_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
     # T7 (SS; every city of every map; scales 1 and 6, TST-06), through the mod's own path:
     # each city is selected by its per-save city number on the map's preset, as presets.lua bakes it from
     # the spawn-city setting, so the mod's city fold places the spawn, never the runner. The city offset
-    # read back at the spawn must be the city's tile plus the generator's recorded move (manifest starts;
-    # starts_<map>_v1.lua), else the moves are not wired; then no player-blocking water lies within 12
+    # read back at the spawn must be the city's tile plus the generator's recorded move (manifest starts),
+    # else the moves are not wired; then no player-blocking water lies within 12
     # tiles of the spawn, a walk from the spawn reaches the start lake (the spawn lake's footprint) and
     # each of the four starting patches without crossing water (T7 (d)), and T5 holds through the start
     # area for every corridor that meets the city's start disc, with that city as spawn. A map whose

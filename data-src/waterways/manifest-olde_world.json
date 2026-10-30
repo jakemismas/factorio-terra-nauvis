@@ -25006,10 +25006,5 @@
     }
    }
   }
- },
- "starts_file": {
-  "file": "terra-nauvis/prototypes/generated/starts_olde_world_v1.lua",
-  "sha256": "242027b6026267d51cd49dcc4a95c681c20ef27ef3d76333c01163e8d7b68460",
-  "bytes": 6371
  }
 }

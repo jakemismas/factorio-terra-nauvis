@@ -14634,10 +14634,5 @@
     }
    }
   }
- },
- "starts_file": {
-  "file": "terra-nauvis/prototypes/generated/starts_atlantic_v1.lua",
-  "sha256": "271579d6bcc92ff806746dad039862cf5838af9acbdcbb9f47ea35689bf23be8",
-  "bytes": 9369
  }
 }

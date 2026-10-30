@@ -10,8 +10,10 @@
 -- (prototypes/tables/cities.lua) and the polygon's vertices (approvals-data.json
 -- destroyed_europe_polygon), keyed by each map's spawn-city setting values in the setting's order. On
 -- Europe APPROVALS 10 lists 8 of 41 cities; Luxembourg is not a setting value (APPROVALS 12 removes it
--- for iron-lorraine-minette), which leaves 7 of 40. Atlantic and Old World each hold Prague, at their
--- own in-map position. Vilnius lies 39 km inside the polygon's edge on Europe's map, and no other city of
+-- for iron-lorraine-minette), which leaves 7 of 40. Atlantic holds Prague; Old World holds Prague,
+-- Frankfurt and Aachen (the maintainer's start-city decision of 2026-10-30 07:35 added the last two inside the
+-- polygon; read back in game as the zone depth at each city: 699, 719 and 704 tiles at scale 6, Moscow
+-- -3882 and London -304 outside). Vilnius lies 39 km inside the polygon's edge on Europe's map, and no other city of
 -- any map lies within 70 km of the edge, so no warped edge (at most 66.7 km of movement, S10) brings
 -- another city in. The gate's FG row de_dump_facts recomputes this list from the polygon and the city
 -- tables. Spawn cities inside the zone stay selectable (APPROVALS 10); only a random pick on a world
@@ -22,6 +24,6 @@ return {
   zone_cities = {
     europe = {"brussels", "prague", "paris", "berlin", "vilnius", "amsterdam", "warsaw"},
     atlantic = {"prague"},
-    olde_world = {"prague"},
+    olde_world = {"prague", "frankfurt", "aachen"},
   },
 }

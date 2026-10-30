@@ -13760,10 +13760,5 @@
     }
    }
   }
- },
- "starts_file": {
-  "file": "terra-nauvis/prototypes/generated/starts_europe_v1.lua",
-  "sha256": "0786e3a7dc1333b9be9edda7957a302ade17f1cbb0361b281408fec0c84b284e",
-  "bytes": 11940
  }
 }

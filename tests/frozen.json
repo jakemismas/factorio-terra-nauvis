@@ -544,10 +544,10 @@
   },
   "tn_cx_atlantic_v2": {
    "type": "noise-expression",
-   "sha256": "8afd959c49cf87779207fa9af845fe4aba1146984f2065eeb1b081b6c1243158",
+   "sha256": "f66680eed72a3ddf0b7421c79a179d26903ce7e46ab834fcae21422459f033b2",
    "dump": "m1",
-   "slice": "waterways",
-   "registered": "2026-10-29"
+   "slice": "olde-world-atlantic",
+   "registered": "2026-10-30"
   },
   "tn_cx_europe_v3": {
    "type": "noise-expression",
@@ -558,17 +558,17 @@
   },
   "tn_cx_olde_world_v2": {
    "type": "noise-expression",
-   "sha256": "38230fee6916b6fbb7d38765ec89bbedc94844754984c4c9efd89b203dfb13bc",
+   "sha256": "debe50348d0d244c128b34368f6c3da89ad858c605834e810238da80b12935c2",
    "dump": "m1",
-   "slice": "waterways",
-   "registered": "2026-10-29"
+   "slice": "olde-world-atlantic",
+   "registered": "2026-10-30"
   },
   "tn_cy_atlantic_v2": {
    "type": "noise-expression",
-   "sha256": "4f038d8fb1d473d1d76f29b46dc37b4151d7f4f1196bc34c1df0a2f20859656b",
+   "sha256": "67b7f7b9932fed871cf064f701d16c4f474529174d331c9a622c0ec32b921ae5",
    "dump": "m1",
-   "slice": "waterways",
-   "registered": "2026-10-29"
+   "slice": "olde-world-atlantic",
+   "registered": "2026-10-30"
   },
   "tn_cy_europe_v3": {
    "type": "noise-expression",
@@ -579,10 +579,10 @@
   },
   "tn_cy_olde_world_v2": {
    "type": "noise-expression",
-   "sha256": "6dfaccc4cc7edad0696566489ca8a1de3f691096db20ee59e9f8508ff3d4b8e7",
+   "sha256": "cf12c455ec961b2681833a2bebbbec9d124027e8712a737062c9ede953b406e4",
    "dump": "m1",
-   "slice": "waterways",
-   "registered": "2026-10-29"
+   "slice": "olde-world-atlantic",
+   "registered": "2026-10-30"
   },
   "tn_dams_atlantic_s1_v1": {
    "type": "noise-expression",
@@ -9007,18 +9007,18 @@
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
-  "tn_tree_lift": {
+  "tn_city_pool_atlantic_v1": {
    "type": "noise-expression",
-   "sha256": "4b7e0eb295fee350a5574010e7f4ffb2259aef838e54c2d023aaca103a0f8770",
+   "sha256": "6046297ad590f6011bd6c45ba009888dab192859d65ecb62a524489553bfd3be",
    "dump": "m1",
-   "slice": "trees-forests",
+   "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
-  "tn_tree_lift_v1": {
+  "tn_city_pool_olde_world_v1": {
    "type": "noise-expression",
-   "sha256": "e8e2fcf7b194f3aaff900cea43d25b2bf9693ab1ed02e3fcec79dfd9d4d15072",
+   "sha256": "31454b3994070a6b91cf43bfb148e34365be2bad0d1dd882697ba28d9cd8b796",
    "dump": "m1",
-   "slice": "trees-forests",
+   "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   }
  }

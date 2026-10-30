@@ -359,7 +359,19 @@ for _, key in ipairs(cfg.preset_order) do
 end
 
 -- The fallbacks of every geography version: one prototype per name, valued as every version that
--- reads it bakes it (a number, or the name of the expression that folds it).
+-- reads it bakes it (a number, or the name of the expression that folds it). The layer chain offset
+-- names are the exception: a Map type pick names the newest version's entry, so they hold what that
+-- version's preset points them at (layer_chain_names, the city fold), and a Map-type-only world's
+-- region layer, climate and offshore stamp sit on the spawn's ground as a preset world's do.
+local chain_fallback = {}
+for _, key in ipairs(cfg.map_order) do
+  local g = cfg.geography[key]
+  if g and g.versions and #g.versions > 0 then
+    for k, value in pairs(layer_chain_names(key, g.versions[#g.versions])) do
+      chain_fallback[k] = value
+    end
+  end
+end
 local fallbacks, seen = {}, {}
 for _, key in ipairs(cfg.map_order) do
   local g = cfg.geography[key]
@@ -367,6 +379,9 @@ for _, key in ipairs(cfg.map_order) do
     local names = baked(key, v)
     for _, f in ipairs(v.fallbacks) do
       local value = names[f.name]
+      if chain_fallback[f.name] ~= nil then
+        value = chain_fallback[f.name]
+      end
       if value == nil then
         error("the Map type fallback " .. f.name .. " of " .. v.entry .. " has no value in its version's preset")
       end
