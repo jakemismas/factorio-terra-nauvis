@@ -2051,6 +2051,7 @@ return {
   --       a pixel) are written whole instead of as a one-tile line; the tool marks them
   --   new_water, new_deep, land_fallback  the tile a written water tile gets, the one it gets in open sea
   --       (a pixel whose 5 x 5 holds water alone); land_fallback is written land in a chunk that shows no land
+  --       on its lattice nor on ground_rings rings of chunks around it
   --   smooth  the write rule at scales from min_scale up: the reference blurred by a quadratic B-spline must read
   --       the pixel's class by at least threshold + wobble * a smooth tile noise (3/4 is half a pixel from a
   --       straight coast); in a fill pixel it reads within thin of its value at the pixel's centre, a blob. octaves
@@ -2076,7 +2077,7 @@ return {
     spawn_keep_tiles = 24,
     chunk_tiles = 32,
     row_cache = 2048,
-    new_water = "water", new_deep = "deepwater", land_fallback = "sand-1",
+    new_water = "water", new_deep = "deepwater", land_fallback = "sand-1", ground_rings = 3,
     smooth = {min_scale = 3, threshold = 0.72, wobble = 0.22, thin = 0.35, spline_centre = 0.75, ease = 3,
               period_tiles = 64, lattice_tiles = 4, shift_tiles = {21, 32},
               octaves = {{cells = 4, weight = 1}, {cells = 12, weight = 0.6}},

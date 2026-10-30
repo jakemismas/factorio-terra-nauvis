@@ -117,6 +117,7 @@ local WP_X, WP_Y = SM.shift_tiles[1], SM.shift_tiles[2]
 -- handler writes nothing there (EDGE is that width, or 0 for a version without the edge).
 local EDGE = 0
 local WATER, KEEP, NONLAND, NONLAND_SET, FALLBACK = {}, {}, {}, {}, nil
+local GROUND, GROUND_STAMP = nil, nil
 
 ------------------------------------------------------------------------------------------------ the tables
 
@@ -632,6 +633,28 @@ local function land_lattice(surface)
   return cells, n, step
 end
 
+-- The land tile for a chunk whose lattice holds no land: the first land on rings of samples around it, inside the
+-- 7 x 7 chunks the game has given tiles (worldgen-runtime), or FALLBACK, once per chunk. A sample can read land this
+-- handler wrote there, so the ground of such a chunk can follow generation order; its land and water cannot.
+local function chunk_ground(surface)
+  if GROUND_STAMP == stamp then
+    return GROUND
+  end
+  GROUND_STAMP, GROUND = stamp, FALLBACK
+  for ring = 1, B.ground_rings do
+    for dy = -1, 1 do
+      for dx = -1, 1 do
+        local t = surface.get_tile(X0 + CT / 2 + dx * ring * CT, Y0 + CT / 2 + dy * ring * CT)
+        if t.valid and not NONLAND_SET[t.name] then
+          GROUND = t.name
+          return GROUND
+        end
+      end
+    end
+  end
+  return GROUND
+end
+
 local RECS = {}
 
 -- Step 6: one set_tiles call; written land takes the ground around it, and written water is deep in an open-sea
@@ -646,7 +669,7 @@ local function write(surface)
       if not cells then
         cells, n, step = land_lattice(surface)
       end
-      name = cells[floor((ly + step / 2) / step) * n + floor((lx + step / 2) / step)] or FALLBACK
+      name = cells[floor((ly + step / 2) / step) * n + floor((lx + step / 2) / step)] or chunk_ground(surface)
     end
     local rec = RECS[q]
     if rec then
