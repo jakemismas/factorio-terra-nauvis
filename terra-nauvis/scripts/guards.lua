@@ -158,6 +158,18 @@ function M.kind(surface)
   return nil
 end
 
+-- The geography of a Map-type-only world: {map = <map key>, version = <the geography version whose
+-- entry the world names for elevation>}, or nil for any other world (scripts/start.lua's start
+-- messages read it).
+function M.map_type_geography(surface)
+  local kind, key = M.kind(surface)
+  local v = kind == "map_type" and ENTRY_VERSION[pen_of(surface)[K.elevation]]
+  if not v then
+    return nil
+  end
+  return {map = key, version = v}
+end
+
 -- A noise name's prototype body as text, "" when this version defines none.
 local function body_of(name)
   local proto = prototypes.named_noise_expression[name]

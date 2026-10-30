@@ -24,8 +24,12 @@
 --     reads as the world was created with. With the zone on and the spawn city at random, the save's city
 --     number names the map's random pool, which counts as random (0) here.
 --
--- A Map-type-only world is not an Earth world here (it holds no tn_geo): it gets the Map type notice
--- from guards.lua and no start message. Control code reads save state only (U6).
+-- A Map-type-only world (it holds no tn_geo) gets the same start: its spawn city, read back the same
+-- way through the city fold its elevation entry reads (the per-save names fall back to the
+-- prototypes, valued as the preset bakes them), the start message with the map type's world size
+-- (its scale read back at (0, 0) too), and the RSO warning; guards.lua adds the Map type notice.
+-- The cliff reset and D12 stay Earth-only. A world that is neither gets nothing. Control code reads
+-- save state only (U6).
 local cfg = require("prototypes.config")
 local cities = require("prototypes.city_tables")
 local guards = require("scripts.guards")
@@ -87,40 +91,67 @@ local function reset_cliffs(earth, surface)
   return true
 end
 
+-- The resolved spawn city of a world whose geography version has a spawn record, read back at
+-- (0, 0), and the start message naming it with the world size at `scale` (D29), logged once and set
+-- as freeplay's intro. Returns the index and whether the intro took the message.
+local function announce(surface, map_key, sp, scale)
+  local got = surface.calculate_tile_properties({sp.city_index}, {{x = 0, y = 0}})[sp.city_index]
+  local index = got and got[1] and math.floor(got[1] + 1 / 2)
+  local row = index and city_row(map_key, sp, index)
+  if not row then
+    return index, false
+  end
+  local m = cfg.maps[map_key]
+  local text = message("start", row.name, m.width_px * scale, m.height_px * scale)
+  log(text)
+  return index, intro(text)
+end
+
+-- A noise value at (0, 0) of the surface (its own names, else the prototypes' fallbacks).
+local function value_at_origin(surface, name)
+  local got = surface.calculate_tile_properties({name}, {{x = 0, y = 0}})[name]
+  return got and got[1]
+end
+
 function M.on_init()
-  local earth = storage.earth
   local surface = game.surfaces["nauvis"]
-  if type(earth) ~= "table" or not surface then
+  if not surface then
     return
   end
-  reset_cliffs(earth, surface)
-  local geo = guards.geography_of(earth.geo)
-  local sp = geo and geo.version.spawn
-  if sp then
-    local pen = surface.map_gen_settings.property_expression_names or {}
-    earth.city = tonumber(pen[sp.city])
-    if earth.city == nil and pen[sp.city] ~= nil and pen[sp.city] == (cfg.destroyed.pools or {})[geo.map] then
-      earth.city = 0
+  local earth = storage.earth
+  if type(earth) == "table" then
+    reset_cliffs(earth, surface)
+    local geo = guards.geography_of(earth.geo)
+    local sp = geo and geo.version.spawn
+    if sp then
+      local pen = surface.map_gen_settings.property_expression_names or {}
+      earth.city = tonumber(pen[sp.city])
+      if earth.city == nil and pen[sp.city] ~= nil and pen[sp.city] == (cfg.destroyed.pools or {})[geo.map] then
+        earth.city = 0
+      end
+      earth.city_index, earth.intro = announce(surface, geo.map, sp, earth.scale or 0)
     end
-    local got = surface.calculate_tile_properties({sp.city_index}, {{x = 0, y = 0}})[sp.city_index]
-    local index = got and got[1] and math.floor(got[1] + 1 / 2)
-    earth.city_index = index
-    local row = index and city_row(geo.map, sp, index)
-    if row then
-      local m = cfg.maps[geo.map]
-      local scale = earth.scale or 0
-      local text = message("start", row.name, m.width_px * scale, m.height_px * scale)
-      log(text)
-      earth.intro = intro(text)
+  else
+    local mt = guards.map_type_geography(surface)
+    if not mt then
+      return
+    end
+    local sp = mt.version.spawn
+    local state = storage.map_type
+    if sp and type(state) == "table" then
+      local scale = math.floor((value_at_origin(surface, cfg.keys.scale) or 0) + 1 / 2)
+      state.city_index, state.intro = announce(surface, mt.map, sp, scale)
     end
   end
   local rso = script.active_mods["rso-mod"]
   if rso then
     guards.record_warning("rso", {rso})
   end
-  local de = cfg.toggles.destroyed_europe
-  if settings.startup[cfg.settings[de.setting].name].value and not script.active_mods[de.requires] then
-    guards.record_warning("destroyed_no_ab", {})
+  if type(earth) == "table" then
+    local de = cfg.toggles.destroyed_europe
+    if settings.startup[cfg.settings[de.setting].name].value and not script.active_mods[de.requires] then
+      guards.record_warning("destroyed_no_ab", {})
+    end
   end
 end
 

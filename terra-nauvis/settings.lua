@@ -13,6 +13,7 @@ for _, key in ipairs(cfg.setting_order) do
     default_value = s.default_value,
     allowed_values = s.allowed_values,
     order = s.order,
+    hidden = s.hidden,
   }
 end
 data:extend(defs)

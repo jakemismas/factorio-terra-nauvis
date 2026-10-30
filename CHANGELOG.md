@@ -27,6 +27,14 @@ versions follow [Semantic Versioning](https://semver.org/).
   `build_zip.py --release` run the drafts' data-final-fixes.lua offline; the offline check holds M1
   records only.
 
+- Fast finish fixups: a world made from a Map type entry alone gets the start a preset world gets
+  (ported from an earlier prototype `bf25592`, its pack probe of 2026-10-29 11:05 and
+  design notes 16:10 there): `start.on_init` reads the city back at (0, 0) through the fold the entry
+  reads, sets the start message with the world size at the scale read back there as freeplay's
+  intro, and records the RSO warning, which the player path already sends;
+  `guards.map_type_geography` names the version whose entry the world reads. The cliff reset and
+  the D12 warning stay Earth-only, and a world that is neither gets nothing.
+
 - Milestone `europe-coast`: Europe's real coastline at map scales 1 to 6. `tools/build_geo.py`
   emits S1-fit's one-sided tent model as name-free generated Lua within 120 columns:
   `geo_europe_v1.lua` (8,192 tents plus the recorded T1-e local refit of 66 level-0 tents over the
@@ -696,6 +704,9 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- The startup setting Exact coastlines (`terra-nauvis-exact-coast`) is hidden (`hidden = true`,
+  default still off, the handler and its tables kept): `bandfix.maps` is empty, so it acts on no
+  map and a visible switch would mislead. settings.lua now passes a setting's `hidden` field.
 - Live-profile protection is fh.py isolation alone (the decision, 2026-10-27 16:19 and
   23:47; design notes 2026-10-28 00:45): G1 (RESULT `ok`, `isolated=yes`, `errors=0`) is the only
   live-profile protection, and copying the built zip into the live mods folder is allowed.

@@ -926,10 +926,11 @@ return {
       order = "c-f",
     },
     -- Exact coastlines (milestone coast-band-fix and 13:45, default off, a per-world opt-in):
-    -- a new world's preset bakes the band-fix key from it, for the maps bandfix.maps lists.
+    -- a new world's preset bakes the band-fix key from it, for the maps bandfix.maps lists. Hidden while
+    -- bandfix.maps is empty (first release): it acts on no map, so a visible switch would mislead.
     exact_coast = {
       name = ID .. "-exact-coast", type = "bool-setting", setting_type = "startup", default_value = false,
-      order = "c-g",
+      order = "c-g", hidden = true,
     },
     -- City markers (milestone extras; APPROVALS 1a, D28, default off): runtime-global, so any admin can switch
     -- it in a running game; on, the map view shows every city of the world's map (scripts/markers.lua).

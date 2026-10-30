@@ -30,6 +30,8 @@ Date: 2026-10-28
       coasts and out of the start area. Off leaves the lake at the spawn city, the rivers and the
       real lakes of the map; a world keeps its value for life.
     - A warning at the start, and to each player who joins, when RSO is active.
+    - A world that uses a Terra Nauvis map type alone gets the same start as a preset world: the
+      intro names its spawn city and world size, and with RSO active it gets the RSO warning.
     - Other planets' surfaces never take the Terra Nauvis map, and adding the mod to a world made
       without it leaves every surface of that world as it was.
     - Rivers, straits and canals on every map at every scale: rivers grow with the map scale and
@@ -69,9 +71,9 @@ Date: 2026-10-28
       stay outside, and the start area stays normal. A random spawn city never lands inside the
       zone. Without Alien Biomes nothing changes, and the game warns at the start and each player
       who joins.
-    - Exact coastlines startup setting (default off): on a map it acts on, each new chunk's coast
-      snaps to the reference wherever the noise misses it by half a reference pixel or more. In this
-      version it acts on no map yet.
+    - Exact coastlines startup setting (default off, hidden in this version): on a map it acts on,
+      each new chunk's coast snaps to the reference wherever the noise misses it by half a reference
+      pixel or more. It acts on no map yet, so it stays out of the settings menu until one passes.
     - City markers map setting (default off, changeable in a running game): the map view names every
       city of a Terra Nauvis world's map where it lies; switching it off removes them.
   Changes:
