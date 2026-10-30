@@ -143,15 +143,15 @@ local function version(m, g)
     -- (b at the clamp reads at least any land the coast reads). Every box tile is water, so the ring
     -- is not needed.
     local B = C.edge_band
-    local octaves = {}
+    local band_octaves = {}
     for _, oc in ipairs(B.octaves) do
-      octaves[#octaves + 1] = num(oc.weight) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
+      band_octaves[#band_octaves + 1] = num(oc.weight) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
         num(oc.seed1) .. ", input_scale = " .. num(1) .. " / (" .. num(oc.wavelength_px) .. " * " .. s ..
         "), offset_x = " .. g.cx .. ", offset_y = " .. g.cy .. "}"
     end
     local locals = {
       d = d,
-      warp = num(B.warp_px) .. " * clamp(" .. table.concat(octaves, " + ") .. ", -1, 1)",
+      warp = num(B.warp_px) .. " * clamp(" .. table.concat(band_octaves, " + ") .. ", -1, 1)",
       b = "clamp(d / " .. s .. " + warp - " .. num(B.width_px) .. ", " .. num(-C.transfer_clamp_px) .. ", " ..
         num(C.transfer_clamp_px) .. ")",
     }
