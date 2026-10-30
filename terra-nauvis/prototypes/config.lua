@@ -2083,7 +2083,7 @@ return {
   --   fill  K pixels whose band region holds no 2 x 2 block of tiles (an islet or a channel narrower than
   --       a pixel) are written whole instead of as a one-tile line; the tool marks them
   --   new_water, new_deep, land_fallback  the tile a written water tile gets, the one it gets in open sea
-  --       (a pixel whose 5 x 5 holds water alone); land_fallback is written land in a chunk that shows no land
+  --       (a pixel with no land among its 8 neighbours); land_fallback is written land in a chunk that shows no land
   --       on its lattice nor on ground_rings rings of chunks around it
   --   smooth  the write rule at scales from min_scale up: the reference blurred by a quadratic B-spline must read
   --       the pixel's class by at least threshold + wobble * a smooth tile noise (3/4 is half a pixel from a

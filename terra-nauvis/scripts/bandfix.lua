@@ -99,7 +99,6 @@ local NONE = BY.none
 local LANDISH = {[BY.land] = true, [BY.land_k] = true, [BY.land_masked] = true}
 local IS_K = {[BY.water_k] = true, [BY.land_k] = true}
 local OPEN = {[BY.water] = true, [BY.land] = true, [BY.water_k] = true, [BY.land_k] = true}
-local SEA_SYM = {[BY.water] = true, [BY.water_k] = true}
 local KPAT = "[" .. S.water_k .. S.land_k .. "]"
 local MASKED = {[S.water] = S.water_masked, [S.water_k] = S.water_masked, [S.land] = S.land_masked,
                 [S.land_k] = S.land_masked, [S.thin] = S.thin, [S.none] = S.none,
@@ -426,24 +425,15 @@ local function in_edge(c, r)
   return EDGE > 0 and (c < EDGE or r < EDGE or c >= MAP.width_px - EDGE or r >= MAP.height_px - EDGE)
 end
 
--- Whether water pixel (c, r) is open sea: no land among its 8 neighbours, and the 5 x 5 around it lies in the K+
--- table and holds water alone, so a bay narrower than that keeps one shallow tile, without deep squares.
+-- Whether pixel (c, r) is open sea: water with no land among its 8 neighbours. A pixel outside the K+ table reads
+-- as water, so deep water can come one pixel nearer such land, never onto it. Computed once per chunk.
 local function open_sea(c, r)
   local k = r * MAP.width_px + c
   local sea = SEA[k]
-  if sea ~= nil then
-    return sea
+  if sea == nil then
+    sea = not landish(c, r) and other_mask(c, r, false) == 0
+    SEA[k] = sea
   end
-  sea = true
-  for dr = -2, 2 do
-    local row = sea and row_at(r + dr)
-    for dc = -2, 2 do
-      if sea and not SEA_SYM[sym_in(row, c + dc)] then
-        sea = false
-      end
-    end
-  end
-  SEA[k] = sea
   return sea
 end
 
