@@ -518,6 +518,18 @@ versions follow [Semantic Versioning](https://semver.org/).
   the largest floor 0.17 of the strength term) and at scale 6 with it (15 rows, 0.47 to 1.48, 7.0 to
   259 times; the floor binds on 19 of 77 rows there), Entity 11,262 on Europe's default preset. The gate, the
   suite and the baseline are the build's: the workspace lock was held through most of the draft.
+- Milestone `edge-and-lakes` (#TBD): each map's next
+  geography version (Europe's v6, `tn_geo` 14; Atlantic's and Old World's v5, 15 and 16; every name its
+  own, older versions unchanged) sinks land the map's box cuts into deep water across a noise-warped
+  band 4 to 20 reference px inside the box (config.lua `coast.edge_band`: width 12 px, warp 8 px from
+  three basis octaves of 32, 12 and 4 px, transferred as a second coast with the version's shore gains,
+  so the cut reads as a wavy coastline with a beach and a deepwater line; the extent's ring of plain
+  water is gone), and Europe's v6 reads its inland lakes through the new per-save toggle
+  `tn_inland_lakes` (startup setting Inland lakes, default off; a folded `if()`, so off compiles to
+  the spawn lake alone). T1 masks reference land within 21 px of the box (`edge_band_mask`, reported
+  as `edge_band_share`), T2's seed comparisons mask it too, T3's far-field row reads the band at the
+  box, and spawn-cities' T3 inland-lake rows run with the switch on. The runner's rows:
+  `el_dump_facts` and `el_offline` in the gate; `el_lakes` and `el_edge` in the suite.
 
 ### Changed
 

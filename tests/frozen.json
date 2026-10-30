@@ -7627,6 +7627,769 @@
    "slice": "resources-enemies",
    "registered": "2026-10-29",
    "mask": "live"
+  },
+  "tn_canals_atlantic_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "88d21894d14ef6efab84f1bc562b436dd50a7771d5a7882dad55858579778325",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_atlantic_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "6c0f29932cd2d0c25c03efcfb3cf265384547f70e21c1b1cc40a884089b31217",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_atlantic_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "835cf065065741f01f5c468aff3e58fc8994e035d19aaac69453a9ec34406989",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_atlantic_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "123f8210f611e3222a266a913b5484969730e26f5df520a8ea6391c908d95a8f",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_atlantic_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "0e2d3d84255be80790247d5b1465e80503acc17c32f74a347672f34296c42a3f",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_atlantic_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "add606b99fd744a816b38c0a4029367c3bd54fbf664ac1034562ee62eb7ef906",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_europe_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "32cb3fdf42b5bf26e2e7e6f47ab5093d2e7547868f766b6ef462acf3f4a735ef",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_europe_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "2c8e26565cfb2a9721655b1ec4d58088a3b1df5ddc28dd2e7e2d369b8ec80f73",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_europe_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "bbedc27948ca04bfe97649f166e90eae0f4444c594400c33f9e1072a96f30628",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_europe_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "4bc56bdd1e32561414502efffe4b61d3b838557a66e3384cbe1d29986dcf7457",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_europe_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "a0d73eb5e8cd35d0e617c7ef382747f1e178353fe6cda220d6bb1911d573a62b",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_europe_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "dcbe0bfe053564f075561ed4d88f295617accbd97da973fa4867c9174d71fab0",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_olde_world_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "f70a241a54a8cb06ce06e83d02bc0ae3d2bc9034b374544325e6ca6af568a528",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_olde_world_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "396d81090a607d23e2563e0a7efde3048af91bf4b527673e4c32963a5c8f7a68",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_olde_world_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "783b7ed8e19b4a319e2094e253dc709cf1687088d25977ba656b0d47d9a3358b",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_olde_world_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "201fa2fc8ff283a37021af8ea5df32d52c0ec85867d7af2402eb8c06a631affa",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_olde_world_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "f120f81eca2ba26adc86006978d35efcd8a6cd4c50cd6ac69cb2caa89294e67b",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_canals_olde_world_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "c132d9543e4ddd24cf49b322dbc8fb2528c80b1c4ed18590ae3b8b6206c915a4",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_cx_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "597631f58d9bc454be878d5957a9f0e933439a5710983a9043bfe04ad21e2ada",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_cx_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "ca9e1d31a5df2f514e1594f407032d25b912c979d70795e8604254f2e6a05327",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_cx_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "eef5eebd471813f76fe7cc02c7572354a5556c85c968785cb28a36faae5048c6",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_cy_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "ce4a8e91346522689addcd71e2a74912c2a8a0606bcc9fccbc4879b8a1285c1e",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_cy_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "588ddc176f8a0cebc227c2255cc84db479ef5f93277cf467651affb052cc828b",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_cy_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "2889e885a5e5a6105b807e759dc76dfee5e658b40f4b668881bafa1192b64488",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_atlantic_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "4a47c0e539f20247256759aec55c6635d150dc7ae88a879bd8cd04885432ea04",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_atlantic_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "a63194c0818b7f3c9c537d523e2c85509526fcaad4d8da5a907b4e2975190a75",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_atlantic_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "c7a5e9cf2ee18940e68e63b7338c28102059f357e37a78c3a18a7d56c1975498",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_atlantic_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "f1d88d587127a0ba1e6837e03467d72384cae5ea2d461710444c88ac5a8743f0",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_atlantic_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "8bdbf0fe8f58eb7020d1970c4d4482193b0827a7659d4d063fec6a8df99098c8",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_atlantic_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "8d90d82c53e424b06ead0d06f84776e07398de14bad9c11068e3cdf37e085232",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_europe_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "dd2767aaaef7a59702b52f7d225c168e15ed3079030c9e2bd5f2a567876a60d1",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_europe_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "9e3ec8773827d62290f9d3c8c1db2f279b49f47db997f2465a9600c43239328d",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_europe_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "d4f48d31dd8cc5f511b0be66cbffaafa5b1355c2e86be6f14cec528961acc8df",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_europe_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "a154c9b22653c1016e8ad7cdf8d41a770dda481f7ea3e04eb3623038ea7fe9ab",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_europe_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "681f8d7b26c5bf693cd817b1aa9bb3fcfee6b5c6fea96fe490f1b067156b3ae4",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_europe_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "7175edc0efe0c81e8ab4ee1905edb2d39e4b442068b5e8dd67dd6ec32f77585a",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_olde_world_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "7b19af2a6e29833e11a07ee8494dca77512a3808de4f3519b44e6c14a73150c7",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_olde_world_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "884bc0abaf63e99673d6edce91579fe519aabf8b15280eb2206108c797df71eb",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_olde_world_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "2ba707ea3415af4a7a47972d9299fecc4b10b87a89e83dd180f7b067780bf96f",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_olde_world_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "ab9ba685b31dc69e06bed687164f18b614889da81a280e2732c72236ea95496a",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_olde_world_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "de5abf57ece287e469a6a11010d9e255151682be2be41373e373197e30da2804",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_dams_olde_world_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "8a3f3e0b7d9eba466b98d2d8b95a83680a623c35661e867c1786b5b7d0eff7ea",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_detail_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "8d0e8fceb024fc71dfb88114d70a9da0cd4ab489da6907df74a115230866e053",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_detail_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "14efcfd9cba80310c3e1d6869955daa405367b94d8b75fc6ea1a1f2bf522c6de",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_detail_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "7510299b9fb2f9539eed707a4081fa551857995ca6e4ad3d72978c9c5f9e9365",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_elevation_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "6ee6d41b08f691994bff2a25303da0f02bd21a539698f254049dc644f919c619",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_elevation_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "e9f598dd6b77243a3ab607574a00db8200d49af7f8778da80b691f08e3ad5d85",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_elevation_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "241a4e4bf56484bbc5666d6ffacd000367f710130347d97f72560167a265e5f6",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_far_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "9fdb5546974c7b27caa93a852cf4105972f7bbd24ea48791621baece75b0f493",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_far_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "f957e694fe228b87e6c01d9ec6a18afc5b97283363f56be9592e3dc87ecfd5de",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_far_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "a00e9e44dca2ac9811761cc807ee7bc1ccd1555a818b293125cd404ae623ede1",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_atlantic_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "7fa940b05ce5d80e221e4bcee3b208414ccae3275922c4baf06858da028c8af8",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_atlantic_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "f4e761c8c68b8ac4e3e9fd5ee00b221d56a30145f19494c58fee0a40a4f79180",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_atlantic_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "cf16a536ec43e3c31c68dded794a3b9a50be5b57706d16c189f70a3bf2b95788",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_atlantic_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "291d20f13ccb716550bff5a9bef3c028099610bf356179b90e09ad3bea9ba0d1",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_atlantic_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "f7dd7514db2681add9ecfc0daa63a35d7ad980cbad813886f17762a2b4c0b293",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_atlantic_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "150042b42f91f66ebc4cb526a2d4b2e6dcc6c76f2e0127e28c327be51d9e4823",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_europe_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "20eeeb37e1df79d674ed176b09d3b7284ce067cde685e2cf22c47c8dfcbe324b",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_europe_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "bce8f96d10c73951199d0cab5651f1d451bcc1bdb2c7c7796959d9d9fc88e62d",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_europe_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "c87e4f65ee06e648012ed50144de5d7cab212542751594ed4153eba27e4c4cd4",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_europe_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "520627e0aef815a54782b308a109725e933cb11e1acb38dd5b82f085503f904f",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_europe_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "d9fccdfc6845db73c272a5e38056e9119ee974a362b54219174ad18224a5e1d9",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_europe_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "505f3c624c8c0004413b2e87543a06f8743f05a553e2fcf2b051c4339646a079",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_olde_world_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "ca982b011563b373704cc24c21caf4a5e62a6b7d69ceffa38f9045a577993907",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_olde_world_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "83ca995eac9045624e96f13d8b3c8c733a4fe39057be48ad637583d96595443d",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_olde_world_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "b9c19766de15e76a6270aff86475a018b96455ff7e986d996659265684722fd5",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_olde_world_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "96b4808ed029914f3bf229a82eab7901f8bec29871bc6d029378ecb9fe67d397",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_olde_world_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "09c54ffa366251007d821e599beec7b04d6e6f65a1e4393e977de245941731ab",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_fords_olde_world_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "8bc01684d10cbfbb53544756dc36a4dae9cbd560cba5438d1d762525ecc0450c",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_geo_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "d79d3ac710d5037cdb47d9ede4066569bf574c2f4fd151b0f214f5f3bbcf8e56",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_geo_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "919cbb0332cf94cd50110f1ac4734970671fdcfe2dc8ea6fe30076f139112841",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_geo_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "524107891c62f4b0a34c674e7f5621a69a6c78e3001fd0cb9c4ec1fe16e0925b",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_gx_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "390bd0cda73f4181e84eaeb54b452d8cd22d712c97e5510d0dfc80b8c0b34e7d",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_gx_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "1c2cc2be57c49ff8e1fab26e69bf46ff35acd1fd0a3d1ecfb86beb0aa5d15ba1",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_gx_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "72125cd602035a0924666e75e935113a3cee91f7975031f63627cc82da2caec5",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_gy_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "d3898028dda2d6f00158b0d6143d0d9844a26ede07b15c7f8dfc2ce7fba53fa5",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_gy_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "7a828a0f4f2ecc18f9f2ecef8b55b726af8199ea1740dc82bab12abac5e90e37",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_gy_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "30309f308bbaaef3907595f2a1ba010155dd2dcea71bfcc693bbc826eda9027d",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_inland_lakes_europe_v5": {
+   "type": "noise-expression",
+   "sha256": "a8bd5d149c042a1da7cfb16e1fda0ac20ed36e9b1e12d2eadbb31818b9a6ada6",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_land_coarse_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "641d146b5312b04da69843a8efd1ee755efc400d560a8eb9cf7f888123902f3e",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_land_coarse_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "83cc7b69bdf440396a376f6f14006f4772f915f21e981549335748b8792280e7",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_land_coarse_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "62b98740840bde049b82d02e1986e3552a67b1cfbc9d6dc54deeff4dc85a497f",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_shore_atlantic_v3": {
+   "type": "noise-expression",
+   "sha256": "a81e1ebb0fac13fcf02d68acc597ba0fa1a6cf5d4c8e4699a31d013c4bb82f81",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_shore_europe_v3": {
+   "type": "noise-expression",
+   "sha256": "fa49878612e2cb7d8b80dbfa038cd99bd9ca0ff5ee6c0f9fe4b659b6e5b146da",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_shore_olde_world_v3": {
+   "type": "noise-expression",
+   "sha256": "b58bc4e6cc7f75202768dc32bc16dd3d372322923582d8315b29a3bdfd6d0a99",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_u_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "cf921bdb2ab7c6aa6976a118251fffdb19969e9ab2586e288c3e539fa1eebb4a",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_u_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "3f81deb71c30170d5b420254fb6bb8ee189a45c737e8ea6769f81d0cbbed89ba",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_u_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "2be7b9ebd7a5f8d1b53fba0be59d819333fe0ff64d010c225d5e31a122edfb9e",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_v_atlantic_v5": {
+   "type": "noise-expression",
+   "sha256": "ebbb5cbfefe177a7a6c1b83c39ba6c50645993ebe77db42a7c4a8ad9e847fe17",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_v_europe_v6": {
+   "type": "noise-expression",
+   "sha256": "affc8ba354d2eb22e8c4bf50d1b4d7cd29a19afafae5b221eed66375c7b0d1a0",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_v_olde_world_v5": {
+   "type": "noise-expression",
+   "sha256": "e94aec4f638043b4850c8ecda21933da5b920575e9f56794f46920035326bf6e",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_atlantic_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "1f4e62b0452f2dcd0c6b211dfba5e75dc9d728c299ef31c00ed35f4b7a680678",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_atlantic_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "8d2bc412520de566e284d454209c7aad3dbd0817691f866ada7bd4fc74a55c60",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_atlantic_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "78427f8fbad5a2bef3dfdf14b93dd7ff3af63eaa0a9e3542cbdda746b3c54e9c",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_atlantic_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "5bab3d86d95bd111503fa44aee9085f92bca186d8965ae61ea96891982409728",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_atlantic_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "12b14d2bcdd4a6a552ba53129e7a399a95f0bcd4fe2c5f71146837020fcffb4c",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_atlantic_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "789f1a21de8c20d16809a2e086b93246f8aa4172418cd897b9ae4cad3a59b638",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_europe_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "134191241d48ad6015f21c586ad7f975fb99cfd66e9eecb2e25ddcda5da13971",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_europe_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "287093aeb2eed294d841f5c92d0092a0df2f34906d877d7e5a185e63ce81a908",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_europe_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "f5390c312a75179991857af80d8158e7446fd77db738054602e568ca1ed6e049",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_europe_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "0ef5b82b24014075050b61b93999b2aee1165b60e726f9b3f5b3f9aa61561a1c",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_europe_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "c5315ddd47c77e606fd3c427ce16f14964816d8f9c455fd74a032be52f3cfeb1",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_europe_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "a0230495b32187984ac1eaa214a0f3e39e5d108988ef163308168d81f6417890",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_olde_world_s1_v4": {
+   "type": "noise-expression",
+   "sha256": "372412c3fd03c071d42f00c720daa98f2639f41e500dbf5accf7f7683e59e073",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_olde_world_s2_v4": {
+   "type": "noise-expression",
+   "sha256": "693ebe6087d1049284151d9e4ee71345c51e87bb292b89c0a604325aaf3c082b",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_olde_world_s3_v4": {
+   "type": "noise-expression",
+   "sha256": "9d385c705c58abdf9e5244538a8126cb256ed98a83de190c3cbd7a63bbfce8d0",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_olde_world_s4_v4": {
+   "type": "noise-expression",
+   "sha256": "ff628be297eaac88a81165fb6faa1934b9e5c93495c47fe37c22cb66a76be932",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_olde_world_s5_v4": {
+   "type": "noise-expression",
+   "sha256": "1fb502820126dd14a0f001fdba2b403767fc4bdcf59cc3692124b2184428b3be",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
+  },
+  "tn_ww_olde_world_s6_v4": {
+   "type": "noise-expression",
+   "sha256": "1e912c3d98152dd15754fb667a54817deace7892f4aa464f62751e0d1f80e5c6",
+   "dump": "m1",
+   "slice": "edge-and-lakes",
+   "registered": "2026-10-29"
   }
  }
 }
