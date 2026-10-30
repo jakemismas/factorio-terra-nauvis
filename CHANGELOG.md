@@ -371,11 +371,15 @@ versions follow [Semantic Versioning](https://semver.org/).
   beside Alien Biomes the 19
   vanilla land tiles re-listed behind gated hooks with S3's temperate lean, the non-adopted AB land
   tiles excluded from temperate bands by a gated hook (D11; APPROVALS 9), and AB's palms on Earth
-  copies that read a constant (the palm leak closed; ARCHITECTURE's preset-key fallback); the 12
+  copies that read a constant (the palm leak closed; ARCHITECTURE's preset-key fallback), whose keys
+  every preset bakes with or without AB, so a world that gains AB later meets the switch, while a
+  save made before the switch keeps its palms on the fine field for life (design notes 2026-10-29
+  18:40, which also keeps the stored withheld-preset warning's text true); the 12
   adopted marshes (APPROVALS 8) from the region layer's marsh weight, with water-mud pools on land and
-  water-shallow along open water joined to the ford hook, and AB's wetland biome; each map's third
-  elevation entry, the waterways around a shore body recalibrated for AB's beach band and deepwater
-  line, carrying the Map type fields (geography 3); AB 0.8.0's palms frozen as Earth data
+  water-shallow along open water joined to the ford hook, and AB's wetland biome; each map's next
+  elevation entry (Europe's version 4, Atlantic's and Old World's version 3; `tn_geo` 8 to 10), the
+  waterways around a shore body recalibrated for AB's beach band and deepwater line, carrying the Map
+  type fields; AB 0.8.0's palms frozen as Earth data
   (`tools/build_palms.py`, `prototypes/generated/palms_ab_v1.lua`) with a check of the installed palms;
   without AB `grass-1` between the marsh pools; the milestone's bodies registered in `tests/frozen.json` by
   `freeze`, which now hashes every registered body in every dump that holds it; M2 in the gate (its

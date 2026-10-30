@@ -61,4 +61,5 @@ Date: 2026-10-28
       the fine coast); the Map type entries are. A world made from a preset that later loads
       beside Alien Biomes gets one loud warning, since its new chunks then generate more slowly.
     - With Alien Biomes enabled the Terra Nauvis presets are offered again: the palms read the
-      climate alone, never the coast.
+      climate alone, never the coast. A world made from a preset without Alien Biomes does the same
+      once Alien Biomes is added.
