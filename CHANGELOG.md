@@ -6,6 +6,38 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-30
+
+First release of Terra Nauvis, for Factorio 2.1. This summary is the whole release at a glance; the
+`### Added` entries under it are the build record of each milestone, kept as written. Install, settings,
+compatibility and known limits are in README.md, and the changelog players see in game is
+`terra-nauvis/changelog.txt`.
+
+### Summary
+
+- Three Earth maps as map-gen presets and Map type entries: Terra Nauvis: Europe, Atlantic and Old
+  World, with real coastlines at map scales 1 to 6 in an endless deep ocean.
+- A spawn at a chosen or random city on every map (40, 50 and 33 cities), with land around it, a lake
+  nearby, the starting ore and an enemy-free start.
+- Waterways: great rivers, straits and canals that ships can sail, walkable fords across the rivers,
+  and the soft map edge where a map's frame cuts through land.
+- Earth climate with or without Alien Biomes, marshes, 16 great forests, and the base game's trees,
+  rocks and plants beside Alien Biomes.
+- Cliff ridges along 16 mountain ranges with passes, the only cliffs on a map.
+- Historic ore hotspots with heavier biters, and offshore oil fields with the Oil Rig mod.
+- Options: Canals, Great forests, Ridges, Ore hotspots, Inland lakes, Destroyed Europe with Alien
+  Biomes, and City markers on the map view.
+- Noise draws almost all of the terrain, so the new-game preview shows the map. Control scripts
+  handle what noise cannot: the start of a new world, the guards and warnings, the city markers and
+  the Exact coastlines handler.
+- Compatibility: Alien Biomes is optional, Space Age works and its other planets stay as they are,
+  RSO is not supported and the game warns when it is active.
+- Tooling: the static rows, the frozen body registry, reproducible zips, CI on every push and a
+  release built by a `v*` tag.
+- Verification: the fast finish replaced the plan's security review and suites with one security
+  pass and the playability checks. What that leaves open is on
+  its issue.
+
 ### Added
 
 - the first release fast finish: groups 1 to 3 and edge-and-lakes
