@@ -2098,10 +2098,10 @@
   },
   "tn_sd_camargue_v1": {
    "type": "noise-expression",
-   "sha256": "05756e457422f4736f75087ca517f2e1a01611f3f8baa30f0a6df71fc1307e8b",
+   "sha256": "8231ea13c0c232c28a0e518978a1061e1c1e2c92bd38b9297882bafb5a1bdcb3",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_carpathian_montane_v1": {
    "type": "noise-expression",
@@ -2259,10 +2259,10 @@
   },
   "tn_sd_danube_delta_v1": {
    "type": "noise-expression",
-   "sha256": "ec16c68ded41c5c357b4c13627e5cf226b2464171f54a0a3606fd6b4bab494c3",
+   "sha256": "eff6b00b484e9c3e6ad8eb1b5ffed4db9fc8252d5f09b34ed0d32f2b24dcf59d",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_destroyed_europe_v1": {
    "type": "noise-expression",
@@ -2287,10 +2287,10 @@
   },
   "tn_sd_everglades_v1": {
    "type": "noise-expression",
-   "sha256": "bc8e85e4080aa6e6e2a0730cb71de58c81b0488ce59404326d2d4db3f4ed09a9",
+   "sha256": "889aa7caeec494dcc33233c4527e57d6f256e6e30e6e209032c9f4fdf08e4f9f",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_hyrcanian_v1": {
    "type": "noise-expression",
@@ -2399,10 +2399,10 @@
   },
   "tn_sd_mesopotamian_v1": {
    "type": "noise-expression",
-   "sha256": "111dddf2882946165082290310eb7dc23e58e2b8513ccc236b4d819cef160e12",
+   "sha256": "c593baad45d251468afdf7e2597261ecb79c65c377ce9552b14510823d6b11ce",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_offshore_angola_block_17_v1": {
    "type": "noise-expression",
@@ -2616,31 +2616,31 @@
   },
   "tn_sd_okavango_v1": {
    "type": "noise-expression",
-   "sha256": "5f05bb9db2ea00d0cb79daf7d4190626de32841c62e37852d8aec17ffdc40b1a",
+   "sha256": "0586b7a7a796979c02391a4af58de3b5cb3ac94f15a71697f8410bda85199883",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_pantanal_v1": {
    "type": "noise-expression",
-   "sha256": "4b0c7d0a23948ad33d41d2f7c6b39222fed3544ba130389daf333e38a3bd7e60",
+   "sha256": "7189523170f0ef905805287207a31e69da8fb74437167f1887d7ed71a95b340b",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_po_delta_v1": {
    "type": "noise-expression",
-   "sha256": "adba7438313c5f07b8d979b6a38b31a355123d94c66c17ff063ed55d21cf1bcc",
+   "sha256": "c71da025331a3b2a273d782212958aa5c11c285ef95430280eda9fa8c0227b96",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_pripet_v1": {
    "type": "noise-expression",
-   "sha256": "1d7e292ed5d3f7af07af8fa72180243b95f9201b51e42691b8efed0b27d1f0ba",
+   "sha256": "5fc3930a76ad65c427e65d6445f4bc458e047b4135719cd59cb03ac0c80074f0",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_scandinavian_taiga_v1": {
    "type": "noise-expression",
@@ -2700,10 +2700,10 @@
   },
   "tn_sd_sudd_v1": {
    "type": "noise-expression",
-   "sha256": "00256e4fa5388d660571c239da051a0b45b9a9270ba7ef2d0760b797efc898cb",
+   "sha256": "636b3b3976735a21aa58cf777330a5c9296f32a83a42fd226d362d08d64efc99",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_tuchola_v1": {
    "type": "noise-expression",
@@ -2770,24 +2770,24 @@
   },
   "tn_sd_vasyugan_v1": {
    "type": "noise-expression",
-   "sha256": "a169bcebde126d799f994f77bcd019a3119698f0a10f82e77a556c2ce69390dc",
+   "sha256": "32580df62ab5a2051fee860a4c37d45bc9748a7a028339514324d6cd61ccb662",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_volga_delta_v1": {
    "type": "noise-expression",
-   "sha256": "8c3dd0fce5722627175766af2fd953518dc685a7c64c323715418182cf987bec",
+   "sha256": "42a34e22dc206f7345ea8a4728e1f90d100901618ba61d005ecd02bd55bc7775",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_wadden_sea_v1": {
    "type": "noise-expression",
-   "sha256": "b5b694b8928b8bb469c84240e9dc71b121bdfa00e96d43223cd794bb64bdcb7e",
+   "sha256": "bc2e4344e02e3d65ebd12ac675207dd5250f0f983fc7e437b96f35962f015767",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_west_siberian_taiga_v1": {
    "type": "noise-expression",
@@ -3008,10 +3008,10 @@
   },
   "tn_w_danube_delta_v1": {
    "type": "noise-expression",
-   "sha256": "49afb65eedbd428c4c3ae3a9276e56484c9c9b704cc9897f858ccfff094cf18f",
+   "sha256": "8cd36f121a1777784f57c78c462702dc14e59ecf5524e1e59ceaddbbc002fef0",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_w_destroyed_europe_v1": {
    "type": "noise-expression",
@@ -3036,10 +3036,10 @@
   },
   "tn_w_everglades_v1": {
    "type": "noise-expression",
-   "sha256": "c20fa70f931346263fbd3e6882d457cba60d993d8c6572033741d95e1dea1b40",
+   "sha256": "8483cb151b98a36a09e4c5f7cdda9a50874c6b77a7e4ba7f9c2fe84a1542114a",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_w_hyrcanian_v1": {
    "type": "noise-expression",
@@ -3148,10 +3148,10 @@
   },
   "tn_w_mesopotamian_v1": {
    "type": "noise-expression",
-   "sha256": "a5f6a1d0f343f74ec597fe22a9fd1b8117874581ed145760e363219c7d464581",
+   "sha256": "46db6dba481607652d82e220c15f49fb8947896a908290101b8ee388e3c22be6",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_w_offshore_angola_block_17_v1": {
    "type": "noise-expression",
@@ -3365,17 +3365,17 @@
   },
   "tn_w_okavango_v1": {
    "type": "noise-expression",
-   "sha256": "91e4cb86262e0ec66e08ef880a7bd909569cdb7fb2c1a1bf19871e08d8c224f7",
+   "sha256": "cb60f96631c575a4fa3ea85b1bdc5ee94b6ea55f433034a4b7a021bea77e03c1",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_w_pantanal_v1": {
    "type": "noise-expression",
-   "sha256": "804f8e859b3535248b9c985e2680a12b25c337c0fc635916d77bc6d64e0456bc",
+   "sha256": "34e554e367b8cc946f869e5061ac0d2c14469fb437fc87946bbe3021f63bcb7b",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_w_po_delta_v1": {
    "type": "noise-expression",
@@ -3386,10 +3386,10 @@
   },
   "tn_w_pripet_v1": {
    "type": "noise-expression",
-   "sha256": "1fd54685599ce36dd9f47c3b59bf455f1f41b5ab37c6103039237dca369c1be3",
+   "sha256": "380f0df9fd819169df9d992c48b013d5dce6f6b688d4f1ce00e707efafc4c6e0",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_w_scandinavian_taiga_v1": {
    "type": "noise-expression",
@@ -3449,10 +3449,10 @@
   },
   "tn_w_sudd_v1": {
    "type": "noise-expression",
-   "sha256": "3680449f96eda0db767904919a334d07d5a1e714ea99a3fab7901d5ccac2cab6",
+   "sha256": "f3edd8c951d26277adad46288db220a59c73d0703bbce685ff5117fbadb47fb6",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_w_tuchola_v1": {
    "type": "noise-expression",
@@ -3519,17 +3519,17 @@
   },
   "tn_w_vasyugan_v1": {
    "type": "noise-expression",
-   "sha256": "79f8087ba0248b6c4b2b580fdd7df7feffd53eb8e01cf8c58ca1715add850cd1",
+   "sha256": "90025e4612a99a8878bf05185fee7e646e5dd394c2e4332dfa3c9a6ca3b93dbc",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_w_volga_delta_v1": {
    "type": "noise-expression",
-   "sha256": "64e16f695bb0da884fd29055fe6e785ae199edf4638f0a6d4a530e57b83b8b50",
+   "sha256": "b6fdb8a9a8d77d5621704217b77404a9bbc3c9283156c39196f19cf12165eb63",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_w_wadden_sea_v1": {
    "type": "noise-expression",
@@ -3582,10 +3582,10 @@
   },
   "tn_ab_exclude_v1": {
    "type": "noise-expression",
-   "sha256": "b3d0a0546d9c2c7bc79c260dba54256cf2e598011e3331b427865467f3c00392",
+   "sha256": "bb7213f104856120d117cb14a7a3d21492c62df307992acf8f2fd43c51e77dd4",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_aux_fb_v1": {
    "type": "noise-expression",
@@ -3596,14 +3596,14 @@
   },
   "tn_dry_v1": {
    "type": "noise-expression",
-   "sha256": "98af012ea390aabd3494cded0c17c50d1b0af1a8f693a5f1b4b1cbb952ad02fa",
+   "sha256": "0469a0c8c30b234fe574c0aca0650347b54f011ced30e68a05f2fa7d00658305",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_lat_v1": {
    "type": "noise-expression",
-   "sha256": "1ae93a8bea6c66a5a296cdf626e6e3ddd38b948fb191b69f60f5a58da6f06700",
+   "sha256": "72766f08bcdaad912ef6be4ac601681689fbe2795589807cd7b7913844df8fcb",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
@@ -3624,10 +3624,10 @@
   },
   "tn_marsh_grass_v1": {
    "type": "noise-expression",
-   "sha256": "c96b5a3bdf42365827bce0b750ebf0876a87d28b76627f97e725832c1bdaaf9d",
+   "sha256": "5b33d65fffa9d7c929088892cb1f4f8129b8e4a276851178deafb952ce0c728b",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_marsh_water_mud": {
    "type": "noise-expression",
@@ -3638,10 +3638,10 @@
   },
   "tn_marsh_water_mud_v1": {
    "type": "noise-expression",
-   "sha256": "287b63adf73ec92fc8b2468af4ecbe990df36863406917fdad810b5cd6672578",
+   "sha256": "d164ffcc1a2d97b51f55400cc28f64855a4d919fc5c1713f5d134a5fd80dbc96",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_marsh_water_shallow": {
    "type": "noise-expression",
@@ -3652,10 +3652,10 @@
   },
   "tn_marsh_water_shallow_v1": {
    "type": "noise-expression",
-   "sha256": "6b5447d0dea8605041eae909bb44542efeeee49baca5093862f02d21623b009d",
+   "sha256": "842314a02e131beb7694669ed77fe6f05d33262d64a3772535fb343f51322c3f",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_moisture_fb_v1": {
    "type": "noise-expression",
@@ -3715,10 +3715,10 @@
   },
   "tn_vtile_bonus_v1": {
    "type": "noise-expression",
-   "sha256": "d657792e7bb62d9908e1fdf548b9859db9afa097e9accc0897fb909cc34ad28f",
+   "sha256": "c91f6952adb9b23871e810c0bcd36cb8be7313d57cde58d84244f67deb166937",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_vtile_dirt_1": {
    "type": "noise-expression",
@@ -4492,10 +4492,10 @@
   },
   "tn_cliff_elevation_v1": {
    "type": "noise-expression",
-   "sha256": "b9c7f05488ab46f3821aaf157b4e9c12df97cd37443c0742a898ed13ab49128c",
+   "sha256": "a70991abddca99ae4ad44328aa61c230f95e4527efb7225265c322877fa39eba",
    "dump": "m1",
    "slice": "ridges",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_cliffiness_v1": {
    "type": "noise-expression",
@@ -4506,42 +4506,42 @@
   },
   "tn_crest_atlantic_v1": {
    "type": "noise-expression",
-   "sha256": "144ae226a03ce8f7b7b0e0b2202f453c08609bf9da2d5ad49c27580f1b640a4d",
+   "sha256": "37aed6d13441e83a3b89b498869f7c236b6dfff8fd12140ce2c169ad0947335d",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_crest_europe_v1": {
    "type": "noise-expression",
-   "sha256": "8ddc004ee587bd7fd2e33fdc406e627db3aca38a1d2d8765fe323399cf20339d",
+   "sha256": "43049c14acd710d4cfabaab52c63ebdae3f03b2c5c40c921bc3b418a0da0b282",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_crest_olde_world_v1": {
    "type": "noise-expression",
-   "sha256": "88963f24b64d16a69248efd2436cf713186a882322daff61d050177f88eecb40",
+   "sha256": "a336bd07e1c16f857314e49d14e96f26db416b1dfeae215970d83623153596a5",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_openings_atlantic_v1": {
    "type": "noise-expression",
-   "sha256": "66bd41fb297aa77eb38b03b52ade01886654151285c14b9eda3a38e57b1b1356",
+   "sha256": "7dc395e7d6fe6914493143d93b899e6523c1b40e01df28d8e77439e63f2c30bb",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_openings_europe_v1": {
    "type": "noise-expression",
-   "sha256": "41eef2c6dac077e137acea58840a81dc6b52f6a44b62f65f08527227bf754f08",
+   "sha256": "2a8618ca904fe1547dc714b2636ea58944a4dff53b0e545b83ed1092e7934cd3",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_openings_olde_world_v1": {
    "type": "noise-expression",
-   "sha256": "24095787748e1ea9e92193b2241969278f6d1b15f5ffe85237a8999215658b2a",
+   "sha256": "fedc0ee7f39db0864511424ee57392a17e6a785cb69db3e0db2672b52fd3cb55",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
@@ -4591,13 +4591,6 @@
   "tn_ridge_clear_v1": {
    "type": "noise-expression",
    "sha256": "0540199b6c772c22b7971844ab0ef4c87cc9e28205e8fc992396b55889936839",
-   "dump": "m1",
-   "slice": "ridges",
-   "registered": "2026-10-29"
-  },
-  "tn_ridge_d2_v1": {
-   "type": "noise-expression",
-   "sha256": "843e2543ea26371cd584b051cb12edf827e66ad4c991b9c5808496b2ddc11aec",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-29"
@@ -4667,10 +4660,10 @@
   },
   "tn_hs_coal_v1": {
    "type": "noise-expression",
-   "sha256": "74f2fc50e4016381c97adcab97a19bb7981bcd49081e80a2d5501a05e5048075",
+   "sha256": "321a7d2adb11b8d865be90bd9fef06ab27f039761aa032ead105fdbb44f0e04e",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_hs_copper_ore_p_v1": {
    "type": "noise-expression",
@@ -4688,10 +4681,10 @@
   },
   "tn_hs_copper_ore_v1": {
    "type": "noise-expression",
-   "sha256": "d6a1e17885a124ca33545255291423c70e3f3fa7499edd4a97e9f8eeab3c38a2",
+   "sha256": "fe8e67a2f30ca6cfa8dbe640ad29d21836edcb7fbde29a8c9668dbe2788b2ac6",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_hs_crude_oil_p_v1": {
    "type": "noise-expression",
@@ -4709,10 +4702,10 @@
   },
   "tn_hs_crude_oil_v1": {
    "type": "noise-expression",
-   "sha256": "5c2dbbe8250dcb25c4852e7c6684358960e12142a8f4051ce97138a0a2c4cd9e",
+   "sha256": "ba22a484ee61108ff2b9028a90ee16f5d82a39942cc6c2086bb3eddafb044d18",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_hs_iron_ore_p_v1": {
    "type": "noise-expression",
@@ -4730,10 +4723,10 @@
   },
   "tn_hs_iron_ore_v1": {
    "type": "noise-expression",
-   "sha256": "8e403f1947609f3744320aa8d9723cf9405922c80acb9c2c157cfa370d900bda",
+   "sha256": "ca7b1758fd9f7f7c9121b07e1a6228b1231d8172d43e9ff4df63f46e06a6fdf9",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_hs_offshore_oil_p_v1": {
    "type": "noise-expression",
@@ -4751,10 +4744,10 @@
   },
   "tn_hs_offshore_oil_v1": {
    "type": "noise-expression",
-   "sha256": "22de09a38b6379f933087552c2c448c33f9f46c79f9512fc2f23dc1cec1e495a",
+   "sha256": "1b7dd798426e6bdf67a3553ce22813f0632ddde4c961d4170d37eb4cd7a25003",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_hs_stone_p_v1": {
    "type": "noise-expression",
@@ -4772,10 +4765,10 @@
   },
   "tn_hs_stone_v1": {
    "type": "noise-expression",
-   "sha256": "c839a95da2a88388dfd811cbde1006ba37bd46362c187d43dda4efe7932dbc5b",
+   "sha256": "ce72a64bd124f6fbaecca5ec99511377f62baea43652f2c39c7e87b9a03f0b55",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_hs_uranium_ore_p_v1": {
    "type": "noise-expression",
@@ -4793,10 +4786,10 @@
   },
   "tn_hs_uranium_ore_v1": {
    "type": "noise-expression",
-   "sha256": "4b146fc52a5ffdc71ac604cef75999e9777f75a746aafb4a3f1ce0bafc5bf334",
+   "sha256": "1753f2cff8a1f1319acf01ea805c581f3172827e6330b1f9849072894397bb3b",
    "dump": "m1",
    "slice": "resources-enemies",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_ore_coal_p_v2": {
    "type": "noise-expression",
@@ -5824,7 +5817,7 @@
   },
   "tn_ab_exclude_v2": {
    "type": "noise-expression",
-   "sha256": "d451cb35e00163813381d9dccb07141677d46e9f2ba673694b358dc055674617",
+   "sha256": "4d490d87be5fcb899294b785a681344a54a03c83b2fe7507eca24eccf3ccbe44",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
@@ -5880,8 +5873,15 @@
   },
   "tn_vtile_bonus_v2": {
    "type": "noise-expression",
-   "sha256": "80eb1021bcebceca191d7e8474183e78a818f45ed16c736dac166423fa72aa75",
+   "sha256": "f3c65a5612ffc743af8160005f9c55ed164fe987c20631c3280f8026f72fd4e9",
    "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_climate_meander_v1": {
+   "type": "noise-expression",
+   "sha256": "61a0f3978c581507082a68db61f2873bd3f7addc8a855095925eef5452c89f80",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
@@ -5906,6 +5906,20 @@
    "slice": "extras",
    "registered": "2026-10-30"
   },
+  "tn_marsh_pool_v1": {
+   "type": "noise-expression",
+   "sha256": "dec7938d61d90f4cb9b6460a05b3774b0f236aef4c1d2ca88ae76013ee16c306",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_region_marsh_rough_v1": {
+   "type": "noise-expression",
+   "sha256": "f7a6fcbc2c81bec28fdf953dbe8ea05c4cad37cad584859beb58b6c20b6bb69a",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
   "tn_region_u_k250_v1": {
    "type": "noise-expression",
    "sha256": "a01776b16f4a358f120248421e98774d9e5060b6b6a09d6a43e197a67be5ba84",
@@ -5916,6 +5930,139 @@
   "tn_region_v_k250_v1": {
    "type": "noise-expression",
    "sha256": "bcddfc7d4b1304a1cedd70647af9a733c6b379bb868be07d13548e2685483e18",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_depth_atlantic_v1": {
+   "type": "noise-expression",
+   "sha256": "80d444eb5f3887ec4a49789ffacdd5427ff88e2dc34f54a234614b041b5cf7ff",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_depth_europe_v1": {
+   "type": "noise-expression",
+   "sha256": "e9b3dc77bec89aec43e653d5cac7a8e616641096da1a2f71becb3c101b961167",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_depth_olde_world_v1": {
+   "type": "noise-expression",
+   "sha256": "9110804e1d1b6e785876ca7697319383e311f81709eeec95fa1f8f39d6254c60",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_height_v1": {
+   "type": "noise-expression",
+   "sha256": "e9a36108da9c3fdea131497188f69eea15291b60f2cf4acfb58eed8e0cd36ec7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_keep_atlantic_v1": {
+   "type": "noise-expression",
+   "sha256": "c281ee0b9f04260d464ff9825ca77b258872f47e3c42bf68c87fec05780b56b9",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_keep_europe_v1": {
+   "type": "noise-expression",
+   "sha256": "1ea5f123696b6bd3339653f6c6c310a4a3552f6747e7c3e496ab4d158a4ed8b2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_keep_olde_world_v1": {
+   "type": "noise-expression",
+   "sha256": "891afee9b5d10d73332224d360a079cb943f831c6c57a9397c09aa8907daac07",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_near_atlantic_v1": {
+   "type": "noise-expression",
+   "sha256": "38aaadc03795b88c29545f1e32ce701474dc36aee13b14d23265d9d356ee7391",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_near_europe_v1": {
+   "type": "noise-expression",
+   "sha256": "a58a37f7108bbf59254b1fdb3cbb38c3e84bb74b1adea0e185bafd9c76229cd0",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_near_olde_world_v1": {
+   "type": "noise-expression",
+   "sha256": "d576a4293f831d33ac2d46c1aa417265311d53f1fcf75ccde795109c77a8cf61",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_run_atlantic_v1": {
+   "type": "noise-expression",
+   "sha256": "6754d24d6b100f45cc4406dba303f0722f39c0e1d397a013a00b8d04336ad901",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_run_europe_v1": {
+   "type": "noise-expression",
+   "sha256": "9dad75067e795f7cdc6d17d54fdcd2f22288cd4560c52499e208656e56caf3b2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_run_olde_world_v1": {
+   "type": "noise-expression",
+   "sha256": "f5af8e5cb3b737ccd71cf702f2b339151e212267ba112ba9486558d01b8d76d2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_u_atlantic_v1": {
+   "type": "noise-expression",
+   "sha256": "0a77e274b893fd60cd5fad8d4010e6dfec1affae76d0274cde766518555d6648",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_u_europe_v1": {
+   "type": "noise-expression",
+   "sha256": "81734a3e10beff92a4ed9737e5b11f7ca0579089221a267e42cf6bf59ff431b9",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_u_olde_world_v1": {
+   "type": "noise-expression",
+   "sha256": "9c61f98c9b32bc242e7e2829c5ede4d2d690440550d9d42e79bcf834587c9b7b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_v_atlantic_v1": {
+   "type": "noise-expression",
+   "sha256": "6bafab0d24e7c886b003407686a5bd1588ad9d4744bed37ddd5aba3ce09ca909",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_v_europe_v1": {
+   "type": "noise-expression",
+   "sha256": "0507bc994bfdf0d82f9bc38c133105f252718af5d30be45c3fde27cfd35c403b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_ridge_v_olde_world_v1": {
+   "type": "noise-expression",
+   "sha256": "b4a035a6da0a5e334302e7e9dad484b0cbd1147ed6149e322bd28e6408b0fe2c",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
