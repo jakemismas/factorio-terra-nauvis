@@ -325,7 +325,8 @@ box (from `edge-and-lakes` with its edge band), the start land guarantee, the wa
 stamps. Only the Tile program reads them, and only through the `elevation` property and the
 Tile-only ford hook; the analytic spawn lake is firewall-clean, because it reads only `x`, `y` and
 `map_seed`. Every expression the Entity or Cliff program reaches (climate, `distance`, the region
-layer, hotspot and enemy terms, ridges, the start mask, the sea mask, the palm switch, tree hooks)
+layer, hotspot and enemy terms, ridges, the start mask, the sea mask, the palm switch, tree hooks,
+the list hook's keep body)
 reads only `x`, `y`, `map_seed` and the map-setting constants, per-save numbers and keys, the
 coordinate chain, built-in noise, analytic terms built from tables, `tn_land_coarse`, and other
 firewall-clean names.
@@ -546,7 +547,14 @@ climate-tiles).
 | Forest boost on every living tree (15 vanilla, 65 AB; AB's two palms take it through the second versions of their copies, their prototypes stay AB's) | `tn_forests_on` | `tn_tree_mult` inside `min(1, (orig) * tn_tree_mult)` | `orig` | 7 |
 | Vanilla rocks, decals and decoratives beside AB (R3 3.4 items 4 to 6): 3 rock entities and 8 rock and decal decoratives rebuilt from `tables/vanilla.lua` on vanilla land and listed on Nauvis; 11 decoratives AB takes off Nauvis re-listed as `(score) + key` on vanilla land; the AB-restricted vanilla decoratives and dead trees with the vanilla land tiles appended (no gate: vanilla land exists on Earth worlds only) | `tn_on` | per name: `tn_vrock_<name>` (rebuilt, off `0`), `tn_vdeco_<name>` (re-listed, off `-inf`, every one naming `tn_vdeco_v1`) | `0` or `-inf` | 7 (design note 10) |
 
+| Long AB-only tile restrictions beside AB: 111 decoratives and 64 trees take the vanilla land tiles at the front of the list and `(own) * tn_ab_keep_v1` on the on branch; the 13 extended decoratives and 5 dead trees take the same front, order only | `tn_on` | none: the versioned body is named directly, so a save made before the hook is safe (a key absent from it would read neutral and let these grow on vanilla land) | the own probability | fast finish |
+
 Tile scores that must lose return `-inf`, never a small or negative number (noise rule 4).
+
+A `tile_restriction` costs generation time on its own: the game walks the list entry by entry for every
+tile, with or without a probability, and a tile on no list walks all of it (measured at Frankfurt beside
+AB: probability 0 on 180 decoratives saved 27 ms of 270; the vanilla land tiles at the front saved 206 ms).
+Vanilla land lies on no AB list, so keep common tiles first in any list a hook writes.
 
 ### Region layer (S10 design (d))
 

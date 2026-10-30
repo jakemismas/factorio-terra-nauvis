@@ -162,6 +162,7 @@ local CT = {
   VT_BONUS = NOISE .. "vtile_bonus_v1",
   AB_EXCLUDE = NOISE .. "ab_exclude",
   AB_EXCLUDE_BODY = NOISE .. "ab_exclude_v1",
+  AB_KEEP_BODY = NOISE .. "ab_keep_v1",
   MARSH_MUD = NOISE .. "marsh_water_mud",
   MARSH_POOL = NOISE .. "marsh_pool_v1",
   MARSH_MUD_BODY = NOISE .. "marsh_water_mud_v1",
@@ -1124,6 +1125,11 @@ return {
       names = {DE.zone, DE.heat, DE.temperature, DE.pool_europe, DE.pool_atlantic, DE.pool_olde_world},
       files = {"prototypes/tables/destroyed.lua"},
     },
+    -- The list hook's body (tiles.scan), defined on every load like the other tile bodies.
+    {
+      release = "0.1.0",
+      names = {CT.AB_KEEP_BODY},
+    },
   },
 
   -- Elevation composition tunables (ARCHITECTURE.md, "Elevation composition"; S9's values):
@@ -2052,6 +2058,21 @@ return {
       key = CT.AB_EXCLUDE, off = "0", body = CT.AB_EXCLUDE_BODY, body_grain = CT.AB_EXCLUDE_BODY_G,
       temperate_from = 25, temperate_below = 65, marsh_cut = 0.68,
     },
+    -- The list hook (Alien Biomes' long tile restrictions, design notes 2026-10-30 12:55): the game walks a
+    -- restriction entry by entry for every tile of a chunk, so a vanilla land tile, on no AB list, costs a
+    -- whole walk per AB decorative and tree, 19,000 entries a tile at Frankfurt, whatever the probability
+    -- says. Beside Alien Biomes each AB-only autoplace on Nauvis with a list longer than vanilla.tiles
+    -- takes the vanilla land tiles at the front of its list (they end the walk on their first entries)
+    -- and, on its on branch, (own probability) * body. `body` is 0 where the vanilla tile body is not
+    -- -inf on land, 1 elsewhere: it is that bonus body without its elevation term, so it reads no fine
+    -- field and may run in the Entity program. `margin` widens its band and lean by the furthest
+    -- climate.grain moves the tile scores' temperature, in temperature units: the grain stays out of
+    -- the Entity program (trees and decoratives keep the plain fields), so the body can only cover the
+    -- frayed edge from outside. grain.temperature is 3 and noise_layer_noise peaked at 1.996 over 14
+    -- seeds of a million tiles. `types` pairs each prototype type with the settings group
+    -- on_nauvis reads; Alien Biomes' palms keep their list (their keys already name Earth copies).
+    scan = {body = CT.AB_KEEP_BODY, margin = 6,
+            types = {{type = "optimized-decorative", group = "decorative"}, {type = "tree", group = "entity"}}},
     marsh = {
       water_mud = {tile = "water-mud", key = CT.MARSH_MUD, off = "-inf", body = CT.MARSH_MUD_BODY},
       water_shallow = {key = CT.MARSH_SHALLOW, off = "-inf", body = CT.MARSH_SHALLOW_BODY},

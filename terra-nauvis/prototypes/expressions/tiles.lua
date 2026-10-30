@@ -7,16 +7,20 @@
 --                        keep their wetland biome (APPROVALS 8)
 --   tn_ab_exclude        every non-adopted Alien Biomes land tile: -inf in the temperate band outside
 --                        marshes, 0 elsewhere (D11: only APPROVALS 9's tiles mix into temperate zones)
+--   tn_ab_keep_v1        0 where a vanilla land tile may lie, 1 elsewhere: AB's long-listed decoratives and
+--                        trees multiply by it (the list hook; config.lua tiles.scan), and it reads no fine field
 --   tn_marsh_water_mud   water-mud pools on land inside marshes, outside the start clearing
 --   tn_marsh_water_shallow  water-shallow along open water inside marshes, above shallow_depth, so a
 --                        river's floor (-2.2) stays player-blocking water (T5)
 --   tn_marsh_grass       without Alien Biomes: grass-1 between the pools, +bonus on marsh land, 0 elsewhere
 -- Marshes read the region layer's marsh weight, the shared region expression, and nothing else of the
--- layer (T16; D13). These bodies read elevation and run in the Tile program only, behind the gate.
+-- layer (T16; D13). These bodies read elevation and run in the Tile program only, behind the gate, but
+-- for tn_ab_keep_v1, which reads no elevation and runs in the Entity program.
 local cfg = require("prototypes.config")
 
 local V = cfg.tiles.vanilla
 local X = cfg.tiles.exclude
+local S = cfg.tiles.scan
 local MS = cfg.tiles.marsh
 local K = cfg.keys
 local MARSH_W = cfg.regions.names.marsh_w
@@ -66,6 +70,15 @@ end
 local PATCH = {patch = "clamp(" .. num(V.patch.amplitude) .. " * " .. noise(V.patch) .. ", " .. num(-V.patch.clamp) ..
   ", " .. num(V.patch.clamp) .. ")"}
 def(V.body, vanilla_bonus("temperature"), PATCH)
+
+-- The list hook's factor: the bonus body's conditions on plain temperature, without its elevation term,
+-- as 0 where that body may not be -inf and 1 where it surely is. The bonus reads the grain's frayed copy
+-- on a preset, and this runs in the Entity program, which keeps the plain fields, so the band's edges and
+-- the lean widen by scan.margin, the furthest the grain can move them (config.lua tiles.scan).
+def(S.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", 1, if(temperature >= " ..
+  num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " .. num(V.lean_t) .. ") / " ..
+  num(V.lean_span) .. " + patch - " .. num(V.lean_cut - S.margin / V.lean_span) ..
+  " > 0, 0, if(temperature >= " .. num(X.temperate_from - S.margin) .. ", 0, 1))))", PATCH)
 
 -- The exclusion of non-adopted Alien Biomes land tiles from the temperate band.
 -- Inside a marsh the tiles open up to AB's wet ground, but not to its alien palette: a dry belt's red

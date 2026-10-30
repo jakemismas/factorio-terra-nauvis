@@ -99,3 +99,7 @@ Date: 2026-10-30
     - With Alien Biomes enabled every Terra Nauvis preset is offered: the palms read the
       climate alone, never the coast. A world made from a preset without Alien Biomes does the same
       once Alien Biomes is added.
+    - Beside Alien Biomes a Terra Nauvis map generates faster around vanilla land: Alien Biomes'
+      decoratives and trees no longer search their whole tile lists on every vanilla land tile. They
+      no longer grow where vanilla land may lie, which removes about 0.3 percent of the decoratives
+      in temperate regions; no tile moves.

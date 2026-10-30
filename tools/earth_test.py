@@ -16959,12 +16959,25 @@ def tf_land(cfg):
 
 
 def tf_extended(cfg, base_list):
-    """An AB tile restriction with the vanilla land tiles appended (data-final-fixes.lua extend_restriction)."""
-    out = list(base_list or [])
-    for t in tf_land(cfg):
+    """An AB tile restriction with the vanilla land tiles at its front (data-final-fixes.lua extend_restriction)."""
+    out = tf_land(cfg)
+    for t in base_list or []:
         if t not in out:
             out.append(t)
     return out
+
+
+def tf_list_hooked(cfg, ba):
+    """True when the list hook (data-final-fixes.lua list_hooks) applies to an AB autoplace: a probability, a
+    tile restriction longer than the vanilla land tiles, and none of them on it."""
+    land = tf_land(cfg)
+    lst = ba.get("tile_restriction") or []
+    return ba.get("probability_expression") not in (None, "") and len(lst) > len(land) and not set(land) & set(lst)
+
+
+def tf_list_hook_text(cfg, own):
+    """The list hook around an AB probability: the keep body's factor on the Earth branch, the own text off."""
+    return tf_restore_text(cfg, f"({own}) * {cfg['tiles']['scan']['body']}", f"({own})")
 
 
 def tf_hook_change(cfg, t, n, earth, base):
@@ -16972,8 +16985,9 @@ def tf_hook_change(cfg, t, n, earth, base):
     forests' stable hooks alone: a living tree's probability wrapped in the great-forests hook; beside
     Alien Biomes a restored vanilla tree, rock or decal rebuilt behind tn_on from vanilla.lua (restricted
     to vanilla land, the trees under the boost too), a re-listed decorative's (score) + key behind tn_on
-    with vanilla land as its restriction, and an AB restriction with the vanilla land tiles appended. Alien
-    Biomes' palms take no hook (tf_palm_trees), so any change to one fails."""
+    with vanilla land as its restriction, an AB restriction with the vanilla land tiles at its front, and
+    the list hook on a long AB-only tree or decorative list (tf_list_hooked). Alien Biomes' palms take no
+    hook (tf_palm_trees), so any change to one fails."""
     TR = cfg["trees"]
     R = TR["restore"]
     V = tf_vanilla()
@@ -17003,6 +17017,9 @@ def tf_hook_change(cfg, t, n, earth, base):
         own = ba.get("probability_expression")
         if own in (None, ""):
             return False
+        if tf_list_hooked(cfg, ba):
+            return ea == dict(ba, probability_expression=tf_boost_text(cfg, tf_list_hook_text(cfg, tf_lua_text(own))),
+                              tile_restriction=tf_extended(cfg, ba["tile_restriction"]))
         return ea == dict(ba, probability_expression=tf_boost_text(cfg, tf_lua_text(own)))
     if n in R["rocks"] and not ba:
         row = next((r for r in V["rocks"] if r["name"] == n and r["type"] == t), None)
@@ -17021,6 +17038,9 @@ def tf_hook_change(cfg, t, n, earth, base):
                           tile_restriction=tf_land(cfg))
     if t == "optimized-decorative" and n in V["extend"] and ba.get("tile_restriction") is not None:
         return ea == dict(ba, tile_restriction=tf_extended(cfg, ba.get("tile_restriction")))
+    if t == "optimized-decorative" and tf_list_hooked(cfg, ba):
+        return ea == dict(ba, probability_expression=tf_list_hook_text(cfg, tf_lua_text(ba["probability_expression"])),
+                          tile_restriction=tf_extended(cfg, ba["tile_restriction"]))
     return False
 
 
@@ -17065,6 +17085,30 @@ def tf_controls():
     out["trees: the boost alone on a living tree passes"] = (tf_hook_change(cfg, "tree", "tree-01", tree1, tree0), "")
     out["trees: the boost plus another change fails"] = (
         not tf_hook_change(cfg, "tree", "tree-01", dict(tree1, max_health=1), tree0), "")
+    # the list hook: a long AB-only list, as AB's own trees and decoratives hold it
+    ab_list = [f"mineral-x-{i}" for i in range(len(tf_land(cfg)) + 1)]
+    deco0 = {"type": "optimized-decorative", "name": "ab-deco",
+             "autoplace": {"probability_expression": "p", "tile_restriction": ab_list}}
+    deco1 = {"type": "optimized-decorative", "name": "ab-deco",
+             "autoplace": {"probability_expression": tf_list_hook_text(cfg, "p"),
+                           "tile_restriction": tf_extended(cfg, ab_list)}}
+    out["trees: the list hook alone on a long AB list passes"] = (
+        tf_hook_change(cfg, "optimized-decorative", "ab-deco", deco1, deco0), "")
+    out["trees: the list hook on a short AB list fails"] = (not tf_hook_change(
+        cfg, "optimized-decorative", "ab-deco",
+        {"type": "optimized-decorative", "name": "ab-deco", "autoplace": {
+            "probability_expression": tf_list_hook_text(cfg, "p"), "tile_restriction": tf_extended(cfg, ["a"])}},
+        {"type": "optimized-decorative", "name": "ab-deco",
+         "autoplace": {"probability_expression": "p", "tile_restriction": ["a"]}}), "")
+    out["trees: a list hook that leaves vanilla land off the front fails"] = (not tf_hook_change(
+        cfg, "optimized-decorative", "ab-deco",
+        {"type": "optimized-decorative", "name": "ab-deco", "autoplace": {
+            "probability_expression": tf_list_hook_text(cfg, "p"), "tile_restriction": ab_list + tf_land(cfg)}},
+        deco0), "")
+    out["trees: a list hook without the keep factor fails"] = (not tf_hook_change(
+        cfg, "optimized-decorative", "ab-deco",
+        {"type": "optimized-decorative", "name": "ab-deco", "autoplace": {
+            "probability_expression": "p", "tile_restriction": tf_extended(cfg, ab_list)}}, deco0), "")
     out["trees: a text other than the boost fails"] = (
         not tf_hook_change(cfg, "tree", "tree-01", dict(tree0, autoplace={"control": "trees",
                                                                           "probability_expression": "1"}), tree0), "")
