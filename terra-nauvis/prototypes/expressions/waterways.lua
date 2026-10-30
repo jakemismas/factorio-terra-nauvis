@@ -78,8 +78,8 @@ local function natural_locals(g)
   local locals = {}
   local rx, ry, px, py = {}, {}, {}, {}
   for i, o in ipairs(N.warp) do
-    local nx, ny, amp = "wx" .. i, "wy" .. i, "(" .. num(o.amplitude[1]) .. " + " .. num(o.amplitude[2]) .. " * " .. s ..
-      ")"
+    local nx, ny = "wx" .. i, "wy" .. i
+    local amp = "(" .. num(o.amplitude[1]) .. " + " .. num(o.amplitude[2]) .. " * " .. s .. ")"
     locals[nx] = noise(o.seed1x, o.wavelength)
     locals[ny] = noise(o.seed1y, o.wavelength)
     rx[i], ry[i] = amp .. " * " .. nx, amp .. " * " .. ny

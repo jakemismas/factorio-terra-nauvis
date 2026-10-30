@@ -1248,8 +1248,8 @@ def waterway_footprint(cfg, mref, map_key, s, margin_tiles):
     reach = math.sqrt(2) / 2
     for f in rec["features"]:
         P = (np.asarray(f["polyline_geo"], float) - [ox, oy]) / s - 0.5
-        bw.band_into(mask, P, (f["hw_tiles"] + margin_tiles) / s + reach)
-    half = bw.ww_cfg(cfg)["basin_tiles"] / 2
+        bw.band_into(mask, P, (f["reach_tiles"] + margin_tiles) / s + reach)
+    half = bw.ww_cfg(cfg)["basin_tiles"] / 2 + bw.warp_reach(bw.ww_cfg(cfg), s)
     for b in rec.get("basins") or []:
         cx, cy = (b["centre"][0] - ox) / s - 0.5, (b["centre"][1] - oy) / s - 0.5
         h = (half + margin_tiles) / s + reach

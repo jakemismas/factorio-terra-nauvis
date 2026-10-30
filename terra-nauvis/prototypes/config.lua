@@ -1763,7 +1763,7 @@ return {
         {seed1x = 7505, seed1y = 7506, wavelength = {14, 1.5}, amplitude = {0.6, 0.2}, passage = 1},
       },
       noise_peak = 1.7,
-      width = {seed1 = 7507, wavelength = {60, 60}, amplitude = 0.3, floor_half_tiles = 5},
+      width = {seed1 = 7507, wavelength = {60, 60}, amplitude = 0.3, floor_half_tiles = 5.5},
       profile = {source = 0.7, mouth = 1.35, tip = 0.55, taper_tiles = {10, 30}, step_tiles = 0.75},
       basin = {half_length_tiles = 8, radius_tiles = 12},
       deloop = {gap_px = 8, arc_px = 30, reach_px = 400},

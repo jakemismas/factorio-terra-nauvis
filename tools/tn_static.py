@@ -1991,8 +1991,12 @@ def waterway_basin_findings(repo, cfg):
                 out.append(f"manifest-{key}.json scale {s} names {rec.get('file')}, which is missing")
                 continue
             sets = lua_set_strings(f.read_text(encoding="utf-8"))
+            reach = cfg["waterways"]["natural"]["basin"]["half_length_tiles"]
             for b in rec.get("basins") or []:
-                term = f"abs(X - {float(b['centre'][0]):.9g}), abs(Y - {float(b['centre'][1]):.9g})"
+                # a basin is a capsule along its course, in its feature's frame
+                (cx, cy), (tx, ty) = b["centre"], b["tangent"]
+                x, y = ("X", "Y") if b.get("kind") == "river" else ("XP", "YP")
+                term = f"seg({x}, {y}, {float(cx - tx * reach):.9g}, {float(cy - ty * reach):.9g}, "
                 home, other = ("canals", "ww") if b.get("kind") == "canal" else ("ww", "canals")
                 if term not in sets.get(home, "") or term in sets.get(other, ""):
                     out.append(f"{key} scale {s}: the {b.get('kind')} basin of {b.get('feature')} at {b['centre']} is not "

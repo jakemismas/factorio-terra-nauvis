@@ -707,10 +707,10 @@ def river_widths(w, f, s, geo):
 
     def at(a):
         t = min(a / coast, 1.0)
-        hw = max(floor, f["hw"] * (Pf["source"] + (Pf["mouth"] - Pf["source"]) * t))
+        hw = max(floor, round(f["hw"] * (Pf["source"] + (Pf["mouth"] - Pf["source"]) * t) / step) * step)
         if a < taper:
-            hw *= Pf["tip"] + (1 - Pf["tip"]) * a / taper
-        return max(round(hw / step) * step, step)
+            hw = max(round(hw * (Pf["tip"] + (1 - Pf["tip"]) * a / taper) / step) * step, step)
+        return hw
 
     return [at(float(c + l / 2)) for c, l in zip(cum[:-1], L)], at
 
