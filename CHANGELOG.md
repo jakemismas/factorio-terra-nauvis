@@ -46,8 +46,9 @@ compatibility and known limits are in README.md, and the changelog players see i
   `data-src/approvals/destroyed-zone.json`: 15 vertices, each moved per seed by up to its own jitter of
   30 to 110 km through constants that fold, on a warp of 2.5 shares of the shared one. Three keep paths
   (Britain, Denmark with the Kiel Canal, the Carpathian crest) replace the six exclusion rows. The
-  random pool skips every city the outline can reach at any seed (266 km): 18 of Europe's 40. Old World
-  at scale 6, zone on: Tile 205,278 and Entity 31,965 against 205,408 and 32,095 before; previews in
+  random pool skips every city the outline can reach at any seed (266 km): 18 of Europe's 40. The heat
+  noise runs at 24 tiles instead of 96: single-tile land chunks in the zone fall from 441 of 919 to 15. Old World
+  at scale 6, zone on: Tile 205,212 and Entity 31,955 against 205,392 and 32,135 before; previews in
   `previews/earth-build/feedback-1005/zone/sheet-*.png`.
 - Start ore guarantee: `scripts/start_ore.lua`, called once from `start.on_init` on an
   Earth or Map-type-only world, floods the land the spawn reaches on foot (water tiles block,

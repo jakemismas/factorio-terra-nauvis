@@ -1494,7 +1494,8 @@ return {
   --          Biomes units: a heat-1 rim (100 to 120) that climbs within ramp / per_tile tiles to a core
   --          mixing heat-1 to heat-4 (R3 7.1: heat-2 from 120, heat-3 from 135, heat-4 from 145 to 150; S3's
   --          small disc ramped 0.49 per tile to its cap, which on this zone would pave it with heat-4);
-  --          -inf elsewhere, neutral for max(); the noise is in tiles, a texture, not geography
+  --          -inf elsewhere, neutral for max(); the noise is in tiles, a texture, not geography, and fine enough
+  --          that a chunk rarely holds one heat band alone (at 96 tiles 48 percent of land chunks did, at 24, 2)
   --   temperature   the Alien Biomes temperature's next version: max(climate-tiles' first version, heat)
   --          with the toggle on, the first version alone off (a folded if() on the switch, U5)
   --   pools  per map with a city fold, its random pick over the cities outside the zone: the fold's hash
@@ -1506,7 +1507,7 @@ return {
     pools = {europe = DE.pool_europe, atlantic = DE.pool_atlantic, olde_world = DE.pool_olde_world},
     start = {radius_tiles = 150, distance = DISTANCE},
     heat = {rim = 100.5, per_tile = 0.49, ramp = 30, cap = 149.5,
-            noise = {amplitude = 20, wavelength_tiles = 96, octaves = 3, persistence = 0.5, seed1 = 7901}},
+            noise = {amplitude = 20, wavelength_tiles = 24, octaves = 3, persistence = 0.6, seed1 = 7901}},
     switch_threshold = 0.5,
   },
 
