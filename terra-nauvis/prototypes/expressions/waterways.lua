@@ -72,17 +72,26 @@ end
 
 local E = {}
 -- The sets of every geography version that composes them, bound to its chain, for every offered scale,
--- once per chain class: the first version of a class that composes waterways keeps the bodies, and a
--- later one names them by set and scale. The game parses every body's text at startup, and every
--- version carrying the same sets cost about 6 s of "Time to load mods".
+-- once per chain class: the newest version of a class that composes waterways keeps the bodies, so the
+-- world its preset makes compiles exactly the program it did, and every older one names them by set and
+-- scale. The game parses every body's text at startup, and every version carrying the same sets cost
+-- about 6 s of "Time to load mods". A version added to a class later takes
+-- the bodies and turns the previous holder's into names (coast.lua's fit bodies, the same rule).
 local REP = {}
+for _, key in ipairs(cfg.map_order) do
+  for _, g in ipairs((cfg.geography[key] or {}).versions or {}) do
+    if g.waterways then
+      REP[chain_class(key, g)] = g.waterways
+    end
+  end
+end
+
 for _, key in ipairs(cfg.map_order) do
   local versions = (cfg.geography[key] or {}).versions or {}
   local files = FILES[key]
   for _, g in ipairs(versions) do
     local sets = g.waterways
-    local class = sets and chain_class(key, g)
-    local rep = class and REP[class]
+    local rep = sets and REP[chain_class(key, g)]
     for _, s in ipairs(sets and cfg.scales.values or {}) do
       local gen = files[s]
       if not gen then
@@ -90,7 +99,7 @@ for _, key in ipairs(cfg.map_order) do
       end
       local function set(kind, expression, functions)
         local name = sets[kind][s]
-        if rep then
+        if rep ~= sets then
           E[#E + 1] = {type = "noise-expression", name = name, expression = rep[kind][s]}
           return
         end
@@ -106,9 +115,6 @@ for _, key in ipairs(cfg.map_order) do
       set("canals", gen.canals, {"seg"})
       set("dams", gen.dams, {"seg"})
       set("fords", gen.fords, {"box"})
-    end
-    if class and not rep then
-      REP[class] = sets
     end
   end
 end

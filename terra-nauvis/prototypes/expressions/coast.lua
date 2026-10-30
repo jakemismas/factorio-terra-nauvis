@@ -92,14 +92,23 @@ end
 -- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain, once
 -- per chain class. The game parses every body's text at startup (about 0.5 us a byte), and six
 -- versions per map each carrying the same fit cost 13.5 MB of noise text and about 7 s of "Time to
--- load mods". The first version of a class keeps the body; a later one
--- names it, which reads the same values in every world that reads it. A noise-function called per
--- version saves nothing: the game expands every call at startup.
+-- load mods". The newest version of a class keeps the body, so the world
+-- its preset makes compiles exactly the program it did; every older one names it, which reads the
+-- same values in every world that reads it. A version added to a class later takes the body and turns
+-- the previous holder into a name, a change in place to a registered body (allowed while unreleased).
+-- A noise-function called per version saves nothing: the game expands every call at startup.
 local REP = {}
+for _, key in ipairs(cfg.map_order) do
+  for _, g in ipairs((cfg.geography[key] or {}).versions or {}) do
+    REP[chain_class(g.fits.geo, g)] = g.geo
+    REP[chain_class(g.fits.land_coarse, g)] = g.land_coarse
+  end
+end
+
 local function fit_body(name, file, g)
-  local key = chain_class(file, g)
-  if REP[key] then
-    def(name, REP[key])
+  local rep = REP[chain_class(file, g)]
+  if rep ~= name then
+    def(name, rep)
     return
   end
   local fit = FILES[file]
@@ -113,7 +122,6 @@ local function fit_body(name, file, g)
   L.U = g.u
   L.V = g.v
   def(name, fit.expression, L)
-  REP[key] = name
 end
 
 -- One geography version of a map: its chain, fit bodies, detail, box and elevation entry. Returns
