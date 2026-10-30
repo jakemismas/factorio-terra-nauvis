@@ -23,8 +23,9 @@
 --            map's edge has no pass on that map, a band along the edge near the crossing, so the ridge
 --            stops short of the edge (APPROVALS 5); or a noise gap, more of them the thinner the ridge,
 --            so a line breaks into cliffs of many lengths and a thin stretch frays into scattered ones
---   keep     1 at a slot, 0 past collar_tiles: inside it the ridge keeps its full width and has no
---            noise gaps, so a pass reads as a doorway in a wall and not as one more gap
+--   keep     1 at a slot, 0 past collar_tiles: it pulls the run to 1 and shuts the noise gaps, so round
+--            a slot the ridge stands at its true width, a pass reads as a doorway in a wall and not as
+--            one more gap, and the slot reaches right across the ridge
 -- The bodies a preset names through a key, as tn_land_coarse is: the crest (h) and the openings, which
 -- only the Cliff program reads, and the crest band (tn_band) the ore clearance reads in the Entity
 -- program, a cheap superset of the tiles whose centre lies within ore_clear_tiles of the unwandered
@@ -232,7 +233,7 @@ local function add_opening(O, m, pts, o, wide)
   local a, b = pts[o.seg], pts[o.seg + 1]
   local dx, dy = b[1] - a[1], b[2] - a[2]
   local len = math.sqrt(dx * dx + dy * dy)
-  -- across the crest the slot outreaches the ridge's half-width there, whatever the swell does to it
+  -- across the crest the slot outreaches the ridge's half-width there, the collar holding the run at 1
   local along = len > 0 and math.max(0, math.min(1, ((cu - a[1]) * dx + (cv - a[2]) * dy) / (len * len))) or 0
   local reach = math.max(RD.reach_tiles, wide[o.seg] + along * (wide[o.seg + 1] - wide[o.seg]) + RD.reach_margin_tiles)
   if o.vertex and len > 0 then
@@ -345,7 +346,8 @@ local function map_bodies(key)
   def(N.wander_u[key], g.u .. " + " .. waves(RD.wander.u, true))
   def(N.wander_v[key], g.v .. " + " .. waves(RD.wander.v, true))
   -- the width's multiplier: at 0 the ridge has thinned to nothing and only the fray is left
-  def(N.run[key], "max(0, " .. N.keep[key] .. ", " .. num(RD.run_base) .. " + " .. waves(RD.run) .. ")")
+  def(N.run[key], "max(0, (" .. num(RD.run_base) .. " + " .. waves(RD.run) .. ") * (1 - " .. N.keep[key] .. ") + " ..
+    N.keep[key] .. ")")
   local C = {u = N.wander_u[key], v = N.wander_v[key], run = N.run[key], L = {}, terms = {}, near = {}}
   local O = {u = N.wander_u[key], v = N.wander_v[key], fixed_u = g.u, fixed_v = g.v, L = {}, terms = {}, keeps = {}}
   local centre = " + " .. num(RD.centre_tiles)
