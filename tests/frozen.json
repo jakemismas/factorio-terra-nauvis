@@ -4779,10 +4779,10 @@
   },
   "tn_aux_fb_v1": {
    "type": "noise-expression",
-   "sha256": "066b04f1010400ac03d557e8ea6477af38c83f8d27129c1f971181f0f2006977",
+   "sha256": "94cd196437e7806acf6468660d55bddf9f111475a7706edabc701fd8fcd7e268",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_canals_atlantic_s1_v2": {
    "type": "noise-expression",
@@ -5423,10 +5423,10 @@
   },
   "tn_moisture_fb_v1": {
    "type": "noise-expression",
-   "sha256": "baf0102355bdbbff9f71e60b532b282c6e0cf2855b5492f6bb2ad27a6211f939",
+   "sha256": "30349b826f3109b4a00cbacc596cb10913ad6ade36e902fb3e65b6fe2651999e",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_palm_a_p_v1": {
    "type": "noise-expression",
@@ -5493,10 +5493,10 @@
   },
   "tn_temperature_fb_v1": {
    "type": "noise-expression",
-   "sha256": "eea159f8a63950c838fd33bdefa488f886a1f828f43b34259cdb33a4977c70ef",
+   "sha256": "1f26084e81694a5f919b486698f5ab671f7527f775c9ef1540fe6d8187536d90",
    "dump": "m1",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_u_atlantic_v3": {
    "type": "noise-expression",
@@ -9005,6 +9005,20 @@
    "sha256": "17f1184727e31238ca0227fd0136ce2d3cdaaac25a0b16d3e3454b4cf8ee687f",
    "dump": "m1",
    "slice": "olde-world-atlantic",
+   "registered": "2026-10-30"
+  },
+  "tn_tree_lift": {
+   "type": "noise-expression",
+   "sha256": "4b7e0eb295fee350a5574010e7f4ffb2259aef838e54c2d023aaca103a0f8770",
+   "dump": "m1",
+   "slice": "trees-forests",
+   "registered": "2026-10-30"
+  },
+  "tn_tree_lift_v1": {
+   "type": "noise-expression",
+   "sha256": "e8e2fcf7b194f3aaff900cea43d25b2bf9693ab1ed02e3fcec79dfd9d4d15072",
+   "dump": "m1",
+   "slice": "trees-forests",
    "registered": "2026-10-30"
   }
  }

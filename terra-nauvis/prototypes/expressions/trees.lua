@@ -22,9 +22,10 @@
 --
 -- The great forests (trees-forests; S10 section 4; ARCHITECTURE.md, "Stable hooks"): every living tree's
 -- probability becomes boost(own) below, if(tn_forests_on > threshold, min(cap, ((own) + tn_tree_lift) *
--- tn_tree_mult), own); the lift key's prototype holds 0 and Earth presets name the boreal lift (config.lua
--- trees.boost), so only the boreal great forests fill in beyond the multiplier. The gate's prototype holds 0 and the key's 1, so on every world without an Earth preset the
--- hook folds to the tree's own autoplace; Earth presets bake the gate from the great-forests setting and
+-- tn_tree_mult), own) on the base game's living trees (own alone on every other tree); the lift key's
+-- prototype holds 0 and Earth presets name the boreal lift (config.lua trees.boost), so only the boreal
+-- great forests fill in beyond the multiplier. The gate's prototype holds 0 and the key's 1, so on every
+-- world without an Earth preset the hook folds to the tree's own autoplace; Earth presets bake the gate from the great-forests setting and
 -- name the region layer's multiplier in the key (1 + forest boost 2 times the forest sum; the region
 -- formula lives in regions.lua alone, D13). A multiplier keeps the climate in charge: where a tree's
 -- own probability is 0 or below, the boost adds nothing (S10). Alien Biomes' palm prototypes carry no
@@ -55,10 +56,17 @@ end
 
 local M = {}
 
--- The great-forests hook around a tree's own probability (also each palm copy's second version).
-function M.boost(own)
-  return "if(" .. B.gate .. " > " .. num(cfg.hooks.threshold) .. ", min(" .. num(B.cap) .. ", ((" .. own .. ") + " ..
-    B.lift .. ") * " .. B.key .. "), " .. own .. ")"
+-- The great-forests hook around a tree's own probability (also each palm copy's second version, without
+-- the lift). `lift` adds the boreal lift key, for the base game's living trees only: Alien Biomes' trees
+-- already fill its taiga, and lifted they covered over half the land (draft run q-ab-after, 558 trees per
+-- chunk in the preview against 129 without).
+function M.boost(own, lift)
+  local inner = "(" .. own .. ")"
+  if lift then
+    inner = "((" .. own .. ") + " .. B.lift .. ")"
+  end
+  return "if(" .. B.gate .. " > " .. num(cfg.hooks.threshold) .. ", min(" .. num(B.cap) .. ", " .. inner .. " * " ..
+    B.key .. "), " .. own .. ")"
 end
 -- config.lua tiles.palm.table names this file for tools/build_palms.py; the registration scan reads
 -- literal module names only.

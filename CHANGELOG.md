@@ -736,6 +736,13 @@ compatibility and known limits are in README.md, and the changelog players see i
 
 ### Changed
 
+- The north without Alien Biomes: the fallback climate (shared by the three maps) keeps
+  the boreal belt moist and warm enough for vanilla's cold trees up to a treeline near 70N, pulls the
+  cold aux low, and the great-forests hook gains a boreal lift (`tn_tree_lift_v1`) for the base game's
+  living trees only. Old World at scale 6, seed 1000: sand in Siberia 21.7 to 0 percent, under 1 percent
+  in Scandinavia, and the taiga windows go from 1 to 4 preview trees a chunk to 136 to 148 in Siberia
+  and 80 in Scandinavia (Alien Biomes' own taiga: 110 to 129). Beside Alien Biomes the map is nearly
+  unchanged; the Moscow window gains about 23 percent preview trees; a non-Earth world is byte-identical.
 - Startup: each repeated geography body is defined once per chain class. Versions of
   a map with the same city offset (Europe 3 to 6 on the city fold; Atlantic and Old World 1 to 5 at
   0) read equal geo tiles in every world, so the newest version of a class keeps the coast fit,
