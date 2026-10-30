@@ -205,8 +205,8 @@ local function destroyed_values(map_key, v, names)
 end
 
 -- The climate grain (config.lua climate.grain): with Alien Biomes, the listed maps' tile scores read the
--- grain's bodies through the keys, and the temperate bonus and exclusion their grain versions. Europe is
--- not listed, so its keys stay their plain fields and its worlds keep their programs.
+-- grain's bodies through the keys, and the temperate bonus and exclusion their grain versions. A map not
+-- listed keeps its keys as the plain fields, and its worlds keep their programs.
 local function grain_values(map_key)
   local out = {}
   if AB and cfg.climate.grain.maps[map_key] then

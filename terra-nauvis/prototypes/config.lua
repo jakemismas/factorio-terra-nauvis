@@ -1783,16 +1783,18 @@ return {
     -- noise can move, so at scale 6, where the spread's finest octave is 240 tiles, every edge outside
     -- the temperate band is a razor line round a flat blob. Europe hides it: 54 percent of its land is
     -- temperate, against 18 on Old World and Atlantic, where vanilla tiles and their patch noise win.
-    -- Beside Alien Biomes, Old World and Atlantic give the tile scores alone frayed copies of the
-    -- three fields: each Alien Biomes tile with a prefix below reads keys.tile on its on branch, and
-    -- the temperate bonus and exclusion read the temperature copy, so their edge frays too. A copy adds
+    -- Beside Alien Biomes, every map below gives the tile scores alone frayed copies of the three
+    -- fields (Europe too: its Moscow had the same razor edges): each Alien Biomes tile with a prefix
+    -- below reads keys.tile on its on branch, and the temperate bonus and exclusion read the
+    -- temperature copy, so their edge frays too. A copy adds
     -- noise_layer_noise(layer), 6 to 48 tiles at every scale, the same call as grass-1's, so the Tile
     -- program shares it; trees and decoratives keep the plain fields, so placement stays as it was.
     -- The amounts are per unit (aux inside its cap), at full weight cold_span under cold_t and
     -- hot_span over hot_t and at none between, so temperate land keeps its character. A coarser noise
     -- only redraws the blobs (the temperate patch noise, 60 tiles and up at scale 6, left razor edges).
-    -- Each key's prototype is its plain field, so a preset that names none, Europe's, is unchanged.
-    grain = {maps = {atlantic = true, olde_world = true}, layer = 19, temperature = 3, moisture = 0.09, aux = 0.09,
+    -- Each key's prototype is its plain field, so a preset that names none keeps its program.
+    grain = {maps = {atlantic = true, europe = true, olde_world = true}, layer = 19,
+             temperature = 3, moisture = 0.09, aux = 0.09,
              cold_t = 32, cold_span = 10, hot_t = 58, hot_span = 7,
              prefixes = {"vegetation-", "mineral-", "frozen-", "volcanic-"},
              keys = {temperature = CT.K_TILE_T, moisture = CT.K_TILE_M, aux = CT.K_TILE_A}},
