@@ -26984,8 +26984,7 @@ EL_EDGE_RUNS = 2                 # edge windows per map: the longest box-touchin
 EL_MIN_RUN_PX = 32               # a side's run shorter than this gets no window (an islet the box cuts)
 EL_MIN_WATER_PX = 4              # the band's water edge never closer to the box than this (px)
 EL_MAX_REACH_PX = 20             # nor deeper than this: the nearest land the box does not cut lies at 22 px
-EL_MASK_SHARE = 0.07             # T1: the edge band mask stays at most 7 percent of a map (Europe 6.3)
-EL_CITY_ROOM_PX = 60             # every spawn city keeps this much ground between it and the band's reach
+EL_MASK_SHARE = 0.055            # T1: the edge band mask stays at most this share of a map (Europe's swell reads most)
 # One inland window per map with inland lakes, its centre in reference px: away from every coast and
 # box and beside the runner's default spawn (Europe: the Pannonian basin, north of Tirana at seed 1000).
 EL_LAKE_PX = {"europe": (1406, 1043)}

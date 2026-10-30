@@ -5005,10 +5005,10 @@
   },
   "tn_detail_europe_v6": {
    "type": "noise-expression",
-   "sha256": "14efcfd9cba80310c3e1d6869955daa405367b94d8b75fc6ea1a1f2bf522c6de",
+   "sha256": "c3ece207d2ce93eae337ac89e9670ba928a798c0b511d7b65b081f5212fed1d5",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_elevation_europe_v6": {
    "type": "noise-expression",
@@ -5019,7 +5019,7 @@
   },
   "tn_far_europe_v6": {
    "type": "noise-expression",
-   "sha256": "141c5b59b425e871483ba7a22ff4947f268784417c56ac5db6323c35f56213aa",
+   "sha256": "2eeec8998aacf5e5dd5317a163216e01e9a3802ba706a06abe6199b193523b6b",
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-30"
@@ -5068,10 +5068,10 @@
   },
   "tn_geo_europe_v6": {
    "type": "noise-expression",
-   "sha256": "919cbb0332cf94cd50110f1ac4734970671fdcfe2dc8ea6fe30076f139112841",
+   "sha256": "4a2276471884ed1e9eb8405b55aefc343793470d351e5aeb1965e4ee337b5fa4",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_gx_europe_v6": {
    "type": "noise-expression",
@@ -5103,10 +5103,10 @@
   },
   "tn_shore_europe_v3": {
    "type": "noise-expression",
-   "sha256": "fa49878612e2cb7d8b80dbfa038cd99bd9ca0ff5ee6c0f9fe4b659b6e5b146da",
+   "sha256": "124a57e910ebe4f33411fa0bc662abad16bb32b719a1699f80c4e37d063e1b6f",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_u_europe_v6": {
    "type": "noise-expression",
@@ -5460,7 +5460,7 @@
   },
   "tn_far_atlantic_v6": {
    "type": "noise-expression",
-   "sha256": "67828741ec28fe72f171b446120521ec2e6e5a955735ddceac8ffcade2423f87",
+   "sha256": "bdd396d9947d56850c7eda5ca9aaa13edb061c3f6006e010aee53218b6cb500d",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
