@@ -26,12 +26,11 @@
 --   5. the classes of the written tiles' bounding box are read once: a written tile that would stand as a
 --      strip one tile wide takes its neighbour in the box along, when that neighbour belongs to the same
 --      reference class;
---   6. one set_tiles call inside the chunk, without tile correction;
---   7. the written land takes the trees, rocks and decoratives of the land beside it (scripts/coastcover.lua).
--- It writes only tiles the rule changes, so a repeated delivery writes nothing and places no cover twice, and
--- it decides land and water from its own chunk only, so generation order does not change them. No player state,
--- no storage write. Decoded table rows are a cache of shipped data, so a joining peer that starts with an empty
--- cache computes the same tiles.
+--   6. one set_tiles call inside the chunk, without tile correction.
+-- It writes only tiles the rule changes, so a repeated delivery writes nothing, and what it reads outside its
+-- own chunk can only pick the name of a land tile, never land or water. No RNG, no player state, no storage
+-- write. Decoded table rows are a cache of shipped data, so a joining peer that starts with an empty cache
+-- computes the same tiles.
 local cfg = require("prototypes.config")
 local guards = require("scripts.guards")
 local coastcover = require("scripts.coastcover")
@@ -121,6 +120,8 @@ local EDGE = 0
 local EDGE_SIDE = {}
 local WATER, KEEP, NONLAND, NONLAND_SET, FALLBACK = {}, {}, {}, {}, nil
 local GROUND, GROUND_STAMP = nil, nil
+-- The corner ground (config.lua bandfix.smooth.corners), on the maps it lists: CORNERS is that table.
+local CORNERS, CORNER, CORNER_STAMP = nil, {}, nil
 
 ------------------------------------------------------------------------------------------------ the tables
 
@@ -651,7 +652,9 @@ local function land_lattice(surface)
     end
   end
   local total = n * n
-  while found > 0 and found < total do
+  local pass = 0
+  while found > 0 and found < total and not (CORNERS and pass >= CORNERS.reach) do
+    pass = pass + 1
     local grown = {}
     for j = 0, n - 1 do
       for i = 0, n - 1 do
@@ -691,6 +694,38 @@ local function chunk_ground(surface)
   return GROUND
 end
 
+-- The first land on rings of samples around one chunk corner. Every chunk that meets at the corner reads the same
+-- samples, so what they write there meets without a seam.
+local function corner_sample(surface, cx, cy)
+  for _, r in ipairs(CORNERS.rings) do
+    for dy = -1, 1 do
+      for dx = -1, 1 do
+        local t = surface.get_tile(cx + dx * r, cy + dy * r)
+        if t.valid and not NONLAND_SET[t.name] and t.name ~= "out-of-map" then
+          return t.name
+        end
+      end
+    end
+  end
+  return nil
+end
+
+-- The ground of written land out of reach of the chunk's own lattice: the nearest of the chunk's four corners, the
+-- borders between them wandering with the wobble, so a chunk's edge always takes its own corners and no chunk
+-- is a rectangle of one tile (config.lua bandfix.smooth.corners).
+local function corner_ground(surface, lx, ly)
+  if CORNER_STAMP ~= stamp then
+    CORNER_STAMP = stamp
+    for k = 0, 3 do
+      CORNER[k] = corner_sample(surface, X0 + (k % 2) * CT, Y0 + floor(k / 2) * CT)
+    end
+  end
+  local x, y = X0 + lx, Y0 + ly
+  local i = (lx + 0.5) / CT + CORNERS.wander * WOBBLE[y % WP * WP + x % WP] >= 0.5 and 1 or 0
+  local j = (ly + 0.5) / CT + CORNERS.wander * WOBBLE[(y + WP_Y) % WP * WP + (x + WP_X) % WP] >= 0.5 and 1 or 0
+  return CORNER[j * 2 + i] or CORNER[j * 2 + 1 - i] or CORNER[(1 - j) * 2 + i] or CORNER[(1 - j) * 2 + 1 - i]
+end
+
 local RECS = {}
 
 -- Step 6: one set_tiles call; written land takes the ground around it, and written water is deep in an open-sea
@@ -705,7 +740,8 @@ local function write(surface)
       if not cells then
         cells, n, step = land_lattice(surface)
       end
-      name = cells[floor((ly + step / 2) / step) * n + floor((lx + step / 2) / step)] or chunk_ground(surface)
+      name = cells[floor((ly + step / 2) / step) * n + floor((lx + step / 2) / step)] or
+        (CORNERS and corner_ground(surface, lx, ly)) or chunk_ground(surface)
     end
     local rec = RECS[q]
     if rec then
@@ -841,15 +877,7 @@ local function prepare(st)
   STATE, SHARED, MASKS, MAP = st, tabs.shared, masks, m
   local gv = guards.geography_of(st.geo)
   EDGE = (gv and gv.version and gv.version.edge) and cfg.coast.edge_band.mask_px or 0
-  EDGE_SIDE = {}
-  if EDGE > 0 then
-    local margins = cfg.coast.edge_band.outline.margins[st.map]
-    for side, n in pairs({left = m.height_px, right = m.height_px, top = m.width_px, bottom = m.width_px}) do
-      if margins[side] then
-        EDGE_SIDE[side] = side_reach(margins[side], n)
-      end
-    end
-  end
+  CORNERS = SM.corners.maps[st.map] and SM.corners or nil
   LUT = reach_lut(st.scale)
   THIN = thin_lut(st.scale, LUT)
   SMOOTH, THIN_CENTRE, WOBBLE = {}, {}, wobble_table()
