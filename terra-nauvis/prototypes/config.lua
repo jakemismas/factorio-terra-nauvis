@@ -2144,6 +2144,45 @@ return {
     },
   },
 
+  -- The start ore guarantee: vanilla's starting patches pick
+  -- among a few fixed spot-noise candidates per ore, so on archipelago and peninsula starts no
+  -- start mask can keep every ore on the spawn's land (design notes 2026-10-29 00:30: even an oracle
+  -- mask loses some). Once, in on_init of an Earth or Map-type-only world, scripts/start_ore.lua
+  -- floods the land reached on foot from the spawn (4-connected tiles without `water_layer` within
+  -- `grid` tiles), sums each ore's amount on those tiles within `radius` tiles, and where that is
+  -- under `trigger` times `reference` (vanilla's mean starting amount within 150 tiles at seeds
+  -- 1000, 1002 and 1004, times the control's richness) places one patch of `fill` times it on
+  -- reached land: the nearest centre `min_distance` (vanilla's starting-patch excluder) to radius -
+  -- r tiles out (rings every `ring_step` tiles, about `arc_step` tiles apart on a ring, at least
+  -- `min_ring_points`) whose disc of r + `land_margin` tiles is all reached land and holds no
+  -- resource within r + `ore_margin`. r is the disc that holds the amount at `density` per tile,
+  -- shrunk by `shrink` down to `min_radius` when nothing fits. An ore whose control size is 0 and
+  -- every world with rso-mod active (RSO places starting ore itself) are left alone. Scripted ore
+  -- never shows in a map preview.
+  start_ore = {
+    ores = {
+      {resource = "iron-ore", reference = 368000, density = 540},
+      {resource = "copper-ore", reference = 357000, density = 860},
+      {resource = "coal", reference = 266000, density = 890},
+      {resource = "stone", reference = 159000, density = 750},
+    },
+    rso = "rso-mod",
+    resource_type = "resource",
+    water_layer = "water_tile",
+    grid = 160,
+    radius = 150,
+    trigger = 0.5,
+    fill = 0.5,
+    min_distance = 40,
+    ring_step = 4,
+    arc_step = 8,
+    min_ring_points = 8,
+    land_margin = 2,
+    ore_margin = 3,
+    shrink = 0.75,
+    min_radius = 4,
+  },
+
   -- The spawn (milestone spawn-cities; S7 option ii, the shift; D15, D25, D29): the numbers spawn.lua
   -- builds every spawn body from (the names are each geography version's own, in its spawn record).
   --   hash: random is (map_seed_small * small_mult + floor(map_seed / high_div) * high_mult) % N + 1
@@ -2472,6 +2511,8 @@ return {
       toggle_off = "toggle-off",
       cliff_reset = "cliff-reset",
       destroyed_no_ab = "destroyed-no-ab",
+      start_ore = "start-ore",
+      start_ore_none = "start-ore-none",
     },
   },
 

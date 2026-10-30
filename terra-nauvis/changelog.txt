@@ -23,6 +23,10 @@ Date: 2026-10-30
       World (Random or one of 33: EarthMaps' 30 with Prague at the real city, plus Frankfurt, Aachen
       and Moscow): the map moves so the city sits at the spawn, with a lake nearby and the starting
       ore on the city's own land, as on Europe.
+    - Every start gets iron, copper, coal and stone on the land it can walk to: where the start area
+      holds less than half of a normal start's amount of an ore on that land (an island or
+      peninsula start, such as Stockholm or Athens), a patch of it is placed on that land when the
+      world is created.
     - A loud message when a save names a map expression this version lacks, and an info line when
       the scale or spawn city setting no longer matches a save.
     - Spawn city startup setting for Europe: Random (the default) or one of 40 cities. The map moves

@@ -40,6 +40,14 @@ compatibility and known limits are in README.md, and the changelog players see i
 
 ### Added
 
+- Start ore guarantee: `scripts/start_ore.lua`, called once from `start.on_init` on an
+  Earth or Map-type-only world, floods the land the spawn reaches on foot (water tiles block,
+  within 160 tiles) and, for iron, copper, coal and stone, places one patch of half vanilla's mean
+  starting amount on that land where the reached amount within 150 tiles is under half of it
+  (config.lua `start_ore`; skipped with rso-mod or an ore control at size 0). Fixes the ore-starved
+  starts of Stockholm (scales 1 to 3), Athens (scale 5) and island starting patches such as
+  Stockholm scale 1 coal at seed 1002. No noise body changes.
+
 - the first release fast finish: groups 1 to 3 and edge-and-lakes
   assembled on one branch. Atlantic's and Old World's version 6 (`tn_geo` 17 and 18) carry the spawn
   city the drafts lacked (every Old World start had landed at the map's offset 0, 0, in India): the
