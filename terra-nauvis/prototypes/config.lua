@@ -1187,12 +1187,15 @@ return {
     -- 4 px, so every land column the box cuts ends in water before it, and never deeper than 20 px,
     -- short of the nearest land the box does not cut (Cyprus 22 px, Alaska 24 px, Ireland and Stewart
     -- Island 25 px; design notes, edge-and-lakes). T1 masks reference land within width_px + warp_px + 1
-    -- px of the box (mask_px), plus the side's margin where outline below gives it one; the band-fix
-    -- handler writes nothing in that same reach (scripts/bandfix.lua, edge_band_reach in earth_test.py).
+    -- px of the box (mask_px).
+    -- fold_geographies: these read the octaves' sum folded back at +-1 instead of clamped there. A clamp
+    -- pins about a fifth of the edge to one distance from the box, so it drew dead straight coast and
+    -- square bays for hundreds of tiles along it.
     edge_band = {
       width_px = 12,
       warp_px = 8,
       mask_px = 21,
+      fold_geographies = {14, 17},
       octaves = {
         {seed1 = 7401, wavelength_px = 32, weight = 1},
         {seed1 = 7402, wavelength_px = 12, weight = 0.5},
@@ -2237,7 +2240,13 @@ return {
     smooth = {min_scale = 3, threshold = 0.72, wobble = 0.22, thin = 0.35, spline_centre = 0.75, ease = 3,
               period_tiles = 64, lattice_tiles = 4, shift_tiles = {21, 32},
               octaves = {{cells = 4, weight = 1}, {cells = 12, weight = 0.6}},
-              hash = {x = 73, y = 179, seed = 283, modulus = 1021, mix = 31, half = 510}},
+              hash = {x = 73, y = 179, seed = 283, modulus = 1021, mix = 31, half = 510},
+              -- corners: on these maps written land more than reach lattice steps from the chunk's own land takes
+              -- the ground of the chunk's nearest corner, each the first land on rings of samples round that corner,
+              -- the borders between corners wandering by wander of a chunk. Picked per chunk, the ground drew
+              -- rectangles of one tile with straight sides along chunk borders wherever a coast was written far
+              -- from its land (Danube delta, Amazon mouth; the maintainer's straight blocky edge).
+              corners = {maps = {atlantic = true}, reach = 3, rings = {8, 24, 48, 64}, wander = 0.4}},
     neighbours = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}},
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
     varint_base = 32,

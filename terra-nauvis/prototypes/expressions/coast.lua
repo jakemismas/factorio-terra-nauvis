@@ -196,47 +196,19 @@ local function version(m, g)
       end
       return table.concat(terms, " + ")
     end
-    -- A margin table as an expression of along, reference px along its side: one clamped ramp per
-    -- segment that changes, their constants folded into one number, so a table's cost is those ramps.
-    local function margin(knots, along)
-      local terms, c = {}, knots[1][2]
-      for i = 2, #knots do
-        local a0, v0, a1, v1 = knots[i - 1][1], knots[i - 1][2], knots[i][1], knots[i][2]
-        if v1 ~= v0 then
-          local slope = (v1 - v0) / (a1 - a0)
-          c = c - slope * a0
-          terms[#terms + 1] = num(slope) .. " * clamp(" .. along .. ", " .. num(a0) .. ", " .. num(a1) .. ")"
-        end
-      end
-      return num(c) .. " + " .. table.concat(terms, " + ")
-    end
-    local O = B.outline
-    local M = O.margins[m.key]
+    local sum = table.concat(band_octaves, " + ")
     local locals = {
-      dl = dl, dr = dr, dt = dt, db = db,
-      d = "min(dl, dr, dt, db)",
-      au = "dl / " .. s, av = "dt / " .. s,
-      warp = num(B.warp_px) .. " * clamp(" .. noise_terms(B.octaves) .. ", -1, 1)",
+      d = d,
+      warp = num(B.warp_px) .. " * clamp(" .. sum .. ", -1, 1)",
+      b = "clamp(d / " .. s .. " + warp - " .. num(B.width_px) .. ", " .. num(-C.transfer_clamp_px) .. ", " ..
+        num(C.transfer_clamp_px) .. ")",
     }
-    local inside = {}
-    local sides = {left = {"dl", "av"}, top = {"dt", "au"}, right = {"dr", "av"}, bottom = {"db", "au"}}
-    for _, side in ipairs({"left", "top", "right", "bottom"}) do
-      local dist, along = sides[side][1], sides[side][2]
-      local term = dist .. " / " .. s
-      if M[side] then
-        local parts = {num(O.floor)}
-        for i, band in ipairs(O.bands) do
-          local n = "ol" .. i
-          locals[n] = num(band.gain) .. " * (" .. noise_terms(band.octaves) .. ")"
-          parts[#parts + 1] = num(band.share / 2) .. " * (1 + " .. n .. " / (1 + abs(" .. n .. ")))"
-        end
-        locals.share = table.concat(parts, " + ")
-        term = term .. " - share * (" .. margin(M[side], along) .. ")"
+    for _, id in ipairs(B.fold_geographies) do
+      if id == g.geo_id then
+        locals.warp_sum = sum
+        locals.warp = num(B.warp_px) .. " * clamp(2 * clamp(warp_sum, -1, 1) - warp_sum, -1, 1)"
       end
-      inside[#inside + 1] = term
     end
-    locals.b = "clamp(min(" .. table.concat(inside, ", ") .. ") + warp - " .. num(B.width_px) .. ", " ..
-      num(-C.transfer_clamp_px) .. ", " .. num(C.transfer_clamp_px) .. ")"
     local o = num(C.transfer_offset)
     local band
     if g.shore then
