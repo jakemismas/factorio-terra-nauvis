@@ -395,10 +395,11 @@ end
 -- D33's strip rule (ARCHITECTURE.md, "D33 surface guard"): a surface other than Nauvis drops a listed
 -- key only when the save's default value names an Earth body or the key is an Earth per-save key. From
 -- ridges the listed keys include vanilla properties (cliff_elevation, cliffiness, the ore
--- probabilities, the water pins' readers), and vanilla's Lakes and Island presets set cliffiness and
--- cliff_elevation to the very values Space Age's planets set themselves, so comparing the value alone
--- would blank those planets' own keys on a world that is no Earth map. The guard's comparison with the
--- default value stays; this predicate gates it (the static d33_guard row requires the call).
+-- probabilities, beside group 0's water slider readers), and vanilla's Lakes and Island presets set
+-- cliffiness and cliff_elevation to the very values Space Age's planets set themselves, so comparing
+-- the value alone would blank those planets' own keys on a world that is no Earth map. The guard's
+-- comparison with the default value stays; this predicate gates it (the static d33_guard row requires
+-- the call).
 function M.earth_valued(key, value)
   local prefix = cfg.identity.noise_prefix
   local function earth(s)

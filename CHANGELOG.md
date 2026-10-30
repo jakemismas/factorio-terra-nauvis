@@ -436,9 +436,11 @@ versions follow [Semantic Versioning](https://semver.org/).
   probability of iron, copper, coal, stone, uranium and crude oil through each Earth preset's ore keys,
   reading a cheap crest band at each tile's centre in the Entity program, with no
   `cliff_removal_probability` edit; the water frequency slider's two vanilla
-  readers, `segmentation_multiplier` and `nauvis_segmentation_multiplier`, pinned on every Earth preset
-  to registered constant bodies holding their default-slider values (T4); `guards.earth_valued`, the
-  D33 strip rule, with the static `d33_guard` row; the static `ranges` row; the runner's rows
+  readers, `segmentation_multiplier` and `nauvis_segmentation_multiplier`, stay group 0's
+  `water_slider` constants on every Earth preset (T4; no pin bodies ship); `guards.earth_valued`, the
+  D33 strip rule, with the static `d33_guard` row; the static `redefinitions` row (a mod Lua file
+  defines each top-level function once, so a stale copy cannot silently replace one); the static
+  `ranges` row; the runner's rows
   (`rd_dump_facts`, `rd_offline`, `rd_t4_fg`, `rd_t7_fg` in the gate; `rd_t6`, `rd_t6_start`, `rd_t4`,
   `rd_t7`, `rd_t8`, `rd_t11`, `rd_v2`, `rd_t15b`, `rd_t15e` in the suite), M1 against M0 and M2 against
   BAB wherever the criteria name M2; and the test mod `tools/mods/ea-path-probe` (T15e driver 2). The
@@ -462,21 +464,20 @@ versions follow [Semantic Versioning](https://semver.org/).
   and 6 and the cliff sliders, the cliff signature identical; at cliffs none the start area holds 0
   cliffs (143 at normal) and the reset logs once and restores all 1,305 cliffs beyond it; water
   frequency moved the Earth preview at every seed, since vanilla trees (and on M2 Alien Biomes'
-  shallows) read it through `segmentation_multiplier` and `nauvis_segmentation_multiplier`, which the
-  water pins added afterwards hold constant (not yet run in game). T7 on 11 cities on or near crests
+  shallows) read it through `segmentation_multiplier` and `nauvis_segmentation_multiplier`, which
+  group 0's `water_slider` constants now hold on every Earth preset (not yet run in game on this view). T7 on 11 cities on or near crests
   (30 spawns at scales 1 and 6): 0 cliffs and 0 ridge cliffiness within 150 tiles. T8: 0 ore entities
   on a ridge cell at the three seeds at scales 1 and 6 (125 to 8,719 resources a dump), the
   vanilla-keys control 10,040 of 20,090, the default preset hash- and complexity-identical to M0. T11:
   an Alpine block keeps its 57 cliffs loaded with ridges off (fresh B 0), the drift line once. T15e
   driver 2 fires its trigger. On the final build `rd_dump_facts`, isolation (a) and
   (b) on every preset at scales 6 and 1, and the frozen row pass, and `rd_t4_fg` held every slider but
-  water frequency before the pins, M0 changing under each. Offline after that run (no game):
+  water frequency before its readers were held constant, M0 changing under each. Offline after that run (no game):
   `earth_test.py static` passes 17 of 17 rows (187 fixture controls, the new `d33_guard` among them);
   `rd_offline` holds 31 of 31 checks and controls, among them the crest band mirror (0 of 8.2 million
   tile centres within the ore clearance outside the band on the three maps at scale 6), rd_geo equal
   to `oracle.place_tile` at pixel centres, and the live sample's P1 call resolving for every milestone
-  whose timed_ss names t15b_m1; the pins pass `rd_dump_facts` on the draft's M1 dump with the pins
-  added, with its controls. The M2 halves, `rd_t7_fg`, `rd_v2`, T8 on Atlantic and Old World, the
+  whose timed_ss names t15b_m1. The M2 halves, `rd_t7_fg`, `rd_v2`, T8 on Atlantic and Old World, the
   timed T15 rows, the full T7 run, `baseline`, the suite and the gate remain for the build.
 - Milestone `resources-enemies`: historical ore hotspots, offshore fields, a richness ramp, sparser
   base ore and heavier biters inside hotspots. `prototypes/tables/hotspots.lua` (the 77 adopted rows of

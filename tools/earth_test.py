@@ -8754,29 +8754,19 @@ def rd_resource_removal(dump):
     return {n: (p or {}).get("cliff_removal_probability") for n, p in ((dump or {}).get("resource") or {}).items()}
 
 
-def rd_pin_value(text):
-    """A water pin's vanilla expression at the default slider (control:water:frequency 1), or None when
-    the text is more than arithmetic on that one control."""
-    s = str(text).replace("control:water:frequency", "1")
-    if not re.fullmatch(r"[0-9.\s*+\-/()]+", s):
-        return None
-    try:
-        return float(eval(s, {"__builtins__": {}}, {}))
-    except Exception:
-        return None
-
-
 def rd_dump_findings(cfg, d0, d1, table, base="M0"):
     """The ridges' facts in the M0 and M1 dumps, or BAB's and M2's with base "BAB" (T16, T13; design notes
     08:00): every resource's
     cliff_removal_probability equals M0's (the milestone sets none, so the ridge exclusion acts only through
     Earth ore probability); every Earth preset bakes the ridges toggle from its setting, points the cliff
-    properties at the ridge bodies, its crest, openings and band keys at its own map's bodies, each
-    Earth ore's probability key at a wrapper holding M0's live probability times the ore clearance and
-    the water frequency slider's two vanilla readers at their pins (T4), each pin the constant of M0's
-    reader at the default slider; no ridge body reads cliff_richness, the cliff control or a slider
-    constant but the contour units, and every ridge body reads only its map's chain, the per-save
-    numbers and keys and map constants (firewall-clean). Returns (findings, meas)."""
+    properties at the ridge bodies, its crest, openings and band keys at its own map's bodies, and each
+    Earth ore's probability key at a wrapper holding M0's live probability times the ore clearance; no
+    ridge body reads cliff_richness, the cliff control or a slider constant but the contour units, and
+    every ridge body reads only its map's chain, the per-save numbers and keys and map constants
+    (firewall-clean). Returns (findings, meas).
+    The water frequency slider's two vanilla readers (T4) are no ridges check: the restack dropped the
+    draft's pin bodies, and group 0's water_slider constants hold them on every Earth preset, which the
+    gate's water_inert row walks and previews."""
     RD, K, sw = cfg["ridges"], cfg["keys"], cfg["toggles"]["ridges"]
     N = RD["names"]
     out = []
@@ -8784,7 +8774,7 @@ def rd_dump_findings(cfg, d0, d1, table, base="M0"):
     if r0 != r1:
         out.append(f"cliff_removal_probability differs from {base}'s: "
                    f"{[(k, r0.get(k), r1.get(k)) for k in sorted(set(r0) | set(r1)) if r0.get(k) != r1.get(k)][:4]}")
-    ne0, ne1 = d0.get("noise-expression") or {}, d1.get("noise-expression") or {}
+    ne1 = d1.get("noise-expression") or {}
     want_toggle = sw["on"] if cfg["settings"][sw["setting"]]["default_value"] else sw["off"]
     for key in cfg["preset_order"]:
         p = cfg["presets"][key]
@@ -8812,21 +8802,7 @@ def rd_dump_findings(cfg, d0, d1, table, base="M0"):
             body = (ne1.get(o["name"]) or {}).get("expression")
             if body != f"({live}) * {N['clear']}":
                 out.append(f"wrapper {o['name']} is {str(body)[:80]!r}, not {base}'s live probability times {N['clear']}")
-        for w in RD.get("water_pins") or []:
-            if pen.get(w["key"]) != w["name"]:
-                out.append(f"{p['name']}: {w['key']} is {pen.get(w['key'])!r}, want the pin {w['name']} (T4: the water "
-                           f"frequency slider inert)")
-    for w in RD.get("water_pins") or []:
-        body = (ne1.get(w["name"]) or {}).get("expression")
-        if body != cfg["number_format"] % w["value"]:
-            out.append(f"pin {w['name']} is {body!r}, not the constant {cfg['number_format'] % w['value']}")
-        van = (ne0.get(w["key"]) or {}).get("expression")
-        if van != w["vanilla"]:
-            out.append(f"{base}'s {w['key']} is {van!r}, not {w['vanilla']!r}: its pin no longer mirrors the vanilla reader")
-        elif rd_pin_value(van) != float(w["value"]):
-            out.append(f"pin {w['name']} holds {w['value']}, but {base}'s {w['key']} reads {rd_pin_value(van)} at the default "
-                       f"slider")
-    ridge = [N["d2"], N["free"], N["cliff_elevation"], N["cliffiness"], N["clear"]] + \
+    ridge =[N["d2"], N["free"], N["cliff_elevation"], N["cliffiness"], N["clear"]] + \
         [N[k][mk] for k in ("crest", "openings", "band") for mk in cfg["map_order"] if N[k].get(mk)]
     banned = ("cliff_richness", "control:", "segmentation_multiplier", "cliff_smoothing")
     allowed_maps = {}
@@ -8859,8 +8835,7 @@ def rd_dump_findings(cfg, d0, d1, table, base="M0"):
             other = sorted(x for m2, s2 in allowed_maps.items() if m2 != mk for x in s2 & refs)
             if other:
                 out.append(f"{n} reads another map's chain {other}")
-    del ne0
-    meas = {"resources": sorted(r1), "bodies": len(ridge), "toggle_default": want_toggle,
+    meas ={"resources": sorted(r1), "bodies": len(ridge), "toggle_default": want_toggle,
             "openings": {k: sum(1 for r in table for o in r.get("openings") or [] if o["kind"] == k)
                          for k in ("pass", "gap", "edge")}}
     return out, meas
@@ -8887,18 +8862,6 @@ def rd_dump_controls(cfg, d0, d1, table):
     if N["cliffiness"] in c.get("noise-expression", {}):
         c["noise-expression"][N["cliffiness"]]["expression"] += " * cliff_richness"
     res["a cliff body reading cliff_richness fails"] = bool(rd_dump_findings(cfg, d0, c, table)[0])
-    pins = cfg["ridges"].get("water_pins") or []
-    if pins:
-        w = pins[0]
-        e = dict(d1, **{"map-gen-presets": copy.deepcopy(d1.get("map-gen-presets") or {})})
-        pname = cfg["presets"][cfg["preset_order"][0]]["name"]
-        preset_pen(e, pname).pop(w["key"], None)
-        res["a preset that leaves a water frequency reader unpinned fails"] = bool(rd_dump_findings(cfg, d0, e, table)[0])
-        f = dict(d0, **{"noise-expression": dict(d0.get("noise-expression") or {})})
-        f["noise-expression"][w["key"]] = dict(f["noise-expression"].get(w["key"]) or {},
-                                               expression=f"2 * {w['vanilla']}")
-        res["a vanilla reader that no longer equals its pin at the default slider fails"] = bool(
-            rd_dump_findings(cfg, f, d1, table)[0])
     return res
 
 
@@ -8906,7 +8869,7 @@ def row_rd_dump_facts(ctx, mods, sec6, row, cache):
     """T16 (FG) and T13 facts of milestone ridges from the M0 and M1 dumps and, M2 in the
     registry's dumps (from climate-tiles; ridges names it too), the BAB and M2 dumps: no
     cliff_removal_probability set (every resource's value in M1 equals M0's and in M2 equals BAB's), the
-    presets' ridge keys, ore wrappers and water pins, slider-proof and firewall-clean ridge bodies, on
+    presets' ridge keys and ore wrappers, slider-proof and firewall-clean ridge bodies, on
     both pairs; with positive controls. The M2 half fails closed when its dumps are missing."""
     cfg = mods.cfg
     d0, d1 = ctx.shared.get("dump_m0"), ctx.shared.get("dump_m1")
