@@ -3911,6 +3911,7 @@ def append_only_fixtures(cfg, fz):
             "two references disagreeing on a dump label": (fz, cfg, {"main": ref, "origin/main": other_label})}.items():
         f = append_only_findings(wfz, wcfg, refs)
         out.append((f"append-only: {label} fails", bool(f), f[:1]))
+    out += unreleased_moves_fixtures(cfg, fz, ref, v, dropped, rehashed)
     for label, (path, refs) in {
             "a ref that does not resolve": ("tests/frozen.json", ["refs/heads/tn-fixture-no-such-ref"]),
             "a resolving ref without the file": ("tests/tn-fixture-no-such-file.json", ["HEAD"])}.items():
@@ -3919,6 +3920,67 @@ def append_only_fixtures(cfg, fz):
             out.append((f"append-only: {label} fails closed", False, "read without an error"))
         except ReferenceUnreadable as e:
             out.append((f"append-only: {label} fails closed", True, str(e)[:80]))
+    return out
+
+
+def unreleased_moves_fixtures(cfg, fz, ref, name, dropped, rehashed):
+    """The unreleased waiver: a record moved or dropped passes only at the exact hash the waiver lists
+    (append-only and snapshots alike), a retired tn_geo id only when listed; a release tag voids the
+    waiver and fails the row while it holds entries, a broken file fails closed, and tools/refreeze.py
+    records each hash a record leaves."""
+    import copy
+    import refreeze
+    out = []
+    rec = fz["bodies"][name]
+    moves = {"format": tnfrozen.MOVES_FORMAT, "ruling": "fixture", "geographies": [], "records": {name: [rec["sha256"]]}}
+    wrong = dict(moves, records={name: ["4" * 64]})
+    main = {"main": ref}
+    for label, wfz in (("a re-hashed body", rehashed), ("a dropped body", dropped)):
+        f = append_only_findings(wfz, cfg, main, moves)
+        out.append((f"unreleased: {label} the waiver lists at its landed hash passes", not f, f[:1]))
+        out.append((f"unreleased: {label} the waiver lists at another hash fails",
+                    bool(append_only_findings(wfz, cfg, main, wrong)), ""))
+    snap = {"format": tnfrozen.SNAPSHOT_FORMAT, "bodies": {name: rec}, "sha256": tnfrozen.key_of({name: rec})}
+    out.append(("unreleased: a snapshot's record the waiver lists passes",
+                not tnfrozen.snapshot_problems(rehashed, {"fx": snap}, moves), ""))
+    out.append(("unreleased: a snapshot's record the waiver does not list fails",
+                bool(tnfrozen.snapshot_problems(rehashed, {"fx": snap}, wrong)), ""))
+    row = next(r for r in cfg["release_registry"] if "geography" in r)
+    gone = copy.deepcopy(cfg)
+    gone["release_registry"] = [r for r in cfg["release_registry"] if r != row]
+    out.append(("unreleased: a tn_geo id that left the registry fails", bool(append_only_findings(fz, gone, main)), ""))
+    f = append_only_findings(fz, gone, main, dict(moves, geographies=[row["geography"]]))
+    out.append(("unreleased: a tn_geo id the waiver retires passes", not f, f[:1]))
+    with tempfile.TemporaryDirectory(prefix="tn-moves-") as td:
+        p = Path(td) / "tests" / "unreleased-moves.json"
+        p.parent.mkdir()
+        p.write_text(json.dumps(moves), encoding="utf-8")
+        f, got = moves_findings(td, [])
+        out.append(("unreleased: the waiver applies while no release exists", not f and got == moves, f[:1]))
+        f, got = moves_findings(td, ["refs/tags/v0.1.0"])
+        out.append(("unreleased: a release tag voids a waiver that holds entries", bool(f) and got is None, ""))
+        out.append(("unreleased: active_moves reads nothing once a release exists",
+                    tnfrozen.active_moves(["refs/tags/v0.1.0"], p) is None, ""))
+        p.write_text("{", encoding="utf-8")
+        f, got = moves_findings(td, [])
+        out.append(("unreleased: a waiver that does not parse fails closed", bool(f) and got is None, ""))
+        p.write_text(json.dumps(dict(moves, ruling="")), encoding="utf-8")
+        f, got = moves_findings(td, [])
+        out.append(("unreleased: a waiver naming no ruling fails closed", bool(f) and got is None, ""))
+    pre = cfg["identity"]["noise_prefix"]
+    gone_n, kept_n, new_n = f"{pre}fx_gone_v1", f"{pre}fx_kept_v1", f"{pre}fx_new_v1"
+    bodies = {gone_n: tnfrozen.record("noise-expression", "5" * 64, "m1", "extras", "2026-10-30"),
+              kept_n: tnfrozen.record("noise-expression", "6" * 64, "m1", "extras", "2026-10-30"),
+              f"{pre}fx_m2_v1": tnfrozen.record("noise-expression", "7" * 64, "m2", "extras", "2026-10-30")}
+    dump = {"noise-expression": {kept_n: {"type": "noise-expression", "name": kept_n, "expression": "1"},
+                                 new_n: {"type": "noise-expression", "name": new_n, "expression": "2"}}}
+    empty = dict(moves, records={})
+    nf, nm, rep = refreeze.refreeze({"bodies": bodies}, empty, {"m1": dump}, cfg, "2026-10-30", "extras",
+                                    [(kept_n, bodies[kept_n])])
+    out.append(("unreleased: refreeze moves, drops and adds, and names each hash left behind",
+                rep["changed"] == [kept_n] and rep["dropped"] == [gone_n] and rep["added"] == [new_n] and
+                rep["unchecked"] == [f"{pre}fx_m2_v1"] and nm["records"] == {gone_n: ["5" * 64], kept_n: ["6" * 64]} and
+                nf["bodies"][kept_n]["slice"] == "extras" and gone_n not in nf["bodies"], str(rep)[:120]))
     return out
 
 

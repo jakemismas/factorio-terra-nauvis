@@ -81,6 +81,17 @@ local function by_map(fn)
   return out
 end
 
+-- The city offset of the world's map folded into one constant added to each noise's seed1, so each
+-- spawn city gets a climate texture of its own: the world shifts to put the city at the origin, so a
+-- noise of plain x and y would repeat around every city of a seed. A seed folds at compile time; x + cx
+-- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (design notes
+-- 2026-10-30 11:10).
+local SH = C.city_shift
+def(N.shift, by_map(function(X)
+  return "(floor(" .. X.g.cx .. ") % " .. num(SH.modulus) .. ") * " .. num(SH.stride) .. " + floor(" .. X.g.cy ..
+    ") % " .. num(SH.modulus)
+end))
+
 -- A noise of wavelength_px reference pixels, its input scale times `freq` (a slider's frequency or 1).
 local function noise(P, freq)
   local scale = "1 / (" .. num(P.wavelength_px) .. " * " .. K.scale .. ")"
@@ -88,8 +99,8 @@ local function noise(P, freq)
     scale = "(" .. freq .. ") / (" .. num(P.wavelength_px) .. " * " .. K.scale .. ")"
   end
   return num(P.amplitude) .. " * multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(P.seed1) ..
-    ", octaves = " .. num(P.octaves) .. ", persistence = " .. num(P.persistence) .. ", input_scale = " .. scale ..
-    ", output_scale = 1}"
+    " + " .. N.shift .. ", octaves = " .. num(P.octaves) .. ", persistence = " .. num(P.persistence) ..
+    ", input_scale = " .. scale .. ", output_scale = 1}"
 end
 
 local function ramp_in(v, lo, hi, r)

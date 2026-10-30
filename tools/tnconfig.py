@@ -954,13 +954,15 @@ def release_names(cfg):
 
 
 # requires (destroyed-europe): a mod without which a preset bakes the toggle off whatever its setting says
-TOGGLE_FIELDS = {"setting", "preset_key", "default", "mechanism", "on", "off", "maps", "requires"}
+TOGGLE_FIELDS = {"setting", "preset_key", "default", "mechanism", "on", "off", "maps", "requires",
+                 "map_type_follows"}
 
 
 def toggles(cfg):
     """`toggles` is keyed by toggle key, `toggle_order` lists those keys, as settings and presets are;
     each toggle is {setting = <settings key>, preset_key = <property_expression_names key>,
-    default, mechanism = "name switch" | "hook gate", on = <name>, off = <name>, maps = {...}}.
+    default, mechanism = "name switch" | "hook gate", on = <name>, off = <name>, maps = {...},
+    map_type_follows = <true where the Map type fallback mirrors the setting>}.
     Returns the toggles in order, each with its key under "key"."""
     t = _keyed(cfg, "toggles")
     order = _names(cfg.get("toggle_order", []), "toggle_order")

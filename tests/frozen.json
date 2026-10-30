@@ -3715,7 +3715,7 @@
   },
   "tn_aux_fb_v1": {
    "type": "noise-expression",
-   "sha256": "94cd196437e7806acf6468660d55bddf9f111475a7706edabc701fd8fcd7e268",
+   "sha256": "243773cfb9ffa03d2c6541f5219597c629bf538804099ba4a20b96df385b61e8",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
@@ -3785,7 +3785,7 @@
   },
   "tn_moisture_fb_v1": {
    "type": "noise-expression",
-   "sha256": "30349b826f3109b4a00cbacc596cb10913ad6ade36e902fb3e65b6fe2651999e",
+   "sha256": "8877790f62149a48709636187e074c72414c9102471ad934265df21cb0671f43",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
@@ -3834,7 +3834,7 @@
   },
   "tn_temperature_fb_v1": {
    "type": "noise-expression",
-   "sha256": "1f26084e81694a5f919b486698f5ab671f7527f775c9ef1540fe6d8187536d90",
+   "sha256": "5ea2ab9aac16d59900ef6ac3d5d81931a8072d796b4ce4f84711f29f315e4614",
    "dump": "m1",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
@@ -3981,24 +3981,24 @@
   },
   "tn_aux_ab_v1": {
    "type": "noise-expression",
-   "sha256": "37909ab0124f5224bf1e45e6bbaf1d65b2aff8fc7700eb9d27769471733f806b",
+   "sha256": "59a3a9be195c11eb6f8582f16fd543757431e8cf5fdb13e0f66eee7075225c67",
    "dump": "m2",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_moisture_ab_v1": {
    "type": "noise-expression",
-   "sha256": "0887291abc5904b33031a531e7d4d6423bad9daf6191e18f10a0641fb3cff917",
+   "sha256": "d8590e8e966c136b76a6fd2836690a1eb65770560ea19fda1ed285d3b074b5c1",
    "dump": "m2",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_temperature_ab_v1": {
    "type": "noise-expression",
-   "sha256": "6024c1456c8fc3ee6faa8e1917466a41da18123b34eee34e8b1b125a7596070f",
+   "sha256": "157c9215c3c78b68758ce1f1adaafc692379c5739d0e9c45c01460a4f47ec234",
    "dump": "m2",
    "slice": "climate-tiles",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_forests_on": {
    "type": "noise-expression",
@@ -5939,6 +5939,13 @@
    "sha256": "e8e2fcf7b194f3aaff900cea43d25b2bf9693ab1ed02e3fcec79dfd9d4d15072",
    "dump": "m1",
    "slice": "trees-forests",
+   "registered": "2026-10-30"
+  },
+  "tn_climate_shift_v1": {
+   "type": "noise-expression",
+   "sha256": "3650c7358c5535cb8fb92a9187faa4c95986ba779d52984b00407913caaf11c9",
+   "dump": "m1",
+   "slice": "extras",
    "registered": "2026-10-30"
   }
  }

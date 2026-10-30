@@ -828,6 +828,12 @@ Rules:
 
 ### Release versioning policy
 
+Until the first release (no `v<x.y.z>` tag) the rules below bend in one named way: the decision,
+2026-10-30 10:26, retired every superseded geography version, so each map holds one version (Europe's
+tn_geo 14, Atlantic's 17, Old World's 18) and a landed record may change or leave only if
+`tests/unreleased-moves.json` lists its old hash (`tools/refreeze.py` writes it; design notes 2026-10-30
+10:55). A release tag voids that file, and from then on the rules hold as written.
+
 1. A body is registered when the milestone that adds it lands, from `europe-coast` on, and
    released when it ships in a release zip. From registration on its text is immutable:
    `tests/frozen.json` holds its record (sha256 and the dump the gate reads it from, among others),

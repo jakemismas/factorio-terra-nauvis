@@ -755,6 +755,20 @@ compatibility and known limits are in README.md, and the changelog players see i
 
 ### Changed
 
+- One geography version per map: Europe v6
+  (tn_geo 14), Atlantic v6 (17) and Old World v6 (18) stay, every superseded version goes, and the
+  map-wide layers read those versions' chains. 442 bodies dropped, 18 re-registered, config.lua down by
+  a third, noise text 6.50 MB to 3.55 MB. Time to load mods falls from 12.0 s on main to 2.81 s (median of three alternating runs, game at HIGH priority, on a machine other work kept loaded; vanilla 0.52 s). 36 of 36 previews (three maps, scales 1 and 6, three
+  windows, base and beside Alien Biomes) are pixel-identical, and Tile complexity falls by 8 to 16.
+- Until the first release, `tests/unreleased-moves.json` names every landed record that moved and
+  `tools/refreeze.py` writes it with the registry from fresh dumps; the append-only row, the release
+  build and a landing excuse a record only at a listed hash, and a release tag voids the file. The
+  release input checks read release tags only.
+- The climate noise (temperature, moisture, aux, fallback and Alien Biomes) takes a seed1 shift folded
+  from the city offset, so each spawn city of a seed has its own tile texture, at no per-tile cost
+.
+- A startup toggle's drift line for Great forests, Ridges, Ore hotspots and Destroyed Europe says the
+  setting applies to new worlds only (`drift-toggle-new-only`; audit minor).
 - The north without Alien Biomes: the fallback climate (shared by the three maps) keeps
   the boreal belt moist and warm enough for vanilla's cold trees up to a treeline near 70N, pulls the
   cold aux low, and the great-forests hook gains a boreal lift (`tn_tree_lift_v1`) for the base game's
@@ -809,6 +823,8 @@ compatibility and known limits are in README.md, and the changelog players see i
 
 ### Removed
 
+- Geography versions 1 to 5 of each map (tn_geo 1 to 13, 15 and 16), start mask version 1, and the
+  chain class routing and layer chain redirect that served them.
 - The river-safe starts files `prototypes/generated/starts_<map>_v1.lua`: no code read them, and Old
   World's file still held Prague's old grid point and lacked Frankfurt, Aachen and Moscow.
   `build_waterways.py` no longer emits them; the manifests keep each city's per-scale start record.
