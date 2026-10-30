@@ -74,6 +74,11 @@ versions follow [Semantic Versioning](https://semver.org/).
   to about a fifth, K covers every coast pixel, the sea's thin water opens as channels and inlets, and
   islets the raster lost return from a vector coastline (`tools/build_islets.py`,
   `data-src/bandfix/islets-<map>.json`; design notes 2026-10-30 17:40, a development branch).
+- Beside Alien Biomes, the combined build's razor edges are gone:
+  the climate grain's weight reads the temperature, so a cold spot in temperate land frays; a marsh has no
+  dark rim of one width and its edge wanders with the pools; aux folds back at its cap, so dry land keeps
+  its tile mix; natural moisture stops at 0.92, so forests fill in instead of ringing a moisture peak.
+- Destroyed Europe's start disc has an irregular edge and only widens past its 150 tiles.
 
 ## [0.1.0] - 2026-10-30
 

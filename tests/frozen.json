@@ -3862,7 +3862,7 @@
   },
   "tn_moisture_ab_v1": {
    "type": "noise-expression",
-   "sha256": "1241ec649c6e7bb592e9a9c19b1b8fe7087178ebc51a5af07812ca6defec922d",
+   "sha256": "d83e631bdb230cf69dd8fdb1bd539d0db793b9a399ec1c19e95b8b563238f496",
    "dump": "m2",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
@@ -5838,7 +5838,7 @@
   },
   "tn_moisture_ab_v2": {
    "type": "noise-expression",
-   "sha256": "714ac14fdfad36cbe0cc9187906cd75ccf22cfdc4086787151021a77489f7ee6",
+   "sha256": "794735528820fc4eb8838d4af6a57fc77c980b7f108d9b8bb16524cbbb6a18f6",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
@@ -6111,7 +6111,7 @@
   },
   "tn_ab_keep_v1": {
    "type": "noise-expression",
-   "sha256": "f87d5681cf83c5a606b5953d82051e11376163f61c1904c4310cc043600179a5",
+   "sha256": "3ab522211a34f02b9258411b42da15babe3da35f667323ab71aea85d05fbe18a",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"

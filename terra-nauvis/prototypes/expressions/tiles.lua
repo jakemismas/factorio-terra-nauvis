@@ -87,8 +87,8 @@ local WILD_TILE = WILD .. " + " .. num(W.fine) .. " * " .. MS.pool.name
 -- that body may not be -inf and 1 where it surely is, so a change to one belongs in the other. The bonus
 -- reads the grain's frayed copy on a preset, and this runs in the Entity program, which keeps the plain
 -- fields, so the band's edges and the lean widen by scan.margin to cover the fray (config.lua tiles.scan).
-def(S.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
-  ", 0, 1), if(band_t >= " .. num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " ..
+def(S.body, "if(" .. MS.edge .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
+  ", 0, 1), if(temperature >= " .. num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " ..
   num(V.lean_t) .. ") / " .. num(V.lean_span) .. " + patch + " .. num(V.fine) .. " * " .. MS.pool.name .. " - " ..
   num(V.lean_cut - S.margin / V.lean_span) .. " > 0, 0, if(temperature >= " .. num(X.temperate_from - S.margin) ..
   ", 0, 1))))", {patch = PATCH.patch, band_t = band_t("temperature", WILD .. " - " .. num(W.keep - W.cut))})
