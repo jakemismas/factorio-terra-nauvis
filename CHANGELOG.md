@@ -798,14 +798,14 @@ compatibility and known limits are in README.md, and the changelog players see i
   follows its bends and draws a basin as a short capsule on its course; a river's half-width follows a
   profile from source to mouth, with a tapered source. `waterways.lua` reads every set through one
   shared domain warp of the geo tiles (three octaves, faded out around the spawn), a low-frequency
-  width noise and a fine bank noise, so the banks wander and stop being parallel for eight noise
-  evaluations per tile, not per segment. Fords read the same warp, so they stay on their rivers, their
-  spacing is jittered and they keep out of a basin's pool.
+  width noise and a fine bank noise, so the banks wander and stop being parallel for nine noise
+  evaluations per tile, not per segment. Fords read the same warp, so they stay on their rivers, and
+  they have rough edges, jittered spacing and keep out of a basin's pool. The longest straight segments
+  take bends.
   Straits, canals and dams read a lighter warp. The coast fit's own discs on a river's course are
   filled (20 ponds on Old World, 7 on Europe, 5 on Atlantic). The start lake and the inland lakes get
-  a warp of their own, and inland lakes vary in size. Old World at scale 6 ships 881 river segments
-  against 1,339, Tile 142,285 to 128,153, and 203,685 to 189,554 beside Alien Biomes (design notes
-  2026-10-30 13:10).
+  a warp of their own, and inland lakes vary in size. Old World at scale 6 ships 926 river segments
+  against 1,339.
 - One geography version per map: Europe v6
   (tn_geo 14), Atlantic v6 (17) and Old World v6 (18) stay, every superseded version goes, and the
   map-wide layers read those versions' chains. 442 bodies dropped, 18 re-registered, config.lua down by

@@ -35,8 +35,8 @@ evaluations per tile, not per segment. A turning basin is a short wide capsule o
 
 Each scale's file holds four name-free sets, which prototypes/expressions/waterways.lua binds to the
 map's geo tiles through the locals X and Y (the rivers' warped tiles), XP and YP (the passages' lighter
-warp, so a strait or canal keeps the places the oracle tests), W (the width modulation) and B (the fine
-bank noise), and the ponds:
+warp, so a strait or canal keeps the places the oracle tests), W (the width modulation), B (the fine
+bank noise) and J (the fords' rough edge), and the ponds:
   ww      rivers, straits and basins: per (half-width, depth, frame) class max(depth, slope (d - hw)),
           d the distance in tiles to the class's nearest segment, hw times W on a river, held at the
           river floor; min() over the classes (the elevation the carve allows; the entry takes min() with it)
@@ -1447,7 +1447,7 @@ def render_sets(cfg, built):
             boxes.append(f"box(X, Y, {g9(cx)}, {g9(cy)}, {f32(tx)}, {f32(ty)}, {g9(fd['half_length'])}, "
                          f"{g9(fd['half_width'])})")
     if boxes:
-        fords = f"if(max({min_tree(boxes)}, elevation) < 0, {g9(w['ford']['score'])}, -inf)"
+        fords = f"if(max({min_tree(boxes)} - J, elevation) < 0, {g9(w['ford']['score'])}, -inf)"
     else:
         fords = "-inf"
     stats = {"segments": counts, "fords": len(boxes), "basins": len(built["basins"]), "ponds": len(built["ponds"]),
@@ -1484,7 +1484,7 @@ def render_lua(cfg, map_key, s, exprs, stats, data_rel, data_sha):
               f"{m['display']} at scale {s}: {seg['river']} river, {seg['strait']} strait, {seg['canal']} canal and "
               f"{seg['dam']} dam segments,",
               f"{stats['fords']} fords, {stats['basins']} turning basins.",
-              "Name-free data: waterways.lua binds the locals X, Y, XP, YP, W and B to the map's warped tiles.",
+              "Name-free data: waterways.lua binds the locals X, Y, XP, YP, W, B and J to the map's warped tiles.",
               "Never edit by hand: rerun the tool (plan hard rule 9)."]
     out = [f"-- {line}" for line in header]
     out.append("local F = {}")

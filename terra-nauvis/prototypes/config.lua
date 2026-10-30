@@ -1720,7 +1720,8 @@ return {
   --     bend: R4's rule, no window_tiles
   --     stretch turning more than limit_degrees; basin_tiles: the turning basin where it still fails
   --     (R4 W10).
-  --   ford: every every_px reference px of a river's path, length_tiles long along it, spanning the
+  --   ford: every every_px reference px of a river's path, length_tiles long along it before its rough
+  --     edge (natural.ford_edge, so at least about 6 tiles walk across), spanning the
   --     carve plus margin_tiles, its banks bank_tiles beyond the carve on reference land; score
   --     beats every water tile's autoplace inside it.
   --   start: a spawn whose clear_tiles disc a corridor crosses moves to the nearest tile
@@ -1740,7 +1741,7 @@ return {
                  least_tiles = {2.5, 2, 1, 1, 1, 1}},
     bend = {window_tiles = 17, limit_degrees = 90},
     basin_tiles = 30,
-    ford = {every_px = 60, length_tiles = 8, margin_tiles = 2, bank_tiles = 3, score = 10000, jitter = 0.3},
+    ford = {every_px = 60, length_tiles = 10, margin_tiles = 3, bank_tiles = 3, score = 10000, jitter = 0.3},
     vertex_grid = 16,
     start = {clear_tiles = 12, radius_tiles = 150},
     -- The natural course (the decision of 2026-10-30, "not perfect lines, with perfect edges"; waterways.lua
@@ -1753,6 +1754,8 @@ return {
     --     river's half-width wherever W and the warp squeeze it, so T5's 7-tile square still passes.
     --   bank: B = amplitude {a, b} * (half + half * clamp(noise, -1, 1)) tiles of wavelength {a, b} tiles at
     --     scale s (a + b s), the fine irregularity every river and passage bank adds to its half-width.
+    --   ford_edge: J = amplitude {a, b} * noise tiles of wavelength {a, b} tiles at scale s, added to a ford's
+    --     rectangle on every side, so its two edges across the river are irregular and not parallel.
     --   profile: a river's half-width factor from source at its inland end to mouth where it meets the coast
     --     fit, tip at the very source over taper_tiles {a, b} = a + b s, on a step_tiles grid.
     --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide.
@@ -1771,6 +1774,7 @@ return {
       noise_peak = 1.7,
       width = {seed1 = 7507, wavelength = {60, 60}, amplitude = 0.3, floor_half_tiles = 5.5},
       bank = {seed1 = 7508, wavelength = {8, 1}, amplitude = {0.6, 0.15}, half = 0.5},
+      ford_edge = {seed1 = 7509, wavelength = {5, 0.5}, amplitude = {1.2, 0.1}},
       profile = {source = 0.7, mouth = 1.35, tip = 0.55, taper_tiles = {10, 30}, step_tiles = 0.75},
       basin = {half_length_tiles = 8, radius_tiles = 12},
       deloop = {gap_px = 8, arc_px = 30, reach_px = 400},
