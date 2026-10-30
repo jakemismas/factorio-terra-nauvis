@@ -270,8 +270,10 @@ if AB then
   -- the cap, so no grain reaches its alien palette.
   local G, GN = C.grain, N.grain
   local T2 = cfg.destroyed.names.temperature
+  -- The cold side reads the zone's lift and the hot side the unlifted temperature, so the zone takes no
+  -- grain: full grain there lets Alien Biomes' tan sand through as specks in the volcanic rock.
   def(GN.field, "max(clamp((" .. num(G.cold_t) .. " - " .. T2 .. ") / " .. num(G.cold_span) .. ", 0, 1), clamp((" ..
-    T2 .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1)) * noise_layer_noise(" ..
+    N.ab.temperature .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1)) * noise_layer_noise(" ..
     num(G.layer) .. ")")
   def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. ", max(" .. T2 .. ", " ..
     num(T.ab.max) .. "))")

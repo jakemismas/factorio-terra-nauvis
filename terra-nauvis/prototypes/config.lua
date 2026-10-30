@@ -1760,11 +1760,12 @@ return {
 
   -- Destroyed Europe (milestone destroyed-europe; ARCHITECTURE.md milestone contract 10; APPROVALS 10; S3 section 6;
   -- R3 7.1). prototypes/expressions/destroyed.lua builds, from the region layer's interface names only:
-  --   zone   min(tn_destroyed_depth, d - max(start.radius_tiles, starting_area_radius)) in tiles, d the
+  --   zone   min(tn_destroyed_depth, d - max(start.radius_tiles, starting_area_radius) - wobble) in tiles, d the
   --          distance to the spawn, so the zone is positive inside its seeded outline less its keep rows
   --          (regions.lua seeded_polygon: vertices and edges move with the seed) and never inside the start
   --          disc, where every spawn city keeps normal ground and trees (T7); the zone's own start mask, d read from
-  --          start.distance (the spawn distance body every spawn record names)
+  --          start.distance (the spawn distance body every spawn record names). The wobble is at least 0, so
+  --          the disc only grows past its radius: at 0 it was a perfect circle of normal ground in black rock
   --   heat   where the zone is positive, clamp(rim + min(per_tile * zone, ramp) + noise, rim, cap) in Alien
   --          Biomes units: a heat-1 rim (100 to 120) that climbs within ramp / per_tile tiles to a core
   --          mixing heat-1 to heat-4 (R3 7.1: heat-2 from 120, heat-3 from 135, heat-4 from 145 to 150; S3's
@@ -1780,10 +1781,9 @@ return {
   destroyed = {
     names = {zone = DE.zone, heat = DE.heat, temperature = DE.temperature, fine = DE.chaos_fine},
     pools = {europe = DE.pool_europe, atlantic = DE.pool_atlantic, olde_world = DE.pool_olde_world},
-    -- warp_tiles: the start cut moves out by 0 to twice this along the fine noise, so its edge is organic
-    -- and no zone tile ever lies inside radius_tiles
-    start = {radius_tiles = 150, distance = DISTANCE, warp_tiles = 60},
-    heat = {rim = 112, per_tile = 0.49, ramp = 30, cap = 149.5, lift_px = 30, lift_fray_px = 12,
+    start = {radius_tiles = 150, distance = DISTANCE,
+             wobble = {amplitude = 34, lean = 1, wavelength_tiles = 56, octaves = 3, persistence = 0.6, seed1 = 7902}},
+    heat = {rim = 100.5, per_tile = 0.49, ramp = 30, cap = 149.5,
             noise = {amplitude = 20, wavelength_tiles = 24, octaves = 3, persistence = 0.6, seed1 = 7901}},
     -- The red palette: a class per tile from a macro noise over the depth, so
     -- the patches mix and follow no contour. e = min(depth, sat_px) + mac_px * macro, in reference
