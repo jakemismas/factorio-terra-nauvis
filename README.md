@@ -85,7 +85,7 @@ All of these are startup settings except City markers, which is on the Map tab.
 | Ridges | On | Places cliff ridges along 16 mountain ranges, the only cliffs on the map, with passes wide enough for a double track. Off gives a map with no cliffs. |
 | Ore hotspots | On | Adds dense ore at historic sites, with about three times the base game's biter nests inside them, and offshore oil fields where the Oil Rig mod is installed. Off gives the base game's ore. |
 | Inland lakes | Off | Scatters small random lakes across the land. Off leaves the lake at the spawn city, the rivers and the real lakes of the map. |
-| Destroyed Europe | Off | Needs Alien Biomes. Turns the heart of Europe into volcanic ground, hotter toward the middle, with edges that change with the map seed. The start area stays normal. |
+| Destroyed Europe | Off | Needs Alien Biomes. Turns the heart of Europe, from France to Warsaw and down to Ljubljana and about Rome, into volcanic ground, hotter toward the middle, with an outline that differs on every map seed. The start area stays normal. |
 | Exact coastlines | Off | Hidden in this version, because it acts on no map yet. It snaps a new world's coast to the reference map as chunks generate. |
 | City markers | Off | Names every city on the map view. It changes nothing in the world, so you can switch it at any time in a running game. Worlds made from a Map type entry alone get no markers. |
 
