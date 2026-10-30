@@ -5269,14 +5269,9 @@ def row_ec_dump_facts(ctx, mods, sec6, row, cache):
                 bad.append(f"{label}: fallback {n} carries local expressions")
         if p.get(K["scale"]) != want_scale:
             bad.append(f"{label}: the preset bakes scale {p.get(K['scale'])}, want {want_scale}")
-        # an older version's fallbacks, valued as that version's own preset bakes them (the layer chain's
-        # that a stamp reads among them)
-        # the layer chain offset names excepted: they hold what the newest version's preset points them
-        # at (presets.lua chain_fallback), so a Map-type-only world's layers follow its spawn
-        chain_fb = tnconfig.layer_chain_names(cfg, mk, tnconfig.geography_versions(cfg)[mk][-1])
+        # an older version's fallbacks, valued as that version's own preset bakes them
         for v in older:
             vb = dict(tnconfig.baked_names(cfg, mk, v, want_scale))
-            vb.update({n: val for n, val in chain_fb.items() if n in vb})
             for e in v["fallbacks"]:
                 body = (dump.get("noise-expression") or {}).get(e["name"])
                 if body is None or body.get("expression") != baked_text(vb[e["name"]]):

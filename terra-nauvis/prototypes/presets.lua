@@ -18,11 +18,10 @@
 --
 -- A Map type pick sets only elevation, so every other per-save name a geography version's entry
 -- reads gets a prototype-level fallback valued as that version's preset bakes it under the current
--- startup settings: every version's, the older ones included, since their entries stay defined for
--- the worlds that name them. Surface values beat prototype names (S2): preset worlds and saves keep
--- their own values, and only a Map-type-only world follows the startup settings at every load
--- (Contradictions item 15). A frozen fallback (config.lua) mirrors no setting: its constant body is
--- registered, so no later version moves the worlds that read it.
+-- startup settings. Surface values beat prototype names (S2): preset worlds and saves keep their own
+-- values, and only a Map-type-only world follows the startup settings at every load (Contradictions
+-- item 15). A frozen fallback (config.lua) mirrors no setting: its constant body is registered, so no
+-- later version moves the worlds that read it.
 --
 -- A preset is not defined while a mod of its withheld_with list is loaded: from europe-coast to
 -- region-layer Alien Biomes' palms read elevation in the Entity program, so beside them a preset
@@ -253,27 +252,6 @@ local function bandfix_names(map_key)
   return out
 end
 
--- A spawn version's layer chain offset names: where the map's layer chain version (config.lua
--- layer_chain_geo, the frame the region layer, the climate and the layers after them read) holds
--- another city offset (Atlantic's and Old World's, registered at 0 before their spawn versions), its
--- offset names point at this version's city fold, so those layers read the spawn's ground. Europe's
--- layer chain version already reads the fold, so it bakes nothing here.
-local function layer_chain_names(map_key, v)
-  local out = {}
-  local id = (cfg.layer_chain_geo or {})[map_key]
-  if not (v.spawn and id) then
-    return out
-  end
-  for _, lv in ipairs(cfg.geography[map_key].versions) do
-    if lv.geo_id == id and lv.cx ~= v.cx and
-        (lv.city_offset[1] ~= v.city_offset[1] or lv.city_offset[2] ~= v.city_offset[2]) then
-      out[lv.cx] = v.city_offset[1]
-      out[lv.cy] = v.city_offset[2]
-    end
-  end
-  return out
-end
-
 -- The property_expression_names one geography version's preset bakes under the current startup
 -- settings (tools/tnconfig.py baked_names mirrors it). A version with a spawn record also bakes the
 -- distance redirect (vanilla's starting ore and enemy-free start follow the spawn through it, S7),
@@ -304,9 +282,6 @@ local function baked(map_key, v)
     names[sp.city] = city_number(sp.city_setting)
     names[K.spawn_lake] = sp.spawn_lake
     names[K.spawn_bias] = sp.spawn_bias
-    for k, value in pairs(layer_chain_names(map_key, v)) do
-      names[k] = value
-    end
   end
   local ww = v.waterways
   if ww then
@@ -359,19 +334,7 @@ for _, key in ipairs(cfg.preset_order) do
 end
 
 -- The fallbacks of every geography version: one prototype per name, valued as every version that
--- reads it bakes it (a number, or the name of the expression that folds it). The layer chain offset
--- names are the exception: a Map type pick names the newest version's entry, so they hold what that
--- version's preset points them at (layer_chain_names, the city fold), and a Map-type-only world's
--- region layer, climate and offshore stamp sit on the spawn's ground as a preset world's do.
-local chain_fallback = {}
-for _, key in ipairs(cfg.map_order) do
-  local g = cfg.geography[key]
-  if g and g.versions and #g.versions > 0 then
-    for k, value in pairs(layer_chain_names(key, g.versions[#g.versions])) do
-      chain_fallback[k] = value
-    end
-  end
-end
+-- reads it bakes it (a number, or the name of the expression that folds it).
 local fallbacks, seen = {}, {}
 for _, key in ipairs(cfg.map_order) do
   local g = cfg.geography[key]
@@ -379,9 +342,6 @@ for _, key in ipairs(cfg.map_order) do
     local names = baked(key, v)
     for _, f in ipairs(v.fallbacks) do
       local value = names[f.name]
-      if chain_fallback[f.name] ~= nil then
-        value = chain_fallback[f.name]
-      end
       if value == nil then
         error("the Map type fallback " .. f.name .. " of " .. v.entry .. " has no value in its version's preset")
       end

@@ -59,48 +59,13 @@ local function fn(f)
   return {parameters = params, expression = f.expression, local_expressions = locals}
 end
 
--- A version's chain class: its map and its city offset, which its preset bakes for its offset names
--- and their frozen fallbacks hold, so every version of a class reads equal geo tiles in every world
--- that reads one of them (coast.lua's chain_class; every version of a map binds the same files). A
--- landed version (config.lua landed_geographies) is a class of its own: its records never change.
-local LANDED = {}
-for _, id in ipairs(cfg.landed_geographies or {}) do
-  LANDED[id] = true
-end
-
-local function chain_class(key, g)
-  local o = g.city_offset
-  if not (o and o[1] ~= nil and o[2] ~= nil) then
-    error("geography version " .. tostring(g.entry) .. " has no city offset")
-  end
-  if LANDED[g.geo_id] then
-    return key .. "|landed|" .. tostring(g.geo_id)
-  end
-  return key .. "|" .. tostring(o[1]) .. "|" .. tostring(o[2])
-end
-
 local E = {}
--- The sets of every geography version that composes them, bound to its chain, for every offered scale,
--- once per chain class: the newest version of a class that composes waterways keeps the bodies, so the
--- world its preset makes compiles exactly the program it did, and every older one names them by set and
--- scale. The game parses every body's text at startup, and every version carrying the same sets cost
--- about 6 s of "Time to load mods". A version added to a class later takes
--- the bodies and turns the previous holder's into names (coast.lua's fit bodies, the same rule).
-local REP = {}
-for _, key in ipairs(cfg.map_order) do
-  for _, g in ipairs((cfg.geography[key] or {}).versions or {}) do
-    if g.waterways then
-      REP[chain_class(key, g)] = g.waterways
-    end
-  end
-end
-
+-- The sets of the geography version that composes them, bound to its chain, for every offered scale.
 for _, key in ipairs(cfg.map_order) do
   local versions = (cfg.geography[key] or {}).versions or {}
   local files = FILES[key]
   for _, g in ipairs(versions) do
     local sets = g.waterways
-    local rep = sets and REP[chain_class(key, g)]
     for _, s in ipairs(sets and cfg.scales.values or {}) do
       local gen = files[s]
       if not gen then
@@ -108,10 +73,6 @@ for _, key in ipairs(cfg.map_order) do
       end
       local function set(kind, expression, functions)
         local name = sets[kind][s]
-        if rep ~= sets then
-          E[#E + 1] = {type = "noise-expression", name = name, expression = rep[kind][s]}
-          return
-        end
         local locals = {X = g.gx, Y = g.gy}
         local lf = {}
         for _, f in ipairs(functions) do

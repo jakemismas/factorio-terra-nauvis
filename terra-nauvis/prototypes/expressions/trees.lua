@@ -25,10 +25,11 @@
 -- tn_tree_mult), own) on the base game's living trees (own alone on every other tree); the lift key's
 -- prototype holds 0 and Earth presets name the boreal lift (config.lua trees.boost), so only the boreal
 -- great forests fill in beyond the multiplier. The gate's prototype holds 0 and the key's 1, so on every
--- world without an Earth preset the hook folds to the tree's own autoplace; Earth presets bake the gate from the great-forests setting and
--- name the region layer's multiplier in the key (1 + forest boost 2 times the forest sum; the region
--- formula lives in regions.lua alone, D13). A multiplier keeps the climate in charge: where a tree's
--- own probability is 0 or below, the boost adds nothing (S10). Alien Biomes' palm prototypes carry no
+-- world without an Earth preset the hook folds to the tree's own autoplace; Earth presets bake the gate
+-- from the great-forests setting and name the region layer's multiplier in the key (1 + forest boost 2
+-- times the forest sum; the region formula lives in regions.lua alone, D13). A multiplier keeps the
+-- climate in charge: where a tree's own probability is 0 or below, the boost adds nothing (S10). Alien
+-- Biomes' palm prototypes carry no
 -- hook (they stay AB's, so the frozen palm table and its checks read them raw): on Earth presets the
 -- palms read their copies, so each palm's probability key names a second version that is the same
 -- formula around the registered first; the richness keys keep the first versions.

@@ -33,6 +33,12 @@ carries a `frozen` snapshot of the records registered through that milestone (`s
 `suite` and `freeze`), and a zip copied out of the checkout carries its bodies and one in its build
 record; `snapshot_problems` fails any record such a snapshot holds that the registry changed or
 dropped.
+
+Until the first release, tests/unreleased-moves.json lists what a landed state held and the tree may
+leave behind: per
+record the exact sha256 values the registry moved away from, and the tn_geo ids it retired.
+`active_moves` reads it, a release tag voids it (the T16 append-only row then fails until it is empty),
+and every other record stays held. tools/refreeze.py writes it together with the registry.
 """
 import ast
 import copy
@@ -238,6 +244,62 @@ def file_problems(fz, registry):
     return out
 
 
+MOVES = REPO / "tests" / "unreleased-moves.json"
+MOVES_FORMAT = "tn-unreleased-moves/1"
+MOVES_KEYS = ("format", "ruling", "geographies", "records")
+
+
+def moves_problems(moves):
+    """The waiver file's shape ([] when it holds): MOVES_KEYS, the decision that allows it, tn_geo ids,
+    and per record name a list of sha256 values."""
+    if not isinstance(moves, dict):
+        return [f"tests/unreleased-moves.json is a {type(moves).__name__}, not a JSON object"]
+    out = []
+    if sorted(moves) != sorted(MOVES_KEYS):
+        out.append(f"tests/unreleased-moves.json holds {sorted(moves)}, want {sorted(MOVES_KEYS)}")
+    if moves.get("format") != MOVES_FORMAT:
+        out.append(f"tests/unreleased-moves.json format {moves.get('format')!r}, want {MOVES_FORMAT!r}")
+    if not (isinstance(moves.get("ruling"), str) and moves.get("ruling")):
+        out.append("tests/unreleased-moves.json names no ruling")
+    geos = moves.get("geographies")
+    if not (isinstance(geos, list) and all(isinstance(g, int) and not isinstance(g, bool) for g in geos)):
+        out.append("tests/unreleased-moves.json geographies is not a list of tn_geo ids")
+    recs = moves.get("records")
+    if not isinstance(recs, dict):
+        return out + ["tests/unreleased-moves.json records is not a table"]
+    for name, hashes in sorted(recs.items()):
+        if not (isinstance(hashes, list) and hashes and all(isinstance(h, str) and SHA256_RE.fullmatch(h) for h in hashes)):
+            out.append(f"tests/unreleased-moves.json {name}: not a list of sha256 values")
+    return out
+
+
+def read_moves(path=MOVES):
+    """The waiver file's table, or None when the file is absent. Raises RegistryUnreadable when it
+    does not parse or breaks its shape (fail closed)."""
+    p = Path(path)
+    if not p.exists():
+        return None
+    try:
+        moves = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        raise RegistryUnreadable(f"tests/unreleased-moves.json does not parse ({e}) (fail closed)") from e
+    probs = moves_problems(moves)
+    if probs:
+        raise RegistryUnreadable(f"{probs[0]} (fail closed)")
+    return moves
+
+
+def active_moves(tags, path=MOVES):
+    """The waiver while no release exists; None once any release tag does (`tags`, the checkout's
+    v<x.y.z> tags), so nothing a release holds can ever be excused."""
+    return None if tags else read_moves(path)
+
+
+def moved(moves, name, sha256):
+    """Whether the waiver excuses the registered record `name` at this exact hash."""
+    return bool(moves) and sha256 in ((moves.get("records") or {}).get(name) or [])
+
+
 def record_changes(mine, ref):
     """The fields in which a record differs from a reference record, over every field of either (a
     field one of them lacks counts as changed); [] when they are equal."""
@@ -372,10 +434,11 @@ def snapshot(fz, registry, slice_id):
     return {"format": SNAPSHOT_FORMAT, "through": slice_id, "bodies": bodies, "sha256": key_of(bodies)}
 
 
-def snapshot_problems(fz, snapshots):
+def snapshot_problems(fz, snapshots, moves=None):
     """Every record a snapshot holds ({label: snapshot}) that the registry `fz` changed or dropped,
-    and every snapshot that is not well formed (its sha256 must cover its bodies, so a record edited
-    in a snapshot without its hash fails instead of reading as the reference)."""
+    the waiver's records at their exact hash excepted (`moves`, active_moves), and every snapshot that
+    is not well formed (its sha256 must cover its bodies, so a record edited in a snapshot without its
+    hash fails instead of reading as the reference)."""
     out = []
     bodies = (fz or {}).get("bodies") if isinstance((fz or {}).get("bodies"), dict) else {}
     for label, snap in sorted(snapshots.items()):
@@ -387,6 +450,8 @@ def snapshot_problems(fz, snapshots):
             out.append(f"{label}: the frozen snapshot's sha256 does not cover its bodies (edited by hand; fail closed)")
             continue
         for name, rec in sorted(snap["bodies"].items()):
+            if moved(moves, name, rec.get("sha256")):
+                continue
             if name not in bodies:
                 out.append(f"{name} is registered in {label}'s snapshot but missing from tests/frozen.json (a "
                            f"registered record never leaves the registry)")
