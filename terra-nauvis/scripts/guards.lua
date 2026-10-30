@@ -407,24 +407,6 @@ function M.earth_valued(key, value)
   return earth(key) or earth(value)
 end
 
-
--- "earth", "map_type" (with its map key) or nil.
-function M.kind(surface)
-  local pen = pen_of(surface)
-  if pen[K.geo] ~= nil then
-    return "earth"
-  end
-  local entry = pen[K.elevation]
-  local key = entry and ENTRY_MAP[entry]
-  if key then
-    local proto = prototypes.named_noise_expression[entry]
-    if proto and proto.intended_property == K.elevation then
-      return "map_type", key
-    end
-  end
-  return nil
-end
-
 -- D33 (ARCHITECTURE.md, "D33 surface guard"; S11): a surface other than Nauvis inherits the save's
 -- default property_expression_names unless its planet sets a key itself, so it drops (writes "") each
 -- Earth preset key whose value equals the save's own default, with a whole-table assignment. A planet
