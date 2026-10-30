@@ -2,7 +2,7 @@
 -- Written by tools/build_regions.py (writer 1) from
 --   data-src/approvals/approvals-data.json sha256 33ce91d5e5303fb47825d52593e942d22f2d16e7f03b3d11cab4fd97eaa24c5a
 --   docs/plan/research/R7b-geography.json sha256 480c9f20e0a33decc79786b2c4b7a38fe3b8ba8d8b5d8706783f11d913be7729
---   data-src/approvals/destroyed-zone.json sha256 8113d3185fb1c2ea552c4568a9c20de40c2c8d1f45a00f0ebfd7cdfaa9c9a8fe
+--   data-src/approvals/destroyed-zone.json sha256 ed758ba6286997627f52d3572564c788e6787050f9e1dc345e1574b38e3689f8
 -- Never edit by hand: an approval edit is an edit of approvals-data.json, then
 -- `python tools/build_regions.py emit`; the static gate row re-emits this file and fails on a difference.
 --
@@ -22,16 +22,16 @@ return {
       id = "destroyed_europe", layer = "destroyed", mode = "include", shape = "polygon", warp = 2.5,
       maps = {"europe", "atlantic", "olde_world"},
       latlon = {
-        {43.45, -2.1}, {48.4, -5.4}, {51.0072, 1.4786}, {53.5, 4.6}, {53.75, 8.7}, {55.3, 17}, {54.36, 23.1},
-        {52.0766, 23.6161}, {49.7833, 22.7667}, {49.55, 17.85}, {45.55, 15}, {45.3, 13.4}, {42.2, 14.7}, {41.35, 12.8},
-        {41.25, 9.6}, {42.35, 3.3},
+        {43.45, -2.1}, {48.4, -5.4}, {51.0072, 1.4786}, {53.5, 4.6}, {55.3, 17}, {54.36, 23.1}, {52.0766, 23.6161},
+        {49.7833, 22.7667}, {49.55, 17.85}, {45.55, 15}, {45.3, 13.4}, {42.2, 14.7}, {41.35, 12.8}, {41.25, 9.6},
+        {42.35, 3.3},
       },
       vertex_jitter_km = {
-        80, 50, 40, 60, 30, 90, 110, 110, 70, 50, 70, 40, 90, 100, 80, 70,
+        80, 50, 40, 60, 90, 110, 110, 70, 50, 70, 40, 90, 100, 80, 70,
       },
       vertex_phase = {
-        0.437112688, 0.151615411, 0.154371397, 0.844856607, 0.475944679, 0.481420007, 0.746452696, 0.796097949,
-        0.320134982, 0.808700745, 0.284323369, 0.456894025, 0.408658231, 0.33418846, 0.534147954, 0.26615482,
+        0.437112688, 0.151615411, 0.154371397, 0.844856607, 0.481420007, 0.746452696, 0.796097949, 0.320134982,
+        0.808700745, 0.284323369, 0.456894025, 0.408658231, 0.33418846, 0.534147954, 0.26615482,
       },
       source = "destroyed-zone.json vertices (Jake's ruling of 2026-10-30 10:05)",
     },

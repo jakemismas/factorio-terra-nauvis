@@ -6,7 +6,6 @@
   {"id": "ushant", "lat": 48.4, "lon": -5.4, "jitter_km": 50, "anchor": "approved vertex B, offshore W of Ushant"},
   {"id": "dover", "lat": 51.0072, "lon": 1.4786, "jitter_km": 40, "anchor": "approved vertex C, Strait of Dover midline"},
   {"id": "texel", "lat": 53.5, "lon": 4.6, "jitter_km": 60, "anchor": "approved vertex D, North Sea NW of Texel"},
-  {"id": "german_bight", "lat": 53.75, "lon": 8.7, "jitter_km": 30, "anchor": "approved vertex E"},
   {"id": "baltic", "lat": 55.3, "lon": 17.0, "jitter_km": 90, "anchor": "approved vertex F"},
   {"id": "suwalki", "lat": 54.36, "lon": 23.1, "jitter_km": 110, "anchor": "approved vertex H"},
   {"id": "bug", "lat": 52.0766, "lon": 23.6161, "jitter_km": 110, "anchor": "approved vertex I"},

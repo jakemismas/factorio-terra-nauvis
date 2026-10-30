@@ -43,7 +43,7 @@ compatibility and known limits are in README.md, and the changelog players see i
 - Destroyed Europe grows south and differs every seed:
   the zone now runs from France through Switzerland, southern Germany, Austria and Slovenia to Ljubljana
   and down Italy to about Rome, keeping the old zone's coverage north of the Alps. The outline lives in
-  `data-src/approvals/destroyed-zone.json`: 16 vertices, each moved per seed by up to its own jitter of
+  `data-src/approvals/destroyed-zone.json`: 15 vertices, each moved per seed by up to its own jitter of
   30 to 110 km through constants that fold, on a warp of 2.5 shares of the shared one. Three keep paths
   (Britain, Denmark with the Kiel Canal, the Carpathian crest) replace the six exclusion rows. The
   random pool skips every city the outline can reach at any seed (266 km): 18 of Europe's 40. Old World
