@@ -430,48 +430,6 @@
    "slice": "region-layer",
    "registered": "2026-10-28"
   },
-  "tn_depth_keep_brenner_v1": {
-   "type": "noise-expression",
-   "sha256": "6b1c87e36d3f93797d0101f60ebb81380b925dd5bf84b9e03e3f01f9b4ff6968",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_depth_keep_dukla_v1": {
-   "type": "noise-expression",
-   "sha256": "c5b8debb245d67808f5562c2b89f29abcfc68924937255c076c1d4f2ae2a1c4a",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_depth_keep_gotthard_v1": {
-   "type": "noise-expression",
-   "sha256": "47be37e815f7ab0d5aa0053b40b2de7778dbecc1ce840526c73d40395718dc4c",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_depth_keep_kiel_canal_v1": {
-   "type": "noise-expression",
-   "sha256": "7ab676f465114bb351cdb91e2eca35af4e5b4ffd1229384177ce1c028e739b8e",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_depth_keep_semmering_v1": {
-   "type": "noise-expression",
-   "sha256": "8b3651c873ba10e8d3529d2a3542d6a628c73458deddeae3756f09bf812b252a",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_depth_keep_south_foreland_england_v1": {
-   "type": "noise-expression",
-   "sha256": "e6ea4902673d8f02dde34aad8e312ec2733f23b7c649811a6b2b21280a79b584",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
   "tn_depth_landes_v1": {
    "type": "noise-expression",
    "sha256": "ecc84adcb510a3b2ede7108a3eac7e4bf23f05104a7e2083689eb325c42f43b0",
@@ -887,10 +845,10 @@
   },
   "tn_destroyed_sd_v1": {
    "type": "noise-expression",
-   "sha256": "7bfb3d8c20a138d26547d7cee15d1a2fe160881a60c47585091de073d8fa0033",
+   "sha256": "a6268f18b3defcc9efbf0d0b5f8470c62b980b0cc6f960e0d3874eb771098b4e",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_destroyed_w_v1": {
    "type": "noise-expression",
@@ -2308,10 +2266,10 @@
   },
   "tn_sd_destroyed_europe_v1": {
    "type": "noise-expression",
-   "sha256": "2030e8cee27b4edfe831d5e0c325b10fbdc8a4279edf3984ff6cb2c672cc555e",
+   "sha256": "f55d0dab5e7f9c9f885f6f377ef739ee41a03002894c5e384a0cf1f340e4781d",
    "dump": "m1",
    "slice": "region-layer",
-   "registered": "2026-10-28"
+   "registered": "2026-10-30"
   },
   "tn_sd_dinaric_mixed_v1": {
    "type": "noise-expression",
@@ -2428,48 +2386,6 @@
   "tn_sd_iron_sishen_v1": {
    "type": "noise-expression",
    "sha256": "daaf89d8863c44ba97b5106ff9f291d3c36defec1e2af096263970636348c898",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_sd_keep_brenner_v1": {
-   "type": "noise-expression",
-   "sha256": "1ac211d1d5c05d6e4741c4e68824c01c1c707d3243e86d8bb7064724fd243275",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_sd_keep_dukla_v1": {
-   "type": "noise-expression",
-   "sha256": "470e6c32d952496eee805fd899053d31c3878bbe6e67076acdbac224a448635c",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_sd_keep_gotthard_v1": {
-   "type": "noise-expression",
-   "sha256": "a4b71697e7f84e1075e4357182004f94726ff7df48f62c3ef2472adc42a6d2f7",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_sd_keep_kiel_canal_v1": {
-   "type": "noise-expression",
-   "sha256": "df8776f3b1184b191b790652426e161be13f3eafe233f3941094ff657d0fbcdf",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_sd_keep_semmering_v1": {
-   "type": "noise-expression",
-   "sha256": "046e89d11d970f8308a63ae2aeaea5e9575d6a1e6dcb49b9dd80a4518e069bae",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_sd_keep_south_foreland_england_v1": {
-   "type": "noise-expression",
-   "sha256": "5ed8386472e33dd57f9a9ac932832f5194430706bbdc1d42047a26b212b47c35",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-28"
@@ -3219,48 +3135,6 @@
   "tn_w_iron_sishen_v1": {
    "type": "noise-expression",
    "sha256": "a3465bbc30395d590034dd887924fbf6812a5d262817f00396a782ed95b9f5e2",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_w_keep_brenner_v1": {
-   "type": "noise-expression",
-   "sha256": "7876818e8e6157860e4144705a39aac34900117df55a1124235206a4a84d2a71",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_w_keep_dukla_v1": {
-   "type": "noise-expression",
-   "sha256": "e0c0c2117266a891fb1b89928846a9563f446b242aadecee69daf4a7f20a066a",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_w_keep_gotthard_v1": {
-   "type": "noise-expression",
-   "sha256": "07ec4639262e6f5f14d7e2376557f6fa833355e3c9ae9df714727881f8e4c5e0",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_w_keep_kiel_canal_v1": {
-   "type": "noise-expression",
-   "sha256": "aa60e3b9db0e42df6ca966ae06eafff0c4e9c8e2e5fc0dabd8d8531a690e620d",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_w_keep_semmering_v1": {
-   "type": "noise-expression",
-   "sha256": "2c1dcdf782f4acdbd0594798ed8693508fc7d545b8a7e9ed9504e11002da9d44",
-   "dump": "m1",
-   "slice": "region-layer",
-   "registered": "2026-10-28"
-  },
-  "tn_w_keep_south_foreland_england_v1": {
-   "type": "noise-expression",
-   "sha256": "16d2d061433d876c51c47e5761d272c010279b98562bf96402a54d19e03bf384",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-28"
@@ -5299,10 +5173,10 @@
   },
   "tn_city_pool_europe_v1": {
    "type": "noise-expression",
-   "sha256": "f75b0c87f85f37fba9e0943b40677863f5d98a03778f79e406be2f38d66601ea",
+   "sha256": "3934d0733b75ff787aa64985892f1cdb0682423b1949a3721156f3e20e7e5a91",
    "dump": "m1",
    "slice": "destroyed-europe",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_destroyed_heat_v1": {
    "type": "noise-expression",
@@ -5941,73 +5815,80 @@
    "slice": "trees-forests",
    "registered": "2026-10-30"
   },
-  "tn_climate_shift_v1": {
+  "tn_depth_keep_britain_v1": {
    "type": "noise-expression",
-   "sha256": "3650c7358c5535cb8fb92a9187faa4c95986ba779d52984b00407913caaf11c9",
+   "sha256": "9e8b05575ffc3ddbf14e1643dba514cf242d263a26ef5855efdeb067b24d569a",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_ab_exclude_v2": {
+  "tn_depth_keep_carpathians_v1": {
    "type": "noise-expression",
-   "sha256": "d451cb35e00163813381d9dccb07141677d46e9f2ba673694b358dc055674617",
-   "dump": "m2",
+   "sha256": "f68f9957e902ed7b186b5460c4a95c56e58767b089c637f02462aa78dbddb1f8",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_aux_ab_v2": {
+  "tn_depth_keep_denmark_v1": {
    "type": "noise-expression",
-   "sha256": "828b02187ec055f0623f87769c401420919305cb784afab17dfa95bad8623338",
-   "dump": "m2",
+   "sha256": "9d588eada4b1ce67136969f327d2b314ff6ddcc6ee08d014dd2f77d27c16dd79",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_climate_grain_v1": {
+  "tn_region_u_k250_v1": {
    "type": "noise-expression",
-   "sha256": "31d0892f90aa4af92b5ebd1f8987e1d3cea4adfb1276b100c9d56468cd81d212",
-   "dump": "m2",
+   "sha256": "a01776b16f4a358f120248421e98774d9e5060b6b6a09d6a43e197a67be5ba84",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_moisture_ab_v2": {
+  "tn_region_v_k250_v1": {
    "type": "noise-expression",
-   "sha256": "fd54baf4412176760ce19f3d0444746246b274a853a83e606fb7f72312de7206",
-   "dump": "m2",
+   "sha256": "bcddfc7d4b1304a1cedd70647af9a733c6b379bb868be07d13548e2685483e18",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_temperature_ab_v3": {
+  "tn_sd_keep_britain_v1": {
    "type": "noise-expression",
-   "sha256": "1c624e59e9a8c42beaa4f04ef62dc4f8308702634597a1ab84d1c89130690b98",
-   "dump": "m2",
+   "sha256": "9fed05938a75f550c9f4313bd4d8d2870e26a8e492fab6a169da40fe691425a7",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_tile_aux": {
+  "tn_sd_keep_carpathians_v1": {
    "type": "noise-expression",
-   "sha256": "1234aba2391552d1b558f95240511c52e8afd9040c124e1ae0fb3bdff0e1abe2",
-   "dump": "m2",
+   "sha256": "b3e7bdb9a5381891990bc6b8f49e73a90eb3aed18944eaa91baf684a28d03c8f",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_tile_moisture": {
+  "tn_sd_keep_denmark_v1": {
    "type": "noise-expression",
-   "sha256": "42bc057c2d94c91f6089a19c33b5675781bd6399855926ed0b535c168d4921ab",
-   "dump": "m2",
+   "sha256": "d40faf472564887356b0f85b4e908315ad9fe5a0db9174ff80e553b1e6ee4c58",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_tile_temperature": {
+  "tn_w_keep_britain_v1": {
    "type": "noise-expression",
-   "sha256": "699630c354eae8481a972c8f2df27e2ff849f388897ec9a38845c67a1802ec7e",
-   "dump": "m2",
+   "sha256": "a57883cf66558f7460507b599adccd39583c7e9337fce22c3137af78187abbe2",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_vtile_bonus_v2": {
+  "tn_w_keep_carpathians_v1": {
    "type": "noise-expression",
-   "sha256": "80eb1021bcebceca191d7e8474183e78a818f45ed16c736dac166423fa72aa75",
-   "dump": "m2",
+   "sha256": "890dc0cefea02b1b6f81fa3dab93b2da051a7532a3b4e8bc015333c32e2de09c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_w_keep_denmark_v1": {
+   "type": "noise-expression",
+   "sha256": "79f07a5013389f6f0400226f83b653db35513192eddbdfd0a42fd8c4e2737904",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   }
