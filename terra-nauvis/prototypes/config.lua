@@ -1249,6 +1249,10 @@ return {
     ore_margin = 3,
     shrink = 0.75,
     min_radius = 4,
+    -- A placed patch's outline: inner of its radius
+    -- moved by gain times the hotspot blob's deviation from its mean over the disc, never past the radius
+    -- find_spot proved land for; grow widens that radius so the kept tiles hold about the planned area.
+    outline = {blob = REN.HS_BLOB, inner = 0.7, gain = 0.3, grow = 1.25},
   },
 
   -- The spawn (milestone spawn-cities; S7 option ii, the shift; D15, D25, D29): the numbers spawn.lua

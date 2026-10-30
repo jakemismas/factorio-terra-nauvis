@@ -106,22 +106,37 @@ local function find_spot(surface, reach, r, turn)
   return nil
 end
 
+-- The patch: the disc find_spot proved, eaten back by the hotspot blob so its outline is as uneven as a
+-- hotspot's bodies (config.lua start_ore.outline), with the amount spread over the tiles it keeps. The blob
+-- counts from its own mean over the disc, so a patch keeps its size wherever it lands; a world that cannot
+-- read the blob keeps the plain disc.
 local function place(surface, name, cx, cy, r, amount)
-  local tiles, wsum = {}, 0
+  local O = C.outline
+  local cells, n = {}, 0
   local r2 = r * r
   for dy = -r, r do
     for dx = -r, r do
-      local q = (dx * dx + dy * dy) / r2
-      if q <= 1 then
-        local w = 1 - q / 2
-        tiles[#tiles + 1] = {dx = dx, dy = dy, w = w}
-        wsum = wsum + w
+      if dx * dx + dy * dy <= r2 then
+        n = n + 1
+        cells[n] = {x = cx + dx + HALF, y = cy + dy + HALF, q = (dx * dx + dy * dy) / r2}
       end
     end
   end
-  for _, t in ipairs(tiles) do
-    surface.create_entity{name = name, position = {cx + t.dx + HALF, cy + t.dy + HALF},
-                          amount = max(1, floor(amount * t.w / wsum + HALF))}
+  local blob = surface.calculate_tile_properties({O.blob}, cells)[O.blob]
+  local mean = 0
+  for i = 1, blob and n or 0 do
+    mean = mean + blob[i] / n
+  end
+  local kept, wsum = {}, 0
+  for i, t in ipairs(cells) do
+    if not blob or sqrt(t.q) < O.inner + O.gain * (blob[i] - mean) then
+      t.w = 1 - t.q / 2
+      wsum = wsum + t.w
+      kept[#kept + 1] = t
+    end
+  end
+  for _, t in ipairs(kept) do
+    surface.create_entity{name = name, position = {t.x, t.y}, amount = max(1, floor(amount * t.w / wsum + HALF))}
   end
 end
 
@@ -139,7 +154,7 @@ function M.ensure(surface)
       local have = reached_amount(surface, reach, ore.resource)
       if have < C.trigger * target then
         local amount = floor(C.fill * target)
-        local r = max(C.min_radius, floor(sqrt(amount / ore.density / pi) + HALF))
+        local r = max(C.min_radius, floor(C.outline.grow * sqrt(amount / ore.density / pi) + HALF))
         local cx, cy
         while true do
           cx, cy = find_spot(surface, reach, r, (n - 1) / #C.ores)
