@@ -124,6 +124,7 @@ local CT = {
   CL_DRY = NOISE .. "dry_v1",
   CL_CORE = NOISE .. "t_core_v1",
   CL_MEANDER = NOISE .. "climate_meander_v1",
+  CL_SHIFT = NOISE .. "climate_shift_v1",
   CL_T_AB = NOISE .. "temperature_ab_v1",
   CL_M_AB = NOISE .. "moisture_ab_v1",
   CL_A_AB = NOISE .. "aux_ab_v1",
@@ -964,8 +965,8 @@ return {
     -- controls, so they exist only with Alien Biomes and are registered from the M2 dump.
     {
       release = "0.1.0",
-      names = {CT.CL_LAT, CT.CL_LON, CT.CL_MEANDER, CT.CL_DRY, CT.CL_CORE, CT.CL_T_AB, CT.CL_M_AB, CT.CL_A_AB,
-               CT.CL_T_FB,
+      names = {CT.CL_LAT, CT.CL_LON, CT.CL_MEANDER, CT.CL_DRY, CT.CL_CORE, CT.CL_SHIFT, CT.CL_T_AB, CT.CL_M_AB,
+               CT.CL_A_AB, CT.CL_T_FB,
       CT.CL_M_FB, CT.CL_A_FB,
                CT.VT_GRASS_1, CT.VT_GRASS_2, CT.VT_GRASS_3, CT.VT_GRASS_4, CT.VT_DRY_DIRT, CT.VT_DIRT_1, CT.VT_DIRT_2,
                CT.VT_DIRT_3,
@@ -1836,6 +1837,10 @@ return {
     -- reach: a belt is a latitude and longitude box, whose edge ran dead straight for thousands of tiles
     -- on the map view until it wandered by about this many degrees (no new noise, one more use of it).
     meander = {name = CT.CL_MEANDER, degrees = 0.6, wavelength_px = 360, seed1 = 7601, dry_lat = 3, dry_lon = 4},
+    -- The city offset folded into a seed1 shift (tiles modulo `modulus`, x times `stride` plus y): each
+    -- spawn city's climate noise gets its own seed (climate.lua). The largest value stays under 2^24, so
+    -- float32 holds it exactly.
+    city_shift = {modulus = 4093, stride = 257},
     temperature = {
       ref_lat = 54, ref_t = 25, per_degree = 2.2, min = -20, cap = 78,
       continental = {t = 6, lon_start = 15, lon_span = 45, lat_start = 35, lat_span = 10},

@@ -56,8 +56,8 @@ def(MS.pool.name, noise(MS.pool))
 -- alone (with -inf there, water-mud covered the band wherever the lean failed: draft render
 -- pv-m2-s1-eu-1); at and above the band's top, below its bottom where the lean fails, on water and
 -- inside marshes -inf. The lean still reaches below the band's bottom, on its cold side.
-def(V.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) .. ", " ..
-  num(V.bonus) .. ", -inf), if(elevation > 0, if(temperature >= " ..
+def(V.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
+  ", if(elevation > 0, " .. num(V.bonus) .. ", -inf), -inf), if(elevation > 0, if(temperature >= " ..
   num(X.temperate_below) .. ", -inf, if(1 - abs(temperature - " .. num(V.lean_t) .. ") / " .. num(V.lean_span) ..
   " + patch + " .. num(V.fine) .. " * " .. MS.pool.name .. " - " .. num(V.lean_cut) .. " > 0, " .. num(V.bonus) ..
   ", if(temperature >= " .. num(X.temperate_from) ..
