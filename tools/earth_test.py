@@ -5394,9 +5394,15 @@ def row_t1_t2_grids(ctx, mods, sec6, row, cache):
         rec = t1_eval(mref, Lp, Cp, scale=1)
         meas["preview_s1"] = rec
         fails += t1_fails("preview scale 1", rec)
-        # T2: every seed's grid bits equal seed 1000's outside the masks
+        # T2: every seed's grid bits equal seed 1000's outside the masks (from edge-and-lakes the edge band's
+        # warp reads map_seed, so its mask is one of them; edge_band_mask)
+        edge = edge_band_mask(mref)
+
         def seed_diff(L0, C0, L, C):
-            return int(((L != L0) & C & C0 & ~mref.thin).sum())
+            out = (L != L0) & C & C0 & ~mref.thin
+            if edge is not None:
+                out &= ~edge
+            return int(out.sum())
         for s in T1_SCALES_FG:
             L0, C0 = grids[(SEED, s)]
             for seed in SEEDS[1:]:
@@ -15062,6 +15068,9 @@ def ct_judge_places(cfg, places, vals, mref, scale, ab, label):
     fails, rows = [], []
     core = cfg["climate"]["names"]["core"]
     mw = cfg["regions"]["names"]["marsh_w"]
+    # edge-and-lakes: a place inside the edge band's mask (Gafsa, 15 px from Europe's box) may lie under
+    # the band's water at some seeds, so its tile family is reported, not judged; its band still is
+    eb = edge_band_mask(mref) if getattr(mref, "key", None) else None
     for p in places:
         pt = tuple(oracle.place_tile(mref, p, str(scale)))
         v = vals.get(pt) or {}
@@ -15075,7 +15084,9 @@ def ct_judge_places(cfg, places, vals, mref, scale, ab, label):
             if not ok:
                 fails.append(f"{label} {p['id']}: band {got} (core {v.get(core)}, moisture {v.get('moisture')}), "
                              f"want {want}")
-            if not okf and band_edge_free(p):
+            rp = p.get("ref_pixel")
+            in_band = bool(eb is not None and rp and eb[int(rp[1]), int(rp[0])])
+            if not okf and band_edge_free(p) and not in_band:
                 fails.append(f"{label} {p['id']}: tile {v.get('tile')} ({fam}) is not in {want}'s families "
                              f"{CT_FAMILIES[ab].get(want)} ({'AB' if ab else 'fallback'})")
         if p.get("kind") == "marsh" and p.get("adopted"):
@@ -21473,7 +21484,11 @@ def owa_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
                 if s in OWA_T2_SCALES:
                     for seed in SEEDS[1:]:
                         L2, C2 = grid_land(mref, at[(mk, s, seed)], s)
-                        diff = int(((L2 != L) & C2 & C & ~mref.thin).sum())
+                        dm = (L2 != L) & C2 & C & ~mref.thin
+                        edge = edge_band_mask(mref)
+                        if edge is not None:
+                            dm &= ~edge
+                        diff = int(dm.sum())
                         meas[f"t2_{mk}_s{s}_{seed}"] = diff
                         if diff:
                             fails.append(f"T2: {mk} scale {s} seed {seed}: {diff} grid bits differ from seed {SEED} "
