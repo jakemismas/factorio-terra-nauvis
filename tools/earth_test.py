@@ -3685,10 +3685,10 @@ def row_ab_withheld(ctx, mods, sec6, row, cache):
     palm path), so withholding is what keeps the constraint and the row would see a preset that
     slipped through; with nothing withheld (climate-tiles' palm switch), each preset defined there
     walked without its palm keys, the names a save made before the switch carries, must reach it
-    instead. Withholding reaches new worlds only, so the save route is warned: a preset
-    world made on M1 and loaded beside AB logs the withheld-preset warning exactly once, and loaded
-    on M1, or on M1 with an unrelated mod added (a configuration change without a withholding mod),
-    it logs none; an Earth world made beside AB from the preset's full map-gen-settings file (a
+    instead. Withholding reaches new worlds only, so the save route is
+    warned: a preset world made on M1 and loaded beside AB logs the withheld-preset warning exactly
+    once (none once nothing is withheld), and loaded on M1, or on M1 with an unrelated mod added (a
+    configuration change without a withholding mod), it logs none; an Earth world made beside AB from the preset's full map-gen-settings file (a
     server's route) logs it once at creation; the Map-type-only world beside AB never logs it."""
     cfg = mods.cfg
     live_set = list(AB_MODS)
