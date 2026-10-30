@@ -89,6 +89,14 @@ local function vanilla_hooks()
   end
 end
 
+-- A tile score with the three climate fields read through the grain's copies (config.lua climate.grain).
+local function grain_scores(text)
+  for field, key in pairs(cfg.climate.grain.keys) do
+    text = string.gsub(text, "%f[%w_:]" .. field .. "%f[^%w_:]", key)
+  end
+  return text
+end
+
 -- Only the adopted Alien Biomes tiles mix into temperate bands (D11; APPROVALS 9): every other AB land
 -- tile on Nauvis adds the exclusion key, and its own score stays the off value.
 local function exclusion_hooks()
@@ -110,12 +118,34 @@ local function exclusion_hooks()
     end
   end
   table.sort(names)
+  local excluded = {}
   for _, name in ipairs(names) do
+    excluded[name] = true
     local autoplace = data.raw.tile[name].autoplace
     local original = "(" .. tostring(autoplace.probability_expression) .. ")"
-    autoplace.probability_expression = hook(original .. " + " .. X.key, original)
+    autoplace.probability_expression = hook(grain_scores(original) .. " + " .. X.key, original)
   end
   log(cfg.identity.title .. ": temperate exclusion on " .. #names .. " Alien Biomes tiles")
+  -- The grain's copies reach every Alien Biomes land tile: snow, volcanic and the adopted tiles too.
+  local others = {}
+  for name in pairs(tile_settings or {}) do
+    local t = data.raw.tile[name]
+    if not excluded[name] and t and t.autoplace and t.autoplace.probability_expression then
+      for _, p in ipairs(cfg.climate.grain.prefixes) do
+        if string.sub(name, 1, #p) == p then
+          others[#others + 1] = name
+          break
+        end
+      end
+    end
+  end
+  table.sort(others)
+  for _, name in ipairs(others) do
+    local autoplace = data.raw.tile[name].autoplace
+    local original = "(" .. tostring(autoplace.probability_expression) .. ")"
+    autoplace.probability_expression = hook(grain_scores(original), original)
+  end
+  log(cfg.identity.title .. ": climate grain copies on " .. (#names + #others) .. " Alien Biomes tiles")
 end
 
 -- The palm switch: Earth presets name the Earth copies of the palms,

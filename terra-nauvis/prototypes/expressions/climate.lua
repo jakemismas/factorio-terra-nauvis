@@ -221,10 +221,10 @@ if AB then
   end
   def(N.ab.aux, ab_aux(""))
 
-  -- The grain's bodies (config.lua climate.grain). Temperature adds to the zone's lift, the version
-  -- presets name, and stops at the natural ceiling unless the zone is already over it, so no grain
-  -- reaches Alien Biomes' volcanic band outside the zone; aux adds under the cap, so no grain reaches
-  -- its alien palette.
+  -- The grain's bodies (config.lua climate.grain), which tile scores alone read. Temperature adds to
+  -- the zone's lift, the version presets name, and stops at the natural ceiling unless the zone is
+  -- already over it, so no grain reaches Alien Biomes' volcanic band outside the zone; aux adds under
+  -- the cap, so no grain reaches its alien palette.
   local G, GN = C.grain, N.grain
   local T2 = cfg.destroyed.names.temperature
   def(GN.field, "max(clamp((" .. num(G.cold_t) .. " - " .. N.core .. ") / " .. num(G.cold_span) .. ", 0, 1), clamp((" ..

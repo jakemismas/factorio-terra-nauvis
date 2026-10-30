@@ -5940,6 +5940,41 @@
    "dump": "m2",
    "slice": "climate-tiles",
    "registered": "2026-10-30"
+  },
+  "tn_tile_temperature": {
+   "type": "noise-expression",
+   "sha256": "699630c354eae8481a972c8f2df27e2ff849f388897ec9a38845c67a1802ec7e",
+   "dump": "m2",
+   "slice": "climate-tiles",
+   "registered": "2026-10-30"
+  },
+  "tn_tile_moisture": {
+   "type": "noise-expression",
+   "sha256": "42bc057c2d94c91f6089a19c33b5675781bd6399855926ed0b535c168d4921ab",
+   "dump": "m2",
+   "slice": "climate-tiles",
+   "registered": "2026-10-30"
+  },
+  "tn_tile_aux": {
+   "type": "noise-expression",
+   "sha256": "1234aba2391552d1b558f95240511c52e8afd9040c124e1ae0fb3bdff0e1abe2",
+   "dump": "m2",
+   "slice": "climate-tiles",
+   "registered": "2026-10-30"
+  },
+  "tn_vtile_bonus_v2": {
+   "type": "noise-expression",
+   "sha256": "80eb1021bcebceca191d7e8474183e78a818f45ed16c736dac166423fa72aa75",
+   "dump": "m2",
+   "slice": "climate-tiles",
+   "registered": "2026-10-30"
+  },
+  "tn_ab_exclude_v2": {
+   "type": "noise-expression",
+   "sha256": "d451cb35e00163813381d9dccb07141677d46e9f2ba673694b358dc055674617",
+   "dump": "m2",
+   "slice": "climate-tiles",
+   "registered": "2026-10-30"
   }
  }
 }

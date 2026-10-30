@@ -130,6 +130,11 @@ local CT = {
   CL_T_AB_G = NOISE .. "temperature_ab_v3",
   CL_M_AB_G = NOISE .. "moisture_ab_v2",
   CL_A_AB_G = NOISE .. "aux_ab_v2",
+  K_TILE_T = NOISE .. "tile_temperature",
+  K_TILE_M = NOISE .. "tile_moisture",
+  K_TILE_A = NOISE .. "tile_aux",
+  VT_BONUS_G = NOISE .. "vtile_bonus_v2",
+  AB_EXCLUDE_BODY_G = NOISE .. "ab_exclude_v2",
   CL_T_FB = NOISE .. "temperature_fb_v1",
   CL_M_FB = NOISE .. "moisture_fb_v1",
   CL_A_FB = NOISE .. "aux_fb_v1",
@@ -946,7 +951,8 @@ return {
                CT.VT_DIRT_3,
                CT.VT_DIRT_4, CT.VT_DIRT_5, CT.VT_DIRT_6, CT.VT_DIRT_7, CT.VT_SAND_1, CT.VT_SAND_2, CT.VT_SAND_3,
                CT.VT_RED_0, CT.VT_RED_1,
-               CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY, CT.MARSH_MUD,
+               CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.VT_BONUS_G, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY,
+               CT.AB_EXCLUDE_BODY_G, CT.K_TILE_T, CT.K_TILE_M, CT.K_TILE_A, CT.MARSH_MUD,
                CT.MARSH_MUD_BODY, CT.MARSH_SHALLOW,
                CT.MARSH_SHALLOW_BODY, CT.MARSH_GRASS, CT.MARSH_GRASS_BODY},
     },
@@ -1777,14 +1783,19 @@ return {
     -- noise can move, so at scale 6, where the spread's finest octave is 240 tiles, every edge outside
     -- the temperate band is a razor line round a flat blob. Europe hides it: 54 percent of its land is
     -- temperate, against 18 on Old World and Atlantic, where vanilla tiles and their patch noise win.
-    -- Beside Alien Biomes, Old World and Atlantic add the fine noise that frays vanilla's own tile
-    -- edges to all three fields: noise_layer_noise(layer), 6 to 48 tiles at every scale, the same call
-    -- as grass-1's, so the Tile program shares it. Temperature, moisture and aux move by their amounts
-    -- per unit (aux inside its cap), at full weight cold_span under cold_t and hot_span over hot_t and
-    -- at none between, so temperate land keeps its character. A coarser noise only redraws the blobs
-    -- (the temperate patch noise, 60 tiles and up at scale 6, left every edge a razor line).
+    -- Beside Alien Biomes, Old World and Atlantic give the tile scores alone frayed copies of the
+    -- three fields: each Alien Biomes tile with a prefix below reads keys.tile on its on branch, and
+    -- the temperate bonus and exclusion read the temperature copy, so their edge frays too. A copy adds
+    -- noise_layer_noise(layer), 6 to 48 tiles at every scale, the same call as grass-1's, so the Tile
+    -- program shares it; trees and decoratives keep the plain fields, so placement stays as it was.
+    -- The amounts are per unit (aux inside its cap), at full weight cold_span under cold_t and
+    -- hot_span over hot_t and at none between, so temperate land keeps its character. A coarser noise
+    -- only redraws the blobs (the temperate patch noise, 60 tiles and up at scale 6, left razor edges).
+    -- Each key's prototype is its plain field, so a preset that names none, Europe's, is unchanged.
     grain = {maps = {atlantic = true, olde_world = true}, layer = 19, temperature = 3, moisture = 0.09, aux = 0.09,
-             cold_t = 32, cold_span = 10, hot_t = 58, hot_span = 7},
+             cold_t = 32, cold_span = 10, hot_t = 58, hot_span = 7,
+             prefixes = {"vegetation-", "mineral-", "frozen-", "volcanic-"},
+             keys = {temperature = CT.K_TILE_T, moisture = CT.K_TILE_M, aux = CT.K_TILE_A}},
     -- the coldness the fallback's pulls and spread read: 0 at core cold.t and warmer, 1 at
     -- cold.t - cold.span and colder
     cold = {t = 10, span = 30},
@@ -1864,7 +1875,7 @@ return {
               ["red-desert-0"] = CT.VT_RED_0,
               ["red-desert-1"] = CT.VT_RED_1, ["red-desert-2"] = CT.VT_RED_2, ["red-desert-3"] = CT.VT_RED_3},
       off = "-inf",
-      body = CT.VT_BONUS,
+      body = CT.VT_BONUS, body_grain = CT.VT_BONUS_G,
       bonus = 10, lean_t = 45, lean_span = 30, lean_cut = 0.5,
       patch = {amplitude = 0.36, clamp = 0.45, wavelength_px = 10, octaves = 3, persistence = 0.5, seed1 = 7605},
       marsh_cut = 0.5,
@@ -1875,7 +1886,7 @@ return {
                   "mineral-beige-dirt-1", "mineral-cream-sand-1", "mineral-grey-sand-1", "water-mud"},
     exclude = {
       prefixes = {"vegetation-", "mineral-"},
-      key = CT.AB_EXCLUDE, off = "0", body = CT.AB_EXCLUDE_BODY,
+      key = CT.AB_EXCLUDE, off = "0", body = CT.AB_EXCLUDE_BODY, body_grain = CT.AB_EXCLUDE_BODY_G,
       temperate_from = 25, temperate_below = 65, marsh_cut = 0.5,
     },
     marsh = {
