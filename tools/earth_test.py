@@ -24549,7 +24549,8 @@ def el_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
     # T1, T3 (SS; every map; scales 1 and 6): at each map's longest box-touching runs
     # of reference land, every land line the box cuts ends in water at least EL_MIN_WATER_PX before the
     # box, the band's water edge stays within its reach, beyond the T1 mask the previous version holds
-    # tile for tile, no water turns to land, and beyond the box all is water (G5)
+    # tile for tile, no water turns to land, and beyond the box all is water (G5); a map with a lakes field
+    # is judged with its switch on, the previous version's lakes
     edge_plan = [(mk, s, lab, at) for mk in el_maps(cfg) for s in EL_SCALES
                  for lab, at in el_edge_windows(cfg, mk, s, runner_offset(cfg, mk, s))]
 
@@ -24559,7 +24560,9 @@ def el_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
         dirs = []
         i = 0
         for mk, s, lab, at in edge_plan:
-            for name in ("new", "prev"):
+            # a map with a lakes field compares with its switch on, so the band is the one difference
+            # (the previous version always composes its inland lakes)
+            for name in ("on" if geo[mk].get("lakes") else "new", "prev"):
                 mgs = write_mgs(ctx, f"el-{mk}-s{s}-{lab}-{name}", pens(mk, s)[name])
                 ln = i % PAR_MAX
                 out = ctx.out / f"el-edge-{mk}-s{s}-{lab}-{name}"
