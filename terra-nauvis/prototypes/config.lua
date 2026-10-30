@@ -2068,11 +2068,12 @@ return {
     -- field and may run in the Entity program. `margin` widens its band and lean, in temperature units,
     -- over climate.grain's fray: the grain stays out of the Entity program (trees and decoratives keep
     -- the plain fields), so the body can only cover the frayed edge from outside. The fray's bound is 6
-    -- (grain.temperature 3 times noise_layer_noise's peak of 2), but 6 strips Alien Biomes' trees along
-    -- the cold edge; 4 is the smallest margin that left these off vanilla land, 3 of 477,000 left on it
-    --. `types` pairs each prototype type with the settings group on_nauvis reads;
-    -- Alien Biomes' palms keep their list (their keys already name Earth copies).
-    scan = {body = CT.AB_KEEP_BODY, margin = 4,
+    -- (grain.temperature 3 times noise_layer_noise's peak of 2), but full cover strips Alien Biomes' trees
+    -- along the band's edges, and a stray plant on a frayed edge reads better than a bare fringe, so 2 lets
+    -- about 0.4 percent of these onto vanilla land. `types` pairs each prototype
+    -- type with the settings group on_nauvis reads; Alien Biomes' palms keep their list (their keys already
+    -- name Earth copies).
+    scan = {body = CT.AB_KEEP_BODY, margin = 2,
             types = {{type = "optimized-decorative", group = "decorative"}, {type = "tree", group = "entity"}}},
     marsh = {
       water_mud = {tile = "water-mud", key = CT.MARSH_MUD, off = "-inf", body = CT.MARSH_MUD_BODY},
