@@ -20,7 +20,8 @@
 -- centre, S8's convention); it folds to constants, so the chain's constant slots accept it (S7: Tile
 -- 9,350 for 1, 30 or 50 cities). Also here: each map's analytic spawn lake and starting-ore bias,
 -- both on the city's generated bearing (tools/build_spawn.py), the start land guarantee and each
--- version's inland lakes, which the version's elevation entry composes (coast.lua). Every number
+-- version's inland lakes, which the version's elevation entry composes (coast.lua). Both lake kinds
+-- read their shapes through a domain warp of their own. Every number
 -- comes from config.lua, the city tables and the generated bearings (S-5). A body that several
 -- versions name is defined once, and two versions that would build it differently fail at load.
 local cfg = require("prototypes.config")
@@ -103,6 +104,16 @@ local function noise(seed1, wavelength, cx, cy)
   end
   return "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(seed1) .. ", input_scale = " .. num(1) ..
     " / " .. num(wavelength) .. shift .. "}"
+end
+
+-- One axis of a lake's domain warp: amplitude times
+-- one basis noise per octave row of config.lua, so a lake's shore wanders off the circle its distance draws.
+local function warp(octaves, axis, cx, cy)
+  local parts = {}
+  for i, o in ipairs(octaves) do
+    parts[i] = num(o.amplitude) .. " * " .. noise(o["seed1" .. axis], o.wavelength, cx, cy)
+  end
+  return table.concat(parts, " + ")
 end
 
 -- Destroyed Europe's random pool (milestone destroyed-europe; APPROVALS 10): the city fold's hash modulo the
@@ -225,7 +236,9 @@ local function spawn(map_key, v)
       lake_angle = angle,
       lake_x = num(L.distance) .. " * cos(lake_angle)",
       lake_y = num(L.distance) .. " * sin(lake_angle)",
-      lake_d = "sqrt((x - lake_x) * (x - lake_x) + (y - lake_y) * (y - lake_y))",
+      lake_wx = "x + " .. warp(L.warp, "x"),
+      lake_wy = "y + " .. warp(L.warp, "y"),
+      lake_d = "sqrt((lake_wx - lake_x) * (lake_wx - lake_x) + (lake_wy - lake_y) * (lake_wy - lake_y))",
       lake_n = num(L.noise.amplitude) .. " * " .. noise(L.noise.seed1, L.noise.wavelength),
     })
 
@@ -245,18 +258,22 @@ local function spawn(map_key, v)
   -- inside start_radii start radii of the spawn.
   local I = S.inland_lakes
   local quantity = math.pi * I.radius * I.radius / I.cone_divisor   -- a cone of peak 1
-  local spots = "spot_noise{x = " .. v.gx .. ", y = " .. v.gy .. ", density_expression = " ..
+  local spots = "spot_noise{x = lake_wx, y = lake_wy, density_expression = " ..
     num(quantity * I.per_region / (I.region * I.region)) .. ", spot_quantity_expression = " .. num(quantity) ..
     ", spot_radius_expression = " .. num(I.radius) .. ", spot_favorability_expression = " .. num(1) ..
     ", seed0 = map_seed, seed1 = " .. num(I.seed1) .. ", basement_value = " .. num(0) ..
     ", maximum_spot_basement_radius = " .. num(2 * I.radius) .. ", region_size = " .. num(I.region) ..
     ", candidate_spot_count = " .. num(I.candidates) .. ", suggested_minimum_candidate_point_spacing = " ..
     num(I.spacing) .. ", hard_region_target_quantity = " .. num(1) .. "}"
-  def(sp.inland_lakes, "max(" .. num(I.gain) .. " * (" .. num(I.level) .. " - lake_spot) + lake_shore, " ..
+  def(sp.inland_lakes, "max(" .. num(I.gain) .. " * (" .. num(I.level) .. " + lake_size - lake_spot) + lake_shore, " ..
     num(I.coast_gain) .. " * (" .. num(I.coast_px) .. " - " .. v.geo .. "), (" .. num(I.start_radii) ..
     " * starting_area_radius - " .. dist .. ") * " .. num(I.start_slope) .. ")", {
       lake_spot = spots,
       lake_shore = num(I.shore.amplitude) .. " * " .. noise(I.shore.seed1, I.shore.wavelength, v.cx, v.cy),
+      lake_size = num(I.size.amplitude) .. " * clamp(" .. noise(I.size.seed1, I.size.wavelength, v.cx, v.cy) ..
+        ", -1, 1)",
+      lake_wx = v.gx .. " + " .. warp(I.warp, "x", v.cx, v.cy),
+      lake_wy = v.gy .. " + " .. warp(I.warp, "y", v.cx, v.cy),
     })
 end
 

@@ -1294,11 +1294,17 @@ return {
   --     1/3), so the design water fraction is per_region * pi * (radius * (1 - level))^2 / region^2
   --     (0.61 percent). Kept coast_px reference pixels inside the coast fit (no lake on a shore, a
   --     small island or an isthmus) and out of start_radii start radii of the spawn.
+  --   warp (both lakes, the decision of 2026-10-30): octave rows of a domain warp, a basis noise per axis
+  --     (seed1x, seed1y) of wavelength tiles times amplitude tiles, so no lake reads as a disc; size moves
+  --     an inland lake's level by amplitude times a clamped low-frequency noise, so they are not all one
+  --     size; the level stays far enough above 0 that the shore noise cannot open water off a spot.
   spawn = {
     random_value = "random",
     hash = {small_mult = 157, high_mult = 97, high_div = 65536},
     lake = {distance = 72, bearings = 16, magnitude = 2.5, offset = 3, divisor = 8,
-            noise = {seed1 = 7201, wavelength = 12, amplitude = 4}},
+            noise = {seed1 = 7201, wavelength = 12, amplitude = 4},
+            warp = {{seed1x = 7205, seed1y = 7206, wavelength = 90, amplitude = 12},
+                    {seed1x = 7207, seed1y = 7208, wavelength = 30, amplitude = 5}}},
     bias = {radius = 150, excluder = 40, widths = {50, 75, 100, 150}, seed = 7203, layouts = 150, ores = 4,
             candidates = 32, region = 450, spacing = 30, patch = {7, 14}, share = 0.5, margin = 0.005},
     land = {radius = 16, slope = 0.5},
@@ -1306,6 +1312,9 @@ return {
       seed1 = 7202, region = 1024, per_region = 8, radius = 24, level = 1 / 3, gain = 12, candidates = 32,
       spacing = 128, cone_divisor = 3,
       shore = {seed1 = 7204, wavelength = 8, amplitude = 1},
+      warp = {{seed1x = 7209, seed1y = 7210, wavelength = 48, amplitude = 12},
+              {seed1x = 7211, seed1y = 7212, wavelength = 16, amplitude = 4}},
+      size = {seed1 = 7213, wavelength = 256, amplitude = 0.2},
       coast_px = 2.5, coast_gain = 20, start_radii = 1.5, start_slope = 0.25,
     },
   },
