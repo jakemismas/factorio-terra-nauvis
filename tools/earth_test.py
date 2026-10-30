@@ -241,6 +241,18 @@ REGISTRY = [
      # null this release
      "oracle_properties": ["hotspot"],
      "dumps": ["m1", "m3"]},
+    # The soft map edge and the inland lakes switch (design section 12, milestone 2): each map's next geography
+    # version sinks land into deep water across a noise-warped band inside the box, and a version with a
+    # spawn record composes its inland lakes only with the per-save switch on (default off). From here
+    # T1 masks the edge band (t1_eval, edge_band_mask; U13) and T3's far-field check reads the band in
+    # place of the ring (row_t3_oracle); its gate's live timed sample re-times Europe's block (t15b_m1).
+    {"id": "edge-and-lakes", "part": 6, "order": 2,
+     "fg": ["el_dump_facts", "el_offline"],
+     "ss": ["el_lakes", "el_edge"],
+     "deterministic_ss": ["el_lakes", "el_edge"],
+     "timed_ss": ["t15b_m1"],
+     "oracle_properties": [],
+     "dumps": ["m1"]},
 ]
 
 
@@ -4992,12 +5004,38 @@ def corridor_mask(map_key, scale):
     return _CORRIDORS[k]
 
 
+_EDGE_MASKS = {}
+
+
+def edge_band_mask(mref):
+    """T1's edge band mask (U13; edge-and-lakes) of a map whose newest geography version carries the soft
+    map edge, or None: the reference land pixels less than coast.edge_band mask_px from the box, where
+    the band may sink land into water (its water edge lies at most width_px + warp_px reference px in,
+    and a pixel's centre tile sits at most half a pixel past its index). Water pixels stay water under
+    the band's min(), so only land is masked."""
+    k = mref.key
+    if k not in _EDGE_MASKS:
+        cfg = tnconfig.load()
+        g = tnconfig.geography(cfg).get(k) or {}
+        B = (cfg.get("coast") or {}).get("edge_band")
+        if not (g.get("edge") and B):
+            _EDGE_MASKS[k] = None
+        else:
+            import numpy as np
+            r = np.arange(mref.H)[:, None]
+            c = np.arange(mref.W)[None, :]
+            d = np.minimum(np.minimum(r, mref.H - 1 - r), np.minimum(c, mref.W - 1 - c))
+            _EDGE_MASKS[k] = (d < int(B["mask_px"])) & mref.land.astype(bool)
+    return _EDGE_MASKS[k]
+
+
 def t1_eval(mref, L, C, scale=None):
-    """T1 on one land decision, masked (U13): thin water, and from waterways the D16 corridors of the
-    map at `scale` (the D15 lake footprints are empty until spawn-cities): agreement, IoU, coast
-    deviation, islands per size bucket (4- and 8-connected), and the thin water that became land, as
-    pixels and reaches. covered_px stays the pixels the grid or previews covered; the corridor pixels
-    left out of the evaluation are counted under masked_px."""
+    """T1 on one land decision, masked (U13): thin water, from waterways the D16 corridors of the
+    map at `scale` (the D15 lake footprints are empty until spawn-cities), and from edge-and-lakes the
+    edge band (edge_band_mask): agreement, IoU, coast deviation, islands per size bucket (4- and
+    8-connected), and the thin water that became land, as pixels and reaches. covered_px stays the
+    pixels the grid or previews covered; the corridor and edge band pixels left out of the evaluation
+    are counted under masked_px, and the edge band's share of the map under edge_band_share."""
     import numpy as np
     import t1_metrics as t1
     corr = corridor_mask(mref.key, scale) if (scale is not None and mref.key) else None
@@ -5006,6 +5044,11 @@ def t1_eval(mref, L, C, scale=None):
     if corr is not None:
         n_corr = int((C & corr & ~mref.thin).sum())
         C = C & ~corr
+    edge = edge_band_mask(mref) if mref.key else None
+    n_edge = 0
+    if edge is not None:
+        n_edge = int((C & edge).sum())
+        C = C & ~edge
     res, _ = t1.crop_and_evaluate(mref, L.copy(), C, t1.DEFAULT_CAP, 4)
     res8, _ = t1.crop_and_evaluate(mref, L.copy(), C, t1.DEFAULT_CAP, 8)
     res["covered_px"] = covered
@@ -5017,8 +5060,10 @@ def t1_eval(mref, L, C, scale=None):
     return {"agreement": res["pixel_agreement"], "iou": res["land_iou"], "p99_px": cd["p99"], "max_px": cd["max"],
             "mean_px": cd["mean"], "misclassified": cd["misclassified"], "covered_px": res["covered_px"],
             "evaluated_px": res["evaluated_px"],
-            "masked_px": {"thin_water": res["excluded_thin_px"], "lake_footprints_d15": 0, "corridors_d16": n_corr},
-            "masked_share": round((res["excluded_thin_px"] + n_corr) / float(mref.W * mref.H), 6),
+            "masked_px": {"thin_water": res["excluded_thin_px"], "lake_footprints_d15": 0, "corridors_d16": n_corr,
+                          "edge_band": n_edge},
+            "masked_share": round((res["excluded_thin_px"] + n_corr + n_edge) / float(mref.W * mref.H), 6),
+            "edge_band_share": round(n_edge / float(mref.W * mref.H), 6),
             "islands_conn4": {k: [v["present"], v["islands"]] for k, v in b4.items()},
             "islands_conn8": {k: [v["present"], v["islands"]] for k, v in b8.items()},
             "islands_65_missing": [b4["65+"]["missing"], b8["65+"]["missing"]],
@@ -5545,6 +5590,13 @@ def row_t3_oracle(ctx, mods, sec6, row, cache):
                 if not beyond:
                     fails.append(f"scale {s} {side} edge: tiles inside and outside the extent interleave")
                 ring = (vals.get((last, 0) if axis == 0 else (0, last)) or {}).get(g["far"])
+                if g.get("edge"):
+                    # edge-and-lakes: a version with the soft map edge has no ring; its band sinks the
+                    # extent's outermost tile below the deepwater line at every scale (coast.edge_band)
+                    if not isinstance(ring, (int, float)) or isinstance(ring, bool) or not ring < DEEP_BELOW:
+                        fails.append(f"scale {s} {side} edge: the outermost tile {last} reads {ring} in {g['far']}, "
+                                     f"not deep water below {DEEP_BELOW} (the edge band)")
+                    continue
                 if s >= ring_from and ring != edge_water:
                     fails.append(f"scale {s} {side} edge: the outermost tile {last} reads {ring} in {g['far']}, not "
                                  f"the edge water {edge_water}")
@@ -13950,8 +14002,12 @@ def ww_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
             meas[f"{mk}_s{s}"] = {"agreement": rec["agreement"], "masked_share": rec["masked_share"],
                                   "masked_px": rec["masked_px"], "islands_65": rec["islands_conn4"].get("65+"),
                                   "merged_65": rec["islands_65_merged"], "thin_water_became_land": rec["thin_water_became_land"]}
-            if rec["masked_share"] > WW_MASK_SHARE:
-                fails.append(f"{mk} scale {s}: masked share {rec['masked_share']} over {WW_MASK_SHARE}")
+            # the waterways' bar holds thin water and the corridors; edge-and-lakes' edge band is reported
+            # beside it (edge_band_share) and judged by its own row (el_t1)
+            ww_share = round(rec["masked_share"] - rec.get("edge_band_share", 0), 6)
+            meas[f"{mk}_s{s}"]["edge_band_share"] = rec.get("edge_band_share", 0)
+            if ww_share > WW_MASK_SHARE:
+                fails.append(f"{mk} scale {s}: masked share {ww_share} (thin water and corridors) over {WW_MASK_SHARE}")
             if rec["agreement"] is None or rec["agreement"] < bar:
                 fails.append(f"{mk} scale {s}: masked agreement {rec['agreement']} under {bar} (T1-a)")
             if mk == eu and (any(rec["islands_65_missing"]) or any(rec["islands_65_merged"])):
@@ -19763,6 +19819,8 @@ def suite_checks(ctx, mods, sec6):
         rd_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     if any(s["id"] == "resources-enemies" for s in registry_upto(ctx.slice)):
         re_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "edge-and-lakes" for s in registry_upto(ctx.slice)):
+        el_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     return checks
 
 
@@ -22444,6 +22502,16 @@ def sc_mgs(ctx, cfg, mk, scale, city, label, extra=None):
     return write_mgs(ctx, f"sc-{label}", pen)
 
 
+def sc_lakes_on(cfg, mk):
+    """The pen entries that turn the inland lakes switch on (edge-and-lakes: default off) for a map whose
+    newest version reads its inland lakes through it, else {}: T3's inland-lake rows judge real lakes,
+    so they run with the switch on."""
+    tg = (cfg.get("toggles") or {}).get("inland_lakes")
+    if not tg or not (tnconfig.geography(cfg).get(mk) or {}).get("lakes"):
+        return {}
+    return {tg["preset_key"]: tg["on"]}
+
+
 def sc_city_modset(ctx, mods, tag, city=None, scale=None, extra=()):
     """M1 plus the dump probe (and `extra` mods), prepared, with the spawn-city and scale settings
     written explicitly (G7)."""
@@ -23373,7 +23441,7 @@ def sc_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
         water the lakes did not add."""
         off = runner_offset(cfg, mk, s)
         city = cfg["settings"][g["city_setting"]]["default_value"]
-        mgs = sc_mgs(ctx, cfg, mk, s, city, f"t3l-s{s}")
+        mgs = sc_mgs(ctx, cfg, mk, s, city, f"t3l-s{s}", extra=sc_lakes_on(cfg, mk))
         x0, y0 = gx0 - off[0], gy0 - off[1]
         S = SC_SQUARE
         ln = i % PAR_MAX
@@ -23395,7 +23463,8 @@ def sc_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
         jobs, i = [], 0
         for s in (1, 6):
             off = runner_offset(cfg, mk, s)
-            mgs = sc_mgs(ctx, cfg, mk, s, cfg["settings"][g["city_setting"]]["default_value"], f"t3l-s{s}")
+            mgs = sc_mgs(ctx, cfg, mk, s, cfg["settings"][g["city_setting"]]["default_value"], f"t3l-s{s}",
+                         extra=sc_lakes_on(cfg, mk))
             for gx0, gy0, bw, bh in lake_blocks(s):
                 ln = i % PAR_MAX
                 inst = lane_instance(ctx, ln)
@@ -24055,6 +24124,447 @@ def v2_sheet(cfg, mk, scale, runs, out_png, cols=5, panel=192):
         name = rows_tbl.get(city, {}).get("name", city)
         draw.text((x0 + 2, y0 - label_h + 3), f"{name}  (scale {s}, offset {cx}, {cy})", fill=(235, 235, 235))
     sheet.convert("P", palette=Image.ADAPTIVE, colors=256).save(out_png, optimize=True)
+
+
+# ------------------------------------------------------------------------------------------------ edge-and-lakes
+
+# The soft map edge and the inland lakes switch (design section 12, milestone 2
+# 2026-10-29 16:05 and 17:50). Its FG rows read the M1 dump and the reference rasters; its suite checks
+# render small previews of each map's box edges and of one inland window, each world built from the
+# preset's names (expected_pen) with the switch, the lakes body or the version picked by name.
+EL_SCALES = (1, 6)               # the suite's scales: the band is in reference px, so 1 and 6 bound it
+EL_WINDOW = 1024                 # tiles a side of an edge or inland preview window
+EL_SPAWN_WINDOW = 256            # tiles a side of the spawn window (inside the inland lakes' start exclusion)
+EL_EDGE_INSET = 128              # tiles of the edge window beyond the box (G5: they read deep water)
+EL_EDGE_RUNS = 2                 # edge windows per map: the longest box-touching runs of reference land
+EL_MIN_WATER_PX = 4              # the band's water edge never closer to the box than this (px)
+EL_MAX_REACH_PX = 20             # nor deeper than this: the nearest land the box does not cut lies at 22 px
+EL_MASK_SHARE = 0.02             # T1: the edge band mask stays at most 2 percent of a map
+# One inland window per map with inland lakes, its centre in reference px: away from every coast and
+# box and beside the runner's default spawn (Europe: the Pannonian basin, north of Tirana at seed 1000).
+EL_LAKE_PX = {"europe": (1406, 1043)}
+
+
+def el_band(cfg):
+    """coast.edge_band, or GateError."""
+    B = (cfg.get("coast") or {}).get("edge_band")
+    if not isinstance(B, dict):
+        raise GateError("config.lua has no coast.edge_band (edge-and-lakes)")
+    return B
+
+
+def el_maps(cfg):
+    """The maps whose newest geography version carries the soft map edge."""
+    geo = tnconfig.geography(cfg)
+    return [mk for mk in cfg["map_order"] if (geo.get(mk) or {}).get("edge")]
+
+
+def el_components(mref):
+    """The reference land's 8-connected components as [(depth, px)]: each one's closest approach to the
+    box in reference px (0: the box cuts it) and its size."""
+    import numpy as np
+    import t1_metrics as t1
+    R = t1.flat_runs(mref.land.astype(bool), 8)
+    if not R["n"]:
+        return []
+    rows, s, e = R["rows"], R["s"], R["e"]
+    depth = np.minimum(np.minimum(rows, mref.H - 1 - rows), np.minimum(s, mref.W - 1 - e))
+    dmin = np.full(R["n"], np.iinfo(np.int64).max, np.int64)
+    np.minimum.at(dmin, R["comp"], depth.astype(np.int64))
+    size = np.bincount(R["comp"], weights=e - s + 1, minlength=R["n"]).astype(np.int64)
+    return list(zip(dmin.tolist(), size.tolist()))
+
+
+def el_offline_checks(cfg):
+    """{check: (ok, detail)}: the band's numbers keep its water edge between EL_MIN_WATER_PX and
+    EL_MAX_REACH_PX of the box and inside the T1 mask; per edge map the reference land the band can reach
+    (components the box does not cut within width + warp px; on Europe, where T1-e gates islands, none of
+    ISLAND_MIN_PX or more) and the edge band mask's share of the map; and a T1 control on Europe: a land
+    decision with every masked pixel sunk scores 1.0 masked and less with the mask left out (G6)."""
+    import numpy as np
+    import earthgeo as eg
+    import t1_metrics as t1
+    B = el_band(cfg)
+    W, A, M = float(B["width_px"]), float(B["warp_px"]), int(B["mask_px"])
+    out = {"band numbers": (W - A >= EL_MIN_WATER_PX and W + A <= EL_MAX_REACH_PX and M >= W + A + 1,
+                            f"water edge {W - A} to {W + A} px, mask {M} px")}
+    for mk in el_maps(cfg):
+        mref = eg.MapRef(mk)
+        comps = el_components(mref)
+        cut = [c for c in comps if c[0] == 0]
+        near = sorted(c for c in comps if 0 < c[0] < W + A)
+        big = [c for c in near if c[1] >= ISLAND_MIN_PX]
+        out[f"{mk}: land the box cuts"] = (bool(cut), f"{len(cut)} components, {sum(c[1] for c in cut)} px")
+        out[f"{mk}: uncut land within the band's reach"] = (
+            not (mk == "europe" and big),
+            f"{len(near)} components (depth, px) {near[:8]}; of {ISLAND_MIN_PX} px or more: {big[:4]}")
+        mask = edge_band_mask(mref)
+        share = float(mask.sum()) / (mref.W * mref.H) if mask is not None else None
+        out[f"{mk}: edge band mask share"] = (mask is not None and share <= EL_MASK_SHARE,
+                                             f"{None if share is None else round(share, 5)} (at most {EL_MASK_SHARE})")
+    mref = eg.MapRef("europe") if "europe" in el_maps(cfg) else None
+    if mref is not None:
+        mask = edge_band_mask(mref)
+        land = mref.land.astype(bool)
+        sunk = land & ~mask
+        cov = np.ones_like(land)
+        masked = t1_eval(mref, sunk, cov.copy())["agreement"]
+        res, _ = t1.crop_and_evaluate(mref, sunk.copy(), cov.copy(), t1.DEFAULT_CAP, 4)
+        bare = res["pixel_agreement"]
+        out["europe: T1 masks the edge band (control)"] = (masked == 1.0 and bare is not None and bare < 1.0,
+                                                           f"sunk band scores {masked} masked, {bare} unmasked")
+    return out
+
+
+def row_el_offline(ctx, mods, sec6, row, cache):
+    """edge-and-lakes' offline checks (FG; no game run; el_offline_checks)."""
+    try:
+        results = el_offline_checks(mods.cfg)
+    except Exception as e:
+        results = {f"the offline checks crashed: {type(e).__name__}: {e}": (False, "")}
+    for k, (ok, detail) in results.items():
+        if not ok:
+            row.fails.append(f"offline check did not hold: {k} {detail}".rstrip())
+    row.meas = {k: d for k, (_, d) in results.items()}
+    row.detail = f"{sum(1 for ok, _ in results.values() if ok)} of {len(results)} offline checks held"
+
+
+def row_el_dump_facts(ctx, mods, sec6, row, cache):
+    """T16 (FG) on the M1 dump: every map's newest entry is a new versioned name its preset
+    names, the older entries defined, registered and unnamed; its far-field box reads the band's
+    octaves and no ring while the previous version's box keeps its ring; a version with a lakes field
+    reads its inland lakes body only through if(<switch> > threshold, body, inf); every preset bakes the
+    switch at the setting's default (off: the neutral zero) and the switch's prototype, a Map type
+    fallback, names the same; the switch is a preset key (the Nauvis-only guard strips it)."""
+    cfg = mods.cfg
+    d1 = ctx.shared.get("dump_m1")
+    if d1 is None:
+        row.fails.append("no M1 dump")
+        return
+    ne = d1.get("noise-expression") or {}
+    fz = json.loads((TESTS / "frozen.json").read_text(encoding="utf-8")).get("bodies") or {}
+    tg = (cfg.get("toggles") or {}).get("inland_lakes")
+    if not tg:
+        row.fails.append("config.lua has no inland_lakes toggle")
+        return
+    key = tg["preset_key"]
+    want = tg["on"] if cfg["settings"][tg["setting"]]["default_value"] else tg["off"]
+    B = el_band(cfg)
+    seeds = [str(o["seed1"]) for o in B["octaves"]]
+    if key not in cfg.get("preset_keys", []):
+        row.fails.append(f"{key} is not in config.lua preset_keys: the Nauvis-only guard would leave it on other planets")
+    fb = (ne.get(key) or {}).get("expression")
+    if fb != want:
+        row.fails.append(f"the switch's Map type fallback {key} reads {fb!r}, want {want!r} (the setting's default)")
+    meas = {}
+    versions = tnconfig.geography_versions(cfg)
+    for mk in el_maps(cfg):
+        p = next(pr for pr in cfg["presets"].values() if pr["map"] == mk)
+        pen = preset_pen(d1, p["name"])
+        g, prev = versions[mk][-1], versions[mk][-2]
+        if pen.get("elevation") != g["entry"]:
+            row.fails.append(f"{p['name']} names {pen.get('elevation')}, not the newest entry {g['entry']}")
+        if pen.get(key) != want:
+            row.fails.append(f"{p['name']} bakes {key} = {pen.get(key)!r}, want {want!r}")
+        for v in versions[mk][:-1]:
+            if v["entry"] not in ne or v["entry"] not in fz:
+                row.fails.append(f"the older entry {v['entry']} is no longer defined or registered (old saves name it)")
+        for n in (g["entry"], g["far"]):
+            if n not in fz:
+                row.fails.append(f"{n} is not registered in tests/frozen.json")
+        far = ne.get(g["far"]) or {}
+        flat = json.dumps(far, sort_keys=True)
+        if not all(f"seed1 = {sd}" in flat for sd in seeds) or "ring" in (far.get("local_expressions") or {}):
+            row.fails.append(f"{g['far']} does not read the band's octaves {seeds} or still reads the ring")
+        pfar = ne.get(prev["far"]) or {}
+        if "ring" not in (pfar.get("local_expressions") or {}):
+            row.fails.append(f"the previous box {prev['far']} lost its ring: an older body changed in place")
+        entry = ne.get(g["entry"]) or {}
+        locs = entry.get("local_expressions") or {}
+        if g.get("lakes"):
+            lakes = g["spawn"]["inland_lakes"]
+            lk = locs.get("lk", "")
+            if not (lk.startswith(f"if({key} > ") and lakes in lk and lk.endswith(", inf)")):
+                row.fails.append(f"{g['entry']} does not read {lakes} through the switch: lk = {lk!r}")
+            if lakes in entry.get("expression", "") or any(lakes in v for k, v in locs.items() if k != "lk"):
+                row.fails.append(f"{g['entry']} reads {lakes} outside the switch")
+        meas[mk] = {"entry": g["entry"], "far": g["far"], "switch": pen.get(key), "lakes": bool(g.get("lakes"))}
+    row.meas = meas
+    row.detail = f"{len(meas)} maps: {meas}"
+
+
+ROW_FUNCS.update({"el_dump_facts": row_el_dump_facts, "el_offline": row_el_offline})
+
+
+def el_world(cfg, mk, s, off, cx, cy):
+    """A reference pixel's centre tile in world tiles at scale s with the spawn offset `off`."""
+    return s * (cx - cfg["maps"][mk]["wr"]) + s // 2 - off[0], s * (cy - cfg["maps"][mk]["hr"]) + s // 2 - off[1]
+
+
+def el_snap(v):
+    return int(math.floor(v / 32.0)) * 32
+
+
+def el_box_distance(cfg, mk, s, off, xs, ys):
+    """Each world tile's distance in tiles to the edge of the map's extent (>= 0 inside), as coast.lua's
+    far-field box computes it."""
+    import numpy as np
+    m = cfg["maps"][mk]
+    gx, gy = xs + off[0], ys + off[1]
+    return np.minimum(np.minimum(gx + s * m["wr"], s * (m["width_px"] - m["wr"]) - 1 - gx),
+                      np.minimum(gy + s * m["hr"], s * (m["height_px"] - m["hr"]) - 1 - gy))
+
+
+def el_edge_windows(cfg, mk, s, off):
+    """Up to EL_EDGE_RUNS preview windows on the map's box edges where reference land meets the box: one
+    per longest run of box-touching land, centred on the run along the edge, the box EL_EDGE_INSET tiles
+    from the window's outer side. [(label, (ox, oy))], centres snapped to 32."""
+    import numpy as np
+    import earthgeo as eg
+    mref = eg.MapRef(mk)
+    land = mref.land.astype(bool)
+    edges = {"top": land[0, :], "bottom": land[-1, :], "left": land[:, 0], "right": land[:, -1]}
+    runs = []
+    for side, line in edges.items():
+        idx = np.nonzero(line)[0]
+        if not len(idx):
+            continue
+        cuts = np.nonzero(np.diff(idx) > 1)[0]
+        starts = np.concatenate(([idx[0]], idx[cuts + 1]))
+        ends = np.concatenate((idx[cuts], [idx[-1]]))
+        runs += [(int(b - a + 1), side, int(a), int(b)) for a, b in zip(starts, ends)]
+    out = []
+    half = EL_WINDOW // 2
+    for n, side, a, b in sorted(runs, reverse=True)[:EL_EDGE_RUNS]:
+        mid = (a + b) // 2
+        if side in ("top", "bottom"):
+            x, _ = el_world(cfg, mk, s, off, mid, 0)
+            edge = el_world(cfg, mk, s, off, 0, 0 if side == "top" else mref.H - 1)[1]
+            y = edge + (half - EL_EDGE_INSET) * (1 if side == "top" else -1)
+        else:
+            _, y = el_world(cfg, mk, s, off, 0, mid)
+            edge = el_world(cfg, mk, s, off, 0 if side == "left" else mref.W - 1, 0)[0]
+            x = edge + (half - EL_EDGE_INSET) * (1 if side == "left" else -1)
+        out.append((f"{side}-{a}-{b}", (el_snap(x), el_snap(y))))
+    return out
+
+
+def el_window_tiles(ox, oy, size):
+    """World tile coordinates (xs, ys) of a preview's pixels: the image is centred on its offset."""
+    import numpy as np
+    xs = np.arange(size)[None, :] + ox - size // 2
+    ys = np.arange(size)[:, None] + oy - size // 2
+    return np.broadcast_to(xs, (size, size)), np.broadcast_to(ys, (size, size))
+
+
+def el_edge_eval(cfg, mk, s, off, ox, oy, new_water, prev_water, label):
+    """One edge window: (meas, fails). Every tile beyond the box is water (G5); every tile the previous
+    version holds as water stays water; outside the band's mask the two versions agree tile for tile;
+    and in every box-touching land column whose reference stays land through the mask, the band's
+    water reaches EL_MIN_WATER_PX of the box and its water edge lies within width + warp + 1 px."""
+    import numpy as np
+    import earthgeo as eg
+    B = el_band(cfg)
+    size = new_water.shape[0]
+    xs, ys = el_window_tiles(ox, oy, size)
+    d = el_box_distance(cfg, mk, s, off, xs, ys)
+    fails, meas = [], {}
+    beyond = d < 0
+    if beyond.any() and not new_water[beyond].all():
+        fails.append(f"{label}: {int((beyond & ~new_water).sum())} tiles beyond the box are not water (G5)")
+    lost = prev_water & ~new_water
+    if lost.any():
+        fails.append(f"{label}: {int(lost.sum())} tiles the previous version holds as water are land")
+    outside = d >= (int(B["mask_px"]) + 1) * s
+    moved = (new_water != prev_water) & outside
+    if moved.any():
+        fails.append(f"{label}: {int(moved.sum())} tiles beyond the band's mask differ from the previous version")
+    changed = int(((new_water != prev_water) & ~beyond).sum())
+    # the box-touching columns: per window column (top or bottom edge) or row (left or right), the tile
+    # line perpendicular to the box; judged where the reference is land from the box through the mask
+    mref = eg.MapRef(mk)
+    land = mref.land.astype(bool)
+    m = cfg["maps"][mk]
+    gx, gy = xs + off[0], ys + off[1]
+    col = np.clip(np.floor_divide(gx, s) + m["wr"], 0, mref.W - 1)
+    row = np.clip(np.floor_divide(gy, s) + m["hr"], 0, mref.H - 1)
+    ref = land[row, col]
+    edges_px, short = [], 0
+    vertical = int(np.abs(np.diff(d, axis=0)).sum()) >= int(np.abs(np.diff(d, axis=1)).sum())
+    lines = range(size)
+    for k in lines:
+        dl = d[:, k] if vertical else d[k, :]
+        wl = new_water[:, k] if vertical else new_water[k, :]
+        rl = ref[:, k] if vertical else ref[k, :]
+        inside = dl >= 0
+        deep = inside & (dl < (int(B["mask_px"]) + 1) * s)
+        if not deep.any() or not rl[deep].all() or not (inside & (dl < s)).any():
+            continue
+        near = inside & (dl < EL_MIN_WATER_PX * s)
+        if not wl[near].all():
+            short += 1
+        land_d = dl[inside & ~wl]
+        first = float(land_d.min()) / s if land_d.size else None
+        edges_px.append(first)
+    judged = [e for e in edges_px if e is not None]
+    made = new_water & ~prev_water & ~beyond
+    made_px = round(float(d[made].max()) / s, 2) if made.any() else None
+    if short:
+        fails.append(f"{label}: {short} box-touching land lines hold land within {EL_MIN_WATER_PX} px of the box")
+    meas = {"lines": len(edges_px), "short": short, "water_edge_px": {
+        "min": round(min(judged), 2) if judged else None, "max": round(max(judged), 2) if judged else None,
+        "spread": round(float(np.std(judged)), 2) if judged else None}, "band_water_deepest_px": made_px,
+        "changed_tiles": changed}
+    return meas, fails
+
+
+def el_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """edge-and-lakes' suite checks, added to suite_checks' table (design section 12, milestone 2)."""
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    geo = tnconfig.geography(cfg)
+    versions = tnconfig.geography_versions(cfg)
+    tg = cfg["toggles"]["inland_lakes"]
+
+    def key(name, extra=None):
+        k, _ = common_key(ctx, f"ss-{name}", extra)
+        return k
+
+    def lanes(tag):
+        out = []
+        for i in range(PAR_MAX):
+            ms = mods.m1(f"-{tag}{i + 1}")
+            mods.prepare(ms, f"{tag}{i + 1}")
+            out.append(ms)
+        return out
+
+    def pens(mk, s):
+        """The worlds by name: new (the preset at its defaults), on (the switch on), neutral (on with the
+        inland lakes body neutral) and prev (the previous version through the same build)."""
+        new = expected_pen(cfg, mk, s)
+        out = {"new": new, "prev": tnconfig.baked_names(cfg, mk, versions[mk][-2], s)}
+        if geo[mk].get("lakes"):
+            out["on"] = dict(new, **{tg["preset_key"]: tg["on"]})
+            out["neutral"] = dict(out["on"], **{geo[mk]["spawn"]["inland_lakes"]: NEUTRAL})
+        return out
+
+    def water(run_dir):
+        import t1_metrics as t1
+        ws = t1.water_colour_set(blocking_water_colours(ctx.shared["dump_m1"]))
+        return ~t1.preview_land(Path(run_dir) / f"{SEED}.png", ws)
+
+    # T3 (SS; every map with a lakes field; scales 1 and 6): with the switch off the
+    # inland window's water is exactly the world's with the inland lakes body neutral (no inland lake
+    # water beside the spawn lake, the waterways and the fit's own water); with it on the window is the
+    # previous version's to the tile; on differs from off (G6); and the spawn window is the same in all
+    # three (the spawn lake unchanged)
+    lake_maps = [mk for mk in el_maps(cfg) if geo[mk].get("lakes")]
+    lake_plan = [(mk, s, w, name) for mk in lake_maps for s in EL_SCALES
+                 for w, names in (("inland", ("new", "on", "neutral", "prev")), ("spawn", ("new", "on", "prev")))
+                 for name in names]
+
+    def lakes_run(deadline):
+        ms = lanes("ell")
+        jobs = [[] for _ in range(PAR_MAX)]
+        dirs = []
+        for i, (mk, s, w, name) in enumerate(lake_plan):
+            off = runner_offset(cfg, mk, s)
+            if w == "inland":
+                cx, cy = EL_LAKE_PX[mk]
+                x, y = el_world(cfg, mk, s, off, cx, cy)
+                size, at = EL_WINDOW, (el_snap(x), el_snap(y))
+            else:
+                size, at = EL_SPAWN_WINDOW, (0, 0)
+            mgs = write_mgs(ctx, f"el-{mk}-s{s}-{w}-{name}", pens(mk, s)[name])
+            ln = i % PAR_MAX
+            out = ctx.out / f"el-lakes-{mk}-s{s}-{w}-{name}"
+            jobs[ln].append((None, preview_args(lane_instance(ctx, ln), ms[ln], size, mgs=mgs, offset=at), out, 600))
+            dirs.append(out)
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def lakes_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if not lake_plan:
+            return {}, ["no map's newest version has a lakes field"], ""
+        got = {(mk, s, w, name): water(x) for (mk, s, w, name), x in zip(lake_plan, dirs)}
+        for mk in lake_maps:
+            for s in EL_SCALES:
+                i = {n: got[(mk, s, "inland", n)] for n in ("new", "on", "neutral", "prev")}
+                p = {n: got[(mk, s, "spawn", n)] for n in ("new", "on", "prev")}
+                rec = {"off_vs_neutral": int((i["new"] != i["neutral"]).sum()),
+                       "on_vs_prev": int((i["on"] != i["prev"]).sum()),
+                       "on_vs_off": int((i["on"] != i["new"]).sum()),
+                       "spawn_off_vs_prev": int((p["new"] != p["prev"]).sum()),
+                       "spawn_on_vs_prev": int((p["on"] != p["prev"]).sum()),
+                       "spawn_water_px": int(p["prev"].sum())}
+                meas[f"{mk}_s{s}"] = rec
+                lab = f"{mk} scale {s}"
+                if rec["off_vs_neutral"]:
+                    fails.append(f"{lab}: switch off holds {rec['off_vs_neutral']} tiles of inland lake water")
+                if rec["on_vs_prev"]:
+                    fails.append(f"{lab}: switch on differs from the previous version in {rec['on_vs_prev']} tiles")
+                if not rec["on_vs_off"]:
+                    fails.append(f"{lab}: switch on and off agree in the inland window: no lake to switch (G6)")
+                if rec["spawn_off_vs_prev"] or rec["spawn_on_vs_prev"]:
+                    fails.append(f"{lab}: the spawn window moved ({rec['spawn_off_vs_prev']} off, "
+                                 f"{rec['spawn_on_vs_prev']} on)")
+                if not rec["spawn_water_px"]:
+                    fails.append(f"{lab}: no water in the spawn window: the spawn lake is missing")
+        return meas, fails, "; ".join(f"{k}: off-neutral {v['off_vs_neutral']}, on-prev {v['on_vs_prev']}, "
+                                      f"on-off {v['on_vs_off']}" for k, v in meas.items())
+
+    checks["el_lakes"] = SuiteCheck("el_lakes", lambda: key("el_lakes", {"plan": lake_plan, "lake_px": EL_LAKE_PX}),
+                                    lakes_run, lakes_derive)
+
+    # T1, T3 (SS; every map; scales 1 and 6): at each map's longest box-touching runs
+    # of reference land, every land line the box cuts ends in water at least EL_MIN_WATER_PX before the
+    # box, the band's water edge stays within its reach, beyond the T1 mask the previous version holds
+    # tile for tile, no water turns to land, and beyond the box all is water (G5)
+    edge_plan = [(mk, s, lab, at) for mk in el_maps(cfg) for s in EL_SCALES
+                 for lab, at in el_edge_windows(cfg, mk, s, runner_offset(cfg, mk, s))]
+
+    def edge_run(deadline):
+        ms = lanes("ele")
+        jobs = [[] for _ in range(PAR_MAX)]
+        dirs = []
+        i = 0
+        for mk, s, lab, at in edge_plan:
+            for name in ("new", "prev"):
+                mgs = write_mgs(ctx, f"el-{mk}-s{s}-{lab}-{name}", pens(mk, s)[name])
+                ln = i % PAR_MAX
+                out = ctx.out / f"el-edge-{mk}-s{s}-{lab}-{name}"
+                jobs[ln].append((None, preview_args(lane_instance(ctx, ln), ms[ln], EL_WINDOW, mgs=mgs, offset=at),
+                                 out, 600))
+                dirs.append(out)
+                i += 1
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def edge_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if not edge_plan:
+            return {}, ["no map's box cuts reference land"], ""
+        changed = 0
+        for k, (mk, s, lab, at) in enumerate(edge_plan):
+            new, prev = water(dirs[2 * k]), water(dirs[2 * k + 1])
+            m, f = el_edge_eval(cfg, mk, s, runner_offset(cfg, mk, s), at[0], at[1], new, prev,
+                                f"{mk} scale {s} {lab}")
+            meas[f"{mk}_s{s}_{lab}"] = m
+            fails += f
+            changed += m["changed_tiles"]
+            if not m["lines"]:
+                fails.append(f"{mk} scale {s} {lab}: no box-touching land line in the window")
+        if not changed:
+            fails.append("no edge window changed against the previous version: the band is not in the build (G6)")
+        return meas, fails, "; ".join(f"{k}: {v['lines']} lines, water edge {v['water_edge_px']}"
+                                      for k, v in meas.items())
+
+    checks["el_edge"] = SuiteCheck("el_edge", lambda: key("el_edge", {"plan": edge_plan}), edge_run, edge_derive)
 
 
 # ------------------------------------------------------------------------------------------------ commands
