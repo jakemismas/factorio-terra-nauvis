@@ -1277,6 +1277,41 @@ def file_name(map_key, s, version):
     return f"waterways_{map_key}_s{s}_v{version}.lua"
 
 
+def load_data(map_key):
+    p = DATA / f"{map_key}.json"
+    if not p.exists():
+        raise SystemExit(f"{p.relative_to(REPO).as_posix()} is missing: run `python tools/build_waterways.py import`")
+    return json.loads(p.read_text(encoding="utf-8")), p
+
+
+def poly_list(P):
+    return [[round(float(x), 4), round(float(y), 4)] for x, y in P]
+
+
+def feature_record(f, s, w):
+    rec = {"kind": f["kind"], "id": f["id"], "name": f["name"], "hw_tiles": round(f["hw"], 4),
+           "segments": f["segments"], "window_tiles": f["window"], "polyline_geo": poly_list(f["P"]),
+           "length_tiles": round(polyline_length(f["P"]), 3)}
+    if f["kind"] != "dam":
+        rec["depth"] = f["depth"]
+        rec["bend"] = {"violations": f["bend"]["violations"], "worst_deg": f["bend"]["worst_deg"],
+                       "basins": [[round(b[0], 4), round(b[1], 4)] for b in f.get("basins", [])],
+                       "covered": f["bend"].get("covered", True)}
+        if f["bend"].get("required"):
+            rec["bend"]["required_basin"] = True
+    if f["kind"] == "river":
+        rec["class"] = f["class"]
+        rec["width_tiles"] = class_width(w, f["class"], s)
+        rec["fords"] = f["fords"]
+        rec["fords_skipped"] = f["fords_skipped"]
+        rec["fords_expected"] = int(polyline_length(f["P"]) // (w["ford"]["every_px"] * s))
+    if f["kind"] == "strait":
+        rec["width_class"] = f["width_class"]
+    if f["kind"] == "dam":
+        rec["canal"] = f["canal"]
+    return rec
+
+
 def emit_map(cfg, map_key, out_dir=GENERATED, manifest=True, scales=None):
     """Write the map's six generated files (and its manifest) and return the manifest record. The
     river-safe starts stay in the manifest's per-scale records only: no Lua file is emitted for them
