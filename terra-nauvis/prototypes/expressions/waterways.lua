@@ -2,8 +2,9 @@
 --
 -- Per map and scale, four named sets from the generated files (tools/build_waterways.py): the rivers,
 -- straits and turning basins (ww), the canals, the dams and the fords. Each reads only its map's geo
--- tiles in the chain of the geography version that composes them (its `waterways` record), bound here
--- to the locals X and Y, so they live in the Tile program alone (firewall rule); that version's
+-- tiles in the chain of the geography version that composes them (its `waterways` record), warped and
+-- bound here to the locals X, Y, XP, YP and W, so they live in the Tile program alone (firewall rule);
+-- that version's
 -- elevation entry (coast.lua) picks the save's scale's ww, canal and dam sets by name through the
 -- folded scale, and its preset points the ford key at the map's ford set for its scale, which the
 -- water-shallow hook in data-final-fixes.lua reads behind the gate.
@@ -59,6 +60,44 @@ local function fn(f)
   return {parameters = params, expression = f.expression, local_expressions = locals}
 end
 
+-- The natural course (config.lua natural): one warp of the geo tiles every set
+-- of a version reads, so the fords stay on their rivers and the cost is a few noise evaluations per tile,
+-- not per segment. Each octave is one basis noise per axis in geo tiles, anchored like the coast's detail,
+-- so the same ground wanders the same way from every spawn. Rivers read X and Y, the whole warp; straits,
+-- canals and dams read XP and YP, each octave at its passage share, so a passage keeps the places the
+-- oracle tests. The warp fades out around the spawn, so a river stays where the river-safe starts measured
+-- it. W is the rivers' low-frequency width modulation. Every local reads constants and x, y alone.
+local function natural_locals(g)
+  local N = cfg.waterways.natural
+  local s = cfg.keys.scale
+  local function noise(seed1, wavelength)
+    return "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(seed1) .. ", input_scale = 1 / (" ..
+      num(wavelength[1]) .. " + " .. num(wavelength[2]) .. " * " .. s .. "), offset_x = " .. g.cx ..
+      ", offset_y = " .. g.cy .. "}"
+  end
+  local locals = {}
+  local rx, ry, px, py = {}, {}, {}, {}
+  for i, o in ipairs(N.warp) do
+    local nx, ny, amp = "wx" .. i, "wy" .. i, "(" .. num(o.amplitude[1]) .. " + " .. num(o.amplitude[2]) .. " * " .. s ..
+      ")"
+    locals[nx] = noise(o.seed1x, o.wavelength)
+    locals[ny] = noise(o.seed1y, o.wavelength)
+    rx[i], ry[i] = amp .. " * " .. nx, amp .. " * " .. ny
+    px[i] = num(o.passage) .. " * " .. rx[i]
+    py[i] = num(o.passage) .. " * " .. ry[i]
+  end
+  local F = N.spawn_fade
+  locals.fade = "clamp((sqrt(x * x + y * y) - " .. num(F.inner_tiles) .. ") / " .. num(F.outer_tiles - F.inner_tiles) ..
+    ", 0, 1)"
+  local function warped(tile, parts)
+    return tile .. " + fade * (" .. table.concat(parts, " + ") .. ")"
+  end
+  locals.X, locals.Y = warped(g.gx, rx), warped(g.gy, ry)
+  locals.XP, locals.YP = warped(g.gx, px), warped(g.gy, py)
+  locals.W = "1 + " .. num(N.width.amplitude) .. " * clamp(" .. noise(N.width.seed1, N.width.wavelength) .. ", -1, 1)"
+  return locals
+end
+
 local E = {}
 -- The sets of the geography version that composes them, bound to its chain, for every offered scale.
 for _, key in ipairs(cfg.map_order) do
@@ -71,9 +110,8 @@ for _, key in ipairs(cfg.map_order) do
       if not gen then
         error("waterways.lua has no generated file for " .. key .. " at scale " .. s)
       end
-      local function set(kind, expression, functions)
-        local name = sets[kind][s]
-        local locals = {X = g.gx, Y = g.gy}
+      local function set(name, expression, functions)
+        local locals = natural_locals(g)
         local lf = {}
         for _, f in ipairs(functions) do
           lf[f] = fn(gen.functions[f])

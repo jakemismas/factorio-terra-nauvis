@@ -1722,13 +1722,39 @@ return {
     slope = 4,
     dam = {floor_tiles = 1.5, per_scale = 0.5},
     tolerance_tiles = {2, 2, 2, 3, 3, 3},
-    smoothing = {windows = {1, 5, 9, 13, 17, 25, 33, 49, 65, 97}, passes = 3, step_tiles = 1,
+    smoothing = {windows = {1, 5, 9, 13, 17, 25, 33, 49, 65, 97}, passes = 3, step_tiles = 1, min_window_px = 8,
                  fine_tolerance_tiles = 0.5, drawn_kinds = {"strait", "canal"}},
     bend = {window_tiles = 17, limit_degrees = 90},
     basin_tiles = 30,
-    ford = {every_px = 60, length_tiles = 8, margin_tiles = 2, bank_tiles = 3, score = 10000},
+    ford = {every_px = 60, length_tiles = 8, margin_tiles = 2, bank_tiles = 3, score = 10000, jitter = 0.3},
     vertex_grid = 16,
     start = {clear_tiles = 12, radius_tiles = 150},
+    -- The natural course (the decision of 2026-10-30, "not perfect lines, with perfect edges"; waterways.lua
+    -- and tools/build_waterways.py).
+    --   warp: one octave per row, a basis noise per axis (seed1x, seed1y) of wavelength {a, b} = a + b s tiles
+    --     and amplitude {a, b} = a + b s tiles at scale s, added to the geo tiles every set reads; passage is
+    --     the share a strait, canal or dam reads. The first two rows are the meanders, the last the banks,
+    --     short enough that the two banks of a river differ. noise_peak: basis noise's peak, for the warp's reach.
+    --   width: W = 1 + amplitude * clamp(noise, -1, 1), a river's half-width factor; floor_half_tiles holds a
+    --     river's half-width wherever W and the warp squeeze it, so T5's 7-tile square still passes.
+    --   profile: a river's half-width factor from source at its inland end to mouth where it meets the coast
+    --     fit, tip at the very source over taper_tiles {a, b} = a + b s, on a step_tiles grid.
+    --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide.
+    --   deloop: a river's hooks cut, tools/build_waterways.py deloop.
+    --   spawn_fade: the warp is 0 within inner_tiles of the spawn and whole beyond outer_tiles.
+    natural = {
+      warp = {
+        {seed1x = 7501, seed1y = 7502, wavelength = {60, 50}, amplitude = {2, 3.8}, passage = 0},
+        {seed1x = 7503, seed1y = 7504, wavelength = {30, 12}, amplitude = {1.5, 0.9}, passage = 0.3},
+        {seed1x = 7505, seed1y = 7506, wavelength = {14, 1.5}, amplitude = {0.6, 0.2}, passage = 1},
+      },
+      noise_peak = 1.7,
+      width = {seed1 = 7507, wavelength = {60, 60}, amplitude = 0.3, floor_half_tiles = 5},
+      profile = {source = 0.7, mouth = 1.35, tip = 0.55, taper_tiles = {10, 30}, step_tiles = 0.75},
+      basin = {half_length_tiles = 8, radius_tiles = 12},
+      deloop = {gap_px = 8, arc_px = 30, reach_px = 400},
+      spawn_fade = {inner_tiles = 40, outer_tiles = 200},
+    },
   },
 
   -- The region layer (milestone region-layer; ARCHITECTURE.md, "Region layer"; S10 design (d), design notes
