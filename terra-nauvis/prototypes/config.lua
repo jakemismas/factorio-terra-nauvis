@@ -126,6 +126,10 @@ local CT = {
   CL_T_AB = NOISE .. "temperature_ab_v1",
   CL_M_AB = NOISE .. "moisture_ab_v1",
   CL_A_AB = NOISE .. "aux_ab_v1",
+  CL_GRAIN = NOISE .. "climate_grain_v1",
+  CL_T_AB_G = NOISE .. "temperature_ab_v3",
+  CL_M_AB_G = NOISE .. "moisture_ab_v2",
+  CL_A_AB_G = NOISE .. "aux_ab_v2",
   CL_T_FB = NOISE .. "temperature_fb_v1",
   CL_M_FB = NOISE .. "moisture_fb_v1",
   CL_A_FB = NOISE .. "aux_fb_v1",
@@ -935,7 +939,8 @@ return {
     -- controls, so they exist only with Alien Biomes and are registered from the M2 dump.
     {
       release = "0.1.0",
-      names = {CT.CL_LAT, CT.CL_LON, CT.CL_DRY, CT.CL_CORE, CT.CL_SHIFT, CT.CL_T_AB, CT.CL_M_AB, CT.CL_A_AB, CT.CL_T_FB,
+      names = {CT.CL_LAT, CT.CL_LON, CT.CL_DRY, CT.CL_CORE, CT.CL_T_AB, CT.CL_M_AB, CT.CL_A_AB, CT.CL_GRAIN,
+               CT.CL_T_AB_G, CT.CL_M_AB_G, CT.CL_A_AB_G, CT.CL_T_FB,
       CT.CL_M_FB, CT.CL_A_FB,
                CT.VT_GRASS_1, CT.VT_GRASS_2, CT.VT_GRASS_3, CT.VT_GRASS_4, CT.VT_DRY_DIRT, CT.VT_DIRT_1, CT.VT_DIRT_2,
                CT.VT_DIRT_3,
@@ -1767,6 +1772,19 @@ return {
       -- the moisture spread's cold), so the boreal belt keeps grass-2, beach sand and red desert out
       fallback = {cold_aux = 0.3, cold_cap = 0.45, cold_span = 12, dry_pull = 0.15, bias = 1},
     },
+    -- The grain: Alien Biomes scores a tile by
+    -- plateau_peak_to_noise_expression, min(peak * 20, 1), whose box edge is far steeper than its own
+    -- noise can move, so at scale 6, where the spread's finest octave is 240 tiles, every edge outside
+    -- the temperate band is a razor line round a flat blob. Europe hides it: 54 percent of its land is
+    -- temperate, against 18 on Old World and Atlantic, where vanilla tiles and their patch noise win.
+    -- Beside Alien Biomes, Old World and Atlantic add the fine noise that frays vanilla's own tile
+    -- edges to all three fields: noise_layer_noise(layer), 6 to 48 tiles at every scale, the same call
+    -- as grass-1's, so the Tile program shares it. Temperature, moisture and aux move by their amounts
+    -- per unit (aux inside its cap), at full weight cold_span under cold_t and hot_span over hot_t and
+    -- at none between, so temperate land keeps its character. A coarser noise only redraws the blobs
+    -- (the temperate patch noise, 60 tiles and up at scale 6, left every edge a razor line).
+    grain = {maps = {atlantic = true, olde_world = true}, layer = 19, temperature = 3, moisture = 0.09, aux = 0.09,
+             cold_t = 32, cold_span = 10, hot_t = 58, hot_span = 7},
     -- the coldness the fallback's pulls and spread read: 0 at core cold.t and warmer, 1 at
     -- cold.t - cold.span and colder
     cold = {t = 10, span = 30},
@@ -1789,6 +1807,7 @@ return {
     },
     names = {lat = CT.CL_LAT, lon = CT.CL_LON, dry = CT.CL_DRY, core = CT.CL_CORE, shift = CT.CL_SHIFT,
              ab = {temperature = CT.CL_T_AB, moisture = CT.CL_M_AB, aux = CT.CL_A_AB},
+             grain = {field = CT.CL_GRAIN, temperature = CT.CL_T_AB_G, moisture = CT.CL_M_AB_G, aux = CT.CL_A_AB_G},
              fallback = {temperature = CT.CL_T_FB, moisture = CT.CL_M_FB, aux = CT.CL_A_FB}},
     -- The climate bands the T3 oracle and the D11 row read, in Alien Biomes units (R3 4.1).
     bands = {frozen_below = 0, cold_below = 25, hot_from = 65, dry_below = 0.4},

@@ -204,16 +204,35 @@ if AB then
   def(N.ab.temperature, "clamp(" .. N.core .. " + " .. noise(T.noise, "(var('control:hot:frequency') + " ..
     "var('control:cold:frequency')) / 2") .. " + " .. num(TA.shift_per_unit) .. " * (var('control:hot:size') - " ..
     "var('control:cold:size')), " .. num(TA.min) .. ", " .. num(TA.max) .. ")")
-  def(N.ab.moisture, "clamp(max(" .. moisture_mean() .. " + " .. moisture_spread(false) .. " + " ..
-    num(M.ab_bias) .. " * var('control:moisture:bias'), " .. num(M.marsh) .. " * " .. MARSH_W .. "), 0, 1)")
+  local function ab_moisture(extra)
+    return "clamp(max(" .. moisture_mean() .. " + " .. moisture_spread(false) .. extra .. " + " ..
+      num(M.ab_bias) .. " * var('control:moisture:bias'), " .. num(M.marsh) .. " * " .. MARSH_W .. "), 0, 1)"
+  end
+  def(N.ab.moisture, ab_moisture(""))
   -- Natural aux stays under ab_cap, below AB's alien palette, whatever the spread; dry temperate land
   -- lifts toward vanilla red desert, a lift that is 0 wherever the AB temperature lies outside the
   -- exclusion band, so no alien AB colour can follow it.
   local R = A.red
-  def(N.ab.aux, "clamp(min(" .. num(A.base) .. " + " .. noise(A.noise, AFREQ) .. ", " .. num(A.ab_cap) .. ") + " ..
-    num(R.lift) .. " * " .. N.dry .. " * clamp((" .. N.ab.temperature .. " - " .. num(R.t_lo) .. ") / " ..
-    num(R.ramp) .. ", 0, 1) * clamp((" .. num(R.t_hi) .. " - " .. N.ab.temperature .. ") / " .. num(R.ramp) ..
-    ", 0, 1) + " .. num(A.ab_bias) .. " * var('control:aux:bias'), 0, 1)")
+  local function ab_aux(extra)
+    return "clamp(min(" .. num(A.base) .. " + " .. noise(A.noise, AFREQ) .. extra .. ", " .. num(A.ab_cap) .. ") + " ..
+      num(R.lift) .. " * " .. N.dry .. " * clamp((" .. N.ab.temperature .. " - " .. num(R.t_lo) .. ") / " ..
+      num(R.ramp) .. ", 0, 1) * clamp((" .. num(R.t_hi) .. " - " .. N.ab.temperature .. ") / " .. num(R.ramp) ..
+      ", 0, 1) + " .. num(A.ab_bias) .. " * var('control:aux:bias'), 0, 1)"
+  end
+  def(N.ab.aux, ab_aux(""))
+
+  -- The grain's bodies (config.lua climate.grain). Temperature adds to the zone's lift, the version
+  -- presets name, and stops at the natural ceiling unless the zone is already over it, so no grain
+  -- reaches Alien Biomes' volcanic band outside the zone; aux adds under the cap, so no grain reaches
+  -- its alien palette.
+  local G, GN = C.grain, N.grain
+  local T2 = cfg.destroyed.names.temperature
+  def(GN.field, "max(clamp((" .. num(G.cold_t) .. " - " .. N.core .. ") / " .. num(G.cold_span) .. ", 0, 1), clamp((" ..
+    N.core .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ")")
+  def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. ", max(" .. T2 .. ", " ..
+    num(T.ab.max) .. "))")
+  def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field))
+  def(GN.aux, ab_aux(" + " .. num(G.aux) .. " * " .. GN.field))
 end
 
 data:extend(E)

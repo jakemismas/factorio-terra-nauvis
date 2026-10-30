@@ -204,6 +204,18 @@ local function destroyed_values(map_key, v, names)
   return out
 end
 
+-- The climate grain (config.lua climate.grain): with Alien Biomes, the listed maps' temperature, moisture
+-- and aux name the grain's bodies, after the zone's lift, which the temperature body reads. Europe is
+-- not listed, so its worlds keep their compiled programs.
+local function grain_values(map_key)
+  local out = {}
+  if AB and cfg.climate.grain.maps[map_key] then
+    local G = cfg.climate.names.grain
+    out.temperature, out.moisture, out.aux = G.temperature, G.moisture, G.aux
+  end
+  return out
+end
+
 -- The six base resources a little sparser (D20): frequency 0.75 in the preset, planet entries left
 -- neutral (planet values multiply preset values; known noise gotcha). A control another mod removed
 -- is left out.
@@ -304,6 +316,9 @@ local function baked(map_key, v)
     names[k] = value
   end
   for k, value in pairs(destroyed_values(map_key, v, names)) do
+    names[k] = value
+  end
+  for k, value in pairs(grain_values(map_key)) do
     names[k] = value
   end
   for k, value in pairs(bandfix_names(map_key)) do
