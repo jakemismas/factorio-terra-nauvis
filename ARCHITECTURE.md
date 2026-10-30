@@ -93,7 +93,7 @@ so the `prototypes/` and `scripts/` rows below are `terra-nauvis/prototypes/...`
 | `terra-nauvis/prototypes/expressions/enemies.lua` | Enemy-layer wrapper | | 9 |
 | `terra-nauvis/prototypes/expressions/ridges.lua` | `cliff_elevation` and `cliffiness` from the ranges table: per map the squared crest distance (`tn_crest_<map>_v<n>`), the openings (`tn_openings_<map>_v<n>`) and the Entity-side crest band (`tn_band_<map>_v<n>`); the shared effective crest distance, ridge-free start disc, cliff properties and ore clearance; the toggle's neutral pair `tn_one` and `tn_zero` unless waterways defined them first | slider-proof, contour units (S5); the per-map bodies read only their map's chain and the scale (firewall-clean); the toggle never multiplies (U5) | 8 |
 | `terra-nauvis/prototypes/expressions/destroyed.lua` | Destroyed-zone consumers: the zone `tn_destroyed_zone_v1` (the region layer's zone depth cut by the start disc, the zone's own start mask), its heat and the Alien Biomes temperature's next version `tn_temperature_ab_v2`; the random pool is spawn.lua's (`tn_city_pool_<map>_v1`), its switch presets.lua's | firewall-clean, as the region layer is | 10 |
-| `terra-nauvis/prototypes/expressions/waterways.lua` | Loads the generated waterway sets per map and scale (locals X and Y bound to the geo tiles of the geography version that composes them, its `waterways` record), the hook gate `tn_on` and ford key `tn_fords` prototypes, the canals switch's neutral bodies, and the entry composition `coast.lua` wraps around the rest of that version's composition | the sets reach Tile only (firewall names); the ford set through the `water-shallow` hook alone | 4 |
+| `terra-nauvis/prototypes/expressions/waterways.lua` | Loads the generated waterway sets per map and scale (locals X, Y, XP, YP and W: the warped geo tiles of the geography version that composes them, its `waterways` record, and the rivers' width noise), the hook gate `tn_on` and ford key `tn_fords` prototypes, the canals switch's neutral bodies, and the entry composition `coast.lua` wraps around the rest of that version's composition | the sets reach Tile only (firewall names); the ford set through the `water-shallow` hook alone | 4 |
 | `terra-nauvis/prototypes/generated/` | `geo_<map>_v<n>.lua`, `land_coarse_<map>_v<n>.lua`, `waterways_<map>_s<k>_v<n>.lua` (with the ford sets) | machine-written; the header records tool version and input sha256; name-free data (the tents read the locals `U` and `V`, which `coast.lua` binds to the map's chain), every line within 120 columns through Lua 5.2's backslash-z continuation; never hand-edited; one file per released version | 1, 3, 4, 11 |
 | `terra-nauvis/prototypes/tables/` | `cities`, `hotspots`, `ranges`, `canals`, `regions` (the forest and marsh rows among them), `destroyed`: approval data in degrees, with sources; hotspot rows take the adopted centre (`lat`, `lon` in `approvals-data.json`), which decision 16 moved inland for one hotspot | versioned by release (copy-on-write after a release) | per milestone |
 | `terra-nauvis/scripts/start.lua` | `on_init`: world detection, storage, D29 message, cliff "none" reset, D12 and D32 warnings stored through `guards.record_warning` for the per-player path (section "Guards", stored records) | | 2, 8 |
@@ -187,10 +187,13 @@ shape problem (`tnconfig.schema_problems`). Keyed groups pair with an order list
    `data-src/fits/` beside the shipped model.
 3. **Waterways** (`tools/build_waterways.py`, S4's method). Least-cost paths through thin water
    between snapped waypoints, extended through drawn water to open sea at least 6 px from land, land
-   gaps bridged. Per scale: smoothing until no 17-tile stretch turns more than 90 degrees, then
-   Douglas-Peucker at 2 tiles (scales 1 to 3) or 3 tiles (4 to 6), and turning basins where the bend
-   rule still fails (S4, on its own paths: Dardanelles at every scale; Rhine, Garonne and Little Belt
-   at 6; on the re-routed straits only the rivers' remain, design notes waterways). Rivers are
+   gaps bridged. Per scale: a river's out-and-back hooks cut, smoothing from 12 reference px until no
+   17-tile stretch turns more than 90 degrees, then Douglas-Peucker with a tolerance that follows the
+   river's bends, up to 2, 3, 6, 8, 10 and 12 tiles at scales 1 to 6, and turning basins, short capsules
+   on the course, where the bend rule still fails (S4, on its own paths: Dardanelles at every scale;
+   Rhine, Garonne and Little Belt at 6; on the re-routed straits only the rivers' remain, design notes
+   waterways). In the mod every set reads one shared domain warp and a river's half-width one
+   low-frequency noise, so a river wanders off its polyline. Rivers are
    `max(7, k s)` tiles wide, k = 3 for a major river and 2 for the rest (the class column of APPROVALS
    7 in `approvals-data.json`; the maintainer, design notes 12:35), carved with half-width `max(3.75, k s / 2)` so
    S4's quarter-tile margin stays on the floor; straits keep S4's half-width
