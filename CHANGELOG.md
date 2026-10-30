@@ -50,6 +50,15 @@ compatibility and known limits are in README.md, and the changelog players see i
   starts of Stockholm (scales 1 to 3), Athens (scale 5) and island starting patches such as
   Stockholm scale 1 coal at seed 1002. No noise body changes.
 
+- Climate grain for Old World and Atlantic beside Alien Biomes (Europe's
+  biomes look best). Alien Biomes' tile scores read frayed copies of temperature, moisture and aux
+  through `tn_tile_temperature`, `tn_tile_moisture` and `tn_tile_aux`, each adding
+  `noise_layer_noise(19)`, the call that frays grass-1's own edges, outside the temperate band; the
+  temperate bonus and exclusion take grain versions. Only those two maps' presets name them, so
+  Europe and every base world keep their programs, and trees and decoratives keep the plain fields.
+  Beside Alien Biomes it is not free: paired CPU reads a median 2.2 percent slower at Frankfurt and
+  1.5 at Moscow. `climate.grain.maps = {}` in config.lua turns it off.
+
 - the first release fast finish: groups 1 to 3 and edge-and-lakes
   assembled on one branch. Atlantic's and Old World's version 6 (`tn_geo` 17 and 18) carry the spawn
   city the drafts lacked (every Old World start had landed at the map's offset 0, 0, in India): the
