@@ -35,7 +35,7 @@ evaluations per tile, not per segment. A turning basin is a short wide capsule o
 
 Each scale's file holds four name-free sets, which prototypes/expressions/waterways.lua binds to the
 map's geo tiles through the locals X and Y (the rivers' warped tiles), XP and YP (the passages' lighter
-warp, so a strait or canal keeps the places the oracle tests) and W (the width modulation):
+warp, so a strait or canal keeps the places the oracle tests) and W (the width modulation), and the ponds:
   ww      rivers, straits and basins: per (half-width, depth, frame) class max(depth, slope (d - hw)),
           d the distance in tiles to the class's nearest segment, hw times W on a river, held at the
           river floor; min() over the classes (the elevation the carve allows; the entry takes min() with it)
@@ -44,6 +44,8 @@ warp, so a strait or canal keeps the places the oracle tests) and W (the width m
   fords   the ford rectangles: score where the tile is inside one and its elevation is below 0, else
           -inf (the water-shallow hook's on branch); they read the rivers' warped tiles, so each stays on
           its river
+  ponds   land over the coast fit's own round ponds on a river's course (river_ponds), max() into the
+          entry; the only term here that reads plain geo tiles, the locals X and Y of the entry
 Segment distances come from one local function, seg, with its projection coefficients folded per
 segment; ford rectangles from another, box. Coefficients print as float32 %.9g, every line stays
 within 120 columns (build_geo.py's backslash-z wrapping), and the same inputs give byte-identical
@@ -740,6 +742,7 @@ class MapGeo:
     _RASTERS = {}
     _FITS = {}
     _LOW = {}
+    _PONDS = {}
 
     def _fit(self):
         """(fit land, checkpoint record) and the fit's smallest value over each pixel's 3 x 3
@@ -771,6 +774,12 @@ class MapGeo:
     def fit_land(self):
         """The shipped coast fit's land at every reference pixel centre and its checkpoint's path and sha256."""
         return self._fit()[0]
+
+    def ponds(self, w, data):
+        """river_ponds of this map, once per run: they read the fit and the rivers, not the scale."""
+        if self.key not in MapGeo._PONDS:
+            MapGeo._PONDS[self.key] = river_ponds(w, self, data)
+        return MapGeo._PONDS[self.key]
 
     def bank_check(self, X, Y, s):
         """A ford's bank samples at geo tiles (X, Y): (each lies on land in the reference raster and in the
@@ -819,6 +828,31 @@ class MapGeo:
         else:
             out[inside] = land[rr[inside], cc[inside]] | thin[rr[inside], cc[inside]]
         return out
+
+
+def river_ponds(w, geo, data):
+    """The coast fit's own ponds on a river's course: (centre col, centre row, radius) in reference px of
+    every water component of the fit of at most ponds.max_px px within ponds.reach_px of a river's cells.
+    They are what the fit kept of the raster's river where it drew it two pixels wide: one tent, so a
+    perfect disc, which the warp cannot touch and which the warped river leaves standing beside it."""
+    np = _np()
+    from scipy import ndimage as ni
+    Pd = w["natural"]["ponds"]
+    land = geo.fit_land()[0]
+    near = np.zeros(land.shape, bool)
+    for r in data["rivers"]:
+        C = np.asarray(r["cells"], int)
+        near[C[:, 1], C[:, 0]] = True
+    k = int(Pd["reach_px"])
+    near = ni.binary_dilation(near, structure=np.ones((2 * k + 1, 2 * k + 1), bool))
+    lab, _ = ni.label(~land, structure=np.ones((3, 3), bool))
+    sizes = np.bincount(lab.ravel())
+    out = []
+    for i in sorted(int(v) for v in np.unique(lab[near]) if v > 0 and sizes[v] <= Pd["max_px"]):
+        rows, cols = np.nonzero(lab == i)
+        cx, cy = float(cols.mean()), float(rows.mean())
+        out.append((cx, cy, float(np.hypot(cols - cx, rows - cy).max())))
+    return out
 
 
 def scale_cut(w, data, s):
@@ -1235,6 +1269,10 @@ def build_scale(cfg, data, geo, s):
     half = w["basin_tiles"] / 2
     basins = []
     hw_at = {}
+    ox, oy = geo.offset(s)
+    Pd = w["natural"]["ponds"]
+    ponds = [{"centre": [round(s * (cx + 0.5) + ox, 4), round(s * (cy + 0.5) + oy, 4)],
+              "radius": round((r + Pd["margin_px"]) * s, 4)} for cx, cy, r in geo.ponds(w, data)]
     for f in feats:
         if f["kind"] == "river":
             f["widths"], hw_at[f["id"]] = river_widths(w, f, s, geo)
@@ -1262,7 +1300,7 @@ def build_scale(cfg, data, geo, s):
         others = [(o["P"], o["hw"], o["P"].min(0), o["P"].max(0)) for j, o in enumerate(feats)
                   if j != i and o["kind"] != "dam"]
         f["fords"], f["fords_skipped"] = place_fords(w, geo, s, f["P"], f["hw"], others, f["id"], hw_at[f["id"]])
-    return {"scale": s, "features": feats, "basins": basins, "half_basin": half, "carved": carved,
+    return {"scale": s, "features": feats, "basins": basins, "half_basin": half, "carved": carved, "ponds": ponds,
             "tolerance_tiles": tol, "rivers_carved": keep, "rivers_listed": len(data["rivers"])}
 
 
@@ -1373,9 +1411,17 @@ def render_sets(cfg, built):
         fords = f"if(max({min_tree(boxes)}, elevation) < 0, {g9(w['ford']['score'])}, -inf)"
     else:
         fords = "-inf"
-    stats = {"segments": counts, "fords": len(boxes), "basins": len(built["basins"]),
+    stats = {"segments": counts, "fords": len(boxes), "basins": len(built["basins"]), "ponds": len(built["ponds"]),
              "classes": {"ww": len(ww_groups), "canals": len(canal_groups)}}
-    return {"ww": ww, "canals": canals, "dams": dams, "fords": fords}, stats
+    # one sqrt for every pond: each squared distance over its own squared radius, so the plug is land out to
+    # the radius and meets the ground below 0 past it, where the fit is land anyway
+    def off(v):
+        return f"({g9(v)})" if v < 0 else g9(v)
+
+    terms = [f"((X - {off(p['centre'][0])}) * (X - {off(p['centre'][0])}) + (Y - {off(p['centre'][1])}) * "
+             f"(Y - {off(p['centre'][1])})) / {g9(p['radius'] * p['radius'])}" for p in built["ponds"]]
+    ponds = f"{g9(w['natural']['ponds']['height'])} * (1 - sqrt({min_tree(terms)}))" if terms else "-inf"
+    return {"ww": ww, "canals": canals, "dams": dams, "fords": fords, "ponds": ponds}, stats
 
 
 def lua_string_lines(text, first_prefix, last_suffix, indent="  "):
@@ -1406,10 +1452,10 @@ def render_lua(cfg, map_key, s, exprs, stats, data_rel, data_sha):
     out += ("F.seg = " + SEG_FN).split("\n")
     out += ("F.box = " + BOX_FN).split("\n")
     out.append("local S = {functions = F}")
-    for key in ("ww", "canals", "dams", "fords"):
+    for key in ("ww", "canals", "dams", "fords", "ponds"):
         out += lua_string_lines(exprs[key], f"S.{key} = ", "")
     out.append(f"S.stats = {{rivers = {seg['river']}, straits = {seg['strait']}, canals = {seg['canal']}, "
-               f"dams = {seg['dam']}, fords = {stats['fords']}, basins = {stats['basins']}}}")
+               f"dams = {seg['dam']}, fords = {stats['fords']}, basins = {stats['basins']}, ponds = {stats['ponds']}}}")
     out.append("return S")
     for line in out:
         if len(line) > MAX_COLUMNS:
@@ -1484,7 +1530,7 @@ def emit_map(cfg, map_key, out_dir=GENERATED, manifest=True, scales=None):
                 "cut": {"tolerance_tiles": built["tolerance_tiles"], "rivers_carved": built["rivers_carved"],
                         "rivers_listed": built["rivers_listed"]},
                 "features": [feature_record(f, s, w) for f in built["features"]],
-                "basins": built["basins"]}
+                "basins": built["basins"], "ponds": built["ponds"]}
         if mask is not None:
             land, thin = geo.load()
             srec["t1_mask"] = {"pixels": int(mask.sum()), "share": round(float(mask.sum()) / mask.size, 6),

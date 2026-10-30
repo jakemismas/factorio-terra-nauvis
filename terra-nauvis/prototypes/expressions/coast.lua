@@ -240,7 +240,7 @@ local function version(m, g)
   end
   if g.waterways then
     local ww_locals
-    text, ww_locals = waterways.composition(g.waterways, text)
+    text, ww_locals = waterways.composition(g.waterways, text, m.key, g)
     for k, v in pairs(ww_locals) do
       locals[k] = v
     end

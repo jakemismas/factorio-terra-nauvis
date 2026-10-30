@@ -87,6 +87,12 @@
    "spawn_fade": {
     "inner_tiles": 40,
     "outer_tiles": 200
+   },
+   "ponds": {
+    "max_px": 32,
+    "reach_px": 3,
+    "margin_px": 1.5,
+    "height": 20
    }
   },
   "river_k": {
@@ -117,8 +123,8 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_atlantic_s1_v1.lua",
-   "sha256": "929794772f0723211509cf622bc77af87865851fa768c2441a5b75c059d2caaa",
-   "bytes": 52331,
+   "sha256": "0beaece963a2fc836d2582b0b75fe682598abc3cc28e4556ab981feef0b37033",
+   "bytes": 52807,
    "stats": {
     "segments": {
      "river": 396,
@@ -128,6 +134,7 @@
     },
     "fords": 186,
     "basins": 11,
+    "ponds": 5,
     "classes": {
      "ww": 10,
      "canals": 2
@@ -3025,6 +3032,28 @@
      "depth": -2.2
     }
    ],
+   "ponds": [
+    {
+     "centre": [-288.1053, -1374.5789],
+     "radius": 4.0811
+    },
+    {
+     "centre": [-500.0, -1130.0],
+     "radius": 3.5
+    },
+    {
+     "centre": [-436.3636, -26.0909],
+     "radius": 3.3719
+    },
+    {
+     "centre": [1164.0, 1361.875],
+     "radius": 4.5026
+    },
+    {
+     "centre": [968.4074, 1457.7407],
+     "radius": 4.3041
+    }
+   ],
    "t1_mask": {
     "pixels": 637701,
     "share": 0.00623,
@@ -3543,8 +3572,8 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_atlantic_s2_v1.lua",
-   "sha256": "3e3ec634767372a1b6e20843462c0f952cbaada6a1f19e9e7a23806d28ac851f",
-   "bytes": 50586,
+   "sha256": "861914fd6264c0cab9f06dc2b3b8841fb8df17cefe8efe0b3dcb32d6707f237b",
+   "bytes": 51058,
    "stats": {
     "segments": {
      "river": 418,
@@ -3554,6 +3583,7 @@
     },
     "fords": 124,
     "basins": 7,
+    "ponds": 5,
     "classes": {
      "ww": 11,
      "canals": 1
@@ -5689,6 +5719,28 @@
      "depth": -6
     }
    ],
+   "ponds": [
+    {
+     "centre": [-575.2105, -2748.1579],
+     "radius": 8.1622
+    },
+    {
+     "centre": [-999.0, -2259.0],
+     "radius": 7.0
+    },
+    {
+     "centre": [-871.7273, -51.1818],
+     "radius": 6.7439
+    },
+    {
+     "centre": [2329.0, 2724.75],
+     "radius": 9.0052
+    },
+    {
+     "centre": [1937.8148, 2916.4815],
+     "radius": 8.6081
+    }
+   ],
    "t1_mask": {
     "pixels": 284209,
     "share": 0.002777,
@@ -6117,8 +6169,8 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_atlantic_s3_v1.lua",
-   "sha256": "cd171f737132fb7823ab31c19a9844bfde59efddb19bfe17ef83836238ff4142",
-   "bytes": 39862,
+   "sha256": "ed0279ab32b363e2663b828286cff7d5b5240b13bd5def85f593cb3459cb9a91",
+   "bytes": 40344,
    "stats": {
     "segments": {
      "river": 314,
@@ -6128,6 +6180,7 @@
     },
     "fords": 90,
     "basins": 5,
+    "ponds": 5,
     "classes": {
      "ww": 12,
      "canals": 2
@@ -7895,6 +7948,28 @@
      "depth": -2.2
     }
    ],
+   "ponds": [
+    {
+     "centre": [-863.3158, -4122.7368],
+     "radius": 12.2433
+    },
+    {
+     "centre": [-1499.0, -3389.0],
+     "radius": 10.5
+    },
+    {
+     "centre": [-1308.0909, -77.2727],
+     "radius": 10.1158
+    },
+    {
+     "centre": [3493.0, 4086.625],
+     "radius": 13.5078
+    },
+    {
+     "centre": [2906.2222, 4374.2222],
+     "radius": 12.9122
+    }
+   ],
    "t1_mask": {
     "pixels": 179208,
     "share": 0.001751,
@@ -8287,8 +8362,8 @@
   },
   "4": {
    "file": "terra-nauvis/prototypes/generated/waterways_atlantic_s4_v1.lua",
-   "sha256": "447c3c7514e0e8c2a621aebf4a291d8ac9b191e172dcd57e9f44af72f0bdfc32",
-   "bytes": 47653,
+   "sha256": "5f5c12d2b44009f8ae2dec4a33a8a2e6927d34d93041c900fc6731ad01c13b9e",
+   "bytes": 48131,
    "stats": {
     "segments": {
      "river": 401,
@@ -8298,6 +8373,7 @@
     },
     "fords": 90,
     "basins": 4,
+    "ponds": 5,
     "classes": {
      "ww": 14,
      "canals": 2
@@ -10080,6 +10156,28 @@
      "depth": -2.2
     }
    ],
+   "ponds": [
+    {
+     "centre": [-1150.4211, -5496.3158],
+     "radius": 16.3244
+    },
+    {
+     "centre": [-1998.0, -4518.0],
+     "radius": 14.0
+    },
+    {
+     "centre": [-1743.4545, -102.3636],
+     "radius": 13.4877
+    },
+    {
+     "centre": [4658.0, 5449.5],
+     "radius": 18.0104
+    },
+    {
+     "centre": [3875.6296, 5832.963],
+     "radius": 17.2163
+    }
+   ],
    "t1_mask": {
     "pixels": 166289,
     "share": 0.001625,
@@ -10472,8 +10570,8 @@
   },
   "5": {
    "file": "terra-nauvis/prototypes/generated/waterways_atlantic_s5_v1.lua",
-   "sha256": "d1bcefce1295b5655a9c384d0544e89c3f73ef42f3e0ff052d1c33c44b431267",
-   "bytes": 46937,
+   "sha256": "9671d9ac907d60373c7c5871f5546fcb163aa21ff666cdf73e48b3b84ba83ce3",
+   "bytes": 47421,
    "stats": {
     "segments": {
      "river": 381,
@@ -10483,6 +10581,7 @@
     },
     "fords": 90,
     "basins": 4,
+    "ponds": 5,
     "classes": {
      "ww": 19,
      "canals": 2
@@ -12262,6 +12361,28 @@
      "depth": -2.2
     }
    ],
+   "ponds": [
+    {
+     "centre": [-1438.5263, -6870.8947],
+     "radius": 20.4055
+    },
+    {
+     "centre": [-2498.0, -5648.0],
+     "radius": 17.5
+    },
+    {
+     "centre": [-2179.8182, -128.4545],
+     "radius": 16.8597
+    },
+    {
+     "centre": [5822.0, 6811.375],
+     "radius": 22.513
+    },
+    {
+     "centre": [4844.037, 7290.7037],
+     "radius": 21.5204
+    }
+   ],
    "t1_mask": {
     "pixels": 160329,
     "share": 0.001566,
@@ -12654,8 +12775,8 @@
   },
   "6": {
    "file": "terra-nauvis/prototypes/generated/waterways_atlantic_s6_v1.lua",
-   "sha256": "ff87b90bf0a67737447bbf30aea4b283f18266ec6c78f9825515a124d7480fc2",
-   "bytes": 42515,
+   "sha256": "df86f465807c1e44c8d224cda085cf82c1e6e12a14c2a4d8d74f2b6a40997193",
+   "bytes": 42996,
    "stats": {
     "segments": {
      "river": 319,
@@ -12665,6 +12786,7 @@
     },
     "fords": 90,
     "basins": 7,
+    "ponds": 5,
     "classes": {
      "ww": 21,
      "canals": 2
@@ -14453,6 +14575,28 @@
      "centre": [7203.0, -4323.0],
      "tangent": [0.043437, 0.999056],
      "depth": -2.2
+    }
+   ],
+   "ponds": [
+    {
+     "centre": [-1725.6316, -8244.4737],
+     "radius": 24.4866
+    },
+    {
+     "centre": [-2997.0, -6777.0],
+     "radius": 21.0
+    },
+    {
+     "centre": [-2615.1818, -153.5455],
+     "radius": 20.2316
+    },
+    {
+     "centre": [6987.0, 8174.25],
+     "radius": 27.0156
+    },
+    {
+     "centre": [5813.4444, 8749.4444],
+     "radius": 25.8244
     }
    ],
    "t1_mask": {

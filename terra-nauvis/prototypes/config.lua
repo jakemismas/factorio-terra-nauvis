@@ -1756,6 +1756,8 @@ return {
     --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide.
     --   deloop: a river's hooks cut, tools/build_waterways.py deloop.
     --   spawn_fade: the warp is 0 within inner_tiles of the spawn and whole beyond outer_tiles.
+    --   ponds: water components of the coast fit of at most max_px px within reach_px of a river's cells take
+    --     land, height at the centre and 0 margin_px beyond the component's farthest pixel.
     natural = {
       warp = {
         {seed1x = 7501, seed1y = 7502, wavelength = {60, 50}, amplitude = {2, 3.8}, passage = 0},
@@ -1768,6 +1770,7 @@ return {
       basin = {half_length_tiles = 8, radius_tiles = 12},
       deloop = {gap_px = 8, arc_px = 30, reach_px = 400},
       spawn_fade = {inner_tiles = 40, outer_tiles = 200},
+      ponds = {max_px = 32, reach_px = 3, margin_px = 1.5, height = 20},
     },
   },
 

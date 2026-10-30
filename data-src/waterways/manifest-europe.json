@@ -87,6 +87,12 @@
    "spawn_fade": {
     "inner_tiles": 40,
     "outer_tiles": 200
+   },
+   "ponds": {
+    "max_px": 32,
+    "reach_px": 3,
+    "margin_px": 1.5,
+    "height": 20
    }
   },
   "river_k": {
@@ -117,8 +123,8 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s1_v1.lua",
-   "sha256": "3c278ebc5af35fca1637a4716b719df1a6039e28b2e7a027ecb0b18c99484706",
-   "bytes": 26909,
+   "sha256": "7695479bc7c09ce5d9cc36340ed30384ec398e8e14946d5132a673e4f1910d57",
+   "bytes": 27549,
    "stats": {
     "segments": {
      "river": 195,
@@ -128,6 +134,7 @@
     },
     "fords": 87,
     "basins": 8,
+    "ponds": 7,
     "classes": {
      "ww": 10,
      "canals": 2
@@ -1780,6 +1787,36 @@
      "depth": -2.2
     }
    ],
+   "ponds": [
+    {
+     "centre": [-283.1111, -35.8889],
+     "radius": 3.3922
+    },
+    {
+     "centre": [-276.0, -30.6923],
+     "radius": 3.8077
+    },
+    {
+     "centre": [-44.2069, -20.8276],
+     "radius": 5.6775
+    },
+    {
+     "centre": [-490.5625, 56.375],
+     "radius": 3.9662
+    },
+    {
+     "centre": [670.0, 113.0],
+     "radius": 3.5
+    },
+    {
+     "centre": [-802.1667, 258.1667],
+     "radius": 2.6785
+    },
+    {
+     "centre": [-948.6, 592.56],
+     "radius": 5.1924
+    }
+   ],
    "t1_mask": {
     "pixels": 323603,
     "share": 0.079128,
@@ -2742,8 +2779,8 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s2_v1.lua",
-   "sha256": "d68ee50ad8090d07fb74505cda152d8a0e511001a25cf418a48c2afb544413f3",
-   "bytes": 38133,
+   "sha256": "41eb07d4639aec675da84831abf6042e84f146be0f532b4165d60c7de1ba1063",
+   "bytes": 38775,
    "stats": {
     "segments": {
      "river": 324,
@@ -2753,6 +2790,7 @@
     },
     "fords": 89,
     "basins": 7,
+    "ponds": 7,
     "classes": {
      "ww": 11,
      "canals": 1
@@ -4449,6 +4487,36 @@
      "depth": -6
     }
    ],
+   "ponds": [
+    {
+     "centre": [-565.2222, -70.7778],
+     "radius": 6.7843
+    },
+    {
+     "centre": [-551.0, -60.3846],
+     "radius": 7.6154
+    },
+    {
+     "centre": [-87.4138, -40.6552],
+     "radius": 11.3551
+    },
+    {
+     "centre": [-980.125, 113.75],
+     "radius": 7.9324
+    },
+    {
+     "centre": [1341.0, 227.0],
+     "radius": 7.0
+    },
+    {
+     "centre": [-1603.3333, 517.3333],
+     "radius": 5.357
+    },
+    {
+     "centre": [-1896.2, 1186.12],
+     "radius": 10.3847
+    }
+   ],
    "t1_mask": {
     "pixels": 213732,
     "share": 0.052262,
@@ -5053,8 +5121,8 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s3_v1.lua",
-   "sha256": "ce85a1849e78559490ecc67fb75679cde3474913c0f16b74005ec7be386bea77",
-   "bytes": 37206,
+   "sha256": "13553a49be8dc5cd84bbf62853eaf2334821f617fb503e4dd76468fcf450af4a",
+   "bytes": 37851,
    "stats": {
     "segments": {
      "river": 314,
@@ -5064,6 +5132,7 @@
     },
     "fords": 90,
     "basins": 4,
+    "ponds": 7,
     "classes": {
      "ww": 12,
      "canals": 1
@@ -6741,6 +6810,36 @@
      "depth": -6
     }
    ],
+   "ponds": [
+    {
+     "centre": [-848.3333, -106.6667],
+     "radius": 10.1765
+    },
+    {
+     "centre": [-827.0, -91.0769],
+     "radius": 11.4231
+    },
+    {
+     "centre": [-131.6207, -61.4828],
+     "radius": 17.0326
+    },
+    {
+     "centre": [-1470.6875, 170.125],
+     "radius": 11.8985
+    },
+    {
+     "centre": [2011.0, 340.0],
+     "radius": 10.5
+    },
+    {
+     "centre": [-2405.5, 775.5],
+     "radius": 8.0355
+    },
+    {
+     "centre": [-2844.8, 1778.68],
+     "radius": 15.5771
+    }
+   ],
    "t1_mask": {
     "pixels": 177551,
     "share": 0.043415,
@@ -7251,8 +7350,8 @@
   },
   "4": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s4_v1.lua",
-   "sha256": "5ab77e13636f09e41b21c9f00a1c9a48a540df2aa696f9fe860e4bb9ab1ed8c7",
-   "bytes": 44988,
+   "sha256": "517b3071470d3f2e4a02afa9a6c52a38c3ebc0a9ec637a59e73292dc5ab96db6",
+   "bytes": 45641,
    "stats": {
     "segments": {
      "river": 403,
@@ -7262,6 +7361,7 @@
     },
     "fords": 90,
     "basins": 3,
+    "ponds": 7,
     "classes": {
      "ww": 14,
      "canals": 2
@@ -8954,6 +9054,36 @@
      "depth": -2.2
     }
    ],
+   "ponds": [
+    {
+     "centre": [-1130.4444, -141.5556],
+     "radius": 13.5686
+    },
+    {
+     "centre": [-1102.0, -120.7692],
+     "radius": 15.2308
+    },
+    {
+     "centre": [-174.8276, -81.3103],
+     "radius": 22.7102
+    },
+    {
+     "centre": [-1960.25, 227.5],
+     "radius": 15.8647
+    },
+    {
+     "centre": [2682.0, 454.0],
+     "radius": 14.0
+    },
+    {
+     "centre": [-3206.6667, 1034.6667],
+     "radius": 10.714
+    },
+    {
+     "centre": [-3792.4, 2372.24],
+     "radius": 20.7695
+    }
+   ],
    "t1_mask": {
     "pixels": 166952,
     "share": 0.040824,
@@ -9406,8 +9536,8 @@
   },
   "5": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s5_v1.lua",
-   "sha256": "8b72fa7c0df8bd0bcc602f128ae6700948bcc06b064c1ccd0c79ca692974cec8",
-   "bytes": 44082,
+   "sha256": "82f1f465f25111c3036d8de067f389b61362321b60540efaa4dd1ee92cf94c69",
+   "bytes": 44743,
    "stats": {
     "segments": {
      "river": 383,
@@ -9417,6 +9547,7 @@
     },
     "fords": 90,
     "basins": 3,
+    "ponds": 7,
     "classes": {
      "ww": 19,
      "canals": 2
@@ -11107,6 +11238,36 @@
      "depth": -2.2
     }
    ],
+   "ponds": [
+    {
+     "centre": [-1413.5556, -177.4444],
+     "radius": 16.9608
+    },
+    {
+     "centre": [-1378.0, -151.4615],
+     "radius": 19.0385
+    },
+    {
+     "centre": [-219.0345, -102.1379],
+     "radius": 28.3877
+    },
+    {
+     "centre": [-2450.8125, 283.875],
+     "radius": 19.8309
+    },
+    {
+     "centre": [3352.0, 567.0],
+     "radius": 17.5
+    },
+    {
+     "centre": [-4008.8333, 1292.8333],
+     "radius": 13.3926
+    },
+    {
+     "centre": [-4741.0, 2964.8],
+     "radius": 25.9619
+    }
+   ],
    "t1_mask": {
     "pixels": 161338,
     "share": 0.039451,
@@ -11539,8 +11700,8 @@
   },
   "6": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s6_v1.lua",
-   "sha256": "02464b60a31f5fcfb28551051f1f40418b8cfab6152ce122a6bd9ed62d6ab6a5",
-   "bytes": 39461,
+   "sha256": "98ae458f6be5f3c6d095a3d6029f1d17bb6553c257369401eee8c1f039de57c2",
+   "bytes": 40101,
    "stats": {
     "segments": {
      "river": 319,
@@ -11550,6 +11711,7 @@
     },
     "fords": 90,
     "basins": 6,
+    "ponds": 7,
     "classes": {
      "ww": 21,
      "canals": 2
@@ -13252,6 +13414,36 @@
      "centre": [1980.0, 4065.0],
      "tangent": [0.777281, 0.629154],
      "depth": -2.2
+    }
+   ],
+   "ponds": [
+    {
+     "centre": [-1695.6667, -212.3333],
+     "radius": 20.3529
+    },
+    {
+     "centre": [-1653.0, -181.1538],
+     "radius": 22.8462
+    },
+    {
+     "centre": [-262.2414, -121.9655],
+     "radius": 34.0652
+    },
+    {
+     "centre": [-2940.375, 341.25],
+     "radius": 23.7971
+    },
+    {
+     "centre": [4023.0, 681.0],
+     "radius": 21.0
+    },
+    {
+     "centre": [-4810.0, 1552.0],
+     "radius": 16.0711
+    },
+    {
+     "centre": [-5688.6, 3558.36],
+     "radius": 31.1542
     }
    ],
    "t1_mask": {

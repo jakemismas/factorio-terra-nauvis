@@ -142,7 +142,8 @@ data:extend(E)
 -- composition, so no lake of an earlier step reopens a dammed isthmus, and min() makes the carves
 -- and lakes order-free. Each set is picked by name through the folded scale, so only the save's
 -- scale's sets compile, and the canals switch compiles only its selected branch (S4: Tile 19,620 off
--- and 20,161 on at scale 1).
+-- and 20,161 on at scale 1). Beside the dams, the map's ponds (tools/build_waterways.py river_ponds): land
+-- over the fit's own discs on a river's course, inline text per scale, so a carve still cuts them.
 local M = {}
 
 local function by_scale(names)
@@ -155,15 +156,22 @@ local function by_scale(names)
   return text
 end
 
-function M.composition(sets, previous)
+function M.composition(sets, previous, key, g)
   if not sets then
     error("a waterways composition needs the version's waterway sets")
   end
   local on = cfg.keys.canals .. " > " .. num(H.threshold)
-  return "min(max(" .. previous .. ", dam), carve, canal)", {
+  local ponds = {}
+  for _, s in ipairs(cfg.scales.values) do
+    ponds[s] = FILES[key][s].ponds
+  end
+  return "min(max(" .. previous .. ", dam, ponds), carve, canal)", {
     dam = "if(" .. on .. ", -inf, " .. by_scale(sets.dams) .. ")",
+    ponds = by_scale(ponds),
     carve = by_scale(sets.ww),
     canal = "if(" .. on .. ", " .. by_scale(sets.canals) .. ", inf)",
+    X = g.gx,
+    Y = g.gy,
   }
 end
 
