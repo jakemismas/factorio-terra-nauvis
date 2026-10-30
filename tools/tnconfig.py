@@ -700,7 +700,8 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     Biomes), and with ab=True (Alien Biomes loaded, the M2 dump) the AB climate variant, the vanilla
     tile keys and the exclusion key, else the fallback climate and the marsh grass key; from
     trees-forests the tree keys; from ridges the cliff properties, the map's ridge keys and the Earth
-    ores' wrapper keys."""
+    ores' wrapper keys; from destroyed-europe, with
+    ab=True, the Alien Biomes temperature's next version."""
     K, m = cfg["keys"], cfg["maps"][map_key]
     pen = {K["elevation"]: version["entry"], K["start_mask"]: version["start_mask"],
            K["land_coarse"]: version["land_coarse"], K["map"]: m["id"], K["scale"]: int(scale),
@@ -780,6 +781,13 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         tg = cfg["toggles"]["hotspots"]
         on = cfg["settings"][tg["setting"]]["default_value"]
         pen[version["fields"]] = cfg["fields"]["names"][map_key] if on else cfg["neutral"]["zero"]
+    # destroyed-europe (presets.lua destroyed_values, last): with Alien Biomes temperature names the Alien
+    # Biomes temperature's next version whatever the toggle (its folded switch keeps climate-tiles' first
+    # version when off); the random pool replaces the city number only with the zone on, never at the
+    # setting's default (off)
+    de = cfg.get("destroyed")
+    if ab and de and de.get("names"):
+        pen["temperature"] = de["names"]["temperature"]
     return pen
 
 
@@ -915,7 +923,8 @@ def release_names(cfg):
     return sorted(release_of(cfg))
 
 
-TOGGLE_FIELDS = {"setting", "preset_key", "default", "mechanism", "on", "off", "maps"}
+# requires (destroyed-europe): a mod without which a preset bakes the toggle off whatever its setting says
+TOGGLE_FIELDS = {"setting", "preset_key", "default", "mechanism", "on", "off", "maps", "requires"}
 
 
 def toggles(cfg):

@@ -17,6 +17,12 @@
 --     reset_size (config.lua ridges) with a whole-table assignment, once, logged in one line: the
 --     preview and the starting chunks keep none, and every chunk generated from then on gets its
 --     ridges (S5: 330 of 330 cliffs restored; the starting area holds no ridge cell anyway).
+--   - D12 (milestone destroyed-europe): with the Destroyed Europe setting on and Alien Biomes not
+--     active, the warning that the world has no zone, stored through guards.record_warning like the RSO
+--     warning. The preset baked the zone off for lack of Alien Biomes (FEAS-17), so the save
+--     cannot tell an asked-for zone from none: this one check reads the startup setting, which on_init
+--     reads as the world was created with. With the zone on and the spawn city at random, the save's city
+--     number names the map's random pool, which counts as random (0) here.
 --
 -- A Map-type-only world is not an Earth world here (it holds no tn_geo): it gets the Map type notice
 -- from guards.lua and no start message. Control code reads save state only (U6).
@@ -93,6 +99,9 @@ function M.on_init()
   if sp then
     local pen = surface.map_gen_settings.property_expression_names or {}
     earth.city = tonumber(pen[sp.city])
+    if earth.city == nil and pen[sp.city] ~= nil and pen[sp.city] == (cfg.destroyed.pools or {})[geo.map] then
+      earth.city = 0
+    end
     local got = surface.calculate_tile_properties({sp.city_index}, {{x = 0, y = 0}})[sp.city_index]
     local index = got and got[1] and math.floor(got[1] + 1 / 2)
     earth.city_index = index
@@ -108,6 +117,10 @@ function M.on_init()
   local rso = script.active_mods["rso-mod"]
   if rso then
     guards.record_warning("rso", {rso})
+  end
+  local de = cfg.toggles.destroyed_europe
+  if settings.startup[cfg.settings[de.setting].name].value and not script.active_mods[de.requires] then
+    guards.record_warning("destroyed_no_ab", {})
   end
 end
 

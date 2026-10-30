@@ -70,6 +70,12 @@
    "type": "bool-setting",
    "setting_type": "startup",
    "default_value": false
+  },
+  "destroyed_europe": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-destroyed-europe (startup, bool, default off; D12) and section 10",
+   "type": "bool-setting",
+   "setting_type": "startup",
+   "default_value": false
   }
  },
  "numeric_literals_allowed": [0, 1, 2]

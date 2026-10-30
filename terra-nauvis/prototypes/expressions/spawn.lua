@@ -28,6 +28,8 @@
 -- versions name is defined once, and two versions that would build it differently fail at load.
 local cfg = require("prototypes.config")
 local cities = require("prototypes.tables.cities")
+-- destroyed-europe: the cities its zone covers, which a random pick on a world with the zone on skips
+local destroyed = require("prototypes.tables.destroyed")
 
 -- One require per generated file the release registry lists (the registration scan reads literal
 -- module names), keyed by its path as config.lua's release_registry files and spawn records name it.
@@ -108,6 +110,33 @@ local function noise(seed1, wavelength, cx, cy)
     " / " .. num(wavelength) .. shift .. "}"
 end
 
+-- Destroyed Europe's random pool (milestone destroyed-europe; APPROVALS 10): the city fold's hash modulo the
+-- number of the map's cities outside the zone, then that city's index of 1 to n. A preset with the zone on
+-- and the spawn city at random bakes this body as the map's city number, so the fold resolves it as it
+-- resolves a chosen city; the index folds to a constant like the fold's own pick.
+local function pool_body(name, key, setting, tbl)
+  local inside = {}
+  for _, value in ipairs(destroyed.zone_cities[key] or {}) do
+    if not tbl.cities[value] then
+      error("prototypes/tables/destroyed.lua lists " .. value .. ", which the city table of " .. key .. " lacks")
+    end
+    inside[value] = true
+  end
+  local pool = {}
+  for i, value in ipairs(setting.allowed_values) do
+    if i > 1 and not inside[value] then
+      pool[#pool + 1] = i - 1
+    end
+  end
+  local H = S.hash
+  local text = num(pool[#pool])
+  for k = #pool - 1, 1, -1 do
+    text = "if(pool_pick == " .. num(k) .. ", " .. num(pool[k]) .. ", " .. text .. ")"
+  end
+  def(name, text, {pool_pick = "(map_seed_small * " .. num(H.small_mult) .. " + floor(map_seed / " ..
+    num(H.high_div) .. ") * " .. num(H.high_mult) .. ") % " .. num(#pool) .. " + 1"})
+end
+
 -- The spawn bodies of one geography version of a map (its spawn record names them).
 local function spawn(map_key, v)
   local sp = v.spawn
@@ -151,6 +180,13 @@ local function spawn(map_key, v)
   -- random (0): the folded hash of map_seed, an index of 1 to n
   def(sp.city_index, "if(" .. sp.city .. " > 0, " .. sp.city .. ", (map_seed_small * " .. num(H.small_mult) ..
     " + floor(map_seed / " .. num(H.high_div) .. ") * " .. num(H.high_mult) .. ") % " .. num(n) .. " + 1)")
+
+  -- Destroyed Europe's random pool (milestone destroyed-europe; APPROVALS 10): pool_body above, one per map
+  -- (every version with a spawn record names the same body, which def defines once).
+  local pool_name = cfg.destroyed and cfg.destroyed.pools[map_key]
+  if pool_name then
+    pool_body(pool_name, map_key, setting, tbl)
+  end
 
   local function chain(field, radius)
     local text = "0"

@@ -538,6 +538,29 @@ versions follow [Semantic Versioning](https://semver.org/).
   body and switch on the previous version tile for tile in an inland window (2,119 lake tiles between
   them), and the spawn window is identical in all three. The edge band mask is 1.25 percent of Europe and
   under 0.01 percent of the other maps. The gate, the suite and the baseline are the build's.
+- Milestone `destroyed-europe`: the optional Destroyed Europe zone. The startup setting Destroyed
+  Europe (`terra-nauvis-destroyed-europe`, default off, APPROVALS 1a and 10), baked per save as the name
+  switch `tn_destroyed`, on only with the setting and Alien Biomes (the toggle's new `requires` field;
+  FEAS-17); `prototypes/expressions/destroyed.lua`: the zone `tn_destroyed_zone_v1`, the region layer's
+  `tn_destroyed_depth_v1` (R7b's 14-vertex polygon less its six exclusion rows, edges moving with the
+  seed) cut by the start disc `max(150, starting_area_radius)` around the spawn, its heat
+  `tn_destroyed_heat_v1` (a heat-1 rim at 100.5 climbing over 61 tiles to a core near 130 that mixes Alien
+  Biomes' four heat bands), and the Alien Biomes temperature's next version `tn_temperature_ab_v2`, which
+  every Earth preset names with Alien Biomes and whose folded switch keeps climate-tiles' temperature with
+  the zone off; `prototypes/tables/destroyed.lua`: APPROVALS 10's zone cities per map (Europe 7 of 40,
+  Atlantic and Old World Prague); Europe's random pool `tn_city_pool_europe_v1` (spawn.lua), which a preset
+  with the zone on and the spawn city at random bakes as the city number, so random never lands on a zone
+  city while a chosen one still can; the D12 warning without Alien Biomes, logged at creation and sent to
+  each created player through the stored-warning path; the drift line counts the pool as random and
+  compares the toggle with its `requires` rule; four new bodies in `tests/frozen.json`. Runner: FG rows
+  `de_dump_facts` (M1 and M2 dumps at the defaults and with the setting on: bodies, preset names, pools,
+  registration, isolation (a) and (b) with the zone on, the zone-on M2 increment within 6.3's key-on
+  allocation) and `de_pool` (offline: the table against the polygon, the pool's picks at T7's seeds);
+  suite checks `de_t2` (with V3 renders), `de_t3`, `de_t7`, `de_t13`, `de_t18`, `de_t11` and `de_t15b`;
+  `tools/oracle.py destroyed` writes the oracle's destroyed_zone expectations (the region expectation's
+  `destroyed` key) and validate checks them. Climate-tiles' dump facts expect the next Alien Biomes
+  temperature in every M2 preset, and the oracle control that turns trees-forests live keeps every later
+  registry milestone live.
 
 ### Changed
 

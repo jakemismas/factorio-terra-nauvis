@@ -6,8 +6,9 @@
 -- stored warnings to each created player. Milestone spawn-cities adds the start (the resolved city, the
 -- start message and the RSO warning; from ridges also the cliff "none" reset) after world detection,
 -- and the D33 surface guard on every new surface and as a sweep in on_init and on_configuration_changed
--- (surfaces made inside an on_init raise no event, S11). Nothing is registered conditionally, so
--- on_load has nothing to restore.
+-- (surfaces made inside an on_init raise no event, S11). Milestone destroyed-europe adds to the start the
+-- D12 warning (Destroyed Europe on without Alien Biomes), stored like the RSO warning for every created
+-- player. Nothing is registered conditionally, so on_load has nothing to restore.
 local guards = require("scripts.guards")
 local start = require("scripts.start")
 

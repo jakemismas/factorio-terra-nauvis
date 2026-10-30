@@ -3726,7 +3726,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -3795,7 +3795,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -3864,7 +3864,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -3933,7 +3933,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4002,7 +4002,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4071,7 +4071,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4140,7 +4140,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4209,7 +4209,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4278,7 +4278,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4347,7 +4347,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4416,7 +4416,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4485,7 +4485,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4554,7 +4554,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4623,7 +4623,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4692,7 +4692,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4761,7 +4761,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4830,7 +4830,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4899,7 +4899,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -4968,7 +4968,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5037,7 +5037,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5106,7 +5106,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5175,7 +5175,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5244,7 +5244,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5313,7 +5313,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5382,7 +5382,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5451,7 +5451,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5520,7 +5520,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5589,7 +5589,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5658,7 +5658,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5727,7 +5727,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5796,7 +5796,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5865,7 +5865,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -5934,7 +5934,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6003,7 +6003,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6072,7 +6072,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6141,7 +6141,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6210,7 +6210,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6279,7 +6279,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6348,7 +6348,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6417,7 +6417,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6486,7 +6486,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6555,7 +6555,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6624,7 +6624,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6693,7 +6693,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6762,7 +6762,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6831,7 +6831,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6900,7 +6900,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -6969,7 +6969,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -7038,7 +7038,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -7107,7 +7107,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -7176,7 +7176,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -7245,7 +7245,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -7314,7 +7314,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -7383,7 +7383,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -7452,7 +7452,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -7521,7 +7521,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -8993,7 +8993,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9079,7 +9079,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9165,7 +9165,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9251,7 +9251,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9337,7 +9337,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9423,7 +9423,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9509,7 +9509,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9595,7 +9595,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9681,7 +9681,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9767,7 +9767,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9853,7 +9853,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -9939,7 +9939,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10025,7 +10025,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10111,7 +10111,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10197,7 +10197,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10283,7 +10283,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10369,7 +10369,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10455,7 +10455,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10541,7 +10541,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10627,7 +10627,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10713,7 +10713,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10799,7 +10799,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10885,7 +10885,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -10971,7 +10971,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -11057,7 +11057,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -11143,7 +11143,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -11229,7 +11229,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -11315,7 +11315,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -11401,7 +11401,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -11487,7 +11487,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -11573,7 +11573,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -12587,7 +12587,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -12654,7 +12654,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -12721,7 +12721,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -12788,7 +12788,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -12855,7 +12855,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -12922,7 +12922,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -12989,7 +12989,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13056,7 +13056,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13123,7 +13123,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13190,7 +13190,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13257,7 +13257,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13324,7 +13324,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13391,7 +13391,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13458,7 +13458,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13525,7 +13525,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13592,7 +13592,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13659,7 +13659,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13726,7 +13726,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13793,7 +13793,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13860,7 +13860,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13927,7 +13927,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -13994,7 +13994,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14061,7 +14061,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14128,7 +14128,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14195,7 +14195,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14262,7 +14262,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14329,7 +14329,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14396,7 +14396,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14463,7 +14463,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14530,7 +14530,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14597,7 +14597,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14664,7 +14664,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14731,7 +14731,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14798,7 +14798,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14865,7 +14865,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14932,7 +14932,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -14999,7 +14999,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15066,7 +15066,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15133,7 +15133,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15200,7 +15200,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15267,7 +15267,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15334,7 +15334,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15401,7 +15401,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15468,7 +15468,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15535,7 +15535,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15602,7 +15602,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15669,7 +15669,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15736,7 +15736,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15803,7 +15803,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15870,7 +15870,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -15937,7 +15937,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16004,7 +16004,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16071,7 +16071,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16138,7 +16138,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16205,7 +16205,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16272,7 +16272,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16339,7 +16339,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16406,7 +16406,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16473,7 +16473,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16540,7 +16540,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16607,7 +16607,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16674,7 +16674,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16741,7 +16741,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16808,7 +16808,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16875,7 +16875,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -16942,7 +16942,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17009,7 +17009,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17076,7 +17076,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17143,7 +17143,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17210,7 +17210,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17277,7 +17277,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17344,7 +17344,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17411,7 +17411,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17478,7 +17478,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17545,7 +17545,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17612,7 +17612,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17679,7 +17679,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17746,7 +17746,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17813,7 +17813,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17880,7 +17880,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -17947,7 +17947,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18014,7 +18014,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18081,7 +18081,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18148,7 +18148,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18215,7 +18215,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18282,7 +18282,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18349,7 +18349,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18416,7 +18416,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18483,7 +18483,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18550,7 +18550,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18617,7 +18617,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18684,7 +18684,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18751,7 +18751,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18818,7 +18818,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18885,7 +18885,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -18952,7 +18952,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19019,7 +19019,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19086,7 +19086,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19153,7 +19153,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19220,7 +19220,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19287,7 +19287,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19354,7 +19354,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19421,7 +19421,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19488,7 +19488,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19555,7 +19555,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19622,7 +19622,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19689,7 +19689,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19756,7 +19756,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19823,7 +19823,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19890,7 +19890,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -19957,7 +19957,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20024,7 +20024,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20091,7 +20091,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20158,7 +20158,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20225,7 +20225,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20292,7 +20292,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20359,7 +20359,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20426,7 +20426,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20493,7 +20493,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20560,7 +20560,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20627,7 +20627,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20694,7 +20694,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20761,7 +20761,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20828,7 +20828,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -20895,7 +20895,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29153,7 +29153,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29222,7 +29222,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29291,7 +29291,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29360,7 +29360,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29429,7 +29429,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29498,7 +29498,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29567,7 +29567,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29697,7 +29697,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29766,7 +29766,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29835,7 +29835,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29904,7 +29904,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -29973,7 +29973,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -30042,7 +30042,7 @@
     "region": {
      "destroyed": false
     },
-    "destroyed_zone": null,
+    "destroyed_zone": false,
     "forest": null,
     "hotspot": null,
     "marsh": null
@@ -30111,7 +30111,7 @@
     "region": {
      "destroyed": true
     },
-    "destroyed_zone": null,
+    "destroyed_zone": true,
     "forest": null,
     "hotspot": null,
     "marsh": null

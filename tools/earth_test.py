@@ -253,6 +253,17 @@ REGISTRY = [
      "timed_ss": ["t15b_m1"],
      "oracle_properties": [],
      "dumps": ["m1"]},
+    # The optional Destroyed Europe zone (design section 13, milestone 0): Alien Biomes volcanic ground in R7b's
+    # polygon through the region layer, cut by the start disc, the random pool that skips the zone's spawn
+    # cities, and the warning without Alien Biomes. Its FG rows read the M1 and M2 dumps (two more with the
+    # setting on); its suite renders the zone at three seeds and times Europe with the zone on against BAB.
+    {"id": "destroyed-europe", "part": 7, "order": 0,
+     "fg": ["de_dump_facts", "de_pool"],
+     "ss": ["de_t2", "de_t3", "de_t7", "de_t13", "de_t18", "de_t11", "de_t15b"],
+     "deterministic_ss": ["de_t2", "de_t7", "de_t11"],
+     "timed_ss": ["de_t15b"],
+     "oracle_properties": ["destroyed_zone"],
+     "dumps": ["m1", "m2"]},
 ]
 
 
@@ -3099,8 +3110,10 @@ def oracle_controls():
         upto = [s for s in plan_slice_order(git_show("main:SPRINT-1-PLAN.md") or PLAN.read_text(encoding="utf-8"))]
         before = upto[: upto.index("trees-forests")]
         out["oracle: a forest expectation before trees-forests ships fails"] = (run(before, eu["places"]) != 0, "")
+        # with trees-forests live and every later milestone whose expectations the oracle already holds
+        # (destroyed-europe's destroyed_zone), as the gate runs it
         out["oracle: the same expectation once trees-forests is live passes"] = (
-            run(before + ["trees-forests"], eu["places"]) == 0, "")
+            run(list(dict.fromkeys(before + ["trees-forests"] + [s["id"] for s in REGISTRY])), eu["places"]) == 0, "")
         forest["expect"]["forest"] = None
         old = brief["expect"]["climate_band"]
         brief["expect"]["climate_band"] = "temperate" if old != "temperate" else "cold"
@@ -4504,7 +4517,8 @@ def expected_pen(cfg, map_key, scale, city=None, ab=False):
     AB-only keys apply; from trees-forests the tree keys, tf_preset_keys; from ridges the cliff
     properties, the map's ridge keys and every Earth ore's probability key; from resources-enemies the
     ore keys at the next probability wrappers, the richness and enemy wrappers and the map's offshore
-    stamp key, which follows the hotspots toggle)."""
+    stamp key, which follows the hotspots toggle; from destroyed-europe, ab=True, temperature at the
+    Alien Biomes temperature's next version)."""
     return tnconfig.baked_names(cfg, map_key, tnconfig.geography(cfg)[map_key], scale, city, ab=ab)
 
 
@@ -19027,6 +19041,925 @@ def row_water_inert(ctx, mods, sec6, row, cache):
 
 
 
+# ================================================================================================ destroyed-europe
+
+# Milestone destroyed-europe (part 7, order 0; design section 13; ARCHITECTURE.md milestone contract 10): the optional
+# zone of Alien Biomes volcanic ground in R7b's polygon through the region layer, cut by the start disc, the
+# random pool that skips the zone's spawn cities, and the warning without Alien Biomes. Every name
+# comes from config.lua's destroyed group and toggles.destroyed_europe, the zone cities from
+# prototypes/tables/destroyed.lua.
+DE_TABLE = MOD / "prototypes" / "tables" / "destroyed.lua"
+DE_T7_SEEDS = (1000, 1002, 1004, 4000000001, 4294967295)   # T7: random never returns a zone city
+DE_T7_SCALES = (1, 6)                                      # T7: every zone city spawns normally at both
+DE_T2_SCALES = (6, 1)                                      # T2: the zone grids on Europe (V3 renders at the first)
+DE_HOT = 100                                               # Alien Biomes' volcanic tiles above this (R3 7.1)
+DE_DRIFT_KM = 70                                           # a city this near the edge could flip (S10: 66.7 km)
+DE_VOLCANIC = "volcanic-"                                  # Alien Biomes' volcanic tile prefix (R3 7.1)
+DE_T3_SCALE = 6                                            # T3: every map at this scale, M2, three seeds
+DE_V3_SIZE = 1024                                          # V3: render side in tiles around the zone's middle
+DE_RAMP_TILES = 8                                          # T7: a margin inside the start disc for the noise
+DE_SPAWN_GRID = 24                                         # T7: samples per side over the start disc
+DE_RING_TILES = 64                                         # T7: the ring past the disc that must hold zone
+DE_START_AREA = 150                                        # starting_area_radius at the default slider (150 x 1)
+DE_CITY_FAR = "madrid"                                     # T2, V3: a spawn whose start disc misses the zone
+DE_CITY_OUT = "vienna"                                     # T3, T11: a spawn outside the zone, fixed so the
+                                                           # worlds a check compares share one spawn offset
+
+
+def de_table():
+    return tnconfig.load(DE_TABLE)
+
+
+def de_polygon():
+    """R7b's 14 vertices (lon, lat) from approvals-data.json, the table regions.lua builds the zone from."""
+    appr = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(encoding="utf-8"))
+    return [(float(v["lon"]), float(v["lat"])) for v in appr["destroyed_europe_polygon"]]
+
+
+def de_inside(poly, lon, lat):
+    c = False
+    for i in range(len(poly)):
+        (x1, y1), (x2, y2) = poly[i], poly[(i + 1) % len(poly)]
+        if (y1 > lat) != (y2 > lat) and lon < x1 + (lat - y1) * (x2 - x1) / (y2 - y1):
+            c = not c
+    return c
+
+
+def de_edge_km(poly, lon, lat):
+    """Distance in km from (lon, lat) to the polygon's nearest edge (local equirectangular)."""
+    k = math.cos(math.radians(lat))
+    best = None
+    for i in range(len(poly)):
+        (x1, y1), (x2, y2) = poly[i], poly[(i + 1) % len(poly)]
+        ax, ay, bx, by, px, py = x1 * k, y1, x2 * k, y2, lon * k, lat
+        dx, dy = bx - ax, by - ay
+        t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)))
+        d = math.hypot(ax + t * dx - px, ay + t * dy - py) * 111.2
+        best = d if best is None else min(best, d)
+    return best
+
+
+def de_membership(cfg):
+    """{map: {"inside": [values], "near": [(value, km)]}}: each map's spawn cities inside R7b's polygon by their
+    in-map positions (prototypes/tables/cities.lua), in setting order, and those outside within DE_DRIFT_KM of
+    its edge, which a warped edge could reach."""
+    import oracle
+    poly = de_polygon()
+    cities = tnconfig.load(oracle.CITIES)
+    out = {}
+    for mk in cfg["map_order"]:
+        g = tnconfig.geography(cfg).get(mk) or {}
+        key = "spawn_city_" + mk
+        s = cfg["settings"].get(g.get("city_setting") or key)
+        if not s or mk not in cities:
+            continue
+        rows = cities[mk]["cities"]
+        inside, near = [], []
+        for v in s["allowed_values"][1:]:
+            c = rows[v]
+            if de_inside(poly, c["lon"], c["lat"]):
+                inside.append(v)
+            else:
+                km = de_edge_km(poly, c["lon"], c["lat"])
+                if km < DE_DRIFT_KM:
+                    near.append((v, round(km, 1)))
+        out[mk] = {"inside": inside, "near": near}
+    return out
+
+
+def de_pool(cfg, mk, table=None):
+    """The map's random pool: the 1-based indices of its spawn-city setting's cities outside the zone."""
+    g = tnconfig.geography(cfg)[mk]
+    values = cfg["settings"][g["city_setting"]]["allowed_values"]
+    zone = set(((table or de_table()).get("zone_cities") or {}).get(mk) or [])
+    return [i for i, v in enumerate(values) if i > 0 and v not in zone]
+
+
+def de_pool_pick(cfg, mk, seed, table=None):
+    """The city index the pool body resolves at `seed`: the fold's float32 hash (oracle.random_city_index)
+    modulo the pool's size, then the pool's k-th city."""
+    import oracle
+    pool = de_pool(cfg, mk, table)
+    return pool[oracle.random_city_index(cfg, seed, len(pool)) - 1]
+
+
+def de_pool_body(cfg, mk, table=None):
+    """The pool body's expression and its one local, as spawn.lua writes them."""
+    pool = de_pool(cfg, mk, table)
+    H = cfg["spawn"]["hash"]
+
+    def num(v):
+        return lua_num(v)
+    text = num(pool[-1])
+    for k in range(len(pool) - 1, 0, -1):
+        text = f"if(pool_pick == {num(k)}, {num(pool[k - 1])}, {text})"
+    local = (f"(map_seed_small * {num(H['small_mult'])} + floor(map_seed / {num(H['high_div'])}) * "
+             f"{num(H['high_mult'])}) % {num(len(pool))} + 1")
+    return text, {"pool_pick": local}
+
+
+def lua_num(v):
+    """config.lua's number_format ("%.9g") as Lua's string.format writes it."""
+    return "%.9g" % v
+
+
+def de_on_pen(cfg, mk, pen, ab):
+    """A preset's names with the Destroyed Europe setting on, as presets.lua bakes them: the toggle on only
+    with Alien Biomes (FEAS-17), and then, with the spawn city at random, the map's pool as its city number."""
+    K, D, sw = cfg["keys"], cfg["destroyed"], cfg["toggles"]["destroyed_europe"]
+    out = dict(pen)
+    if not ab:
+        out[sw["preset_key"]] = sw["off"]
+        return out
+    out[sw["preset_key"]] = sw["on"]
+    g = tnconfig.geography(cfg).get(mk) or {}
+    pool = (D.get("pools") or {}).get(mk)
+    if "city" in g and pool and out.get(g["city"]) in (0, 0.0, "0"):
+        out[g["city"]] = pool
+    return out
+
+
+def de_setting_name(cfg):
+    return cfg["settings"][cfg["toggles"]["destroyed_europe"]["setting"]]["name"]
+
+
+def de_modset(ctx, mods, tag, ab, probe=None, on=True, extra=()):
+    """M1 (or M2, ab=True) plus a probe mod (and `extra` folders), its own modset per tag, prepared (G7), with
+    the Destroyed Europe setting written on (or off)."""
+    adds = ([HERE / "mods" / probe] if probe else []) + list(extra)
+    z = mods.build_zip()
+    name = f"ea-{tag}-{mods.zip_sha[:8]}" + (f"-{folder_hash(*adds)}" if adds else "")
+    ms = mods.make(name, [z] + adds, from_live=(["alien-biomes"] + LIVE_DEPS["alien-biomes"]) if ab else ())
+    mods.prepare(ms, tag)
+    res = ctx.fh_plain(["settings", ms, "--set", f"startup.{de_setting_name(mods.cfg)}={'true' if on else 'false'}"])
+    if not res.startswith("RESULT ok"):
+        raise GateError(f"fh.py settings {ms}: {res}")
+    return ms
+
+
+def de_mgs(ctx, cfg, mk, scale, ab, on, label, city=None):
+    """A map's preset as the M1 (or M2) dump holds it, as a full MGS file at `scale`, with the zone on or off
+    as presets.lua bakes it, and the spawn city `city` (a setting value) when given."""
+    pname, g = map_preset(cfg, mk)
+    dump = ctx.shared["dump_m2" if ab else "dump_m1"]
+    pen = dict(preset_pen(dump, pname))
+    if not pen:
+        raise GateError(f"the {'M2' if ab else 'M1'} dump holds no preset {pname}")
+    pin_scale(cfg, mk, pen, scale)
+    if city is not None and "city" in g:
+        s = cfg["settings"][g["city_setting"]]
+        pen[g["city"]] = s["allowed_values"].index(city)
+    sw = cfg["toggles"]["destroyed_europe"]
+    pen = de_on_pen(cfg, mk, pen, ab) if on else dict(pen, **{sw["preset_key"]: sw["off"]})
+    body = {"property_expression_names": pen}
+    controls = preset_controls(dump, pname)
+    if controls:
+        body["autoplace_controls"] = controls
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"de-{mk}-s{scale}-{'m2' if ab else 'm1'}-{'on' if on else 'off'}{label}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+# -- FG: the dump facts (T15, T16) and the pool (T7's static half)
+
+def de_dump_findings(cfg, d1, d2, d1on, d2on, frozen, firewall):
+    """de_dump_facts' checks on the M1 and M2 dumps at the defaults and with the setting on, as (findings,
+    facts)."""
+    fails, facts = [], {}
+    D, K, sw = cfg["destroyed"], cfg["keys"], cfg["toggles"]["destroyed_europe"]
+    N, RN = D["names"], cfg["regions"]["names"]
+    region = set(rl_all_names(rl_names(cfg, rl_rows())))
+    t1 = cfg["climate"]["names"]["ab"]["temperature"]
+    for label, d, ab in (("M1", d1, False), ("M2", d2, True), ("M1 on", d1on, False), ("M2 on", d2on, True)):
+        ne = d.get("noise-expression") or {}
+        for n in (N["zone"], N["heat"]):
+            if n not in ne:
+                fails.append(f"{label}: {n} is not defined")
+        if (N["temperature"] in ne) != ab:
+            fails.append(f"{label}: {N['temperature']} is {'missing' if ab else 'defined'}; it exists with Alien "
+                         f"Biomes only, as {t1} does")
+        # the zone reads the region layer through tn_destroyed_* alone
+        for n in (N["zone"], N["heat"], N["temperature"]):
+            body = ne.get(n)
+            if not body:
+                continue
+            texts = [body.get("expression")] + list((body.get("local_expressions") or {}).values())
+            refs = {r for tx in texts for r in expr_refs(tx)}
+            own = cfg["identity"]["noise_prefix"] + "destroyed_"
+            bad = sorted(r for r in refs if r in region and not r.startswith(own))
+            if bad:
+                fails.append(f"{label}: {n} reads region names {bad}; the zone reads tn_destroyed_* only (T16)")
+        zrefs = set(expr_refs((ne.get(N["zone"]) or {}).get("expression")))
+        if RN["destroyed_depth"] not in zrefs or cfg["destroyed"]["start"]["distance"] not in zrefs:
+            fails.append(f"{label}: {N['zone']} reads {sorted(zrefs)[:6]}, not {RN['destroyed_depth']} and the spawn "
+                         f"distance")
+        trefs = set(expr_refs((ne.get(N["temperature"]) or {}).get("expression"))) if ab else set()
+        if ab and not {K["destroyed"], t1, N["heat"]} <= trefs:
+            fails.append(f"{label}: {N['temperature']} reads {sorted(trefs)}, not the toggle, {t1} and the heat")
+        for mk in cfg["map_order"]:
+            if not (cfg.get("geography") or {}).get(mk):
+                continue
+            pname, g = map_preset(cfg, mk)
+            pen = preset_pen(d, pname)
+            on = label.endswith("on") and ab
+            want = sw["on"] if on else sw["off"]
+            if pen.get(sw["preset_key"]) != want:
+                fails.append(f"{label} {pname}: {sw['preset_key']} is {pen.get(sw['preset_key'])!r}, want {want!r} "
+                             f"(on only with the setting and Alien Biomes, FEAS-17)")
+            if ab and pen.get("temperature") != N["temperature"]:
+                fails.append(f"{label} {pname}: temperature names {pen.get('temperature')!r}, want {N['temperature']}")
+            if not ab and pen.get("temperature") == N["temperature"]:
+                fails.append(f"{label} {pname}: temperature names {N['temperature']} without Alien Biomes")
+            pool = (D.get("pools") or {}).get(mk)
+            if "city" in g:
+                got = pen.get(g["city"])
+                if on and pool and got != pool:
+                    fails.append(f"{label} {pname}: the city number is {got!r}, want the pool {pool} (random, zone on)")
+                if not on and not redirect_constant(got):
+                    fails.append(f"{label} {pname}: the city number is {got!r}, want a number with the zone off")
+            for k in pen:
+                if k not in cfg["preset_keys"]:
+                    fails.append(f"{label} {pname}: the preset sets {k}, which preset_keys lacks (the Nauvis-only "
+                                 f"guard strips only listed keys)")
+    # the setting on without Alien Biomes changes nothing a preset bakes (the static half of T13)
+    for mk in cfg["map_order"]:
+        if not (cfg.get("geography") or {}).get(mk):
+            continue
+        pname, _ = map_preset(cfg, mk)
+        if preset_pen(d1on, pname) != preset_pen(d1, pname):
+            diff = sorted(k for k in set(preset_pen(d1on, pname)) | set(preset_pen(d1, pname))
+                          if preset_pen(d1on, pname).get(k) != preset_pen(d1, pname).get(k))
+            fails.append(f"M1: the setting on changes {pname}'s names {diff[:6]} without Alien Biomes (FEAS-17)")
+    # the pool bodies are spawn.lua's text over tables/destroyed.lua
+    table = de_table()
+    ne1 = d1.get("noise-expression") or {}
+    for mk, name in (D.get("pools") or {}).items():
+        body = ne1.get(name) or {}
+        text, loc = de_pool_body(cfg, mk, table)
+        if body.get("expression") != text or (body.get("local_expressions") or {}) != loc:
+            fails.append(f"M1: {name} is not the pool over {mk}'s cities outside the zone")
+    # frozen: every body this milestone adds is registered with its dump's hash
+    bodies = frozen.get("bodies") or {}
+    for name, dump, lab in ((N["zone"], d1, "m1"), (N["heat"], d1, "m1"), (N["temperature"], d2, "m2")) + tuple(
+            (n, d1, "m1") for n in (D.get("pools") or {}).values()):
+        proto = (dump.get("noise-expression") or {}).get(name)
+        reg = bodies.get(name)
+        if proto is None:
+            continue
+        if not reg:
+            fails.append(f"{name} is not registered in tests/frozen.json (ruling 21)")
+        elif reg.get("sha256") != body_hash(proto) or reg.get("dump", "m1") != lab:
+            fails.append(f"{name}: tests/frozen.json holds {str(reg.get('sha256'))[:12]} ({reg.get('dump')}), the "
+                         f"{lab.upper()} dump {body_hash(proto)[:12]}")
+    # isolation (b) with the zone on: no Entity, decorative or Cliff root of an Earth preset reaches a
+    # firewall name on M2
+    walks = {}
+    for mk in cfg["map_order"]:
+        if not (cfg.get("geography") or {}).get(mk):
+            continue
+        pname, _ = map_preset(cfg, mk)
+        rep = walk_roots(d2on, preset_pen(d2on, pname), set(firewall))
+        walks[mk] = {g_: rep[g_]["hits"] for g_ in rep}
+        for g_, r in rep.items():
+            if r["hits"]:
+                fails.append(f"M2 on {pname}: a {g_} root reaches a firewall name: {r['example']} (isolation (b))")
+        reached = set().union(*(set(r["reached"]) for r in rep.values()))
+        if N["heat"] not in reached:
+            fails.append(f"M2 on {pname}: no Entity root reaches {N['heat']} (the walk's positive control: AB's "
+                         f"trees read temperature)")
+    facts["isolation_b_on"] = walks
+    return fails, facts
+
+
+def row_de_dump_facts(ctx, mods, sec6, row, cache):
+    """T15, T16 (FG; destroyed-europe): on M1 and M2 at the defaults and with the setting on, the zone, its heat
+    and the pools are defined, the Alien Biomes temperature's next version only with Alien Biomes; the zone reads
+    the region layer through tn_destroyed_* only; every preset bakes the toggle on exactly with the setting and
+    Alien Biomes, names the next temperature with Alien Biomes and the pool as Europe's city number with the zone
+    on and random; without Alien Biomes the setting changes no preset name (FEAS-17); every preset key is listed
+    for the Nauvis-only guard; every new body is registered with its dump's hash; isolation (b) holds with the
+    zone on, and the walk reaches the heat (positive control)."""
+    cfg = mods.cfg
+    d1, d2 = ctx.shared.get("dump_m1"), ctx.shared.get("dump_m2")
+    if d1 is None or d2 is None:
+        row.fails.append("no M1 and M2 dumps (row dumps failed)")
+        return
+    m1on = de_modset(ctx, mods, "m1deon", False)
+    m2on = de_modset(ctx, mods, "m2deon", True)
+    outs = []
+    for ms, lab in ((m1on, "m1"), (m2on, "m2")):
+        r = ctx.fh(["dump-data", "--instance", ctx.instance, "--modset", ms], ctx.out / f"de-dump-{lab}-on")
+        row.fails += g1(r.out) + g3(r.out)
+        outs.append(r.out)
+    if row.fails:
+        return
+    d1on, d2on = (json.loads((o / "data-raw-dump.json").read_text(encoding="utf-8")) for o in outs)
+    frozen = json.loads((TESTS / "frozen.json").read_text(encoding="utf-8"))
+    f, facts = de_dump_findings(cfg, d1, d2, d1on, d2on, frozen, firewall_names(cfg))
+    row.fails += f
+    # isolation (a) with the zone on (M2): Entity and Cliff equal between the real build and its constant-coast
+    # twin while Tile differs (design constraint 3)
+    twin = de_modset(ctx, mods, "m2deonc", True, None, True, [stage_twin(ctx, cfg)])
+    pname = cfg["presets"][cfg["preset_order"][0]]["name"]
+    a = [preview(ctx, m2on, "de-iso-real", 64, preset=pname, verbose=True).out,
+         preview(ctx, twin, "de-iso-twin", 64, preset=pname, verbose=True).out]
+    for x in a:
+        row.fails += g1(x) + g3(x)
+    real, tw = ctx_complexity(a[0]), ctx_complexity(a[1])
+    if not real or real.get("tile") == tw.get("tile"):
+        row.fails.append(f"M2 on {pname}: the twin's Tile equals the real build's: the positive control failed")
+    for prog in ("entity", "cliff"):
+        if real.get(prog) != tw.get(prog):
+            row.fails.append(f"M2 on {pname}: {prog.title()} differs between the real build {real.get(prog)} and its "
+                             f"constant-coast twin {tw.get(prog)} with the zone on (sacred constraint 3)")
+    facts["isolation_a_on"] = {"real": real, "twin": tw}
+    # within 6.3 (T15, FG): the zone on adds at most the milestone's M2 key-on allocation over the zone off (the M2
+    # modset at its defaults, the same preset and size)
+    off = preview(ctx, ctx.shared["m2"], "de-cx-m2-off", 64, preset=pname, verbose=True).out
+    row.fails += g1(off) + g3(off)
+    coff = ctx_complexity(off)
+    inc = {p: ((real.get(p) or {}).get("complexity") or 0) - ((coff.get(p) or {}).get("complexity") or 0)
+           for p in ("tile", "entity", "cliff")}
+    facts["m2_zone_on_increment"] = {"off": coff, "increment": inc}
+    al = (sec6.get("allocations") or {}).get("destroyed-europe") if isinstance(sec6, dict) else None
+    if al is None:
+        row.fails.append(f"section 6.3 holds no destroyed-europe row to bound the zone-on increment ({sec6!r:.80})")
+    mk = cfg["presets"][cfg["preset_order"][0]]["map"]
+    for prog in ("tile", "entity", "cliff"):
+        if not al or prog not in al:
+            continue
+        lim = alloc_for(al[prog], "M2", mk, "key on")
+        if lim.get("kind") == "add" and inc[prog] > lim["value"]:
+            row.fails.append(f"M2 {pname}: the zone on adds {prog.title()} {inc[prog]}, over 6.3's key-on "
+                             f"{lim['value']:g} (T15)")
+    a.append(off)
+    row.run_dirs = outs + a
+    row.meas = facts
+    row.detail = (f"zone, heat and {len(cfg['destroyed'].get('pools') or {})} pool(s) on M1 and M2, the next "
+                  f"temperature with AB only; the toggle on only with the setting and AB; isolation (b) with the zone "
+                  f"on: {facts.get('isolation_b_on')}; M2 zone-on increment {inc} within 6.3's key-on allocation")
+
+
+def row_de_pool(ctx, mods, sec6, row, cache):
+    """T7 (FG, offline; APPROVALS 10): prototypes/tables/destroyed.lua lists exactly each map's spawn cities inside
+    R7b's polygon by their in-map positions, no other city lies within DE_DRIFT_KM of its edge (so no warped edge
+    brings one in), every listed city is a setting value, and the pool's float32 pick at T7's seeds never returns
+    a zone city while the fold's own pick does at some seed of a scan (the positive control)."""
+    import oracle
+    cfg = mods.cfg
+    fails = row.fails
+    table = de_table()
+    mem = de_membership(cfg)
+    listed = table.get("zone_cities") or {}
+    for mk, m in mem.items():
+        if list(listed.get(mk) or []) != m["inside"]:
+            fails.append(f"{mk}: tables/destroyed.lua lists {listed.get(mk)}, the polygon holds {m['inside']}")
+        if m["near"]:
+            fails.append(f"{mk}: {m['near']} lie outside within {DE_DRIFT_KM} km of the edge: a warped edge can reach "
+                         f"them, so list them or give them a row (ARCHITECTURE.md, Region layer, per seed)")
+    picks = {}
+    for mk, pool_name in (cfg["destroyed"].get("pools") or {}).items():
+        g = tnconfig.geography(cfg)[mk]
+        values = cfg["settings"][g["city_setting"]]["allowed_values"]
+        zone = set(listed.get(mk) or [])
+        got = {str(seed): values[de_pool_pick(cfg, mk, seed, table)] for seed in DE_T7_SEEDS}
+        picks[mk] = got
+        bad = {s: v for s, v in got.items() if v in zone}
+        if bad:
+            fails.append(f"{mk}: the pool picks zone cities {bad}")
+        n = len(values) - 1
+        control = next((s for s in range(1000, 1400) if values[oracle.random_city_index(cfg, s, n)] in zone), None)
+        if control is None:
+            fails.append(f"{mk}: the fold's own pick lands on no zone city in seeds 1000 to 1399 (no positive control)")
+        picks[f"{mk}_control_seed"] = control
+    row.meas = {"membership": mem, "picks": picks}
+    row.detail = (f"zone cities {({k: v['inside'] for k, v in mem.items()})}; pool picks at {list(DE_T7_SEEDS)}: "
+                  f"{picks}")
+
+
+# -- suite checks
+
+def de_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """destroyed-europe's suite checks, added to suite_checks' table (design section 13, milestone 0)."""
+    import build_regions as br
+    import oracle
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    D, K, sw = cfg["destroyed"], cfg["keys"], cfg["toggles"]["destroyed_europe"]
+    N = D["names"]
+    rows = rl_rows()
+    _, eu, _ = first_preset(cfg)
+    maps = [k for k in cfg["map_order"] if (cfg.get("geography") or {}).get(k)]
+    dump_sha = [ctx.shared.get("dump_m1_sha"), ctx.shared.get("dump_m2_sha")]
+    zone_row = next(r for r in rows if r["layer"] == "destroyed" and r.get("mode") != "exclude")
+    zone_shape = br.shape_px(zone_row, cfg)
+    table = de_table()
+
+    def key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "dump": dump_sha, "extra": extra or {}})
+
+    lane_ms = {}
+
+    def lane_modset(tag, ln, ab, on):
+        k = (tag, ln, ab, on)
+        if k not in lane_ms:
+            lane_ms[k] = de_modset(ctx, mods, f"{tag}{ln + 1}", ab, RL_PROBE, on)
+        return lane_ms[k]
+
+    def lane_dump_modset(tag, ln, on):
+        k = (tag, ln, True, on, "dump")
+        if k not in lane_ms:
+            lane_ms[k] = de_modset(ctx, mods, f"{tag}{ln + 1}{'n' if on else 'f'}", True, "ep-s8-dump", on)
+        return lane_ms[k]
+
+    def probe_job(ln, tag, ab, on, mk, s, seed, label, out, city=None, **vals):
+        ms = lane_modset(tag, ln, ab, on)
+        g = tnconfig.geography(cfg)[mk]
+        vals.setdefault("offset", f"{g['cx']},{g['cy']}")
+        vals.setdefault("constants", ",".join([K["map"], K["scale"]] +
+                                              ([g["city_index"]] if "city_index" in g else [])))
+        # one MGS file per job: T7's zone cities share a scale and seed with each other and with random, and
+        # every job's file is written before the workers run
+        mgs = de_mgs(ctx, cfg, mk, s, ab, on, f"-{label}-{seed}" + (f"-{city}" if city else ""), city)
+        inst = lane_instance(ctx, ln)
+        return (rl_settings(ctx, ms, inst, label=label, **vals), scenario_args(inst, ms, RL_TICKS, seed, mgs), out,
+                RL_TIMEOUT)
+
+    def run_jobs(specs, tag):
+        """specs: [(ab, on, mk, s, seed, label, out, city, vals)] over at most PAR_MAX workers."""
+        n = min(PAR_MAX, len(specs))
+        lanes = [[] for _ in range(n)]
+        for i, (ab, on, mk, s, seed, label, out, city, vals) in enumerate(specs):
+            ln = i % n
+            lanes[ln].append(probe_job(ln, tag, ab, on, mk, s, seed, label, out, city, **vals))
+        run_lanes(ctx, [l for l in lanes if l])
+        return [sp[6] for sp in specs]
+
+    def iou(a, b):
+        u = int((a | b).sum())
+        return round(int((a & b).sum()) / u, 4) if u else None
+
+    # V3, T2 (SS; Europe; seeds 1000, 1002 and 1004; M2): the zone body's sign over the polygon's box with the
+    # zone on at scales 6 and 1, one seed repeated; renders of the zone with the zone on for the verification pass
+    # every T2 world spawns at DE_CITY_FAR, far from the zone, so its start disc cuts nothing and the seeds
+    # differ only in the warp (random would cut each seed's pool city's disc out of the zone at scale 1)
+    t2_specs = [(True, True, eu, s, seed, "de2", ctx.out / f"de-t2-s{s}-{seed}", DE_CITY_FAR,
+                 {"grids": rl_grid_arg("zone", rl_grid(cfg, eu, s, zone_shape), "sign", [N["zone"]])})
+                for s in DE_T2_SCALES for seed in SEEDS]
+    t2_specs.append((True, True, eu, DE_T2_SCALES[0], SEED, "de2", ctx.out / f"de-t2-s{DE_T2_SCALES[0]}-{SEED}-repeat",
+                     DE_CITY_FAR, {"grids": rl_grid_arg("zone", rl_grid(cfg, eu, DE_T2_SCALES[0], zone_shape), "sign",
+                                                        [N["zone"]])}))
+
+    def t2_run(deadline):
+        dirs = run_jobs(t2_specs, "de2")
+        m2on = lane_modset("de2", 0, True, True)
+        # V3: the zone's middle on Europe at scale 1, whole, at each seed (the region frame is Europe's)
+        cu = sum(p[0] for p in zone_shape["pts"]) / len(zone_shape["pts"])
+        cv = sum(p[1] for p in zone_shape["pts"]) / len(zone_shape["pts"])
+        m = cfg["maps"][eu]
+        values = cfg["settings"][tnconfig.geography(cfg)[eu]["city_setting"]]["allowed_values"]
+        for seed in SEEDS:
+            mgs = de_mgs(ctx, cfg, eu, 1, True, True, f"-v3-{seed}", DE_CITY_FAR)
+            sx, sy = oracle.spawn_offset(cfg, eu, 1, seed, values.index(DE_CITY_FAR))
+            off = f"{int(cu - m['wr']) - sx},{int(cv - m['hr']) - sy}"
+            r = ctx.fh(["preview", "--instance", ctx.instance, "--modset", m2on, "--seed", str(seed), "--size",
+                        str(DE_V3_SIZE), "--map-gen-settings", mgs, "--offset", off], ctx.out / f"de-v3-{seed}")
+            dirs.append(r.out)
+        return dirs
+
+    def t2_derive(dirs):
+        fails, meas = [], {}
+        n = len(t2_specs)
+        if len(dirs) != n + len(SEEDS):
+            return {}, [f"{len(dirs)} T2 runs, want {n + len(SEEDS)}"], ""
+        masks = {}
+        for sp, dr in zip(t2_specs, dirs[:n]):
+            ab, on, mk, s, seed, label, out, city, vals = sp
+            fails += g1(dr) + g3(dr)
+            probe = rl_read(dr, "de2")
+            fails += rl_g5(cfg, probe, mk, s, seed)
+            b = rl_bits(rl_probe_grid(probe, "zone"), N["zone"])
+            if (b == 2).any():
+                fails.append(f"{mk} scale {s} seed {seed}: {int((b == 2).sum())} zone samples not finite")
+            masks[(s, seed, str(out).endswith("repeat"))] = b == 1
+        pairs = ((SEEDS[0], SEEDS[1]), (SEEDS[0], SEEDS[2]), (SEEDS[1], SEEDS[2]))
+        for s in DE_T2_SCALES:
+            for a, b in pairs:
+                v = iou(masks[(s, a, False)], masks[(s, b, False)])
+                meas[f"s{s}_iou_{a}_{b}"] = v
+                if v is None or not (RL_IOU_PAIRS[0] <= v <= RL_IOU_PAIRS[1]):
+                    fails.append(f"scale {s}: the zone's IoU between seeds {a} and {b} is {v}, outside {RL_IOU_PAIRS} "
+                                 f"(T2)")
+            meas[f"s{s}_zone_px"] = {str(seed): int(masks[(s, seed, False)].sum()) for seed in SEEDS}
+        rep = masks[(DE_T2_SCALES[0], SEED, True)]
+        meas["repeat_differing_px"] = int((rep != masks[(DE_T2_SCALES[0], SEED, False)]).sum())
+        if meas["repeat_differing_px"]:
+            fails.append(f"the zone at seed {SEED} differs from its repeat in {meas['repeat_differing_px']} px (T2)")
+        renders = []
+        for dr in dirs[n:]:
+            fails += g1(dr)
+            renders += [str(Path(dr) / k) for k in (load_run_json(dr) or {}).get("images", {})]
+        meas["v3_renders"] = renders
+        return meas, fails, (f"IoU between seeds {[meas[k] for k in meas if '_iou_' in k]} in {RL_IOU_PAIRS}; repeat "
+                             f"differs in {meas['repeat_differing_px']} px; V3 renders {renders}")
+
+    checks["de_t2"] = SuiteCheck("de_t2", lambda: key("de_t2", {"specs": [sp[:6] for sp in t2_specs]}), t2_run,
+                                 t2_derive)
+
+    # T3 (SS; every map; M2; three seeds): at the oracle places with a destroyed_zone expectation, the zone on
+    # reads Earth temperature above 100 and a volcanic tile (on land: the sea inside stays water) inside the
+    # polygon, outside the world's start disc; outside it reads the temperature and the tile of the zone off;
+    # the protected places (region_hard: the passes, the Kiel Canal and the straits) stay outside at every
+    # seed. The dump probe generates each place's chunk and reads its tile and the names there, in world tiles
+    # (geo minus the spawn offset of the fixed spawn city)
+    def t3_points(mk):
+        O = oracle.load_oracle(mk, TESTS / "oracle")
+        mref = mref_of(mk)
+        out = []
+        for p in O["places"]:
+            if p["expect"].get("destroyed_zone") is None:
+                continue
+            out.append((p, tuple(int(v) for v in oracle.place_tile(mref, p, str(DE_T3_SCALE)))))
+        return out
+
+    def t3_offset(mk):
+        g_ = tnconfig.geography(cfg)[mk]
+        if "city" not in g_:
+            off = g_.get("city_offset") or [0, 0]
+            return tuple(int(v) for v in off) if all(isinstance(v, (int, float)) for v in off) else (0, 0)
+        values = cfg["settings"][g_["city_setting"]]["allowed_values"]
+        return oracle.spawn_offset(cfg, mk, DE_T3_SCALE, SEED, values.index(DE_CITY_OUT))
+
+    t3_specs = []
+    for mk in maps:
+        pts = t3_points(mk)
+        if not pts:
+            continue
+        ox, oy = t3_offset(mk)
+        # the zone on and off at one spawn: random would pick from the pool on and from every city off, and the
+        # climate noise reads world tiles, so the same place would read other noise
+        city = DE_CITY_OUT if "city" in tnconfig.geography(cfg)[mk] else None
+        world = ";".join(f"{x - ox},{y - oy}" for _, (x, y) in pts)
+        for seed in SEEDS:
+            for on in (True, False):
+                t3_specs.append((mk, seed, on, city, world, ctx.out / f"de-t3-{mk}-{seed}-{'on' if on else 'off'}"))
+
+    def t3_run(deadline):
+        n = min(PAR_MAX, len(t3_specs))
+        lanes = [[] for _ in range(n)]
+        for i, (mk, seed, on, city, world, out) in enumerate(t3_specs):
+            ln = i % n
+            ms = lane_dump_modset("de3", ln, on)
+            inst = lane_instance(ctx, ln)
+            mgs = de_mgs(ctx, cfg, mk, DE_T3_SCALE, True, on, f"-t3-{seed}", city)
+            lanes[ln].append((dump_settings(ctx, ms, inst, label="de3", points=world,
+                                            names=",".join([K["map"], K["scale"], "temperature", N["zone"]])),
+                              scenario_args(inst, ms, 3, seed, mgs), out, RL_TIMEOUT))
+        run_lanes(ctx, [l for l in lanes if l])
+        return [sp[5] for sp in t3_specs]
+
+    def t3_derive(dirs):
+        fails, meas, listed = [], {}, []
+        if len(dirs) != len(t3_specs):
+            return {}, [f"{len(dirs)} T3 runs, want {len(t3_specs)}"], ""
+        got = {}
+        for (mk, seed, on, city, world, out), dr in zip(t3_specs, dirs):
+            fails += g1(dr) + g3(dr)
+            got[(mk, seed, on)] = point_values(read_dump(dr, "de3"))
+        R = max(cfg["destroyed"]["start"]["radius_tiles"], DE_START_AREA) + DE_RAMP_TILES
+        for mk in maps:
+            pts = t3_points(mk)
+            if not pts:
+                continue
+            ox, oy = t3_offset(mk)
+            c = {"inside": 0, "outside": 0, "listed": 0, "start_disc": 0, "sea": 0, "fail": 0}
+            for seed in SEEDS:
+                on_v, off_v = got.get((mk, seed, True), {}), got.get((mk, seed, False), {})
+                for p, (x, y) in pts:
+                    w = (x - ox, y - oy)
+                    a, b = on_v.get(w, {}), off_v.get(w, {})
+                    ta, tb, z = a.get("temperature"), b.get("temperature"), a.get(N["zone"])
+                    if not all(isinstance(v, (int, float)) for v in (ta, tb, z)):
+                        c["fail"] += 1
+                        fails.append(f"{mk} seed {seed} {p['id']}: unreadable {ta!r} {tb!r} {z!r}")
+                        continue
+                    want = p["expect"]["destroyed_zone"]
+                    margin = (p.get("region_margin_km") or {}).get("destroyed")
+                    hard = "destroyed" in (p.get("region_hard") or [])
+                    hot = ta > DE_HOT
+                    tile = str(a.get("tile") or "")
+                    if want and math.hypot(*w) < R:
+                        # inside the polygon and inside this world's start disc: the zone's own start mask
+                        c["start_disc"] += 1
+                        if hot:
+                            c["fail"] += 1
+                            fails.append(f"{mk} seed {seed} {p['id']}: lifted to {round(ta, 2)} inside the start disc")
+                        continue
+                    if want and hot:
+                        if "water" in tile:
+                            c["sea"] += 1
+                        elif not tile.startswith(DE_VOLCANIC):
+                            c["fail"] += 1
+                            fails.append(f"{mk} seed {seed} {p['id']}: {round(ta, 2)} but tile {tile} (want volcanic)")
+                        else:
+                            c["inside"] += 1
+                        continue
+                    if not want and not hot and abs(ta - tb) < 1e-6 and a.get("tile") == b.get("tile"):
+                        c["outside"] += 1
+                        continue
+                    if not hard and margin is not None and margin <= oracle.REGION_LIST_KM:
+                        c["listed"] += 1
+                        listed.append(f"{mk} seed {seed} {p['id']}: {round(ta, 2)} ({margin} km from the edge)")
+                    else:
+                        c["fail"] += 1
+                        fails.append(f"{mk} seed {seed} {p['id']}: temperature {round(ta, 3)} on, {round(tb, 3)} off, "
+                                     f"tile {a.get('tile')} on, {b.get('tile')} off, want "
+                                     f"{'inside' if want else 'outside'}" + (" (a protected feature)" if hard else ""))
+            meas[mk] = c
+            if not (c["inside"] and c["outside"]):
+                fails.append(f"{mk}: {c['inside']} inside and {c['outside']} outside passes; both must hold somewhere")
+        meas["listed"] = listed
+        per_map = {k: v for k, v in meas.items() if k != "listed"}
+        return meas, fails, f"T3 at scale {DE_T3_SCALE} and seeds {list(SEEDS)}: {per_map}"
+
+    checks["de_t3"] = SuiteCheck("de_t3", lambda: key("de_t3", {"specs": [sp[:4] for sp in t3_specs]}), t3_run,
+                                 t3_derive)
+
+    # T7 (SS; Europe; zone on; scales 1 and 6): random never returns a zone city at T7's seeds (read back from
+    # the fold at (0, 0)), and every zone city chosen explicitly starts on normal ground: no zone and no lifted
+    # temperature within the start disc, the zone present beyond it (the positive control)
+    g = tnconfig.geography(cfg)[eu]
+
+    def disc_grid(s):
+        """(R, R2, step, n): the start disc less a margin, and a square grid reaching DE_RING_TILES past it."""
+        R = cfg["destroyed"]["start"]["radius_tiles"] - DE_RAMP_TILES
+        R2 = R + DE_RAMP_TILES + DE_RING_TILES
+        step = max(1, int(2 * R2 // DE_SPAWN_GRID))
+        n = 2 * R2 // step + 1
+        return R, R2, step, n
+
+    t7_specs = [(True, True, eu, s, seed, "de7", ctx.out / f"de-t7-random-s{s}-{seed}", None, {}) for s in DE_T7_SCALES
+                for seed in DE_T7_SEEDS]
+    for s in DE_T7_SCALES:
+        R, R2, step, n = disc_grid(s)
+        for city in (table.get("zone_cities") or {}).get(eu) or []:
+            t7_specs.append((True, True, eu, s, SEED, "de7", ctx.out / f"de-t7-{city}-s{s}", city,
+                             {"grids": f"disc|{-R2},{-R2},{step},{n},{n}|raw|temperature,{N['zone']}",
+                              "offset": ""}))
+
+    def t7_run(deadline):
+        return run_jobs(t7_specs, "de7")
+
+    def t7_derive(dirs):
+        fails, meas, ring_hits = [], {}, {}
+        if len(dirs) != len(t7_specs):
+            return {}, [f"{len(dirs)} T7 runs, want {len(t7_specs)}"], ""
+        values = cfg["settings"][g["city_setting"]]["allowed_values"]
+        zone = set((table.get("zone_cities") or {}).get(eu) or [])
+        for sp, dr in zip(t7_specs, dirs):
+            ab, on, mk, s, seed, label, out, city, vals = sp
+            fails += g1(dr) + g3(dr)
+            probe = rl_read(dr, "de7")
+            fails += rl_g5(cfg, probe, mk, s, seed)
+            idx = (probe.get("constants") or {}).get(g["city_index"])
+            if city is None:
+                want = de_pool_pick(cfg, eu, seed, table)
+                got = int(round(idx)) if isinstance(idx, (int, float)) else None
+                meas[f"random_s{s}_{seed}"] = values[got] if got else idx
+                if got != want:
+                    fails.append(f"scale {s} seed {seed}: the fold resolved {idx!r}, the pool model {want} "
+                                 f"({values[want]})")
+                if got and values[got] in zone:
+                    fails.append(f"scale {s} seed {seed}: random returned the zone city {values[got]} (T7)")
+                continue
+            grid = rl_probe_grid(probe, "disc")
+            import numpy as np
+            T = rl_raw(grid, "temperature")
+            Z = rl_raw(grid, N["zone"])
+            R, R2, step, n = disc_grid(s)
+            ii = np.arange(n) * step - R2
+            X, Y = np.meshgrid(ii, ii)
+            D2 = X * X + Y * Y
+            inside = D2 <= R * R
+            ring = D2 > (R + DE_RAMP_TILES) ** 2
+            hot = int(((T > DE_HOT) & inside).sum()) if T is not None else None
+            zpos = int(((Z > 0) & inside).sum()) if Z is not None else None
+            beyond = int(((Z > 0) & ring).sum()) if Z is not None else 0
+            ring_hits[s] = ring_hits.get(s, 0) + beyond
+            meas[f"{city}_s{s}"] = {"hot_in_disc": hot, "zone_in_disc": zpos, "zone_beyond": beyond, "index": idx}
+            if hot or zpos or hot is None:
+                fails.append(f"{city} at scale {s}: {hot} lifted and {zpos} zone samples inside the start disc (T7)")
+            if not (isinstance(idx, (int, float)) and values[int(round(idx))] == city):
+                fails.append(f"{city} at scale {s}: the fold resolved {idx!r}, not the chosen city")
+        for s in DE_T7_SCALES:
+            if not ring_hits.get(s):
+                fails.append(f"scale {s}: no zone sample just beyond any zone city's start disc (the positive control)")
+        return meas, fails, f"T7 random and zone-city starts: {meas}"
+
+    # the key holds each spec's inputs (no output path): (ab, on, map, scale, seed, label, city, probe values)
+    checks["de_t7"] = SuiteCheck("de_t7", lambda: key("de_t7", {"specs": [sp[:6] + sp[7:] for sp in t7_specs]}),
+                                 t7_run, t7_derive)
+
+    # T13 (SS; M1; FEAS-17): the setting on without Alien Biomes gives the world hash and the Tile, Entity and
+    # Cliff complexity of the setting off and logs the warning once; with Alien Biomes the zone off costs 0
+    # (the folded switch) and the zone on its measured increment (S9: Tile +1,795, Entity +1,300 on M2)
+    def t13_run(deadline):
+        out = []
+        m1on = de_modset(ctx, mods, "de13a", False, None, True)
+        m1off = de_modset(ctx, mods, "de13b", False, None, False)
+        pname, _ = map_preset(cfg, eu)
+        for ms, lab in ((m1on, "on"), (m1off, "off")):
+            out.append(preview(ctx, ms, f"de-t13-m1-{lab}", 512, preset=pname, verbose=True).out)
+        for ms, lab in ((m1on, "on"), (m1off, "off")):
+            mgs = de_mgs(ctx, cfg, eu, 6, False, lab == "on", "-t13")
+            out.append(ctx.fh(scenario_args(ctx.instance, ms, 3, SEED, mgs), ctx.out / f"de-t13-scn-{lab}").out)
+        m2 = de_modset(ctx, mods, "de13c", True, None, False)
+        pen = preset_pen(ctx.shared["dump_m2"], pname)
+        v1 = write_mgs(ctx, "de-t13-m2-v1", dict(pen, temperature=cfg["climate"]["names"]["ab"]["temperature"]))
+        for lab, mgs in (("off", de_mgs(ctx, cfg, eu, 6, True, False, "-t13")), ("v1", v1),
+                         ("on", de_mgs(ctx, cfg, eu, 6, True, True, "-t13"))):
+            out.append(preview(ctx, m2, f"de-t13-m2-{lab}", 512, verbose=True, mgs=mgs).out)
+        return out
+
+    def t13_derive(dirs):
+        fails = []
+        for dr in dirs:
+            fails += g1(dr)
+        p_on, p_off, s_on, s_off, m2_off, m2_v1, m2_on = dirs
+        ion, ioff = (load_run_json(p_on) or {}).get("images"), (load_run_json(p_off) or {}).get("images")
+        if ion != ioff:
+            fails.append("M1: the setting on changes the Earth preview without Alien Biomes (FEAS-17)")
+        c_on, c_off = ctx_complexity(p_on), ctx_complexity(p_off)
+        if c_on != c_off:
+            fails.append(f"M1: complexity with the setting on {c_on} differs from off {c_off}")
+        prefix = message_prefix(cfg, "destroyed_no_ab")
+        n_on, n_off = count_lines(log_text(s_on), prefix), count_lines(log_text(s_off), prefix)
+        if n_on != 1 or n_off:
+            fails.append(f"the no-AB warning logs {n_on} times with the setting on (want once) and {n_off} times off")
+        c2 = {k: ctx_complexity(x) for k, x in (("off", m2_off), ("v1", m2_v1), ("on", m2_on))}
+
+        def compiled(c):
+            # the folded switch adds parsed nodes only: operations and the estimate must agree, and no program may
+            # need more registers (measured: the zone off allocates one Entity register fewer than climate-tiles'
+            # temperature, 207 against 208, at equal operations and complexity; design notes, destroyed-europe)
+            return {p: {k: v.get(k) for k in ("operations", "complexity")} for p, v in c.items()}
+        regs = {p: [(c2["off"].get(p) or {}).get("registers"), (c2["v1"].get(p) or {}).get("registers")]
+                for p in sorted(set(c2["off"]) | set(c2["v1"]))}
+        if compiled(c2["off"]) != compiled(c2["v1"]) or any(a_ is None or b_ is None or a_ > b_
+                                                              for a_, b_ in regs.values()):
+            fails.append(f"M2: the zone off costs {compiled(c2['off'])}, registers {regs}, against climate-tiles' "
+                         f"temperature {compiled(c2['v1'])} (want 0)")
+        inc = {p: (c2["on"].get(p, {}).get("complexity") or 0) - (c2["off"].get(p, {}).get("complexity") or 0)
+               for p in sorted(set(c2["on"]) | set(c2["off"]))}
+        # the zone on within 6.3's key-on allocation (M2 key on: Tile +2,700, Entity +2,000, Cliff 0)
+        al = (sec6.get("allocations") or {}).get("destroyed-europe") if isinstance(sec6, dict) else None
+        for prog in ("tile", "entity", "cliff"):
+            try:
+                a = alloc_for(al[prog], "M2", eu, "key on") if al and prog in al else None
+            except GateError:
+                a = None
+            if a and a.get("kind") == "add" and inc.get(prog, 0) > a["value"]:
+                fails.append(f"M2: the zone on adds {prog.title()} {inc.get(prog)}, over 6.3's {a['value']} (T15)")
+        return ({"m1": {"on": c_on, "off": c_off}, "warning_lines": [n_on, n_off], "m2": c2, "m2_registers": regs,
+                 "m2_on_increment": inc},
+                fails, f"M1 on equals off; warning lines {n_on} on and {n_off} off; M2 zone-on increment {inc}")
+
+    checks["de_t13"] = SuiteCheck("de_t13", lambda: key("de_t13"), t13_run, t13_derive)
+
+    # T18 (SS): a created player in an Earth world with the setting on and no Alien Biomes would get
+    # the stored warning from on_player_created; spawn-cities' probe records whether a headless run can create a
+    # player at all. When it cannot (2.1.23 lists create_test_player on LuaSimulation only), the design notes entry
+    # stands and smoke step 3 carries it; the warning's storage is proven by the log line and the RSO path (t13_rso)
+    def t18_run(deadline):
+        ms = de_modset(ctx, mods, "de18", False, "ea-player-probe", True)
+        mgs = de_mgs(ctx, cfg, eu, 6, False, True, "-t18")
+        return [ctx.fh(scenario_args(ctx.instance, ms, 3, SEED, mgs), ctx.out / "de-t18-player").out]
+
+    def t18_derive(dirs):
+        fails = g1(dirs[0])
+        f = Path(dirs[0]) / "script-output" / "ea-player-probe" / "player.json"
+        rec = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+        if not f.exists():
+            fails.append("the player probe wrote nothing")
+        elif rec.get("create_test_player_available"):
+            fails.append("a headless run can script a player: replace the smoke route with the scripted-player test "
+                         "(ruling 25)")
+        n = count_lines(log_text(dirs[0]), message_prefix(cfg, "destroyed_no_ab"))
+        if n != 1:
+            fails.append(f"the no-AB warning logs {n} times in the player world (want once)")
+        return dict(rec, warning_lines=n), fails, (f"no scripted player headless ({rec.get('error')}); warning logged "
+                                                   f"{n} time(s); the per-player send stays with smoke step 3")
+
+    checks["de_t18"] = SuiteCheck("de_t18", lambda: key("de_t18"), t18_run, t18_derive)
+
+    # T11 (SS; M2): created with the zone on and loaded with the setting off, a probe block inside
+    # the zone matches fresh A (created on) and differs from fresh B (created off): the toggle is baked per
+    # save. Both worlds spawn at DE_CITY_OUT, outside the zone, so A and B share one spawn offset (random would
+    # pick from the pool in A and from every city in B)
+    def t11_block():
+        """One 96-tile block in world tiles around the zone's deepest pixel of Europe's map at scale 6."""
+        mref = mref_of(eu)
+        got = oracle.interior_pixel(cfg, eu, mref, zone_row)
+        if got is None:
+            raise GateError("the zone has no interior pixel on Europe's map")
+        c, r_ = got[0], got[1]
+        s = 6
+        m = cfg["maps"][eu]
+        values = cfg["settings"][g["city_setting"]]["allowed_values"]
+        ox, oy = oracle.spawn_offset(cfg, eu, s, SEED, values.index(DE_CITY_OUT))
+        x = s * (c - m["wr"]) + s // 2 - ox
+        y = s * (r_ - m["hr"]) + s // 2 - oy
+        return [(x - 48, y - 48, 96, 96)]
+
+    def t11_run(deadline):
+        msa = de_modset(ctx, mods, "de11a", True, "ep-s8-dump", True)
+        msb = de_modset(ctx, mods, "de11b", True, "ep-s8-dump", False)
+        sa, sb = ctx.out / "de-t11-create-a" / "a.zip", ctx.out / "de-t11-create-b" / "b.zip"
+        inst = ctx.instance
+        outs = [ctx.fh(create_args(inst, msa, sa, mgs=de_mgs(ctx, cfg, eu, 6, True, True, "-t11a", DE_CITY_OUT)),
+                       sa.parent).out,
+                ctx.fh(create_args(inst, msb, sb, mgs=de_mgs(ctx, cfg, eu, 6, True, False, "-t11b", DE_CITY_OUT)),
+                       sb.parent).out]
+        areas = rd_areas_text(t11_block())
+        for label, ms, save in (("a-under-b", msb, sa), ("a-under-a", msa, sa), ("b-under-b", msb, sb)):
+            dump_settings(ctx, ms, inst, label="t11", areas=areas, points="0,0",
+                          names=f"{K['map']},{K['scale']}")()
+            outs.append(ctx.fh(scenario_args(inst, ms, 4, save=save), ctx.out / f"de-t11-{label}").out)
+        return outs
+
+    def t11_derive(dirs):
+        fails = []
+        for dr in dirs:
+            fails += g1(dr)
+        ab, aa, bb = (area_tiles(read_dump(dr, "t11")) for dr in dirs[2:5])
+        if ab != aa:
+            n = sum(1 for x, y in zip(ab, aa) if x != y)
+            fails.append(f"A loaded with the setting off differs from fresh A in {n} tiles (T11)")
+        nb = sum(1 for x, y in zip(ab, bb) if x != y)
+        if not nb:
+            fails.append("A loaded with the setting off equals fresh B: the zone did not follow the save (T11)")
+        volc = sum(1 for t in ab if t.startswith(DE_VOLCANIC))
+        if not volc:
+            fails.append("the T11 block holds no volcanic tile in A (positive control)")
+        return ({"tiles": len(ab), "differing_vs_fresh_a": sum(1 for x, y in zip(ab, aa) if x != y),
+                 "differing_vs_fresh_b": nb, "volcanic_in_a": volc}, fails,
+                f"A under off: equals fresh A, {nb} tiles differ from fresh B, {volc} volcanic tiles")
+
+    checks["de_t11"] = SuiteCheck("de_t11", lambda: key("de_t11", {"block": t11_block()}), t11_run, t11_derive)
+
+    # T15 (SS; zone on; P2; PERF-05; timed): Europe with the zone on on M2 against BAB at scale 6 at 16 LP, within
+    # P2 and the key-on time allocation, the 8 LP pair recorded as the diagnostic (the gate's timing protocol)
+    import earthgeo as eg
+    tq1 = HERE / "mods" / "tq1-gen"
+    ab_live = ["alien-biomes"] + LIVE_DEPS["alien-biomes"]
+    pos15 = europe_positions(cfg, eg.MapRef(eu))
+
+    def t15_drivers():
+        z = mods.build_zip()
+        m2t = mods.make(f"ea-de-m2t-{mods.zip_sha[:8]}-{folder_hash(tq1)}", [z, tq1], from_live=ab_live)
+        babt = mods.make(f"ea-tf-babt-{folder_hash(tq1)}", [tq1], from_live=ab_live)
+        return m2t, babt
+
+    def t15_run(deadline):
+        m2t, babt = t15_drivers()
+        s = 6
+        masks = [getattr(ctx.perf, m) if m != "MASK24" else MASK24 for m in T15B_MASKS[s]]
+        # the block is placed through the runner world's spawn (random's own pick at SEED); with the zone on,
+        # random would bake the pool and spawn elsewhere, so the zone-on world chooses that city by name
+        values = cfg["settings"][g["city_setting"]]["allowed_values"]
+        own = values[oracle.random_city_index(cfg, SEED, len(values) - 1)]
+        sa = make_save_mgs(ctx, mods, m2t, "tq1-gen-block", pos15["block"][s], f"de-m2t-{eu}-s{s}",
+                           de_mgs(ctx, cfg, eu, s, True, True, "-t15b", own))
+        sb = make_save_mgs(ctx, mods, babt, "tq1-gen-block", pos15["block"][s], f"de-babt-{eu}-s{s}")
+        return [pair_batch(ctx, {"a": (m2t, sa), "b": (babt, sb)}, T15B["reps_suite"], masks, f"de-t15b-m2-{eu}-s{s}",
+                           deadline)]
+
+    def t15_derive(dirs):
+        # an M2t/BABt pair meets P2 (and P3 at 24 LP), never P1; P2's relative rule reads main's recorded M2t/BABt
+        # ratio plus the key-on allocation (+0.05, p2_limits' variant); with none recorded it fails closed naming
+        # it while the pair's ratio is still derived and recorded without that bar (as trees-forests' pairs do)
+        lim = {k: v for k, v in (sec6.get("limits") or {}).items() if k != "P1"} if isinstance(sec6, dict) else {}
+        lf = []
+        try:
+            lim = p2_limits(sec6, "destroyed-europe", eu, 6, lim, variant="key on")
+        except GateError as e:
+            lim.pop("P2", None)
+            lf.append(f"{eu} scale 6: {e}")
+        m, f, _ = derive_t15b([dirs[0]], lim, T15B["reps_suite"], pair="m2_bab",
+                              label=f"{eu} M2t with the zone on/BABt scale 6")
+        return ({"m2_zone_on_scale_6": m}, lf + f,
+                f"{eu} zone on: M2t/BABt at 16 LP {((m.get(f'{0xFFFF:#x}') or {}).get('ratio'))}, 8 LP recorded")
+
+    checks["de_t15b"] = SuiteCheck("de_t15b", lambda: key("de_t15b", {"control": ctl, "timing": timing, "config": T15B,
+                                                                      "pos": pos15, "masks": T15B_MASKS,
+                                                                      "records": TIMED_RECORDS}), t15_run, t15_derive)
+    return checks
+
+
 ROW_FUNCS = {
     "static": row_static, "plan_main": row_plan_main, "section6": row_section6,
     "frozen": row_frozen, "data_src": row_data_src, "offline_selftests": row_offline_selftests,
@@ -19055,6 +19988,8 @@ ROW_FUNCS = {
     "rd_t7_fg": row_rd_t7_fg,
     # resources-enemies
     "re_dump_facts": row_re_dump_facts, "re_t4_fg": row_re_t4_fg,
+    # destroyed-europe
+    "de_dump_facts": row_de_dump_facts, "de_pool": row_de_pool,
 }
 
 
@@ -19837,6 +20772,8 @@ def suite_checks(ctx, mods, sec6):
         re_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     if any(s["id"] == "edge-and-lakes" for s in registry_upto(ctx.slice)):
         el_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "destroyed-europe" for s in registry_upto(ctx.slice)):
+        de_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     return checks
 
 

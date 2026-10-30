@@ -64,6 +64,13 @@
 -- From edge-and-lakes each preset also bakes the inland lakes toggle (default off; toggle_values), which
 -- a version with a lakes field reads its inland lakes through, and the toggle's key is that version's
 -- Map type fallback, so a Map-type-only world follows the setting.
+--
+-- From destroyed-europe each preset also bakes the zone toggle, on only when its setting is on and
+-- Alien Biomes is loaded (the toggle's `requires`; FEAS-17); with Alien Biomes it points temperature at
+-- the Alien Biomes temperature's next version, whose switch folds it to climate-tiles' first when the
+-- toggle is off; and with the toggle on and the spawn city at random a version with a spawn record
+-- bakes the map's random pool as the city number, so random never lands on a city the zone covers
+-- (APPROVALS 10).
 local cfg = require("prototypes.config")
 
 local K = cfg.keys
@@ -176,6 +183,23 @@ local function stamp_values(map_key, v)
   return {[key] = on and body or cfg.neutral.zero}
 end
 
+-- Destroyed Europe (milestone destroyed-europe): with Alien Biomes, temperature names the zone's lift (its
+-- switch, the toggle baked above, folds it to climate-tiles' first temperature when off); with the toggle
+-- on and the map's spawn city at random, a version's city number (its spawn record's) names the map's random
+-- pool, which skips the cities the zone covers. `names` is the version's table so far.
+local function destroyed_values(map_key, v, names)
+  local D, sw = cfg.destroyed, cfg.toggles.destroyed_europe
+  local out = {}
+  if AB then
+    out.temperature = D.names.temperature
+  end
+  local pool, sp = D.pools[map_key], v.spawn
+  if sp and pool and names[sw.preset_key] == sw.on and names[sp.city] == 0 then
+    out[sp.city] = pool
+  end
+  return out
+end
+
 -- The six base resources a little sparser (D20): frequency 0.75 in the preset, planet entries left
 -- neutral (planet values multiply preset values; known noise gotcha). A control another mod removed
 -- is left out.
@@ -198,6 +222,10 @@ local function toggle_values(map_key)
     for _, m in ipairs(t.maps) do
       if m == map_key then
         local value = settings.startup[cfg.settings[t.setting].name].value
+        -- a toggle that requires a mod bakes off without it, whatever the setting says (destroyed-europe)
+        if t.requires and not mods[t.requires] then
+          value = false
+        end
         out[t.preset_key] = value and t.on or t.off
       end
     end
@@ -211,8 +239,9 @@ end
 -- the map's city number and the spawn lake and bias the start mask reads. From climate-tiles every
 -- version also bakes the climate and tile keys (climate_names), from trees-forests the tree keys
 -- after them (tree_names: a palm's probability key names its second version), and from ridges the
--- cliff properties and the map's ridge keys (ridge_values), and from resources-enemies a version with
--- an offshore stamp its stamp key (stamp_values).
+-- cliff properties and the map's ridge keys (ridge_values), from resources-enemies a version with
+-- an offshore stamp its stamp key (stamp_values), and from destroyed-europe the Alien Biomes temperature's
+-- next version and, with the zone on and the city at random, the map's random pool (destroyed_values).
 local function baked(map_key, v)
   local names = {
     [K.elevation] = v.entry,
@@ -252,6 +281,9 @@ local function baked(map_key, v)
     names[k] = value
   end
   for k, value in pairs(stamp_values(map_key, v)) do
+    names[k] = value
+  end
+  for k, value in pairs(destroyed_values(map_key, v, names)) do
     names[k] = value
   end
   return names

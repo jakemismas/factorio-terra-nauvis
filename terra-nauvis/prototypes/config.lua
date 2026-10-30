@@ -683,6 +683,19 @@ local ELN = {
 local EU_SETS4 = {ww = ELN.EU_WW4, canals = ELN.EU_CANALS4, dams = ELN.EU_DAMS4, fords = ELN.EU_FORDS4}
 local AT_SETS4 = {ww = ELN.AT_WW4, canals = ELN.AT_CANALS4, dams = ELN.AT_DAMS4, fords = ELN.AT_FORDS4}
 local OW_SETS4 = {ww = ELN.OW_WW4, canals = ELN.OW_CANALS4, dams = ELN.OW_DAMS4, fords = ELN.OW_FORDS4}
+-- Destroyed Europe (milestone destroyed-europe; APPROVALS 10; D12; S3 section 6). The toggle key tn_destroyed
+-- is a name switch to tn_one and tn_zero, baked on only when its setting is on and Alien Biomes is loaded
+-- (FEAS-17: without AB the switch drops at the data stage). The key (K) and the bodies, one table so this
+-- file stays under Lua's 200 locals per function: the zone (the region layer's zone depth cut by the start
+-- disc), its heat, the next version of climate-tiles' Alien Biomes temperature, which lifts the zone above
+-- 100, and per map with a city fold the random pick over the cities outside the zone.
+local DE = {
+  K = NOISE .. "destroyed",
+  zone = NOISE .. "destroyed_zone_v1",
+  heat = NOISE .. "destroyed_heat_v1",
+  temperature = NOISE .. "temperature_ab_v2",
+  pool_europe = NOISE .. "city_pool_europe_v1",
+}
 
 return {
   identity = {
@@ -825,9 +838,18 @@ return {
       name = ID .. "-inland-lakes", type = "bool-setting", setting_type = "startup", default_value = false,
       order = "c-e",
     },
+    -- Destroyed Europe (milestone destroyed-europe; APPROVALS 1a and 10, D12, default off): Alien Biomes volcanic
+    -- ground inside R7b's polygon, its edges moving with the map seed, never at the spawn. It needs Alien
+    -- Biomes: without it the toggle bakes off and the mod warns. Baked per save through the
+    -- toggle tn_destroyed.
+    destroyed_europe = {
+      name = ID .. "-destroyed-europe", type = "bool-setting", setting_type = "startup", default_value = false,
+      order = "c-f",
+    },
   },
   setting_order = {"scale", "spawn_city_europe", "spawn_city_atlantic", "spawn_city_olde_world", "canals",
-                   "great_forests", "ridges", "hotspots", "inland_lakes"},
+                   "great_forests", "ridges", "hotspots", "inland_lakes",
+                   "destroyed_europe"},
 
   -- Map-gen presets, sorted right after Default ("a") and before Rich resources ("b") (S13).
   -- withheld_with lists the mods whose presence withholds a preset (presets.lua defines no such
@@ -870,6 +892,8 @@ return {
     fields = {europe = REN.EU_FIELDS_KEY, atlantic = REN.AT_FIELDS_KEY, olde_world = REN.OW_FIELDS_KEY},
     -- edge-and-lakes: the inland lakes switch (a toggle)
     inland_lakes = ELN.K_INLAND_LAKES,
+    -- destroyed-europe: the zone toggle
+    destroyed = DE.K,
   },
 
   -- Each map's geography (ARCHITECTURE.md, "Map type entries"): map_type_order, the order of the
@@ -1365,7 +1389,9 @@ return {
                  "enemy_base_probability", REN.K_HOTSPOTS, REN.EU_FIELDS_KEY, REN.AT_FIELDS_KEY, REN.OW_FIELDS_KEY,
                  "entity:offshore-oil:probability", "entity:offshore-oil:richness",
                  -- edge-and-lakes: the inland lakes switch and the new versions' city offset names
-                 ELN.K_INLAND_LAKES, ELN.EU6_CX, ELN.EU6_CY, ELN.AT5_CX, ELN.AT5_CY, ELN.OW5_CX, ELN.OW5_CY},
+                 ELN.K_INLAND_LAKES, ELN.EU6_CX, ELN.EU6_CY, ELN.AT5_CX, ELN.AT5_CY, ELN.OW5_CX, ELN.OW5_CY,
+                 -- destroyed-europe: the zone toggle (temperature and the city numbers are listed above)
+                 DE.K},
 
   -- The fine field per map (design constraint 3): map key -> {every version's elevation entry and
   -- every term only it reads}. The constant-coast twin turns each into a constant; no Entity,
@@ -1801,6 +1827,15 @@ return {
       files = {OW_GEO_FILE, OW_LAND_COARSE_FILE,
                OW_WW_FILES[1], OW_WW_FILES[2], OW_WW_FILES[3], OW_WW_FILES[4], OW_WW_FILES[5], OW_WW_FILES[6]},
     },
+    -- The Destroyed Europe bodies (destroyed-europe). They belong to no geography: the zone and its heat
+    -- read the region layer's zone depth and the spawn distance; the temperature's next version reads
+    -- climate-tiles' Alien Biomes temperature, so it exists only with Alien Biomes and is registered from
+    -- the M2 dump; each pool reads its map's city fold hash and prototypes/tables/destroyed.lua.
+    {
+      release = "0.1.0",
+      names = {DE.zone, DE.heat, DE.temperature, DE.pool_europe},
+      files = {"prototypes/tables/destroyed.lua"},
+    },
   },
 
   -- Elevation composition tunables (ARCHITECTURE.md, "Elevation composition"; S9's values):
@@ -2146,13 +2181,41 @@ return {
             start_depth = 20},
   },
 
+  -- Destroyed Europe (milestone destroyed-europe; ARCHITECTURE.md milestone contract 10; APPROVALS 10; S3 section 6;
+  -- R3 7.1). prototypes/expressions/destroyed.lua builds, from the region layer's interface names only:
+  --   zone   min(tn_destroyed_depth, d - max(start.radius_tiles, starting_area_radius)) in tiles, d the
+  --          distance to the spawn, so the zone is positive inside R7b's polygon less its six exclusion rows
+  --          (S10 design (d): the edges move with the seed) and never inside the start disc, where every
+  --          spawn city keeps normal ground and trees (T7); the zone's own start mask, d read from
+  --          start.distance (the spawn distance body every spawn record names)
+  --   heat   where the zone is positive, clamp(rim + min(per_tile * zone, ramp) + noise, rim, cap) in Alien
+  --          Biomes units: a heat-1 rim (100 to 120) that climbs within ramp / per_tile tiles to a core
+  --          mixing heat-1 to heat-4 (R3 7.1: heat-2 from 120, heat-3 from 135, heat-4 from 145 to 150; S3's
+  --          small disc ramped 0.49 per tile to its cap, which on this zone would pave it with heat-4);
+  --          -inf elsewhere, neutral for max(); the noise is in tiles, a texture, not geography
+  --   temperature   the Alien Biomes temperature's next version: max(climate-tiles' first version, heat)
+  --          with the toggle on, the first version alone off (a folded if() on the switch, U5)
+  --   pools  per map with a city fold, its random pick over the cities outside the zone: the fold's hash
+  --          modulo the pool's size, then the pool's k-th city (prototypes/tables/destroyed.lua lists the
+  --          zone cities); a preset with the toggle on and the spawn city at random bakes it as the map's
+  --          city number, so the first fold reads it and resolves it as a chosen city (APPROVALS 10)
+  destroyed = {
+    names = {zone = DE.zone, heat = DE.heat, temperature = DE.temperature},
+    pools = {europe = DE.pool_europe},
+    start = {radius_tiles = 150, distance = DISTANCE},
+    heat = {rim = 100.5, per_tile = 0.49, ramp = 30, cap = 149.5,
+            noise = {amplitude = 20, wavelength_tiles = 96, octaves = 3, persistence = 0.5, seed1 = 7901}},
+    switch_threshold = 0.5,
+  },
+
   -- Control-stage messages: the locale section and keys (locale/en/terra-nauvis.cfg). notice_withheld
   -- is the Map type notice where the map's preset is withheld (presets.withheld_with); drift_update
   -- is the drift line for a Map type fallback that moved with the mod itself rather than with a
   -- startup setting (a frozen fallback never should: the line is a tripwire); withheld_beside warns
   -- an Earth world whose preset is withheld beside a mod it now loads with; start is the start
   -- message (D29), rso the RSO warning (D32) and drift_city the drift line for a changed spawn-city
-  -- setting on an Earth world (spawn-cities). Messages name a world's
+  -- setting on an Earth world (spawn-cities); destroyed_no_ab is the D12 warning, Destroyed Europe on
+  -- without Alien Biomes (destroyed-europe). Messages name a world's
   -- map by its preset's name, which no version changes. A stored warning keeps its key here
   -- (scripts/guards.lua record_warning; ARCHITECTURE.md, "Guards", stored records), so a key that
   -- saves can hold is never removed or renamed: retire a message by leaving its key and locale
@@ -2174,6 +2237,7 @@ return {
       toggle_on = "toggle-on",
       toggle_off = "toggle-off",
       cliff_reset = "cliff-reset",
+      destroyed_no_ab = "destroyed-no-ab",
     },
   },
 
@@ -2206,8 +2270,15 @@ return {
     -- record bakes it unread.
     inland_lakes = {setting = "inland_lakes", preset_key = ELN.K_INLAND_LAKES, default = false,
                     mechanism = "name switch", on = ONE, off = ZERO, maps = {"europe", "atlantic", "olde_world"}},
+    -- Destroyed Europe (destroyed-europe): a name switch read by the temperature's next version through a
+    -- folded if(), so the zone off compiles to climate-tiles' temperature alone. `requires` names the mod
+    -- without which a preset bakes it off whatever the setting says (FEAS-17), and the drift line
+    -- compares with the same rule.
+    destroyed_europe = {setting = "destroyed_europe", preset_key = DE.K, default = false,
+                        mechanism = "name switch", on = ONE, off = ZERO, maps = {"europe", "atlantic", "olde_world"},
+                        requires = "alien-biomes"},
   },
-  toggle_order = {"canals", "great_forests", "ridges", "hotspots", "inland_lakes"},
+  toggle_order = {"canals", "great_forests", "ridges", "hotspots", "inland_lakes", "destroyed_europe"},
 
   -- Stable hooks on shared prototypes (ARCHITECTURE.md, "Stable hooks"): if(gate > threshold, on
   -- branch, off value), whose outermost if() folds away on worlds without the gate. The gate's

@@ -61,6 +61,12 @@ Date: 2026-10-28
     - Where a map's edge cuts through land (North Africa and Russia on Europe, the far east of
       Siberia on the Atlantic and Old World maps), the land sinks into deep water a little inside
       the edge along a wavy coast that changes with the map seed, instead of a straight cut.
+    - Destroyed Europe startup setting (default off, needs Alien Biomes): from the Gironde and Brittany
+      to Warsaw, the heart of Europe becomes Alien Biomes' volcanic ground, hotter toward the middle,
+      its edges changing with the map seed; Britain, Denmark, the Kiel Canal and the mountain passes
+      stay outside, and the start area stays normal. A random spawn city never lands inside the
+      zone. Without Alien Biomes nothing changes, and the game warns at the start and each player
+      who joins.
   Changes:
     - With Alien Biomes enabled the Terra Nauvis presets are not offered yet (its palms would read
       the fine coast); the Map type entries are. A world made from a preset that later loads

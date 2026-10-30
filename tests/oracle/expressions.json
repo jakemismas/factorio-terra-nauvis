@@ -36,9 +36,13 @@
   "names": "config.lua regions.names: destroyed_sd for 'destroyed', row.sd .. id .. suffix for 'row:<id>'"
  },
  "destroyed_zone": {
-  "expr": null,
+  "expr": "tn_destroyed_zone_v1",
   "rule": "gt",
-  "threshold": 0
+  "threshold": 0,
+  "list_within_km": 40.0,
+  "source": "the region expectation's 'destroyed' key (oracle.py regions)",
+  "start_disc": "a place within the world's start disc is exempt: the zone is 0 there (T7)",
+  "hot": "Alien Biomes worlds with the zone on read temperature above 100 where the zone is positive"
  },
  "forest": {
   "expr": null,

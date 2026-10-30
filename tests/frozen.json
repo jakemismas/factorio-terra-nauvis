@@ -8390,6 +8390,34 @@
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-29"
+  },
+  "tn_city_pool_europe_v1": {
+   "type": "noise-expression",
+   "sha256": "f75b0c87f85f37fba9e0943b40677863f5d98a03778f79e406be2f38d66601ea",
+   "dump": "m1",
+   "slice": "destroyed-europe",
+   "registered": "2026-10-29"
+  },
+  "tn_destroyed_heat_v1": {
+   "type": "noise-expression",
+   "sha256": "2e993bd7062d1aa97a85f199ee7e9dc17b6449bbb3fe3db4c65b45ffe299f27c",
+   "dump": "m1",
+   "slice": "destroyed-europe",
+   "registered": "2026-10-29"
+  },
+  "tn_destroyed_zone_v1": {
+   "type": "noise-expression",
+   "sha256": "550805cc089d184344c8548e5fc7645a0fac597fdd3324796d81ba69b44bc085",
+   "dump": "m1",
+   "slice": "destroyed-europe",
+   "registered": "2026-10-29"
+  },
+  "tn_temperature_ab_v2": {
+   "type": "noise-expression",
+   "sha256": "a854a1f82c6a8d74ac26271d20af14da39dd9ef03e8943ddf82486ae47a390f6",
+   "dump": "m2",
+   "slice": "destroyed-europe",
+   "registered": "2026-10-29"
   }
  }
 }

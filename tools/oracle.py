@@ -963,6 +963,65 @@ def region_findings(cfg, key, O, geo, rows, live):
     return out
 
 
+# ------------------------------------------------------------------------------------------------
+# Destroyed Europe (milestone destroyed-europe): the destroyed_zone property reads the zone body
+# (config.lua destroyed.names.zone), positive inside R7b's polygon less its exclusion rows and outside the
+# world's start disc. A place's expectation is its region expectation's 'destroyed' key, so the two never
+# drift apart; its margin and protection are the region ones (region_margin_km, region_hard), and a place
+# inside the start disc of the world a check runs is exempt (the zone's own start mask, T7).
+
+def destroyed_spec(cfg):
+    return {"expr": cfg["destroyed"]["names"]["zone"], "rule": "gt", "threshold": 0,
+            "list_within_km": REGION_LIST_KM, "source": "the region expectation's 'destroyed' key (oracle.py regions)",
+            "start_disc": "a place within the world's start disc is exempt: the zone is 0 there (T7)",
+            "hot": "Alien Biomes worlds with the zone on read temperature above 100 where the zone is positive"}
+
+
+def destroyed_extend_map(O):
+    """The oracle of one map with every place's destroyed_zone expectation (idempotent)."""
+    O = json.loads(json.dumps(O))
+    n = 0
+    for p in O["places"]:
+        r = p["expect"].get("region") or {}
+        p["expect"]["destroyed_zone"] = r["destroyed"] if "destroyed" in r else None
+        n += int("destroyed" in r)
+    return O, n
+
+
+def cmd_destroyed(a):
+    cfg = eg.tnconfig.load()
+    oracle_dir = Path(a.oracle_dir)
+    for key in eg.MAPS:
+        O, n = destroyed_extend_map(load_oracle(key, oracle_dir))
+        (oracle_dir / f"{key}.json").write_text(json.dumps(O, indent=1, ensure_ascii=False) + "\n",
+                                                encoding="utf-8", newline="\n")
+        inside = sum(1 for p in O["places"] if p["expect"].get("destroyed_zone") is True)
+        print(f"{key}: {n} places with a destroyed_zone expectation, {inside} inside")
+    exp = oracle_dir / "expressions.json"
+    E = json.loads(exp.read_text(encoding="utf-8"))
+    E["destroyed_zone"] = destroyed_spec(cfg)
+    exp.write_text(json.dumps(E, indent=1) + "\n", encoding="utf-8", newline="\n")
+    print(f"RESULT ok oracle destroyed_zone expectations written maps={','.join(eg.MAPS)} dir={oracle_dir}")
+    return 0
+
+
+def destroyed_findings(O, live):
+    """validate()'s destroyed_zone checks on one map: each expectation equals what `destroyed` writes now,
+    and none exists before destroyed-europe is live."""
+    out = []
+    want, _ = destroyed_extend_map(O)
+    for h, p in zip(O["places"], want["places"]):
+        got = h["expect"].get("destroyed_zone")
+        if "destroyed-europe" not in live:
+            if got is not None:
+                out.append(f"{h['id']}: a destroyed_zone expectation before destroyed-europe is live")
+                break
+        elif got != p["expect"].get("destroyed_zone"):
+            out.append(f"{h['id']}: destroyed_zone {got} differs from `oracle.py destroyed` "
+                       f"({p['expect'].get('destroyed_zone')})")
+    return out
+
+
 def owner(O, p, prop):
     """The milestone that ships a row's property: the row's pending tag, else the oracle's layers map."""
     return (p.get("pending") or {}).get(prop) or (O.get("layers") or LAYERS).get(prop)
@@ -1044,6 +1103,8 @@ def validate(live=(), oracle_dir=None):
         except Exception as e:  # a region table or geometry that fails to load fails closed
             rf = [f"region checks crashed: {type(e).__name__}: {e}"]
         ck(f"{key}_region_expectations", not rf, "; ".join(rf[:3]))
+        df = destroyed_findings(O, live)
+        ck(f"{key}_destroyed_zone_expectations", not df, "; ".join(df[:3]))
         ck(f"{key}_brief_rows", sum(1 for p in O["places"] if p.get("origin") == "brief") >= 5,
            f"{sum(1 for p in O['places'] if p.get('origin') == 'brief')} brief rows")
     eu = load_oracle("europe", oracle_dir)
@@ -1391,6 +1452,9 @@ def main():
     p = sub.add_parser("regions", help="write the region layer's rows and expectations into tests/oracle/<map>.json")
     p.add_argument("--oracle-dir", default=str(ORACLE_DIR))
     p.set_defaults(fn=cmd_regions)
+    p = sub.add_parser("destroyed", help="write the destroyed_zone expectations into tests/oracle/<map>.json")
+    p.add_argument("--oracle-dir", default=str(ORACLE_DIR))
+    p.set_defaults(fn=cmd_destroyed)
     p = sub.add_parser("validate", help="validate tests/oracle/<map>.json against its sources and the fixture")
     p.add_argument("--live", default="", help="comma list of the slices whose oracle properties are live")
     p.set_defaults(fn=lambda a: validate([x for x in a.live.split(",") if x]))

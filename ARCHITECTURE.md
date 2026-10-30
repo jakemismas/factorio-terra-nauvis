@@ -92,7 +92,7 @@ so the `prototypes/` and `scripts/` rows below are `terra-nauvis/prototypes/...`
 | `terra-nauvis/prototypes/expressions/resources.lua` | Ore wrappers (richness ramp, hotspots), offshore-oil wrapper, offshore field stamps | | 9 |
 | `terra-nauvis/prototypes/expressions/enemies.lua` | Enemy-layer wrapper | | 9 |
 | `terra-nauvis/prototypes/expressions/ridges.lua` | `cliff_elevation` and `cliffiness` from the ranges table: per map the squared crest distance (`tn_crest_<map>_v<n>`), the openings (`tn_openings_<map>_v<n>`) and the Entity-side crest band (`tn_band_<map>_v<n>`); the shared effective crest distance, ridge-free start disc, cliff properties and ore clearance; the toggle's neutral pair `tn_one` and `tn_zero` unless waterways defined them first | slider-proof, contour units (S5); the per-map bodies read only their map's chain and the scale (firewall-clean); the toggle never multiplies (U5) | 8 |
-| `terra-nauvis/prototypes/expressions/destroyed.lua` | Destroyed-zone consumers: temperature lift, start mask, random-pool switch | | 10 |
+| `terra-nauvis/prototypes/expressions/destroyed.lua` | Destroyed-zone consumers: the zone `tn_destroyed_zone_v1` (the region layer's zone depth cut by the start disc, the zone's own start mask), its heat and the Alien Biomes temperature's next version `tn_temperature_ab_v2`; the random pool is spawn.lua's (`tn_city_pool_<map>_v1`), its switch presets.lua's | firewall-clean, as the region layer is | 10 |
 | `terra-nauvis/prototypes/expressions/waterways.lua` | Loads the generated waterway sets per map and scale (locals X and Y bound to the geo tiles of the geography version that composes them, its `waterways` record), the hook gate `tn_on` and ford key `tn_fords` prototypes, the canals switch's neutral bodies, and the entry composition `coast.lua` wraps around the rest of that version's composition | the sets reach Tile only (firewall names); the ford set through the `water-shallow` hook alone | 4 |
 | `terra-nauvis/prototypes/generated/` | `geo_<map>_v<n>.lua`, `land_coarse_<map>_v<n>.lua`, `waterways_<map>_s<k>_v<n>.lua` (with the ford sets), `bandfix_<map>_v<n>.lua` | machine-written; the header records tool version and input sha256; name-free data (the tents read the locals `U` and `V`, which `coast.lua` binds to the map's chain), every line within 120 columns through Lua 5.2's backslash-z continuation; never hand-edited; one file per released version | 1, 3, 4, 11 |
 | `terra-nauvis/prototypes/tables/` | `cities`, `hotspots`, `ranges`, `canals`, `regions` (the forest and marsh rows among them), `destroyed`: approval data in degrees, with sources; hotspot rows take the adopted centre (`lat`, `lon` in `approvals-data.json`), which decision 16 moved inland for one hotspot | versioned by release (copy-on-write after a release) | per milestone |
@@ -1889,6 +1889,16 @@ takes over the Map type fields.
   warning goes to the log at creation and to every created player.
 - **Gate.** V3 at three seeds; T2; T3 membership; T11 zone flip; T13 the warning's player
   path; T15 with the zone on, on M2 (PERF-05).
+- **As built (draft).** `tn_destroyed_zone_v1 = min(tn_destroyed_depth_v1, tn_distance_v1 - max(150,
+  starting_area_radius))` in tiles; `tn_destroyed_heat_v1 = if(zone > 0, clamp(100.5 + min(0.49 zone, 30) +
+  20 n, 100.5, 149.5), -inf)`, n a 96-tile noise; `tn_temperature_ab_v2 = if(tn_destroyed > 0.5,
+  max(tn_temperature_ab_v1, heat), tn_temperature_ab_v1)`, which every Earth preset names with Alien Biomes.
+  The toggle `destroyed_europe` is a name switch with `requires = "alien-biomes"`: a preset bakes it off
+  without that mod (FEAS-17) and the drift line compares with the same rule. With the zone on and the spawn
+  city at random a preset bakes the map's pool `tn_city_pool_<map>_v1` (the fold's hash modulo the cities
+  outside the zone, `prototypes/tables/destroyed.lua`) as its city number, which the first fold resolves like
+  a chosen city; the drift line and start.lua count it as random. start.lua reads the setting once in
+  `on_init` for the D12 warning, the one read of `settings.startup` in this milestone.
 
 ### 11. `coast-band-fix` (part 7, order 1)
 
