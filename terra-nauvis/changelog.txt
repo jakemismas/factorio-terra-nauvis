@@ -102,5 +102,5 @@ Date: 2026-10-30
     - Beside Alien Biomes a Terra Nauvis map generates faster around vanilla land: Alien Biomes'
       decoratives and trees no longer search their whole tile lists on every vanilla land tile. They
       no longer grow where vanilla land may lie, which removes about 0.3 percent of the decoratives
-      in temperate regions and thins them along the edges of the temperate band, by about a tenth
-      at Moscow; no tile moves.
+      in temperate regions and thins them along the edges of the temperate band, by about 15
+      percent; no tile moves.

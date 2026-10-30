@@ -71,14 +71,15 @@ local PATCH = {patch = "clamp(" .. num(V.patch.amplitude) .. " * " .. noise(V.pa
   ", " .. num(V.patch.clamp) .. ")"}
 def(V.body, vanilla_bonus("temperature"), PATCH)
 
--- The list hook's factor: the bonus body's conditions on plain temperature, without its elevation term,
--- as 0 where that body may not be -inf and 1 where it surely is. The bonus reads the grain's frayed copy
--- on a preset, and this runs in the Entity program, which keeps the plain fields, so the band's edges and
--- the lean widen by scan.margin to cover the fray (config.lua tiles.scan).
-def(S.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", 1, if(temperature >= " ..
-  num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " .. num(V.lean_t) .. ") / " ..
-  num(V.lean_span) .. " + patch - " .. num(V.lean_cut - S.margin / V.lean_span) ..
-  " > 0, 0, if(temperature >= " .. num(X.temperate_from - S.margin) .. ", 0, 1))))", PATCH)
+-- The list hook's factor: vanilla_bonus's every condition but elevation, on plain temperature, as 0 where
+-- that body may not be -inf and 1 where it surely is, so a change to one belongs in the other. The bonus
+-- reads the grain's frayed copy on a preset, and this runs in the Entity program, which keeps the plain
+-- fields, so the band's edges and the lean widen by scan.margin to cover the fray (config.lua tiles.scan).
+def(S.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
+  ", 0, 1), if(temperature >= " .. num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " ..
+  num(V.lean_t) .. ") / " .. num(V.lean_span) .. " + patch + " .. num(V.fine) .. " * " .. MS.pool.name .. " - " ..
+  num(V.lean_cut - S.margin / V.lean_span) .. " > 0, 0, if(temperature >= " .. num(X.temperate_from - S.margin) ..
+  ", 0, 1))))", PATCH)
 
 -- The exclusion of non-adopted Alien Biomes land tiles from the temperate band.
 -- Inside a marsh the tiles open up to AB's wet ground, but not to its alien palette: a dry belt's red

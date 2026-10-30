@@ -90,8 +90,8 @@ compatibility and known limits are in README.md, and the changelog players see i
   Tiles do not move (dump and in-game hash); AB-only decoratives and trees lose their placements on
   adopted tiles and water-mud where vanilla land may also lie. The body reads plain temperature, so its
   band and lean are 4 wider than the grain-frayed tile bonus's, and these plants also thin along the
-  temperate band's edges: 14 percent of the AB-only decoratives and 11 of the trees at Moscow. See
-  design notes 2026-10-30 12:55 and 14:30.
+  temperate band's edges: about 15 percent of them over nine edge windows, 12 and 10 at Moscow, 48 and
+  62 at Riga. See design notes 2026-10-30 12:55 and 14:30.
 
 - the first release fast finish: groups 1 to 3 and edge-and-lakes
   assembled on one branch. Atlantic's and Old World's version 6 (`tn_geo` 17 and 18) carry the spawn

@@ -6111,7 +6111,7 @@
   },
   "tn_ab_keep_v1": {
    "type": "noise-expression",
-   "sha256": "cb1bba7804377fcb76ae2f7a74390c8f92cb330fcea22d5a72ae1825a7aaa352",
+   "sha256": "c269f510a63d748ff2768c0c3ddb5defcbc56f97f5e0d901496cb2646c452edb",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"

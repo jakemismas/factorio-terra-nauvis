@@ -2069,8 +2069,8 @@ return {
     -- over climate.grain's fray: the grain stays out of the Entity program (trees and decoratives keep
     -- the plain fields), so the body can only cover the frayed edge from outside. The fray's bound is 6
     -- (grain.temperature 3 times noise_layer_noise's peak of 2), but 6 strips Alien Biomes' trees along
-    -- the cold edge; 4 is the smallest margin that left none of these on vanilla land (design notes
-    -- 2026-10-30 14:30). `types` pairs each prototype type with the settings group on_nauvis reads;
+    -- the cold edge; 4 is the smallest margin that left these off vanilla land, 3 of 231,000 left on it
+    --. `types` pairs each prototype type with the settings group on_nauvis reads;
     -- Alien Biomes' palms keep their list (their keys already name Earth copies).
     scan = {body = CT.AB_KEEP_BODY, margin = 4,
             types = {{type = "optimized-decorative", group = "decorative"}, {type = "tree", group = "entity"}}},
