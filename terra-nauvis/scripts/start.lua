@@ -11,6 +11,12 @@
 --   - D32: with RSO active, the RSO warning, stored through guards.record_warning, which logs it
 --     once here and sends it to each created player (game.print in on_init reaches no player, S11;
 --     decision 25).
+--   - The cliff "none" reset (milestone ridges; S5): with the cliff control's size at 0 ("none") the
+--     engine places no cliffs at all, whatever the cliff expressions say, and the starting area is
+--     generated before on_init. So on an Earth world with ridges on, a size of 0 is written back as
+--     reset_size (config.lua ridges) with a whole-table assignment, once, logged in one line: the
+--     preview and the starting chunks keep none, and every chunk generated from then on gets its
+--     ridges (S5: 330 of 330 cliffs restored; the starting area holds no ridge cell anyway).
 --
 -- A Map-type-only world is not an Earth world here (it holds no tn_geo): it gets the Map type notice
 -- from guards.lua and no start message. Control code reads save state only (U6).
@@ -52,12 +58,36 @@ local function intro(text)
   return true
 end
 
+-- The cliff "none" reset; returns true when it wrote the control back.
+local function reset_cliffs(earth, surface)
+  local mgs = surface.map_gen_settings
+  local pen = mgs.property_expression_names or {}
+  local sw = cfg.toggles.ridges
+  if pen[sw.preset_key] ~= sw.on then
+    return false
+  end
+  local control = mgs.cliff_settings and mgs.cliff_settings.control
+  local controls = mgs.autoplace_controls or {}
+  local c = control and controls[control]
+  if not (c and c.size == 0) then
+    return false
+  end
+  c.size = cfg.ridges.reset_size
+  controls[control] = c
+  mgs.autoplace_controls = controls
+  surface.map_gen_settings = mgs
+  earth.cliff_reset = true
+  log(message("cliff_reset", control, cfg.ridges.reset_size))
+  return true
+end
+
 function M.on_init()
   local earth = storage.earth
   local surface = game.surfaces["nauvis"]
   if type(earth) ~= "table" or not surface then
     return
   end
+  reset_cliffs(earth, surface)
   local geo = guards.geography_of(earth.geo)
   local sp = geo and geo.version.spawn
   if sp then

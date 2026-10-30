@@ -69,6 +69,10 @@ GATE_BUDGET_S = 9 * 60
 SEED = 1000
 SEEDS = (1000, 1002, 1004)
 S8_COUNTS = {"t1_metrics": 62, "oracle": 760, "dump_render": 10, "contact_sheet": 4, "nav": 10}
+# Self-test checks later milestones add to a ported S8 tool, by tool and milestone: the offline row holds each
+# tool at S8's count plus these, so a dropped S8 check and an unrecorded addition both fail
+# (waterways: nav.py's three disc checks, design notes 2026-10-28 09:40)
+SELFTEST_ADDED = {"nav": {"waterways": 3}}
 GST_TESTS = 31
 VANILLA = {"tile": 10068, "entity": 8549, "cliff": 287}
 TWIN_CONSTANT = "8"                       # S9's constant coast
@@ -108,7 +112,8 @@ class FatalRun(BaseException):
 # The runner's milestone registry (design note 2): per milestone its part, its fast-gate rows (FG),
 # its suite checks (SS), which suite checks are deterministic or timed (rule 3's live sample), the
 # oracle properties it ships, and the dumps whose Earth bodies the frozen row and freeze read
-# (M1 here; climate-tiles adds M2). Each later milestone appends its entry. It stays one literal that no
+# (M1 here; climate-tiles adds M2; resources-enemies adds M3, the only dump holding the Oil Rig's
+# offshore-oil wrappers). Each later milestone appends its entry. It stays one literal that no
 # other module-level statement names: the static rows and the release build read it with
 # tnfrozen.runner_registry, which fails closed otherwise, and a tests/frozen.json record's dump label
 # must be one of these labels.
@@ -146,6 +151,96 @@ REGISTRY = [
      "timed_ss": ["t15b_m1"],
      "oracle_properties": [],
      "dumps": ["m1"]},
+    # Old World and Atlantic from their own fits, with their presets, Map type entries, coarse land
+    # fields and budget rows (design section 9). From here the T15a rows, the baseline and isolation (a)
+    # cover every map (budget_maps), and the new maps' rows run each through its own preset.
+    {"id": "olde-world-atlantic", "part": 3, "order": 0,
+     "fg": ["owa_dump_facts", "owa_routes", "owa_maptype", "owa_t7_random"],
+     "ss": ["owa_fits", "owa_t1_grids", "owa_t1_windows", "owa_v1_sheets", "owa_t7", "owa_t11", "owa_maptype_cost",
+            "owa_t15b"],
+     "deterministic_ss": ["owa_fits", "owa_t11"],
+     "timed_ss": ["owa_t15b"],
+     "oracle_properties": [],
+     "dumps": ["m1"]},
+    # Rivers, straits and canals at every scale with fords, dams, basins and the canals key (plan
+    # section 10, milestone 0). From here every T1 row masks the D16 corridors (t1_eval), the strait,
+    # isthmus and canal oracle rows are live, and the suite re-times every map's program and
+    # Europe's exploring rows with waterways in place.
+    {"id": "waterways", "part": 4, "order": 0,
+     "fg": ["ww_dump_facts", "ww_emit", "ww_t3", "ww_ford"],
+     "ss": ["ww_t5", "ww_fords", "ww_widths", "ww_bend", "ww_t1", "ww_t3_maps", "ww_t11", "ww_m3", "ww_paths",
+            "ww_v2", "ww_t7", "ww_ab", "ww_t13_m2", "ww_off", "ww_t15b", "ww_maptype_cost", "walker_m1", "rt_m1",
+            "save_m1"],
+     "deterministic_ss": ["ww_bend", "ww_t11", "ww_t13_m2"],
+     # ww_maptype_cost: each map's v2 entry picked alone, timed and reported (Contradictions item 15)
+     "timed_ss": ["ww_t15b", "ww_maptype_cost"],
+     # the oracle's layers map gives waterways `river` (oracle.LAYERS); R1's reach rows keep null
+     # expectations on purpose
+     "oracle_properties": ["river"],
+     "dumps": ["m1"]},
+    # The shared region layer (design section 10, milestone 1): rows, warp, roughness and aggregates that
+    # consumers read by name; nothing reads it yet. It adds no timed row, so its gate's live timed
+    # sample re-times Europe's block on the current build (t15b_m1). `unchanged`: its criterion keeps
+    # every program's complexity and every preview hash as main's (T13, T15), which zero_change and
+    # t15a_rows compare for equality while no later milestone is registered (zero_change_scope).
+    {"id": "region-layer", "part": 4, "order": 1, "unchanged": True,
+     "fg": ["rl_dump_facts", "rl_t3_oracle", "zero_change"],
+     "ss": ["rl_t3_maps", "rl_t2_zone", "rl_locality", "rl_read_cost"],
+     "deterministic_ss": ["rl_t3_maps", "rl_t2_zone", "rl_locality"],
+     "timed_ss": ["t15b_m1"],
+     "oracle_properties": ["region"],
+     "dumps": ["m1"]},
+    # Earth climate after EarthMaps' layout with and without Alien Biomes, the vanilla tiles beside AB,
+    # the fallback, marshes, the palm switch and each map's next elevation entry around the shore body
+    # (Europe's version 4, Atlantic's and Old World's version 3; design section 11, milestone 0). From here
+    # M2 joins the gate: its dump (frozen row and freeze), the dump facts, its
+    # zero-cost row, isolation (a) and (b) beside AB and the climate oracle rows; ww_ab re-runs T5 beside
+    # AB with the recalibrated transfer.
+    {"id": "climate-tiles", "part": 5, "order": 0,
+     "fg": ["ct_dump_facts", "ct_zero_cost_m2", "ct_isolation_m2", "ct_t3", "ct_t4_moisture"],
+     "ss": ["ct_t3_maps", "ct_marsh_census", "ct_d11", "ct_variety", "ct_t4", "ct_v3", "ct_maptype_m2", "ct_t10",
+            "ct_m6", "ct_ce9", "ww_ab", "ct_t15b", "ct_maptype_t15b", "walker_m2", "rt_m2", "save_m2"],
+     "deterministic_ss": ["ct_t3_maps", "ct_marsh_census", "ct_d11", "ct_variety"],
+     "timed_ss": ["ct_t15b"],
+     "oracle_properties": ["climate_band", "marsh", "tile_family_ab", "tile_family_vanilla"],
+     "dumps": ["m1", "m2"]},
+    # Trees by climate, the great forests through the region layer's multiplier, and the base game's
+    # trees, rocks, decals and plants beside Alien Biomes (design section 11, milestone 1). From here every
+    # living tree carries the great-forests hook on every world (zero_cost_diffs lets its folded nodes
+    # join Entity's parsed counts), and the oracle's forest property is live (tf_forest_expectations).
+    {"id": "trees-forests", "part": 5, "order": 1,
+     "fg": ["tf_dump_facts", "tf_t3"],
+     "ss": ["tf_t10_forests", "tf_t10_save", "tf_t10_climate", "tf_t10_scatter", "tf_t17", "tf_t4", "tf_t3_maps",
+            "tf_palms", "tf_d27", "tf_t11", "tf_v4", "tf_t15b"],
+     "deterministic_ss": ["tf_d27", "tf_t11", "tf_t3_maps"],
+     "timed_ss": ["tf_t15b"],
+     "oracle_properties": ["forest"],
+     "dumps": ["m1", "m2"]},
+    # Cliff ridges with rail-width passes, the ridges toggle, inert cliffs and water sliders and the
+    # ore clearance (design section 12, milestone 0). Its suite completes and times every map's full
+    # program; its gate's live timed sample re-times Europe's block (t15b_m1). Its rows run
+    # M1 against M0 and M2 against BAB (T4, T6, T16, T15 name M2), so it names the m2 dump as
+    # climate-tiles does, and an M2 half whose dumps are missing fails closed.
+    {"id": "ridges", "part": 6, "order": 0,
+     "fg": ["rd_dump_facts", "rd_offline", "rd_t4_fg", "rd_t7_fg"],
+     "ss": ["rd_t6", "rd_t6_start", "rd_t4", "rd_t7", "rd_t8", "rd_t11", "rd_v2", "rd_t15b", "rd_t15e"],
+     "deterministic_ss": ["rd_t11", "rd_t6_start"],
+     "timed_ss": ["t15b_m1"],
+     "oracle_properties": [],
+     "dumps": ["m1", "m2"]},
+    # Hotspots on the region layer's discs, offshore fields, the richness ramp, sparser base ore and
+    # the enemy layer (design section 12, milestone 1). Its FG rows add the M2 and M3 dumps' isolation walk;
+    # its gate's live timed sample re-times Europe's block on the current build (t15b_m1).
+    {"id": "resources-enemies", "part": 6, "order": 1,
+     "fg": ["re_dump_facts", "re_t4_fg"],
+     "ss": ["re_t8", "re_t8_base", "re_t8_m3", "re_t4_oil", "re_t9", "re_t4", "re_t7", "re_t2", "re_t11", "re_t5",
+            "re_t15b", "re_explore", "re_t15e"],
+     "deterministic_ss": ["re_t2", "re_t11"],
+     "timed_ss": ["t15b_m1"],
+     # the oracle's layers map gives resources-enemies `hotspot` (oracle.LAYERS); its expectations stay
+     # null this release
+     "oracle_properties": ["hotspot"],
+     "dumps": ["m1", "m3"]},
 ]
 
 
@@ -669,17 +764,22 @@ LIMIT_CONSUMERS = {
     "P18": "derive_t15b: M0t against M0t at 16 LP (pair m0_self)",
     "P1": "derive_t15b_europe: M1t/M0t at 16 LP on the map's TQ1b block at scales 6 and 1 (suite check t15b_m1, "
           "its live sample)",
-    "P4": "derive_rt_pair: ticks over 20 ms in each M1 window (suite check rt_m1)",
-    "P5": "derive_rt_pair: the median p99 interval of M1 over M0's (suite check rt_m1)",
-    "P6": "derive_rt_pair: the longest M1 interval (suite check rt_m1)",
+    "P2": "derive_t15b (pair m2_bab): M2t/BABt at 16 LP on every map's TQ1b block at scales 6 and 1 (suite checks "
+          "ct_t15b and, from trees-forests, tf_t15b, their live samples live_t15b_ct and live_t15b_tf; p2_limits)",
+    "P4": "derive_rt_pair: ticks over 20 ms in each Earth window (suite checks rt_m1, M1 against M0, and from "
+          "climate-tiles rt_m2, M2 against BAB)",
+    "P5": "derive_rt_pair: the median p99 interval of the Earth runs over the comparator's (rt_m1; rt_m2)",
+    "P6": "derive_rt_pair: the longest Earth interval, M1's limit on rt_m1 and M2's on rt_m2",
     "P7": "derive_walker_pair: Earth scriptUpdate per tick over M0's in benchmark mode (suite check walker_m1)",
-    "P19": "derive_save_pair: the forced block's save increment, M1 over M0 (suite check save_m1)",
+    "P19": "derive_save_pair: the forced block's save increment over the comparator's (save_m1, M1 over M0; "
+           "from climate-tiles save_m2, M2 over BAB)",
 }
 
 
-def unenforced_limits(sec6):
-    """The 6.2 rows in force that no check of this runner consumes (LIMIT_CONSUMERS)."""
-    return [pid for pid in sorted(sec6["limits"], key=lambda k: int(k[1:])) if pid not in LIMIT_CONSUMERS]
+def unenforced_limits(sec6, consumers=None):
+    """The 6.2 rows in force that no check of this runner consumes (LIMIT_CONSUMERS, or `consumers`)."""
+    have = LIMIT_CONSUMERS if consumers is None else consumers
+    return [pid for pid in sorted(sec6["limits"], key=lambda k: int(k[1:])) if pid not in have]
 
 
 # ------------------------------------------------------------------------------------------------ workspace
@@ -1036,6 +1136,14 @@ class Mods:
         z = self.build_zip()
         return self.make(f"ea-{tag}-{self.zip_sha[:8]}", [z], from_live=names)
 
+    def m2(self):
+        """M2 (climate-tiles on): M1 plus Alien Biomes and its graphics library from the live folder."""
+        return self.with_live("m2", ["alien-biomes"] + LIVE_DEPS["alien-biomes"])
+
+    def bab(self):
+        """BAB: Alien Biomes alone, M2's comparator (U7: Earth plus AB against AB alone, never vanilla)."""
+        return self.make("ea-bab", from_live=["alien-biomes"] + LIVE_DEPS["alien-biomes"])
+
     def prepare(self, modset, label):
         """G7: a first dump-data run on the modset (its mod-settings-dump.json lists what exists),
         then every Earth setting written explicitly. Returns the dump run."""
@@ -1148,6 +1256,14 @@ def earth_presets(cfg):
 def preset_pen(dump, name):
     p = ((dump or {}).get("map-gen-presets") or {}).get("default", {}).get(name) or {}
     return (p.get("basic_settings") or {}).get("property_expression_names") or {}
+
+
+def preset_controls(dump, name):
+    """The preset's basic_settings.autoplace_controls (resources-enemies: the six base resources at
+    frequency 0.75, D20), which a full --map-gen-settings file of the preset carries too, so the MGS
+    route and the --preset route place the same ore (T13)."""
+    p = ((dump or {}).get("map-gen-presets") or {}).get("default", {}).get(name) or {}
+    return {k: dict(v) for k, v in ((p.get("basic_settings") or {}).get("autoplace_controls") or {}).items()}
 
 
 def lua_value(v):
@@ -1599,11 +1715,14 @@ def frozen_check(fz_work, fz_main, dumps, cfg, registry=None):
     never skipped, since the label picks the dump the body is read from); it is append-only against
     the reference, whole records compared (type, sha256, dump, milestone and date), so a relabel moves a
     registered record as a new hash does; every registered body is present in the dump its record
-    names with the same generation-field hash; no placeholder name or Map type fallback is
-    registered; and every Earth body of every dump the gate reads (M1, and M2 once a milestone adds it)
+    names, an M1 body in every dump, and hashes to its registered sha256 in every dump that holds
+    it (registered_body_fails: from climate-tiles a body that differs between the M1 and M2 dumps
+    would let adding or removing Alien Biomes rewrite it in place); no placeholder name or Map type
+    fallback is registered; and every Earth body of every dump the gate reads (M1, and M2 once a milestone adds it)
     is registered, the placeholder's names and the fallbacks excepted, so a body can neither ship
     unregistered nor change in place unseen. `dumps` maps a dump label ("m1", "m2") to its data-raw
-    dump. No registered body goes unread: a record whose dump label this command did not produce
+    dump; a record's optional mask (resources-enemies' live mask) applies to its hash. No registered
+    body goes unread: a record whose dump label this command did not produce
     fails like an unknown label, a later milestone's dump included (the gate through an earlier milestone
     cannot vouch for that body; run it through the newest milestone, which produces every label). Only
     `dumps=None` reads no dump, for the controls that test the append-only comparison alone."""
@@ -1623,6 +1742,7 @@ def frozen_check(fz_work, fz_main, dumps, cfg, registry=None):
                          f"record never changes in place; ship a change under the next _v<n>)")
     ph = set(tnconfig.placeholder_names(cfg)) if cfg else set()
     fb = set(tnconfig.exempt_fallback_names(cfg)) if cfg else set()
+    live = live_masked_names(cfg)
     for name, rec in bodies.items():
         if name in ph:
             fails.append(f"placeholder name {name} is registered")
@@ -1631,17 +1751,20 @@ def frozen_check(fz_work, fz_main, dumps, cfg, registry=None):
                          f"U3)")
         if dumps is None or tnfrozen.record_problems(name, rec, registry):
             continue
+        # from resources-enemies: only the wrappers of an optional mod's live autoplace carry the live
+        # mask, and they always do (versioning rule 3; MASKS)
+        if (rec.get("mask") == "live") != (name in live):
+            fails.append(f"registered body {name} carries the mask {rec.get('mask')!r}: only the wrappers of an "
+                         f"optional mod's live autoplace {sorted(live)} carry the live mask, and they always do "
+                         f"(versioning rule 3)")
+            continue
         label = rec["dump"]
         if label not in dumps:
             fails.append(f"registered body {name}: its record's dump label {label!r} names a dump this command did not "
                          f"produce ({sorted(dumps)}), so its hash and presence would go unchecked (fail closed: run "
                          f"the gate through a slice that produces {label!r})")
             continue
-        body = (dumps[label].get(rec["type"]) or {}).get(name)
-        if body is None:
-            fails.append(f"registered body {name} is missing from the {label} dump (old names stay defined)")
-        elif body_hash(body) != rec["sha256"]:
-            fails.append(f"registered body {name} changed in place (ship it under the next _v<n>)")
+        fails += registered_body_fails(name, rec, dumps)
     exempt = ph | fb
     for label, dump in sorted((dumps or {}).items()):
         for name in sorted(earth_bodies(dump, cfg)):
@@ -1651,18 +1774,51 @@ def frozen_check(fz_work, fz_main, dumps, cfg, registry=None):
     return fails
 
 
+def registered_body_fails(name, rec, dumps):
+    """One registered body against every dump the gate reads: present in the dump it was registered
+    from, and present in every dump when that is M1 (a body Earth defines without Alien Biomes is
+    defined beside it too); wherever a dump holds it, its generation fields hash to the registered
+    sha256. A body that differs only in a dump other than its own would let adding or removing Alien
+    Biomes rewrite it in place on existing saves (design constraint 2), so that fails too."""
+    fails = []
+    home = rec["dump"]
+    t = rec["type"]
+    for label in sorted(dumps, key=lambda lb: (lb != home, lb)):
+        body = (dumps[label].get(t) or {}).get(name)
+        if body is None:
+            if label == home:
+                fails.append(f"registered body {name} is missing from the {label} dump (old names stay defined)")
+            elif home == "m1":
+                fails.append(f"registered body {name} (registered from the m1 dump) is missing from the {label} dump: "
+                             f"a body Earth defines without Alien Biomes stays defined beside it")
+            continue
+        if body_hash(body, rec.get("mask")) == rec["sha256"]:
+            continue
+        if label == home:
+            fails.append(f"registered body {name} changed in place (ship it under the next _v<n>)")
+        else:
+            fails.append(f"registered body {name} differs between the {home} and {label} dumps: give the Alien "
+                         f"Biomes variant its own name")
+    return fails
+
+
 def freeze_registry(fz, dumps, cfg, slice_id, today, registry=None):
     """What `freeze` writes, or GateError: every existing record must keep the tnfrozen contract (a
     dump label no registry entry assigns, or a typo of one, refuses the run instead of being
-    skipped) and match the dump it names in type and hash (present, never changed in place); no
-    placeholder name or setting-mirroring fallback may be registered; then every Earth body of the
-    dumps that is not yet registered is appended with a full record for `slice_id`. Returns (the new
+    skipped) and match the dump it names in type and hash (present, never changed in place), an M1
+    body present in every dump and every dump that holds a body hashing alike (registered_body_fails;
+    from climate-tiles, M1 and M2); no placeholder name or setting-mirroring fallback may be
+    registered; then every Earth body of the dumps that is not yet registered is appended with a full
+    record for `slice_id`, from the first dump (in registry order) that holds it, and a new name that
+    hashes differently between the dumps refuses the run (an Alien Biomes variant needs its own name);
+    from resources-enemies the wrappers of an optional mod's live autoplace register with the live mask. Returns (the new
     registry, the names added); it never changes an existing record."""
     registry = REGISTRY if registry is None else registry
     probs = tnfrozen.file_problems(fz, registry)
     if probs:
         raise GateError(f"tests/frozen.json breaks the record contract: {probs[:2]}; freeze registers nothing")
     skip = frozen_exempt(cfg)
+    live = live_masked_names(cfg)
     bad = sorted(set(fz["bodies"]) & skip)
     if bad:
         raise GateError(f"tests/frozen.json registers {bad}, which are never registered (the placeholder's names, the "
@@ -1675,17 +1831,29 @@ def freeze_registry(fz, dumps, cfg, slice_id, today, registry=None):
         if body is None:
             raise GateError(f"registered body {name} is missing from the {rec['dump']} dump (old names stay defined); "
                             f"freeze registers nothing")
-        h = body_hash(body)
+        h = body_hash(body, rec.get("mask"))
         if h != rec["sha256"]:
             raise GateError(f"{name} changed in place: registered {rec['sha256'][:12]}, now {h[:12]}; ship it under "
                             f"the next _v<n>")
+        cross = registered_body_fails(name, rec, dumps)
+        if cross:
+            raise GateError(f"{cross[0]}; freeze registers nothing")
     out = json.loads(json.dumps(fz))
     added = []
     for label, dump in dumps.items():
         for name, (t, proto) in sorted(earth_bodies(dump, cfg).items()):
-            if name in skip or name in out["bodies"]:
+            if name in skip:
                 continue
-            out["bodies"][name] = tnfrozen.record(t, body_hash(proto), label, slice_id, today)
+            mask = "live" if name in live else None
+            h = body_hash(proto, mask)
+            if name in out["bodies"]:
+                first = out["bodies"][name]
+                if name in added and first["sha256"] != h:
+                    raise GateError(f"{name} hashes {first['sha256'][:12]} in the {first['dump']} dump and {h[:12]} "
+                                    f"in the {label} dump: give the Alien Biomes variant its own name; freeze "
+                                    f"registers nothing")
+                continue
+            out["bodies"][name] = tnfrozen.record(t, h, label, slice_id, today, mask=mask)
             added.append(name)
     probs = tnfrozen.file_problems(out, registry)
     if probs:
@@ -1694,12 +1862,22 @@ def freeze_registry(fz, dumps, cfg, slice_id, today, registry=None):
 
 
 GEN_FIELDS = tnfrozen.HASH_FIELDS
+# A frozen entry's mask (tests/frozen.json "mask"; absent: none). "live" registers a wrapper around an
+# optional mod's live autoplace (the Oil Rig's offshore oil, built only beside it) over its own
+# composition: every generation field but the local expressions and functions, which hold the live
+# text it wraps (live_value and the autoplace's own locals). Versioning rule 3 lets that text follow
+# the pack, so an Oil Rig update is no change in place; re_offshore_findings proves in every gate that
+# those locals are exactly the live autoplace's, so no Earth term can hide in them.
+MASKS = tnfrozen.MASK_NAMES
 
 
-def body_hash(proto):
-    """sha256 of a noise body's generation fields only (never intended_property, localised_name, order):
-    tnfrozen.body_hash, which the offline body check (T16, the release build) shares."""
-    return tnfrozen.body_hash(proto)
+def body_hash(proto, mask=None):
+    """sha256 of a noise body's generation fields only (never intended_property, localised_name, order),
+    with a frozen entry's mask applied (MASKS): tnfrozen.body_hash, which the offline body check (T16,
+    the release build) shares."""
+    if mask is not None and mask not in MASKS:
+        raise GateError(f"unknown frozen mask {mask!r} (known: {list(MASKS)})")
+    return tnfrozen.body_hash(proto, mask)
 
 
 def offline_parity(dumps, cfg, source=MOD):
@@ -1730,10 +1908,48 @@ def offline_parity(dumps, cfg, source=MOD):
     return fails, seen
 
 
-def gate_dumps(ctx, through):
+def live_masked_names(cfg):
+    """The Earth bodies registered with the live mask: the Oil Rig's offshore-oil wrappers (config.lua
+    resources.offshore), which wrap its live autoplace and exist only beside it."""
+    OF = (((cfg or {}).get("resources") or {}).get("offshore")) or {}
+    return {n for n in (OF.get("p"), OF.get("r")) if n}
+
+
+def dump_modset(mods, label):
+    """(modset, prepare label) of a dump the frozen row and freeze read: M1, M2 (climate-tiles), and M3 (M1 with Alien
+    Biomes, Cargo Ships and the Oil Rig copied read-only from the live mods folder; resources-enemies),
+    the only dump that holds the Oil Rig's offshore-oil wrappers. A milestone that adds a dump label to the
+    registry adds its modset here."""
+    if label == "m1":
+        return mods.m1(), "m1"
+    if label == "m2":
+        return mods.m2(), "m2"
+    if label == "m3":
+        return mods.with_live("rem3", RE_M3_LIVE), "re-m3"
+    raise GateError(f"no modset produces the {label} dump: the slice that adds the label extends dump_modset")
+
+
+def produce_dump(ctx, mods, label):
+    """A gate dump by label (dump_modset), prepared (G7) and read once per command into
+    ctx.shared["dump_<label>"] with its sha256; the M3 run must print the Oil Rig's checksum line (G2),
+    or its wrappers would be missing for a reason no frozen check sees."""
+    ms, plabel = dump_modset(mods, label)
+    r = mods.prepare(ms, plabel)
+    if label == "m3":
+        g = g2(r.out, [RE_OIL_RIG])
+        if g:
+            raise GateError(f"the M3 dump: {g[0]}")
+    f = r.out / "data-raw-dump.json"
+    ctx.shared[f"dump_{label}"] = json.loads(f.read_text(encoding="utf-8"))
+    ctx.shared[f"dump_{label}_sha"] = sha256_file(f)
+    return ctx.shared[f"dump_{label}"]
+
+
+def gate_dumps(ctx, through, mods=None):
     """The dumps the frozen row and freeze read, by label, from the registry's `dumps` of every
-    milestone up to `through` (toolchain: M1; climate-tiles adds M2). A label the dumps row did not
-    produce fails closed."""
+    milestone up to `through` (toolchain: M1; resources-enemies adds M3; climate-tiles adds M2). The dumps
+    row produces M1; given `mods`, any other label is produced here (produce_dump). A label nothing
+    produced fails closed."""
     labels = []
     for s in registry_upto(through):
         for label in s.get("dumps", []):
@@ -1742,6 +1958,8 @@ def gate_dumps(ctx, through):
     out = {}
     for label in labels:
         d = ctx.shared.get(f"dump_{label}")
+        if d is None and mods is not None and label != "m1":
+            d = produce_dump(ctx, mods, label)
         if d is None:
             raise GateError(f"the registry names the {label} dump, which this command did not produce")
         out[label] = d
@@ -1805,7 +2023,10 @@ def frozen_controls(cfg):
     another assigned dump, retyped, re-sliced or re-dated fails the append-only comparison; a
     well-formed record whose dump this command did not produce (a later milestone's) fails too, so no
     registered body goes unread; freeze refuses each broken registry and a body changed in place
-    under a relabel, and appends full records."""
+    under a relabel, and appends full records. From climate-tiles (the M2 dump): an M1 body with
+    another expression in the M2 dump and an M1 body missing from the M2 dump fail, an M2-only body
+    passes; freeze refuses a body that differs between the dumps and registers a body both hold
+    alike once, from M1."""
     prefix = cfg["identity"]["noise_prefix"]
     name = f"{prefix}fixture_v1"
     body = {"type": "noise-expression", "name": name, "expression": "x + 1"}
@@ -1910,6 +2131,57 @@ def frozen_controls(cfg):
             "freeze refuses a registered body missing from its dump": (reg, d_missing, "is missing from the m1 dump")
     }.items():
         out[label] = _refuses(lambda fz=fz, dump=dump: freeze_registry(fz, {"m1": dump}, cfg, sid, FX_DATE), needle)
+    # the M2 dump (climate-tiles): the same registered name with another expression in the M2 dump
+    # only (an Alien Biomes branch), an M2-only body, and a new name in both dumps
+    d_m2_other = {"noise-expression": {name: dict(body, expression="x + 3")}}
+    m2_fails = frozen_check(reg, reg, {"m1": d_ok, "m2": d_m2_other}, cfg)
+    out["an M1 body with another expression in the M2 dump fails (Alien Biomes variant)"] = (
+        len(m2_fails) == 1 and "differs between the m1 and m2 dumps" in m2_fails[0])
+    out["an M1 body missing from the M2 dump fails"] = any(
+        "is missing from the m2 dump" in f for f in frozen_check(reg, reg, {"m1": d_gui, "m2": d_missing}, cfg))
+    ab_name = f"{prefix}fixture_ab_v1"
+    ab_body = dict(body, name=ab_name)
+    reg_m2 = fx_registry({ab_name: fx_record(ab_body, dump="m2")})
+    out["an M2-only body absent from M1 passes"] = not frozen_check(
+        reg_m2, reg_m2, {"m1": {"noise-expression": {}}, "m2": {"noise-expression": {ab_name: ab_body}}}, cfg)
+    out["freeze refuses a registered body that changed in the M2 dump"] = _refuses(
+        lambda: freeze_registry(reg, {"m1": d_ok, "m2": d_m2_other}, cfg, sid, FX_DATE),
+        "differs between the m1 and m2 dumps")
+    new_name = f"{prefix}fixture_new_v1"
+    new_body = dict(body, name=new_name)
+    split = {"m1": {"noise-expression": {new_name: new_body}},
+             "m2": {"noise-expression": {new_name: dict(new_body, expression="x + 3")}}}
+    same = {"m1": {"noise-expression": {new_name: new_body}}, "m2": {"noise-expression": {new_name: new_body}}}
+    out["freeze refuses a new name whose hash differs between the dumps"] = _refuses(
+        lambda: freeze_registry(fx_registry({}), split, cfg, sid, FX_DATE), "give the Alien Biomes variant its own name")
+    try:
+        same_fz, same_added = freeze_registry(fx_registry({}), same, cfg, sid, FX_DATE)
+        ok = same_added == [new_name] and same_fz["bodies"][new_name]["dump"] == "m1"
+    except GateError:
+        ok = False
+    out["freeze registers a new name present alike in both dumps once, from M1"] = ok
+    # the live mask (resources-enemies): a wrapper of an optional mod's live autoplace, registered from
+    # M3 over its own terms
+    lname = f"{prefix}fixture_live_v1"
+    lbody = {"type": "noise-expression", "name": lname, "expression": "if(t > 0.5, max(live_value * s, h), live_value * s)",
+             "local_expressions": {"live_value": "a * b"}}
+    lcfg = dict(cfg, resources={"offshore": {"p": lname}})
+    lreg = fx_registry({lname: tnfrozen.record("noise-expression", body_hash(lbody, "live"), "m3", sid, FX_DATE,
+                                               mask="live")})
+    d_live = {"noise-expression": {lname: dict(lbody, local_expressions={"live_value": "a * c", "k": "2"},
+                                               local_functions={"f": {"parameters": ["p"], "expression": "p"}})}}
+    d_comp = {"noise-expression": {lname: dict(lbody, expression="if(t > 0.5, max(live_value, h), live_value)")}}
+    out["an unregistered body of the M3 dump fails too"] = bool(frozen_check(reg, reg, {"m1": d_gui, "m3": d_new},
+                                                                             cfg))
+    out["a live-masked wrapper passes when only the live text it wraps changes"] = not frozen_check(
+        lreg, lreg, {"m1": {"noise-expression": {}}, "m3": d_live}, lcfg)
+    out["a live-masked wrapper fails when its own composition changes"] = bool(frozen_check(
+        lreg, lreg, {"m1": {"noise-expression": {}}, "m3": d_comp}, lcfg))
+    out["a body outside the live wrappers may not carry the live mask"] = bool(frozen_check(
+        lreg, lreg, {"m1": {"noise-expression": {}}, "m3": d_live}, cfg))
+    plain = fx_registry({lname: tnfrozen.record("noise-expression", body_hash(lbody), "m3", sid, FX_DATE)})
+    out["a live wrapper registered without the live mask fails"] = bool(frozen_check(
+        plain, {"bodies": {}}, {"m1": {"noise-expression": {}}, "m3": {"noise-expression": {lname: lbody}}}, lcfg))
     return out
 
 
@@ -1932,7 +2204,7 @@ def row_frozen(ctx, mods, sec6, row, cache):
     work = json.loads((TESTS / "frozen.json").read_text(encoding="utf-8"))
     main, ref_shas, ref_fails = reference_registry()
     row.fails += ref_fails
-    dumps = gate_dumps(ctx, ctx.slice)
+    dumps = gate_dumps(ctx, ctx.slice, mods)
     row.fails += frozen_check(work, main, dumps, cfg)
     seen = sorted({n for d in dumps.values() for n in earth_bodies(d, cfg)})
     # the offline data stage, which CI's bodies row and the release build judge bodies by, held to the
@@ -2170,8 +2442,10 @@ def row_offline_selftests(ctx, mods, sec6, row, cache):
                 fails.append(f"{tool} selftest: {res[-1] if res else 'no RESULT line'}")
                 continue
             meas[tool] = int(m.group(1))
-            if tool in S8_COUNTS and int(m.group(1)) != S8_COUNTS[tool]:
-                fails.append(f"{tool} ran {m.group(1)} checks, S8 ran {S8_COUNTS[tool]}")
+            added = {k: v for k, v in SELFTEST_ADDED.get(tool, {}).items() if k in {s["id"] for s in REGISTRY}}
+            if tool in S8_COUNTS and int(m.group(1)) != S8_COUNTS[tool] + sum(added.values()):
+                fails.append(f"{tool} ran {m.group(1)} checks, S8 ran {S8_COUNTS[tool]} and later slices added "
+                             f"{added or 'none'}")
         # the registry's oracle_properties are the properties the oracle's layers map gives each milestone
         layers = json.loads((TESTS / "oracle" / "europe.json").read_text(encoding="utf-8")).get("layers") or {}
         for s in registry_upto(ctx.slice):
@@ -2324,9 +2598,12 @@ def section6_controls(main):
     out["every 6.2 row in force through europe-coast has an enforcing check"] = (not unenforced_limits(ec),
                                                                                   unenforced_limits(ec))
     # a row that first comes into force in a later milestone, before its consumer lands
+    cb = parse_section6(main, "coast-band-fix")
+    out["a row in force with no enforcing check fails closed (coast-band-fix's P8 before its consumer lands)"] = (
+        "P8" in unenforced_limits(cb), unenforced_limits(cb)[:3])
     ct = parse_section6(main, "climate-tiles")
-    out["a row in force with no enforcing check fails closed (climate-tiles' P2 before its consumer lands)"] = (
-        "P2" in unenforced_limits(ct), unenforced_limits(ct)[:3])
+    out["every 6.2 row in force through climate-tiles has an enforcing check (P2 on M2)"] = (
+        not unenforced_limits(ct), unenforced_limits(ct))
     noslice = re.sub(r"^(\| P18 \| [^|]+\| [^|]+ \| )`toolchain`", r"\1suites", main, count=1, flags=re.M)
     try:
         ns = parse_section6(noslice, "toolchain")
@@ -2448,6 +2725,19 @@ def t15a_controls(main):
         first["kind"] == "first" and alone == {"kind": "add", "value": 0.03})
     p1 = p1_limits(sc, "spawn-cities", "europe", batch).get("P1", {}).get("limit")
     out["P1: the batch's bound is the absolute 1.5"] = p1 == {"max": 1.5}
+    # an unchanged milestone (exact, zero_change_scope): every Earth row equals main's, a decrease included
+    base, lower = row_("europe", "M1", 90000, ent + 400), row_("europe", "M1", 89999, ent + 400)
+    out["T15a exact: a row equal to main's passes"] = not check_t15a([van, base], fake, [base], "fixture", exact=True)
+    out["T15a exact: a Tile decrease under main's fails"] = bool(check_t15a([van, lower], fake, [base], "fixture",
+                                                                            exact=True))
+    out["T15a: the same decrease passes without exact (growth only)"] = not check_t15a([van, lower], fake, [base],
+                                                                                       "fixture")
+    out["T15a exact: a row main lacks fails"] = bool(check_t15a([van, base], fake, [], "fixture", exact=True))
+    reg = [{"id": "a"}, {"id": "b", "unchanged": True}]
+    out["zero_change_scope: an unchanged slice that is the newest registered one is in scope"] = (
+        zero_change_scope("b", reg) and not zero_change_scope("a", reg))
+    out["zero_change_scope: a slice registered after it retires the comparison"] = not zero_change_scope(
+        "b", reg + [{"id": "c"}])
     return {k: (v, "") for k, v in out.items()}
 
 
@@ -2999,8 +3289,15 @@ def row_runner_controls(ctx, mods, sec6, row, cache):
             results.update(group(main))
         except Exception as e:
             results[f"{group.__name__} ran"] = (False, f"{type(e).__name__}: {e}")
-    for group in (fatal_run_controls, oracle_controls, gst_replay_controls, review_fix_controls, t7_ore_controls,
-                  gate_evidence_controls):
+    upto = {s_["id"] for s_ in registry_upto(ctx.slice)}
+    groups = ((fatal_run_controls, oracle_controls, gst_replay_controls, review_fix_controls, t7_ore_controls,
+               gate_evidence_controls) +
+              ((owa_controls,) if "olde-world-atlantic" in upto else ()) +
+              ((ww_controls,) if "waterways" in upto else ()) +
+              ((rl_runner_controls,) if "region-layer" in upto else ()) +
+              ((tf_controls,) if "trees-forests" in upto else ()) +
+              ((re_runner_controls,) if "resources-enemies" in upto else ()))
+    for group in groups:
         try:
             results.update(group())
         except Exception as e:
@@ -3142,8 +3439,74 @@ def row_dumps(ctx, mods, sec6, row, cache):
     ctx.shared["dump_m1"] = json.loads((r1.out / "data-raw-dump.json").read_text(encoding="utf-8"))
     ctx.shared["dump_m1_sha"] = sha256_file(r1.out / "data-raw-dump.json")
     ctx.shared["m0"], ctx.shared["m1"] = m0, m1
+    # from climate-tiles M2 joins the gate (design section 5 step 2): its dump and BAB's, which the frozen
+    # row (AB-only bodies), the dump facts and the M2 rows read
+    if uses_m2(ctx):
+        ab = ["alien-biomes"] + LIVE_DEPS["alien-biomes"]
+        m2, bab = mods.m2(), mods.bab()
+        r2, rb = mods.prepare(m2, "m2"), mods.prepare(bab, "bab")
+        row.run_dirs += [r2.out, rb.out]
+        row.fails += g2(r2.out, [cfg["identity"]["id"], "base"] + ab) + g2(rb.out, ["base"] + ab)
+        ctx.shared["dump_m2"] = json.loads((r2.out / "data-raw-dump.json").read_text(encoding="utf-8"))
+        ctx.shared["dump_m2_sha"] = sha256_file(r2.out / "data-raw-dump.json")
+        ctx.shared["dump_bab"] = json.loads((rb.out / "data-raw-dump.json").read_text(encoding="utf-8"))
+        ctx.shared["m2"], ctx.shared["bab"] = m2, bab
     row.detail = (f"M0 {m0} and M1 {m1} dump-data pass G1 to G3; settings dump equals APPROVALS 1a for "
                   f"{sorted(rules)}; settings written explicitly (G7)")
+
+
+def added_prototype_findings(d0, d1, earth_noise, cfg=None):
+    """What Earth adds over M0, as (findings, added): every added noise-expression or noise-function
+    is a noise name config.lua defines (`earth_noise`: tnconfig.defined_names, whose noise names hold
+    the region layer's row names composed from config.lua's stems and suffix and the table's ids),
+    nothing else but the presets inside the default map-gen-presets entry is added, and no vanilla
+    prototype changes (A-1) but a stable hook's (stable_hook_change, with `cfg`)."""
+    out, added, changed = [], [], []
+    for t, protos in d1.items():
+        if not isinstance(protos, dict):
+            continue
+        base = d0.get(t, {}) if isinstance(d0.get(t), dict) else {}
+        for n, v in protos.items():
+            if n not in base:
+                added.append((t, n))
+            elif v != base[n] and not (t == "map-gen-presets" and n == "default") and \
+                    not (cfg is not None and stable_hook_change(cfg, t, n, v, base[n])):
+                changed.append((t, n))
+    if changed:
+        out.append(f"Earth changed vanilla prototypes {changed[:5]} (A-1: default worlds stay vanilla)")
+    for t, n in added:
+        if t in NOISE_TYPES:
+            if n not in earth_noise:
+                out.append(f"{t} {n} is not a name config.lua defines")
+        else:
+            out.append(f"Earth added a {t} prototype {n} (only noise bodies and presets in this slice; D1)")
+    return out, added
+
+
+def added_name_controls(cfg, d0, d1, earth_noise):
+    """Positive controls of the added-name check on fixture copies of the M1 dump: an unknown
+    prefixed noise expression fails, and so does a name of the region layer's row form (a config.lua
+    stem, an id no table row has, the suffix); a row body of the region table that the dump holds
+    passes, since config.lua defines it through the table."""
+    out = {}
+    ne = d1.get("noise-expression") or {}
+
+    def with_extra(name):
+        body = {"type": "noise-expression", "name": name, "expression": "0"}
+        return dict(d1, **{"noise-expression": dict(ne, **{name: body})})
+    unknown = cfg["identity"]["noise_prefix"] + "fixture_unknown_v1"
+    f, _ = added_prototype_findings(d0, with_extra(unknown), earth_noise, cfg)
+    out["an added noise expression config.lua does not define fails"] = any(unknown in x for x in f)
+    names = tnconfig.region_names(cfg)
+    if names["rows"]:
+        stray = tnconfig.region_row_name(cfg, "sd", "fixture_no_such_row")
+        f, _ = added_prototype_findings(d0, with_extra(stray), earth_noise, cfg)
+        out[f"a region row name of no table row ({stray}) fails"] = any(stray in x for x in f)
+        sd = names["rows"][next(iter(names["rows"]))]["sd"]
+        f, added = added_prototype_findings(d0, d1, earth_noise, cfg)
+        out[f"a region row body of the table ({sd}) passes"] = (
+            ("noise-expression", sd) in added and not any(sd in x for x in f))
+    return out
 
 
 def row_t13_dump_facts(ctx, mods, sec6, row, cache):
@@ -3194,24 +3557,12 @@ def row_t13_dump_facts(ctx, mods, sec6, row, cache):
             if loop:
                 row.fails.append(f"{pn}: redirect target {target} reads the property {k} it replaces (A-3): "
                                  f"{' > '.join(loop[-6:])}")
-    added, changed = [], []
-    for t, protos in d1.items():
-        if not isinstance(protos, dict):
-            continue
-        base = d0.get(t, {}) if isinstance(d0.get(t), dict) else {}
-        for n, v in protos.items():
-            if n not in base:
-                added.append((t, n))
-            elif v != base[n] and not (t == "map-gen-presets" and n == "default"):
-                changed.append((t, n))
-    if changed:
-        row.fails.append(f"Earth changed vanilla prototypes {changed[:5]} (A-1: default worlds stay vanilla)")
-    for t, n in added:
-        if t == "noise-expression" or t == "noise-function":
-            if n not in earth_noise:
-                row.fails.append(f"{t} {n} is not a name config.lua defines")
-        else:
-            row.fails.append(f"Earth added a {t} prototype {n} (only noise bodies and presets in this slice; D1)")
+    found, added = added_prototype_findings(d0, d1, earth_noise, cfg)
+    row.fails += found
+    ctl = added_name_controls(cfg, d0, d1, earth_noise)
+    for k, ok in ctl.items():
+        if not ok:
+            row.fails.append(f"dump-facts positive control did not behave: {k}")
     base_presets = set(d0["map-gen-presets"]["default"])
     extra = set(presets) - base_presets
     if extra - names["preset"]:
@@ -3226,7 +3577,9 @@ def row_t13_dump_facts(ctx, mods, sec6, row, cache):
     toggles = [t["preset_key"] for t in tnconfig.toggles(cfg)]
     row.fails += tn_static.toggle_multiply_findings(exprs, toggles)
     row.detail = (f"preset {pname} order {p.get('order') if p else None} redirects {sorted((p or {}).get('basic_settings', {}).get('property_expression_names', {}))}; "
-                  f"{len(added)} added prototypes, all Earth names; no vanilla prototype changed")
+                  f"{len(added)} added prototypes, all Earth names ({len(tnconfig.region_noise_names(cfg))} of the "
+                  f"noise names config.lua defines are the region layer's); no vanilla prototype changed; "
+                  f"{sum(ctl.values())} of {len(ctl)} added-name controls behaved")
 
 
 def row_isolation_b(ctx, mods, sec6, row, cache):
@@ -3487,6 +3840,24 @@ def baseline_record():
     return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
 
 
+def zero_cost_diffs(base, earth):
+    """The programs whose --verbose counts differ between a comparator and the default preset with
+    Earth loaded (T13): operations, registers and the estimated complexity in every program, and the
+    expression counts in Cliff. From waterways the gated water-shallow hook adds its parsed and folded
+    nodes to the Tile program's expression counts (design notes, waterways: the hook compiles to nothing,
+    its outermost if() folding on the gate's prototype 0); from trees-forests the great-forests hook on
+    every living tree and, beside Alien Biomes, the restored vanilla trees and rocks add theirs to the
+    Entity program's."""
+    out = []
+    for prog in sorted(set(base) | set(earth)):
+        a, b = base.get(prog) or {}, earth.get(prog) or {}
+        keys = ("operations", "registers", "complexity") + (() if prog in ("tile", "entity") else
+                                                            ("expressions", "unique"))
+        if any(a.get(k) != b.get(k) for k in keys):
+            out.append(f"{prog}: {b} vs {a}")
+    return out
+
+
 def row_t13_zero_cost(ctx, mods, sec6, row, cache):
     m0, m1 = ctx.shared["m0"], ctx.shared["m1"]
     key, newest = common_key(ctx, "t13_zero_cost", {"m1": mods.manifest(m1), "dump": ctx.shared.get("dump_m1_sha")})
@@ -3503,8 +3874,8 @@ def row_t13_zero_cost(ctx, mods, sec6, row, cache):
         fails += g2(dirs[1], [mods.cfg["identity"]["id"]])
         if a["images"] != b["images"]:
             fails.append(f"a default-preset world with Earth differs from M0: {a['images']} vs {b['images']}")
-        if c["complexity"] != e["complexity"]:
-            fails.append(f"default-preset complexity differs from M0: {e['complexity']} vs {c['complexity']}")
+        fails += [f"default-preset complexity differs from M0's in {x}" for x in zero_cost_diffs(c["complexity"],
+                                                                                              e["complexity"])]
         got = {k: v["complexity"] for k, v in c["complexity"].items()}
         if got != VANILLA:
             fails.append(f"M0 complexity {got} is not vanilla's {VANILLA} (re-baseline?)")
@@ -3618,36 +3989,104 @@ ZERO_COST_ROWS = ("vanilla", "default", "bab")
 BUDGET_SCALES = (1, 2, 3, 4, 5, 6)
 
 
-def budgets_rows(cfg, meas_map, meas_m0, meas_def):
+def toggle_maps(cfg):
+    """The maps some toggle lists: their budgets rows measure toggles off apart (waterways' canals)."""
+    return {m for t in tnconfig.toggles(cfg) for m in (t.get("maps") or [])}
+
+
+def budget_jobs(cfg, bmaps):
+    """(map, scale, toggles off) for each measured T15a map row: every scale with toggles on, and with
+    every toggle off on the maps some toggle lists."""
+    tm = toggle_maps(cfg)
+    return [(mk, s, off) for mk in bmaps for off in ((False, True) if mk in tm else (False,)) for s in BUDGET_SCALES]
+
+
+def budget_label(bmaps, mk, s, off):
+    return (f"cx-map-s{s}" if mk == bmaps[0] else f"cx-map-{mk}-s{s}") + ("-off" if off else "")
+
+
+def budget_label_m2(mk, s, off):
+    """The M2 row's preview label (climate-tiles: M2 rows beside the M1 rows, BAB their comparator)."""
+    return f"cx-m2-{mk}-s{s}" + ("-off" if off else "")
+
+
+def budget_m2(slice_id):
+    """Whether T15a and the baseline measure the M2 rows: from the first milestone whose registry entry adds
+    the M2 dump (climate-tiles; P11 and P13 bind M2 rows from there)."""
+    try:
+        return any("m2" in e.get("dumps", []) for e in registry_upto(slice_id))
+    except GateError:
+        return False
+
+
+def budgets_rows(cfg, meas_map, meas_m0, meas_def, meas_off=None, m2=None):
     """tests/budgets.json rows, each keyed by row kind, map, modset, scale, toggles (and variant):
-    vanilla (M0), the default preset with Earth loaded (zero cost), and the first preset's map at
-    scales 1 to 6 with toggles on and off. No toggle exists before spawn-cities, so a scale's on and
-    off rows hold one measurement; the milestone that adds a toggle measures its off row."""
-    pname, mk, _ = first_preset(cfg)
+    vanilla (M0), the default preset with Earth loaded (zero cost), and every preset's map at
+    scales 1 to 6 with toggles on and off (olde-world-atlantic: every map, design section 9).
+    `meas_map` is {map key: {scale: programs}}; a flat {scale: programs} is the first preset's map
+    (europe-coast's shape). On a map no toggle lists, a scale's on and off rows hold one measurement;
+    on a map some toggle lists (waterways' canals: every map), the off row is `meas_off`'s, measured
+    with every toggle off. From climate-tiles `m2` = {"bab": programs, "map": {map: {scale: programs}},
+    "off": {...}} adds BAB (the M2 rows' comparator, U7) and every preset's map on M2 at scales 1 to 6
+    with toggles on and off, which P11, P13 and P14 bind."""
+    if meas_map and all(isinstance(k, int) for k in meas_map):
+        meas_map = {first_preset(cfg)[1]: meas_map}
+    tm = toggle_maps(cfg)
     common = {"seed": SEED, "size": 64}
     rows = [
         dict(common, row="vanilla", map=None, modset="M0", preset=None, scale=None, toggles="n/a", programs=meas_m0),
         dict(common, row="default", map=None, modset="M1", preset=None, scale=None, toggles="n/a", programs=meas_def),
     ]
-    for s in sorted(meas_map):
-        for tog in ("on", "off"):
-            rows.append(dict(common, row="map", map=mk, modset="M1", preset=pname, scale=s, toggles=tog,
-                             programs=meas_map[s]))
+    for key in cfg["preset_order"]:
+        p = cfg["presets"][key]
+        per = meas_map.get(p["map"]) or {}
+        off = (meas_off or {}).get(p["map"]) or {}
+        for s in sorted(per):
+            if p["map"] in tm and s not in off:
+                raise GateError(f"{p['map']} scale {s}: a toggle lists the map, and its toggles-off row was not measured")
+            for tog in ("on", "off"):
+                rows.append(dict(common, row="map", map=p["map"], modset="M1", preset=p["name"], scale=s, toggles=tog,
+                                 programs=off[s] if tog == "off" and p["map"] in tm else per[s]))
+    if m2 is not None:
+        rows.append(dict(common, row="bab", map=None, modset="BAB", preset=None, scale=None, toggles="n/a",
+                         programs=m2["bab"]))
+        for key in cfg["preset_order"]:
+            p = cfg["presets"][key]
+            per = (m2.get("map") or {}).get(p["map"]) or {}
+            off = (m2.get("off") or {}).get(p["map"]) or {}
+            for s in sorted(per):
+                if p["map"] in tm and s not in off:
+                    raise GateError(f"M2 {p['map']} scale {s}: a toggle lists the map, and its toggles-off row was not "
+                                    f"measured")
+                for tog in ("on", "off"):
+                    rows.append(dict(common, row="map", map=p["map"], modset="M2", preset=p["name"], scale=s,
+                                     toggles=tog, programs=off[s] if tog == "off" and p["map"] in tm else per[s]))
     return rows
+
+
+def budget_maps(cfg):
+    """The maps whose rows T15a and the baseline measure: the first preset's (europe-coast) and, from
+    olde-world-atlantic on, every preset's map (design section 5, step 4: every map)."""
+    if any(s["id"] == "olde-world-atlantic" for s in REGISTRY):
+        return list(dict.fromkeys(cfg["presets"][k]["map"] for k in cfg["preset_order"]))
+    return [first_preset(cfg)[1]]
 
 
 def _row_id(r):
     return (r.get("row"), r.get("map"), r.get("modset"), r.get("scale"), r.get("toggles"), r.get("variant"))
 
 
-def check_t15a(rows, sec6, main_rows, through, pending=None):
+def check_t15a(rows, sec6, main_rows, through, pending=None, exact=False):
     """T15a against section 6 (parsed from main's plan): every 6.2 complexity limit in force, bound
     by its measure's program, modset and maps (P10 and P12 on M1 rows, P11 and P13 on M2 rows, P14 on
     every Earth row; P12 and P13 per map by the row's map); no Earth row equal to its comparator
     (G5); and growth over main's same row (or, for a row main lacks, its comparator's) within the
     6.3 allocation of the pending milestones (`pending`, default the gating milestone alone; a group's gate
     passes every unlanded milestone up to it: batch_alloc_for) for the row's modset and map ("cap": only
-    the limits bound it; "none" and a cell that names nothing give 0)."""
+    the limits bound it; "none" and a cell that names nothing give 0). With `exact` (the gating
+    milestone keeps generation unchanged: zero_change_scope) every Earth row also equals main's same
+    row in all three programs, so a decrease fails as a growth does, and a row main lacks fails
+    (T15: unchanged complexity)."""
     fails = []
     pending = [through] if pending is None else list(pending)
     missing = [s for s in pending if s not in (sec6.get("allocations") or {}) and
@@ -3673,6 +4112,17 @@ def check_t15a(rows, sec6, main_rows, through, pending=None):
                 fails.append(f"{name}: {pid} holds no value for map {r.get('map')!r}")
             elif cx[sc["program"]] > cap:
                 fails.append(f"{name} {sc['program'].title()} {cx[sc['program']]} over {pid} {cap:g}")
+        base = next((m for m in main_rows if _row_id(m) == _row_id(r)), None)
+        if exact:
+            where = f"{name} scale {r.get('scale')} toggles {r.get('toggles')}"
+            if base is None:
+                fails.append(f"{where}: main records no such row, so {through}'s unchanged complexity cannot be "
+                             f"shown (T15)")
+            else:
+                main_cx = {k: v["complexity"] for k, v in (base.get("programs") or {}).items()}
+                if cx != main_cx:
+                    fails.append(f"{where} complexity {cx} differs from main's {main_cx}: {through} changes no "
+                                 f"program (T15)")
         comp = comps.get(COMPARATOR.get(r.get("modset")))
         if comp is None:
             fails.append(f"{name}: no {COMPARATOR.get(r.get('modset'), 'comparator')} row to compare with (U7)")
@@ -3680,7 +4130,6 @@ def check_t15a(rows, sec6, main_rows, through, pending=None):
         comp_cx = {k: v["complexity"] for k, v in comp["programs"].items()}
         if cx == comp_cx:
             fails.append(f"{name} equals its comparator's {comp_cx}: the preset was not applied (G5)")
-        base = next((m for m in main_rows if _row_id(m) == _row_id(r)), None)
         base_cx = {k: v["complexity"] for k, v in (base or comp)["programs"].items()}
         for prog in ("tile", "entity", "cliff"):
             a = batch_alloc_for(sec6, pending, prog, r.get("modset"), r.get("map"), r.get("variant"))
@@ -3730,42 +4179,150 @@ def row_t15a_rows(ctx, mods, sec6, row, cache):
     to tests/budgets.json."""
     m0, m1 = ctx.shared["m0"], ctx.shared["m1"]
     cfg = mods.cfg
+    bmaps = budget_maps(cfg)
+    jobs = budget_jobs(cfg, bmaps)
+    with_m2 = budget_m2(ctx.slice)
+    m2, bab = (ctx.shared.get("m2"), ctx.shared.get("bab")) if with_m2 else (None, None)
+    if with_m2 and (m2 is None or bab is None or ctx.shared.get("dump_m2") is None):
+        row.fails.append("the M2 rows need the M2 and BAB modsets and the M2 dump (row dumps failed)")
+        return
     key, newest = common_key(ctx, "t15a_rows", {"m1": mods.manifest(m1), "dump": ctx.shared.get("dump_m1_sha"),
-                                                  "scales": BUDGET_SCALES})
+                                                  "scales": BUDGET_SCALES, "maps": bmaps, "jobs": jobs,
+                                                  "m2": [mods.manifest(m2), mods.manifest(bab),
+                                                         ctx.shared.get("dump_m2_sha")] if with_m2 else None})
+    n_m1 = 2 + len(jobs)
 
     def live():
         out = [preview(ctx, m0, "cx-m0", 64, verbose=True).out, preview(ctx, m1, "cx-default", 64, verbose=True).out]
-        for s in BUDGET_SCALES:
-            out.append(preview(ctx, m1, f"cx-map-s{s}", 64, verbose=True, mgs=preset_mgs(ctx, cfg, s)).out)
+        for mk, s, off in jobs:
+            out.append(preview(ctx, m1, budget_label(bmaps, mk, s, off), 64, verbose=True,
+                               mgs=map_preset_mgs(ctx, cfg, mk, s, toggles_off=off)).out)
+        if with_m2:
+            out.append(preview(ctx, bab, "cx-bab", 64, verbose=True).out)
+            for mk, s, off in jobs:
+                out.append(preview(ctx, m2, budget_label_m2(mk, s, off), 64, verbose=True,
+                                   mgs=map_preset_mgs(ctx, cfg, mk, s, toggles_off=off, ab=True)).out)
         return out
 
     def derive(dirs):
         fails = []
         for d in dirs:
             fails += g1(d) + g3(d)
+        want = n_m1 + (1 + len(jobs) if with_m2 else 0)
+        if len(dirs) != want:
+            return {}, fails + [f"{len(dirs)} run directories, want {want}"], ""
         c0, cd = ctx_complexity(dirs[0]), ctx_complexity(dirs[1])
-        cmap = {s: ctx_complexity(d) for s, d in zip(BUDGET_SCALES, dirs[2:])}
-        cp = cmap[max(BUDGET_SCALES)]
-        rows = budgets_rows(mods.cfg, cmap, c0, cd)
+        cmaps, coff = {}, {}
+        for d, (mk, s, off) in zip(dirs[2:n_m1], jobs):
+            (coff if off else cmaps).setdefault(mk, {})[s] = ctx_complexity(d)
+        m2rows = None
+        if with_m2:
+            m2rows = {"bab": ctx_complexity(dirs[n_m1]), "map": {}, "off": {}}
+            for d, (mk, s, off) in zip(dirs[n_m1 + 1:], jobs):
+                m2rows["off" if off else "map"].setdefault(mk, {})[s] = ctx_complexity(d)
+            if {k: v.get("complexity") for k, v in m2rows["bab"].items()} == VANILLA:
+                fails.append("BAB's complexity is vanilla's: Alien Biomes did not load (G5)")
+        rows = budgets_rows(mods.cfg, cmaps, c0, cd, coff, m2=m2rows)
         pend = pending_slices(ctx.slice)
         if isinstance(sec6, Exception):
             fails.append(f"section 6 unreadable: {sec6}")
         else:
             main_rows, ref_fails = reference_budget_rows()
             fails += ref_fails
-            fails += check_t15a(rows, sec6, main_rows, ctx.slice, pend)
+            fails += check_t15a(rows, sec6, main_rows, ctx.slice, pend,
+                                exact=zero_change_scope(ctx.slice))
         work = json.loads(BUDGETS.read_text(encoding="utf-8")).get("rows", [])
         if work != rows:
             fails.append("tests/budgets.json differs from the gate's measurement: run 'python tools/earth_test.py "
                          "baseline' and commit it (rule 5)")
         enforced = sorted(k for k, v in (sec6["limits"] if isinstance(sec6, dict) else {}).items() if v.get("complexity"))
-        per = ", ".join(f"{s}: {cmap[s].get('tile', {}).get('complexity')}/{cmap[s].get('entity', {}).get('complexity')}/"
-                        f"{cmap[s].get('cliff', {}).get('complexity')}" for s in BUDGET_SCALES)
+        per = "; ".join(f"{mk} " + ", ".join(
+            f"{s}: {cm[s].get('tile', {}).get('complexity')}/{cm[s].get('entity', {}).get('complexity')}/"
+            f"{cm[s].get('cliff', {}).get('complexity')}" for s in BUDGET_SCALES) for mk, cm in cmaps.items())
+        same = "; every Earth row equal to main's (unchanged)" if zero_change_scope(ctx.slice) else ""
         return {"rows": rows}, fails, (f"map rows Tile/Entity/Cliff by scale {per}, within {'/'.join(enforced)} and "
                                        f"the 6.3 allocation of the pending slices {pend} over the landed rows or the "
-                                       f"comparator, not vanilla; equal to tests/budgets.json")
+                                       f"comparator, not vanilla; equal to tests/budgets.json{same}")
 
     cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+# -- unchanged generation (a milestone whose criterion keeps every program and preview as main's)
+
+def zero_change_scope(through, registry=None):
+    """True when the gating milestone `through` keeps generation unchanged (its registry entry's
+    `unchanged`: region-layer, whose layer nothing reads yet) and no registered milestone follows it: then
+    every recorded preview hash and every T15a row must equal main's (rule 5, compared with main's
+    copy). A milestone registered after it may change generation by design (its consumers), so from
+    then the comparison retires."""
+    reg = REGISTRY if registry is None else registry
+    ids = [s["id"] for s in reg]
+    if through not in ids:
+        raise GateError(f"unknown slice {through!r}; the runner's registry holds {ids}")
+    return bool(reg[ids.index(through)].get("unchanged")) and ids.index(through) == len(ids) - 1
+
+
+def preview_change_findings(work, main, keys, seeds):
+    """Rule 5's image comparison with main's copy for an unchanged milestone: every 256 px preview hash
+    tests/baselines/build-<build>.json records under previews_256, for each key (M0 and every budget
+    map's preset) at each seed, equals main's committed copy; a hash either copy lacks fails."""
+    if main is None:
+        return [f"git show main:tests/baselines/build-{GAME_BUILD}.json failed: no main copy to compare with"]
+    wp, mp = (work or {}).get("previews_256") or {}, (main or {}).get("previews_256") or {}
+    out = []
+    for k in keys:
+        for s in seeds:
+            a, b = (wp.get(k) or {}).get(str(s)), (mp.get(k) or {}).get(str(s))
+            if not a or not b:
+                who = "the working tree" if not a else "main"
+                out.append(f"{k} at seed {s}: {who} records no 256 px preview hash, so the preview cannot be shown "
+                           f"unchanged (run 'earth_test.py baseline')")
+            elif a != b:
+                out.append(f"{k} at seed {s}: the preview {a[:16]} differs from main's {b[:16]} (T13: the slice "
+                           f"changes no preview)")
+    return out
+
+
+def row_zero_change(ctx, mods, sec6, row, cache):
+    """T13 and T15 for a milestone that keeps generation unchanged (zero_change_scope; region-layer: with
+    no consumer the layer leaves every preview hash and every program's complexity as they were):
+    the 256 px preview hashes the working tree records (written by `baseline` from fresh runs; M0's
+    and the first preset's at seed 1000 are also tied to the gate's own runs by t13_zero_cost and
+    t13_preset_preview) for M0 and every map's preset at seeds 1000, 1002 and 1004 equal main's
+    committed copy; t15a_rows requires every Earth row's complexity equal to main's. Positive
+    controls on fixture records: one changed hash fails and a hash main lacks fails, while the
+    identical record passes."""
+    cfg = mods.cfg
+    if not zero_change_scope(ctx.slice):
+        later = [s["id"] for s in REGISTRY[[s["id"] for s in REGISTRY].index(ctx.slice) + 1:]]
+        row.detail = (f"not in force through {ctx.slice}: " +
+                      (f"the slices {later} registered after it change generation by design" if later else
+                       f"{ctx.slice} is not marked unchanged, so it may change generation"))
+        return
+    work = baseline_record()
+    main_text = git_show(f"main:tests/baselines/build-{GAME_BUILD}.json")
+    main = json.loads(main_text) if main_text else None
+    keys = ["M0"] + budget_maps(cfg)
+    pf = preview_change_findings(work, main, keys, SEEDS)
+    row.fails += pf
+    fx = {"previews_256": {k: {str(s): sha256_bytes(f"{k}:{s}".encode()) for s in SEEDS} for k in keys}}
+    k0, s0 = keys[-1], str(SEEDS[-1])
+    changed, lacking = json.loads(json.dumps(fx)), json.loads(json.dumps(fx))
+    changed["previews_256"][k0][s0] = "0" * 64
+    del lacking["previews_256"][k0][s0]
+    ctl = {"an identical record passes": not preview_change_findings(fx, fx, keys, SEEDS),
+           f"a record with {k0}'s hash at seed {s0} changed fails": bool(
+               preview_change_findings(changed, fx, keys, SEEDS)),
+           f"a main copy lacking {k0}'s hash at seed {s0} fails": bool(
+               preview_change_findings(fx, lacking, keys, SEEDS))}
+    for k, ok in ctl.items():
+        if not ok:
+            row.fails.append(f"positive control did not behave: {k}")
+    n = len(keys) * len(SEEDS)
+    row.detail = (f"{ctx.slice} keeps generation unchanged: {n - len(pf)} of the {n} recorded 256 px preview "
+                  f"hashes of {keys} at seeds {list(SEEDS)} equal main's copy of tests/baselines/build-{GAME_BUILD}"
+                  f".json; t15a_rows holds every Earth row equal to main's; {sum(ctl.values())} of {len(ctl)} controls "
+                  f"behaved")
 
 
 ISOLATION_SCALES = (1, 6)
@@ -3781,9 +4338,11 @@ def row_isolation_a(ctx, mods, sec6, row, cache):
     # each preset at its startup scale (6) through --preset, and at scale 1 through the preset's full
     # MGS file at that scale (the preset route's equal, T13): the plan's scales 1 and 6 on M1
     variants = []
-    for pn in earth_presets(cfg):
+    scale1_maps = set(budget_maps(cfg))     # the first preset's map; from olde-world-atlantic on, every map
+    for key_ in cfg["preset_order"]:
+        pn, mk_ = cfg["presets"][key_]["name"], cfg["presets"][key_]["map"]
         variants.append((pn, None))
-        if pn == first_preset(cfg)[0]:
+        if mk_ in scale1_maps:
             variants.append((pn, ISOLATION_SCALES[0]))
     presets = [f"{pn} scale {s or cfg['settings']['scale']['default_value']}" for pn, s in variants]
     twin_src = stage_twin(ctx, cfg)
@@ -3802,7 +4361,8 @@ def row_isolation_a(ctx, mods, sec6, row, cache):
                 dirs += [preview(ctx, m1, f"iso-real-{i}", 64, preset=pn, verbose=True).out,
                          preview(ctx, m1c, f"iso-twin-{i}", 64, preset=pn, verbose=True).out]
             else:
-                mgs = preset_mgs(ctx, cfg, s)
+                mk_ = next(cfg["presets"][k]["map"] for k in cfg["preset_order"] if cfg["presets"][k]["name"] == pn)
+                mgs = map_preset_mgs(ctx, cfg, mk_, s)
                 dirs += [preview(ctx, m1, f"iso-real-{i}", 64, mgs=mgs, verbose=True).out,
                          preview(ctx, m1c, f"iso-twin-{i}", 64, mgs=mgs, verbose=True).out]
         dirs += [preview(ctx, m1f, "iso-fixture-real", 64, preset=LEAK_FIXTURE, verbose=True).out,
@@ -3904,14 +4464,30 @@ def first_preset(cfg):
     return p["name"], p["map"], geo
 
 
-def expected_pen(cfg, map_key, scale, city=None):
+def expected_pen(cfg, map_key, scale, city=None, ab=False):
     """The property_expression_names a map's preset must bake at a startup scale (and, for a version
     with a spawn record, a spawn-city setting value, default the setting's default): its newest
     geography version's, from config.lua's own tables (tnconfig.baked_names mirrors presets.lua,
     vanilla's water-slider readers at their default-slider values included, D15; from spawn-cities
     also the distance redirect, the map's city number and the spawn lake and bias keys, with the
-    version's city offset names pointing at the city fold)."""
-    return tnconfig.baked_names(cfg, map_key, tnconfig.geography(cfg)[map_key], scale, city)
+    version's city offset names pointing at the city fold; from climate-tiles the climate redirects
+    and the marsh keys, ab=True for the M2 dump, where the Alien Biomes climate variant and the
+    AB-only keys apply; from trees-forests the tree keys, tf_preset_keys; from ridges the cliff
+    properties, the map's ridge keys and every Earth ore's probability key; from resources-enemies the
+    ore keys at the next probability wrappers, the richness and enemy wrappers and the map's offshore
+    stamp key, which follows the hotspots toggle)."""
+    return tnconfig.baked_names(cfg, map_key, tnconfig.geography(cfg)[map_key], scale, city, ab=ab)
+
+
+def pin_scale(cfg, map_key, pen, scale):
+    """A dumped preset's names at another startup scale, as presets.lua bakes them there: the scale
+    key and, from waterways, the ford key at the map's ford set for that scale."""
+    pen[cfg["keys"]["scale"]] = int(scale)
+    sets = ((cfg.get("waterways") or {}).get("sets") or {}).get(map_key)
+    fk = (cfg.get("keys") or {}).get("fords")
+    if sets and fk:
+        pen[fk] = sets["fords"][int(scale) - 1]
+    return pen
 
 
 def runner_offset(cfg, map_key, scale, seed=SEED, city=None):
@@ -3948,6 +4524,16 @@ def coast_only_pen(cfg, map_key, pen):
 NO_CLIFFS = {"name": "cliff", "richness": 0}
 
 
+def ridges_off(cfg, pen):
+    """A pen with the ridges toggle off (milestone ridges): ridge cliffs never read cliff richness, so a
+    T1 preview without cliffs also turns the ridges off (0 cliffs; S5). A pen without the toggle, or a
+    config before ridges, is returned as it is."""
+    sw = (cfg.get("toggles") or {}).get("ridges")
+    if not sw or sw["preset_key"] not in pen:
+        return pen
+    return dict(pen, **{sw["preset_key"]: sw["off"]})
+
+
 def write_mgs(ctx, label, pen):
     """A --map-gen-settings file holding only property_expression_names; its keys come from the dumped
     preset (U10: never combined with --preset)."""
@@ -3963,24 +4549,34 @@ def preset_mgs(ctx, cfg, scale=None, cliffs=True, coast_only=False):
     `scale` (the preset made at that startup scale bakes exactly that; T13 proves the two routes
     equal). cliffs=False adds cliff richness 0 for the T1 previews: a preview draws cliffs over the
     tiles, water included, and cliffs never change a tile. coast_only=True writes coast_only_pen's
-    test-only world (T1, T2 and T3 in europe-coast's frame)."""
+    test-only world (T1, T2 and T3 in europe-coast's frame). From resources-enemies the file carries the
+    preset's autoplace controls too (D20's frequency 0.75; preset_controls), so the MGS route and the
+    --preset route place the same ore (T13)."""
     pname, mk, _ = first_preset(cfg)
     pen = dict(preset_pen(ctx.shared["dump_m1"], pname))
     if not pen:
         raise GateError(f"the M1 dump holds no preset {pname}")
     if scale is not None:
-        pen[cfg["keys"]["scale"]] = int(scale)
+        pin_scale(cfg, mk, pen, scale)
     label = f"preset-s{pen[cfg['keys']['scale']]}"
     if coast_only:
         pen = coast_only_pen(cfg, mk, pen)
         label += "-coast"
-    if cliffs:
+    controls = preset_controls(ctx.shared["dump_m1"], pname)
+    if cliffs and not controls:
         return write_mgs(ctx, label, pen)
+    body = {"property_expression_names": pen}
+    if controls:
+        body["autoplace_controls"] = controls
     d = ctx.out / "mgs"
     d.mkdir(parents=True, exist_ok=True)
-    f = d / f"{label}-nocliffs.json"
-    f.write_text(json.dumps({"property_expression_names": pen, "cliff_settings": NO_CLIFFS}, indent=1, sort_keys=True),
-                 encoding="utf-8")
+    if cliffs:
+        f = d / f"{label}.json"
+    else:
+        body["property_expression_names"] = ridges_off(cfg, pen)
+        body["cliff_settings"] = NO_CLIFFS
+        f = d / f"{label}-nocliffs.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
     return f
 
 
@@ -4004,6 +4600,17 @@ def blocking_water_colours(dump):
     if not out:
         raise GateError("the dump holds no placeable player-blocking water tile")
     return out
+
+
+def ford_colours(dump, cfg):
+    """The ford tile's map colour (waterways: water-shallow through the gated hook). A Map type world
+    never places it (its gate is off), so a water mask compared between a Map type world and a preset
+    world counts it as water on both sides."""
+    F = (cfg.get("hooks") or {}).get("fords") or {}
+    mc = (((dump or {}).get("tile") or {}).get(F.get("tile")) or {}).get("map_color") if F else None
+    if mc is None:
+        return []
+    return [(mc.get("r", 0), mc.get("g", 0), mc.get("b", 0)) if isinstance(mc, dict) else tuple(mc[:3])]
 
 
 def lane_instance(ctx, i):
@@ -4299,12 +4906,16 @@ def preview_plan(mref, scale, max_size=PREVIEW_MAX):
     return size, [(cx, cy) for cy in centres(y0, H) for cx in centres(x0, W)]
 
 
-def preview_args(inst, modset, size, seed=SEED, mgs=None, offset=None, preset=None, verbose=False):
+def preview_args(inst, modset, size, seed=SEED, mgs=None, offset=None, preset=None, verbose=False, quantities=None):
+    """fh.py preview arguments; `quantities` (prototype names) asks fh.py for --report-quantities, which
+    it parses into run.json's quantities by seed (the only way a preview reports them)."""
     a = ["preview", "--instance", inst, "--modset", modset, "--seed", str(seed), "--size", str(size)]
     if offset is not None:
         a.append(f"--offset={offset[0]},{offset[1]}")
     if mgs is not None:
         a += ["--map-gen-settings", mgs]
+    if quantities:
+        a += ["--report-quantities", ",".join(quantities)]
     extra = (["--verbose"] if verbose else []) + (["--preset", preset] if preset else [])
     return a + (["--"] + extra if extra else [])
 
@@ -4320,10 +4931,11 @@ def cliff_colours(dump):
     return out
 
 
-def previews_land(mref, runs, scale, colours, hidden=()):
+def previews_land(mref, runs, scale, colours, hidden=(), seed=SEED):
     """(land, covered, hidden) from preview runs [(run dir, (offset x, offset y))]: each preview pixel
     is a tile, water where its colour is a player-blocking water tile's (t1_metrics' preview mode).
-    A pixel drawn in a `hidden` colour (cliffs) shows no tile: it is left uncovered and counted."""
+    A pixel drawn in a `hidden` colour (cliffs) shows no tile: it is left uncovered and counted. A run
+    rendered with --seed-max holds one image per seed; `seed` picks its image."""
     import numpy as np
     from PIL import Image
     import t1_metrics as t1
@@ -4333,7 +4945,7 @@ def previews_land(mref, runs, scale, colours, hidden=()):
     C = np.zeros((mref.H, mref.W), bool)
     Hd = np.zeros((mref.H, mref.W), bool)
     for d, off in runs:
-        imgs = sorted(Path(d).glob(f"{SEED}.png")) or sorted(Path(d).glob("*.png"))
+        imgs = sorted(Path(d).glob(f"{seed}.png")) or sorted(Path(d).glob("*.png"))
         if len(imgs) != 1:
             raise GateError(f"{d}: {len(imgs)} preview images (G4)")
         lp = t1.preview_land(imgs[0], ws)
@@ -4348,14 +4960,38 @@ def previews_land(mref, runs, scale, colours, hidden=()):
     return L, C, Hd
 
 
-def t1_eval(mref, L, C):
-    """T1 on one land decision (thin water masked; the D15 lake footprints and D16 corridors are empty
-    until spawn-cities and waterways): agreement, IoU, coast deviation, islands per size bucket
-    (4- and 8-connected), and the thin water that became land, as pixels and reaches."""
+_CORRIDORS = {}
+
+
+def corridor_mask(map_key, scale):
+    """T1's D16 corridor mask of a map at a scale (U13; waterways on): the reference pixels whose centre
+    tile lies inside a carve, from the committed waterway manifest (tools/build_waterways.py, which the
+    ww_emit row holds byte-identical to a fresh emission). None before waterways."""
+    k = (map_key, int(scale))
+    if k not in _CORRIDORS:
+        import build_waterways
+        cfg = tnconfig.load()
+        _CORRIDORS[k] = build_waterways.mask_from_manifest(cfg, map_key, int(scale)) if cfg.get("waterways") else None
+    return _CORRIDORS[k]
+
+
+def t1_eval(mref, L, C, scale=None):
+    """T1 on one land decision, masked (U13): thin water, and from waterways the D16 corridors of the
+    map at `scale` (the D15 lake footprints are empty until spawn-cities): agreement, IoU, coast
+    deviation, islands per size bucket (4- and 8-connected), and the thin water that became land, as
+    pixels and reaches. covered_px stays the pixels the grid or previews covered; the corridor pixels
+    left out of the evaluation are counted under masked_px."""
     import numpy as np
     import t1_metrics as t1
+    corr = corridor_mask(mref.key, scale) if (scale is not None and mref.key) else None
+    covered = int(C.sum())
+    n_corr = 0
+    if corr is not None:
+        n_corr = int((C & corr & ~mref.thin).sum())
+        C = C & ~corr
     res, _ = t1.crop_and_evaluate(mref, L.copy(), C, t1.DEFAULT_CAP, 4)
     res8, _ = t1.crop_and_evaluate(mref, L.copy(), C, t1.DEFAULT_CAP, 8)
+    res["covered_px"] = covered
     thin = L & C & mref.thin
     R = t1.flat_runs(thin, 8)
     area = np.bincount(R["comp"], weights=R["e"] - R["s"] + 1, minlength=R["n"]) if R["n"] else np.zeros(0)
@@ -4364,10 +5000,12 @@ def t1_eval(mref, L, C):
     return {"agreement": res["pixel_agreement"], "iou": res["land_iou"], "p99_px": cd["p99"], "max_px": cd["max"],
             "mean_px": cd["mean"], "misclassified": cd["misclassified"], "covered_px": res["covered_px"],
             "evaluated_px": res["evaluated_px"],
-            "masked_px": {"thin_water": res["excluded_thin_px"], "lake_footprints_d15": 0, "corridors_d16": 0},
+            "masked_px": {"thin_water": res["excluded_thin_px"], "lake_footprints_d15": 0, "corridors_d16": n_corr},
+            "masked_share": round((res["excluded_thin_px"] + n_corr) / float(mref.W * mref.H), 6),
             "islands_conn4": {k: [v["present"], v["islands"]] for k, v in b4.items()},
             "islands_conn8": {k: [v["present"], v["islands"]] for k, v in b8.items()},
             "islands_65_missing": [b4["65+"]["missing"], b8["65+"]["missing"]],
+            "islands_65_merged": [b4["65+"].get("merged", 0), b8["65+"].get("merged", 0)],
             "thin_water_became_land": {"pixels": int(thin.sum()), "reaches": int(R["n"]),
                                        "reaches_20_px_plus": int((area >= 20).sum())}}
 
@@ -4392,13 +5030,30 @@ def entry_reads(dump, pen, start):
     return seen
 
 
+def stamp_fallbacks(cfg, map_key, version):
+    """The Map type fallbacks a version's offshore stamp adds to what its entry reads (resources-enemies;
+    design notes 2026-10-29 15:10 and 23:30): the stamp body sits on the layer chain (config.lua
+    layer_chain_geo), where the region layer's hotspot discs are, so through the stamp key the entry also
+    reads that chain version's frozen fallbacks (its city offset constants). The version's preset bakes
+    none of them, so a Map type pick and a preset world read the same registered body. Only frozen ones
+    count: a setting-mirroring name the stamp reaches must be one of the version's own fallbacks, which
+    its Map type record keeps (scripts/guards.lua). Empty for a version without a stamp."""
+    if not version.get("fields"):
+        return []
+    lg = (cfg.get("layer_chain_geo") or {}).get(map_key)
+    layer = next((v for v in tnconfig.geography_versions(cfg)[map_key] if v["geo_id"] == lg), None)
+    own = {e["name"] for e in version["fallbacks"]}
+    return [e for e in (layer or {}).get("fallbacks", []) if e.get("frozen") and e["name"] not in own]
+
+
 def row_ec_dump_facts(ctx, mods, sec6, row, cache):
     """T13 and T16 on the dumps (D2 amended; S13): the Map type entry carries intended_property
     "elevation", a [noise-expression] localised_name whose locale text is "<title>: <map>" and an
     order after vanilla's unordered entries and before Island's; no other Earth expression carries
     intended_property; the preset's elevation names the entry; every per-save name the entry reads
-    has a prototype fallback equal to what the preset bakes, at default settings and at T11's
-    settings B, and so does every older version's entry, against what its own version's preset
+    has a prototype fallback equal to what the preset bakes (a layer chain fallback an offshore stamp
+    reads, stamp_fallbacks, may instead be left unbaked to its prototype), at default settings and at
+    T11's settings B, and so does every older version's entry, against what its own version's preset
     would bake (tnconfig.baked_names; older entries stay defined for the worlds that name them); no
     map-dependent value reaches the entry through tn_map or a shared key; the fallbacks, and only
     they, are exempt from tests/frozen.json; and the geography reads no vanilla named body (each
@@ -4452,20 +5107,26 @@ def row_ec_dump_facts(ctx, mods, sec6, row, cache):
     keys = set(cfg["preset_keys"])
     read_keys = sorted(n for n in reads if n in keys)
     fb = {e["name"]: e for e in g["fallbacks"]}
-    if sorted(fb) != read_keys:
+    # resources-enemies: a version with an offshore stamp also reads the layer chain's frozen offset
+    # fallbacks through its stamp key, which its preset leaves to their prototypes (stamp_fallbacks)
+    stamp_fb = {e["name"]: e for e in stamp_fallbacks(cfg, mk, g)}
+    if sorted(set(fb) | set(stamp_fb)) != read_keys:
+        plus = f", plus the layer chain's {sorted(stamp_fb)} its stamp reads" if stamp_fb else ""
         fails.append(f"the entry reads the per-save names {read_keys}; config.lua's fallbacks for its version are "
-                     f"{sorted(fb)}")
+                     f"{sorted(fb)}{plus}")
+    all_fb = dict(stamp_fb, **fb)
     shared_bad = [n for n in read_keys if n in (K["map"], K["geo"], K["land_coarse"]) or
-                  (n in fb and fb[n]["map_qualified"] and tn_static.map_suffixes(n, cfg["map_order"]) != [mk])]
+                  (n in all_fb and all_fb[n]["map_qualified"] and tn_static.map_suffixes(n, cfg["map_order"]) != [mk])]
     if shared_bad:
         fails.append(f"map-dependent values reach the entry through tn_map or a shared key: {shared_bad}")
     fmt = cfg["number_format"]
-    # every older version of the entry reads exactly its own version's fallbacks
+    # every older version of the entry reads exactly its own version's fallbacks (and, with a stamp, the
+    # layer chain's its stamp reads)
     older = tnconfig.geography_versions(cfg)[mk][:-1]
     for v in older:
         if v["entry"] in ne:
             got = sorted(n for n in entry_reads(d1, {}, v["entry"]) if n in keys)
-            want = sorted(e["name"] for e in v["fallbacks"])
+            want = sorted({e["name"] for e in v["fallbacks"]} | {e["name"] for e in stamp_fallbacks(cfg, mk, v)})
             if got != want:
                 fails.append(f"the older entry {v['entry']} reads the per-save names {got}; its version's fallbacks "
                              f"are {want}")
@@ -4482,13 +5143,16 @@ def row_ec_dump_facts(ctx, mods, sec6, row, cache):
                 bad.append(f"{label}: no prototype fallback {n}")
                 continue
             baked = p.get(n)
-            if baked is None or body.get("expression") != baked_text(baked):
+            # a layer chain fallback the stamp reads: unbaked, the preset world reads the same prototype
+            if not (n in stamp_fb and baked is None) and \
+                    (baked is None or body.get("expression") != baked_text(baked)):
                 bad.append(f"{label}: fallback {n} = {body.get('expression')!r}, the preset bakes {baked!r}")
             if body.get("local_expressions"):
                 bad.append(f"{label}: fallback {n} carries local expressions")
         if p.get(K["scale"]) != want_scale:
             bad.append(f"{label}: the preset bakes scale {p.get(K['scale'])}, want {want_scale}")
-        # an older version's fallbacks, valued as that version's own preset bakes them
+        # an older version's fallbacks, valued as that version's own preset bakes them (the layer chain's
+        # that a stamp reads among them)
         for v in older:
             vb = tnconfig.baked_names(cfg, mk, v, want_scale)
             for e in v["fallbacks"]:
@@ -4535,13 +5199,15 @@ def row_ec_dump_facts(ctx, mods, sec6, row, cache):
     if unpinned:
         fails.append(f"the entry reads {unpinned} through prototypes that tests/frozen.json does not register under a "
                      f"well-formed record: a later version could move every Map-type-only world made from it")
-    # the setting-mirroring fallbacks a Map-type-only world follows: the scale and, for a version with
-    # a spawn record, its map's city number (the spawn-city setting); nothing else follows a setting
-    follows = {K["scale"]} | ({g["city"]} if g.get("spawn") else set())
+    # the setting-mirroring fallbacks a Map-type-only world follows: the scale, for a version with a
+    # spawn record its map's city number (the spawn-city setting) and, for a version with an offshore
+    # stamp, its stamp key (the hotspots setting; design notes 2026-10-28 12:10), each with its own drift
+    # line (scripts/guards.lua); nothing else follows a setting
+    follows = {K["scale"]} | ({g["city"]} if g.get("spawn") else set()) | ({g["fields"]} if g.get("fields") else set())
     drifting = sorted(n for n in read_keys if n in exempt and n not in follows)
     if drifting:
-        fails.append(f"the entry reads the setting-mirroring fallbacks {drifting}: only the scale and its version's "
-                     f"city number follow a setting")
+        fails.append(f"the entry reads the setting-mirroring fallbacks {drifting}: only the scale, its version's "
+                     f"city number and its stamp key follow a setting")
     # every version of the entry stays defined; only the newest carries the Map type fields
     missing_versions = [n for n in g["entry_versions"] if n not in ne]
     if missing_versions:
@@ -4660,10 +5326,10 @@ def row_t1_t2_grids(ctx, mods, sec6, row, cache):
         if Hp.any():
             fails.append(f"{int(Hp.sum())} cliff pixels in the cliff-free preview: the cliff setting did not apply")
         for s in T1_SCALES_FG:
-            rec = t1_eval(mref, *grids[(SEED, s)])
+            rec = t1_eval(mref, *grids[(SEED, s)], scale=s)
             meas[f"grid_s{s}"] = rec
             fails += t1_fails(f"grid scale {s}", rec)
-        rec = t1_eval(mref, Lp, Cp)
+        rec = t1_eval(mref, Lp, Cp, scale=1)
         meas["preview_s1"] = rec
         fails += t1_fails("preview scale 1", rec)
         # T2: every seed's grid bits equal seed 1000's outside the masks
@@ -4744,6 +5410,13 @@ def far_points(mref, scale):
     return far, window, (mref.W * s, mref.H * s)
 
 
+def oracle_context(cfg, pen, map_key):
+    """The oracle's settings context of a preset's names (expect_when): each toggle that lists the map,
+    true where the preset bakes its on value (waterways: canals)."""
+    return {t["key"]: pen.get(t["preset_key"]) == t["on"] for t in tnconfig.toggles(cfg)
+            if map_key in (t.get("maps") or [])}
+
+
 def edge_switch(window, vals, far_name, floor):
     """(the outermost tile of the window's run inside the map, or None) for one edge: the window
     runs from inside to outside or the reverse; the tiles whose far body reads the floor are outside.
@@ -4758,7 +5431,7 @@ def edge_switch(window, vals, far_name, floor):
 
 def row_t3_oracle(ctx, mods, sec6, row, cache):
     """T3 (FG; scale 6): every oracle place's land or water expectation holds at expression level and
-    in its real tile (strait and canal rows stay null until waterways); probes 1, 100, 10,000 and
+    in its real tile under the preset's settings context (from waterways the strait, isthmus and canal rows are live, the canal rows by expect_when canals); probes 1, 100, 10,000 and
     100,000 tiles beyond each map edge read deep water (D15), at scale 6 and at every scale from the
     edge ring's (config.lua coast.edge_min_scale), and from 100 tiles out at every scale; at scales 1
     to 6 the far-field box switches exactly at the extent, measured from a window of tiles across
@@ -4890,13 +5563,15 @@ def row_t3_oracle(ctx, mods, sec6, row, cache):
             if s != 6:
                 continue
             ok = bad = 0
+            octx = oracle_context(cfg, preset_pen(ctx.shared["dump_m1"], first_preset(cfg)[0]), mk)
+            meas["oracle_context"] = octx
             m0 = point_values(read_dump(dirs[len(DETAIL_SCALES)], "t3"))
             water_places = differ = 0
             for pl in O["places"]:
                 t = tuple(oracle.place_tile(mref, pl, "6"))
                 v = vals.get(t, {})
                 for prop in ("land", "water"):
-                    want_v = pl["expect"].get(prop)
+                    want_v = oracle.effective_expect(pl, octx).get(prop)
                     spec = E.get(prop) or {}
                     if want_v is None or not spec.get("expr"):
                         continue
@@ -5250,7 +5925,7 @@ def row_maptype_route(ctx, mods, sec6, row, cache):
         a, p, z = (derive_preview(d) for d in dirs[:3])
         if not a["images"] or a["images"] == z["images"]:
             fails.append("the Map type preview equals M0's: the entry was not applied (G5)")
-        ws = t1.water_colour_set(blocking_water_colours(ctx.shared["dump_m1"]))
+        ws = t1.water_colour_set(blocking_water_colours(ctx.shared["dump_m1"]) + ford_colours(ctx.shared["dump_m1"], cfg))
         wa = ~t1.preview_land(Path(dirs[0]) / f"{SEED}.png", ws)
         wp = ~t1.preview_land(Path(dirs[1]) / f"{SEED}.png", ws)
         diff = int((wa != wp).sum())
@@ -5335,6 +6010,12765 @@ def row_t16_guard(ctx, mods, sec6, row, cache):
              f"the Map-type-only world with the name dropped")
 
     cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+# ================================================================================================ olde-world-atlantic
+
+# Milestone olde-world-atlantic (part 3, design section 9): Old World and Atlantic from their own fits, with
+# their presets, Map type entries, coarse land fields and budget rows. Its rows run on every map the
+# first preset leaves (the new maps), each through its own preset and its own coast view; the
+# europe-coast rows above stay Europe's. Every Earth name comes from config.lua through tnconfig.
+T1_BARS = BASELINES / "t1-bars.json"    # decision 10: a flipped map's recorded bar, with its design notes id
+DECISIONS_MD = REPO / "DECISIONS.md"    # the entries t1-bars.json's decision ids name
+CITIES_LUA = MOD / "prototypes" / "tables" / "cities.lua"     # the spawn-city tables (pure data)
+OWA_T1_SCALES = (1, 3, 6)               # T1 (SS): grid scales per map
+OWA_T2_SCALES = (1, 6)                  # T2 (SS): scales compared across the three seeds
+OWA_WINDOWS = 20                        # T1 (SS): preview windows per map at scale 1 on the densest coast
+OWA_WINDOW = 1024                       # their size in tiles (1 tile per pixel at scale 1)
+VIEW_SIZE = 256                         # the route parity and Map type previews (T13)
+VIEW_WATER = (0.15, 0.85)               # a coast view holds this share of reference water
+VIEW_REACH = 8192                       # tiles from the spawn the coast-view search covers
+FIT_TERMS_REF = 8192                    # design experiment 5: terms saved against 8,192
+COUNCIL_TILE_PER_KTERMS = 8200          # the review's estimate of Tile freed per 1,000 terms (recorded only)
+OWA_BLOCK_STEP = 2                      # chunks between candidate T15b block corners in the search
+OWA_BLOCK_REACH = 160                   # chunks from the spawn the T15b block search covers at scale 6
+OWA_WARM = {6: (-128, -80), 1: (-10, -7)}   # the warm-up chunk relative to the block corner (Europe's)
+
+
+_MREFS = {}
+_VIEWS = {}
+
+
+def mref_of(map_key):
+    """One earthgeo.MapRef per map per process: Atlantic's rasters are 102 M px, decoded once."""
+    import earthgeo as eg
+    if map_key not in _MREFS:
+        _MREFS[map_key] = eg.MapRef(map_key)
+    return _MREFS[map_key]
+
+
+def new_maps(cfg):
+    """The maps this milestone adds: every preset's map other than the first preset's (Europe's)."""
+    _, first, _ = first_preset(cfg)
+    out = []
+    for k in cfg["preset_order"]:
+        mk = cfg["presets"][k]["map"]
+        if mk != first and mk not in out:
+            out.append(mk)
+    if not out:
+        raise GateError("config.lua lists no preset beyond the first: olde-world-atlantic's rows would test nothing")
+    return out
+
+
+def map_preset(cfg, map_key):
+    """(preset name, geography) of the preset whose map is `map_key`: the map's newest geography
+    version, the one its preset names (tnconfig.geography)."""
+    for k in cfg["preset_order"]:
+        p = cfg["presets"][k]
+        if p["map"] == map_key:
+            g = tnconfig.geography(cfg).get(map_key)
+            if not g:
+                raise GateError(f"config.lua gives the preset {p['name']} no geography for {map_key}")
+            return p["name"], g
+    raise GateError(f"config.lua has no preset for the map {map_key}")
+
+
+def map_preset_mgs(ctx, cfg, map_key, scale=None, cliffs=True, toggles_off=False, ab=False):
+    """preset_mgs for the preset of `map_key`: that preset as the M1 dump (ab=True: the M2 dump, the
+    Alien Biomes variant) holds it, as a full MGS file, at its startup scale or at `scale`;
+    cliffs=False adds cliff richness 0 (T1 previews); toggles_off=True sets every toggle that lists
+    the map to its off value (T15a's off rows)."""
+    pname, _ = map_preset(cfg, map_key)
+    pen = dict(preset_pen(ctx.shared["dump_m2" if ab else "dump_m1"], pname))
+    if not pen:
+        raise GateError(f"the {'M2' if ab else 'M1'} dump holds no preset {pname}")
+    if scale is not None:
+        pin_scale(cfg, map_key, pen, scale)
+    if toggles_off:
+        for t in tnconfig.toggles(cfg):
+            if map_key in (t.get("maps") or []):
+                pen[t["preset_key"]] = t["off"]
+    body = {"property_expression_names": pen}
+    label = f"preset-{map_key}-s{pen[cfg['keys']['scale']]}" + ("-toggles-off" if toggles_off else "") + \
+        ("-m2" if ab else "")
+    if not cliffs:
+        body = {"property_expression_names": ridges_off(cfg, pen), "cliff_settings": NO_CLIFFS}
+        label += "-nocliffs"
+    controls = preset_controls(ctx.shared["dump_m1"], pname)
+    if controls:
+        body["autoplace_controls"] = controls
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"{label}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def map_maptype_mgs(ctx, cfg, map_key):
+    """S13's elevation-only MGS file for `map_key`: only elevation, set to the map's entry."""
+    _, g = map_preset(cfg, map_key)
+    return write_mgs(ctx, f"maptype-{map_key}-elevation-only", {cfg["keys"]["elevation"]: g["entry"]})
+
+
+def decisions_entries(text):
+    """{heading: [body, ...]} of the design notes: each '## ' line's text, stripped, and its lines up to
+    the next '## ' heading. A heading written twice holds two bodies, so a reader can refuse it."""
+    out, cur, buf = {}, None, []
+    for line in text.splitlines():
+        if line.startswith("## "):
+            if cur is not None:
+                out.setdefault(cur, []).append("\n".join(buf))
+            cur, buf = line[3:].strip(), []
+        elif cur is not None:
+            buf.append(line)
+    if cur is not None:
+        out.setdefault(cur, []).append("\n".join(buf))
+    return out
+
+
+def t1_bar_findings(doc, cfg, decisions_text):
+    """Decision 10 over tests/baselines/t1-bars.json's document, {"maps": {<map>: {bar, decision,
+    checkpoint}}} (pure, so owa_controls feeds it fixtures). Only a map whose T1 rows read the file
+    may hold a bar: the new maps (map_t1_bar); europe-coast's rows read T1_BAR, so a Europe bar would
+    be silently ignored. The bar is a number under T1_BAR; decision is the heading text of exactly one
+    the design notes entry, whose body names the map, cites its owa_t15b run directories
+    (owa-t15b-<map>-...), states the bar as the file writes it and names the best-fit checkpoint;
+    checkpoint is that best fit, which fit.json must ship (fit_findings), and the bar is valid only
+    for a map the flip rule fired for (flip_findings)."""
+    if not isinstance(doc, dict) or not isinstance(doc.get("maps", {}), dict):
+        return ['tests/baselines/t1-bars.json: want {"maps": {<map>: {bar, decision, checkpoint}}} (ruling 10)']
+    out = []
+    readers = new_maps(cfg)
+    entries = decisions_entries(decisions_text)
+    for mk, rec in doc.get("maps", {}).items():
+        where = f"tests/baselines/t1-bars.json {mk}"
+        if mk not in readers:
+            out.append(f"{where}: only a map whose T1 rows read this file may hold a bar ({readers}); "
+                       f"europe-coast's rows read T1_BAR, so this bar would be ignored")
+            continue
+        if not isinstance(rec, dict) or set(rec) != {"bar", "decision", "checkpoint"}:
+            out.append(f"{where}: want exactly {{bar, decision, checkpoint}} (ruling 10)")
+            continue
+        bar, dec, cp = rec["bar"], rec["decision"], rec["checkpoint"]
+        if isinstance(bar, bool) or not isinstance(bar, (int, float)) or not 0 < bar < T1_BAR:
+            out.append(f"{where}: bar {bar!r} is not a number under T1-a's {T1_BAR} (a flipped map's best fit "
+                       f"lies under it)")
+        if not isinstance(cp, str) or not cp:
+            out.append(f"{where}: checkpoint {cp!r} names no best fit")
+        bodies = entries.get(dec) if isinstance(dec, str) else None
+        if not bodies:
+            out.append(f"{where}: decision {dec!r} is no DECISIONS.md heading ('## <decision>')")
+            continue
+        if len(bodies) != 1:
+            out.append(f"{where}: decision {dec!r} heads {len(bodies)} DECISIONS.md entries")
+            continue
+        body, missing = bodies[0], []
+        if mk not in body and cfg["maps"][mk]["display"] not in body:
+            missing.append("the map")
+        if f"owa-t15b-{mk}-" not in body:
+            missing.append(f"its owa_t15b run directories (owa-t15b-{mk}-...)")
+        if isinstance(bar, (int, float)) and not isinstance(bar, bool) and str(bar) not in body:
+            missing.append(f"the bar {bar}")
+        if isinstance(cp, str) and cp and cp not in body:
+            missing.append(f"the best fit {cp}")
+        if missing:
+            out.append(f"{where}: DECISIONS.md '{dec}' does not name {', '.join(missing)}")
+    return out
+
+
+def t1_bars(cfg=None):
+    """{map key: (bar, design notes heading, best-fit checkpoint)} of the maps the flip rule fired for
+, from tests/baselines/t1-bars.json, refused with every problem t1_bar_findings names;
+    every other map's bar is T1_BAR."""
+    if not T1_BARS.exists():
+        return {}
+    doc = json.loads(T1_BARS.read_text(encoding="utf-8"))
+    fails = t1_bar_findings(doc, cfg or tnconfig.load(), DECISIONS_MD.read_text(encoding="utf-8"))
+    if fails:
+        raise GateError("; ".join(fails))
+    return {mk: (float(r["bar"]), r["decision"], r["checkpoint"]) for mk, r in doc["maps"].items()}
+
+
+def flip_findings(map_key, fired, bars, limit=None):
+    """Decision 10 both ways (pure): a map the flip rule fired for (`fired`, the scales whose 16 LP
+    ratio exceeds `limit`) holds a bar in t1-bars.json, and a bar there belongs only to such a map,
+    so no row lowers T1-a for a map whose timing never flipped."""
+    out = []
+    if fired and map_key not in bars:
+        out.append(f"{map_key}: the flip rule fires (16 LP ratio over {limit} at scales {fired}) and "
+                   f"tests/baselines/t1-bars.json holds no bar for it: record the DECISIONS entry and ship the "
+                   f"runner-up fit (ruling 10)")
+    if not fired and map_key in bars:
+        out.append(f"{map_key}: tests/baselines/t1-bars.json holds a bar ({bars[map_key][0]}) but the flip rule did "
+                   f"not fire: only a flipped map holds one (ruling 10)")
+    return out
+
+
+def map_t1_bar(map_key):
+    return t1_bars().get(map_key, (T1_BAR, None, None))[0]
+
+
+def tile_pixels(mref, t0, n, scale, origin_px):
+    """The reference pixel index each of n tiles from tile t0 samples at an integer scale under the
+    floor convention (pixel c covers tiles s (c - r) to s (c - r) + s - 1), r the map's radius;
+    out-of-raster indices are returned as they are and masked by the caller."""
+    import numpy as np
+    return np.floor_divide(np.arange(t0, t0 + n), int(scale)) + origin_px
+
+
+def view_water(mref, gx0, gy0, scale, size):
+    """The reference water share (thin water counted as land, as the fit fills it) of the size x size
+    tiles from geo tile (gx0, gy0), or None where they leave the raster."""
+    import numpy as np
+    cols = tile_pixels(mref, gx0, size, scale, mref.wr)
+    rows = tile_pixels(mref, gy0, size, scale, mref.hr)
+    if cols[0] < 0 or rows[0] < 0 or cols[-1] >= mref.W or rows[-1] >= mref.H:
+        return None
+    sub = np.ix_(rows, cols)
+    return 1.0 - float((mref.land[sub] | mref.thin[sub]).mean())
+
+
+def map_offset(cfg, map_key, scale, seed=SEED):
+    """The spawn offset in tiles of the runner's preset world of a map at `scale` and `seed`, made at
+    the default settings: world = geo - offset (S7). While the map's city offset is baked as numbers
+    (0 until spawn-cities' fold), those numbers; once it names the fold, spawn-cities' runner_offset
+    (the float32 fold of the default city), and a GateError while this runner lacks it, so no view
+    or timed block is placed in the wrong frame."""
+    _, g = map_preset(cfg, map_key)
+    off = g["city_offset"]
+    if isinstance(off, list) and len(off) == 2 and all(isinstance(v, (int, float)) and not isinstance(v, bool)
+                                                       for v in off):
+        return int(off[0]), int(off[1])
+    ro = globals().get("runner_offset")
+    if not callable(ro):
+        raise GateError(f"{map_key}: the city offset names the fold {off}, and this runner has no runner_offset "
+                        f"(spawn-cities) to place the map's views and timed blocks")
+    ox, oy = ro(cfg, map_key, scale, seed)
+    return int(ox), int(oy)
+
+
+def t1_frame_mgs(ctx, cfg, map_key, scale=None, cliffs=True):
+    """The MGS file of the world T1, T2 and V1 score a new map in: the geo frame, world tile = geo
+    tile, where the grids (grid_spec), the coast windows (coast_windows) and their band probes sit.
+    The map's own preset while its city offset is baked 0; once the offset names the city fold,
+    spawn-cities' coast-only world (coast_only_pen: offset 0, the spawn lake, inland lakes and land
+    guarantee neutral), as europe-coast's T1 rows use from spawn-cities, and a GateError while this
+    runner lacks it."""
+    path = map_preset_mgs(ctx, cfg, map_key, scale, cliffs)
+    _, g = map_preset(cfg, map_key)
+    if g["city_offset"] == [0, 0]:
+        return path
+    cop = globals().get("coast_only_pen")
+    if not callable(cop):
+        raise GateError(f"{map_key}: the city offset is {g['city_offset']}, so the preset world is not T1's geo frame, "
+                        f"and this runner has no coast_only_pen (spawn-cities) to score the coast in")
+    body = json.loads(path.read_text(encoding="utf-8"))
+    body["property_expression_names"] = cop(cfg, map_key, body["property_expression_names"])
+    out = path.with_name(f"{path.stem}-coast-only.json")
+    out.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return out
+
+
+def map_view(cfg, map_key, scale=None, size=VIEW_SIZE):
+    """((x, y), water share): the preview offset (multiples of 32, so fh.py's snap keeps it) nearest
+    the spawn whose window holds a coast, between VIEW_WATER's shares of reference water, so a water
+    mask compares water as well as land (the spawn's own window is all land on Atlantic and Old
+    World). A preview centred at (x, y) shows world tiles x - size / 2 to x + size / 2 - 1; world
+    tiles are geo tiles minus the spawn offset of the runner's preset world at that scale
+    (map_offset: 0 until the spawn-city fold moves it, then spawn-cities' runner offset)."""
+    import math as _m
+    s = int(scale or cfg["settings"]["scale"]["default_value"])
+    ox, oy = map_offset(cfg, map_key, s)
+    memo = (map_key, s, size, ox, oy)
+    if memo in _VIEWS:
+        return _VIEWS[memo]
+    mref = mref_of(map_key)
+    filled = None
+    best = None
+    for r in range(0, VIEW_REACH // 32 + 1):
+        if best is not None and r > _m.sqrt(best[0][0]):
+            break                       # ring r lies at least r steps out: no closer view remains
+        for i in range(-r, r + 1):
+            for j in range(-r, r + 1):
+                if max(abs(i), abs(j)) != r:
+                    continue
+                gx0, gy0 = i * 32 - size // 2 + ox, j * 32 - size // 2 + oy
+                # a pre-screen on the window's own pixels skips all-land and all-water windows
+                c0, r0 = gx0 // s + mref.wr, gy0 // s + mref.hr
+                c1, r1 = (gx0 + size - 1) // s + mref.wr + 1, (gy0 + size - 1) // s + mref.hr + 1
+                if c0 < 0 or r0 < 0 or c1 > mref.W or r1 > mref.H:
+                    continue
+                if filled is None:
+                    filled = mref.land | mref.thin
+                rough = 1.0 - float(filled[r0:r1, c0:c1].mean())
+                if not (VIEW_WATER[0] - 0.05 <= rough <= VIEW_WATER[1] + 0.05):
+                    continue
+                w = view_water(mref, gx0, gy0, s, size)
+                if w is not None and VIEW_WATER[0] <= w <= VIEW_WATER[1]:
+                    cand = ((i * i + j * j, i, j), (i * 32, j * 32), round(w, 4))
+                    if best is None or cand[0] < best[0]:
+                        best = cand
+    if best is None:
+        raise GateError(f"{map_key}: no {size} px window within {VIEW_REACH} tiles of the spawn holds a coast")
+    _VIEWS[memo] = (best[1], best[2])
+    return _VIEWS[memo]
+
+
+def city_slug(name):
+    """A spawn-city setting value: the city's name in lower case, every other run of characters a
+    hyphen."""
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def city_dropdown_findings(cfg, maps):
+    """T16: each map's spawn-city dropdown is random plus EarthMaps' list (data-src/earthmaps/<map>.json
+    cities.list) minus APPROVALS 12's removals (approvals-data.json cities.<map>.removed: none on the
+    new maps), in the approvals' kept order, default random; values are the cities' slugs."""
+    appr = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(encoding="utf-8"))
+    out = []
+    for mk in maps:
+        s = (cfg.get("settings") or {}).get(f"spawn_city_{mk}")
+        if not s:
+            out.append(f"config.lua defines no spawn-city setting spawn_city_{mk} (APPROVALS 1a)")
+            continue
+        ref = json.loads((REPO / "data-src" / "earthmaps" / f"{mk}.json").read_text(encoding="utf-8"))
+        a = appr["cities"][mk]
+        removed = set(a.get("removed") or [])
+        em = [c["full_name"] for c in ref["cities"]["list"]]
+        if sorted(c for c in em if c not in removed) != sorted(a["kept"]):
+            out.append(f"{mk}: the approvals' kept cities differ from EarthMaps' list minus the removals")
+        if a.get("dropdown") != ["random"] + list(a["kept"]):
+            out.append(f"{mk}: approvals-data.json's dropdown is not random plus the kept cities")
+        want = ["random"] + [city_slug(full.split(",")[-1].strip()) for full in a["kept"]]
+        if s.get("allowed_values") != want:
+            out.append(f"{mk}: the spawn-city dropdown {s.get('allowed_values', [])[:4]}... differs from random plus "
+                       f"the {len(want) - 1} kept cities {want[:4]}...")
+        if s.get("default_value") != "random":
+            out.append(f"{mk}: the spawn-city default is {s.get('default_value')!r}, want random (APPROVALS 1a)")
+    return out
+
+
+CITY_FOLD_FIELDS = ("city_setting", "city", "city_index")    # spawn-cities' fold fields of a geography
+
+
+def city_fold(cfg, map_key):
+    """The map's geography when it carries spawn-cities' city fold (`city_setting`, its spawn-city
+    setting; `city`, the per-save city number its preset bakes; `city_index`, the resolved index
+    control reads back at (0, 0)), else None. Every city-dependent check of the new maps (T7, T11's
+    city flip, T13's read-back city index) fails closed on None."""
+    g = tnconfig.geography(cfg).get(map_key) or {}
+    return g if all(isinstance(g.get(f), str) and g.get(f) for f in CITY_FOLD_FIELDS) else None
+
+
+def city_setting_of(cfg, map_key):
+    """The map's spawn-city setting in config.lua: the one its fold names, else spawn_city_<map>, or
+    None."""
+    fold = city_fold(cfg, map_key)
+    return (cfg.get("settings") or {}).get(fold["city_setting"] if fold else f"spawn_city_{map_key}")
+
+
+def set_startup(ctx, modset, pairs):
+    """Write startup settings [(name, value)] of a modset explicitly (U10) through fh.py."""
+    if not pairs:
+        return
+    res = ctx.fh_plain(["settings", modset, "--set"] + [f"startup.{n}={v}" for n, v in pairs])
+    if not res.startswith("RESULT ok"):
+        raise GateError(f"fh.py settings {modset}: {res}")
+
+
+def t11_cities(cfg, map_key):
+    """T11's city flip of a map with a city fold: (setting name, city A, city B), A the setting's
+    default (random) and B the dropdown's last city; None without a fold (t11_city_findings then
+    fails closed)."""
+    s = city_setting_of(cfg, map_key) if city_fold(cfg, map_key) else None
+    if not s:
+        return None
+    return (s["name"], s["default_value"], s["allowed_values"][-1])
+
+
+def t11_city_findings(cfg, map_key, flip, ab, aa, bb, logs):
+    """T11's city half for one map (decision 13; U6) from the probe dumps of A loaded under B, fresh A
+    and fresh B and their logs: the city index read back at (0, 0) under B is fresh A's and a city of
+    the table, fresh B's differs (G6: the flip moved the city), and the city drift line appears once
+    on A under B and never on an undrifted load. A map without a city fold fails closed. Returns
+    (record, failures)."""
+    fold = city_fold(cfg, map_key)
+    if fold is None or flip is None:
+        return None, [f"{map_key}: T11 city flip not run: config.lua gives {map_key} no spawn-city fold "
+                      f"(spawn-cities' mechanism) reading its spawn-city setting, so no save records a city"]
+    name, a, b = flip
+    ia, iaa, ib = (point_values(x).get((0, 0), {}).get(fold["city_index"]) for x in (ab, aa, bb))
+    n = len(city_setting_of(cfg, map_key)["allowed_values"]) - 1
+    fails = []
+    if ia is None or ia != iaa:
+        fails.append(f"{map_key}: the city index reads {ia} on A loaded under B and {iaa} on fresh A (want equal)")
+    if not (isinstance(ia, (int, float)) and 1 <= ia <= n):
+        fails.append(f"{map_key}: the city index {ia} names no city of the table (1 to {n})")
+    if ib is None or ib == iaa:
+        fails.append(f"{map_key}: fresh B ({b}) reads city {ib} and fresh A ({a}) {iaa}: the flip did not move the "
+                     f"city (G6)")
+    lines = None
+    if "drift_city" not in ((cfg.get("messages") or {}).get("keys") or {}):
+        fails.append(f"{map_key}: config.lua defines no drift_city message, so the city drift line cannot be checked")
+    else:
+        line = render_message(cfg, "drift_city", ("string-mod-setting", f"{name}-{a}"),
+                              ("string-mod-setting", f"{name}-{b}"))
+        prefix = message_prefix(cfg, "drift_city")
+        lines = [count_lines(logs[0], line), count_lines(logs[1], prefix), count_lines(logs[2], prefix)]
+        if lines[0] != 1 or lines[1] or lines[2]:
+            fails.append(f"{map_key}: city drift lines {lines} on A under B, A under A and B under B (want 1, 0, 0): "
+                         f"{line!r}")
+    return {"a": a, "b": b, "index_a_under_b": ia, "index_fresh_a": iaa, "index_fresh_b": ib,
+            "drift_city": lines}, fails
+
+
+def maptype_city_findings(cfg, map_key, dumps):
+    """T13's read-back city index on the Map type route, from the probe dumps (elevation-only world,
+    preset world) of owa_maptype's city runs: the index at (0, 0) of the elevation-only world equals
+    the preset world's under the same startup settings, and each names a city of the table (the
+    fold is active, G5). A map without a city fold fails closed. Returns (record, failures)."""
+    fold = city_fold(cfg, map_key)
+    if fold is None:
+        return None, [f"{map_key}: read-back city index not compared: config.lua gives {map_key} no spawn-city fold "
+                      f"(spawn-cities' mechanism), so neither world records a city"]
+    if not dumps or len(dumps) != 2:
+        return None, [f"{map_key}: the read-back city runs are missing"]
+    a, b = (point_values(d).get((0, 0), {}).get(fold["city_index"]) for d in dumps)
+    n = len(city_setting_of(cfg, map_key)["allowed_values"]) - 1
+    fails = []
+    if a is None or a != b:
+        fails.append(f"{map_key}: the elevation-only world reads city {a} at (0, 0), the preset world {b}")
+    for label, v in (("elevation-only", a), ("preset", b)):
+        if not (isinstance(v, (int, float)) and 1 <= v <= n):
+            fails.append(f"{map_key}: the {label} world's city index {v} names no city of the table (1 to {n})")
+    return {"maptype": a, "preset": b}, fails
+
+
+def city_fold_findings(cfg, maps):
+    """A spawn-city setting no save records (U6): each new map whose config.lua defines a spawn-city
+    setting must carry spawn-cities' city fold reading it, or its dropdown changes nothing while its
+    locale promises that the map moves to the city. With the fold: it reads the map's own setting;
+    the per-save city number is a preset key (D33 guard) with a map-qualified Map type fallback; the
+    city offset names the fold's bodies instead of baked numbers, and both offset names are preset
+    keys. Returns failures."""
+    out = []
+    keys = set(cfg.get("preset_keys") or [])
+    fbs = tnconfig.fallbacks(cfg)
+    for mk in maps:
+        s = (cfg.get("settings") or {}).get(f"spawn_city_{mk}")
+        g = tnconfig.geography(cfg)[mk]
+        if city_fold(cfg, mk) is None:
+            if s:
+                out.append(f"{mk}: the setting {s['name']} has no city fold reading it, so no save records the city its "
+                           f"locale promises: give {mk} spawn-cities' fold (city_setting, city, city_index and a city "
+                           f"offset naming the fold), or withhold the setting with its locale, changelog lines and "
+                           f"cities table")
+            continue
+        if g["city_setting"] != f"spawn_city_{mk}" or not s:
+            out.append(f"{mk}: the city fold reads {g['city_setting']!r}, not its own setting spawn_city_{mk}")
+        if g["city"] not in keys:
+            out.append(f"{mk}: the per-save city {g['city']} is not among preset_keys (D33 guard)")
+        if not ({e["name"]: e for e in fbs.get(mk, [])}.get(g["city"]) or {}).get("map_qualified"):
+            out.append(f"{mk}: the per-save city {g['city']} has no map-qualified Map type fallback")
+        off = g.get("city_offset")
+        if not (isinstance(off, list) and len(off) == 2 and all(isinstance(v, str) and v for v in off)):
+            out.append(f"{mk}: the city offset {off} bakes numbers, so the map never moves to its city")
+        for n in (g["cx"], g["cy"]):
+            if n not in keys:
+                out.append(f"{mk}: the city offset name {n} is not among preset_keys (D33 guard)")
+    return out
+
+
+def city_table_findings(cfg, maps, tables=None):
+    """T16: each new map's table in prototypes/tables/cities.lua against its dropdown and EarthMaps: a
+    version number; its keys, in source order, the dropdown's cities after random; each row's name,
+    country, lon and lat EarthMaps' own for that city (data-src/earthmaps/<map>.json cities.list,
+    matched through the approvals' kept order, whose full names read "Region, Country, City").
+    `tables` is the parsed file (owa_controls passes fixtures). Returns failures."""
+    if tables is None:
+        try:
+            tables = tnconfig.load(CITIES_LUA)
+        except (OSError, tnconfig.ConfigError) as e:
+            return [f"prototypes/tables/cities.lua: {e}"]
+    appr = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(encoding="utf-8"))
+    out = []
+    for mk in maps:
+        s = (cfg.get("settings") or {}).get(f"spawn_city_{mk}")
+        if not s:
+            continue                    # city_dropdown_findings fails a map with no setting
+        t = tables.get(mk) if isinstance(tables, dict) else None
+        if not isinstance(t, dict) or not isinstance(t.get("version"), int) or not isinstance(t.get("cities"), dict):
+            out.append(f"cities.lua holds no {{version, cities}} table for {mk}")
+            continue
+        rows, want = t["cities"], s["allowed_values"][1:]
+        if list(rows) != want:
+            out.append(f"cities.lua {mk}: its keys in source order {list(rows)[:4]}... differ from the dropdown's "
+                       f"cities {want[:4]}...")
+        ref = {c["full_name"]: c for c in json.loads((REPO / "data-src" / "earthmaps" / f"{mk}.json").read_text(
+            encoding="utf-8"))["cities"]["list"]}
+        for slug, full in zip(want, appr["cities"][mk]["kept"]):
+            row, c = rows.get(slug), ref.get(full)
+            if not isinstance(row, dict) or c is None:
+                out.append(f"cities.lua {mk}: no row {slug} for EarthMaps' {full}")
+                continue
+            parts = full.split(", ")
+            got = (row.get("name"), row.get("country"), row.get("lon"), row.get("lat"))
+            exp = (c["name"], ", ".join(parts[1:-1]), c["lonlat"][0], c["lonlat"][1])
+            if got != exp:
+                out.append(f"cities.lua {mk}.{slug}: {got} differs from EarthMaps' {exp}")
+    return out
+
+
+OWA_T7_SCALES = (1, 3, 6)               # T7 (SS): every city plus random at these scales
+OWA_T7_SEEDS = (1000, 1002, 1004, 4000000001, 4294967295)   # T7 (c): random's read-back at S7's five seeds
+OWA_LAND_GUARANTEE = ("Kovdor", "Johannesburg", "Chengdu")   # T7: water city pixels the land guarantee carries
+# spawn-cities' T7 machinery, which the new maps' T7 rows run per map once it is in this runner
+SC_T7_HELPERS = ("sc_lane_modsets", "sc_m0_probe", "sc_m0_settings", "sc_m0_ore", "sc_mgs", "sc_t7_settings",
+                 "sc_t7_eval", "sc_scenarios")
+
+
+def owa_t7_reference(cfg, maps, appr=None, refs=None):
+    """T7 (a) against the reference data, per new map and city, with no game: the city's EarthMaps
+    pixel (data-src/earthmaps/<map>.json, the in-map position its cities.lua row gives) is land, or
+    it is one of the cities the plan's start land guarantee carries (OWA_LAND_GUARANTEE; any other
+    water-pixel city fails); and the city lies outside every adopted hotspot margin of the map (map
+    distance, reference pixels times km_per_px, above radius + jitter + city_margin_km, APPROVALS
+    12's own rule). `appr` and `refs` ({map: EarthMaps cities list}) replace the committed data in
+    owa_controls' fixtures. Returns ({map: record}, failures)."""
+    if appr is None:
+        appr = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(encoding="utf-8"))
+    rules = appr["rules"]
+    rec, fails = {}, []
+    for mk in maps:
+        if not city_setting_of(cfg, mk):
+            fails.append(f"{mk}: no spawn-city setting, so T7 has no cities to check")
+            continue
+        listed = (refs or {}).get(mk) or json.loads((REPO / "data-src" / "earthmaps" / f"{mk}.json").read_text(
+            encoding="utf-8"))["cities"]["list"]
+        ref = {c["full_name"]: c for c in listed}
+        guaranteed, worst = [], None
+        for full in appr["cities"][mk]["kept"]:
+            c = ref.get(full)
+            if c is None:
+                fails.append(f"{mk}: EarthMaps lists no city {full}")
+                continue
+            if not c["on_land"]:
+                if c["name"] in OWA_LAND_GUARANTEE:
+                    guaranteed.append(c["name"])
+                else:
+                    fails.append(f"{mk}: {c['name']}'s EarthMaps pixel {c['pixel']} is water, and the start land "
+                                 f"guarantee covers only {list(OWA_LAND_GUARANTEE)} (T7 (a))")
+            for h in appr["hotspots"]:
+                hp = ((h.get("surface") or {}).get(mk) or {}).get("pixel")
+                if not (h.get("adopted") or {}).get(mk) or not hp:
+                    continue
+                km = math.hypot(c["pixel"][0] - hp[0], c["pixel"][1] - hp[1]) * rules["km_per_px"]
+                need = h["radius_km"] + h["jitter_km"] + rules["city_margin_km"]
+                if worst is None or km - need < worst[0]:
+                    worst = (round(km - need, 1), c["name"], h["id"])
+                if km <= need:
+                    fails.append(f"{mk}: {c['name']} lies {km:.1f} map km from {h['id']}, inside its margin {need} km "
+                                 f"(T7 (a))")
+        rec[mk] = {"cities": len(appr["cities"][mk]["kept"]), "land_guarantee": guaranteed,
+                   "closest_hotspot_slack_km": worst}
+    return rec, fails
+
+
+def spawn_machinery():
+    """spawn-cities' T7 machinery in this runner, by name ({name: function}), with tools/oracle.py's
+    float32 fold (resolved_city); a GateError naming what is missing while the runner lacks it (this
+    milestone's draft predates spawn-cities on main)."""
+    import oracle
+    missing = [n for n in SC_T7_HELPERS if not callable(globals().get(n))]
+    if not callable(getattr(oracle, "resolved_city", None)):
+        missing.append("oracle.resolved_city")
+    if missing:
+        raise GateError(f"the new maps' T7 runs on spawn-cities' T7 machinery, which this runner lacks: {missing}")
+    out = {n: globals()[n] for n in SC_T7_HELPERS}
+    out["resolved_city"] = oracle.resolved_city
+    return out
+
+
+def owa_t7_gaps(cfg, maps):
+    """Why the new maps' T7 cannot run in game, or []: a map without a city fold (its spawn never moves
+    to a city), or a runner without spawn-cities' T7 machinery. The T7 rows fail closed on each."""
+    gaps = [f"{mk}: T7 not run in game: config.lua gives {mk} no spawn-city fold (spawn-cities' mechanism), so its "
+            f"spawn never moves to a city" for mk in maps if city_fold(cfg, mk) is None]
+    if not gaps:
+        try:
+            spawn_machinery()
+        except GateError as e:
+            gaps.append(str(e))
+    return gaps
+
+
+def row_owa_t7_random(ctx, mods, sec6, row, cache):
+    """T7 (b), (c) and T18 (a) on every new map (FG; design section 5 step 8: random spawn live on all
+    maps from this milestone; seed 1000; scale 6; M1): spawn-cities' row_t7_random per map through its
+    machinery (sc_t7_eval: the spawn tile land, no player-blocking water within 12 tiles, the start
+    lake, the four starting ores reachable on foot against vanilla's at the same seed, no enemies
+    within 150 tiles, the index read back equal to the float32 model, the start message once). Fails
+    closed while a map has no city fold or the runner lacks the machinery (owa_t7_gaps)."""
+    cfg = mods.cfg
+    maps = new_maps(cfg)
+    gaps = owa_t7_gaps(cfg, maps)
+    if gaps:
+        row.fails += gaps
+        row.detail = f"T7 random spawn not run on {maps}"
+        return
+    sc = spawn_machinery()
+    ms = sc["sc_lane_modsets"](ctx, mods, "m1owasc", len(maps))
+    m0p = sc["sc_m0_probe"](ctx, mods)
+    mgs = {mk: sc["sc_mgs"](ctx, cfg, mk, 6, "random", f"owa-t7-random-{mk}-s6") for mk in maps}
+    key, newest = common_key(ctx, "owa_t7_random", {"ms": [mods.manifest(m) for m in ms + [m0p]],
+                                                      "dump": ctx.shared.get("dump_m1_sha"),
+                                                      "mgs": {mk: p.read_text(encoding="utf-8") for mk, p in mgs.items()}})
+
+    def live():
+        jobs = [(sc["sc_t7_settings"](ctx, ms[i], lane_instance(ctx, i), cfg, tnconfig.geography(cfg)[mk]),
+                 scenario_args(lane_instance(ctx, i), ms[i], 3, SEED, mgs[mk]), ctx.out / f"owa-t7-random-{mk}-s6", i)
+                for i, mk in enumerate(maps)]
+        n = len(maps)
+        jobs.append((sc["sc_m0_settings"](ctx, m0p, lane_instance(ctx, n)), scenario_args(lane_instance(ctx, n), m0p, 3, SEED),
+                     ctx.out / "owa-t7-m0", n))
+        return sc["sc_scenarios"](ctx, jobs)
+
+    def derive(dirs):
+        fails, meas = [], {}
+        for d in dirs:
+            fails += g1(d) + g3(d)
+        if len(dirs) != len(maps) + 1:
+            return {}, fails + [f"{len(dirs)} run directories, want {len(maps) + 1}"], ""
+        m0 = sc["sc_m0_ore"](dirs[-1])
+        for mk, d in zip(maps, dirs):
+            rec, f = sc["sc_t7_eval"](cfg, mk, tnconfig.geography(cfg)[mk], d, m0, SEED, 0, 6,
+                                      f"{mk} random seed {SEED} scale 6")
+            meas[mk] = rec
+            fails += f
+        meas["m0_ore"] = m0
+        return meas, fails, "; ".join(
+            f"{mk}: random at seed {SEED}, scale 6: city {meas[mk].get('city_index')} (the model's), spawn "
+            f"{meas[mk].get('spawn_tile')}, lake {meas[mk].get('lake')}, ore {meas[mk].get('ore_reachable')} reachable "
+            f"against vanilla's {m0}, enemies {meas[mk].get('enemies_150')}" for mk in maps)
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def city_controls(cfg, mk):
+    """The spawn-city checks on fixtures (U1), built in memory from config.lua: without a city fold
+    the fold guard fails the map's setting and the city halves of T11 and T13 fail closed; with a
+    fixture fold (its fields only) the guard fails a per-save city that is no preset key and passes a
+    complete fold, T11 fails a flip that leaves the city or reads B's city under B and passes the
+    index checks of a flip that moves it, and the Map type read-back fails an index that differs from
+    the preset world's or names no city. The committed cities table passes its check; a row moved off
+    EarthMaps' position and a reordered table each fail."""
+    import copy
+    pre = cfg["identity"]["noise_prefix"]
+    city, idx = f"{pre}city_{mk}", f"{pre}city_index_{mk}_v1"
+
+    def newest(c):
+        return c["geography"][mk]["versions"][-1]
+    bare = copy.deepcopy(cfg)
+    newest(bare).pop("spawn", None)
+    newest(bare)["city_offset"] = [0, 0]
+    newest(bare)["fallbacks"] = [e for e in newest(bare)["fallbacks"] if e["name"] != city]
+    bare["preset_keys"] = [k for k in bare["preset_keys"] if k != city]
+    # a fixture fold: a whole spawn record (tnconfig takes no partial one) reading the map's own
+    # setting, its city offset naming the fold's bodies (tnconfig refuses one baked as numbers), the
+    # per-save city not yet a preset key and without its fallback
+    folded = copy.deepcopy(bare)
+    newest(folded)["spawn"] = {
+        "city_setting": f"spawn_city_{mk}", "city": city, "city_index": idx,
+        "spawn_lake": f"{pre}spawn_lake_{mk}_v1", "spawn_bias": f"{pre}spawn_bias_{mk}_v1",
+        "inland_lakes": f"{pre}inland_lakes_{mk}_v1", "start_land": f"{pre}start_land_v1",
+        "distance": f"{pre}distance_v1", "bearings": f"prototypes/generated/spawn_{mk}_v1.lua"}
+    newest(folded)["city_offset"] = [f"{pre}city_cx_{mk}_v1", f"{pre}city_cy_{mk}_v1"]
+    folded["messages"] = dict(folded["messages"], keys={k: v for k, v in folded["messages"]["keys"].items()
+                                                        if k != "drift_city"})
+    baked = copy.deepcopy(folded)
+    newest(baked)["city_offset"] = [0, 0]
+    whole = copy.deepcopy(folded)
+    whole["preset_keys"] = whole["preset_keys"] + [city]
+    newest(whole)["fallbacks"] = newest(whole)["fallbacks"] + [{"name": city, "map_qualified": True}]
+
+    def pt(v):
+        return {"names": [idx], "points": [{"x": 0, "y": 0, "tile": "grass-1", "values": [v]}]}
+
+    def names(fails, needle):
+        return (any(needle in x for x in fails), fails[:1])
+    logs = ["", "", ""]
+    out = {}
+    out["owa: T11's city flip fails closed on a map without a city fold"] = names(
+        t11_city_findings(bare, mk, t11_cities(bare, mk), {}, {}, {}, logs)[1], "T11 city flip not run")
+    flip = t11_cities(folded, mk)
+    out["owa: a T11 city flip that leaves the city fails"] = names(
+        t11_city_findings(folded, mk, flip, pt(3), pt(3), pt(3), logs)[1], "did not move the city")
+    out["owa: a T11 world reading B's city under B fails"] = names(
+        t11_city_findings(folded, mk, flip, pt(7), pt(3), pt(7), logs)[1], "(want equal)")
+    _, f = t11_city_findings(folded, mk, flip, pt(3), pt(3), pt(7), logs)
+    out["owa: a T11 city flip that moves the city passes its index checks"] = (
+        bool(f) and all("drift_city" in x for x in f), f[:1])
+    out["owa: the Map type read-back fails closed on a map without a city fold"] = names(
+        maptype_city_findings(bare, mk, None)[1], "read-back city index not compared")
+    out["owa: a Map type city index differing from the preset world's fails"] = names(
+        maptype_city_findings(folded, mk, (pt(3), pt(5)))[1], "the preset world 5")
+    out["owa: a Map type city index of 0 fails"] = names(maptype_city_findings(folded, mk, (pt(0), pt(0)))[1],
+                                                        "names no city of the table")
+    out["owa: equal Map type and preset city indices pass"] = (not maptype_city_findings(folded, mk, (pt(3), pt(3)))[1],
+                                                               "")
+    out["owa: a spawn-city setting with no city fold reading it fails"] = names(city_fold_findings(bare, [mk]),
+                                                                               "has no city fold reading it")
+    out["owa: a city fold whose per-save city is no preset key fails"] = names(city_fold_findings(folded, [mk]),
+                                                                              "is not among preset_keys")
+    try:
+        tnconfig.geography(baked)
+        out["owa: a city fold whose city offset bakes numbers fails"] = (False, "tnconfig took it")
+    except tnconfig.ConfigError as e:
+        out["owa: a city fold whose city offset bakes numbers fails"] = ("moves with its city" in str(e), str(e))
+    f = city_fold_findings(whole, [mk])
+    out["owa: a complete city fold passes the fold guard"] = (not f, f[:1])
+    if not callable(globals().get("runner_offset")):
+        try:
+            got = map_offset(whole, mk, 6)
+            out["owa: a city offset naming the fold is refused without runner_offset"] = (False, f"placed at {got}")
+        except GateError:
+            out["owa: a city offset naming the fold is refused without runner_offset"] = (True, "")
+    out["owa: a city offset baked 0 places the map at 0"] = (map_offset(bare, mk, 6) == (0, 0), "")
+    # T7 (a) on the reference data: the committed data passes; a water-pixel city outside the land
+    # guarantee and a city inside an adopted hotspot's margin each fail
+    appr = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(encoding="utf-8"))
+    listed = json.loads((REPO / "data-src" / "earthmaps" / f"{mk}.json").read_text(encoding="utf-8"))["cities"]["list"]
+    _, f = owa_t7_reference(cfg, [mk], appr, {mk: listed})
+    out["owa: T7 (a) holds on the committed reference data"] = (not f, f[:1])
+    wet = copy.deepcopy(listed)
+    dry = next(c for c in wet if c["on_land"] and c["name"] not in OWA_LAND_GUARANTEE)
+    dry["on_land"] = False
+    out["owa: a water-pixel city outside the start land guarantee fails T7 (a)"] = names(
+        owa_t7_reference(cfg, [mk], appr, {mk: wet})[1], "is water")
+    near = copy.deepcopy(appr)
+    spot = next(h for h in near["hotspots"] if (h.get("adopted") or {}).get(mk) and
+                ((h.get("surface") or {}).get(mk) or {}).get("pixel"))
+    spot["surface"][mk]["pixel"] = list(dry["pixel"])
+    out["owa: a city inside an adopted hotspot's margin fails T7 (a)"] = names(
+        owa_t7_reference(cfg, [mk], near, {mk: listed})[1], "inside its margin")
+    tables = tnconfig.load(CITIES_LUA)
+    f = city_table_findings(cfg, [mk], tables)
+    out["owa: the committed cities table matches its dropdown and EarthMaps"] = (not f, f[:1])
+    moved = copy.deepcopy(tables)
+    first_city = next(iter(moved[mk]["cities"]))
+    moved[mk]["cities"][first_city]["lon"] += 0.5
+    out["owa: a cities.lua row off EarthMaps' position fails"] = names(city_table_findings(cfg, [mk], moved),
+                                                                      "differs from EarthMaps'")
+    swapped = copy.deepcopy(tables)
+    items = list(swapped[mk]["cities"].items())
+    items[0], items[1] = items[1], items[0]
+    swapped[mk]["cities"] = dict(items)
+    out["owa: a cities.lua table out of the dropdown's order fails"] = names(city_table_findings(cfg, [mk], swapped),
+                                                                            "in source order")
+    return out
+
+
+def owa_controls():
+    """olde-world-atlantic's positive controls: the dropdown check fails a dropdown missing a city
+    and a default other than random, and the coast-view and timed-block choosers refuse a map with
+    no coast (a small all-land raster put in the raster cache for one call, then restored)."""
+    import copy
+    import numpy as np
+    import earthgeo as eg
+    out = {}
+    cfg = tnconfig.load()
+    maps = new_maps(cfg)
+    short = copy.deepcopy(cfg)
+    sk = f"spawn_city_{maps[0]}"
+    if sk in short["settings"]:
+        short["settings"][sk]["allowed_values"] = short["settings"][sk]["allowed_values"][:-1]
+    out["owa: a spawn-city dropdown missing a city fails"] = (bool(city_dropdown_findings(short, maps[:1])), "")
+    wrong = copy.deepcopy(cfg)
+    if sk in wrong["settings"]:
+        wrong["settings"][sk]["default_value"] = wrong["settings"][sk]["allowed_values"][-1]
+    out["owa: a spawn-city default other than random fails"] = (bool(city_dropdown_findings(wrong, maps[:1])), "")
+    out.update(t1_bar_controls(cfg, maps[0]))
+    for m in maps:
+        out.update(fit_controls(m))
+    out.update(city_controls(cfg, maps[0]))
+    mk = maps[0]
+    saved, saved_views = _MREFS.get(mk), dict(_VIEWS)
+    try:
+        _MREFS[mk] = eg.MapRef(land=np.ones((300, 400), bool), thin=np.zeros((300, 400), bool), wr=200, hr=150)
+        _VIEWS.clear()
+        for label, fn in (("coast view", lambda: map_view(cfg, mk)), ("timed block", lambda: map_positions(cfg, mk))):
+            try:
+                got = fn()
+                out[f"owa: the {label} chooser refuses a map with no coast"] = (False, f"chose {got}")
+            except GateError:
+                out[f"owa: the {label} chooser refuses a map with no coast"] = (True, "")
+    finally:
+        if saved is None:
+            _MREFS.pop(mk, None)
+        else:
+            _MREFS[mk] = saved
+        _VIEWS.clear()
+        _VIEWS.update(saved_views)
+    return out
+
+
+def t1_bar_controls(cfg, mk):
+    """Decision 10's positive controls on fixtures (t1-bars.json and the design notes are never read): a
+    recorded flip with its design notes entry passes; an unknown decision id, a bar at T1-a's bar, an
+    entry that does not cite the owa_t15b runs and a bar for a map whose T1 rows ignore the file each
+    fail; a bar on a map whose flip did not fire and a fired flip with no bar each fail; and, on the
+    map's committed fit records, a flipped map shipping another checkpoint than its recorded best fit
+    fails while one shipping it passes."""
+    import copy
+    cp, bar = "model-4096.npz", 0.9875
+    heading = "2026-10-28 09:00 Fixture: the flip rule fired"
+    text = (f"# Decisions\n\n## {heading}\n\n- {mk}: timing runs owa-t15b-{mk}-s6 and owa-t15b-{mk}-s1; best fit "
+            f"{cp} at {bar}.\n\n## 2026-10-28 09:05 Another entry\n\n- Nothing.\n")
+    good = {"maps": {mk: {"bar": bar, "decision": heading, "checkpoint": cp}}}
+
+    def variant(**kw):
+        d = copy.deepcopy(good)
+        d["maps"][mk].update(kw)
+        return d
+
+    def names(fails, needle):
+        """The control holds only when the rule under test is the one that failed."""
+        return (any(needle in x for x in fails), fails[:1])
+    out = {}
+    f = t1_bar_findings(good, cfg, text)
+    out["owa: a recorded flip with its DECISIONS entry passes the t1-bars check"] = (not f, f[:1])
+    out["owa: a t1-bars decision naming no DECISIONS heading fails"] = names(
+        t1_bar_findings(variant(decision="2026-10-28 09:01 No such entry"), cfg, text), "is no DECISIONS.md heading")
+    out["owa: a t1-bars bar at T1-a's bar fails"] = names(
+        t1_bar_findings(variant(bar=T1_BAR), cfg, text.replace(str(bar), str(T1_BAR))), "is not a number under")
+    out["owa: a t1-bars entry whose DECISIONS body cites no owa_t15b run fails"] = names(
+        t1_bar_findings(good, cfg, text.replace(f"owa-t15b-{mk}-", "runs-")), "owa_t15b run directories")
+    first = first_preset(cfg)[1]
+    out["owa: a t1-bars bar for a map whose T1 rows read T1_BAR fails"] = names(
+        t1_bar_findings({"maps": {first: good["maps"][mk]}}, cfg, text), "only a map whose T1 rows read")
+    bars = {mk: (bar, heading, cp)}
+    out["owa: a t1-bars bar on a map whose flip did not fire fails"] = names(flip_findings(mk, [], bars),
+                                                                            "the flip rule did not fire")
+    out["owa: a fired flip with no t1-bars bar fails"] = names(flip_findings(mk, [6], {}), "holds no bar for it")
+    out["owa: a fired flip with its t1-bars bar passes"] = (not flip_findings(mk, [6], bars), "")
+    # fit_record for a flipped map: fit.json must ship the best fit t1-bars.json records
+    curve, spec, man = fit_records(mk)
+    shipped = spec["bodies"]["geo"]["checkpoint"]
+    other = next(p["checkpoint"] for p in curve["points"] if p["checkpoint"] != shipped and "t1" in p)
+    _, f = fit_findings(mk, curve, spec, man, {mk: (bar, heading, shipped)})
+    out["owa: a flipped map shipping its recorded best fit passes the fit check"] = (not f, f[:1])
+    out["owa: a flipped map shipping another checkpoint than its recorded best fit fails"] = names(
+        fit_findings(mk, curve, spec, man, {mk: (bar, heading, other)})[1], "records the best fit")
+    return out
+
+
+def entry_names(cfg, map_key):
+    """Every noise name of a map's geography: its entry, chain, fit, coarse field, detail, box and
+    city offset names, and every other noise-prefixed name the geography binds to the map (older
+    entry versions, and the city fold's names once spawn-cities' fields join it): the names no other
+    map's entry may read (A-21)."""
+    prefix = cfg["identity"]["noise_prefix"]
+    out = set()
+    for v in tnconfig.geography_versions(cfg)[map_key]:
+        out.update(tnconfig.own_names(v))
+        out.update(x for x in v["city_offset"] if isinstance(x, str) and x.startswith(prefix))
+        sp = tnconfig.spawn_of(v)
+        if sp:
+            # the start land guarantee and distance carry no map and may serve every map's versions
+            out.update(sp[n] for n in tnconfig.SPAWN_NAMES if n not in ("start_land", "distance"))
+    return out
+
+
+def entry_isolation_findings(cfg, dump, maps, check=None):
+    """A-21 over a dump (pure, so row_owa_dump_facts runs it on a control copy too): no map's entry
+    reads another map's name, through the prototype names (the Map type route sets only elevation)
+    or through its preset's redirects, the walk entering every body's locals; and each entry reads
+    exactly its own fallbacks among the per-save keys. `check` limits the maps whose entries are
+    walked (default all). Returns (failures, {map: the per-save names its entry reads on the Map type
+    route}). A version with an offshore stamp also reads the layer chain's frozen fallbacks its stamp
+    reaches (stamp_fallbacks)."""
+    keys = set(cfg["preset_keys"])
+    fbs = tnconfig.fallbacks(cfg)
+    fails, reads_of = [], {}
+    for mk in (check or maps):
+        pname, g = map_preset(cfg, mk)
+        others = set().union(*(entry_names(cfg, m) for m in maps if m != mk))
+        for label, pen in (("Map type route", {}), ("preset", preset_pen(dump, pname))):
+            seen = entry_reads(dump, pen, g["entry"])
+            leak = sorted(n for n in seen if n in others)
+            if leak:
+                fails.append(f"{mk}'s entry reads other maps' names {leak} ({label}; A-21)")
+            if label == "Map type route":
+                reads_of[mk] = sorted(n for n in seen if n in keys)
+        want = sorted({e["name"] for e in fbs.get(mk, [])} | {e["name"] for e in stamp_fallbacks(cfg, mk, g)})
+        if reads_of[mk] != want:
+            fails.append(f"{mk}'s entry reads the per-save names {reads_of[mk]}; config.lua's fallbacks for {mk} are "
+                         f"{want}")
+    return fails, reads_of
+
+
+def fallback_findings(cfg, dump, maps, reads_of, label, want_scale):
+    """Each map's Map type fallbacks against its own preset in a dump (pure; U3's one exemption): every
+    per-save name its entry reads has a prototype fallback whose expression is what the map's preset
+    bakes (a number in number_format, or the name it points at), and each preset bakes want_scale. A
+    layer chain fallback an offshore stamp reads (stamp_fallbacks) may be left unbaked: the preset world
+    then reads the same prototype."""
+    K, fmt, bad = cfg["keys"], cfg["number_format"], []
+    for mk in maps:
+        pname, g = map_preset(cfg, mk)
+        stamp = {e["name"] for e in stamp_fallbacks(cfg, mk, g)}
+        p = preset_pen(dump, pname)
+        for n in reads_of.get(mk, []):
+            body = (dump.get("noise-expression") or {}).get(n)
+            baked = p.get(n)
+            if body is None:
+                bad.append(f"{label}: no prototype fallback {n} ({mk})")
+            elif n in stamp and baked is None:
+                continue
+            elif baked is None or body.get("expression") != (fmt % baked if isinstance(baked, (int, float)) else baked):
+                bad.append(f"{label}: fallback {n} = {body.get('expression')!r}, {pname} bakes {baked!r}")
+        if p.get(K["scale"]) != want_scale:
+            bad.append(f"{label}: {pname} bakes scale {p.get(K['scale'])}, want {want_scale}")
+    return bad
+
+
+def dump_fact_controls(cfg, dump, maps, reads_of):
+    """Positive controls of A-21 and the fallback check (U1; project rule 6) on a copy of the M1 dump in
+    which only the changed bodies are copied: the first new map's geo body gains a local reading the
+    first map's geo body (a cross-map read inside the generated fit, where the walk must enter the
+    body's locals), and that map's cx fallback reads 1 against what its preset bakes. Each check
+    must report its case, A-21 on both of its routes (the Map type route and the preset's)."""
+    victim, first = new_maps(cfg)[0], maps[0]
+    geo = tnconfig.geography(cfg)
+    gv, gf = geo[victim], geo[first]
+    ne = dump.get("noise-expression") or {}
+    if gv["geo"] not in ne or gv["cx"] not in ne:
+        return {"owa: the dump-fact controls find their bodies": (False, f"{gv['geo']} or {gv['cx']} is not dumped")}
+    out = {}
+    ctl = dict(dump)
+    ctl["noise-expression"] = dict(ne)
+    geo = dict(ne[gv["geo"]])
+    leak_local = f"{cfg['identity']['noise_prefix']}owa_control_leak"
+    geo["local_expressions"] = dict(geo.get("local_expressions") or {}, **{leak_local: gf["geo"]})
+    ctl["noise-expression"][gv["geo"]] = geo
+    f, _ = entry_isolation_findings(cfg, ctl, maps, check=[victim])
+    routes = {label: any(gf["geo"] in x and f"({label}; A-21)" in x for x in f)
+              for label in ("Map type route", "preset")}
+    out[f"owa: a local of {gv['geo']} reading {gf['geo']} fails A-21 on both routes"] = (
+        all(routes.values()), f"{routes} {f[:2]}")
+    ctl["noise-expression"] = dict(ne)
+    ctl["noise-expression"][gv["cx"]] = dict(ne[gv["cx"]], expression="1")
+    f = fallback_findings(cfg, ctl, [victim], reads_of, "control", int(cfg["settings"]["scale"]["default_value"]))
+    out[f"owa: a fallback {gv['cx']} of 1 against its preset fails"] = (any(gv["cx"] in x for x in f), f[:1])
+    # resources-enemies: a layer chain fallback the victim's stamp reads passes unbaked, and fails once its
+    # preset bakes another value than the prototype (the unbaked exemption is not a blanket pass)
+    stamp = [e["name"] for e in stamp_fallbacks(cfg, victim, gv) if e["name"] in reads_of.get(victim, [])]
+    if gv.get("fields"):
+        scale = int(cfg["settings"]["scale"]["default_value"])
+        f0 = fallback_findings(cfg, dump, [victim], reads_of, "control", scale)
+        out[f"owa: {victim}'s stamp reads layer chain fallbacks, which pass unbaked"] = (
+            bool(stamp) and not any(n in x for n in stamp for x in f0), f"{stamp} {f0[:1]}")
+        if stamp:
+            pname, _ = map_preset(cfg, victim)
+            presets = dict((dump.get("map-gen-presets") or {}).get("default") or {})
+            p = dict(presets.get(pname) or {})
+            bs = dict(p.get("basic_settings") or {})
+            bs["property_expression_names"] = dict(bs.get("property_expression_names") or {}, **{stamp[0]: 7})
+            p["basic_settings"], presets[pname] = bs, p
+            ctl = dict(dump, **{"map-gen-presets": dict(dump.get("map-gen-presets") or {}, default=presets)})
+            f = fallback_findings(cfg, ctl, [victim], reads_of, "control", scale)
+            out[f"owa: {pname} baking {stamp[0]} as 7 against its prototype fails"] = (
+                any(stamp[0] in x for x in f), f[:1])
+    return out
+
+
+def fit_controls(mk):
+    """fit_record's selection rules (design review experiments 4 and 5) on the map's committed records, which
+    must pass under the recorded flips (t1_bars), and on fixtures that must each fail with its own
+    rule's message: the largest smaller growth step reaching FIT_BAR_T1 (the smallest ships), then
+    every smaller step in turn (growth steps and power-of-two checkpoints alike, Atlantic's 6,939
+    and 8,192 among them), a fit at growth 2.0, and a coarse field that is not the 256-term step."""
+    import copy
+    curve, spec, man = fit_records(mk)
+
+    def names(fails, needle):
+        return (any(needle in x for x in fails), fails[:1])
+
+    def raised(step):
+        """The curve with only `step` reaching FIT_BAR_T1, through the score the rule reads for it."""
+        c = copy.deepcopy(curve)
+        for p in c["points"]:
+            if p["checkpoint"] == step["checkpoint"]:
+                if "t1" in p:
+                    p["t1"]["agreement"] = FIT_BAR_T1 + 0.0002
+                else:
+                    p["sample_agreement"] = FIT_BAR_T1 + 0.0002
+        return c
+    out = {}
+    _, f = fit_findings(mk, curve, spec, man, t1_bars())
+    out[f"owa: {mk}'s committed fit records pass the fit check"] = (not f, f[:1])
+    shipped = spec["bodies"]["geo"]["checkpoint"]
+    ship_terms = next(p["terms"] for p in curve["points"] if p["checkpoint"] == shipped)
+    smaller = max((p for p in curve["points"] if p["terms"] < ship_terms and p.get("terms_target") != 256 and "t1" in p),
+                  key=lambda p: p["terms"])
+    out[f"owa: {mk}'s curve with its {smaller['terms']}-term step at {FIT_BAR_T1} fails (the smallest ships)"] = names(
+        fit_findings(mk, raised(smaller), spec, man, {})[1], "a smaller checkpoint reaches")
+    steps = sorted((p for p in curve["points"] if p["terms"] < ship_terms), key=lambda p: p["terms"])
+    missed = [p["terms"] for p in steps
+              if not any("a smaller checkpoint reaches" in x and f"[{p['terms']}]" in x
+                         for x in fit_findings(mk, raised(p), spec, man, {})[1])]
+    out[f"owa: {mk}'s curve with any one of its {len(steps)} smaller steps at {FIT_BAR_T1} fails"] = (
+        bool(steps) and not missed, f"passed with the step of {missed} terms at the bar" if missed else "")
+    fast = copy.deepcopy(curve)
+    fast["params"]["growth"] = 2.0
+    out[f"owa: {mk}'s fit at growth 2.0 fails"] = names(fit_findings(mk, fast, spec, man, {})[1], "the fit ran at growth")
+    coarse = copy.deepcopy(spec)
+    coarse["bodies"]["land_coarse"]["checkpoint"] = smaller["checkpoint"]
+    out[f"owa: {mk}'s coarse field at the {smaller['terms']}-term step fails"] = names(
+        fit_findings(mk, curve, coarse, man, {})[1], "is not the fit's 256-term step")
+    return out
+
+
+# -- step 2: every map's dump facts (T13, T16; the three Map type entries and their fallbacks)
+
+def row_owa_dump_facts(ctx, mods, sec6, row, cache):
+    """T13, T16 (FG; D2 amended; S13): the M1 dump holds exactly one Terra Nauvis noise expression
+    with intended_property "elevation" per map, each the expression its map's preset names in
+    elevation, each with a localised_name whose [noise-expression] text the locale parser finds as
+    "<title>: <map>"; their orders list them in config.lua's preset order, after vanilla's unordered
+    entries (the default Nauvis entry first) and before vanilla's ordered ones (Island); the presets'
+    orders sort in the same sequence after Default's "a" and before Rich resources' "b"; each map's
+    fallbacks equal what its own preset bakes, at default settings and at T11's settings B; no
+    map's entry reads another map's name, through the prototype names (the Map type route) or
+    through its preset's redirects (both checks with positive controls on a dump copy); each new
+    map's spawn-city dropdown and cities.lua table equal EarthMaps' list plus random; and every
+    spawn-city setting has the city fold that records it (city_fold_findings)."""
+    cfg = mods.cfg
+    d1 = ctx.shared.get("dump_m1")
+    if d1 is None:
+        row.fails.append("no M1 dump")
+        return
+    K = cfg["keys"]
+    prefix = cfg["identity"]["noise_prefix"]
+    ne = d1.get("noise-expression") or {}
+    presets = (d1.get("map-gen-presets") or {}).get("default") or {}
+    fails, parts = row.fails, []
+    maps = [cfg["presets"][k]["map"] for k in cfg["preset_order"]]
+    carriers = sorted(n for n, b in ne.items() if n.startswith(prefix) and b.get("intended_property"))
+    want = sorted(tnconfig.geography(cfg)[mk]["entry"] for mk in maps)
+    if carriers != want or len(set(want)) != len(maps):
+        fails.append(f"Terra Nauvis expressions carrying intended_property {carriers}; want exactly one per map {want}")
+    secs = locale_messages(cfg)
+    orders, porders = [], []
+    for mk in maps:
+        pname, g = map_preset(cfg, mk)
+        b = ne.get(g["entry"]) or {}
+        if b.get("intended_property") != K["elevation"]:
+            fails.append(f"{g['entry']} intended_property {b.get('intended_property')!r}, want {K['elevation']!r}")
+        if b.get("localised_name") != [f"noise-expression.{g['entry']}"]:
+            fails.append(f"{g['entry']} localised_name {b.get('localised_name')!r}")
+        want_text = f"{cfg['identity']['title']}: {cfg['maps'][mk]['display']}"
+        got_text = (secs.get("noise-expression") or {}).get(g["entry"])
+        if got_text != want_text:
+            fails.append(f"locale [noise-expression] {g['entry']} reads {got_text!r}, want {want_text!r}")
+        pen = preset_pen(d1, pname)
+        if pen.get(K["elevation"]) != g["entry"]:
+            fails.append(f"preset {pname} names {pen.get(K['elevation'])!r} for elevation, not its entry {g['entry']}")
+        orders.append(b.get("order") or "")
+        porders.append((presets.get(pname) or {}).get("order") or "")
+    vanilla = {n: (b.get("order") or "") for n, b in ne.items()
+               if b.get("intended_property") == K["elevation"] and not n.startswith(prefix)}
+    unordered = sorted(n for n, o in vanilla.items() if not o)
+    ordered = sorted(o for o in vanilla.values() if o)
+    if any(not o for o in orders) or orders != sorted(orders) or len(set(orders)) != len(orders):
+        fails.append(f"the entries' orders {orders} do not list the maps in preset order {maps}")
+    elif ordered and not orders[-1] < ordered[0]:
+        fails.append(f"the entries' orders {orders} do not sort before vanilla's ordered entries {ordered[:1]} (Island)")
+    if not unordered:
+        fails.append("vanilla's default entry carries an order: the Map type list would not start with it")
+    if not (porders and all(porders) and porders == sorted(porders) and len(set(porders)) == len(porders)
+            and "a" < porders[0] and porders[-1] < "b"):
+        fails.append(f"the presets' orders {porders} do not sort in map order after Default's 'a' and before 'b'")
+    # A-21: no map's entry reads another map's name, through the prototype names (the Map type route
+    # sets only elevation) or through its preset's redirects; and it reads exactly its own fallbacks,
+    # each equal to what its own preset bakes; both checks with positive controls on a dump copy (U1)
+    f, reads_of = entry_isolation_findings(cfg, d1, maps)
+    fails += f
+    fails += fallback_findings(cfg, d1, maps, reads_of, "default settings",
+                               int(cfg["settings"]["scale"]["default_value"]))
+    controls = dump_fact_controls(cfg, d1, maps, reads_of)
+    for k, (ok, detail) in controls.items():
+        if not ok:
+            fails.append(f"positive control did not behave: {k} {detail if detail else ''}".rstrip())
+    mb = mods.make(f"ea-m1b{T11_AB[1]}-{mods.zip_sha[:8]}", [mods.build_zip()])
+    mods.prepare(mb, f"m1b{T11_AB[1]}")
+    set_scale(ctx, mods, mb, T11_AB[1])
+    # the same settings-B dump as ec_dump_facts' (one cache entry: the key names it alike)
+    key, newest = common_key(ctx, "ec_dump_b", {"mb": mods.manifest(mb), "b": T11_AB[1]})
+    hit = cache.get(key) if cache is not None else None
+    rb = None
+    if hit:
+        d = abs_ws(ctx, hit["run_dirs"][0])
+        if not g1(d) and run_time(d) >= newest and (d / "data-raw-dump.json").exists():
+            rb = d
+    if rb is None:
+        r = ctx.fh(["dump-data", "--instance", ctx.instance, "--modset", mb], ctx.out / f"owa-dump-settings-b{T11_AB[1]}")
+        if not r.ok:
+            fails.append(f"dump-data at settings B: {r.result}")
+        fails += g1(r.out) + g3(r.out)
+        rb = r.out
+        tmp = Row("ec_dump_b")
+        tmp.run_dirs, tmp.meas = [rb], {}
+        if cache is not None and not g1(rb):
+            cache.put(key, tmp, newest)
+    db = json.loads((Path(rb) / "data-raw-dump.json").read_text(encoding="utf-8"))
+    fails += fallback_findings(cfg, db, maps, reads_of, f"settings B (scale {T11_AB[1]})", T11_AB[1])
+    # T16: each new map's spawn-city dropdown (the settings the dumps row already holds to config.lua)
+    # and its table in cities.lua; U6: no spawn-city setting without the city fold that records it
+    fails += city_dropdown_findings(cfg, new_maps(cfg))
+    fails += city_table_findings(cfg, new_maps(cfg))
+    fails += city_fold_findings(cfg, new_maps(cfg))
+    row.run_dirs = [rb]
+    parts.append(f"spawn-city dropdowns and cities.lua tables of {new_maps(cfg)} equal EarthMaps' lists plus random, "
+                 f"each read by its map's city fold; "
+                 f"entries {want} with orders {orders} (after {unordered}, before {ordered[:1]}); presets {porders}; "
+                 f"each map's entry reads only its own names and its fallbacks {reads_of}, equal to its preset at "
+                 f"scales {cfg['settings']['scale']['default_value']} and {T11_AB[1]}; "
+                 f"{sum(1 for ok, _ in controls.values() if ok)} of {len(controls)} A-21 and fallback controls behaved")
+    row.detail = "; ".join(parts)
+
+
+# -- step 3: route parity and the Map type route on every new map (T13; T18 notice)
+
+def row_owa_routes(ctx, mods, sec6, row, cache):
+    """T13 (FG; 256 px; seed 1000), per new map: --preset and a full --map-gen-settings file (never
+    both) give the same preview over the map's coast view and, created with --create and loaded,
+    the same tiles and entities in 3 x 3 chunks around the spawn."""
+    cfg = mods.cfg
+    maps = new_maps(cfg)
+    ms = probe_modset(ctx, mods, "m1g1")
+    views = {mk: map_view(cfg, mk) for mk in maps}
+    key, newest = common_key(ctx, "owa_routes", {"ms": mods.manifest(ms), "dump": ctx.shared.get("dump_m1_sha"),
+                                                  "area": T12_AREA, "views": views})
+
+    def live():
+        inst, outs = ctx.instance, []
+        for mk in maps:
+            pname, _ = map_preset(cfg, mk)
+            mgs = map_preset_mgs(ctx, cfg, mk)
+            off = views[mk][0]
+            outs += [ctx.fh(preview_args(inst, ms, VIEW_SIZE, preset=pname, offset=off),
+                            ctx.out / f"owa-route-{mk}-preview-preset").out,
+                     ctx.fh(preview_args(inst, ms, VIEW_SIZE, mgs=mgs, offset=off),
+                            ctx.out / f"owa-route-{mk}-preview-mgs").out]
+            sp = ctx.out / f"owa-route-{mk}-create-preset" / "p.zip"
+            sm = ctx.out / f"owa-route-{mk}-create-mgs" / "m.zip"
+            outs += [ctx.fh(create_args(inst, ms, sp, preset=pname), sp.parent).out,
+                     ctx.fh(create_args(inst, ms, sm, mgs=mgs), sm.parent).out]
+            for label, save in (("preset", sp), ("mgs", sm)):
+                dump_settings(ctx, ms, inst, label="route", areas=T12_AREA, types=ROUTE_TYPES)()
+                outs.append(ctx.fh(scenario_args(inst, ms, 4, save=save), ctx.out / f"owa-route-{mk}-load-{label}").out)
+        return outs
+
+    def derive(dirs):
+        fails, meas, parts = [], {}, []
+        for d in dirs:
+            fails += g1(d) + g3(d)
+        if len(dirs) != 6 * len(maps):
+            return {}, fails + [f"{len(dirs)} run directories, want {6 * len(maps)}"], ""
+        for i, mk in enumerate(maps):
+            ds = dirs[6 * i:6 * i + 6]
+            pa, pb = derive_preview(ds[0]), derive_preview(ds[1])
+            if not pa["images"] or pa["images"] != pb["images"]:
+                fails.append(f"{mk}: the preset and MGS previews differ: {pa['images']} vs {pb['images']}")
+            da, db = (read_dump(d, "route") for d in ds[4:6])
+            ta, tb = area_tiles(da), area_tiles(db)
+            diff = sum(1 for x, y in zip(ta, tb) if x != y)
+            ea, eb = area_entities(da), area_entities(db)
+            if diff or not ta or len(ta) != len(tb):
+                fails.append(f"{mk}: the two created worlds' tiles differ: {diff} of {len(ta)}")
+            if ea != eb or not ea:
+                fails.append(f"{mk}: the two created worlds' entities differ: {len(ea)} against {len(eb)}")
+            meas[mk] = {"view": views[mk], "preview": pa["images"], "tiles_differing": diff, "entities": len(ea)}
+            parts.append(f"{mk}: one preview {list(pa['images'].values())[:1]} at view {views[mk][0]} "
+                         f"({views[mk][1]:.0%} water), created worlds equal ({diff} of {len(ta)} tiles, {len(ea)} "
+                         f"entities)")
+        return meas, fails, "; ".join(parts)
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def row_owa_maptype(ctx, mods, sec6, row, cache):
+    """T13 (FG; the Map type route; scale 6; 256 px; seed 1000), per new map: an MGS file that sets
+    only elevation to the map's entry previews and creates with exit 0 and no error signature or
+    "is not defined; ignoring" line (G3); over the map's coast view its preview differs from M0's
+    and from the other maps' elevation-only previews there, and its player-blocking water mask
+    equals its own preset world's. T18: that world's on_init logs the notice exactly once, naming
+    the map's own preset; the map's preset world never logs it. The read-back city index at (0, 0)
+    of the elevation-only world equals the preset world's under the same settings, each a city of
+    the table (maptype_city_findings); a map without spawn-cities' city fold fails closed."""
+    cfg = mods.cfg
+    maps = new_maps(cfg)
+    every = [cfg["presets"][k]["map"] for k in cfg["preset_order"]]
+    ms = mods.make(f"ea-m1v1-{mods.zip_sha[:8]}", [mods.build_zip()])
+    mods.prepare(ms, "m1v1")
+    m0 = ctx.shared["m0"]
+    views = {mk: map_view(cfg, mk) for mk in maps}
+    folds = {mk: city_fold(cfg, mk) for mk in maps}
+    pm = probe_modset(ctx, mods, "m1owamt") if any(folds.values()) else None
+    key, newest = common_key(ctx, "owa_maptype", {"ms": mods.manifest(ms), "dump": ctx.shared.get("dump_m1_sha"),
+                                                   "views": views, "pm": mods.manifest(pm) if pm else None,
+                                                   "folds": sorted(mk for mk, f in folds.items() if f)})
+    base = len(every) + 4               # previews of every map's entry, the preset's, M0's; two creates
+    city_runs = 3                       # a fold map's read-back: Map type world, preset save, its load
+
+    def live():
+        inst, outs = ctx.instance, []
+        for mk in maps:
+            pname, _ = map_preset(cfg, mk)
+            off = views[mk][0]
+            for other in every:
+                outs.append(ctx.fh(preview_args(inst, ms, VIEW_SIZE, mgs=map_maptype_mgs(ctx, cfg, other), offset=off),
+                                   ctx.out / f"owa-mt-{mk}-view-{other}").out)
+            outs += [ctx.fh(preview_args(inst, ms, VIEW_SIZE, preset=pname, offset=off),
+                            ctx.out / f"owa-mt-{mk}-preset").out,
+                     ctx.fh(preview_args(inst, m0, VIEW_SIZE, offset=off), ctx.out / f"owa-mt-{mk}-m0").out]
+            for label, extra in (("maptype", {"mgs": map_maptype_mgs(ctx, cfg, mk)}), ("preset", {"preset": pname})):
+                save = ctx.out / f"owa-mt-{mk}-create-{label}" / f"{label}.zip"
+                outs.append(ctx.fh(create_args(inst, ms, save, **extra), save.parent).out)
+            if folds[mk]:
+                # the read-back city index at (0, 0): the Map type world in one scenario, the preset
+                # world created and loaded with the probe, as spawn-cities' t13_maptype_city does
+                pts = dump_settings(ctx, pm, inst, label="owamt", points="0,0", names=folds[mk]["city_index"])
+                pts()
+                outs.append(ctx.fh(scenario_args(inst, pm, 3, SEED, map_maptype_mgs(ctx, cfg, mk)),
+                                   ctx.out / f"owa-mt-{mk}-city-maptype").out)
+                save = ctx.out / f"owa-mt-{mk}-city-create-preset" / "p.zip"
+                outs.append(ctx.fh(create_args(inst, pm, save, preset=pname), save.parent).out)
+                pts()
+                outs.append(ctx.fh(scenario_args(inst, pm, 3, save=save), ctx.out / f"owa-mt-{mk}-city-preset").out)
+        return outs
+
+    def derive(dirs):
+        import t1_metrics as t1
+        fails, meas, parts = [], {}, []
+        for d in dirs:
+            fails += g1(d) + g3(d)
+        want_n = sum(base + (city_runs if folds[mk] else 0) for mk in maps)
+        if len(dirs) != want_n:
+            return {}, fails + [f"{len(dirs)} run directories, want {want_n}"], ""
+        ws = t1.water_colour_set(blocking_water_colours(ctx.shared["dump_m1"]) + ford_colours(ctx.shared["dump_m1"], cfg))
+        k = 0
+        for mk in maps:
+            n = base + (city_runs if folds[mk] else 0)
+            ds, city_dirs = dirs[k:k + base], dirs[k + base:k + n]
+            k += n
+            pname, _ = map_preset(cfg, mk)
+            views_by = {other: derive_preview(ds[j]) for j, other in enumerate(every)}
+            own = views_by[mk]
+            p, z = derive_preview(ds[len(every)]), derive_preview(ds[len(every) + 1])
+            if not own["images"] or own["images"] == z["images"]:
+                fails.append(f"{mk}: the Map type preview equals M0's: the entry was not applied (G5)")
+            same = [o for o in every if o != mk and views_by[o]["images"] == own["images"]]
+            if same:
+                fails.append(f"{mk}: its elevation-only preview equals {same}'s over its coast view")
+            wa = ~t1.preview_land(Path(ds[every.index(mk)]) / f"{SEED}.png", ws)
+            wp = ~t1.preview_land(Path(ds[len(every)]) / f"{SEED}.png", ws)
+            diff = int((wa != wp).sum())
+            if not wa.any() or wa.all():
+                fails.append(f"{mk}: the Map type preview holds {int(wa.sum())} water pixels: the view shows no coast")
+            if diff:
+                fails.append(f"{mk}: the Map type world's player-blocking water mask differs from the preset world's "
+                             f"in {diff} pixels")
+            notice = render_message(cfg, "notice", ("map-gen-preset-name", pname))
+            counts = [count_lines(log_text(d), notice) for d in ds[len(every) + 2:]]
+            any_notice = count_lines(log_text(ds[-1]), message_prefix(cfg, "notice"))
+            if counts[0] != 1:
+                fails.append(f"{mk}: the elevation-only world logs its notice {counts[0]} times (want once): {notice!r}")
+            if any_notice:
+                fails.append(f"{mk}: a notice appears on the preset world ({any_notice})")
+            dumps = tuple(read_dump(d, "owamt") for d in (city_dirs[0], city_dirs[2])) if len(city_dirs) == 3 else None
+            city, f = maptype_city_findings(cfg, mk, dumps)
+            fails += f
+            meas[mk] = {"view": views[mk], "preview": own["images"], "water_mask_diff": diff,
+                        "water_px": int(wa.sum()), "notice": counts, "city_index": city}
+            parts.append(f"{mk}: elevation-only preview {list(own['images'].values())[:1]} differs from M0's and the "
+                         f"other maps' over view {views[mk][0]}; water mask equal to its preset world's "
+                         f"({int(wa.sum())} water px); notice naming {pname} logged {counts[0]} time; read-back city "
+                         f"index {city or 'not compared (no city fold)'}")
+        return meas, fails, "; ".join(parts)
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+# -- T15b positions of the new maps (design section 9: "a 16 x 16 coast block chosen like Europe's")
+
+def block_land(mref, scale, bx, by, offset=(0, 0), filled=False):
+    """The reference land share of the 512 x 512 tiles of the 16 x 16 chunk block whose north-west
+    chunk is (bx, by) in world chunks, each tile read at the pixel it samples (europe_block's rule),
+    with world tiles converted to geo tiles through the city offset. filled=True counts thin water
+    as land, as the fit renders it (its target fills thin water)."""
+    import numpy as np
+    tx = np.arange(bx * 32, bx * 32 + 512) + offset[0]
+    ty = np.arange(by * 32, by * 32 + 512) + offset[1]
+    cols = np.floor_divide(tx, scale) + mref.wr
+    rows = np.floor_divide(ty, scale) + mref.hr
+    inside = (cols >= 0) & (cols < mref.W)
+    rin = (rows >= 0) & (rows < mref.H)
+    sub = np.ix_(rows[rin], cols[inside])
+    land = mref.land[sub] | mref.thin[sub] if filled else mref.land[sub]
+    return round(float(land.sum()) / (512 * 512), 4)
+
+
+def clear_of_start(x0, y0, n):
+    """True when the n x n tiles from (x0, y0) lie outside the start area the game generates at
+    creation (chunks -7..6 around the spawn), as europe_block requires of a timed block."""
+    sa = START_AREA_CHUNKS * 32
+    return x0 + n - 1 < -sa or x0 >= sa or y0 + n - 1 < -sa or y0 >= sa
+
+
+def twin_block(mref, scale6_corner, scale):
+    """europe_block's scale-1 rule for any map: the chunk-aligned 16 x 16 block at `scale` holding the
+    scale 6 block's pixels, clear of the start area, closest to centred on them, or None."""
+    bx, by = scale6_corner
+    c0, c1 = bx * 32 // P4_SCALE + mref.wr, (bx * 32 + 511) // P4_SCALE + mref.wr
+    r0, r1 = by * 32 // P4_SCALE + mref.hr, (by * 32 + 511) // P4_SCALE + mref.hr
+    tx0, tx1 = (c0 - mref.wr) * scale, (c1 - mref.wr + 1) * scale - 1
+    ty0, ty1 = (r0 - mref.hr) * scale, (r1 - mref.hr + 1) * scale - 1
+    best = None
+    for qx in range((tx1 - 511) // 32 - 1, tx0 // 32 + 2):
+        for qy in range((ty1 - 511) // 32 - 1, ty0 // 32 + 2):
+            X, Y = qx * 32, qy * 32
+            if not (X <= tx0 and X + 511 >= tx1 and Y <= ty0 and Y + 511 >= ty1):
+                continue
+            if not clear_of_start(X, Y, 512):
+                continue
+            d2 = (X + 256 - (tx0 + tx1) / 2) ** 2 + (Y + 256 - (ty0 + ty1) / 2) ** 2
+            if best is None or (d2, qx, qy) < best:
+                best = (d2, qx, qy)
+    return None if best is None else (best[1], best[2])
+
+
+def warm_chunk(corner, scale):
+    """The warm-up chunk at Europe's offset from its block corner at that scale, moved west past the
+    start area where it would fall inside it (a chunk generated at creation warms nothing)."""
+    wx, wy = corner[0] + OWA_WARM[scale][0], corner[1] + OWA_WARM[scale][1]
+    while not clear_of_start(wx * 32, wy * 32, 32):
+        wx -= 16
+    return wx, wy
+
+
+def map_positions(cfg, map_key):
+    """The new map's T15b blocks at scales 6 and 1. Europe's are Phase 4's, fixed in geo coordinates
+    through London; the new maps have no Phase 4 block, so the scale 6 block is the one nearest the
+    map's default spawn (city offset 0: its centre pixel), corners on a grid of OWA_BLOCK_STEP
+    chunks, clear of the start area, whose reference land and whose scale 1 twin's (europe_block's
+    rule) both lie in BLOCK_LAND (test notes 5.4: a coast block of 50 to 95 percent land), with
+    thin water counted as water and again as land: the fit fills thin water, so a block whose only
+    water is rivers renders all land and is no coast block (measured: Atlantic's nearest such block
+    held 0 water tiles in game). Deterministic, and fixed in geo coordinates like Europe's: the
+    blocks are chosen in the geo frame and placed in the timed world's chunks through its spawn
+    offset at each scale (map_offset: 0 until the spawn-city fold, then spawn-cities' runner
+    offset), so a moved spawn moves the chunks and keeps the geo block."""
+    import numpy as np
+    mref = mref_of(map_key)
+    spawn = {P4_SCALE: map_offset(cfg, map_key, P4_SCALE), 1: map_offset(cfg, map_key, 1)}
+    off = (0, 0)                        # the search runs in the geo frame
+    reach = OWA_BLOCK_REACH
+    cands = [(bx, by) for bx in range(-reach, reach + 1, OWA_BLOCK_STEP)
+             for by in range(-reach, reach + 1, OWA_BLOCK_STEP)]
+    cands.sort(key=lambda q: ((q[0] + 8) ** 2 + (q[1] + 8) ** 2, q))
+    for bx, by in cands:
+        if not clear_of_start(bx * 32, by * 32, 512):
+            continue
+        # a cheap pre-screen on the block's own pixels before the exact share
+        c0 = (bx * 32 + off[0]) // P4_SCALE + mref.wr
+        r0 = (by * 32 + off[1]) // P4_SCALE + mref.hr
+        if c0 < 0 or r0 < 0 or c0 + 86 > mref.W or r0 + 86 > mref.H:
+            continue
+        rough = float(np.mean(mref.land[r0:r0 + 86, c0:c0 + 86] | mref.thin[r0:r0 + 86, c0:c0 + 86]))
+        if not (BLOCK_LAND[0] - 0.05 <= rough <= BLOCK_LAND[1] + 0.05):
+            continue
+        f6 = block_land(mref, P4_SCALE, bx, by, off)
+        if not (BLOCK_LAND[0] <= f6 <= BLOCK_LAND[1]) or                 not (BLOCK_LAND[0] <= block_land(mref, P4_SCALE, bx, by, off, True) <= BLOCK_LAND[1]):
+            continue
+        t1c = twin_block(mref, (bx, by), 1)
+        if t1c is None:
+            continue
+        f1 = block_land(mref, 1, t1c[0], t1c[1], off)
+        if not (BLOCK_LAND[0] <= f1 <= BLOCK_LAND[1]) or                 not (BLOCK_LAND[0] <= block_land(mref, 1, t1c[0], t1c[1], off, True) <= BLOCK_LAND[1]):
+            continue
+        if spawn[P4_SCALE] == off and spawn[1] == off:
+            w6, w1 = warm_chunk((bx, by), 6), warm_chunk(t1c, 1)
+            return {"block": {6: f"{bx}:{by}:{w6[0]}:{w6[1]}", 1: f"{t1c[0]}:{t1c[1]}:{w1[0]}:{w1[1]}"},
+                    "block_land": {6: f6, 1: f1}, "corner": {6: (bx, by), 1: t1c}}
+        # a moved spawn: the same geo blocks in the timed world's chunks (world = geo - offset)
+        world = {s: ((c[0] * 32 - spawn[s][0]) // 32, (c[1] * 32 - spawn[s][1]) // 32)
+                 for s, c in ((P4_SCALE, (bx, by)), (1, t1c))}
+        if not all(clear_of_start(c[0] * 32, c[1] * 32, 512) for c in world.values()):
+            continue
+        w6, w1 = warm_chunk(world[P4_SCALE], 6), warm_chunk(world[1], 1)
+        return {"block": {6: f"{world[P4_SCALE][0]}:{world[P4_SCALE][1]}:{w6[0]}:{w6[1]}",
+                          1: f"{world[1][0]}:{world[1][1]}:{w1[0]}:{w1[1]}"},
+                "block_land": {s: block_land(mref, s, c[0], c[1], spawn[s]) for s, c in world.items()},
+                "corner": {6: world[P4_SCALE], 1: world[1]}}
+    raise GateError(f"{map_key}: no 16 x 16 chunk coast block within {reach} chunks of the spawn holds {BLOCK_LAND} "
+                    f"reference land at scales 6 and 1")
+
+
+# ------------------------------------------------------------------------------------------------ region-layer
+#
+# The region layer (design section 10, milestone region-layer; ARCHITECTURE.md, "Region layer"). Nothing
+# reads it yet, so its rows check the bodies in the M1 dump, read the layer itself through the test
+# mod tools/mods/ea-region-probe (calculate_tile_properties at points and on grids, no chunk
+# generated) and compare previews and complexity with what main records (its allocation is 0).
+
+RL_PROBE = "ea-region-probe"
+RL_PREFIX = RL_PROBE + "-"
+RL_FG = ("europe", 6)                    # T3 FG: Europe at scale 6, at every canonical seed
+RL_T3_SCALES = (1, 6)                    # T3 SS: every map at scales 1 and 6
+RL_T2_SCALES = (6, 1)                    # T2 SS: the zone grids on the frame map at these scales
+RL_IOU_PAIRS = (0.85, 0.97)              # T2: the zone's IoU between seed pairs (S10: 0.903 to 0.925)
+RL_IOU_POLYGON = 0.92                    # T2: the zone's IoU with the approved polygon (S10: 0.935 to 0.938)
+RL_BEYOND_PX = 27                        # T2: no zone tile further beyond the polygon (warp 24 + roughness 3 px)
+RL_PAD_PX = 30                           # a grid's margin around its row's box: the drift bound plus the ramp
+RL_EPS_PX = 1e-3                         # float32 slack on a bound in reference pixels
+RL_TICKS = 3
+RL_TIMEOUT = 300
+RL_COARSE_PX = 16                        # locality: the whole-map grid's step in reference pixels
+RL_ROW_SIDE = 400                        # T2: a row grid's side at most, in samples (big rows are sampled coarser)
+RL_READERS = ("moisture", "aux", "temperature")   # read cost: vanilla properties redirected to aggregates
+RL_READ_BY = ("destroyed_w", "forest_w", "enemy_mult")
+RL_CONSUMER_SLICES = ("climate-tiles", "trees-forests", "resources-enemies", "destroyed-europe")   # rl_dump_facts
+RL_AGGREGATES = tnconfig.REGION_AGGREGATES
+RL_LAYER_ROWS = {"destroyed_sd": ("destroyed", "sd"), "forest_w": ("forest", "w"), "forest_sum": ("forest", "w"),
+                 "marsh_w": ("marsh", "w"), "hotspot_w": ("hotspot", "w"), "enemy_mult": ("hotspot", "w")}
+
+
+def rl_rows(path=None):
+    import build_regions
+    return build_regions.load_table(path) if path else build_regions.load_table()
+
+
+def rl_names(cfg, rows):
+    """Every name regions.lua defines for `rows`: tnconfig.region_names, the one naming rule that
+    config.lua's readers (the dump facts, the T16 rows, build_zip.py --release) share:
+    {"aggregates": {key: name}, "internal": [...], "rows": {id: {"sd", "w", "depth"[, "hu", "hv"]}}}.
+    Internal names are the layer's own (the query point and its warped shares, the noise anchor, the
+    warp and the roughness); consumers read the aggregates and the row names."""
+    return tnconfig.region_names(cfg, rows)
+
+
+def rl_all_names(names):
+    out = set(names["aggregates"].values()) | set(names["internal"])
+    for d in names["rows"].values():
+        out |= set(d.values())
+    return out
+
+
+def rl_gen_key(body):
+    """A body's generation fields without its name: two bodies with one key are one formula."""
+    return key_of({k: body.get(k) for k in ("expression", "local_expressions", "local_functions", "parameters")})
+
+
+def rl_split_args(text):
+    """The top-level comma-separated arguments of the call that `text` is, or None."""
+    i = text.find("(")
+    if i < 0 or not text.endswith(")"):
+        return None
+    out, depth, cur = [], 0, []
+    for ch in text[i + 1:-1]:
+        if ch in "({":
+            depth += 1
+        elif ch in ")}":
+            depth -= 1
+        if ch == "," and depth == 0:
+            out.append("".join(cur).strip())
+            cur = []
+        else:
+            cur.append(ch)
+    out.append("".join(cur).strip())
+    return out
+
+
+def rl_fold_branches(cfg, text):
+    """{map key: the text that map reads} of an aggregate: regions.lua folds a text that differs by
+    map as if(<map> == <id>, <text>, ...), the last map being the else branch."""
+    K, maps = cfg["keys"]["map"], [k for k in cfg["map_order"] if (cfg.get("geography") or {}).get(k)]
+    out, rest = {}, text
+    for mk in maps[:-1]:
+        args = rl_split_args(rest) if rest.startswith("if(") else None
+        want = f"{K} == {cfg['number_format'] % cfg['maps'][mk]['id']}"
+        if not args or len(args) != 3 or args[0] != want:
+            return {m: text for m in maps} if not out else None
+        out[mk], rest = args[1], args[2]
+    out[maps[-1]] = rest
+    return out
+
+
+def rl_modset(ctx, mods, tag, build=None):
+    """M1 (or a staged build: (zip, sha256)) plus ea-region-probe, its own modset per tag, prepared (G7)."""
+    probe = HERE / "mods" / RL_PROBE
+    if build is None:
+        ms = mods.with_mods(tag, [probe])
+    else:
+        ms = mods.make(f"ea-{tag}-{build[1][:8]}-{folder_hash(probe)}", [build[0], probe])
+    mods.prepare(ms, tag)
+    return ms
+
+
+def rl_settings(ctx, modset, inst, **vals):
+    """A prepare() that writes every ea-region-probe startup setting of `modset` (stored values persist
+    in a modset otherwise), through fh.py's own encoder as dump_render.set_startup does."""
+    import dump_render
+
+    def prep():
+        fh = dump_render.load_fh()
+        v = {"label": "probe", "surface": "nauvis", "constants": "", "offset": "", "points": "", "names": "",
+             "grids": "", "tick": 1}
+        v.update({k.replace("_", "-"): x for k, x in vals.items()})
+        f = fh.ensure_settings_file(inst, fh.MODSETS / modset)
+        doc = fh.read_mod_settings(f)
+        startup = fh._dict_get(doc["tree"], "startup")
+        for name, x in v.items():
+            node = [6, 0, int(x)] if isinstance(x, int) and not isinstance(x, bool) else [3, 0, str(x)]
+            entry = fh._dict_get(startup, RL_PREFIX + name)
+            if entry is None:
+                startup[2].append((RL_PREFIX + name, [5, 0, [("value", node)]]))
+            else:
+                entry[2] = [(k, node if k == "value" else c) for k, c in entry[2]]
+        f.write_bytes(fh.encode_mod_settings(doc))
+    return prep
+
+
+def rl_job(ctx, cfg, ms, inst, mk, scale, seed, label, out, **vals):
+    """One probe scenario: the map's preset MGS at a scale and seed, the probe reading at tick 1, the
+    spawn offset read in the game from the offset names of the map's newest geography version."""
+    g = tnconfig.geography(cfg)[mk]
+    vals.setdefault("offset", f"{g['cx']},{g['cy']}")
+    K = cfg["keys"]
+    vals.setdefault("constants", f"{K['map']},{K['scale']}")
+    return (rl_settings(ctx, ms, inst, label=label, **vals),
+            scenario_args(inst, ms, RL_TICKS, seed, map_preset_mgs(ctx, cfg, mk, scale)), out, RL_TIMEOUT)
+
+
+def rl_read(run_dir, label):
+    import dump_render
+    f = Path(run_dir) / "script-output" / RL_PROBE / f"{label}.json"
+    if not f.exists():
+        raise GateError(f"{run_dir}: the region probe wrote no {f.name}")
+    return dump_render.load_json(f)
+
+
+def rl_g5(cfg, probe, mk, scale, seed):
+    """G5 on a probe run: it read the map's per-save numbers (the preset applied) at its seed."""
+    K, out = cfg["keys"], []
+    c = probe.get("constants") or {}
+    if c.get(K["map"]) != cfg["maps"][mk]["id"] or c.get(K["scale"]) != int(scale):
+        out.append(f"{mk} scale {scale} seed {seed}: the probe read {K['map']} {c.get(K['map'])!r} and {K['scale']} "
+                   f"{c.get(K['scale'])!r} (G5: the preset did not apply)")
+    if probe.get("seed") != seed:
+        out.append(f"{mk} scale {scale}: the probe ran at seed {probe.get('seed')}, not {seed}")
+    return out
+
+
+def rl_points(cfg, O, mk, scale):
+    """[(place, (x, y))]: the geo tile of every place with a region expectation (the tile holding its
+    reference pixel's centre); the probe subtracts the spawn offset it reads in the game."""
+    import oracle
+    mref = mref_of(mk)
+    return [(p, tuple(int(v) for v in oracle.place_tile(mref, p, str(scale)))) for p in O["places"]
+            if p["expect"].get("region")]
+
+
+def rl_point_names(cfg, pts):
+    import oracle
+    return sorted({oracle.region_names(cfg, k) for p, _ in pts for k in p["expect"]["region"]})
+
+
+def rl_t3_eval(cfg, pts, probe, label):
+    """({pass, listed, fail}, fails, listed): each place's region expectation against the probe. A key
+    that flips within 40 km of its nominal edge is listed, not failed (T3); a protected feature
+    (region_hard) never flips, whatever its distance."""
+    import oracle
+    names = probe.get("names") or []
+    vals = {(int(q["x"]), int(q["y"])): dict(zip(names, q.get("values") or [])) for q in probe.get("points") or []}
+    counts, fails, listed = {"pass": 0, "listed": 0, "fail": 0}, [], []
+    seen = {True: 0, False: 0}
+    for p, t in pts:
+        v = vals.get(t, {})
+        for k, want in p["expect"]["region"].items():
+            name = oracle.region_names(cfg, k)
+            got = v.get(name)
+            if not isinstance(got, (int, float)) or isinstance(got, bool) or got != got:
+                counts["fail"] += 1
+                fails.append(f"{label} {p['id']} {k}: {name} read {got!r} (every name must resolve)")
+                continue
+            inside = got > 0
+            if inside == want:
+                counts["pass"] += 1
+                seen[want] += 1
+                continue
+            margin = (p.get("region_margin_km") or {}).get(k)
+            if k not in (p.get("region_hard") or []) and margin is not None and margin <= oracle.REGION_LIST_KM:
+                counts["listed"] += 1
+                listed.append(f"{label} {p['id']} {k}: {round(got, 2)} px, {margin} km from its edge")
+            else:
+                counts["fail"] += 1
+                fails.append(f"{label} {p['id']} {k}: {name} {round(got, 3)} px, want {'inside' if want else 'outside'}"
+                             + (" (a protected feature)" if k in (p.get("region_hard") or []) else
+                                f" ({margin} km from its edge)"))
+    if not (seen[True] and seen[False]):
+        fails.append(f"{label}: the places passed {seen[True]} inside and {seen[False]} outside expectations; both "
+                     f"must hold somewhere or the check tests nothing")
+    return counts, fails, listed
+
+
+def rl_grid(cfg, mk, scale, shape, pad=RL_PAD_PX, step_px=1):
+    """A grid of pixel centres over a nominal shape's box plus `pad`, in the region frame and in the
+    map's geo tiles (x = s (c - wr) + floor(s / 2)), clipped to the map's raster: {spec, u0, v0, nx,
+    ny, step}."""
+    import build_regions as br
+    import earthgeo as eg
+    du, dv = br.map_offset(cfg, mk)
+    m = cfg["maps"][mk]
+    if shape["kind"] == "disc":
+        us, vs, r = [shape["cu"]], [shape["cv"]], shape["r"]
+    else:
+        us, vs, r = [q[0] for q in shape["pts"]], [q[1] for q in shape["pts"]], shape.get("r") or 0
+    c0 = max(0, int(math.floor(min(us) - r - pad)) - du)
+    c1 = min(m["width_px"] - 1, int(math.ceil(max(us) + r + pad)) - du)
+    r0 = max(0, int(math.floor(min(vs) - r - pad)) - dv)
+    r1 = min(m["height_px"] - 1, int(math.ceil(max(vs) + r + pad)) - dv)
+    nx, ny = (c1 - c0) // step_px + 1, (r1 - r0) // step_px + 1
+    s = int(scale)
+    k = eg.corner_offset_tiles(s)
+    x0, y0 = s * (c0 - m["wr"]) + k, s * (r0 - m["hr"]) + k
+    return {"spec": f"{x0},{y0},{s * step_px},{nx},{ny}", "u0": c0 + du, "v0": r0 + dv, "nx": nx, "ny": ny,
+            "step": step_px}
+
+
+def rl_grid_arg(label, grid, mode, names):
+    return f"{label}|{grid['spec']}|{mode}|{','.join(names)}"
+
+
+def rl_bits(rec, name):
+    """A sign grid's runs as a uint8 array (1 inside, 0 outside, 2 not finite)."""
+    import numpy as np
+    out = np.zeros((rec["ny"], rec["nx"]), np.uint8)
+    for j, line in enumerate((rec.get("values") or {}).get(name) or []):
+        i = 0
+        for run in line.split():
+            v, n = run.split("*")
+            out[j, i:i + int(n)] = int(v)
+            i += int(n)
+    return out
+
+
+def rl_raw(rec, name):
+    import numpy as np
+    rows = (rec.get("values") or {}).get(name) or []
+    return np.asarray(rows, float) if rows else None
+
+
+def rl_uv(grid):
+    import numpy as np
+    return np.meshgrid(grid["u0"] + grid["step"] * np.arange(grid["nx"]), grid["v0"] + grid["step"] * np.arange(grid["ny"]))
+
+
+def rl_probe_grid(probe, label):
+    g = next((x for x in probe.get("grids") or [] if x.get("label") == label), None)
+    if g is None:
+        raise GateError(f"the probe wrote no grid {label}")
+    return g
+
+
+def rl_repeat_findings(pairs, seed):
+    """T2's repeat check, as ({"<map>_s<scale>": summary}, findings): `pairs` maps (map, scale) to
+    (first probe, repeat probe) at one seed. Every grid of either run (by label) must equal the
+    other's as recorded, geometry, names and values alike, so a sign mask is compared bit for bit,
+    and every constant either run read (the map and scale numbers and the hotspot centres) must be
+    the same value; a first run with no grid tests nothing and fails."""
+    out, fails = {}, []
+    for (mk, s), (a, b) in sorted(pairs.items()):
+        ga = {g.get("label"): g for g in (a or {}).get("grids") or []}
+        gb = {g.get("label"): g for g in (b or {}).get("grids") or []}
+        ca, cb = (a or {}).get("constants") or {}, (b or {}).get("constants") or {}
+        gd = sorted(lb for lb in set(ga) | set(gb) if ga.get(lb) != gb.get(lb))
+        cd = sorted(k for k in set(ca) | set(cb) if ca.get(k) != cb.get(k))
+        out[f"{mk}_s{s}"] = {"grids": len(ga), "constants": len(ca), "grids_differing": gd, "constants_differing": cd}
+        if not ga:
+            fails.append(f"{mk} scale {s} seed {seed}: the first run wrote no grid, so its repeat tests nothing")
+        if gd:
+            fails.append(f"{mk} scale {s} seed {seed}: the repeat differs in {len(gd)} of {len(ga)} grids, e.g. "
+                         f"{gd[:3]} (T2: every mask repeats exactly on the same seed)")
+        if cd:
+            fails.append(f"{mk} scale {s} seed {seed}: the repeat read other values of {cd[:4]} (T2: every hotspot "
+                         f"centre repeats)")
+    return out, fails
+
+
+# -- step 2: the region layer's dump facts (T16; the static half of T13 and T15)
+
+def rl_dump_findings(cfg, d1, rows, frozen, firewall):
+    """rl_dump_facts' checks on one dump, as (findings, facts)."""
+    names = rl_names(cfg, rows)
+    every = rl_all_names(names)
+    ne = d1.get("noise-expression") or {}
+    nf = d1.get("noise-function") or {}
+    out, facts = [], {}
+    missing = sorted(n for n in every if n not in ne)
+    if missing:
+        out.append(f"region names missing from the dump: {missing[:6]} ({len(missing)})")
+    # one named expression per region: no copy of a region body under another name
+    region_keys = {rl_gen_key(ne[n]): n for n in every if n in ne}
+    copies = sorted(f"{n} copies {region_keys[rl_gen_key(b)]}" for n, b in ne.items()
+                    if n not in every and rl_gen_key(b) in region_keys)
+    out += [f"a region body re-emitted under another name: {c} (A-7; S10: +646 each)" for c in copies]
+    # consumers read the interface only: nothing outside the layer reads the layer's own names
+    internal = set(names["internal"])
+    readers = []
+    for kind, protos in (("noise-expression", ne), ("noise-function", nf)):
+        for n, b in protos.items():
+            if n in every:
+                continue
+            texts, scope = _body_texts(ne, nf, n)
+            hit = sorted({r for t in texts or [] for r in expr_refs(t) if r in internal and r not in scope})
+            if hit:
+                readers.append(f"{kind} {n} reads {hit}")
+    for key, (texts, scope) in autoplace_index(d1).items():
+        hit = sorted({r for t in texts for r in expr_refs(t) if r in internal and r not in scope})
+        if hit:
+            readers.append(f"{key} reads {hit}")
+    for pname in earth_presets(cfg):
+        for k, v in preset_pen(d1, pname).items():
+            if v in internal or k in internal:
+                readers.append(f"preset {pname} maps {k} to {v}")
+    out += [f"outside the region layer: {r} (consumers read the interface names only)" for r in readers]
+    # each aggregate reads, per map, exactly that map's rows of its layer
+    for agg, (layer, kind) in RL_LAYER_ROWS.items():
+        name = names["aggregates"][agg]
+        body = ne.get(name)
+        if body is None:
+            continue
+        br_ = rl_fold_branches(cfg, body.get("expression") or "")
+        if br_ is None:
+            out.append(f"{name}: its map fold does not parse")
+            continue
+        for mk, text in br_.items():
+            want = {names["rows"][r["id"]][kind] for r in rows if mk in r["maps"] and r["layer"] == layer}
+            got = {x for x in expr_refs(text) if x in every}
+            if got != want:
+                out.append(f"{name} on {mk} reads {sorted(got - want)[:3]} beyond and lacks {sorted(want - got)[:3]} of "
+                           f"its {layer} rows")
+        facts[agg] = {mk: len([x for x in expr_refs(t) if x in every]) for mk, t in br_.items()}
+    mid, width = cfg["regions"]["ramp"]["mid"], cfg["regions"]["ramp"]["width_px"]
+    fmt = cfg["number_format"]
+    for rid, nm in names["rows"].items():
+        w = (ne.get(nm["w"]) or {}).get("expression")
+        if w is not None and w != f"clamp({fmt % mid} + {nm['sd']} / {fmt % width}, 0, 1)":
+            out.append(f"{nm['w']} is not the weight of {nm['sd']}: {w[:80]!r}")
+        dpt = (ne.get(nm["depth"]) or {}).get("expression")
+        if dpt is not None and dpt != f"{nm['sd']} * {cfg['keys']['scale']}":
+            out.append(f"{nm['depth']} is not {nm['sd']} in tiles: {dpt[:80]!r}")
+    # every region body registered with this dump's hash
+    bodies = (frozen or {}).get("bodies") or {}
+    unreg = sorted(n for n in every if n in ne and (bodies.get(n) or {}).get("sha256") != body_hash(ne[n]))
+    if unreg:
+        out.append(f"region bodies not registered with this dump's hash in tests/frozen.json: {unreg[:5]} "
+                   f"({len(unreg)}): register them with {FREEZE_CMD}")
+    # firewall-clean (S10 1.6): no region name reaches the fine field, under any preset's redirects
+    fw = set(firewall)
+    for label, pen in [("prototype names", {})] + [(p, preset_pen(d1, p)) for p in earth_presets(cfg)]:
+        _, hits = NoiseGraph(d1, pen).walk([(n, ()) for n in sorted(every)], lambda x: x in fw, lambda x: x in fw)
+        if hits:
+            out.append(f"the region layer reaches the fine field ({label}): {' -> '.join(map(str, hits[0]))}")
+    facts.update({"rows": len(rows), "names": len(every), "copies": len(copies), "internal_readers": len(readers)})
+    return out, facts
+
+
+def rl_consumers(cfg, d1, every, pen):
+    """The paths by which a world made with `pen` reads a region name: from every placed entity,
+    decorative and cliff property (walk_roots), every tile autoplace and the pen's own keys."""
+    fw = set(every)
+    rep = walk_roots(d1, pen, fw)
+    paths = [p for g in rep.values() for p in g["paths"]]
+    tiles = [f"tile:{n}:probability" for n, t in (d1.get("tile") or {}).items()
+             if isinstance(t, dict) and isinstance(t.get("autoplace"), dict)]
+    starts = [(k, ("tile",)) for k in tiles] + [(k, ("preset key",)) for k in sorted(pen)]
+    _, hits = NoiseGraph(d1, pen).walk(starts, lambda x: x in fw, lambda x: x in fw)
+    return paths + [list(h) for h in hits]
+
+
+def row_rl_dump_facts(ctx, mods, sec6, row, cache):
+    """T16 (FG; D13) and the static half of T13 and T15 on the M1 dump: every row of the table is its
+    named signed distance, weight and depth (a hotspot also its jittered centre), and the aggregates
+    and the layer's own names exist; each region is one named expression (no other body carries a
+    region body's generation fields under another name, A-7) and nothing outside the layer reads its
+    own names, so consumers read the interface only; each aggregate reads, per map, exactly that
+    map's rows; every region body is registered in tests/frozen.json with the dump's hash; the layer
+    is firewall-clean (S10 1.6); and nothing reads it yet: no root of the default preset or of any
+    Terra Nauvis preset reaches a region name, while a fixture preset that redirects moisture to an
+    aggregate does (the walk's positive control). The table's re-emission and the source scan for a
+    region formula outside regions.lua are the static row's (tn_static.py, regions)."""
+    cfg = mods.cfg
+    d1 = ctx.shared.get("dump_m1")
+    if d1 is None:
+        row.fails.append("no M1 dump")
+        return
+    rows = rl_rows()
+    frozen = json.loads((TESTS / "frozen.json").read_text(encoding="utf-8"))
+    f, facts = rl_dump_findings(cfg, d1, rows, frozen, firewall_names(cfg))
+    row.fails += f
+    names = rl_names(cfg, rows)
+    every = rl_all_names(names)
+    used = {}
+    # the layer's consumers (marshes, forests, hotspots, the destroyed zone) arrive with their milestones; once
+    # one is in the registry the Terra Nauvis presets read the layer, the default preset never does
+    consumer = [s["id"] for s in registry_upto(ctx.slice) if s["id"] in RL_CONSUMER_SLICES]
+    for pname in ["default"] + earth_presets(cfg):
+        paths = rl_consumers(cfg, d1, every, preset_pen(d1, pname) if pname != "default" else {})
+        used[pname] = len(paths)
+        if paths and (pname == "default" or not consumer):
+            row.fails.append(f"{pname}: a world reads the region layer, which has no consumer yet: "
+                             f"{' -> '.join(map(str, paths[0]))}")
+        if not paths and pname != "default" and consumer:
+            row.fails.append(f"{pname}: no root reads the region layer, though {consumer} consume it")
+    pname0 = earth_presets(cfg)[0]
+    fixture = dict(preset_pen(d1, pname0), **{RL_READERS[0]: names["aggregates"][RL_READ_BY[1]]})
+    if not rl_consumers(cfg, d1, every, fixture):
+        row.fails.append(f"the consumer walk's positive control did not behave: {pname0} with {RL_READERS[0]} -> "
+                         f"{names['aggregates'][RL_READ_BY[1]]} reads no region name")
+    for k, ok in rl_controls(cfg, d1, rows, frozen).items():
+        if not ok:
+            row.fails.append(f"region dump-facts positive control did not behave: {k}")
+    row.detail = (f"{facts.get('rows')} rows, {facts.get('names')} region names in the M1 dump, every one registered; "
+                  f"0 copies under other names and 0 outside readers of the layer's own names; aggregates per map "
+                  f"{ {k: v for k, v in facts.items() if k in RL_LAYER_ROWS} }; firewall-clean; region readers per "
+                  f"preset {used} (consumers {consumer or 'none yet'}), the moisture fixture reads it")
+
+
+def rl_controls(cfg, d1, rows, frozen):
+    """rl_dump_facts' positive controls on fixture copies of the dump: a copy of a region body under
+    another name, a vanilla expression reading the warp, an aggregate missing a row, an unregistered
+    region body and a region body reading the fine field each fail; the real dump passes."""
+    import copy
+    names = rl_names(cfg, rows)
+    fw = firewall_names(cfg)
+    out = {}
+    base, _ = rl_dump_findings(cfg, d1, rows, frozen, fw)
+    out["the real dump passes"] = not base
+    r0 = next(iter(names["rows"]))
+    sd0 = names["rows"][r0]["sd"]
+
+    def fails_with(mutate, fz=frozen):
+        d = copy.deepcopy({k: d1[k] for k in ("noise-expression", "noise-function", "map-gen-presets", "planet")
+                           if k in d1})
+        for k in d1:
+            d.setdefault(k, d1[k])
+        mutate(d)
+        f, _ = rl_dump_findings(cfg, d, rows, fz, fw)
+        return bool(f)
+    out["a copy of a region body under another name fails"] = fails_with(
+        lambda d: d["noise-expression"].__setitem__("fixture_copy", dict(d["noise-expression"][sd0], name="fixture_copy")))
+    out["a body outside the layer reading the warp fails"] = fails_with(
+        lambda d: d["noise-expression"].__setitem__("fixture_reader", {"type": "noise-expression", "name": "fixture_reader",
+                                                                       "expression": names["internal"][0] + " + 1"}))
+    agg = names["aggregates"]["marsh_w"]
+
+    def drop_row(d):
+        b = d["noise-expression"][agg]
+        marsh = next(nm["w"] for rid, nm in names["rows"].items()
+                     if next(r for r in rows if r["id"] == rid)["layer"] == "marsh")
+        b["expression"] = b["expression"].replace(marsh + ", ", "", 1)
+    out["an aggregate missing one of its rows fails"] = fails_with(drop_row)
+    fz = copy.deepcopy(frozen)
+    (fz.get("bodies") or {}).pop(sd0, None)
+    out["an unregistered region body fails"] = fails_with(lambda d: None, fz)
+
+    def to_fine(d):
+        d["noise-expression"][sd0] = dict(d["noise-expression"][sd0], expression=fw[0] + " + 0")
+    fz2 = copy.deepcopy(frozen)
+    fz2.setdefault("bodies", {})[sd0] = {"sha256": "0" * 64}
+    out["a region body reading the fine field fails"] = fails_with(to_fine, fz2)
+    return out
+
+
+# -- step 6: the T3 oracle on the region layer (Europe at scale 6, every canonical seed)
+
+def row_rl_t3_oracle(ctx, mods, sec6, row, cache):
+    """T3 (FG; Europe at scale 6; seeds 1000, 1002 and 1004; sampled expressions): every Europe place's
+    region expectation holds (oracle.py regions wrote them from the nominal shapes), read with
+    calculate_tile_properties through ea-region-probe: S10's protected points (every canal route
+    vertex, every pass, every strait end outside the polygon, the Belts and Dover's English end among
+    them) lie outside the destroyed zone at every seed, the destroyed probes, forests, marshes,
+    hotspots and interior places hold their side, and a place within 40 km of an edge that flips is
+    listed, not failed; each run reads back the map, the scale and its seed (G5)."""
+    import oracle
+    cfg = mods.cfg
+    mk, s = RL_FG
+    O = oracle.load_oracle(mk, TESTS / "oracle")
+    pts = rl_points(cfg, O, mk, s)
+    names = rl_point_names(cfg, pts)
+    lanes_ms = [rl_modset(ctx, mods, f"rlp{i + 1}") for i in range(min(PAR_MAX, len(SEEDS)))]
+    plan = {"points": [t for _, t in pts], "names": names, "seeds": list(SEEDS), "map": mk, "scale": s}
+    key, newest = common_key(ctx, "rl_t3_oracle", {"ms": [mods.manifest(m) for m in lanes_ms], "plan": plan,
+                                                     "dump": ctx.shared.get("dump_m1_sha")})
+
+    def live():
+        lanes, dirs = [[] for _ in lanes_ms], []
+        for i, seed in enumerate(SEEDS):
+            ln = i % len(lanes_ms)
+            out = ctx.out / f"rl-fg-t3-{mk}-s{s}-{seed}"
+            lanes[ln].append(rl_job(ctx, cfg, lanes_ms[ln], lane_instance(ctx, ln), mk, s, seed, "t3", out,
+                                    points=";".join(f"{x},{y}" for x, y in plan["points"]), names=",".join(names)))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def derive(dirs):
+        fails, meas, listed = [], {}, []
+        for i, seed in enumerate(SEEDS):
+            d = dirs[i]
+            fails += g1(d) + g3(d)
+            probe = rl_read(d, "t3")
+            fails += rl_g5(cfg, probe, mk, s, seed)
+            c, f, lst = rl_t3_eval(cfg, pts, probe, f"seed {seed}")
+            fails += f
+            listed += lst
+            meas[str(seed)] = c
+        meas["listed"] = listed
+        return meas, fails, (f"{mk} scale {s}, {len(pts)} places: {[meas[str(x)] for x in SEEDS]} at seeds {list(SEEDS)}; "
+                             f"listed within 40 km of an edge: {len(listed)} {listed[:4]}")
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+# ================================================================================================ ridges
+
+# Milestone ridges (part 6, order 0): cliff ridges along the 16 adopted ranges with rail-width passes, the
+# ridges toggle, the cliff "none" reset and the ore clearance (design section 12; ARCHITECTURE.md milestone
+# contract 8). The ranges come from tools/build_ranges.py's table; every Earth name from config.lua.
+RD_T6_RANGES = ("alps", "pyrenees", "carpathians")   # T6: the Alps, the Pyrenees and the Carpathian arc
+RD_T6_MAP = "europe"
+RD_T6_SPAWN = "London"                                # far from every tested range (JI-02; test notes 7.2)
+RD_START_SPAWNS = (("Bern", "alps"), ("Andorra la Vella", "pyrenees"))   # decision 12, JI-02
+RD_SCALES = (1, 6)
+RD_GATED_SCALES = (3, 4, 5, 6)                        # T6 coverage gates here, is reported at 1 and 2
+RD_BAND = 96                                          # tiles each side of a crest a T6 dump holds
+RD_NEAR = 32                                          # T6: a range's cliffs lie within 32 tiles of its crest (S5)
+RD_FAR = 48                                           # T6: no cliff more than 48 tiles from any crest
+RD_RAY = (8, 26)                                      # T6: coverage rays 8 to 26 tiles out on each flank (S5)
+RD_FACING_COS = math.cos(math.radians(67.5))          # T6 facing: high side within 67.5 degrees of the crest
+RD_FACING_MIN = 0.9                                   # APPROVALS 11
+RD_COVERAGE_MIN = 0.85                                # APPROVALS 11
+RD_WALK_MIN = 7.5                                     # nav.py walk: 8 tiles clear (S5, S8)
+RD_ROCK_RATIO = 1.5                                   # T6: no rock belts (PD)
+RD_ROCKS = ("rock",)                                  # a simple-entity whose name holds one of these is a rock
+RD_OPEN_MARGIN = 8                                    # coverage leaves out this much past an opening's gap
+RD_WALK_ACROSS = 30                                   # nav.py walk endpoints, tiles either side of the crest
+RD_WALK_WINDOW = 56                                   # half-size of the window nav.py walk reads at an opening
+RD_FILL_LATTICE = 2                                   # the range-wide flood fill's lattice cells per tile
+RD_SIDE_STRIP = (72, 92)                              # the flood fill's two sides: these distances from the crest
+RD_CLIFF_BOX = 4                                      # a cliff's box, the 4-tile cliff lattice cell
+RD_FILL_TESTED_MIN = 0.8                              # T6: the closed fill tests this share of the crest less its openings
+RD_T7_RADIUS = 150                                    # T7: 0 cliffs and 0 ridge cliffiness within 150 tiles
+RD_T7_STEP = 4                                        # its cliffiness grid's step (the cliff lattice)
+RD_T7_DUMP = 160                                      # its cliff dump's half-size round the spawn
+RD_TIMEOUT = 900
+RD_PROBE_TYPES = "cliff,resource,simple-entity"
+RD_RENDER = (("alps", "brenner"), ("pyrenees", "somport"))   # V4: a ridge with a pass, rendered from dumped tiles
+# T8: per map, ranges that exercise both band axes (east-west crests read along x, meridional ones along y)
+RD_T8_RANGES = {"europe": ("alps", "pyrenees", "carpathians"), "atlantic": ("andes", "rockies", "appalachians"),
+                "olde_world": ("himalaya", "urals", "zagros")}
+RD_RENDER_HALF = 96                                   # half-size of a rendered crop
+
+
+def rd_table():
+    import build_ranges
+    try:
+        return build_ranges.load_table()
+    except (build_ranges.RangeError, tnconfig.ConfigError) as e:
+        raise GateError(f"the ranges table: {e}")
+
+
+def rd_range(table, rid):
+    for r in table:
+        if r["id"] == rid:
+            return r
+    raise GateError(f"the ranges table holds no range {rid!r}")
+
+
+def rd_uv(cfg, mk, lat, lon):
+    """A point's chain coordinates on map mk: pixel centres at integer u, v (ARCHITECTURE.md, "The
+    coordinate chain"), as prototypes/expressions/ridges.lua converts the table: earthgeo's continuous
+    pixel position (its georeference) less the half pixel to a pixel's centre."""
+    u, v = mref_of(mk).lonlat_to_uv(lon, lat)
+    return u - 0.5, v - 0.5
+
+
+def rd_geo(cfg, mk, lat, lon, s):
+    """A point's geo tile coordinates (continuous) at scale s: the chain reads u = (gx - k) / s + wr at geo
+    tile gx, k earthgeo's corner offset (U2: one recorded constant, config.lua's divisor), so
+    gx = s (u - wr) + k."""
+    import earthgeo as eg
+    m = mref_of(mk)
+    u, v = rd_uv(cfg, mk, lat, lon)
+    k = eg.corner_offset_tiles(s)
+    return s * (u - m.wr) + k, s * (v - m.hr) + k
+
+
+def rd_geo_controls(cfg):
+    """U2's self-test of rd_geo: at the centre of reference pixels spread over each map (earthgeo's
+    pixel_lonlat), rd_geo gives oracle.place_tile's tile for that pixel at scales 1 and 6, so the ridges'
+    rows and the oracle's city offsets share one coordinate chain."""
+    import oracle
+    out = {}
+    for mk in cfg["map_order"]:
+        m = mref_of(mk)
+        bad, n = [], 0
+        for c in (0, m.W // 3, m.W // 2, m.W - 1):
+            for r in (0, m.H // 4, m.H // 2, m.H - 1):
+                lon, lat = m.pixel_lonlat(c, r)
+                for s in RD_SCALES:
+                    gx, gy = rd_geo(cfg, mk, lat, lon, s)
+                    tx, ty = oracle.place_tile(m, {"ref_pixel": [c, r]}, s)
+                    n += 1
+                    if abs(gx - tx) > 1e-6 or abs(gy - ty) > 1e-6:
+                        bad.append(((c, r), s, (round(gx, 6), round(gy, 6)), (tx, ty)))
+        out[f"rd_geo equals oracle.place_tile at {n} pixel centres of {mk} (scales {list(RD_SCALES)})"] = (not bad,
+                                                                                                         bad[:3])
+    return out
+
+
+def rd_city(mk, name):
+    import oracle
+    O = oracle.load_oracle(mk, TESTS / "oracle")
+    for p in O["places"]:
+        if p.get("kind") == "city" and p.get("name") == name:
+            return p
+    raise GateError(f"the {mk} oracle holds no city {name!r}")
+
+
+def rd_cities(cfg, mk):
+    """Every spawn city of a map: approvals-data.json's kept list, in its order, as oracle places."""
+    import oracle
+    appr = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(encoding="utf-8"))
+    O = oracle.load_oracle(mk, TESTS / "oracle")
+    by_full = {p.get("full_name"): p for p in O["places"] if p.get("kind") == "city"}
+    out = []
+    for full in appr["cities"][mk]["kept"]:
+        p = by_full.get(full)
+        if p is None:
+            raise GateError(f"the {mk} oracle holds no city {full!r} of approvals-data.json's kept list")
+        out.append(p)
+    return out
+
+
+def rd_offset(place, s):
+    """The spawn offset that puts a city at world (0, 0) at scale s: its pixel-centre geo tile."""
+    t = (place.get("tiles_by_scale") or {}).get(str(int(s)))
+    if not t:
+        raise GateError(f"the oracle holds no scale {s} tile for {place.get('id')}")
+    return int(t[0]), int(t[1])
+
+
+def rd_mgs(ctx, cfg, mk, s, label, offset=None, ridges=True, drop=(), extra=None, pen_extra=None, ab=False):
+    """The map's preset as the M1 dump (ab: the M2 dump) holds it, as a full MGS file at scale s (U10: never
+    with --preset), with the spawn moved by an explicit city offset (geo tiles; the city sits at world
+    (0, 0)), the ridges toggle set, `drop` keys removed and `pen_extra` keys set (test variants) and `extra`
+    top-level MapGenSettings fields."""
+    pname, g = map_preset(cfg, mk)
+    tag = "M2" if ab else "M1"
+    dump = ctx.shared.get("dump_m2" if ab else "dump_m1")
+    if dump is None:
+        raise GateError(f"no {tag} dump (row dumps): the {tag} half of a ridges row fails closed")
+    pen = dict(preset_pen(dump, pname))
+    if not pen:
+        raise GateError(f"the {tag} dump holds no preset {pname}")
+    K = cfg["keys"]
+    pen[K["scale"]] = int(s)
+    if offset is not None:
+        pen[g["cx"]], pen[g["cy"]] = int(offset[0]), int(offset[1])
+    sw = cfg["toggles"]["ridges"]
+    pen[sw["preset_key"]] = sw["on"] if ridges else sw["off"]
+    for k in drop:
+        pen.pop(k, None)
+    pen.update(pen_extra or {})
+    body = dict({"property_expression_names": pen}, **(extra or {}))
+    controls = preset_controls(ctx.shared["dump_m1"], pname)
+    if controls or "autoplace_controls" in body:
+        body["autoplace_controls"] = dict(controls, **(body.get("autoplace_controls") or {}))
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"rd-{label}{'-m2' if ab else ''}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def rd_ab_mgs(ctx, cfg, mk, m1_mgs, label):
+    """The M2 twin of an M1 MGS file: its keys, with each key the M2 dump's preset sets differently from the
+    M1 dump's (Alien Biomes' own) taken from the M2 preset, so the M2 world keeps every pin the M1 file's
+    builder made (scale, spawn) and the two timed blocks are one place."""
+    pname, _ = map_preset(cfg, mk)
+    p1, p2 = preset_pen(ctx.shared.get("dump_m1"), pname), preset_pen(rd_m2_dumps(ctx)[0], pname)
+    if not p2:
+        raise GateError(f"the M2 dump holds no preset {pname}")
+    body = json.loads(Path(m1_mgs).read_text(encoding="utf-8"))
+    pen = dict(body.get("property_expression_names") or {})
+    pen.update({k: v for k, v in p2.items() if p1.get(k) != v})
+    body["property_expression_names"] = pen
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"rd-{label}-m2.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def rd_ab_live():
+    """The mods M2 and BAB copy read-only from the live mods folder: Alien Biomes and its graphics."""
+    return ["alien-biomes"] + list(LIVE_DEPS["alien-biomes"])
+
+
+def rd_uses_m2(ctx):
+    """M2 (Earth with Alien Biomes, against BAB) joins ridges' rows whenever the registry names the m2 dump
+    up to the command's milestone: climate-tiles adds it, and ridges names it too (T4, T6, T16 and T15 name
+    M2), so from ridges on it always does."""
+    try:
+        return any("m2" in s.get("dumps", []) for s in registry_upto(ctx.slice))
+    except GateError:
+        return False
+
+
+def rd_m2_dumps(ctx):
+    """(the M2 dump, the BAB dump), failing closed when the registry names m2 but the dumps row produced
+    either not: an M2 half never passes on M1 alone."""
+    d2, db = ctx.shared.get("dump_m2"), ctx.shared.get("dump_bab")
+    if d2 is None or db is None:
+        raise GateError("the registry names the m2 dump, but this command holds no M2 and BAB dumps (row dumps): "
+                        "the M2 half of a ridges row fails closed")
+    return d2, db
+
+
+def rd_world(cfg, mk, s, offset, lat, lon):
+    gx, gy = rd_geo(cfg, mk, lat, lon, s)
+    return gx - offset[0], gy - offset[1]
+
+
+def rd_lines(cfg, table, mk, s, offset, ids=None):
+    """{range id: [polyline, ...]}: each range's kept crest segments on map mk as world-tile polylines,
+    one per run of consecutive segments (the segments its ridge reads)."""
+    out = {}
+    for r in table:
+        if ids is not None and r["id"] not in ids:
+            continue
+        segs = (r.get("segments") or {}).get(mk)
+        if not segs:
+            continue
+        pts = [rd_world(cfg, mk, s, offset, la, lo) for la, lo in r["crest"]]
+        runs, cur = [], [segs[0]]
+        for i in segs[1:]:
+            if i == cur[-1] + 1:
+                cur.append(i)
+            else:
+                runs.append(cur)
+                cur = [i]
+        runs.append(cur)
+        out[r["id"]] = [[pts[i - 1] for i in run] + [pts[run[-1]]] for run in runs]
+    return out
+
+
+def rd_openings(cfg, table, mk, s, offset, rid):
+    """A range's openings on map mk in world tiles, each with its crest direction (unit, world tiles)."""
+    r = rd_range(table, rid)
+    pts = [rd_world(cfg, mk, s, offset, la, lo) for la, lo in r["crest"]]
+    out = []
+    for o in r.get("openings") or []:
+        if mk not in (o.get("maps") or []):
+            continue
+        x, y = rd_world(cfg, mk, s, offset, o["lat"], o["lon"])
+        a, b = pts[o["seg"] - 1], pts[o["seg"]]
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        n = math.hypot(dx, dy) or 1.0
+        dx, dy = dx / n, dy / n
+        if o.get("vertex"):
+            # across the bend's bisector, as ridges.lua opens it
+            p_, q_ = pts[o["vertex"] - 2], pts[o["vertex"] - 1]
+            ix, iy = q_[0] - p_[0], q_[1] - p_[1]
+            il = math.hypot(ix, iy)
+            if il > 0:
+                dx, dy = dx + ix / il, dy + iy / il
+                n = math.hypot(dx, dy) or 1.0
+                dx, dy = dx / n, dy / n
+        out.append(dict(o, x=x, y=y, tx=dx, ty=dy))
+    return out
+
+
+def rd_seg_d(px, py, a, b):
+    """(distance, nearest point, parameter) from a point to segment a-b."""
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    l2 = dx * dx + dy * dy
+    t = 0.0 if l2 == 0 else max(0.0, min(1.0, ((px - a[0]) * dx + (py - a[1]) * dy) / l2))
+    qx, qy = a[0] + t * dx, a[1] + t * dy
+    return math.hypot(px - qx, py - qy), (qx, qy), t
+
+
+def rd_nearest(px, py, lines):
+    """(distance, nearest point, signed side, at an end) to a set of polylines: side +1 on the left of
+    travel (y down), -1 on the right; at an end when the nearest point is a polyline's first or last
+    vertex reached past it."""
+    best = None
+    for line in lines:
+        for i in range(len(line) - 1):
+            a, b = line[i], line[i + 1]
+            d, q, t = rd_seg_d(px, py, a, b)
+            if best is None or d < best[0]:
+                cross = (b[0] - a[0]) * (py - a[1]) - (b[1] - a[1]) * (px - a[0])
+                end = (i == 0 and t <= 0.0) or (i == len(line) - 2 and t >= 1.0)
+                best = (d, q, 1 if cross < 0 else -1, end)
+    return best
+
+
+def rd_chunk_areas(lines, reach):
+    """Dump areas covering every chunk within `reach` tiles of the polylines, as row runs of chunks
+    (x0, y0, w, h), so no tile is dumped twice."""
+    chunks = set()
+    for line in lines:
+        for a, b in zip(line, line[1:]):
+            x0, x1 = min(a[0], b[0]) - reach, max(a[0], b[0]) + reach
+            y0, y1 = min(a[1], b[1]) - reach, max(a[1], b[1]) + reach
+            for cy in range(int(math.floor(y0 / 32)), int(math.floor(y1 / 32)) + 1):
+                for cx in range(int(math.floor(x0 / 32)), int(math.floor(x1 / 32)) + 1):
+                    d, _, _ = rd_seg_d(cx * 32 + 16, cy * 32 + 16, a, b)
+                    if d <= reach + 23:
+                        chunks.add((cx, cy))
+    out = []
+    for cy in sorted({c[1] for c in chunks}):
+        xs = sorted(c[0] for c in chunks if c[1] == cy)
+        start = prev = xs[0]
+        for cx in xs[1:] + [None]:
+            if cx is not None and cx == prev + 1:
+                prev = cx
+                continue
+            out.append((start * 32, cy * 32, (prev - start + 1) * 32, 32))
+            if cx is not None:
+                start = prev = cx
+    return out
+
+
+def rd_areas_text(areas):
+    return ";".join(f"{x0},{y0},{w},{h}" for x0, y0, w, h in areas)
+
+
+def rd_dump_cliffs(dump):
+    """Every dumped cliff once (areas may overlap): [(x, y, orientation, polygon)]."""
+    import dump_render as dr
+    seen, out = set(), []
+    for a in dump.get("areas") or []:
+        for name, x, y, orient, poly in dr.cliff_boxes(a):
+            k = (round(x, 3), round(y, 3), orient)
+            if k not in seen:
+                seen.add(k)
+                out.append((x, y, orient, poly))
+    return out
+
+
+def rd_dump_entities(dump, kind):
+    """Every dumped entity of a type once: [(name, x, y)]."""
+    seen, out = set(), []
+    for a in dump.get("areas") or []:
+        info = a.get("entity_names") or []
+        for e in a.get("entities") or []:
+            n = info[e[0]]
+            if n.get("type") != kind:
+                continue
+            k = (n["name"], round(e[1], 3), round(e[2], 3))
+            if k not in seen:
+                seen.add(k)
+                out.append(k)
+    return out
+
+
+def rd_ungenerated(dump):
+    return sum(int(a.get("chunks_not_generated") or 0) for a in dump.get("areas") or [])
+
+
+RD_SIDE = {"north": (0, -1), "south": (0, 1), "east": (1, 0), "west": (-1, 0), "none": (0, 0)}
+
+
+def rd_high(orientation):
+    """A cliff's high-side unit vector: on the left of travel from its first side to its second (y grows
+    south), the side not none setting the travel direction of an end piece (S5, measured on a crater)."""
+    a, b = orientation.split("-to-")
+    tx, ty = RD_SIDE[b][0] - RD_SIDE[a][0], RD_SIDE[b][1] - RD_SIDE[a][1]
+    n = math.hypot(tx, ty) or 1.0
+    return ty / n, -tx / n
+
+
+def rd_seg_hits_poly(p0, p1, poly):
+    """A segment meets a convex polygon (an endpoint inside, or an edge crossing)."""
+    def inside(p):
+        sgn = None
+        for i in range(len(poly)):
+            a, b = poly[i], poly[(i + 1) % len(poly)]
+            c = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])
+            if abs(c) < 1e-12:
+                continue
+            if sgn is None:
+                sgn = c > 0
+            elif (c > 0) != sgn:
+                return False
+        return True
+
+    def cross(o, a, b):
+        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    if inside(p0) or inside(p1):
+        return True
+    for i in range(len(poly)):
+        a, b = poly[i], poly[(i + 1) % len(poly)]
+        d1, d2 = cross(a, b, p0), cross(a, b, p1)
+        d3, d4 = cross(p0, p1, a), cross(p0, p1, b)
+        if (d1 > 0) != (d2 > 0) and (d3 > 0) != (d4 > 0):
+            return True
+    return False
+
+
+class RdGrid:
+    """Cliff polygons bucketed by 16-tile cell, for ray and distance queries."""
+
+    def __init__(self, cliffs, cell=16):
+        self.cell, self.b = cell, {}
+        for c in cliffs:
+            xs, ys = [p[0] for p in c[3]], [p[1] for p in c[3]]
+            for gx in range(int(math.floor(min(xs) / cell)), int(math.floor(max(xs) / cell)) + 1):
+                for gy in range(int(math.floor(min(ys) / cell)), int(math.floor(max(ys) / cell)) + 1):
+                    self.b.setdefault((gx, gy), []).append(c)
+
+    def near(self, x0, y0, x1, y1):
+        out, seen = [], set()
+        for gx in range(int(math.floor(min(x0, x1) / self.cell)), int(math.floor(max(x0, x1) / self.cell)) + 1):
+            for gy in range(int(math.floor(min(y0, y1) / self.cell)), int(math.floor(max(y0, y1) / self.cell)) + 1):
+                for c in self.b.get((gx, gy), ()):
+                    if id(c) not in seen:
+                        seen.add(id(c))
+                        out.append(c)
+        return out
+
+    def ray_hits(self, p0, p1):
+        return any(rd_seg_hits_poly(p0, p1, c[3]) for c in self.near(p0[0], p0[1], p1[0], p1[1]))
+
+
+def rd_dump_cliffs(dump):
+    """Every dumped cliff once (areas may overlap): [(x, y, orientation, polygon, record)], the record
+    as ep-s8-dump wrote it (its bounding box read from the entity, so the game's own boxes)."""
+    import dump_render as dr
+    seen, out = set(), []
+    for a in dump.get("areas") or []:
+        for c in dr.as_list(a.get("cliffs")):
+            _, x, y, orient, ltx, lty, rbx, rby, bo = c
+            k = (round(x, 3), round(y, 3), orient)
+            if k not in seen:
+                seen.add(k)
+                out.append((x, y, orient, dr.box_corners((ltx, lty), (rbx, rby), bo), list(c)))
+    return out
+
+
+def rd_merge_tiles(dump, x0, y0, w, h):
+    """(palette, int32 index array h x w with -1 where no dumped area covers a tile, layers by name) of a
+    window, merged from every dumped area."""
+    import numpy as np
+    import dump_render as dr
+    pal, index, layers = [], {}, {}
+    out = np.full((h, w), -1, np.int32)
+    for a in dump.get("areas") or []:
+        ar = a["area"]
+        ax0, ay0, aw, ah = ar["x0"], ar["y0"], ar["w"], ar["h"]
+        cx0, cy0 = max(x0, ax0), max(y0, ay0)
+        cx1, cy1 = min(x0 + w, ax0 + aw), min(y0 + h, ay0 + ah)
+        if cx1 <= cx0 or cy1 <= cy0:
+            continue
+        names, idx = dr.decode_tiles(a)
+        for nm, ly in dr.tile_layers(a).items():
+            layers[nm] = ly
+        remap = []
+        for nm in names:
+            if nm not in index:
+                index[nm] = len(pal)
+                pal.append(nm)
+            remap.append(index[nm])
+        remap = np.array(remap, np.int32)
+        out[cy0 - y0:cy1 - y0, cx0 - x0:cx1 - x0] = remap[idx[cy0 - ay0:cy1 - ay0, cx0 - ax0:cx1 - ax0]]
+    return pal, out, layers
+
+
+def rd_window_area(dump, cliffs, x0, y0, w, h):
+    """A synthetic dumped area of a window, merged from every area, in ep-s8-dump's format, so nav.py's
+    walk reads it as it reads one area; tiles no area covers are out-of-map (they block)."""
+    pal, idx, layers = rd_merge_tiles(dump, x0, y0, w, h)
+    oom = "out-of-map"
+    if (idx < 0).any():
+        if oom not in pal:
+            pal.append(oom)
+        idx = idx.copy()
+        idx[idx < 0] = pal.index(oom)
+    layers = dict(layers)
+    layers.setdefault(oom, {"player", "out_of_map"})
+    rows = []
+    for r in range(h):
+        row, parts, c = idx[r], [], 0
+        while c < w:
+            e = c
+            while e + 1 < w and row[e + 1] == row[c]:
+                e += 1
+            parts.append(f"{int(row[c])}*{e - c + 1}")
+            c = e + 1
+        rows.append(" ".join(parts))
+    info = [{"name": n, "layers": sorted(layers.get(n, set()))} for n in pal]
+    cl = []
+    for x, y, orient, poly, rec in cliffs:
+        xs, ys = [p[0] for p in poly], [p[1] for p in poly]
+        if max(xs) < x0 or min(xs) > x0 + w or max(ys) < y0 or min(ys) > y0 + h:
+            continue
+        cl.append([0] + rec[1:])
+    return {"area": {"x0": x0, "y0": y0, "w": w, "h": h}, "tiles": {"palette": pal, "rows": rows, "info": info},
+            "entity_names": [{"name": "cliff", "type": "cliff"}], "cliffs": cl}
+
+
+def rd_walk(dump, cliffs, o, across=RD_WALK_ACROSS, half=RD_WALK_WINDOW):
+    """nav.py walk through one opening: the widest square that travels from one side of the crest to the
+    other through the window round it (the character body subtracted), across the opening's crest
+    direction; the endpoints move along the crest in 4-tile steps until both are free."""
+    import nav
+    x0, y0 = int(math.floor(o["x"])) - half, int(math.floor(o["y"])) - half
+    area = rd_window_area(dump, cliffs, x0, y0, 2 * half, 2 * half)
+    water = nav.tile_mask(area, "player")
+    nx, ny = -o["ty"], o["tx"]
+    best, wet = None, 0
+    tries = [(k, a) for a in (across, across - 4, across - 7) for k in (0, 4, -4, 8, -8, 12, -12)]
+    for k, acr in tries:
+        ax, ay = o["x"] + k * o["tx"] + acr * nx, o["y"] + k * o["ty"] + acr * ny
+        bx, by = o["x"] + k * o["tx"] - acr * nx, o["y"] + k * o["ty"] - acr * ny
+        cells = [(int(math.floor(py - y0)), int(math.floor(px - x0))) for px, py in ((ax, ay), (bx, by))]
+        if any(water[r, c] for r, c in cells if 0 <= r < water.shape[0] and 0 <= c < water.shape[1]):
+            wet += 1
+            continue
+        rep, _, _ = nav.walk_report(area, (ax, ay), (bx, by), 4, None, 32.0)
+        if rep["a_free"] and rep["b_free"]:
+            if best is None or rep["max_passable_width_tiles"] > best["max_passable_width_tiles"]:
+                best = rep
+            if rep["max_passable_width_tiles"] >= RD_WALK_MIN:
+                break
+    if best is None and wet == len(tries):
+        # one side of the crest is water within the window at every try: a coastal opening, which no
+        # walk crosses (Cadibona at scale 1: the Ligurian Sea lies within the cliffs' reach)
+        return {"max_passable_width_tiles": None, "connected": None, "coastal": True}
+    return best or {"max_passable_width_tiles": 0.0, "connected": False, "note": "no free endpoints"}
+
+
+def rd_samples(lines, step=1.0):
+    """Points every `step` tiles along polylines, each with its left normal: [(x, y, nx, ny)]."""
+    out = []
+    for line in lines:
+        for a, b in zip(line, line[1:]):
+            dx, dy = b[0] - a[0], b[1] - a[1]
+            L = math.hypot(dx, dy)
+            if L == 0:
+                continue
+            ux, uy = dx / L, dy / L
+            n = max(1, int(L // step))
+            for k in range(n):
+                t = (k + 0.5) * L / n
+                out.append((a[0] + ux * t, a[1] + uy * t, uy, -ux))
+    return out
+
+
+def rd_t6_range(rcfg, dump, cliffs, lines, openings, start=None, all_lines=None):
+    """T6 on one range (S5's metrics ported, APPROVALS 11): facing, both-flank coverage over the crest
+    less its designed openings (and a start area on the crest), the cliffs near and far from crests,
+    and each opening's nav.py walk width. `start` is (x, y, radius) of a ridge-free start disc."""
+    near, far = [], 0
+    grid = RdGrid(cliffs)
+    every = all_lines or lines
+    for c in cliffs:
+        d, q, _, _ = rd_nearest(c[0], c[1], lines)
+        if d <= RD_NEAR:
+            near.append((c, q))
+        if rd_nearest(c[0], c[1], every)[0] > RD_FAR:
+            far += 1
+    ok = 0
+    for (x, y, orient, poly, rec), q in near:
+        hx, hy = rd_high(orient)
+        n = math.hypot(q[0] - x, q[1] - y) or 1.0
+        if hx * (q[0] - x) / n + hy * (q[1] - y) / n >= RD_FACING_COS:
+            ok += 1
+    facing = round(ok / len(near), 4) if near else None
+    skip = []
+    for o in openings:
+        half = (rcfg["pass_tiles"] / 2 if o["kind"] != "edge" else rcfg["edge_tiles"]) + RD_OPEN_MARGIN
+        skip.append((o["x"], o["y"], half))
+    if start is not None:
+        skip.append((start[0], start[1], start[2] + RD_NEAR))
+    total = both = 0
+    for x, y, nx, ny in rd_samples(lines):
+        if any(math.hypot(x - sx, y - sy) < r for sx, sy, r in skip):
+            continue
+        total += 1
+        a = grid.ray_hits((x + RD_RAY[0] * nx, y + RD_RAY[0] * ny), (x + RD_RAY[1] * nx, y + RD_RAY[1] * ny))
+        b = grid.ray_hits((x - RD_RAY[0] * nx, y - RD_RAY[0] * ny), (x - RD_RAY[1] * nx, y - RD_RAY[1] * ny))
+        both += int(a and b)
+    walks, coastal = {}, []
+    for o in openings:
+        if o["kind"] == "edge":
+            continue
+        rep = rd_walk(dump, cliffs, o)
+        if rep.get("coastal"):
+            coastal.append(o["id"])
+            continue
+        walks[o["id"]] = rep.get("max_passable_width_tiles")
+    return {"cliffs_near": len(near), "facing": facing, "coverage": round(both / total, 4) if total else None,
+            "coverage_columns": total, "cliffs_far": far, "walks": walks, "coastal_openings": coastal}
+
+
+def rd_end_wall(rcfg):
+    """The flood fill's end wall from the ridge's own geometry: the flank contour, its ramp and a cliff's
+    box (S5's contour units; about 52 tiles), the reach of a ridge's end cap beyond the wet stretch."""
+    return float(rcfg["flank_tiles"]) + float(rcfg["ramp_tiles"]) + RD_CLIFF_BOX
+
+
+def rd_line_points(line, step=1.0):
+    """Points every `step` tiles along a polyline from its first vertex: [(arc, x, y)], the last vertex
+    included."""
+    out, acc = [], 0.0
+    for a, b in zip(line, line[1:]):
+        L = math.hypot(b[0] - a[0], b[1] - a[1])
+        k = 0
+        while k * step < L:
+            f = k * step / L
+            out.append((acc + k * step, a[0] + f * (b[0] - a[0]), a[1] + f * (b[1] - a[1])))
+            k += 1
+        acc += L
+    out.append((acc, line[-1][0], line[-1][1]))
+    return out
+
+
+def rd_fill(dump, cliffs, lines, openings, rcfg, start=None, n=RD_FILL_LATTICE):
+    """The range-wide walkability flood fill (S5; S8's quarter-tile model at n cells per tile): the
+    domain is the band within RD_BAND of the crest, walled where the nearest crest point is past one
+    of its ends, less player-blocking tiles and the cliffs' dumped boxes grown by the character; its two
+    sides are the strips RD_SIDE_STRIP out on the left and the right of travel. Returns whether they
+    connect with every opening open (the positive control) and with every opening (and the start disc)
+    closed (they must not). The closed variant also walls each crest end: the wet stretch from the end
+    (crest points with water within the flank contour and a cliff's box, where the end cap may meet the
+    coast and leave a shore path round the ridge) plus rd_end_wall, sized from the ridge's own geometry,
+    so a short crest keeps its middle tested; and it reports the share of the crest less its openings
+    and start disc that it tests, and each side strip's free cells left after closure."""
+    import numpy as np
+    import nav
+    xs = [p[0] for line in lines for p in line]
+    ys = [p[1] for line in lines for p in line]
+    x0, y0 = int(math.floor(min(xs))) - RD_BAND, int(math.floor(min(ys))) - RD_BAND
+    w, h = int(math.ceil(max(xs))) + RD_BAND - x0, int(math.ceil(max(ys))) + RD_BAND - y0
+    pal, idx, layers = rd_merge_tiles(dump, x0, y0, w, h)
+    block_t = idx < 0
+    water_t = np.zeros(idx.shape, bool)
+    for i, nm in enumerate(pal):
+        if "player" in layers.get(nm, set()):
+            block_t |= idx == i
+            water_t |= idx == i
+    margin, reach = rd_end_wall(rcfg), float(rcfg["flank_tiles"]) + RD_CLIFF_BOX
+
+    def wet(px, py):
+        c0, c1 = max(int(math.floor(px - reach)) - x0, 0), min(int(math.floor(px + reach)) - x0 + 1, w)
+        r0_, r1_ = max(int(math.floor(py - reach)) - y0, 0), min(int(math.floor(py + reach)) - y0 + 1, h)
+        if c1 <= c0 or r1_ <= r0_:
+            return False
+        yy, xx = np.nonzero(water_t[r0_:r1_, c0:c1])
+        return bool(len(xx)) and bool((np.hypot(xx + c0 + x0 + 0.5 - px, yy + r0_ + y0 + 0.5 - py) <= reach).any())
+
+    walls = []
+    for line in lines:
+        pts = rd_line_points(line)
+        total = pts[-1][0]
+        ends = []
+        for seq in (pts, [(total - a, x, y) for a, x, y in reversed(pts)]):
+            run = 0.0
+            for a, x, y in seq:
+                if a > total / 2 or not wet(x, y):
+                    break
+                run = a + 1.0
+            ends.append(run)
+        walls.append((total, ends[0] + margin, ends[1] + margin, ends[0], ends[1]))
+    free = ~np.repeat(np.repeat(block_t, n, axis=0), n, axis=1)
+    area = {"entity_names": [{"name": "cliff", "type": "cliff"}], "cliffs": [[0] + c[4][1:] for c in cliffs]}
+    free &= ~nav.cliff_raster(area, x0, y0, w, h, n, half=nav.CHAR_HALF)
+    H, W = h * n, w * n
+    band = np.zeros((H, W), bool)
+    left = np.zeros((H, W), bool)
+    right = np.zeros((H, W), bool)
+    closed = np.zeros((H, W), bool)
+    cxs = (x0 + (np.arange(W) + 0.5) / n).astype(np.float64)
+    step = 256
+
+    def shut(X, Y):
+        cl = np.zeros(np.shape(X), bool)
+        for o in openings:
+            half = (rcfg["pass_tiles"] / 2 if o["kind"] != "edge" else rcfg["edge_tiles"]) + RD_OPEN_MARGIN
+            along = (X - o["x"]) * o["tx"] + (Y - o["y"]) * o["ty"]
+            cl |= (np.abs(along) < half) & (np.hypot(X - o["x"], Y - o["y"]) < RD_BAND + half)
+        st = np.zeros(np.shape(X), bool)
+        if start is not None:
+            st = np.hypot(X - start[0], Y - start[1]) < start[2] + RD_OPEN_MARGIN
+        return cl, st
+    for r0 in range(0, H, step):
+        r1 = min(H, r0 + step)
+        Y, X = np.meshgrid(y0 + (np.arange(r0, r1) + 0.5) / n, cxs, indexing="ij")
+        best = np.full(X.shape, np.inf)
+        side = np.zeros(X.shape, np.int8)
+        end = np.zeros(X.shape, bool)
+        zone = np.zeros(X.shape, bool)
+        for line, (total, w_start, w_end, _, _) in zip(lines, walls):
+            seg_len = [math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in zip(line, line[1:])]
+            acc = 0.0
+            for i in range(len(line) - 1):
+                a, b = line[i], line[i + 1]
+                dx, dy = b[0] - a[0], b[1] - a[1]
+                l2 = dx * dx + dy * dy or 1e-12
+                t = ((X - a[0]) * dx + (Y - a[1]) * dy) / l2
+                tc = np.clip(t, 0.0, 1.0)
+                d = np.hypot(X - (a[0] + tc * dx), Y - (a[1] + tc * dy))
+                m = d < best
+                best = np.where(m, d, best)
+                cr = dx * (Y - a[1]) - dy * (X - a[0])
+                side = np.where(m, np.where(cr < 0, 1, -1).astype(np.int8), side)
+                # a range's end is a natural opening (S5 walled the ends): the band stops past an end
+                # vertex, and the closed fill also walls each end's wet stretch plus the end wall
+                arc = acc + tc * seg_len[i]
+                e = ((i == 0) & (t < 0.0)) | ((i == len(line) - 2) & (t > 1.0))
+                end = np.where(m, e, end)
+                zone = np.where(m, (arc < w_start) | (arc > total - w_end), zone)
+                acc += seg_len[i]
+        ins = (best < RD_BAND) & ~end
+        band[r0:r1] = ins
+        strip = (best >= RD_SIDE_STRIP[0]) & (best <= RD_SIDE_STRIP[1]) & ins
+        left[r0:r1] = strip & (side > 0)
+        right[r0:r1] = strip & (side < 0)
+        cl, st = shut(X, Y)
+        closed[r0:r1] = cl | st | zone
+    out = {}
+    for label, mask in (("open", free & band), ("closed", free & band & ~closed)):
+        lab, _ = nav.labels(mask)
+        a = set(np.unique(lab[left & mask]).tolist()) - {-1}
+        b = set(np.unique(lab[right & mask]).tolist()) - {-1}
+        out[f"{label}_connects"] = bool(a & b)
+    out["sides_cells"] = [int(left.sum()), int(right.sum())]
+    shut_mask = free & band & ~closed
+    out["sides_cells_closed"] = [int((left & shut_mask).sum()), int((right & shut_mask).sum())]
+    # the share of the crest that the closed variant tests, of the crest less its openings: the designed
+    # ones, the start disc and the wet stretches at its ends (where it meets the coast, an opening by
+    # design); what the end walls' geometric margin takes counts against it
+    tested = counted = 0
+    for line, (total, w_start, w_end, wet_start, wet_end) in zip(lines, walls):
+        P = rd_line_points(line)
+        PX, PY = np.array([p[1] for p in P]), np.array([p[2] for p in P])
+        A = np.array([p[0] for p in P])
+        cl, st = shut(PX, PY)
+        keep = ~cl & ~st & (A >= wet_start) & (A <= total - wet_end)
+        counted += int(keep.sum())
+        tested += int((keep & (A >= w_start) & (A <= total - w_end)).sum())
+    out["tested_share"] = round(tested / counted, 4) if counted else None
+    out["tested_tiles"] = [tested, counted]
+    out["end_walls"] = [[round(w1, 1), round(w2, 1)] for _, w1, w2, _, _ in walls]
+    out["wet_ends"] = [[round(a, 1), round(b, 1)] for _, _, _, a, b in walls]
+    return out
+
+
+def rd_pass_free_km(table, rid, mk):
+    """The longest pass-free crest of a range on a map (km), from the table's designed openings (each
+    then proven open by nav.py walk)."""
+    import build_ranges
+    cfg = tnconfig.load()
+    st = build_ranges.map_stretches(cfg, rd_range(table, rid), mk)
+    return round(max(st), 1) if st else 0.0
+
+
+def rd_dist(X, Y, lines):
+    """Distances (numpy, vectorised) from points to the nearest of a set of polylines."""
+    import numpy as np
+    best = np.full(np.shape(X), np.inf)
+    for line in lines:
+        for a, b in zip(line, line[1:]):
+            dx, dy = b[0] - a[0], b[1] - a[1]
+            l2 = dx * dx + dy * dy or 1e-12
+            t = np.clip(((X - a[0]) * dx + (Y - a[1]) * dy) / l2, 0.0, 1.0)
+            best = np.minimum(best, np.hypot(X - (a[0] + t * dx), Y - (a[1] + t * dy)))
+    return best
+
+
+def rd_rocks(dump, lines, all_lines):
+    """Rocks per land tile within RD_NEAR of the range's crest against beyond RD_FAR of every crest, in
+    the same dump (T6: no rock belts; PD 1.5 times)."""
+    import numpy as np
+    import dump_render as dr
+    rocks = [(x, y) for name, x, y in rd_dump_entities(dump, "simple-entity") if any(k in name for k in RD_ROCKS)]
+    near_n = far_n = 0
+    if rocks:
+        rx, ry = np.array([p[0] for p in rocks]), np.array([p[1] for p in rocks])
+        dn, da = rd_dist(rx, ry, lines), rd_dist(rx, ry, all_lines)
+        near_n, far_n = int((dn <= RD_NEAR).sum()), int(((dn > RD_NEAR) & (da > RD_FAR)).sum())
+    near_t = far_t = 0
+    for a in dump.get("areas") or []:
+        names, idx = dr.decode_tiles(a)
+        L = dr.tile_layers(a)
+        land = ~np.isin(idx, [i for i, nm in enumerate(names) if "water_tile" in L.get(nm, set())])
+        ar = a["area"]
+        Y, X = np.meshgrid(ar["y0"] + np.arange(ar["h"]) + 0.5, ar["x0"] + np.arange(ar["w"]) + 0.5, indexing="ij")
+        dn, da = rd_dist(X, Y, lines), rd_dist(X, Y, all_lines)
+        near_t += int((land & (dn <= RD_NEAR)).sum())
+        far_t += int((land & (dn > RD_NEAR) & (da > RD_FAR)).sum())
+    a_near = near_n / near_t if near_t else 0.0
+    a_far = far_n / far_t if far_t else 0.0
+    return {"rocks_near": near_n, "land_near": near_t, "rocks_far": far_n, "land_far": far_t,
+            "ratio": round(a_near / a_far, 4) if a_far else None}
+
+
+# -- FG: the ridges' dump facts (T16, T13) and the slider identity rows (T4)
+
+def rd_resource_removal(dump):
+    return {n: (p or {}).get("cliff_removal_probability") for n, p in ((dump or {}).get("resource") or {}).items()}
+
+
+def rd_pin_value(text):
+    """A water pin's vanilla expression at the default slider (control:water:frequency 1), or None when
+    the text is more than arithmetic on that one control."""
+    s = str(text).replace("control:water:frequency", "1")
+    if not re.fullmatch(r"[0-9.\s*+\-/()]+", s):
+        return None
+    try:
+        return float(eval(s, {"__builtins__": {}}, {}))
+    except Exception:
+        return None
+
+
+def rd_dump_findings(cfg, d0, d1, table, base="M0"):
+    """The ridges' facts in the M0 and M1 dumps, or BAB's and M2's with base "BAB" (T16, T13; design notes
+    08:00): every resource's
+    cliff_removal_probability equals M0's (the milestone sets none, so the ridge exclusion acts only through
+    Earth ore probability); every Earth preset bakes the ridges toggle from its setting, points the cliff
+    properties at the ridge bodies, its crest, openings and band keys at its own map's bodies, each
+    Earth ore's probability key at a wrapper holding M0's live probability times the ore clearance and
+    the water frequency slider's two vanilla readers at their pins (T4), each pin the constant of M0's
+    reader at the default slider; no ridge body reads cliff_richness, the cliff control or a slider
+    constant but the contour units, and every ridge body reads only its map's chain, the per-save
+    numbers and keys and map constants (firewall-clean). Returns (findings, meas)."""
+    RD, K, sw = cfg["ridges"], cfg["keys"], cfg["toggles"]["ridges"]
+    N = RD["names"]
+    out = []
+    r0, r1 = rd_resource_removal(d0), rd_resource_removal(d1)
+    if r0 != r1:
+        out.append(f"cliff_removal_probability differs from {base}'s: "
+                   f"{[(k, r0.get(k), r1.get(k)) for k in sorted(set(r0) | set(r1)) if r0.get(k) != r1.get(k)][:4]}")
+    ne0, ne1 = d0.get("noise-expression") or {}, d1.get("noise-expression") or {}
+    want_toggle = sw["on"] if cfg["settings"][sw["setting"]]["default_value"] else sw["off"]
+    for key in cfg["preset_order"]:
+        p = cfg["presets"][key]
+        pen = preset_pen(d1, p["name"])
+        mk = p["map"]
+        want = {sw["preset_key"]: want_toggle, K["cliff_elevation"]: N["cliff_elevation"],
+                K["cliffiness"]: N["cliffiness"], K["crest"]: N["crest"][mk], K["openings"]: N["openings"][mk],
+                K["band"]: N["band"][mk]}
+        for k, v in want.items():
+            if pen.get(k) != v:
+                out.append(f"{p['name']}: {k} is {pen.get(k)!r}, want {v!r}")
+        for o in RD["ores"]:
+            live = (((d0.get("resource") or {}).get(o["resource"]) or {}).get("autoplace") or {}).get(
+                "probability_expression")
+            if live is None:
+                continue
+            # resources-enemies moves the key to its next wrapper, which reads this one
+            nxt = next((x for x in (cfg.get("resources") or {}).get("ores", []) if x["resource"] == o["resource"]),
+                       None)
+            if nxt and pen.get(o["key"]) == nxt["p"]:
+                if o["name"] not in str((ne1.get(nxt["p"]) or {}).get("expression")):
+                    out.append(f"{p['name']}: {o['key']} names {nxt['p']}, which does not read the wrapper {o['name']}")
+            elif pen.get(o["key"]) != o["name"]:
+                out.append(f"{p['name']}: {o['key']} is {pen.get(o['key'])!r}, want the wrapper {o['name']}")
+            body = (ne1.get(o["name"]) or {}).get("expression")
+            if body != f"({live}) * {N['clear']}":
+                out.append(f"wrapper {o['name']} is {str(body)[:80]!r}, not {base}'s live probability times {N['clear']}")
+        for w in RD.get("water_pins") or []:
+            if pen.get(w["key"]) != w["name"]:
+                out.append(f"{p['name']}: {w['key']} is {pen.get(w['key'])!r}, want the pin {w['name']} (T4: the water "
+                           f"frequency slider inert)")
+    for w in RD.get("water_pins") or []:
+        body = (ne1.get(w["name"]) or {}).get("expression")
+        if body != cfg["number_format"] % w["value"]:
+            out.append(f"pin {w['name']} is {body!r}, not the constant {cfg['number_format'] % w['value']}")
+        van = (ne0.get(w["key"]) or {}).get("expression")
+        if van != w["vanilla"]:
+            out.append(f"{base}'s {w['key']} is {van!r}, not {w['vanilla']!r}: its pin no longer mirrors the vanilla reader")
+        elif rd_pin_value(van) != float(w["value"]):
+            out.append(f"pin {w['name']} holds {w['value']}, but {base}'s {w['key']} reads {rd_pin_value(van)} at the default "
+                       f"slider")
+    ridge = [N["d2"], N["free"], N["cliff_elevation"], N["cliffiness"], N["clear"]] + \
+        [N[k][mk] for k in ("crest", "openings", "band") for mk in cfg["map_order"] if N[k].get(mk)]
+    banned = ("cliff_richness", "control:", "segmentation_multiplier", "cliff_smoothing")
+    allowed_maps = {}
+    # the chain the ridge bodies read: the layer chain (config.lua layer_chain_geo), which a later
+    # geography version keeps
+    for mk, versions in tnconfig.geography_versions(cfg).items():
+        g = next((v for v in versions if v["geo_id"] == (cfg.get("layer_chain_geo") or {}).get(mk)), None)
+        if g:
+            allowed_maps[mk] = {g["u"], g["v"]}
+    for name in ridge:
+        b = ne1.get(name)
+        if b is None:
+            out.append(f"ridge body {name} is missing from the M1 dump")
+            continue
+        text = json.dumps([b.get("expression"), b.get("local_expressions")])
+        for word in banned:
+            if word in text:
+                out.append(f"ridge body {name} reads {word} (the cliffs slider must stay inert; S5)")
+    for mk, names in allowed_maps.items():
+        for kind in ("crest", "openings", "band"):
+            n = N[kind].get(mk)
+            b = ne1.get(n) or {}
+            refs = set()
+            for t in [b.get("expression")] + list((b.get("local_expressions") or {}).values()):
+                refs |= set(expr_refs(str(t)))
+            locals_ = set((b.get("local_expressions") or {}).keys())
+            stray = sorted(r for r in refs - locals_ - names - {K["scale"]} if r.startswith(cfg["identity"]["noise_prefix"]))
+            if stray:
+                out.append(f"{n} reads {stray}: a map's ridge body reads only its own chain and the scale")
+            other = sorted(x for m2, s2 in allowed_maps.items() if m2 != mk for x in s2 & refs)
+            if other:
+                out.append(f"{n} reads another map's chain {other}")
+    del ne0
+    meas = {"resources": sorted(r1), "bodies": len(ridge), "toggle_default": want_toggle,
+            "openings": {k: sum(1 for r in table for o in r.get("openings") or [] if o["kind"] == k)
+                         for k in ("pass", "gap", "edge")}}
+    return out, meas
+
+
+def rd_dump_controls(cfg, d0, d1, table):
+    """Positive controls of rd_dump_findings: a changed cliff_removal_probability, a wrapper that drops
+    the live probability and a ridge body reading cliff_richness each fail."""
+    import copy
+    N = cfg["ridges"]["names"]
+    res = {}
+    a = dict(d1, resource={k: dict(v) for k, v in (d1.get("resource") or {}).items()})
+    first = next(iter(a["resource"]), None)
+    if first:
+        a["resource"][first]["cliff_removal_probability"] = (a["resource"][first].get("cliff_removal_probability")
+                                                              or 0) + 0.5
+    res["a global cliff_removal_probability edit fails"] = bool(rd_dump_findings(cfg, d0, a, table)[0])
+    b = copy.deepcopy(d1)
+    w = cfg["ridges"]["ores"][0]["name"]
+    if w in b.get("noise-expression", {}):
+        b["noise-expression"][w]["expression"] = N["clear"]
+    res["a wrapper that drops the live probability fails"] = bool(rd_dump_findings(cfg, d0, b, table)[0])
+    c = copy.deepcopy(d1)
+    if N["cliffiness"] in c.get("noise-expression", {}):
+        c["noise-expression"][N["cliffiness"]]["expression"] += " * cliff_richness"
+    res["a cliff body reading cliff_richness fails"] = bool(rd_dump_findings(cfg, d0, c, table)[0])
+    pins = cfg["ridges"].get("water_pins") or []
+    if pins:
+        w = pins[0]
+        e = dict(d1, **{"map-gen-presets": copy.deepcopy(d1.get("map-gen-presets") or {})})
+        pname = cfg["presets"][cfg["preset_order"][0]]["name"]
+        preset_pen(e, pname).pop(w["key"], None)
+        res["a preset that leaves a water frequency reader unpinned fails"] = bool(rd_dump_findings(cfg, d0, e, table)[0])
+        f = dict(d0, **{"noise-expression": dict(d0.get("noise-expression") or {})})
+        f["noise-expression"][w["key"]] = dict(f["noise-expression"].get(w["key"]) or {},
+                                               expression=f"2 * {w['vanilla']}")
+        res["a vanilla reader that no longer equals its pin at the default slider fails"] = bool(
+            rd_dump_findings(cfg, f, d1, table)[0])
+    return res
+
+
+def row_rd_dump_facts(ctx, mods, sec6, row, cache):
+    """T16 (FG) and T13 facts of milestone ridges from the M0 and M1 dumps and, M2 in the
+    registry's dumps (from climate-tiles; ridges names it too), the BAB and M2 dumps: no
+    cliff_removal_probability set (every resource's value in M1 equals M0's and in M2 equals BAB's), the
+    presets' ridge keys, ore wrappers and water pins, slider-proof and firewall-clean ridge bodies, on
+    both pairs; with positive controls. The M2 half fails closed when its dumps are missing."""
+    cfg = mods.cfg
+    d0, d1 = ctx.shared.get("dump_m0"), ctx.shared.get("dump_m1")
+    if d0 is None or d1 is None:
+        row.fails.append("no M0 and M1 dumps (row dumps failed)")
+        return
+    table = rd_table()
+    f, meas = rd_dump_findings(cfg, d0, d1, table)
+    row.fails += f
+    ctl = rd_dump_controls(cfg, d0, d1, table)
+    if rd_uses_m2(ctx):
+        try:
+            d2, db = rd_m2_dumps(ctx)
+        except GateError as e:
+            row.fails.append(str(e))
+        else:
+            f2, meas["m2"] = rd_dump_findings(cfg, db, d2, table, base="BAB")
+            row.fails += [f"M2: {x}" for x in f2]
+            a = dict(d2, resource={k: dict(v) for k, v in (d2.get("resource") or {}).items()})
+            first = next(iter(a["resource"]), None)
+            if first:
+                a["resource"][first]["cliff_removal_probability"] = (
+                    a["resource"][first].get("cliff_removal_probability") or 0) + 0.5
+            ctl["an M2 dump that changes one cliff_removal_probability against BAB's fails"] = bool(
+                rd_dump_findings(cfg, db, a, table, base="BAB")[0])
+    for k, ok in ctl.items():
+        if not ok:
+            row.fails.append(f"positive control did not behave: {k}")
+    row.meas = meas
+    row.detail = (f"resources {meas['resources']} keep M0's cliff_removal_probability; every preset bakes ridges "
+                  f"{meas['toggle_default']} and its map's ridge keys; {len(cfg['ridges']['ores'])} ore wrappers hold "
+                  f"M0's live probability times the clearance; {meas['bodies']} ridge bodies slider-proof and "
+                  f"firewall-clean; openings {meas['openings']}; {sum(ctl.values())} of {len(ctl)} controls behaved")
+
+
+# -- FG: ridges' offline checks (no game run): the runner controls its timed rows rely on
+
+def rd_live_limit_controls(text, cfg):
+    """The live sample's P1 call as live_t15b_m1 makes it (live_t15b_limits), for every milestone whose
+    timed_ss names t15b_m1, with a fixture recorded ratio: it resolves, and an added allocation binds
+    relative to that ratio (group 0's p1_limits keeps its scale-less path, the landed ratio, for the
+    callers that name no scale)."""
+    out, fixture = {}, 1.0
+    for s in REGISTRY:
+        if "t15b_m1" not in s["timed_ss"]:
+            continue
+        sid = s["id"]
+        name = f"the live sample's P1 limits resolve for {sid}"
+        try:
+            sec6 = parse_section6(text, sid)
+            lim = live_t15b_limits(sec6, sid, cfg, recorded=lambda *_: fixture)
+            p1 = (lim.get("P1") or {}).get("limit") or {}
+            # group 0's group rule: the pending milestones' allocations together (batch_alloc_for)
+            alloc = batch_alloc_for(sec6, pending_slices(sid), "time", "M1", first_preset(cfg)[1])
+            ok = isinstance(p1.get("max"), (int, float)) and (alloc["kind"] != "add" or p1.get("relative_to") == fixture)
+            out[name] = (ok, p1)
+        except Exception as e:
+            out[name] = (False, f"{type(e).__name__}: {e}")
+    return out
+
+
+def rd_ratio_controls(target, cfg):
+    """Every ratio check the registry names (a '<prefix>_t15b' or t15b_m1 in ss or timed_ss; a Map type
+    route's timing, '<prefix>_maptype_t15b', records no block ratio and is reported only) is one
+    RATIO_CHECKS reads, so no milestone's recorded M1t/M0t ratio goes unread by a later milestone's P1 rule; and
+    every check that RATIO_CHECKS_M2 names (the milestones that time Alien Biomes, M2t/BABt under the map's
+    m2_bab key) is a registry check too, so a renamed timed row cannot leave P2 reading nothing."""
+    out = {}
+    m1 = {n for n, _ in RATIO_CHECKS}
+    named = set()
+    for s_ in REGISTRY:
+        for n in list(s_["ss"]) + list(s_["timed_ss"]):
+            if (n.endswith("_t15b") and "maptype" not in n) or n == "t15b_m1":
+                named.add(n)
+                out[f"ratio check {n} of {s_['id']} is read"] = (n in m1, sorted(m1))
+    for n, _ in RATIO_CHECKS_M2:
+        out[f"M2 ratio check {n} names a registry check"] = (n in named, sorted(named))
+    return out
+
+
+def rd_band_pieces(pts, run, maxt):
+    """prototypes/expressions/ridges.lua's band_pieces, ported: a run of consecutive segments (1-based
+    segment indices into pts, segment i from pts[i - 1] to pts[i]) cut into pieces monotone along one
+    axis whose segments lie within the band's angle of it, longest first, ties to x."""
+    out, i = [], 0
+    while i < len(run):
+        best = None
+        for axis in ("x", "y"):
+            j, sign = i, None
+            while j < len(run):
+                a, b = pts[run[j] - 1], pts[run[j]]
+                c, o = b[0] - a[0], b[1] - a[1]
+                if axis == "y":
+                    c, o = o, c
+                sg = c > 0
+                if c == 0 or abs(o) > maxt * abs(c) or (sign is not None and sg != sign):
+                    break
+                sign = sg
+                j += 1
+            if best is None or j - i > best[0]:
+                best = (j - i, axis)
+        if best[0] == 0:
+            raise GateError("band_max_angle_degrees leaves a crest segment on no axis")
+        out.append((best[1], i, i + best[0] - 1))
+        i += best[0]
+    return out
+
+
+def rd_band_terms(cfg, table, mk):
+    """Map mk's crest band as ridges.lua builds tn_band_<map> (band_pieces and band_term ported): one term per
+    piece, {axis, knots: [(p, q)] in chain pixels sorted along p, half}, a term holding where |Q - S f(P / S)|
+    < half and |P - S mid| < S span + ore_clear_tiles, with P, Q a tile centre's scaled chain coordinates
+    along and across the piece's axis and f the piecewise-linear function through the knots."""
+    RD = cfg["ridges"]
+    maxt = math.tan(math.radians(RD["band_max_angle_degrees"]))
+    terms = []
+    for r in table:
+        segs = (r.get("segments") or {}).get(mk)
+        if not segs:
+            continue
+        pts = [rd_uv(cfg, mk, la, lo) for la, lo in r["crest"]]
+        runs, cur = [], [segs[0]]
+        for i in segs[1:]:
+            if i == cur[-1] + 1:
+                cur.append(i)
+            else:
+                runs.append(cur)
+                cur = [i]
+        runs.append(cur)
+        for run in runs:
+            for axis, first, last in rd_band_pieces(pts, run, maxt):
+                vs = [pts[run[first] - 1]] + [pts[run[j]] for j in range(first, last + 1)]
+                knots = [(v[0], v[1]) if axis == "x" else (v[1], v[0]) for v in vs]
+                if knots[-1][0] < knots[0][0]:
+                    knots.reverse()
+                steep = max(abs((b[1] - a[1]) / (b[0] - a[0])) for a, b in zip(knots, knots[1:]))
+                terms.append({"axis": axis, "knots": knots, "half": RD["ore_clear_tiles"] * math.sqrt(1 + steep * steep)})
+    return terms
+
+
+def rd_band_mirror(cfg, table, mk, s, shrink=1.0):
+    """The band's superset property on map mk at scale s, evaluated: every tile centre within
+    ore_clear_tiles of a kept crest segment (tile centres sit at half-integers in scaled chain units, the
+    band reads bu = u s + centre_tiles) must lie in some term of the band. `shrink` narrows every term's
+    half-height (the positive control). Returns {terms, points, uncovered, examples}."""
+    import numpy as np
+    ore = float(cfg["ridges"]["ore_clear_tiles"])
+    terms = rd_band_terms(cfg, table, mk)
+    boxes = []
+    for tm in terms:
+        P = [s * k[0] for k in tm["knots"]]
+        Q = [s * k[1] for k in tm["knots"]]
+        lo_p, hi_p = P[0] - ore, P[-1] + ore
+        lo_q, hi_q = min(Q) - tm["half"], max(Q) + tm["half"]
+        boxes.append((lo_p, hi_p, lo_q, hi_q) if tm["axis"] == "x" else (lo_q, hi_q, lo_p, hi_p))
+
+    def inside(tm, X, Y):
+        Pv, Qv = (X, Y) if tm["axis"] == "x" else (Y, X)
+        k = tm["knots"]
+        f = np.full(np.shape(Pv), s * k[0][1], dtype=np.float64)
+        for a, b in zip(k, k[1:]):
+            slope = (b[1] - a[1]) / (b[0] - a[0])
+            f += slope * (np.clip(Pv, s * a[0], s * b[0]) - s * a[0])
+        mid, span = (k[0][0] + k[-1][0]) / 2, (k[-1][0] - k[0][0]) / 2
+        return (np.abs(Qv - f) < tm["half"] * shrink) & (np.abs(Pv - s * mid) < s * span + ore)
+    points = uncovered = 0
+    examples = []
+    for r in table:
+        segs = (r.get("segments") or {}).get(mk)
+        if not segs:
+            continue
+        pts = [rd_uv(cfg, mk, la, lo) for la, lo in r["crest"]]
+        for i in segs:
+            a, b = (s * pts[i - 1][0], s * pts[i - 1][1]), (s * pts[i][0], s * pts[i][1])
+            x0, x1 = math.floor(min(a[0], b[0]) - ore) - 1, math.ceil(max(a[0], b[0]) + ore) + 1
+            y0, y1 = math.floor(min(a[1], b[1]) - ore) - 1, math.ceil(max(a[1], b[1]) + ore) + 1
+            Y, X = np.meshgrid(np.arange(y0, y1) + 0.5, np.arange(x0, x1) + 0.5, indexing="ij")
+            dx, dy = b[0] - a[0], b[1] - a[1]
+            l2 = dx * dx + dy * dy or 1e-12
+            tt = np.clip(((X - a[0]) * dx + (Y - a[1]) * dy) / l2, 0.0, 1.0)
+            near = np.hypot(X - (a[0] + tt * dx), Y - (a[1] + tt * dy)) < ore
+            X, Y = X[near], Y[near]
+            hit = np.zeros(X.shape, bool)
+            for tm, bx in zip(terms, boxes):
+                if bx[1] < x0 or bx[0] > x1 or bx[3] < y0 or bx[2] > y1:
+                    continue
+                todo = ~hit
+                if not todo.any():
+                    break
+                hit[todo] = inside(tm, X[todo], Y[todo])
+            points += int(X.size)
+            miss = int((~hit).sum())
+            uncovered += miss
+            if miss and len(examples) < 3:
+                j = int(np.argmax(~hit))
+                examples.append((r["id"], i, round(float(X[j]), 1), round(float(Y[j]), 1)))
+    return {"terms": len(terms), "points": points, "uncovered": uncovered, "examples": examples}
+
+
+def rd_band_controls(cfg, table, dump=None):
+    """T8's band mirror: on every map at scales 1 and 6
+    every tile centre within ore_clear_tiles of a crest lies in the band, the band evaluated from the table
+    and config.lua as ridges.lua builds it; the mirror's term count equals the M1 dump's band body's (two
+    abs() per term), so the mirror evaluates the body the game compiles; positive control: a band whose
+    half-heights shrink to 0.6 leaves tiles uncovered."""
+    out = {}
+    N = cfg["ridges"]["names"]
+    for mk in cfg["map_order"]:
+        if not (cfg.get("geography") or {}).get(mk) or not N["band"].get(mk):
+            continue
+        for s in RD_SCALES:
+            m = rd_band_mirror(cfg, table, mk, s)
+            out[f"the {mk} crest band covers every tile centre within the ore clearance at scale {s}"] = (
+                m["points"] > 0 and m["uncovered"] == 0, m)
+        if dump is not None:
+            body = ((dump.get("noise-expression") or {}).get(N["band"][mk]) or {}).get("expression")
+            want = len(rd_band_terms(cfg, table, mk))
+            got = None if body is None else str(body).count("abs(") // 2
+            out[f"the {mk} band mirror holds the M1 dump's {got} terms"] = (got == want, f"mirror {want}, dump {got}")
+    mk0 = next(iter(RD_T8_RANGES))
+    c = rd_band_mirror(cfg, table, mk0, 6, shrink=0.6)
+    out[f"a {mk0} band shrunk to 0.6 of its half-height leaves tiles uncovered (positive control)"] = (
+        c["uncovered"] > 0, c["uncovered"])
+    return out
+
+
+def rd_p2_controls(text):
+    """rd_p2_limits on main's plan: with a fixture recorded M2t/BABt ratio P2 binds ridges' pair at
+    min(the bar, (ratio + the allocation) x the factor); with none recorded it fails closed; and
+    PAIR_LIMITS holds P2 to the M2t/BABt pair at 16 LP, so a derived ratio meets it."""
+    out = {}
+    sec6 = parse_section6(text, "ridges")
+    p2 = (sec6["limits"].get("P2") or {}).get("limit") or {}
+    alloc = alloc_for(sec6["allocations"]["ridges"]["time"], "M2", "europe")
+    lim = (rd_p2_limits(sec6, "europe", 6, recorded=lambda mk, s: 1.2).get("P2") or {}).get("limit") or {}
+    want = round(min(p2.get("max", 0), (1.2 + alloc.get("value", 0)) * p2.get("relative_factor", 0)), 6)
+    out["P2's relative rule binds ridges' M2t/BABt pair"] = (lim.get("max") == want and lim.get("relative_to") == 1.2,
+                                                            lim)
+    try:
+        rd_p2_limits(sec6, "europe", 6, recorded=lambda mk, s: None)
+        out["P2 with no recorded M2t/BABt ratio fails closed"] = (False, "it resolved")
+    except GateError as e:
+        out["P2 with no recorded M2t/BABt ratio fails closed"] = (True, str(e))
+    out["PAIR_LIMITS holds the M2t/BABt pair to P2 at 16 LP"] = (
+        "P2" in PAIR_LIMITS.get("m2_bab", {}).get(0xFFFF, []), PAIR_LIMITS.get("m2_bab"))
+    return out
+
+
+def row_rd_offline(ctx, mods, sec6, row, cache):
+    """ridges' offline checks and runner controls (FG; no game run): the gate's live timed sample calls
+    P1's relative rule with the map and scale it times for every milestone whose timed_ss names t15b_m1;
+    main_recorded_ratio reads the newest earlier milestone's ratio through every ratio check the registry
+    names; rd_geo, which places every crest, opening and spawn of the ridges' rows, equals
+    oracle.place_tile at pixel centres (U2: the corner offset is earthgeo's, never a runner copy); P2's
+    relative rule binds the M2t/BABt pair; and the crest band mirror proves, on every map at scales 1 and
+    6, that the ore clearance's band covers every tile centre within ore_clear_tiles of a crest."""
+    cfg = mods.cfg
+    text = git_show("main:SPRINT-1-PLAN.md") or PLAN.read_text(encoding="utf-8")
+    results = {}
+    for group in (lambda: rd_live_limit_controls(text, cfg), lambda: rd_ratio_controls(ctx.slice, cfg),
+                  lambda: rd_geo_controls(cfg), lambda: rd_p2_controls(text),
+                  lambda: rd_band_controls(cfg, rd_table(), ctx.shared.get("dump_m1"))):
+        try:
+            results.update(group())
+        except Exception as e:
+            results[f"an offline group crashed: {type(e).__name__}: {e}"] = (False, "")
+    for k, (ok, detail) in results.items():
+        if not ok:
+            row.fails.append(f"offline check or control did not hold: {k} {detail if detail else ''}".rstrip())
+    row.detail = f"{sum(1 for ok, _ in results.values() if ok)} of {len(results)} offline checks and controls held"
+
+
+def rd_view(cfg, table, s, offset):
+    """T4's preview window: a 256-tile square (offset snapped to 32) on the Alps' first crest segment, the
+    Ligurian end, so the view holds ridge cliffs and the coast."""
+    r = rd_range(table, "alps")
+    a, b = r["crest"][0], r["crest"][1]
+    x, y = rd_world(cfg, RD_T6_MAP, s, offset, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+    return (int(round(x / 32)) * 32, int(round(y / 32)) * 32)
+
+
+# M0's positive controls (G6) preview the vanilla spawn at 1024 tiles, where vanilla holds water and
+# cliffs at every canonical seed (S5: 919 cliffs in that square at seed 1000); a far view of the Alps
+# held neither at seed 1000 in the draft's run.
+RD_T4_M0_SIZE = 1024
+RD_T4_SLIDERS = (
+    ("water-none", {"autoplace_controls": {"water": {"size": 0}}}),
+    ("water-size-6", {"autoplace_controls": {"water": {"size": 6}}}),
+    ("water-freq-6", {"autoplace_controls": {"water": {"frequency": 6}}}),
+    ("cliff-freq-6", {"autoplace_controls": {"nauvis_cliff": {"frequency": 6}}}),
+    ("cliff-size-6", {"autoplace_controls": {"nauvis_cliff": {"size": 6}}}),
+    ("cliff-rich-0", {"cliff_settings": {"name": "cliff", "control": "nauvis_cliff", "richness": 0}}),
+)
+
+
+def rd_t4_check_keys(cfg, dump):
+    """U10: every control a slider row names exists in the dump (an unknown key exits 0 with a vanilla map)."""
+    have = set((dump.get("autoplace-control") or {}))
+    out = []
+    for label, extra in RD_T4_SLIDERS:
+        for c in (extra.get("autoplace_controls") or {}):
+            if c not in have:
+                out.append(f"T4 row {label} names the control {c!r}, which the dump lacks")
+        cs = extra.get("cliff_settings")
+        if cs and cs.get("control") not in have:
+            out.append(f"T4 row {label} names the cliff control {cs.get('control')!r}, which the dump lacks")
+    return out
+
+
+def rd_cliff_pixels(png, dump):
+    """The cliff-coloured pixels of a preview (cliffs draw over tiles)."""
+    import numpy as np
+    from PIL import Image
+    img = np.array(Image.open(png).convert("RGB")).astype(int)
+    n = 0
+    for c in cliff_colours(dump):
+        n += int(((img[:, :, 0] == c[0]) & (img[:, :, 1] == c[1]) & (img[:, :, 2] == c[2])).sum())
+    return n
+
+
+def rd_t4_derive(cfg, plan, dump, cmp_="M0"):
+    """Earth previews identical across the slider rows at each seed while each comparator slider row (M0's,
+    or BAB's against M2) differs from the comparator's default (G6), the Earth default differs from the
+    comparator's (G5) and shows ridge cliffs."""
+    fails, meas = [], {}
+    by = {}
+    for seed, label, out_e, out_0 in plan:
+        fails += g1(out_e) + g3(out_e) + g1(out_0) + g3(out_0)
+        try:
+            e, z = derive_preview(out_e)["images"], derive_preview(out_0)["images"]
+        except GateError as x:
+            fails.append(str(x))
+            continue
+        by[(seed, label)] = (list(e.values())[0], list(z.values())[0], out_e)
+    for seed in sorted({k[0] for k in by}):
+        base = by.get((seed, "default"))
+        if not base:
+            fails.append(f"seed {seed}: no default previews")
+            continue
+        if base[0] == base[1]:
+            fails.append(f"seed {seed}: the Earth preview equals {cmp_}'s (G5)")
+        px = rd_cliff_pixels(Path(base[2]) / f"{seed}.png", dump)
+        if not px:
+            fails.append(f"seed {seed}: the Earth view shows no ridge cliff, so the cliff rows test nothing")
+        rec = {"cliff_pixels": px}
+        for label, _ in RD_T4_SLIDERS:
+            v = by.get((seed, label))
+            if not v:
+                fails.append(f"seed {seed} {label}: missing previews")
+                continue
+            if v[0] != base[0]:
+                fails.append(f"seed {seed} {label}: the Earth preview changed with the slider (D15, D19)")
+            if v[1] == base[1]:
+                fails.append(f"seed {seed} {label}: {cmp_}'s preview did not change, so the row proves nothing (G6)")
+            rec[label] = {"earth_identical": v[0] == base[0], f"{cmp_.lower()}_changed": v[1] != base[1]}
+        meas[str(seed)] = rec
+    return meas, fails
+
+
+def rd_t4_variants(ctx, mods, cfg, table, s, tag, job_tag, probe_dirs=()):
+    """T4's two halves (the criterion's 'M1 and M2 with M0 and BAB controls'): [(label, comparator, dump,
+    worker modsets, plan, workers)], M1 against M0 always and M2 against BAB when the registry names the m2
+    dump (from ridges on it does; its dumps missing fail closed). M2's workers take the instances after
+    M1's."""
+    out = []
+    for ab in ((False, True) if rd_uses_m2(ctx) else (False,)):
+        dump = rd_m2_dumps(ctx)[0] if ab else ctx.shared["dump_m1"]
+        fails = rd_t4_check_keys(cfg, dump)
+        if fails:
+            raise GateError(f"{'M2' if ab else 'M1'}: {fails[0]}")
+        lane_ms = rd_lane_modsets(ctx, mods, len(SEEDS), tag, probe_dirs, ab=ab)
+        plan, lanes, view = rd_t4_jobs(ctx, cfg, lane_ms, table, s, SEEDS, f"{job_tag}{'-m2' if ab else ''}", ab=ab,
+                                       lane0=len(SEEDS) if ab else 0)
+        out.append(("M2" if ab else "M1", "BAB" if ab else "M0", dump, lane_ms, plan, lanes, view))
+    return out
+
+
+def row_rd_t4_fg(ctx, mods, sec6, row, cache):
+    """T4 (FG, FEAS-02, TST-13): Europe at scale 6, seeds 1000, 1002 and 1004, M1 with M0
+    controls and M2 with BAB controls: water size none and 6 and water frequency 6, and cliff frequency
+    6, continuity 6 and richness 0, leave the Earth preview byte-identical on a view of the Alps'
+    Ligurian end, which holds ridge cliffs and the coast, while each changes the comparator's (G6) and
+    the Earth preview differs from the comparator's (G5)."""
+    cfg = mods.cfg
+    table = rd_table()
+    s = int(cfg["settings"]["scale"]["default_value"])
+    try:
+        variants = rd_t4_variants(ctx, mods, cfg, table, s, "rd4f", "rd-t4fg")
+    except GateError as e:
+        row.fails.append(str(e))
+        return
+    view = variants[0][6]
+    key, newest = common_key(ctx, "rd_t4_fg", {
+        "ms": [[[mods.manifest(a), mods.manifest(b)] for a, b in v[3]] for v in variants],
+        "dump": [ctx.shared.get("dump_m1_sha")] + ([ctx.shared.get("dump_m2_sha")] if len(variants) > 1 else []),
+        "sliders": RD_T4_SLIDERS, "view": view, "seeds": SEEDS})
+
+    def live():
+        run_lanes(ctx, [ln for v in variants for ln in v[5]])
+        return [d for v in variants for d in [p[2] for p in v[4]] + [p[3] for p in v[4]]]
+
+    def derive(dirs):
+        meas, fails, k, parts = {}, [], 0, []
+        for label, cmp_, dump, _, plan, _, _ in variants:
+            n = len(plan)
+            pl = [(plan[i][0], plan[i][1], dirs[k + i], dirs[k + n + i]) for i in range(n)]
+            k += 2 * n
+            m, f = rd_t4_derive(cfg, pl, dump, cmp_=cmp_)
+            meas[label.lower()] = m
+            fails += [f"{label}: {x}" for x in f]
+            parts.append(f"{label} against {cmp_}: ridge cliff pixels {[m.get(str(x), {}).get('cliff_pixels') for x in SEEDS]}")
+        return meas, fails, (f"Europe scale {s} at {view}, seeds {list(SEEDS)}: the Earth preview stays byte-identical "
+                             f"under {[l for l, _ in RD_T4_SLIDERS]} while the comparator's changes; " + "; ".join(parts))
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def rd_lane_modsets(ctx, mods, n, tag, probe_dirs=(), ab=False, comparator=True):
+    """One Earth modset (M1, plus `probe_dirs`) and one comparator (M0) per worker, prepared (G7); with ab,
+    M2 (M1 plus Alien Biomes and its graphics from the live folder, plus `probe_dirs`) and BAB (Alien
+    Biomes alone, M2's comparator; U7); comparator False leaves the comparator out (None). Concurrent runs
+    never share a modset."""
+    out = []
+    z = mods.build_zip()
+    live = rd_ab_live() if ab else []
+    et, ct = ("a", "b") if ab else ("e", "z")
+    for i in range(n):
+        h = folder_hash(*probe_dirs) if probe_dirs else ("ab" if ab else "m1")
+        e = mods.make(f"ea-{tag}{et}{i + 1}-{mods.zip_sha[:8]}-{h}", [z] + list(probe_dirs), from_live=live)
+        mods.prepare(e, f"{tag}{et}{i + 1}")
+        z0 = None
+        if comparator:
+            z0 = mods.make(f"ea-{tag}{ct}{i + 1}", from_live=live)
+            mods.prepare(z0, f"{tag}{ct}{i + 1}")
+        out.append((e, z0))
+    return out
+
+
+def rd_t4_jobs(ctx, cfg, lane_ms, table, s, seeds, tag, ab=False, lane0=0):
+    """The T4 preview jobs: the Earth preset (Europe, scale s, London's spawn, ridges on; ab: the M2
+    preset) with no slider and with each slider row in 256-tile previews on the Alps' Ligurian end, and
+    the comparator (M0, or BAB with ab) the same on its own spawn (RD_T4_M0_SIZE), at every seed; one worker
+    per seed with its own instance (numbered from lane0) and modsets."""
+    off = rd_offset(rd_city(RD_T6_MAP, RD_T6_SPAWN), s)
+    view = rd_view(cfg, table, s, off)
+    plan, lanes = [], []
+    for i, seed in enumerate(seeds):
+        ms, m0 = lane_ms[i % len(lane_ms)]
+        jobs = []
+        inst = lane_instance(ctx, lane0 + i % len(lane_ms))
+        for label, extra in (("default", {}),) + RD_T4_SLIDERS:
+            e_mgs = rd_mgs(ctx, cfg, RD_T6_MAP, s, f"{tag}-{label}", offset=off, extra=extra, ab=ab)
+            out_e = ctx.out / f"{tag}-earth-{label}-{seed}"
+            jobs.append((None, preview_args(inst, ms, 256, seed=seed, mgs=e_mgs, offset=view), out_e, 300))
+            m0_mgs = None
+            if extra:
+                d = ctx.out / "mgs"
+                d.mkdir(parents=True, exist_ok=True)
+                m0_mgs = d / f"rd-{tag}-m0-{label}.json"
+                m0_mgs.write_text(json.dumps(extra, indent=1, sort_keys=True), encoding="utf-8")
+            out_0 = ctx.out / f"{tag}-m0-{label}-{seed}"
+            jobs.append((None, preview_args(inst, m0, RD_T4_M0_SIZE, seed=seed, mgs=m0_mgs), out_0, 300))
+            plan.append((seed, label, out_e, out_0))
+        lanes.append(jobs)
+    return plan, lanes, view
+
+
+def rd_probe_dirs():
+    return [HERE / "mods" / "ep-s8-dump"]
+
+
+def rd_dump_job(ctx, cfg, ms, inst, label, out, mgs, areas, seed=SEED, ticks=4, types=RD_PROBE_TYPES,
+                names=None):
+    """One ep-s8-dump scenario: areas forced at tick 1 (after on_init) and dumped at tick 2, with the
+    per-save map and scale read at (0, 0) (G5)."""
+    K = cfg["keys"]
+    nm = names or f"{K['map']},{K['scale']}"
+    return (dump_settings(ctx, ms, inst, label=label, areas=rd_areas_text(areas), points="0,0", names=nm, types=types),
+            scenario_args(inst, ms, ticks, seed, mgs), out, RD_TIMEOUT)
+
+
+def rd_g5(cfg, dump, mk, s):
+    """G5 on a dump run: the per-save map and scale read at (0, 0) are the map's and the scale."""
+    K = cfg["keys"]
+    v = point_values(dump).get((0, 0), {})
+    out = []
+    if v.get(K["map"]) != cfg["maps"][mk]["id"] or v.get(K["scale"]) != int(s):
+        out.append(f"{mk} scale {s}: read {K['map']} {v.get(K['map'])!r} and {K['scale']} {v.get(K['scale'])!r} at "
+                   f"(0, 0) (G5: the preset did not apply)")
+    if rd_ungenerated(dump):
+        out.append(f"{mk} scale {s}: {rd_ungenerated(dump)} dumped chunks never generated (a dump with ungenerated "
+                   f"chunks fails)")
+    return out
+
+
+def rd_t7_job(ctx, cfg, ms, inst, mgs, out, geo=None):
+    """One T7 scenario (ep-s8-dump plus ea-region-probe in `ms`): the cliffs within RD_T7_DUMP of world
+    (0, 0), the spawn, and a sign grid of cliffiness every RD_T7_STEP tiles within RD_T7_RADIUS of it. With
+    `geo` (the map and a known city offset) the grid is given in geo tiles and the probe reads the offset
+    from the map's offset names in the game; without, it is given in world tiles round the spawn, which a
+    random spawn needs (the probe then reads at world = grid)."""
+    K = cfg["keys"]
+    r = RD_T7_RADIUS
+    k = (2 * r) // RD_T7_STEP + 1
+    a = rd_areas_text([(-RD_T7_DUMP, -RD_T7_DUMP, 2 * RD_T7_DUMP, 2 * RD_T7_DUMP)])
+    p1 = dump_settings(ctx, ms, inst, label="t7", areas=a, points="0,0", names=f"{K['map']},{K['scale']}", types="cliff")
+    if geo is not None:
+        mk, off = geo
+        g = tnconfig.geography(cfg)[mk]
+        grid = f"disc|{off[0] - r},{off[1] - r},{RD_T7_STEP},{k},{k}|sign|{K['cliffiness']}"
+        p2 = rl_settings(ctx, ms, inst, label="t7", offset=f"{g['cx']},{g['cy']}", constants=f"{K['map']},{K['scale']}",
+                         grids=grid, tick=2)
+    else:
+        grid = f"disc|{-r},{-r},{RD_T7_STEP},{k},{k}|sign|{K['cliffiness']}"
+        p2 = rl_settings(ctx, ms, inst, label="t7", offset="", constants=f"{K['map']},{K['scale']}", grids=grid, tick=2)
+
+    def prep():
+        p1()
+        p2()
+    return (prep, scenario_args(inst, ms, 3, SEED, mgs), out, RD_TIMEOUT)
+
+
+def rd_t7_eval(cfg, dump, probe, expect_off=None):
+    """T7's cliff clause on one run: (cliffs within RD_T7_RADIUS of the spawn, ridge cliffiness cells of the
+    probe's sign grid within it, failures). A cell counts when its sign is not 0 (positive or not
+    finite); its world position is the grid's position less the offset the probe read."""
+    fails = []
+    cl = [c for c in rd_dump_cliffs(dump) if math.hypot(c[0], c[1]) <= RD_T7_RADIUS]
+    po = probe.get("offset") or {}
+    if expect_off is not None and (po.get("x") != expect_off[0] or po.get("y") != expect_off[1]):
+        fails.append(f"the probe read the offset {po}, not {tuple(expect_off)}")
+    gr = (probe.get("grids") or [{}])[0]
+    name = cfg["keys"]["cliffiness"]
+    ones = 0
+    if not (gr.get("recognised") or {}).get(name):
+        fails.append(f"{name} did not resolve in the probe")
+    else:
+        ox, oy, step = float(po.get("x") or 0), float(po.get("y") or 0), float(gr["step"])
+        for j, line in enumerate(gr["values"][name]):
+            i = 0
+            for tok in line.split(" "):
+                b, cnt = tok.split("*")
+                for q in range(int(cnt)):
+                    x, y = gr["x0"] + (i + q) * step - ox, gr["y0"] + j * step - oy
+                    if b != "0" and math.hypot(x, y) <= RD_T7_RADIUS:
+                        ones += 1
+                i += int(cnt)
+    return len(cl), ones, fails
+
+
+RD_T7_FG_SCALE = 6
+RD_T7_FG_CONTROL = ("europe", "Bern")   # the Alps' crest 23 tiles from the spawn at scale 6 (the draft's T6 run)
+
+
+def row_rd_t7_fg(ctx, mods, sec6, row, cache):
+    """T7 (FG; the T7 cliff criteria live in the gate, as each later milestone's gate re-derives only its own
+    suite): each shipped map's own spawn (its preset's, a random pick from spawn-cities) at seed 1000, scale
+    6, M1, one ep-s8-dump scenario of the cliffs round the spawn plus ea-region-probe's 4-tile sign grid of
+    cliffiness within 150 tiles: 0 cliffs and 0 ridge cliffiness cells within 150 tiles. Positive control:
+    the spawn at Bern with the ridge-free start disc redirected to the off body, which must show both."""
+    cfg = mods.cfg
+    s = RD_T7_FG_SCALE
+    maps = [mk for mk in cfg["map_order"] if (cfg.get("geography") or {}).get(mk)]
+    plan = [(mk, None) for mk in maps] + [RD_T7_FG_CONTROL]
+    lanes_ms = rd_lane_modsets(ctx, mods, len(plan), "rd7f", rd_probe_dirs() + [HERE / "mods" / RL_PROBE],
+                               comparator=False)
+    lanes, outs, spec = [], [], []
+    N = cfg["ridges"]["names"]
+    for i, (mk, city) in enumerate(plan):
+        control = city is not None
+        off = rd_offset(rd_city(mk, city), s) if control else None
+        lab = f"t7fg-{mk}{'-control' if control else ''}"
+        mgs = rd_mgs(ctx, cfg, mk, s, lab, offset=off,
+                     pen_extra={N["free"]: cfg["neutral"]["zero"]} if control else None)
+        out = ctx.out / f"rd-{lab}"
+        lanes.append([rd_t7_job(ctx, cfg, lanes_ms[i][0], lane_instance(ctx, i), mgs, out)])
+        outs.append(out)
+        spec.append([mk, city, json.loads(Path(mgs).read_text(encoding="utf-8"))])
+    key, newest = common_key(ctx, "rd_t7_fg", {"ms": [mods.manifest(a) for a, _ in lanes_ms], "plan": spec,
+                                               "radius": RD_T7_RADIUS, "step": RD_T7_STEP, "dump": RD_T7_DUMP,
+                                               "seed": SEED, "m1": ctx.shared.get("dump_m1_sha")})
+
+    def live():
+        run_lanes(ctx, lanes)
+        return outs
+
+    def derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != len(plan):
+            return {}, [f"{len(dirs)} run directories for {len(plan)} T7 runs"], ""
+        for (mk, city), dd in zip(plan, dirs):
+            tag = f"{mk} {'control at ' + city if city else 'own spawn'} scale {s}"
+            fails += g1(dd) + g3(dd)
+            dump = read_dump(dd, "t7")
+            fails += rd_g5(cfg, dump, mk, s)
+            n_c, n_o, f = rd_t7_eval(cfg, dump, rl_read(dd, "t7"))
+            fails += [f"{tag}: {x}" for x in f]
+            meas[tag] = {"cliffs": n_c, "cliffiness_cells": n_o}
+            if city and not (n_c and n_o):
+                fails.append(f"{tag}: with the start disc off the row sees {n_c} cliffs and {n_o} ridge cliffiness cells "
+                             f"within {RD_T7_RADIUS} tiles, so it could not see a lost start disc (positive control)")
+            elif not city and (n_c or n_o):
+                fails.append(f"{tag}: {n_c} cliffs and {n_o} ridge cliffiness cells within {RD_T7_RADIUS} tiles of the "
+                             f"spawn (T7)")
+        return meas, fails, "; ".join(f"{k}: {v['cliffs']} cliffs, {v['cliffiness_cells']} cliffiness cells within "
+                                      f"{RD_T7_RADIUS}" for k, v in meas.items())
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def rd_render_areas(cfg, table, s, offset):
+    """V4's crops: a square round each rendered pass (RD_RENDER)."""
+    out = []
+    for rid, pid in RD_RENDER:
+        o = next((o for o in rd_openings(cfg, table, RD_T6_MAP, s, offset, rid) if o["id"] == pid), None)
+        if o:
+            x, y = int(math.floor(o["x"])) - RD_RENDER_HALF, int(math.floor(o["y"])) - RD_RENDER_HALF
+            out.append((rid, pid, (x, y, 2 * RD_RENDER_HALF, 2 * RD_RENDER_HALF)))
+    return out
+
+
+def rd_t6_plan(cfg, table, s, spawn, rids, mk=RD_T6_MAP):
+    """(offset, lines of every range on the map, lines of the tested ranges, dump areas, render crops)."""
+    off = rd_offset(rd_city(mk, spawn), s)
+    all_lines = rd_lines(cfg, table, mk, s, off)
+    tested = {rid: all_lines[rid] for rid in rids if rid in all_lines}
+    areas = rd_chunk_areas([ln for v in tested.values() for ln in v], RD_BAND)
+    crops = rd_render_areas(cfg, table, s, off) if (mk, spawn) == (RD_T6_MAP, RD_T6_SPAWN) else []
+    return off, all_lines, tested, areas, crops
+
+
+def rd_far_city(cfg, table, mk, rids):
+    """The kept city of a map farthest from the given ranges' crests (geo tiles at scale 1), so a row
+    spawned there keeps the ridge-free start disc off every tested crest; London on Europe, T6's own."""
+    if mk == RD_T6_MAP:
+        return RD_T6_SPAWN
+    lines = [ln for v in rd_lines(cfg, table, mk, 1, (0, 0), ids=list(rids)).values() for ln in v]
+    best = None
+    for p in rd_cities(cfg, mk):
+        x, y = rd_offset(p, 1)
+        d = rd_nearest(x, y, lines)[0] if lines else 0.0
+        if best is None or d > best[0]:
+            best = (d, p["name"])
+    if best is None:
+        raise GateError(f"the {mk} oracle holds no kept city for a T8 spawn")
+    return best[1]
+
+
+def rd_t6_eval(cfg, table, s, dump, off, all_lines, tested, start=None, closed_start=False):
+    """T6's per-range numbers on one dump and their failures (gated scales from RD_GATED_SCALES)."""
+    RDc = cfg["ridges"]
+    cliffs = rd_dump_cliffs(dump)
+    every = [ln for v in all_lines.values() for ln in v]
+    meas, fails = {}, []
+    for rid, lines in tested.items():
+        ops = rd_openings(cfg, table, RD_T6_MAP, s, off, rid)
+        m = rd_t6_range(RDc, dump, cliffs, lines, ops, start=start, all_lines=every)
+        m["fill"] = rd_fill(dump, cliffs, lines, ops, RDc, start=start if closed_start else None)
+        m["rocks"] = rd_rocks(dump, lines, every)
+        m["pass_free_km"] = rd_pass_free_km(table, rid, RD_T6_MAP)
+        meas[rid] = m
+        tag = f"{rid} scale {s}"
+        if not m["cliffs_near"]:
+            fails.append(f"{tag}: no ridge cliff within {RD_NEAR} tiles of the crest (ridges on must hold cliffs)")
+        if m["facing"] is None or m["facing"] < RD_FACING_MIN:
+            fails.append(f"{tag}: facing {m['facing']}, at least {RD_FACING_MIN} (APPROVALS 11)")
+        if s in RD_GATED_SCALES and (m["coverage"] is None or m["coverage"] < RD_COVERAGE_MIN):
+            fails.append(f"{tag}: both-flank coverage {m['coverage']} over the crest less its openings, at least "
+                         f"{RD_COVERAGE_MIN} (ruling 11)")
+        low = {k: v for k, v in m["walks"].items() if v is None or v < RD_WALK_MIN}
+        if low:
+            fails.append(f"{tag}: openings below {RD_WALK_MIN} on nav.py walk: {low}")
+        if m["fill"]["closed_connects"]:
+            fails.append(f"{tag}: with every opening closed the two sides still connect (an unplanned opening)")
+        if s in RD_GATED_SCALES and (m["fill"]["tested_share"] is None or m["fill"]["tested_share"] < RD_FILL_TESTED_MIN):
+            fails.append(f"{tag}: the closed flood fill tests {m['fill']['tested_share']} of the crest less its openings "
+                         f"(end walls {m['fill']['end_walls']}), at least {RD_FILL_TESTED_MIN}")
+        if min(m["fill"]["sides_cells_closed"]) == 0 and (m["fill"]["tested_share"] or 0) > 0:
+            # with crest left to test, a side strip emptied by the closure makes the closed fill vacuous; a
+            # crest wholly inside its openings, walls or the start disc (Andorra at scale 1) is reported
+            fails.append(f"{tag}: a side strip keeps no free cell once the openings are closed "
+                         f"({m['fill']['sides_cells_closed']}), so the closed fill tests nothing")
+        if not m["fill"]["open_connects"]:
+            fails.append(f"{tag}: with the openings open the sides do not connect: the flood fill sees no opening "
+                         f"(positive control)")
+        if m["pass_free_km"] > float(RD_GAP_KM()) + 0.2:
+            fails.append(f"{tag}: a pass-free crest of {m['pass_free_km']} km, over {RD_GAP_KM()}")
+        if m["cliffs_far"]:
+            fails.append(f"{tag}: {m['cliffs_far']} cliffs more than {RD_FAR} tiles from any crest (no ordinary cliffs)")
+        r = m["rocks"]["ratio"]
+        if r is not None and r > RD_ROCK_RATIO:
+            fails.append(f"{tag}: rock density near the crest {r} times the band's average, over {RD_ROCK_RATIO}")
+    return meas, fails, cliffs
+
+
+def RD_GAP_KM():
+    appr = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(encoding="utf-8"))
+    return float(appr["rules"]["unnamed_gap_every_km"])
+
+
+def rd_renders(cfg, table, s, dump, crops, out_dir):
+    """V4: each crop (a ridge with a pass) rendered from dumped tiles (dump_render), listed for the
+    verification pass; V2's crops at every opening are rd_v2's previews."""
+    import dump_render as dr
+    out = []
+    n = len(dump.get("areas") or []) - len(crops)
+    for k, (rid, pid, _) in enumerate(crops):
+        canvas, counts = dr.render(dump, n + k)
+        p = Path(out_dir) / f"v4-{rid}-{pid}-s{s}.png"
+        canvas.save(p)
+        out.append({"png": str(p), "range": rid, "pass": pid, "scale": s,
+                    "cliffs": counts["entities"].get("cliff", 0)})
+    return out
+
+
+def rd_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """ridges' suite checks, added to suite_checks' table (design section 12, milestone 0)."""
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    dump_sha = ctx.shared.get("dump_m1_sha")
+    table = rd_table()
+    import build_ranges
+    tsha = sha256_file(build_ranges.TABLE)
+
+    def base_key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "dump": dump_sha, "table": tsha, "extra": extra or {}})
+
+    # -- T6 (SS): the Alps, the Pyrenees and the Carpathian arc at scales 1 and 6, the spawn at London;
+    # ridges on and off over the same dump areas, on M1 and, the m2 dump in the registry (from ridges on),
+    # on M2 (the criterion's "M1 and M2"; its dumps missing fail closed); V4 crops rendered from dumped tiles
+    def t6_halves():
+        return ["M1"] + (["M2"] if rd_uses_m2(ctx) else [])
+
+    def t6_run(deadline):
+        halves = t6_halves()
+        if "M2" in halves:
+            rd_m2_dumps(ctx)
+        lanes = [rd_lane_modsets(ctx, mods, 2, "rd6", rd_probe_dirs(), ab=h == "M2") for h in halves]
+        jobs = [[] for _ in range(2 * len(halves))]
+        dirs = []
+        for s in RD_SCALES:
+            off, _, _, areas, crops = rd_t6_plan(cfg, table, s, RD_T6_SPAWN, RD_T6_RANGES)
+            all_areas = areas + [c[2] for c in crops]
+            for hi, h in enumerate(halves):
+                ab = h == "M2"
+                for i, ridges in enumerate((True, False)):
+                    lab = f"t6-s{s}-{'on' if ridges else 'off'}"
+                    mgs = rd_mgs(ctx, cfg, RD_T6_MAP, s, lab, offset=off, ridges=ridges, ab=ab)
+                    out = ctx.out / f"rd-{lab}{'-m2' if ab else ''}"
+                    ln = 2 * hi + i
+                    jobs[ln].append(rd_dump_job(ctx, cfg, lanes[hi][i][0], lane_instance(ctx, ln), "t6", out, mgs,
+                                                all_areas))
+                    dirs.append(out)
+        run_lanes(ctx, jobs)
+        return dirs
+
+    def t6_derive(dirs):
+        halves = t6_halves()
+        if len(dirs) != 2 * len(RD_SCALES) * len(halves):
+            return {}, [f"{len(dirs)} run directories for T6's {halves} halves, want {2 * len(RD_SCALES) * len(halves)}"], ""
+        fails, meas, k = [], {}, 0
+        for s in RD_SCALES:
+            off, all_lines, tested, _, crops = rd_t6_plan(cfg, table, s, RD_T6_SPAWN, RD_T6_RANGES)
+            for h in halves:
+                on_d, off_d = dirs[k], dirs[k + 1]
+                k += 2
+                f_ = g1(on_d) + g3(on_d) + g1(off_d) + g3(off_d)
+                don, doff = read_dump(on_d, "t6"), read_dump(off_d, "t6")
+                f_ += rd_g5(cfg, don, RD_T6_MAP, s) + rd_g5(cfg, doff, RD_T6_MAP, s)
+                m, f, cliffs = rd_t6_eval(cfg, table, s, don, off, all_lines, tested)
+                f_ += f
+                n_off = len(rd_dump_cliffs(doff))
+                if n_off:
+                    f_.append(f"scale {s}: ridges off holds {n_off} cliffs (want 0)")
+                if not cliffs:
+                    f_.append(f"scale {s}: ridges on holds no cliff, so it does not differ from ridges off")
+                m["cliffs_on"], m["cliffs_off"] = len(cliffs), n_off
+                m["renders"] = rd_renders(cfg, table, s, don, crops, on_d)
+                meas[f"scale_{s}" if h == "M1" else f"m2_scale_{s}"] = m
+                fails += [f"{h}: {x}" for x in f_]
+        detail = "; ".join(
+            f"{h} scale {s}: " + ", ".join(f"{rid} facing {v['facing']} coverage {v['coverage']} min walk "
+                                           f"{min(v['walks'].values()) if v['walks'] else None}"
+                                           for rid, v in meas.get(f"scale_{s}" if h == "M1" else f"m2_scale_{s}",
+                                                                  {}).items()
+                                           if isinstance(v, dict) and "facing" in v)
+            for s in RD_SCALES for h in halves)
+        return meas, fails, detail
+
+    checks["rd_t6"] = SuiteCheck("rd_t6", lambda: base_key("rd_t6", {"ranges": RD_T6_RANGES, "spawn": RD_T6_SPAWN,
+                                                                      "scales": RD_SCALES, "band": RD_BAND,
+                                                                      "halves": t6_halves(),
+                                                                      "m2": ctx.shared.get("dump_m2_sha")}),
+                                 t6_run, t6_derive)
+
+    # -- T6, T7 (SS, JI-02): the spawn at Bern and at Andorra la Vella, scales 1 and 6
+    def t6s_run(deadline):
+        lanes = rd_lane_modsets(ctx, mods, PAR_MAX, "rd6s", rd_probe_dirs())
+        jobs, dirs, k = [[] for _ in lanes], [], 0
+        for city, rid in RD_START_SPAWNS:
+            for s in RD_SCALES:
+                off = rd_offset(rd_city(RD_T6_MAP, city), s)
+                lines = rd_lines(cfg, table, RD_T6_MAP, s, off, ids=[rid])[rid]
+                areas = rd_chunk_areas([ln for ln in lines], RD_BAND)
+                areas.append((-RD_T7_DUMP, -RD_T7_DUMP, 2 * RD_T7_DUMP, 2 * RD_T7_DUMP))
+                lab = f"t6s-{city_slug(city)}-s{s}"
+                mgs = rd_mgs(ctx, cfg, RD_T6_MAP, s, lab, offset=off)
+                out = ctx.out / f"rd-{lab}"
+                ln = k % len(lanes)
+                jobs[ln].append(rd_dump_job(ctx, cfg, lanes[ln][0], lane_instance(ctx, ln), "t6s", out, mgs, areas))
+                dirs.append(out)
+                k += 1
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def t6s_derive(dirs):
+        fails, meas, k = [], {}, 0
+        RDc = cfg["ridges"]
+        rstart = max(RDc["start"]["radius_tiles"], RD_T7_RADIUS) + RDc["start"]["margin_tiles"]
+        for city, rid in RD_START_SPAWNS:
+            for s in RD_SCALES:
+                dd = dirs[k]
+                k += 1
+                fails += g1(dd) + g3(dd)
+                dump = read_dump(dd, "t6s")
+                fails += rd_g5(cfg, dump, RD_T6_MAP, s)
+                off = rd_offset(rd_city(RD_T6_MAP, city), s)
+                all_lines = rd_lines(cfg, table, RD_T6_MAP, s, off)
+                tested = {rid: all_lines[rid]}
+                start = (0.0, 0.0, rstart)
+                m, f, cliffs = rd_t6_eval(cfg, table, s, dump, off, all_lines, tested, start=start, closed_start=True)
+                inner = sum(1 for c in cliffs if math.hypot(c[0], c[1]) <= RD_T7_RADIUS)
+                beyond = sum(1 for c in cliffs if math.hypot(c[0], c[1]) > rstart and
+                             rd_nearest(c[0], c[1], tested[rid])[0] <= RD_NEAR)
+                d0 = rd_nearest(0.0, 0.0, tested[rid])[0]
+                tag = f"{city} scale {s}"
+                if inner:
+                    fails.append(f"{tag}: {inner} ridge cliffs within {RD_T7_RADIUS} tiles of the spawn (ruling 12)")
+                if not beyond:
+                    fails.append(f"{tag}: no ridge cliff of {rid} beyond the start radius: the range does not resume")
+                m[rid].update({"cliffs_within_150": inner, "cliffs_beyond_start": beyond,
+                               "crest_from_spawn_tiles": round(d0, 1)})
+                meas[f"{city_slug(city)}_s{s}"] = m[rid]
+        return meas, fails, "; ".join(f"{k_}: within 150 {v['cliffs_within_150']}, beyond {v['cliffs_beyond_start']}, "
+                                      f"coverage {v['coverage']}, closed sides connect {v['fill']['closed_connects']}"
+                                      for k_, v in meas.items())
+
+    checks["rd_t6_start"] = SuiteCheck("rd_t6_start", lambda: base_key("rd_t6_start", {"spawns": RD_START_SPAWNS,
+                                                                                        "scales": RD_SCALES}),
+                                       t6s_run, t6s_derive)
+
+    # -- T4 (SS): the FG previews at the three seeds, the cliff list's signature under each cliff
+    # slider over an Alpine crest, and cliffs none at Bern: 0 cliffs in the starting chunks, ridges
+    # beyond them restored by the on_init reset, which logs one line; each on M1 against M0 and, the m2
+    # dump in the registry (from ridges on), on M2 against BAB (the criterion's "M1 and M2 with M0 and BAB
+    # controls"; its dumps missing fail closed)
+    t4_sig = (("default", {}),) + tuple(x for x in RD_T4_SLIDERS if "cliff" in x[0])
+    t4_none = (("none", {"autoplace_controls": {"nauvis_cliff": {"size": 0}}}), ("normal", {}))
+
+    def t4_labels():
+        return ["M1"] + (["M2"] if rd_uses_m2(ctx) else [])
+
+    def t4_run(deadline):
+        s = int(cfg["settings"]["scale"]["default_value"])
+        variants = rd_t4_variants(ctx, mods, cfg, table, s, "rd4", "rd-t4", rd_probe_dirs())
+        run_lanes(ctx, [ln for v in variants for ln in v[5]])
+        dirs = [x for v in variants for x in [p[2] for p in v[4]] + [p[3] for p in v[4]]]
+        # the cliff list's signature over an Alpine crest (Brenner's segment), London's spawn
+        off = rd_offset(rd_city(RD_T6_MAP, RD_T6_SPAWN), s)
+        alps = rd_lines(cfg, table, RD_T6_MAP, s, off, ids=["alps"])["alps"]
+        areas = rd_chunk_areas([alps[0][9:13]], RD_NEAR + 16)
+        # cliffs none at Bern: the start area (generated before on_init) against areas forced after it
+        offb = rd_offset(rd_city(RD_T6_MAP, "Bern"), s)
+        start_box = (-START_AREA_CHUNKS * 32, -START_AREA_CHUNKS * 32, 2 * START_AREA_CHUNKS * 32,
+                     2 * START_AREA_CHUNKS * 32)
+        alps_b = rd_lines(cfg, table, RD_T6_MAP, s, offb, ids=["alps"])["alps"]
+        # areas at least a chunk clear of the start area: a cliff whose lattice cell straddles the start
+        # area's edge sits beside chunks the engine generated at size 0 (the draft's run: 1 of 1,329
+        # cliffs there differed)
+        m_ = 32
+        far = [a for a in rd_chunk_areas(alps_b, RD_NEAR + 16)
+               if not (a[0] + a[2] > start_box[0] - m_ and a[0] < start_box[0] + start_box[2] + m_ and
+                       a[1] + a[3] > start_box[1] - m_ and a[1] < start_box[1] + start_box[3] + m_)][:40]
+        jobs = [[] for _ in range(len(variants) * len(SEEDS))]
+        sig_dirs = []
+        for vi, v in enumerate(variants):
+            ab, lane_ms, b0 = v[0] == "M2", v[3], vi * len(SEEDS)
+            sfx = "-m2" if ab else ""
+            for i, (label, extra) in enumerate(t4_sig):
+                mgs = rd_mgs(ctx, cfg, RD_T6_MAP, s, f"t4sig-{label}", offset=off, extra=extra, ab=ab)
+                out = ctx.out / f"rd-t4sig-{label}{sfx}"
+                ln = i % len(lane_ms)
+                jobs[b0 + ln].append(rd_dump_job(ctx, cfg, lane_ms[ln][0], lane_instance(ctx, b0 + ln), "t4sig", out,
+                                                 mgs, areas, types="cliff"))
+                sig_dirs.append(out)
+            for j, (label, extra) in enumerate(t4_none):
+                mgs = rd_mgs(ctx, cfg, RD_T6_MAP, s, f"t4none-{label}", offset=offb, extra=extra, ab=ab)
+                out = ctx.out / f"rd-t4none-{label}{sfx}"
+                ln = j % len(lane_ms)
+                jobs[b0 + ln].append(rd_dump_job(ctx, cfg, lane_ms[ln][0], lane_instance(ctx, b0 + ln), "t4none", out,
+                                                 mgs, [start_box] + far, types="cliff"))
+                sig_dirs.append(out)
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs + sig_dirs
+
+    def t4_one(label, cmp_, dump, pv, rest):
+        """One half's T4 numbers: the previews (pv: the plan's Earth then comparator run directories), the
+        cliff signatures and the cliffs-none pair (rest)."""
+        s = int(cfg["settings"]["scale"]["default_value"])
+        n = len(SEEDS) * (1 + len(RD_T4_SLIDERS))
+        plan, k = [], 0
+        for seed in SEEDS:
+            for lab, _ in (("default", {}),) + RD_T4_SLIDERS:
+                plan.append((seed, lab, pv[k], pv[n + k]))
+                k += 1
+        meas, fails = rd_t4_derive(cfg, plan, dump, cmp_=cmp_)
+        sig_labels = [x[0] for x in t4_sig]
+        sigs = {}
+        for lab, dd in zip(sig_labels, rest):
+            fails += g1(dd) + g3(dd)
+            d_ = read_dump(dd, "t4sig")
+            fails += rd_g5(cfg, d_, RD_T6_MAP, s)
+            sigs[lab] = key_of(sorted((round(c[0], 2), round(c[1], 2), c[2]) for c in rd_dump_cliffs(d_)))[:16]
+            if lab == "default" and not rd_dump_cliffs(d_):
+                fails.append("the cliff-signature area holds no cliff, so the slider rows test nothing")
+        if len(set(sigs.values())) != 1:
+            fails.append(f"the cliff list changes with the cliff sliders: signatures {sigs}")
+        none_d, normal_d = rest[len(sig_labels)], rest[len(sig_labels) + 1]
+        fails += g1(none_d) + g3(none_d) + g1(normal_d) + g3(normal_d)
+        dn, dl = read_dump(none_d, "t4none"), read_dump(normal_d, "t4none")
+        an, al = dn.get("areas") or [], dl.get("areas") or []
+
+        def cl(area):
+            return sorted((round(c[1], 2), round(c[2], 2), c[3]) for c in (area.get("cliffs") or []))
+        start_none = len(cl(an[0])) if an else None
+        start_norm = len(cl(al[0])) if al else None
+        far_none = [c for a in an[1:] for c in cl(a)]
+        far_norm = [c for a in al[1:] for c in cl(a)]
+        if start_none:
+            fails.append(f"cliffs none: the starting chunks hold {start_none} cliffs (the engine places none there)")
+        if not start_norm:
+            fails.append("cliffs normal at Bern: the starting chunks hold no cliff beyond the start disc, so the none "
+                         "row tests nothing")
+        if far_none != far_norm or not far_norm:
+            fails.append(f"cliffs none: the areas generated after on_init hold {len(far_none)} cliffs against "
+                         f"{len(far_norm)} at normal (the on_init reset must restore every one)")
+        line = message_prefix(cfg, "cliff_reset")
+        n_none, n_norm = count_lines(log_text(none_d), line), count_lines(log_text(normal_d), line)
+        if n_none != 1 or n_norm:
+            fails.append(f"the cliff reset logs {n_none} lines at none (want 1) and {n_norm} at normal (want 0)")
+        meas.update({"signatures": sigs, "none": {"start_cliffs": start_none, "start_cliffs_normal": start_norm,
+                                                  "restored": len(far_none), "normal": len(far_norm),
+                                                  "reset_lines": [n_none, n_norm]}})
+        return meas, [f"{label}: {x}" for x in fails], (
+            f"{label} against {cmp_}: previews identical under the sliders at {list(SEEDS)}; cliff signatures {sigs}; "
+            f"cliffs none at Bern: start {start_none} (normal {start_norm}), restored {len(far_none)} of "
+            f"{len(far_norm)}, reset lines {n_none}")
+
+    def t4_derive(dirs):
+        labels = t4_labels()
+        n = len(SEEDS) * (1 + len(RD_T4_SLIDERS))
+        per = len(t4_sig) + len(t4_none)
+        if len(dirs) != len(labels) * (2 * n + per):
+            return {}, [f"{len(dirs)} run directories for T4's {labels} halves, want {len(labels) * (2 * n + per)}"], ""
+        meas, fails, parts = {}, [], []
+        for vi, label in enumerate(labels):
+            try:
+                dump = rd_m2_dumps(ctx)[0] if label == "M2" else ctx.shared["dump_m1"]
+            except GateError as e:
+                fails.append(str(e))
+                continue
+            pv = dirs[vi * 2 * n:(vi + 1) * 2 * n]
+            rest = dirs[len(labels) * 2 * n + vi * per:len(labels) * 2 * n + (vi + 1) * per]
+            m, f, d_ = t4_one(label, "BAB" if label == "M2" else "M0", dump, pv, rest)
+            meas[label.lower()] = m
+            fails += f
+            parts.append(d_)
+        return meas, fails, "; ".join(parts)
+
+    checks["rd_t4"] = SuiteCheck("rd_t4", lambda: base_key("rd_t4", {"sliders": RD_T4_SLIDERS, "seeds": SEEDS,
+                                                                      "halves": t4_labels(),
+                                                                      "m2": ctx.shared.get("dump_m2_sha")}),
+                                 t4_run, t4_derive)
+
+    # -- T7 (SS): every city of every map at scales 1 and 6: 0 cliffs and 0 ridge cliffiness within 150
+    # tiles of the spawn (the city as the spawn: its offset baked, so the world's own spawn sits there)
+    def t7_jobs():
+        lanes = rd_lane_modsets(ctx, mods, PAR_MAX, "rd7", rd_probe_dirs() + [HERE / "mods" / RL_PROBE],
+                                comparator=False)
+        jobs, plan = [[] for _ in lanes], []
+        n = 0
+        for mk in cfg["map_order"]:
+            if not (cfg.get("geography") or {}).get(mk):
+                continue
+            for p in rd_cities(cfg, mk):
+                for s in RD_SCALES:
+                    off = rd_offset(p, s)
+                    lab = f"t7-{mk}-{city_slug(p['name'])}-s{s}"
+                    mgs = rd_mgs(ctx, cfg, mk, s, lab, offset=off)
+                    out = ctx.out / f"rd-{lab}"
+                    ln = n % len(lanes)
+                    jobs[ln].append(rd_t7_job(ctx, cfg, lanes[ln][0], lane_instance(ctx, ln), mgs, out, geo=(mk, off)))
+                    plan.append((mk, p["name"], s, off, out))
+                    n += 1
+        return jobs, plan
+
+    def t7_run(deadline):
+        jobs, plan = t7_jobs()
+        run_lanes(ctx, [j for j in jobs if j])
+        return [p[4] for p in plan]
+
+    def t7_derive(dirs):
+        fails, meas = [], {}
+        plan = []
+        for mk in cfg["map_order"]:
+            if not (cfg.get("geography") or {}).get(mk):
+                continue
+            for p in rd_cities(cfg, mk):
+                for s in RD_SCALES:
+                    plan.append((mk, p["name"], s, rd_offset(p, s)))
+        if len(plan) != len(dirs):
+            return {}, [f"{len(dirs)} run directories for {len(plan)} spawns"], ""
+        bad = []
+        for (mk, city, s, off), dd in zip(plan, dirs):
+            fails += g1(dd) + g3(dd)
+            dump = read_dump(dd, "t7")
+            fails += rd_g5(cfg, dump, mk, s)
+            n_c, n_o, f = rd_t7_eval(cfg, dump, rl_read(dd, "t7"), expect_off=off)
+            fails += [f"{mk} {city} scale {s}: {x}" for x in f]
+            if n_c or n_o:
+                bad.append((mk, city, s, n_c, n_o))
+            meas[f"{mk}:{city}:s{s}"] = {"cliffs": n_c, "cliffiness_cells": n_o}
+        for mk, city, s, n_c, n_o in bad:
+            fails.append(f"{mk} {city} scale {s}: {n_c} cliffs and {n_o} ridge cliffiness cells within "
+                         f"{RD_T7_RADIUS} tiles of the spawn")
+        return {"spawns": len(dirs), "bad": bad, "cells": meas}, fails, \
+            f"{len(dirs)} spawns (every city of every map at scales {list(RD_SCALES)}): {len(bad)} with a cliff or ridge " \
+            f"cliffiness within {RD_T7_RADIUS} tiles"
+
+    checks["rd_t7"] = SuiteCheck("rd_t7", lambda: base_key("rd_t7", {"radius": RD_T7_RADIUS, "step": RD_T7_STEP,
+                                                                      "scales": RD_SCALES}), t7_run, t7_derive)
+
+    # -- T8, T13 (SS): on every map's preset, no ore entity on a ridge cell at the three
+    # seeds (scales 1 and 6) round ranges that exercise both band axes (RD_T8_RANGES), the spawn at the
+    # kept city farthest from them, each map with a positive control whose preset keeps the vanilla ore
+    # keys; the default preset stays hash- and complexity-identical to M0
+    def t8_plan():
+        out = []
+        for mk in cfg["map_order"]:
+            if not (cfg.get("geography") or {}).get(mk) or mk not in RD_T8_RANGES:
+                continue
+            spawn = rd_far_city(cfg, table, mk, RD_T8_RANGES[mk])
+            out += [(mk, spawn, s, seed, False) for s in RD_SCALES for seed in SEEDS] + [(mk, spawn, 6, SEED, True)]
+        return out
+
+    def t8_run(deadline):
+        lane_ms = rd_lane_modsets(ctx, mods, PAR_MAX, "rd8", rd_probe_dirs())
+        jobs, dirs, k = [[] for _ in lane_ms], [], 0
+        ores = [o["key"] for o in cfg["ridges"]["ores"]]
+        variants = t8_plan()
+        for mk, spawn, s, seed, control in variants:
+            off, _, tested, _, _ = rd_t6_plan(cfg, table, s, spawn, RD_T8_RANGES[mk], mk=mk)
+            areas = rd_chunk_areas([ln for v in tested.values() for ln in v], cfg["ridges"]["ore_clear_tiles"] + 8)
+            lab = f"t8-{mk}-s{s}-{seed}{'-control' if control else ''}"
+            mgs = rd_mgs(ctx, cfg, mk, s, lab, offset=off, drop=ores if control else ())
+            out = ctx.out / f"rd-{lab}"
+            ln = k % len(lane_ms)
+            jobs[ln].append(rd_dump_job(ctx, cfg, lane_ms[ln][0], lane_instance(ctx, ln), "t8", out, mgs, areas, seed=seed,
+                                        types="resource,cliff"))
+            dirs.append(out)
+            k += 1
+        for i, seed in enumerate(SEEDS):
+            ln = i % len(lane_ms)
+            for which in (0, 1):
+                out = ctx.out / f"rd-t8-default-{'m1' if which == 0 else 'm0'}-{seed}"
+                jobs[ln].append((None, preview_args(lane_instance(ctx, ln), lane_ms[ln][which], 256, seed=seed), out, 300))
+                dirs.append(out)
+        for which in (0, 1):
+            out = ctx.out / f"rd-t8-default-cx-{'m1' if which == 0 else 'm0'}"
+            jobs[0].append((None, preview_args(lane_instance(ctx, 0), lane_ms[0][which], 64, verbose=True), out, 300))
+            dirs.append(out)
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def t8_derive(dirs):
+        fails, meas = [], {}
+        RDc = cfg["ridges"]
+        rstart = max(RDc["start"]["radius_tiles"], 0) + RDc["start"]["margin_tiles"]
+        variants = t8_plan()
+        if len(dirs) != len(variants) + 2 * len(SEEDS) + 2:
+            return {}, [f"{len(dirs)} run directories for {len(variants)} T8 dumps and the default-preset previews"], ""
+        for (mk, spawn, s, seed, control), dd in zip(variants, dirs):
+            fails += g1(dd) + g3(dd)
+            dump = read_dump(dd, "t8")
+            fails += rd_g5(cfg, dump, mk, s)
+            off, all_lines, _, _, _ = rd_t6_plan(cfg, table, s, spawn, RD_T8_RANGES[mk], mk=mk)
+            every = [ln for v in all_lines.values() for ln in v]
+            res = rd_dump_entities(dump, "resource")
+            on_ridge = [r for r in res if rd_nearest(r[1], r[2], every)[0] < RDc["ore_clear_tiles"] and
+                        math.hypot(r[1], r[2]) >= rstart]
+            cl = rd_dump_cliffs(dump)
+            grid = RdGrid(cl)
+            under = [r for r in res if any(dump_render_point_in(c[3], r[1], r[2]) for c in grid.near(r[1], r[2], r[1], r[2]))]
+            lab = f"{mk} ({spawn}) scale {s} seed {seed}{' control' if control else ''}"
+            meas[lab] = {"resources": len(res), "on_ridge_cells": len(on_ridge), "under_cliffs": len(under)}
+            if control:
+                if not on_ridge:
+                    fails.append(f"{lab}: the vanilla ore keys put no ore on a ridge cell, so the check cannot see one")
+            else:
+                if on_ridge:
+                    fails.append(f"{lab}: {len(on_ridge)} ore entities stand on ridge cells, e.g. {on_ridge[:2]}")
+                if under:
+                    fails.append(f"{lab}: {len(under)} ore entities lie under a cliff's box")
+                if not res:
+                    fails.append(f"{lab}: the dump holds no ore at all")
+        rest = dirs[len(variants):]
+        for i, seed in enumerate(SEEDS):
+            a, b = rest[2 * i], rest[2 * i + 1]
+            fails += g1(a) + g3(a) + g1(b) + g3(b)
+            ia, ib = derive_preview(a)["images"], derive_preview(b)["images"]
+            if ia != ib:
+                fails.append(f"seed {seed}: the default preset with Earth loaded differs from M0 (T13 zero cost)")
+        ca, cb = ctx_complexity(rest[-2]), ctx_complexity(rest[-1])
+        if not ca or ca != cb:
+            fails.append(f"the default preset with Earth loaded compiles {ca}, M0 {cb} (T13 zero cost)")
+        meas["default_complexity"] = ca
+        return meas, fails, "; ".join(f"{k}: {v['on_ridge_cells']} on ridge cells of {v['resources']}"
+                                      for k, v in meas.items() if isinstance(v, dict) and "resources" in v)
+
+    checks["rd_t8"] = SuiteCheck("rd_t8", lambda: base_key("rd_t8", {"seeds": SEEDS, "scales": RD_SCALES,
+                                                                      "ranges": RD_T8_RANGES}),
+                                 t8_run, t8_derive)
+
+    # -- T11 (SS): created with ridges on, loaded with them off: probe blocks over an Alpine
+    # crest match fresh A in cliffs and differ from fresh B; the drift line once
+    # the worlds come from full MGS files with London's explicit offset (the spawn stays put before and
+    # after spawn-cities' fold; T13 proves the MGS route equal to the preset route), each baking the
+    # toggle its modset's startup setting gives, as the preset does
+    def t11_off(s):
+        return rd_offset(rd_city(RD_T6_MAP, RD_T6_SPAWN), s)
+
+    def t11_areas(s):
+        off = t11_off(s)
+        alps = rd_lines(cfg, table, RD_T6_MAP, s, off, ids=["alps"])["alps"][0]
+        a, b = alps[10], alps[11]
+        x, y = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+        cx, cy = int(math.floor(x / 32)), int(math.floor(y / 32))
+        return [((cx - 1) * 32, (cy - 1) * 32, 96, 96)]
+
+    def t11_run(deadline):
+        s = int(cfg["settings"]["scale"]["default_value"])
+        name = cfg["settings"]["ridges"]["name"]
+        msa = probe_modset(ctx, mods, "rd11a")
+        msb = probe_modset(ctx, mods, "rd11b")
+        for ms, v in ((msa, "true"), (msb, "false")):
+            res = ctx.fh_plain(["settings", ms, "--set", f"startup.{name}={v}"])
+            if not res.startswith("RESULT ok"):
+                raise GateError(f"fh.py settings {ms}: {res}")
+        inst = ctx.instance
+        sa, sb = ctx.out / "rd-t11-create-a" / "a.zip", ctx.out / "rd-t11-create-b" / "b.zip"
+        ma = rd_mgs(ctx, cfg, RD_T6_MAP, s, "t11-a", offset=t11_off(s), ridges=True)
+        mb = rd_mgs(ctx, cfg, RD_T6_MAP, s, "t11-b", offset=t11_off(s), ridges=False)
+        outs = [ctx.fh(create_args(inst, msa, sa, mgs=ma), sa.parent).out,
+                ctx.fh(create_args(inst, msb, sb, mgs=mb), sb.parent).out]
+        areas = rd_areas_text(t11_areas(s))
+        K = cfg["keys"]
+        for label, ms, save in (("a-under-b", msb, sa), ("a-under-a", msa, sa), ("b-under-b", msb, sb)):
+            dump_settings(ctx, ms, inst, label="t11", areas=areas, points="0,0", names=f"{K['map']},{K['scale']}",
+                          types="cliff")()
+            outs.append(ctx.fh(scenario_args(inst, ms, 4, save=save), ctx.out / f"rd-t11-{label}").out)
+        return outs
+
+    def t11_derive(dirs):
+        fails = []
+        for dd in dirs:
+            fails += g1(dd) + g3(dd)
+        ab, aa, bb = (read_dump(dd, "t11") for dd in dirs[2:5])
+        ca, cb, cc = ([(round(c[0], 2), round(c[1], 2), c[2]) for c in rd_dump_cliffs(x)] for x in (ab, aa, bb))
+        if sorted(ca) != sorted(cb):
+            fails.append(f"A loaded with ridges off holds {len(ca)} cliffs over the crest, fresh A {len(cb)}: the save "
+                         f"did not keep its ridges")
+        if not cb:
+            fails.append("fresh A holds no cliff over the Alpine crest, so the flip proves nothing (G6)")
+        if sorted(ca) == sorted(cc):
+            fails.append("A loaded with ridges off equals a fresh ridges-off world (G6)")
+        sw = cfg["toggles"]["ridges"]
+        line = message_prefix(cfg, "drift_toggle")
+        n_ab, n_aa, n_bb = (count_lines(log_text(dd), line) for dd in dirs[2:5])
+        if n_ab != 1 or n_aa or n_bb:
+            fails.append(f"the toggle's drift line appears {n_ab} times on A under B (want 1), {n_aa} and {n_bb} on "
+                         f"undrifted loads (want 0)")
+        meas = {"a_under_b": len(ca), "fresh_a": len(cb), "fresh_b": len(cc), "drift": [n_ab, n_aa, n_bb],
+                "toggle": [sw["on"], sw["off"]]}
+        return meas, fails, (f"ridges-on world loaded with ridges off: {len(ca)} cliffs over the Alpine crest, fresh A "
+                             f"{len(cb)}, fresh B {len(cc)}; drift line {n_ab}, undrifted {n_aa} and {n_bb}")
+
+    checks["rd_t11"] = SuiteCheck("rd_t11", lambda: base_key("rd_t11"), t11_run, t11_derive)
+
+    # -- V2 (SS renders): a 256 px preview centred on every opening of every map that opens it (the 54
+    # adopted passes, the 53 unnamed gaps, the edge openings) at scales 1 and 6, the spawn at the kept city
+    # T8 uses (London on Europe), so no opening sits in the start disc; each run passes G1, G3 and
+    # images_rehash, and the crops are listed for the verification pass (never a verdict). V4 is rd_t6's
+    # dumped-tile render of a ridge with a pass.
+    def v2_plan():
+        out = []
+        for mk in cfg["map_order"]:
+            if not (cfg.get("geography") or {}).get(mk):
+                continue
+            city = rd_far_city(cfg, table, mk, RD_T8_RANGES.get(mk, ()))
+            for s in RD_SCALES:
+                off = rd_offset(rd_city(mk, city), s)
+                for r in table:
+                    for o in r.get("openings") or []:
+                        if mk not in (o.get("maps") or []):
+                            continue
+                        x, y = rd_world(cfg, mk, s, off, o["lat"], o["lon"])
+                        out.append((f"{mk}-s{s}-{r['id']}-{o['id']}", mk, city, s, off, o["kind"],
+                                    (int(math.floor(x / 32)) * 32, int(math.floor(y / 32)) * 32)))
+        return out
+
+    def v2_run(deadline):
+        lane_ms = rd_lane_modsets(ctx, mods, PAR_MAX, "rdv2", comparator=False)
+        lanes, dirs, mgs = [[] for _ in lane_ms], [], {}
+        for i, (label, mk, city, s, off, kind, view) in enumerate(v2_plan()):
+            if (mk, s) not in mgs:
+                mgs[(mk, s)] = rd_mgs(ctx, cfg, mk, s, f"v2-{mk}-s{s}", offset=off)
+            ln = i % len(lane_ms)
+            out = ctx.out / f"rd-v2-{label}"
+            lanes[ln].append((None, preview_args(lane_instance(ctx, ln), lane_ms[ln][0], 256, SEED, mgs[(mk, s)], view),
+                              out, 600))
+            dirs.append(out)
+        run_lanes(ctx, [ln for ln in lanes if ln])
+        return dirs
+
+    def v2_derive(dirs):
+        plan = v2_plan()
+        if len(dirs) != len(plan):
+            return {}, [f"{len(dirs)} V2 previews for {len(plan)} openings and scales"], ""
+        fails, listing = [], []
+        for x, (label, mk, city, s, off, kind, view) in zip(dirs, plan):
+            fails += g1(x) + g3(x) + images_rehash(x)
+            listing.append({"crop": label, "map": mk, "spawn": city, "scale": s, "kind": kind, "offset": list(view),
+                            "run": rel_ws(ctx, x)})
+        kinds = {k: sum(1 for c in listing if c["kind"] == k) for k in ("pass", "gap", "edge")}
+        return {"crops": listing}, fails, (f"{len(listing)} V2 crops at every opening of every map at scales "
+                                           f"{list(RD_SCALES)} ({kinds}) rendered for the verification pass")
+
+    checks["rd_v2"] = SuiteCheck("rd_v2", lambda: base_key("rd_v2", {"scales": RD_SCALES, "ranges": RD_T8_RANGES}),
+                                 v2_run, v2_derive)
+    rd_t15_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+
+
+def dump_render_point_in(poly, x, y):
+    import numpy as np
+    import dump_render as dr
+    return bool(dr.points_in_polygon(poly, np.array([x]), np.array([y]))[0])
+
+
+RD_PATH_PROBE = "ea-path-probe"
+RD_PATH = {"repeats": 50, "gen_tick": 1, "send_tick": 30, "end_tick": 930, "margin": 384, "reach": 80,
+           "pairs": 4, "snap": 16}                      # T15e driver 2: 200 requests per site (PD)
+RD_PATH_TRIGGER = {"ratio": 2.0, "failed": 0.10}        # a trigger, not a gate: an issue and a design note
+
+
+def rd_path_sites(cfg, table, s, off):
+    """T15e driver 2's two sites at scale s: starts on one side of an Alpine crest, on the segment whose
+    midpoint lies farthest from every opening (between two passes), each with its goal straight across
+    on the other side (behind the ridge), and the same pairs moved to open ground the same distance from
+    the spawn in the other direction (no crest within reach)."""
+    alps = rd_lines(cfg, table, RD_T6_MAP, s, off, ids=["alps"])["alps"][0]
+    ops = rd_openings(cfg, table, RD_T6_MAP, s, off, "alps")
+
+    def clear_of(i):
+        mx, my = (alps[i][0] + alps[i + 1][0]) / 2, (alps[i][1] + alps[i + 1][1]) / 2
+        return min((math.hypot(mx - o["x"], my - o["y"]) for o in ops), default=math.inf)
+    i_best = max(range(len(alps) - 1), key=clear_of)
+    a, b = alps[i_best], alps[i_best + 1]
+    every = [ln for v in rd_lines(cfg, table, RD_T6_MAP, s, off).values() for ln in v]
+    ridge, open_ = [], []
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    L = math.hypot(dx, dy) or 1.0
+    tx, ty = dx / L, dy / L
+    nx, ny = -ty, tx
+    for k in range(RD_PATH["pairs"]):
+        t = (k + 1) / (RD_PATH["pairs"] + 1)
+        cx, cy = a[0] + t * dx, a[1] + t * dy
+        if any(math.hypot(cx - o["x"], cy - o["y"]) < 4 * RD_PATH["reach"] for o in ops):
+            continue
+        r = RD_PATH["reach"]
+        ridge.append((round(cx + r * nx), round(cy + r * ny), round(cx - r * nx), round(cy - r * ny)))
+    # open ground: the same pairs moved onto inland cities far from every crest, both ends on reference land
+    mref = mref_of(RD_T6_MAP)
+
+    def land(x, y):
+        c, r = mref.tile_to_pixel(int(math.floor(x + off[0])), int(math.floor(y + off[1])), s)
+        return 0 <= r < mref.H and 0 <= c < mref.W and bool(mref.land[r, c])
+    centres = []
+    for p in rd_cities(cfg, RD_T6_MAP):
+        x, y = (v - o for v, o in zip(rd_offset(p, s), off))
+        if rd_nearest(x, y, every)[0] > 6 * RD_PATH["reach"]:
+            centres.append((x, y))
+    for ax, ay, bx, by in ridge:
+        mx, my = (ax + bx) / 2, (ay + by) / 2
+        for x, y in centres:
+            q = (round(ax - mx + x), round(ay - my + y), round(bx - mx + x), round(by - my + y))
+            if land(q[0], q[1]) and land(q[2], q[3]) and q not in open_:
+                open_.append(q)
+                centres.remove((x, y))
+                break
+    return ridge, open_
+
+
+def rd_parse_pathfinder(text):
+    """{tick: pathFinder ns} from --benchmark-verbose all's per-tick rows (perf.parse_verbose keeps the
+    generation columns only)."""
+    lines = text.splitlines()
+    try:
+        h = next(i for i, l in enumerate(lines) if l.startswith("tick,timestamp,"))
+    except StopIteration:
+        return None
+    cols = lines[h].rstrip(",").split(",")
+    if "pathFinder" not in cols:
+        return None
+    j = cols.index("pathFinder")
+    out = {}
+    for l in lines[h + 1:]:
+        if not l.startswith("t"):
+            continue
+        v = l.rstrip(",").split(",")
+        try:
+            out[int(v[0][1:])] = int(v[j])
+        except (ValueError, IndexError):
+            continue
+    return out
+
+
+def rd_p2_limits(sec6, map_key, scale, recorded=None):
+    """P2's limits for ridges' M2t/BABt pair of a map's block at a scale (6.2: the bar and "the same relative
+    rule" as P1): min(the bar, (main's recorded 16 LP M2t/BABt ratio + ridges' time allocation for M2, which
+    takes M1's number) x the factor), climate-tiles' p2_limits reading main's recorded M2t/BABt ratio
+    (RATIO_CHECKS_M2; `recorded` stands in for the runner controls); none recorded fails closed, as P1's
+    does. P3 at 24 LP stays PAIR_LIMITS' own."""
+    if not isinstance(sec6, dict):
+        return {}
+    lim = dict(sec6["limits"])
+    p2 = lim.get("P2")
+    if not p2:
+        raise GateError("P2 is not in force through ridges: the M2t/BABt pair would meet no bar (fail closed)")
+    lim = p2_limits(sec6, "ridges", map_key, scale,
+                    recorded=(lambda sid, mk, sc: recorded(mk, sc)) if recorded else None)
+    return lim
+
+
+def rd_t15_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """ridges' timed rows: every map's full program at scales 6 and 1 at 16 LP, base M1t against M0t (P1)
+    and, the m2 dump in the registry (from ridges on), M2t against BABt (P2; its dumps missing fail closed),
+    at 24 LP at scale 6 (P3), 8 LP recorded; and T15e driver 2, path requests behind a ridge
+    against open ground."""
+    cfg = mods.cfg
+    table = rd_table()
+    dump_sha = ctx.shared.get("dump_m1_sha")
+    m1t, _ = earth_driver_modsets(ctx, mods)
+    m0t, _, _ = driver_modsets(ctx, mods)
+    tq1 = HERE / "mods" / "tq1-gen"
+
+    def ab_driver():
+        """M2t (M2 plus TQ1's timer) and BABt (BAB plus the timer), named by the Earth zip and the timer."""
+        z = mods.build_zip()
+        m2t = mods.make(f"ea-rd-m2t-{mods.zip_sha[:8]}-{folder_hash(tq1)}", [z, tq1], from_live=rd_ab_live())
+        babt = mods.make(f"ea-rd-babt-{folder_hash(tq1)}", [tq1], from_live=rd_ab_live())
+        return m2t, babt
+
+    def t15_halves():
+        return ["M1"] + (["M2"] if rd_uses_m2(ctx) else [])
+
+    def esig(ms, mk):
+        k = f"sig-{ms}-{mk}"
+        if k not in ctx.shared:
+            pname = map_preset(cfg, mk)[0]
+            ctx.shared[k] = program_signature(ctx, mods, ms, f"{ms}-{mk}", preset=pname)
+        return ctx.shared[k]
+
+    maps = [mk for mk in cfg["map_order"] if (cfg.get("geography") or {}).get(mk)]
+    import earthgeo as eg
+    _, first, _ = first_preset(cfg)
+    pos = {mk: (europe_positions(cfg, eg.MapRef(mk)) if mk == first else map_positions(cfg, mk)) for mk in maps}
+
+    def census_of(mk, s):
+        b = baseline_record()
+        if mk == first:
+            return ((b.get("t15b_europe") or {}).get("census_m0") or {}).get(str(s))
+        return (((b.get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get(str(s))
+
+    def t15_run(deadline):
+        out = []
+        ab = "M2" in t15_halves()
+        if ab:
+            rd_m2_dumps(ctx)
+            m2t, babt = ab_driver()
+        for mk in maps:
+            for s in T15B_SCALES:
+                mgs = preset_mgs(ctx, cfg, s) if mk == first else map_preset_mgs(ctx, cfg, mk, s)
+                sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos[mk]["block"][s], f"rd-m1t-{mk}-s{s}", mgs)
+                sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos[mk]["block"][s], f"rd-m0t-{mk}-s{s}")
+                masks = [getattr(ctx.perf, m) if m != "MASK24" else MASK24 for m in T15B_MASKS[s]]
+                out.append(pair_batch(ctx, {"a": (m1t, sa), "b": (m0t, sb)}, T15B["reps_suite"], masks,
+                                      f"rd-t15b-{mk}-s{s}", deadline))
+                if ab:
+                    # the M2 twin of M1's file: the same scale and spawn, so the block is the same place
+                    mgs2 = rd_ab_mgs(ctx, cfg, mk, mgs, f"t15-{mk}-s{s}")
+                    sc = make_save_mgs(ctx, mods, m2t, "tq1-gen-block", pos[mk]["block"][s], f"rd-m2t-{mk}-s{s}", mgs2)
+                    sd = make_save_mgs(ctx, mods, babt, "tq1-gen-block", pos[mk]["block"][s], f"rd-babt-{mk}-s{s}")
+                    out.append(pair_batch(ctx, {"a": (m2t, sc), "b": (babt, sd)}, T15B["reps_suite"], masks,
+                                          f"rd-t15b-m2-{mk}-s{s}", deadline))
+        return out
+
+    def t15_derive(dirs):
+        halves = t15_halves()
+        want = len(maps) * len(T15B_SCALES) * len(halves)
+        if len(dirs) != want:
+            return {}, [f"{len(dirs)} timed batches for rd_t15b's {halves} halves, want {want}"], ""
+        fails, meas, k = [], {}, 0
+        for mk in maps:
+            rec = {"blocks": pos[mk]["block"], "block_land": pos[mk]["block_land"]}
+            for s in T15B_SCALES:
+                try:
+                    lim = p1_limits(sec6, "ridges", mk, scale=s) if isinstance(sec6, dict) else {}
+                except GateError as e:
+                    lim = {}
+                    fails.append(f"{mk} scale {s}: {e}")
+                m, f, _ = derive_t15b([dirs[k]], lim, T15B["reps_suite"], pair="m1_m0", label=f"{mk} M1t/M0t scale {s}",
+                                      census_m0=census_of(mk, s) or {})
+                k += 1
+                if not census_of(mk, s):
+                    f = f + [f"tests/baselines holds no M0 census of {mk}'s scale {s} block: run 'earth_test.py baseline'"]
+                fails += [f"{mk} scale {s}: {x}" for x in f]
+                rec[f"scale_{s}"] = m
+                if "M2" in halves:
+                    try:
+                        lim2 = rd_p2_limits(sec6, mk, s)
+                    except GateError as e:
+                        lim2 = {}
+                        fails.append(f"{mk} scale {s}: {e}")
+                    m2, f2, _ = derive_t15b([dirs[k]], lim2, T15B["reps_suite"], pair="m2_bab",
+                                            label=f"{mk} M2t/BABt scale {s}")
+                    k += 1
+                    fails += [f"{mk} scale {s}: {x}" for x in f2]
+                    rec.setdefault("m2_bab", {})[f"scale_{s}"] = m2
+            meas[mk] = rec
+
+        def ratios(node):
+            return ", ".join(f"{mask} {v.get('ratio')}" for mask, v in (node or {}).items() if isinstance(v, dict))
+        cols = [("M1", lambda m, s: m.get(f"scale_{s}"))] + (
+            [("M2", lambda m, s: (m.get("m2_bab") or {}).get(f"scale_{s}"))] if "M2" in halves else [])
+        return meas, fails, "; ".join(
+            f"{mk}: " + ", ".join(f"{lab} scale {s} {ratios(get(m, s))}" for s in T15B_SCALES for lab, get in cols)
+            for mk, m in meas.items())
+
+    tsig = {}
+
+    def t15_sigs():
+        if not tsig:
+            tsig["m1"] = [esig(m1t, mk) for mk in maps] + [sig(m0t, "m0t")]
+            if "M2" in t15_halves():
+                m2t, babt = ab_driver()
+                tsig["m2"] = [esig(m2t, mk) for mk in maps] + [sig(babt, "babt")]
+        return tsig
+
+    checks["rd_t15b"] = SuiteCheck("rd_t15b", lambda: key_of({
+        "check": "rd_t15b", "sig": t15_sigs(), "control": ctl, "timing": timing, "config": T15B, "pos": pos,
+        "masks": T15B_MASKS, "build": GAME_BUILD, "borderline": BORDERLINE, "records": TIMED_RECORDS,
+        "earth": [d["mod"], dump_sha, ctx.shared.get("dump_m2_sha")]}), t15_run, t15_derive)
+
+    # T15e driver 2 (a trigger, not a gate): the same request count behind an Alpine ridge and on open
+    # ground, at scale 6 with London's spawn, pathFinder per tick over the window from
+    # --benchmark-verbose all, and the failed share
+    s6 = int(cfg["settings"]["scale"]["default_value"])
+    off = rd_offset(rd_city(RD_T6_MAP, RD_T6_SPAWN), s6)
+    ridge_pairs, open_pairs = rd_path_sites(cfg, table, s6, off)
+
+    def path_run(deadline):
+        ms = mods.with_mods("rdpath", [HERE / "mods" / RD_PATH_PROBE])
+        mods.prepare(ms, "rdpath")
+        out = []
+        for label, prs in (("ridge", ridge_pairs), ("open", open_pairs)):
+            mgs = rd_mgs(ctx, cfg, RD_T6_MAP, s6, f"path-{label}", offset=off)
+            vals = {"label": label, "pairs": ";".join(",".join(str(v) for v in p) for p in prs),
+                    "repeats": RD_PATH["repeats"], "gen-tick": RD_PATH["gen_tick"], "send-tick": RD_PATH["send_tick"],
+                    "end-tick": RD_PATH["end_tick"], "margin": RD_PATH["margin"], "snap": RD_PATH["snap"]}
+            rd_path_settings(ctx, ms, ctx.instance, vals)()
+            r = ctx.fh(["scenario", "--instance", ctx.instance, "--modset", ms, "--seed", str(SEED), "--map-gen-settings",
+                        mgs, "--ticks", str(RD_PATH["end_tick"] + 2), "--", "--benchmark-verbose", "all"],
+                       ctx.out / f"rd-path-{label}", timeout=RD_TIMEOUT)
+            out.append(r.out)
+        return out
+
+    def path_derive(dirs):
+        import perf
+        fails, meas = [], {}
+        for label, dd in zip(("ridge", "open"), dirs):
+            fails += g1(dd) + g3(dd)
+            f = Path(dd) / "script-output" / RD_PATH_PROBE / f"{label}.json"
+            rec = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+            pf = rd_parse_pathfinder(perf.read(Path(dd) / "bench" / "stdout.txt")) or {}
+            win = [v for t, v in pf.items() if RD_PATH["send_tick"] <= t <= RD_PATH["end_tick"]]
+            if not rec or not win:
+                fails.append(f"{label}: no path record or no pathFinder column in --benchmark-verbose all")
+                continue
+            done = rec["found"] + rec["failed"]
+            per = rec.get("per_pair") or []
+            meas[label] = {"sent": rec["sent"], "found": rec["found"], "failed": rec["failed"], "retried": rec["retried"],
+                           "pending": rec["pending"], "pathfinder_ms": round(sum(win) / 1e6, 3),
+                           "failed_share": round(rec["failed"] / done, 4) if done else None, "per_pair": per}
+            for k, pp in enumerate(per):
+                for end in ("start", "goal"):
+                    e = pp.get(end) or {}
+                    if not e.get("placeable"):
+                        fails.append(f"{label} pair {k + 1}: the {end} cannot hold the unit (tile {e.get('tile')}), so "
+                                     f"the site measures a blocked end, not a detour")
+        if "ridge" in meas and "open" in meas and meas["open"]["pathfinder_ms"]:
+            ratio = meas["ridge"]["pathfinder_ms"] / meas["open"]["pathfinder_ms"]
+            share = meas["ridge"]["failed_share"] or 0.0
+            meas["ratio"] = round(ratio, 3)
+            meas["trigger"] = ratio > RD_PATH_TRIGGER["ratio"] or share > RD_PATH_TRIGGER["failed"]
+            meas["pairs"] = {"ridge": ridge_pairs, "open": open_pairs}
+        if not ridge_pairs or not open_pairs:
+            fails.append(f"T15e driver 2 found {len(ridge_pairs)} ridge and {len(open_pairs)} open-ground pairs")
+        return meas, fails, (f"T15e driver 2 (reported; trigger at {RD_PATH_TRIGGER['ratio']}x or "
+                             f"{RD_PATH_TRIGGER['failed']:.0%} failed): pathFinder behind a ridge {meas.get('ratio')}x "
+                             f"open ground, failed {(meas.get('ridge') or {}).get('failed_share')}, still pending at "
+                             f"the window's end {(meas.get('ridge') or {}).get('pending')} behind the ridge and "
+                             f"{(meas.get('open') or {}).get('pending')} on open ground; trigger {meas.get('trigger')}")
+
+    checks["rd_t15e"] = SuiteCheck("rd_t15e", lambda: key_of({
+        "check": "rd_t15e", "mod": d["mod"], "test_mods": d["test_mods"], "fh": d["fh"], "build": GAME_BUILD,
+        "path": RD_PATH, "pairs": [ridge_pairs, open_pairs], "dump": dump_sha}), path_run, path_derive)
+
+
+def rd_path_settings(ctx, modset, inst, vals):
+    """A prepare() that writes every ea-path-probe startup setting of `modset`, through fh.py's encoder."""
+    import dump_render
+
+    def prep():
+        fh = dump_render.load_fh()
+        f = fh.ensure_settings_file(inst, fh.MODSETS / modset)
+        doc = fh.read_mod_settings(f)
+        startup = fh._dict_get(doc["tree"], "startup")
+        for name, x in vals.items():
+            node = [6, 0, int(x)] if isinstance(x, int) and not isinstance(x, bool) else [3, 0, str(x)]
+            key = f"{RD_PATH_PROBE}-{name}"
+            entry = fh._dict_get(startup, key)
+            if entry is None:
+                startup[2].append((key, [5, 0, [("value", node)]]))
+            else:
+                entry[2] = [(k, node if k == "value" else c) for k, c in entry[2]]
+        f.write_bytes(fh.encode_mod_settings(doc))
+    return prep
+
+
+# ------------------------------------------------------------------------------------------------ resources-enemies
+#
+# Milestone resources-enemies (design section 12, milestone 1): its FG rows (re_dump_facts, re_t4_fg) and its
+# suite checks (re_suite_checks). Every hotspot row is a row of prototypes/tables/hotspots.lua whose
+# disc is the region layer's row of the same id; the runner places each disc where the game does: the
+# jittered centre by S6's linear fold (within 0.01 tiles of the game for seeds below 65536, S6 Q3;
+# the dumps also read the game's own centres at (0, 0) and the checks use those), the footprint radius
+# R = min(max(r s, floor_tiles), cap s) tiles. Spawns are set by explicit city offsets in full MGS
+# files (London on every map), so the rows hold before and after spawn-cities' fold, as ridges' do.
+
+RE_SCALES = (1, 6)
+RE_SPAWN = "London"
+RE_SOLID = ("iron-ore", "copper-ore", "coal", "stone")
+RE_DENSITY_MIN = 5.0                      # T8: hotspot ore per land tile over non-hotspot land, equal distance
+RE_AMOUNT_MIN = 0.25                      # T8: realised over the land-scaled target per seed
+RE_PATCH_RATIO_MAX = 0.9                  # T8: base-ore patches at frequency 0.75 against 1.0
+RE_RAMP = {512: 1.01, 1024: 1.09, 2048: 1.23, 4096: 1.50, 8192: 1.50}   # T8, S6 Q5
+RE_RAMP_INSIDE = (0, 150, 300, 449)       # T8: 1.000 inside 450 tiles
+RE_RAMP_TOL = 0.02
+RE_RAMP_BEARINGS = (0, 90, 180, 270)
+RE_T4_SIZE = {"low": (1 / 6, (0.15, 0.21)), "high": (6.0, (4.0, 6.1))}   # T4 (FEAS-15)
+RE_T4_RICH = {"low": 1 / 6, "high": 6.0}  # T4: amounts scale exactly, within RE_RICH_TOL
+RE_RICH_TOL = 0.01
+RE_T4_ENEMY_TOL = 0.10                    # T4: enemies outside the hotspots, on against off (S6 Q1 order effect)
+RE_T4_ENEMY_PROP_TOL = 0.5                # T4: an enemy slider's ratio outside the hotspots on M1 against M0's
+RE_T4_PATCH_TOL = 0.10                    # T4: base patches at frequency 1/6 and 6 over 1, M1 against M0
+RE_T4_SITES = {"europe": ("coal_upper_silesia", "copper_legnica_glogow", "iron_lorraine_minette")}
+RE_T9_BAND = (2.5, 4.5)                   # T9 (S6: 3.42)
+RE_T9_ANNULUS = 0.20                      # T9: inside a hotspot region, outside its disc
+RE_T9_MAPS = ("europe", "olde_world")
+RE_T9_MAX_ROWS = 24                       # T9: onshore rows per map, the first by table order
+RE_START_RADIUS = 150                     # T7, T9: no enemy within this of a spawn
+RE_FADED = 0.05                           # T8: a core whose target is under this share of its target at
+                                          # the end of vanilla's fade-in (450 tiles) is reported, not judged
+RE_CLEARED_MAX = 0.9                      # T8: a start disc this much inside ridges' ore clearance is reported
+RE_CLEAR_SAMPLES = 11                     # T8: ridges' clearance read in game on this grid over each start disc
+RE_CORE_SAMPLES = 15                      # T8: the core's target sampled on this grid a side
+RE_REGION_BLOCK = 2048                    # T8: each region's sampled block, tiles a side
+RE_REGIONS = 6                            # T8: sampled regions per map (oracle cities but the spawn)
+RE_PATCH_WINDOW = 4096                    # T8: the patch-count window, tiles a side, round the spawn
+RE_PATCH_STEP = 4                         # T8: its grid step in tiles
+RE_ROUGH_PX = 3                           # the region layer's edge roughness clamp (config regions.rough)
+RE_MARGIN_TILES = 2                       # past the roughened footprint
+RE_SEA_BOXES = 2                          # T8 M3: open-sea boxes per map for random wells
+RE_SEA_BOX = 1024                         # tiles a side
+RE_MOUTH_PX = 16                          # T8 M3: a well within this of a river mouth is reported
+RE_INLAND_BOX = 512                       # T8 M3: tiles a side of each inland-feature box
+RE_INLAND_KINDS = ("canal", "marsh", "forest")   # T8 M3: oracle kinds boxed per map (a forest: inland lakes)
+RE_MASK_SLIDERS = {"frequency": 6, "size": 6}    # T8 M3: the masked and unmasked runs' offshore-oil sliders
+RE_WELLS_MAX = 400                        # T8 M3: wells per run the mask pass reads
+RE_T4O_LATTICE = 17                       # T4 offshore: lattice points a side over each footprint
+RE_T4_OIL_TOL = 0.25                      # T4 offshore: masked random wells' frequency ratio against the Oil Rig's
+RE_INLAND_MEMO = {}                       # re_inland_boxes per (map, scale, offset)
+RE_TIMEOUT = 1800
+RE_ENEMY_TYPES = "unit-spawner,turret,unit"
+RE_T8_TYPES = "resource,unit-spawner,turret"
+RE_M2_LIVE = ["alien-biomes", "alien-biomes-graphics"]
+RE_M3_LIVE = RE_M2_LIVE + ["cargo-ships", "cargo-ships-graphics", "Robot256Lib", "cargo-ships-oil-rig"]
+RE_OIL_RIG = "cargo-ships-oil-rig"
+RE_T15E_BAND = (1500, 2500)               # T15e driver 1: the ring of chunks outside hotspots
+RE_T15E_STRIDE = 3                        # every third chunk of the ring
+RE_T15E_TOL = 0.20
+RE_POLLUTER = "ea-polluter"               # T15e driver 1's test mod (tools/mods/ea-polluter)
+RE_POLLUTE = {"gen-tick": 1, "start-tick": 2, "end-tick": 18000, "radius": 384, "amount": 2000, "period": 60,
+              "furnaces": 4}
+
+
+def re_rows():
+    """(hotspot rows, frame offsets, the region layer's hotspot rows by id)."""
+    import build_hotspots
+    import build_regions
+    try:
+        rows, offsets = build_hotspots.load_table()
+        reg = {r["id"]: r for r in build_regions.load_table() if r.get("layer") == "hotspot"}
+    except (build_hotspots.HotspotError, build_regions.RegionError, tnconfig.ConfigError) as e:
+        raise GateError(f"the hotspot table: {e}")
+    return rows, offsets, reg
+
+
+def re_ore(cfg, resource):
+    """config.lua's resources.ores row of a resource (its wrapper names)."""
+    return next(o for o in cfg["resources"]["ores"] if o["resource"] == resource)
+
+
+def re_on(rows, mk, onshore=None):
+    return [r for r in rows if mk in r["maps"] and (onshore is None or r["offshore"] != onshore)]
+
+
+def re_footprint(cfg, row, s):
+    """A row's footprint radius in tiles at scale s (config hotspots.floor_tiles; APPROVALS 2)."""
+    H = cfg["hotspots"]
+    return min(max(row["radius_px"] * s, H["floor_tiles"]), row["cap_px"] * s)
+
+
+def re_reach(cfg, row, s):
+    """How far ore or a stamp can reach from a row's jittered centre: the footprint, the roughness."""
+    return re_footprint(cfg, row, s) + RE_ROUGH_PX * s + RE_MARGIN_TILES
+
+
+def re_centre_px(cfg, reg_row, seed):
+    """The region layer's jittered centre of a hotspot row in frame px, by S6's linear fold in float64."""
+    import build_regions as br
+    R = cfg["regions"]
+    J = R["jitter"]
+    cu, cv = br.to_px(reg_row["lat"], reg_row["lon"], br.frame(cfg))
+    reach = reg_row["jitter_km"] / R["km_per_px"] / math.sqrt(2)
+    small = int(seed) & 0xFFFF
+    high = math.floor(int(seed) / 2 ** 32 * J["high_bits"])
+
+    def frac(m):
+        return (small * m + high * J["mult_high"] + reg_row["phase"]) % 1
+    return cu + (2 * frac(J["mult_x"]) - 1) * reach, cv + (2 * frac(J["mult_y"]) - 1) * reach
+
+
+def re_table_px(cfg, reg_row):
+    import build_regions as br
+    return br.to_px(reg_row["lat"], reg_row["lon"], br.frame(cfg))
+
+
+def re_world(cfg, mk, s, offsets, u, v, offset):
+    """A frame-px point's world position on map mk at scale s with the spawn offset (geo tiles): the
+    chain reads u = (gx - floor(s / 2)) / s + wr on the map's own pixels (rd_geo)."""
+    du, dv = offsets[mk]
+    m = cfg["maps"][mk]
+    return (s * (u - du - int(m["wr"])) + s // 2 - offset[0], s * (v - dv - int(m["hr"])) + s // 2 - offset[1])
+
+
+def re_box(x, y, half):
+    """A chunk-aligned dump box round (x, y) reaching at least `half` tiles each way."""
+    x0, y0 = int(math.floor((x - half) / 32)) * 32, int(math.floor((y - half) / 32)) * 32
+    x1, y1 = int(math.ceil((x + half) / 32)) * 32, int(math.ceil((y + half) / 32)) * 32
+    return (x0, y0, x1 - x0, y1 - y0)
+
+
+def re_target(cfg, row, mk, d, size=1.0, R=None):
+    """A row's amount at distance d without its land share: strength times vanilla's regular patch
+    amount there, at least density_floor times vanilla's mean amount per tile over a footprint of
+    radius R when R is given, times the ramp (config hotspots.target; resources.lua mirrors it)."""
+    H, RS = cfg["hotspots"], cfg["resources"]
+    TG = H["target"]
+    h = next(x for x in H["resources"] if x["resource"] == row["resource"])
+    unit = TG["per_km2"] / h["spots_per_km2"] * h["base_density"] * h["mean_size"]
+    f = min(max((d - TG["fade_from"]) / TG["fade_span"], 0), 1) * \
+        (1 + min(max((d - TG["double_from"]) / TG["double_span"], 0), 1)) * max((d + TG["rich_offset"]) / TG["rich_span"], 1)
+    rp = RS["ramp"]
+    ramp = 1 + rp["gain"] * min(max((d - rp["from"]) / rp["span"], 0), 1)
+    amount = row["strength"] * unit
+    if R is not None:
+        amount = max(amount, TG["density_floor"] * h["base_density"] * RS["frequency"] * math.pi * R * R)
+    return amount * size * f * ramp
+
+
+def re_start_radius(cfg, R, s):
+    """A row's start disc at scale s (resources.lua): core_share of R, at most the disc holding
+    spot.max_spots candidates."""
+    H = cfg["hotspots"]
+    SP = H["spot"]
+    per = SP["region_size"] ** 2 / (SP["candidates"] if s > SP["fine_scale"] else SP["candidates_fine"])
+    return min(H["core_share"] * R, math.sqrt(SP["max_spots"] * per / math.pi))
+
+
+def re_target_core(cfg, row, mk, x, y, R, s, n=RE_CORE_SAMPLES):
+    """A row's amount (re_target, no land share) averaged over its start disc round (x, y), where its
+    spots start, on an n x n grid: each spot carries the amount at its candidate's distance, so the
+    expected total is that mean, which a centre reading misses where the disc straddles vanilla's
+    fade-in near the spawn."""
+    rc = re_start_radius(cfg, R, s)
+    vals = []
+    for i in range(n):
+        for j in range(n):
+            dx, dy = (2 * (i + 0.5) / n - 1) * rc, (2 * (j + 0.5) / n - 1) * rc
+            if dx * dx + dy * dy <= rc * rc:
+                vals.append(re_target(cfg, row, mk, math.hypot(x + dx, y + dy), R=R))
+    return sum(vals) / len(vals) if vals else re_target(cfg, row, mk, math.hypot(x, y), R=R)
+
+
+def re_start_points(cfg, p, s, n=RE_CLEAR_SAMPLES):
+    """Whole-tile sample points over a T8 plan row's start disc round its planned centre."""
+    rs = re_start_radius(cfg, p["R"], s)
+    out = []
+    for i in range(n):
+        for j in range(n):
+            dx, dy = (2 * (i + 0.5) / n - 1) * rs, (2 * (j + 0.5) / n - 1) * rs
+            if dx * dx + dy * dy <= rs * rs:
+                out.append((int(round(p["x"] + dx)), int(round(p["y"] + dy))))
+    return out
+
+
+def re_clear_points_text(cfg, plan, s):
+    """(0, 0) for G5, then every plan row's start-disc points."""
+    pts = sorted({q for p in plan for q in re_start_points(cfg, p, s)} - {(0, 0)})
+    return ";".join(f"{x},{y}" for x, y in [(0, 0)] + pts)
+
+
+def re_clear_names_text(cfg):
+    """The off run's point names: the per-save map and scale (G5) and ridges' ore clearance."""
+    K = cfg["keys"]
+    return ",".join([K["map"], K["scale"], cfg["ridges"]["names"]["clear"]])
+
+
+def re_crest_segments(cfg):
+    """Every ridge crest segment of prototypes/tables/ranges.lua in region-frame px."""
+    import build_ranges
+    import build_regions as br
+    fr = br.frame(cfg)
+    out = []
+    for rg in build_ranges.load_table():
+        pts = [br.to_px(lat, lon, fr) for lat, lon in rg["crest"]]
+        out += list(zip(pts, pts[1:]))
+    return out
+
+
+def re_cleared(cfg, mk, s, offsets, x, y, rs, segs, n=RE_CORE_SAMPLES):
+    """The share of a start disc (radius rs tiles round world (x, y) at scale s) within ridges' ore
+    clearance of a crest (ridges.ore_clear_tiles; offline, on the crest polylines): ridges keeps ore
+    off those tiles on every Earth ore, hotspots included, so T8 counts them as no land."""
+    off = rd_offset(rd_city(mk, RE_SPAWN), s)
+    du, dv = offsets[mk]
+    m = cfg["maps"][mk]
+    clear_px = cfg["ridges"]["ore_clear_tiles"] / s
+
+    def frame(px, py):
+        return (px + off[0] - s // 2) / s + du + int(m["wr"]), (py + off[1] - s // 2) / s + dv + int(m["hr"])
+
+    def dseg(pu, pv, a, b):
+        vx, vy = b[0] - a[0], b[1] - a[1]
+        L = vx * vx + vy * vy
+        k = 0 if L == 0 else max(0.0, min(1.0, ((pu - a[0]) * vx + (pv - a[1]) * vy) / L))
+        return math.hypot(pu - a[0] - k * vx, pv - a[1] - k * vy)
+    cu, cv = frame(x, y)
+    near = [(a, b) for a, b in segs if dseg(cu, cv, a, b) < rs / s + clear_px]
+    if not near:
+        return 0.0
+    hit = tot = 0
+    for i in range(n):
+        for j in range(n):
+            dx, dy = (2 * (i + 0.5) / n - 1) * rs, (2 * (j + 0.5) / n - 1) * rs
+            if dx * dx + dy * dy > rs * rs:
+                continue
+            tot += 1
+            pu, pv = frame(x + dx, y + dy)
+            hit += any(dseg(pu, pv, a, b) < clear_px for a, b in near)
+    return hit / tot if tot else 0.0
+
+
+def re_vanilla_density(cfg, resource, d):
+    """Vanilla's mean amount per tile of a resource at distance d on Earth: base_density (resource-
+    autoplace's average amount per tile) times the preset frequency, vanilla's distance factor (the
+    fade-in, the double-density term and the richness factor) and, on the four solid ores, the ramp
+    the richness wrapper applies: what non-hotspot land holds there on average."""
+    H, RS = cfg["hotspots"], cfg["resources"]
+    TG = H["target"]
+    h = next(x for x in H["resources"] if x["resource"] == resource)
+    f = min(max((d - TG["fade_from"]) / TG["fade_span"], 0), 1) *         (1 + min(max((d - TG["double_from"]) / TG["double_span"], 0), 1)) * max((d + TG["rich_offset"]) / TG["rich_span"], 1)
+    ramp = re_ramp(cfg, d) if resource in RE_SOLID else 1
+    return h["base_density"] * RS["frequency"] * f * ramp
+
+
+def re_ramp(cfg, d):
+    rp = cfg["resources"]["ramp"]
+    return 1 + rp["gain"] * min(max((d - rp["from"]) / rp["span"], 0), 1)
+
+
+def re_names_text(cfg, rows):
+    """The probe's point names: the per-save map and scale, and every row's jittered centre."""
+    K, N = cfg["keys"], cfg["regions"]["names"]
+    out = [K["map"], K["scale"]]
+    for r in rows:
+        out += [N["row"]["hu"] + r["id"] + N["suffix"], N["row"]["hv"] + r["id"] + N["suffix"]]
+    return ",".join(out)
+
+
+def re_game_centres(cfg, dump, rows):
+    """{row id: (hu, hv)} read from the game at (0, 0); a row the probe could not read is absent."""
+    N = cfg["regions"]["names"]
+    v = point_values(dump).get((0, 0), {})
+    out = {}
+    for r in rows:
+        a, b = v.get(N["row"]["hu"] + r["id"] + N["suffix"]), v.get(N["row"]["hv"] + r["id"] + N["suffix"])
+        if isinstance(a, (int, float)) and isinstance(b, (int, float)):
+            out[r["id"]] = (float(a), float(b))
+    return out
+
+
+def re_lanes(ctx, mods, n, tag, live=(), m0=True):
+    """Per worker one Earth modset (the zip, the dump probe and `live` mods copied read-only from the live
+    mods folder) and one vanilla modset with the same probe and live mods, prepared (G7)."""
+    z = mods.build_zip()
+    probe = [HERE / "mods" / "ep-s8-dump"]
+    h = folder_hash(*probe)
+    lv = hashlib.sha256(",".join(live).encode()).hexdigest()[:6] if live else "m1"
+    out = []
+    for i in range(n):
+        e = mods.make(f"ea-{tag}e{i + 1}-{mods.zip_sha[:8]}-{h}-{lv}", [z] + probe, from_live=list(live))
+        mods.prepare(e, f"{tag}e{i + 1}")
+        z0 = None
+        if m0:
+            z0 = mods.make(f"ea-{tag}z{i + 1}-{h}-{lv}", probe, from_live=list(live))
+            mods.prepare(z0, f"{tag}z{i + 1}")
+        out.append((e, z0))
+    return out
+
+
+def re_oil_pen(cfg):
+    """The Oil Rig's offshore-oil keys as a preset names them beside the Oil Rig (data-final-fixes.lua):
+    the M1 dump that re_mgs copies holds no such keys, so every M3 MGS file adds them."""
+    OF = cfg["resources"]["offshore"]
+    return {OF["probability"]: OF["p"], OF["richness"]: OF["r"]}
+
+
+def re_mgs(ctx, cfg, mk, s, label, offset, hotspots=True, controls=None, pen=None, extra=None):
+    """The map's preset as the M1 dump holds it, as a full MGS file (U10) at scale s with the spawn moved
+    by an explicit city offset, the hotspots toggle and the map's offshore stamp key set as the preset
+    sets them for that toggle, `controls` merged over the preset's autoplace controls, `pen` over its
+    keys and `extra` top-level MapGenSettings fields."""
+    pname, g = map_preset(cfg, mk)
+    base = dict(preset_pen(ctx.shared["dump_m1"], pname))
+    if not base:
+        raise GateError(f"the M1 dump holds no preset {pname}")
+    K = cfg["keys"]
+    sw = cfg["toggles"]["hotspots"]
+    base[K["scale"]] = int(s)
+    base[g["cx"]], base[g["cy"]] = int(offset[0]), int(offset[1])
+    base[sw["preset_key"]] = sw["on"] if hotspots else sw["off"]
+    base[K["fields"][mk]] = cfg["fields"]["names"][mk] if hotspots else cfg["neutral"]["zero"]
+    base.update(pen or {})
+    ac = preset_controls(ctx.shared["dump_m1"], pname)
+    for k, v in (controls or {}).items():
+        ac[k] = dict(ac.get(k) or {"frequency": 1, "size": 1, "richness": 1}, **v)
+    body = dict({"property_expression_names": base}, **(extra or {}))
+    if ac:
+        body["autoplace_controls"] = ac
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"re-{label}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def re_dump_job(ctx, cfg, ms, inst, label, out, mgs, areas, rows, seed=SEED, types=RE_T8_TYPES, points="0,0",
+                names=None):
+    """One ep-s8-dump scenario: areas forced at tick 1 and dumped at tick 2, the per-save map and scale
+    and every row's jittered centre read at (0, 0) (G5 and T2)."""
+    nm = names or re_names_text(cfg, rows)
+    return (dump_settings(ctx, ms, inst, label=label, areas=rd_areas_text(areas), points=points, names=nm,
+                          types=types), scenario_args(inst, ms, 4, seed, mgs), out, RE_TIMEOUT)
+
+
+class ReDump:
+    """One probe dump read once: entities deduplicated across overlapping areas, tiles per area decoded
+    on demand (water is a tile with the water_tile layer), and the points' values."""
+
+    def __init__(self, dump):
+        self.dump = dump
+        self.areas = dump.get("areas") or []
+        self._tiles = {}
+        seen, self.resources, self.others = set(), [], []
+        for a in self.areas:
+            names = a.get("entity_names") or []
+            for e in a.get("entities") or []:
+                info = names[e[0]]
+                key = (info["name"], e[1], e[2])
+                if key in seen:
+                    continue
+                seen.add(key)
+                if info.get("type") == "resource":
+                    self.resources.append((info["name"], e[1], e[2], e[3] if len(e) > 3 else 0))
+                else:
+                    self.others.append((info["name"], info.get("type"), e[1], e[2]))
+        self.points = point_values(dump)
+
+    def tiles(self, i):
+        if i not in self._tiles:
+            import dump_render as dr
+            a = self.areas[i]
+            pal, idx = dr.decode_tiles(a)
+            info = {t["name"]: t for t in (a.get("tiles") or {}).get("info") or []}
+            water = [("water_tile" in ((info.get(n) or {}).get("layers") or [])) or n == "out-of-map" for n in pal]
+            self._tiles[i] = (a["area"], pal, idx, water)
+        return self._tiles[i]
+
+    def tile_at(self, x, y):
+        """The tile name at world tile (x, y), or None outside every area."""
+        for i, a in enumerate(self.areas):
+            r = a["area"]
+            if r["x0"] <= x < r["x0"] + r["w"] and r["y0"] <= y < r["y0"] + r["h"]:
+                ar, pal, idx, _ = self.tiles(i)
+                return pal[idx[y - ar["y0"], x - ar["x0"]]]
+        return None
+
+    def land_in(self, i, cx, cy, radius):
+        """(land tiles, all tiles) of area i whose centre lies within radius of (cx, cy)."""
+        import numpy as np
+        ar, pal, idx, water = self.tiles(i)
+        ys, xs = np.mgrid[0:ar["h"], 0:ar["w"]]
+        inside = (xs + ar["x0"] + 0.5 - cx) ** 2 + (ys + ar["y0"] + 0.5 - cy) ** 2 <= radius * radius
+        wet = np.array(water, bool)[idx]
+        return int((inside & ~wet).sum()), int(inside.sum())
+
+    def land_share_box(self, i):
+        ar, pal, idx, water = self.tiles(i)
+        import numpy as np
+        wet = np.array(water, bool)[idx]
+        return float((~wet).sum()) / max(1, wet.size), int((~wet).sum())
+
+    def _arrays(self, name):
+        """(x, y, amount) numpy arrays of one resource's entities (built once per name)."""
+        import numpy as np
+        if not hasattr(self, "_res"):
+            self._res = {}
+        if name not in self._res:
+            rows = [(x, y, a) for n, x, y, a in self.resources if n == name]
+            arr = np.array(rows, dtype=np.float64).reshape(-1, 3)
+            self._res[name] = (arr[:, 0], arr[:, 1], arr[:, 2])
+        return self._res[name]
+
+    def ore_in(self, cx, cy, radius, name):
+        xs, ys, am = self._arrays(name)
+        return float(am[(xs - cx) ** 2 + (ys - cy) ** 2 <= radius * radius].sum())
+
+    def ore_in_box(self, box, name):
+        x0, y0, w, h = box
+        xs, ys, am = self._arrays(name)
+        return float(am[(xs >= x0) & (xs < x0 + w) & (ys >= y0) & (ys < y0 + h)].sum())
+
+    def enemies_in(self, cx, cy, radius, types=("unit-spawner",)):
+        return [e for e in self.others if e[1] in types and (e[2] - cx) ** 2 + (e[3] - cy) ** 2 <= radius * radius]
+
+
+def re_control_box(cfg, mk, s, offsets, off, cx, cy, half, avoid, mref):
+    """A box of the footprint's size at the same distance from the spawn, turned until it is clear of
+    every footprint in `avoid` [(x, y, reach)] and at least half reference land; None if no turn fits."""
+    d = math.hypot(cx, cy)
+    a0 = math.atan2(cy, cx)
+    for turn in (90, -90, 180, 45, -45, 135, -135, 30, -30, 150, -150):
+        a = a0 + math.radians(turn)
+        x, y = d * math.cos(a), d * math.sin(a)
+        if any(math.hypot(x - ax, y - ay) < half * 1.42 + reach for ax, ay, reach in avoid):
+            continue
+        if math.hypot(x, y) < RE_START_RADIUS + half * 1.42:
+            continue
+        share = re_ref_land(cfg, mk, s, off, x, y, half, mref)
+        if share is not None and share >= 0.5:
+            return re_box(x, y, half)
+    return None
+
+
+def re_ref_land(cfg, mk, s, off, x, y, half, mref):
+    """The reference land share of a box (the map's raster at its pixels), None off the map."""
+    m = cfg["maps"][mk]
+    u0 = (x - half + off[0] - s // 2) / s + int(m["wr"])
+    v0 = (y - half + off[1] - s // 2) / s + int(m["hr"])
+    n = max(1, int(2 * half / s))
+    c0, r0 = int(math.floor(u0)), int(math.floor(v0))
+    if c0 < 0 or r0 < 0 or c0 + n >= mref.W or r0 + n >= mref.H:
+        return None
+    return float(mref.land[r0:r0 + n, c0:c0 + n].mean())
+
+
+def re_plan_t8(cfg, mk, s, seed, rows, offsets, reg, onshore=True):
+    """T8's dump plan on one map and scale: per row its jittered centre (world), footprint, reach and
+    dump box, and a control box at equal distance (onshore rows only). Returns (offset, plan, areas)."""
+    off = rd_offset(rd_city(mk, RE_SPAWN), s)
+    on = re_on(rows, mk)
+    pos = {}
+    for r in on:
+        hu, hv = re_centre_px(cfg, reg[r["id"]], seed)
+        x, y = re_world(cfg, mk, s, offsets, hu, hv, off)
+        pos[r["id"]] = (x, y, re_reach(cfg, r, s))
+    avoid = list(pos.values())
+    mref = mref_of(mk)
+    plan, areas = [], []
+    for r in on:
+        if r["offshore"] == onshore:
+            continue
+        x, y, reach = pos[r["id"]]
+        box = re_box(x, y, reach)
+        ctrl = re_control_box(cfg, mk, s, offsets, off, x, y, reach, avoid, mref) if onshore else None
+        plan.append({"id": r["id"], "row": r, "x": x, "y": y, "R": re_footprint(cfg, r, s), "reach": reach,
+                     "box": len(areas), "control": None if ctrl is None else len(areas) + 1})
+        areas.append(box)
+        if ctrl is not None:
+            areas.append(ctrl)
+    return off, plan, areas
+
+
+def re_t8_eval(cfg, mk, s, seed, plan, don, doff, offsets, label):
+    """T8 on one dump pair (hotspots on and off over the same areas): per row the density against its
+    control, the realised amount against the land-scaled target, and every resource outside every
+    footprint identical between the two. The row centres come from the game when the dump read them."""
+    fails, rows_out = [], {}
+    segs = re_crest_segments(cfg)
+    gc = re_game_centres(cfg, don.dump, [p["row"] for p in plan])
+    off = rd_offset(rd_city(mk, RE_SPAWN), s)
+    disc = []
+    for p in plan:
+        r = p["row"]
+        x, y = p["x"], p["y"]
+        if r["id"] in gc:
+            x, y = re_world(cfg, mk, s, offsets, gc[r["id"]][0], gc[r["id"]][1], off)
+        else:
+            fails.append(f"{label} {r['id']}: the dump did not read the row's jittered centre (T2)")
+        disc.append((x, y, p["reach"]))
+        res = r["resource"]
+        on_amt, off_amt = don.ore_in(x, y, p["reach"], res), doff.ore_in(x, y, p["reach"], res)
+        land, total = don.land_in(p["box"], x, y, p["R"])
+        share = land / total if total else 0.0
+        realised = on_amt - off_amt
+        target = re_target_core(cfg, r, mk, x, y, p["R"], s)
+        # ridges' ore clearance is no land for ore: the share of the start disc inside it leaves the target
+        cn = cfg["ridges"]["names"]["clear"]
+        cv = [(doff.points.get(q) or {}).get(cn) for q in re_start_points(cfg, p, s)]
+        cv = [v for v in cv if isinstance(v, (int, float))]
+        cleared = (sum(1 for v in cv if v <= 0) / len(cv) if cv else
+                   re_cleared(cfg, mk, s, offsets, x, y, re_start_radius(cfg, p["R"], s), segs))
+        rec_clear = "game" if cv else "offline"
+        share *= 1 - cleared
+        rec = {"resource": res, "x": round(x, 1), "y": round(y, 1), "R": round(p["R"], 1), "cleared": round(cleared, 3),
+               "cleared_from": rec_clear,
+               "land_share": round(share, 3),
+               "realised": realised, "target": round(target), "ratio": round(realised / (target * share), 3)
+               if target * share > 0 else None}
+        # a core inside vanilla's start fade (Portland and Nord-Pas-de-Calais at scale 1 from London)
+        # holds a sliver of its target by design: reported, not judged
+        TG = cfg["hotspots"]["target"]
+        faded = target < RE_FADED * re_target(cfg, r, mk, TG["fade_from"] + TG["fade_span"], R=p["R"])
+        # a disc more than half sea that decision 16 lists for review waits for his call
+        listed = r["share"][mk] < 0.5
+        judged = not faded and cleared < RE_CLEARED_MAX and not listed
+        rec["judged"] = judged if judged else ("faded near the spawn" if faded else "inside ridges' ore clearance"
+                                               if cleared >= RE_CLEARED_MAX else "listed for Jake (ruling 16)")
+        if land and judged and on_amt <= 0:
+            fails.append(f"{label} {r['id']}: no {res} in the footprint ({land} land tiles)")
+        if judged and target * share > 0 and realised < RE_AMOUNT_MIN * target * share:
+            fails.append(f"{label} {r['id']}: realised {realised:.3g} of {res}, under {RE_AMOUNT_MIN} of the target "
+                         f"{target:.3g} times the land share {share:.2f} (ruling 16)")
+        # density against non-hotspot land at equal distance: vanilla's mean there, since a footprint-
+        # sized control box holds either no vanilla patch or a whole one (the box's reading is reported)
+        den = on_amt / max(1, land)
+        vden = re_vanilla_density(cfg, res, math.hypot(x, y))
+        rec["density"], rec["vanilla_density"] = round(den, 2), round(vden, 2)
+        rec["density_ratio"] = round(den / vden, 2) if vden > 0 else None
+        if land and judged and vden > 0 and den < RE_DENSITY_MIN * vden:
+            fails.append(f"{label} {r['id']}: {den:.1f} {res} per land tile, under {RE_DENSITY_MIN} times vanilla's "
+                         f"mean {vden:.2f} at equal distance")
+        if p["control"] is not None:
+            cshare, cland = don.land_share_box(p["control"])
+            box = don.areas[p["control"]]["area"]
+            cden = doff.ore_in_box((box["x0"], box["y0"], box["w"], box["h"]), res) / max(1, cland)
+            rec["control_density"] = round(cden, 2)
+        else:
+            rec["control"] = "no clear land box at equal distance"
+        rows_out[r["id"]] = rec
+
+    def outside(e):
+        return all((e[1] - x) ** 2 + (e[2] - y) ** 2 > reach * reach for x, y, reach in disc)
+    a = sorted(e for e in don.resources if outside(e))
+    b = sorted(e for e in doff.resources if outside(e))
+    if a != b:
+        diff = len(set(a) ^ set(b))
+        fails.append(f"{label}: {diff} resource entities outside every footprint differ between hotspots on and off")
+    if not a:
+        fails.append(f"{label}: the dump holds no resource outside the footprints (G6: nothing to compare)")
+    return {"rows": rows_out, "outside_resources": len(a)}, fails
+
+
+def re_dump_facts(cfg, d1, frozen):
+    """T15, T16 (FG) facts of the M1 dump: every preset names the next ore wrappers, the richness and
+    enemy wrappers, the hotspots toggle and its map's stamp key; the ore frequency is 0.75 in every
+    preset with the planet's entries neutral; every new name is registered; ridges' ore bodies and
+    every older elevation entry stay defined; the hotspot, enemy and sea bodies reach only the region
+    layer, tn_land_coarse and their own names (never a firewall body, the fine coast or a property);
+    no Earth body multiplies by the hotspots toggle (U5)."""
+    fails, meas = [], {}
+    K = cfg["keys"]
+    RS, H, EN = cfg["resources"], cfg["hotspots"], cfg["enemies"]
+    ne = d1.get("noise-expression") or {}
+    nf = d1.get("noise-function") or {}
+    sw = cfg["toggles"]["hotspots"]
+    planet = ((d1.get("planet") or {}).get("nauvis") or {}).get("map_gen_settings") or {}
+    pac = planet.get("autoplace_controls") or {}
+    for name in RS["controls"]:
+        if pac.get(name) not in (None, {}):
+            fails.append(f"the planet's autoplace control {name} is {pac.get(name)!r}, not neutral (D20)")
+    for key in cfg["preset_order"]:
+        p = cfg["presets"][key]
+        mk = p["map"]
+        pen = preset_pen(d1, p["name"])
+        ac = preset_controls(d1, p["name"])
+        for o in RS["ores"]:
+            if pen.get(o["probability"]) != o["p"] or pen.get(o["richness"]) != o["r"]:
+                fails.append(f"{p['name']}: {o['resource']} names {pen.get(o['probability'])!r} and "
+                             f"{pen.get(o['richness'])!r}, want {o['p']} and {o['r']}")
+        for name in RS["controls"]:
+            if (ac.get(name) or {}).get("frequency") != RS["frequency"]:
+                fails.append(f"{p['name']}: autoplace control {name} {ac.get(name)!r}, want frequency {RS['frequency']}")
+        if pen.get(K["enemy"]) != EN["wrapper"]:
+            fails.append(f"{p['name']}: {K['enemy']} names {pen.get(K['enemy'])!r}, want {EN['wrapper']}")
+        if pen.get(sw["preset_key"]) != sw["on"]:
+            fails.append(f"{p['name']}: {sw['preset_key']} is {pen.get(sw['preset_key'])!r} at the default setting")
+        if pen.get(K["fields"][mk]) != cfg["fields"]["names"][mk]:
+            fails.append(f"{p['name']}: {K['fields'][mk]} names {pen.get(K['fields'][mk])!r}")
+        for n in ("probability", "richness"):
+            if pen.get(RS["offshore"][n]) is not None:
+                fails.append(f"{p['name']}: the M1 preset names the Oil Rig's {n} key without the Oil Rig")
+    # names: registered, read by the presets, the superseded bodies still defined
+    wanted = [o[k] for o in RS["ores"] for k in ("p", "r")] + [EN["wrapper"], EN["layer"], RS["ramp"]["name"],
+                                                               RS["sea"]["name"], H["blob"]["name"]]
+    wanted += [h["names"][k] for h in H["resources"] for k in ("v", "p", "r")]
+    newest = tnconfig.geography(cfg)
+    wanted += [newest[mk]["entry"] for mk in cfg["map_order"]] + list(cfg["fields"]["names"].values())
+    for n in wanted:
+        if n not in ne:
+            fails.append(f"{n} is not in the M1 dump")
+        if n not in (frozen.get("bodies") or {}):
+            fails.append(f"{n} is not registered in tests/frozen.json ({FREEZE_CMD})")
+    for o in RS["ores"]:
+        if o["p_v1"] not in ne:
+            fails.append(f"ridges' {o['p_v1']} is no longer defined (ruling 21)")
+    for mk in cfg["map_order"]:
+        for old in newest[mk]["entry_versions"][:-1]:
+            if old not in ne:
+                fails.append(f"the older entry {old} is no longer defined (ruling 21)")
+            elif (ne[old] or {}).get("intended_property"):
+                fails.append(f"the older entry {old} still carries intended_property (one Map type entry per map)")
+    # what the hotspot, enemy and sea bodies read: walked through the first preset's names (the key
+    # tn_land_coarse resolves to that map's coarse field), never a firewall body, the fine coast or an
+    # Earth name beyond the region layer, the coarse field, the chain and the milestone's own bodies
+    pname = cfg["presets"][cfg["preset_order"][0]]["name"]
+    graph = NoiseGraph(d1, preset_pen(d1, pname))
+    region_prefixes = tuple(cfg["regions"]["names"]["row"].values()) + (NOISE_PREFIX_REGION(cfg),)
+    firewall = set(firewall_names(cfg))
+    allowed = {K["land_coarse"], K["map"], K["scale"]} | set(wanted)
+    # every geography version's chain and coarse field (the layer chain the bodies read, and the
+    # newest version's coarse field behind tn_land_coarse)
+    allowed |= {v[n] for vs in tnconfig.geography_versions(cfg).values() for v in vs
+                for n in ("u", "v", "gx", "gy", "cx", "cy", "land_coarse")}
+    # and what a chain's city offset reads: the offset names a version's cx and cy fall back to and, with
+    # a spawn record, the city fold's inputs (Europe's layer chain sits at the chosen city, so the region
+    # layer, and through it every hotspot, reads the fold: tn_city_europe and its index); with a spawn
+    # record also the preset's distance redirect, which vanilla's distance curve and the ramp read
+    for vs in tnconfig.geography_versions(cfg).values():
+        for v in vs:
+            allowed |= {x for x in v["city_offset"] if isinstance(x, str)}
+            sp = tnconfig.spawn_of(v)
+            if sp:
+                allowed |= {sp["city"], sp["city_index"], sp["distance"]}
+    roots = [h["names"][k] for h in H["resources"] for k in ("v", "p", "r")] + [EN["layer"], RS["sea"]["name"]]
+    bad = {}
+    for root in roots:
+        seen, hits = graph.walk([(root, ())], lambda n: n in firewall)
+        for h in hits:
+            bad.setdefault(root, []).append(f"firewall {h[-1]}")
+        for n in seen:
+            if n == root or not n.startswith(cfg["identity"]["noise_prefix"]):
+                continue
+            if not (n in allowed or n.startswith(region_prefixes)):
+                bad.setdefault(root, []).append(n)
+    for root, names in bad.items():
+        fails.append(f"{root} reads {sorted(set(names))[:4]} beyond the region layer and tn_land_coarse (T15, T16)")
+    earth = {n: (b or {}).get("expression") for n, b in ne.items() if n.startswith(cfg["identity"]["noise_prefix"])}
+    fails += tn_static.toggle_multiply_findings(earth, [sw["preset_key"]])
+    meas["names"] = len(wanted)
+    return meas, fails
+
+
+def re_offshore_findings(cfg, d3, frozen):
+    """T16 (FG; versioning rule 3) on the M3 dump: the Oil Rig's offshore-oil wrappers are defined,
+    registered from M3 with the live mask, and each is exactly the body data-final-fixes.lua builds
+    round the Oil Rig's live autoplace in the same dump: its expression is Earth's folded if() on the
+    hotspots toggle (the live probability times the sea mask, or the field term; the live richness or
+    the field richness), its local expressions are the live autoplace's plus live_value holding the
+    live probability or richness text, and its local functions are the live autoplace's. The masked
+    hash freezes the expression; this pins everything the mask leaves out to the live text."""
+    fails = []
+    K, RS = cfg["keys"], cfg["resources"]
+    OF, fmt = RS["offshore"], cfg["number_format"]
+    ne = d3.get("noise-expression") or {}
+    ap = (((d3.get("resource") or {}).get(OF["resource"]) or {}).get("autoplace")) or {}
+    if not ap:
+        return [f"the M3 dump holds no {OF['resource']} autoplace: the Oil Rig's wrappers have nothing to wrap (G6)"]
+
+    def text_of(v):
+        return fmt % v if isinstance(v, (int, float)) and not isinstance(v, bool) else v
+    on = f"{K['hotspots']} > {fmt % cfg['ridges']['switch_threshold']}"
+    hs = next(h["names"] for h in cfg["hotspots"]["resources"] if h["resource"] == OF["resource"])
+    rnd = f"live_value * {RS['sea']['name']}"
+    want = {OF["p"]: (f"if({on}, max({rnd}, {hs['p']}), {rnd})", text_of(ap.get("probability_expression"))),
+            OF["r"]: (f"if({on}, max(live_value, {hs['r']}), live_value)", text_of(ap.get("richness_expression")))}
+    bodies = (frozen or {}).get("bodies") or {}
+    for name, (expr, live) in want.items():
+        b = ne.get(name)
+        if b is None:
+            fails.append(f"{name} is not in the M3 dump (the Oil Rig's wrapper)")
+            continue
+        rec = bodies.get(name)
+        if rec is None:
+            fails.append(f"{name} is not registered in tests/frozen.json ({FREEZE_CMD}; sacred constraint 2)")
+        elif rec.get("dump") != "m3" or rec.get("mask") != "live":
+            fails.append(f"{name} is registered from {rec.get('dump')!r} with mask {rec.get('mask')!r}, want m3 and live")
+        if not isinstance(live, str):
+            fails.append(f"the Oil Rig's live autoplace holds no text {name} could wrap: {live!r}")
+        if b.get("expression") != expr:
+            fails.append(f"{name} is {str(b.get('expression'))[:100]!r}, want {expr!r}")
+        locs = dict(ap.get("local_expressions") or {}, live_value=live)
+        if (b.get("local_expressions") or {}) != locs:
+            extra = sorted(set(b.get("local_expressions") or {}) ^ set(locs))
+            fails.append(f"{name}'s local expressions are not the live autoplace's plus live_value (differing keys "
+                         f"{extra[:4]}, or a value): the live mask would hide an Earth term")
+        if (b.get("local_functions") or {}) != (ap.get("local_functions") or {}):
+            fails.append(f"{name}'s local functions are not the live autoplace's")
+    return fails
+
+
+def NOISE_PREFIX_REGION(cfg):
+    """The region layer's own name stem (query point, warp, roughness): tn_region_."""
+    return cfg["identity"]["noise_prefix"] + "region_"
+
+
+def row_re_dump_facts(ctx, mods, sec6, row, cache):
+    """T15, T16 (FG; PERF-17): the M1 dump's facts (re_dump_facts); isolation check (b), the
+    static walk, on the M2 and M3 dumps: no Entity, decorative or Cliff root of a Terra Nauvis preset
+    reaches a firewall body with Alien Biomes, and with Cargo Ships and the Oil Rig (whose offshore-oil
+    wrappers exist only there), each with its positive control: elevation reaches one; and isolation
+    check (a) on M2 and M3 at Europe's startup scale (M1's is the isolation_a row). Not cached: it
+    re-runs live in every gate (two dumps and four 64-tile previews)."""
+    cfg = mods.cfg
+    d1 = ctx.shared.get("dump_m1")
+    if d1 is None:
+        row.fails.append("no M1 dump (row dumps failed)")
+        return
+    fz = json.loads((TESTS / "frozen.json").read_text(encoding="utf-8"))
+    meas, fails = re_dump_facts(cfg, d1, fz)
+    row.fails += fails
+    fw = firewall_names(cfg)
+    for label, live in (("m2", RE_M2_LIVE), ("m3", RE_M3_LIVE)):
+        ms = mods.with_live(f"re{label}", live)
+        r = mods.prepare(ms, f"re-{label}")
+        dump = json.loads((r.out / "data-raw-dump.json").read_text(encoding="utf-8"))
+        if label == "m3":
+            row.fails += g2(r.out, [RE_OIL_RIG])
+            OF = cfg["resources"]["offshore"]
+            for pn in earth_presets(cfg):
+                pen = preset_pen(dump, pn)
+                if pen.get(OF["probability"]) != OF["p"] or pen.get(OF["richness"]) != OF["r"]:
+                    row.fails.append(f"M3 {pn}: the Oil Rig's keys name {pen.get(OF['probability'])!r} and "
+                                     f"{pen.get(OF['richness'])!r}, want {OF['p']} and {OF['r']}")
+            # the Oil Rig's wrappers: registered from M3 with the live mask, and nothing but Earth's terms
+            # round the live text (re_offshore_findings), with a control that a changed term fails
+            off = re_offshore_findings(cfg, dump, fz)
+            row.fails += [f"M3: {x}" for x in off]
+            bent = json.loads(json.dumps({"noise-expression": {OF["p"]: (dump.get("noise-expression") or {}).get(
+                OF["p"]) or {}}}))
+            bent["noise-expression"][OF["p"]]["expression"] = "live_value"
+            if not off and not re_offshore_findings(cfg, dict(dump, **{"noise-expression": dict(
+                    dump.get("noise-expression") or {}, **bent["noise-expression"])}), fz):
+                row.fails.append("M3: a wrapper without the sea mask passes the offshore wrapper facts (control)")
+            meas["m3_offshore_wrappers"] = sorted(live_masked_names(cfg))
+        n_paths = 0
+        for pn in earth_presets(cfg):
+            pen = preset_pen(dump, pn)
+            report = walk_roots(dump, pen, fw)
+            leaks = {g: v["example"] for g, v in report.items() if v["hits"]}
+            if leaks:
+                row.fails.append(f"{label.upper()} {pn}: Entity or Cliff roots reach firewall bodies: {leaks} (S-3)")
+            _, hits = NoiseGraph(dump, pen).walk([("elevation", ())], lambda n: n in set(fw))
+            if not hits:
+                row.fails.append(f"{label.upper()} {pn}: elevation reaches no firewall body, so the walk sees nothing "
+                                 f"(G6)")
+            n_paths += 1
+        meas[f"{label}_presets_walked"] = n_paths
+    # isolation (a) on M2 and M3: Europe's preset at its startup scale compiles the same Entity and Cliff
+    # programs with the constant-coast twin beside the real build, while Tile differs (the control)
+    twin = stage_twin(ctx, cfg)
+    pname = earth_presets(cfg)[0]
+    z = mods.build_zip()
+    for label, live in (("m2", RE_M2_LIVE), ("m3", RE_M3_LIVE)):
+        real = mods.with_live(f"re{label}", live)
+        tw = mods.make(f"ea-re{label}c-{mods.zip_sha[:8]}-{folder_hash(twin)}", [z, twin], from_live=live)
+        mods.prepare(tw, f"re-{label}c")
+        a_ = ctx_complexity(preview(ctx, real, f"re-iso-{label}-real", 64, preset=pname, verbose=True).out)
+        b_ = ctx_complexity(preview(ctx, tw, f"re-iso-{label}-twin", 64, preset=pname, verbose=True).out)
+        if not a_ or a_.get("tile") == b_.get("tile"):
+            row.fails.append(f"{label.upper()} {pname}: the twin's Tile equals the real build's, so (a) proves nothing "
+                             f"(TST-08)")
+        for prog in ("entity", "cliff"):
+            if a_.get(prog) != b_.get(prog):
+                row.fails.append(f"{label.upper()} {pname}: {prog} {a_.get(prog)} with the real coast, {b_.get(prog)} "
+                                 f"with the twin's constant (S-3)")
+        meas[f"{label}_isolation_a"] = {"real": a_, "twin": b_}
+    row.meas = meas
+    row.detail = (f"every preset names the slice's wrappers, keys and frequency 0.75; {meas.get('names')} names "
+                  f"registered; hotspot, enemy and sea bodies read the region layer and tn_land_coarse only; isolation "
+                  f"(b) on M2 and M3 ({meas.get('m2_presets_walked')} and {meas.get('m3_presets_walked')} presets) and "
+                  f"(a) on M2 and M3 at Europe's startup scale")
+
+
+def row_re_t4_fg(ctx, mods, sec6, row, cache):
+    """T4 (FG; size none): Europe at scale 6, seed 1000, London's spawn, a window over Upper Silesia's
+    coal and Legnica's copper: with every hotspot resource at size none and enemy bases at none, the
+    preview with hotspots on equals the one with hotspots off (the offshore stamp held on in both, so
+    only the hotspot ore and the enemy layer differ); with sizes at the preset's, they differ (G6)."""
+    cfg = mods.cfg
+    mk, s = "europe", int(cfg["settings"]["scale"]["default_value"])
+    rows, offsets, reg = re_rows()
+    ms = probe_modset(ctx, mods, "re4fg")
+    off = rd_offset(rd_city(mk, RE_SPAWN), s)
+    pts = []
+    for rid in RE_T4_SITES[mk][:2]:
+        hu, hv = re_centre_px(cfg, reg[rid], SEED)
+        pts.append(re_world(cfg, mk, s, offsets, hu, hv, off))
+    cx, cy = (pts[0][0] + pts[1][0]) / 2, (pts[0][1] + pts[1][1]) / 2
+    size = int(2 ** math.ceil(math.log2(max(256, math.hypot(pts[0][0] - pts[1][0], pts[0][1] - pts[1][1]) + 512))))
+    offv = (int(round(cx / 32)) * 32, int(round(cy / 32)) * 32)
+    none = {c: {"size": 0} for c in cfg["resources"]["controls"]}
+    none["enemy-base"] = {"size": 0}
+    stamp = {cfg["keys"]["fields"][mk]: cfg["fields"]["names"][mk]}
+    variants = [("none-on", True, none), ("none-off", False, none), ("default-on", True, None),
+                ("default-off", False, None)]
+    key, newest = common_key(ctx, "re_t4_fg", {"ms": mods.manifest(ms), "dump": ctx.shared.get("dump_m1_sha"),
+                                                "view": [offv, size]})
+
+    def live():
+        outs = []
+        for label, on, controls in variants:
+            mgs = re_mgs(ctx, cfg, mk, s, f"t4fg-{label}", off, hotspots=on, controls=controls, pen=stamp)
+            outs.append(ctx.fh(preview_args(ctx.instance, ms, size, mgs=mgs, offset=offv), ctx.out / f"re-t4fg-{label}")
+                        .out)
+        return outs
+
+    def derive(dirs):
+        fails = []
+        for dd in dirs:
+            fails += g1(dd) + g3(dd)
+        im = [derive_preview(dd)["images"] for dd in dirs]
+        if im[0] != im[1]:
+            fails.append("size none: the preview with hotspots on differs from the one with hotspots off (T4)")
+        if im[2] == im[3]:
+            fails.append("at the preset's sizes hotspots on and off render alike, so size none proves nothing (G6)")
+        # the slider reached the map: with hotspots off, size none removes the base ore the preset's sizes
+        # place (vanilla's own behaviour; the suite's re_t4 carries the M0 controls)
+        if im[1] == im[3]:
+            fails.append("with hotspots off, size none renders as the preset's sizes do: the size slider never "
+                         "reached the map (G6)")
+        return {"view": [offv, size], "images": im}, fails, (f"size none at Upper Silesia and Legnica: hotspots on and "
+                                                             f"off render {'alike' if im[0] == im[1] else 'apart'}; at "
+                                                             f"the preset's sizes they differ: {im[2] != im[3]}; size "
+                                                             f"none moved the base ore: {im[1] != im[3]}")
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def re_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """resources-enemies' suite checks, added to suite_checks' table (design section 12, milestone 1)."""
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    dump_sha = ctx.shared.get("dump_m1_sha")
+    rows, offsets, reg = re_rows()
+    import build_hotspots
+    tsha = sha256_file(build_hotspots.TABLE)
+    maps = [mk for mk in cfg["map_order"] if (cfg.get("geography") or {}).get(mk)]
+
+    def base_key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "dump": dump_sha, "table": tsha, "extra": extra or {}})
+
+    # -- T8 (SS; every map; scales 1 and 6; three seeds; M1 and M2): per hotspot its density against
+    # a control box at equal distance and its realised amount against the land-scaled target, resources
+    # outside the footprints identical to hotspots off; V4 renders of one disc per map and scale
+    t8_plan = [(lab, live, mk, s, seed) for lab, live in (("m1", ()), ("m2", RE_M2_LIVE)) for mk in maps
+               for s in RE_SCALES for seed in SEEDS]
+
+    def t8_run(deadline):
+        lanes = {lab: re_lanes(ctx, mods, PAR_MAX // 2, f"re8{lab}", live, m0=False)
+                 for lab, live in (("m1", ()), ("m2", RE_M2_LIVE))}
+        jobs = [[] for _ in range(PAR_MAX)]
+        dirs, k = [], 0
+        for lab, live, mk, s, seed in t8_plan:
+            off, plan, areas = re_plan_t8(cfg, mk, s, seed, rows, offsets, reg)
+            for on in (True, False):
+                tag = f"t8-{lab}-{mk}-s{s}-{seed}-{'on' if on else 'off'}"
+                mgs = re_mgs(ctx, cfg, mk, s, tag, off, hotspots=on)
+                ln = k % (PAR_MAX // 2)
+                lane = (0 if lab == "m1" else PAR_MAX // 2) + ln
+                # the off run reads ridges' ore clearance over every start disc (the same with hotspots
+                # on or off), which T8 counts as no land; the on run reads the jittered centres
+                extra = {} if on else {"points": re_clear_points_text(cfg, plan, s), "names": re_clear_names_text(cfg)}
+                jobs[lane].append(re_dump_job(ctx, cfg, lanes[lab][ln][0], lane_instance(ctx, lane), "t8",
+                                              ctx.out / f"re-{tag}", mgs, areas, re_on(rows, mk), seed=seed, **extra))
+                dirs.append(ctx.out / f"re-{tag}")
+            k += 1
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def t8_derive(dirs):
+        fails, meas, v4 = [], {}, []
+        if len(dirs) != 2 * len(t8_plan):
+            return {}, [f"{len(dirs)} run directories, want {2 * len(t8_plan)}"], ""
+        for i, (lab, live, mk, s, seed) in enumerate(t8_plan):
+            a, b = dirs[2 * i], dirs[2 * i + 1]
+            fails += g1(a) + g3(a) + g1(b) + g3(b)
+            if lab == "m2":
+                fails += g2(a, ["alien-biomes"])
+            don, doff = ReDump(read_dump(a, "t8")), ReDump(read_dump(b, "t8"))
+            fails += rd_g5(cfg, don.dump, mk, s) + rd_g5(cfg, doff.dump, mk, s)
+            off, plan, _ = re_plan_t8(cfg, mk, s, seed, rows, offsets, reg)
+            m, f = re_t8_eval(cfg, mk, s, seed, plan, don, doff, offsets, f"{lab} {mk} scale {s} seed {seed}")
+            fails += f
+            # V4: the first onshore disc of every map, scale, modset and seed, for the verification pass
+            if plan:
+                import dump_render as dr
+                canvas, _ = dr.render(don.dump, plan[0]["box"])
+                png = Path(a) / f"v4-{mk}-{plan[0]['id']}-s{s}-{lab}-{seed}.png"
+                canvas.save(png)
+                m["v4"] = str(png)
+                v4.append(str(png))
+            elif seed == SEEDS[0]:
+                fails.append(f"{lab} {mk} scale {s}: no onshore hotspot disc to render (V4)")
+            meas[f"{lab}:{mk}:s{s}:{seed}"] = m
+        worst = sorted(((v["ratio"], k_, rid) for k_, m in meas.items() if "rows" in m for rid, v in m["rows"].items()
+                        if v.get("ratio") is not None))[:3]
+        meas["v4_renders"] = v4
+        return meas, fails, (f"{len(t8_plan)} worlds (M1 and M2, every map, scales {list(RE_SCALES)}, seeds "
+                             f"{list(SEEDS)}): lowest realised over land-scaled target {worst}; {len(v4)} V4 renders "
+                             f"listed for the verification pass")
+
+    checks["re_t8"] = SuiteCheck("re_t8", lambda: base_key("re_t8", {"plan": t8_plan}), t8_run, t8_derive)
+
+    # -- T8 (SS; every map; scales 1 and 6; three seeds; M1 and M2): every region holds every solid ore
+    # (previews of each map's sampled blocks with fh.py's quantity report, hotspots off, the preset's
+    # frequency); the patch-count ratio at frequency 0.75 against 1.0 on every map (grids of each solid
+    # ore's probability above 0 round the spawn, hotspots off, the default scale, three seeds, M1:
+    # design notes, the patch-count scope); the ramp against M0 at points on every map
+    def regions_of(mk):
+        cities = [p for p in rd_cities(cfg, mk) if p["name"] != RE_SPAWN]
+        step = max(1, len(cities) // RE_REGIONS)
+        return cities[::step][:RE_REGIONS]
+
+    ramp_pts = [(int(round(dd * math.cos(math.radians(b)))), int(round(dd * math.sin(math.radians(b)))))
+                for dd in sorted(set(RE_RAMP) | set(RE_RAMP_INSIDE)) for b in RE_RAMP_BEARINGS]
+    s6 = int(cfg["settings"]["scale"]["default_value"])
+    f_lo = cfg["resources"]["frequency"]
+    t8b_regions = [(lab, live, mk, s, p["name"], seed) for lab, live in (("m1", ()), ("m2", RE_M2_LIVE))
+                   for mk in maps for s in RE_SCALES for p in regions_of(mk) for seed in SEEDS]
+    t8b_patches = [(mk, seed, res, freq) for mk in maps for seed in SEEDS for res in RE_SOLID for freq in (f_lo, 1)]
+    half = PAR_MAX // 2
+
+    def t8b_region_dir(lab, mk, s, name, seed):
+        return ctx.out / f"re-t8b-{lab}-{mk}-s{s}-{city_slug(name)}-{seed}"
+
+    def t8b_run(deadline):
+        K = cfg["keys"]
+        lanes = {"m1": re_lanes(ctx, mods, half, "re8b", (), m0=True),
+                 "m2": re_lanes(ctx, mods, half, "re8b2", RE_M2_LIVE, m0=False)}
+        jobs = [[] for _ in range(PAR_MAX)]
+        dirs, k = [], {"m1": 0, "m2": 0}
+        city = {mk: {p["name"]: p for p in regions_of(mk)} for mk in maps}
+
+        def lane_of(lab):
+            ln = k[lab] % half
+            k[lab] += 1
+            return ln, (0 if lab == "m1" else half) + ln
+        # the regions: one preview per region, modset and seed, with every solid ore's quantity reported
+        for lab, live, mk, s, name, seed in t8b_regions:
+            off = rd_offset(rd_city(mk, RE_SPAWN), s)
+            mgs = re_mgs(ctx, cfg, mk, s, f"t8b-{mk}-s{s}", off, hotspots=False)
+            c = rd_offset(city[mk][name], s)
+            offv = (int(round((c[0] - off[0]) / 32)) * 32, int(round((c[1] - off[1]) / 32)) * 32)
+            ln, lane = lane_of(lab)
+            out = t8b_region_dir(lab, mk, s, name, seed)
+            jobs[lane].append((None, preview_args(lane_instance(ctx, lane), lanes[lab][ln][0], RE_REGION_BLOCK,
+                                                  seed=seed, mgs=mgs, offset=offv, quantities=RE_SOLID),
+                               out, RE_TIMEOUT))
+            dirs.append(out)
+        # patch counts: every map at the default scale, each seed, each solid ore, frequency 0.75 and 1.0
+        n = RE_PATCH_WINDOW // RE_PATCH_STEP
+        x0 = -RE_PATCH_WINDOW // 2
+        for mk, seed, res, freq in t8b_patches:
+            off = rd_offset(rd_city(mk, RE_SPAWN), s6)
+            mgs = re_mgs(ctx, cfg, mk, s6, f"t8p-{mk}-{res}-{freq}", off, hotspots=False,
+                         controls={res: {"frequency": freq}})
+            ln, lane = lane_of("m1")
+            out = ctx.out / f"re-t8p-{mk}-{seed}-{res}-{freq}"
+            prep = dump_settings(ctx, lanes["m1"][ln][0], lane_instance(ctx, lane), label="t8p", points="0,0",
+                                 names=f"{K['map']},{K['scale']}", grid=f"{x0},{x0},{RE_PATCH_STEP},{n},{n}",
+                                 grid_name=re_ore(cfg, res)["p_v1"], grid_threshold="0", grid_op="gt")
+            jobs[lane].append((prep, scenario_args(lane_instance(ctx, lane), lanes["m1"][ln][0], 4, seed, mgs), out,
+                               RE_TIMEOUT))
+            dirs.append(out)
+        # the ramp: each solid ore's richness at the points on every map (hotspots off, frequency 1), and on M0
+        props = [f"entity:{res}:richness" for res in RE_SOLID]
+        names = ",".join([K["map"], K["scale"]] + props + [cfg["resources"]["ramp"]["name"]] +
+                         [re_ore(cfg, res)["r"] for res in RE_SOLID])
+        pts_text = ";".join(f"{x},{y}" for x, y in ramp_pts)
+        for mk in maps + [None]:
+            ln, lane = lane_of("m1")
+            which = 0 if mk else 1
+            mgs = None
+            if mk:
+                mgs = re_mgs(ctx, cfg, mk, s6, f"t8r-{mk}", rd_offset(rd_city(mk, RE_SPAWN), s6), hotspots=False,
+                             controls={c: {"frequency": 1} for c in cfg["resources"]["controls"]})
+            out = ctx.out / (f"re-t8r-m1-{mk}" if mk else "re-t8r-m0")
+            prep = dump_settings(ctx, lanes["m1"][ln][which], lane_instance(ctx, lane), label="t8r", points=pts_text,
+                                 names=names if mk else ",".join(props))
+            jobs[lane].append((prep, scenario_args(lane_instance(ctx, lane), lanes["m1"][ln][which], 4, SEED, mgs),
+                               out, RE_TIMEOUT))
+            dirs.append(out)
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def t8b_ramp(mk, va, vb):
+        """The ramp on one map: Earth's richness over M0's at each point (or the ramp body where the game
+        evaluates no property key), each distance within RE_RAMP_TOL of S6 Q5's values."""
+        fails, ramp, body = [], {}, {}
+        rname = cfg["resources"]["ramp"]["name"]
+        for (x, y) in ramp_pts:
+            dd_ = int(round(math.hypot(x, y)))
+            rv = (va.get((x, y)) or {}).get(rname)
+            if isinstance(rv, (int, float)):
+                body.setdefault(dd_, []).append(rv)
+            for res in RE_SOLID:
+                n = f"entity:{res}:richness"
+                a, b = (va.get((x, y)) or {}).get(n), (vb.get((x, y)) or {}).get(n)
+                if not isinstance(a, (int, float)) or not isinstance(b, (int, float)) or abs(b) < 1e-3:
+                    continue
+                ramp.setdefault(dd_, []).append(a / b)
+        # where the game does not evaluate the property keys, the ramp body read on Earth stands in, with
+        # the dump's proof that each solid ore's richness wrapper multiplies the live richness by it
+        src = "entity richness, Earth over M0"
+        if not ramp:
+            ramp, src = body, "the ramp body on Earth"
+            for res in RE_SOLID:
+                w = ((ctx.shared["dump_m1"].get("noise-expression") or {}).get(re_ore(cfg, res)["r"]) or {})
+                if f"live_value * {rname}" not in str(w.get("expression")):
+                    fails.append(f"{re_ore(cfg, res)['r']} does not multiply the live richness by {rname}")
+        for dist, want in list(RE_RAMP.items()) + [(x, 1.0) for x in RE_RAMP_INSIDE]:
+            got = ramp.get(dist)
+            if not got:
+                fails.append(f"{mk}: the ramp has no readable point at {dist} tiles")
+                continue
+            if any(abs(g - want) > RE_RAMP_TOL for g in got):
+                fails.append(f"{mk}: the ramp at {dist} tiles reads {sorted(round(g, 4) for g in got)[:4]}, want "
+                             f"{want} within {RE_RAMP_TOL} (S6 Q5)")
+        rec = {k_: [round(min(v), 4), round(max(v), 4)] for k_, v in sorted(ramp.items())}
+        return {"source": src, "ramp": rec}, fails
+
+    def t8b_derive(dirs):
+        fails, meas = [], {}
+        want = len(t8b_regions) + len(t8b_patches) + len(maps) + 1
+        if len(dirs) != want:
+            return {}, [f"{len(dirs)} run directories, want {want}"], ""
+        by = {Path(dd).name: dd for dd in dirs}
+        regions = {}
+        for lab, live, mk, s, name, seed in t8b_regions:
+            dd = by.get(t8b_region_dir(lab, mk, s, name, seed).name)
+            if dd is None:
+                fails.append(f"{lab} {mk} scale {s} seed {seed}: no preview of the region round {name}")
+                continue
+            fails += g1(dd) + g3(dd) + (g2(dd, ["alien-biomes"]) if lab == "m2" else [])
+            q = (load_run_json(dd) or {}).get("quantities") or {}
+            if str(seed) not in q:
+                fails.append(f"{dd}: run.json holds no quantity report for seed {seed} (--report-quantities)")
+                continue
+            got = {r: (q[str(seed)].get(r) or {}).get("count") for r in RE_SOLID}
+            regions[f"{lab}:{mk}:s{s}:{name}:{seed}"] = got
+            missing = [r for r in RE_SOLID if not got[r]]
+            if missing:
+                fails.append(f"{lab} {mk} scale {s} seed {seed}: the region round {name} holds no {missing} (D20)")
+        meas["regions"] = regions
+        totals = {}
+        for mk, seed, res, freq in t8b_patches:
+            dd = by[f"re-t8p-{mk}-{seed}-{res}-{freq}"]
+            fails += g1(dd) + g3(dd)
+            dump = read_dump(dd, "t8p")
+            fails += rd_g5(cfg, dump, mk, s6)
+            totals[(mk, res, freq)] = totals.get((mk, res, freq), 0) + re_components(dump.get("grid") or {})
+        ratios = {}
+        for mk in maps:
+            lo = sum(v for (m, r, f), v in totals.items() if m == mk and f == f_lo)
+            hi = sum(v for (m, r, f), v in totals.items() if m == mk and f == 1)
+            ratios[mk] = lo / hi if hi else None
+            if ratios[mk] is None or ratios[mk] >= RE_PATCH_RATIO_MAX:
+                fails.append(f"{mk}: the base-ore patch count at frequency {f_lo} over 1.0 is {ratios[mk]} (want under "
+                             f"{RE_PATCH_RATIO_MAX}; {lo} against {hi} patches)")
+        meas["patch_count"] = {f"{m}:{r}@{f}": v for (m, r, f), v in totals.items()}
+        meas["patch_ratio"] = ratios
+        pb = by["re-t8r-m0"]
+        fails += g1(pb) + g3(pb)
+        vb = point_values(read_dump(pb, "t8r"))
+        meas["ramp"] = {}
+        for mk in maps:
+            pa = by[f"re-t8r-m1-{mk}"]
+            fails += g1(pa) + g3(pa)
+            da = read_dump(pa, "t8r")
+            fails += rd_g5(cfg, da, mk, s6)
+            m, f = t8b_ramp(mk, point_values(da), vb)
+            meas["ramp"][mk] = m
+            fails += f
+        shown = {k_: (None if v is None else round(v, 3)) for k_, v in ratios.items()}
+        return meas, fails, (f"{len(regions)} region previews (M1 and M2, every map, scales {list(RE_SCALES)}, seeds "
+                             f"{list(SEEDS)}) hold every solid ore; patch count at {f_lo} over 1.0 per map {shown}; "
+                             f"ramp per map {[v['ramp'] for v in meas['ramp'].values()][:1]}")
+
+    checks["re_t8_base"] = SuiteCheck("re_t8_base", lambda: base_key("re_t8_base", {
+        "pts": ramp_pts, "regions": t8b_regions, "patches": t8b_patches}), t8b_run,
+                                      t8b_derive)
+
+    # -- T8, T13 (SS; M3; every map; FEAS-07). Fields at scales 1 and 6: per map a hotspots-on and a
+    # hotspots-off run over each field's box, so a field's wells are the on run's wells the off run lacks
+    # (random wells stand in both, footprints included); every field holds one, each on deepwater, and
+    # the stamp leaves land and water alone while each footprint only deepens, visibly somewhere at
+    # scale 1. The sea mask at the default scale: sea boxes beside each field and boxes over a river
+    # mouth, a canal, a marsh and a forest (where spawn-cities' inland lakes fall), in a masked and an
+    # unmasked run at offshore-oil frequency and size 6 with hotspots off; the unmasked run (the Oil Rig's
+    # own expression, no Earth key) must put wells where the mask reads 0 (the positive control), every
+    # masked well stands where it reads 1 and none on inland water (river mouths reported). Onshore
+    # hotspots on M3 equal M2's in every box of T8's plan.
+    oil = cfg["resources"]["offshore"]["resource"]
+    sea_name = cfg["resources"]["sea"]["name"]
+
+    def t8m3_plan(mk, s):
+        """(offset, the field rows' plan, field boxes, sea boxes, inland boxes [(kind, label, box)]); the
+        sea and inland boxes at the default scale only."""
+        off, plan, fields = re_plan_t8(cfg, mk, s, SEED, rows, offsets, reg, onshore=False)
+        if s != s6 or not plan:
+            return off, plan, list(fields), [], []
+        seab = [re_box(p["x"] + k_ * 3 * p["reach"], p["y"], RE_SEA_BOX // 2) for p in plan
+                for k_ in range(1, RE_SEA_BOXES + 1)]
+        return off, plan, list(fields), seab, re_inland_boxes(cfg, mk, s, off)
+
+    t8m3_maps = [mk for mk in maps if any(r["offshore"] for r in re_on(rows, mk))]
+    t8m3_runs = [(mk, s, kind) for mk in t8m3_maps for s in RE_SCALES for kind in ("on", "off")] + \
+        [(mk, s6, kind) for mk in t8m3_maps for kind in ("mask", "nomask")]
+
+    def t8m3_dir(mk, s, kind):
+        return ctx.out / f"re-t8m3-{mk}-s{s}-{kind}"
+
+    def t8m3_wells(dd):
+        """Every offshore-oil well of a run's dump, sorted, at most RE_WELLS_MAX (the mask pass reads these)."""
+        return sorted((x, y) for n, x, y, _ in ReDump(read_dump(dd, "t8m3")).resources if n == oil)[:RE_WELLS_MAX]
+
+    def t8m3_run(deadline):
+        lanes = re_lanes(ctx, mods, PAR_MAX, "re8m3", RE_M3_LIVE, m0=False)
+        lanes2 = re_lanes(ctx, mods, 1, "re8m2", RE_M2_LIVE, m0=False)
+        jobs = [[] for _ in lanes]
+        dirs, k = [], 0
+        for mk, s, kind in t8m3_runs:
+            off, plan, fields, seab, inland = t8m3_plan(mk, s)
+            boxes = (fields if kind in ("on", "off") else []) + seab + [b for _, _, b in inland]
+            mgs = re_mgs(ctx, cfg, mk, s, f"t8m3-{mk}-s{s}-{kind}", off, hotspots=kind == "on",
+                         controls={oil: dict(RE_MASK_SLIDERS)} if kind in ("mask", "nomask") else None,
+                         pen=None if kind == "nomask" else re_oil_pen(cfg))
+            ln = k % len(lanes)
+            k += 1
+            jobs[ln].append(re_dump_job(ctx, cfg, lanes[ln][0], lane_instance(ctx, ln), "t8m3", t8m3_dir(mk, s, kind),
+                                        mgs, boxes, re_on(rows, mk), types="resource"))
+            dirs.append(t8m3_dir(mk, s, kind))
+        # onshore hotspots on M3 against M2: every box of T8's plan at the seed
+        for mk in t8m3_maps:
+            off = rd_offset(rd_city(mk, RE_SPAWN), s6)
+            _, _, oareas = re_plan_t8(cfg, mk, s6, SEED, rows, offsets, reg)
+            for lab in ("m3", "m2"):
+                mgs = re_mgs(ctx, cfg, mk, s6, f"t8m3-{mk}-onshore-{lab}", off,
+                             pen=re_oil_pen(cfg) if lab == "m3" else None)
+                out = ctx.out / f"re-t8m3-{mk}-onshore-{lab}"
+                ln = k % len(lanes) if lab == "m3" else len(lanes) - 1
+                inst = lane_instance(ctx, ln) if lab == "m3" else f"{ctx.instance}-m2"
+                ms = lanes[ln][0] if lab == "m3" else lanes2[0][0]
+                jobs[ln].append(re_dump_job(ctx, cfg, ms, inst, "t8m3o", out, mgs, oareas, re_on(rows, mk),
+                                            types="resource"))
+                dirs.append(out)
+            k += 1
+        run_lanes(ctx, [j for j in jobs if j])
+        # the mask pass: the sea mask and the tile read where each well of the off, masked and unmasked runs
+        # stands
+        for mk in t8m3_maps:
+            pts = set()
+            for kind in ("off", "mask", "nomask"):
+                src = t8m3_dir(mk, s6, kind)
+                if (src / "script-output").exists():
+                    pts |= {(int(math.floor(x)), int(math.floor(y))) for x, y in t8m3_wells(src)}
+            K = cfg["keys"]
+            text = ";".join(f"{x},{y}" for x, y in [(0, 0)] + sorted(pts - {(0, 0)}))
+            off = rd_offset(rd_city(mk, RE_SPAWN), s6)
+            mgs = re_mgs(ctx, cfg, mk, s6, f"t8m3-{mk}-wells", off, hotspots=False, pen=re_oil_pen(cfg))
+            out = ctx.out / f"re-t8m3-{mk}-wells"
+            dump_settings(ctx, lanes[0][0], lane_instance(ctx, 0), label="t8m3w", points=text,
+                          names=",".join([K["map"], K["scale"], sea_name]))()
+            ctx.fh(scenario_args(lane_instance(ctx, 0), lanes[0][0], 4, SEED, mgs), out, timeout=RE_TIMEOUT)
+            dirs.append(out)
+        return dirs
+
+    def t8m3_derive(dirs):
+        import numpy as np
+        fails, meas = [], {}
+        by = {Path(dd).name: dd for dd in dirs}
+        deepened = {s: 0 for s in RE_SCALES}
+        if not t8m3_maps:
+            return {}, ["no map adopts an offshore field (T8 M3: nothing to measure, G6)"], ""
+        for mk in t8m3_maps:
+            rec = {}
+            for s in RE_SCALES:
+                off, plan, fields, seab, inland = t8m3_plan(mk, s)
+                a, b = by.get(t8m3_dir(mk, s, "on").name), by.get(t8m3_dir(mk, s, "off").name)
+                if not a or not b:
+                    fails.append(f"M3 {mk} scale {s}: the field runs are missing")
+                    continue
+                for dd in (a, b):
+                    fails += g1(dd) + g3(dd) + g2(dd, [RE_OIL_RIG])
+                don, doff = ReDump(read_dump(a, "t8m3")), ReDump(read_dump(b, "t8m3"))
+                fails += rd_g5(cfg, don.dump, mk, s) + rd_g5(cfg, doff.dump, mk, s)
+                gc = re_game_centres(cfg, don.dump, [p["row"] for p in plan])
+                random_pos = {(x, y) for n, x, y, _ in doff.resources if n == oil}
+                field = [(x, y) for n, x, y, _ in don.resources if n == oil and (x, y) not in random_pos]
+                for p in plan:
+                    x, y = p["x"], p["y"]
+                    if p["id"] in gc:
+                        x, y = re_world(cfg, mk, s, offsets, gc[p["id"]][0], gc[p["id"]][1], off)
+                    wells = [w for w in field if (w[0] - x) ** 2 + (w[1] - y) ** 2 <= p["reach"] ** 2]
+                    shallow = [w for w in wells if "deepwater" not in (don.tile_at(int(math.floor(w[0])),
+                                                                                   int(math.floor(w[1]))) or "")]
+                    if not wells:
+                        fails.append(f"M3 {mk} scale {s} {p['id']}: the field holds no well (on minus off)")
+                    if shallow:
+                        fails.append(f"M3 {mk} scale {s} {p['id']}: {len(shallow)} field wells stand off deepwater, "
+                                     f"e.g. {shallow[:2]}")
+                    # the stamp: land and water agree inside the field's box with hotspots on and off, and no
+                    # tile there is shallower with them on; the deepened tiles are counted (G6 below)
+                    ia, ib = don.tiles(p["box"]), doff.tiles(p["box"])
+                    wa, wb = np.array(ia[3], bool)[ia[2]], np.array(ib[3], bool)[ib[2]]
+                    da = np.array(["deepwater" in t for t in ia[1]], bool)[ia[2]]
+                    db = np.array(["deepwater" in t for t in ib[1]], bool)[ib[2]]
+                    if wa.shape != wb.shape or (wa != wb).any():
+                        fails.append(f"M3 {mk} scale {s} {p['id']}: the stamp moved the coast "
+                                     f"({int((wa != wb).sum()) if wa.shape == wb.shape else 'shapes differ'})")
+                        continue
+                    shallower, deeper = int((db & ~da).sum()), int((da & ~db).sum())
+                    if shallower:
+                        fails.append(f"M3 {mk} scale {s} {p['id']}: {shallower} tiles are deepwater with hotspots off "
+                                     f"but not on")
+                    deepened[s] += deeper
+                    rec[f"s{s}:{p['id']}"] = {"field_wells": len(wells), "not_on_deepwater": len(shallow),
+                                              "deepened_tiles": deeper}
+            # the sea mask at the default scale
+            w_dd = by.get(f"re-t8m3-{mk}-wells")
+            if not w_dd:
+                fails.append(f"M3 {mk}: the mask pass is missing")
+                meas[mk] = rec
+                continue
+            fails += g1(w_dd) + g3(w_dd)
+            wdump = read_dump(w_dd, "t8m3w")
+            fails += rd_g5(cfg, wdump, mk, s6)
+            sea_vals = point_values(wdump)
+            off = t8m3_plan(mk, s6)[0]
+            mref = mref_of(mk)
+            seen = {}
+            for kind in ("off", "mask", "nomask"):
+                dd = by.get(t8m3_dir(mk, s6, kind).name)
+                if not dd:
+                    fails.append(f"M3 {mk}: the {kind} run is missing")
+                    continue
+                if kind != "off":
+                    fails += g1(dd) + g3(dd) + g2(dd, [RE_OIL_RIG]) + rd_g5(cfg, read_dump(dd, "t8m3"), mk, s6)
+                outside, inland, mouths = [], [], []
+                wells = t8m3_wells(dd)
+                for x, y in wells:
+                    v = (sea_vals.get((int(math.floor(x)), int(math.floor(y)))) or {}).get(sea_name)
+                    if v != 1:
+                        outside.append((x, y, v))
+                    c, r_ = mref.tile_to_pixel(int(math.floor(x + off[0])), int(math.floor(y + off[1])), s6)
+                    if 0 <= r_ < mref.H and 0 <= c < mref.W and (mref.land[r_, c] or mref.thin[r_, c]):
+                        (mouths if re_near_mouth(mref, c, r_) else inland).append((x, y))
+                seen[kind] = {"wells": len(wells), "outside_mask": len(outside), "on_inland_water": len(inland),
+                              "near_mouths": len(mouths)}
+                if kind == "nomask":
+                    # the positive control: the Oil Rig's own expression puts wells where the mask reads 0
+                    if not outside:
+                        fails.append(f"M3 {mk}: the unmasked run puts no well where {sea_name} reads 0, so the mask "
+                                     f"check sees nothing (G6)")
+                    continue
+                if outside:
+                    fails.append(f"M3 {mk} {kind}: {len(outside)} random wells stand outside the sea mask, e.g. "
+                                 f"{outside[:2]}")
+                if inland:
+                    fails.append(f"M3 {mk} {kind}: {len(inland)} random wells stand on inland water, e.g. {inland[:2]}")
+                if kind == "mask" and not wells:
+                    fails.append(f"M3 {mk}: the masked run at frequency and size 6 holds no well (G6)")
+            rec["mask"] = seen
+            rec["inland_boxes"] = [(kd, lb) for kd, lb, _ in t8m3_plan(mk, s6)[4]]
+            # onshore hotspots on M3 equal M2's
+            o3, o2 = by.get(f"re-t8m3-{mk}-onshore-m3"), by.get(f"re-t8m3-{mk}-onshore-m2")
+            if not o3 or not o2:
+                fails.append(f"{mk}: the onshore M3 and M2 runs are missing")
+            else:
+                fails += g1(o3) + g3(o3) + g2(o3, [RE_OIL_RIG]) + g1(o2) + g3(o2) + g2(o2, ["alien-biomes"])
+                r3, r2 = ReDump(read_dump(o3, "t8m3o")), ReDump(read_dump(o2, "t8m3o"))
+                same = sorted(e for e in r3.resources if e[0] != oil) == sorted(r2.resources)
+                if not same:
+                    fails.append(f"{mk}: the onshore hotspot boxes differ between M3 and M2")
+                if not r2.resources:
+                    fails.append(f"{mk}: the onshore boxes hold no resource on M2 (G6: nothing to compare)")
+                rec["onshore_m3_equals_m2"] = same
+            meas[mk] = rec
+        meas["deepened_tiles"] = deepened
+        if not deepened[min(RE_SCALES)]:
+            fails.append(f"no footprint at scale {min(RE_SCALES)} on any map deepened a tile with hotspots on: the stamp "
+                         f"check sees nothing (G6)")
+        return meas, fails, "; ".join(f"{mk}: masked {(m.get('mask') or {}).get('mask')}, unmasked "
+                                      f"{(m.get('mask') or {}).get('nomask')}" for mk, m in meas.items()
+                                      if isinstance(m, dict) and "mask" in m) + f"; deepened tiles {deepened}"
+
+    checks["re_t8_m3"] = SuiteCheck("re_t8_m3", lambda: base_key("re_t8_m3", {
+        "live": RE_M3_LIVE, "runs": t8m3_runs, "sliders": RE_MASK_SLIDERS, "box": RE_INLAND_BOX}), t8m3_run,
+                                    t8m3_derive)
+
+    # -- T4 (SS; offshore oil; M3; JI-16, TST-13), at the default scale on the first map with fields: every
+    # slider run pairs hotspots on with hotspots off, so the random wells are the off run's (the Oil Rig's
+    # own, masked) and a field's wells the on run's that the off run lacks. Random wells follow frequency,
+    # size and richness as the Oil Rig's autoplace does; field wells follow size and richness; frequency
+    # stays inert on the field bodies themselves: tn_hs_offshore_oil_v1 and its probability read at a
+    # lattice over every footprint are the same to the bit at frequency 1/6, 1 and 6.
+    oil_vars = [("default", {}), ("freq-low", {"frequency": 1 / 6}), ("freq-high", {"frequency": 6}),
+                ("size-low", {"size": RE_T4_SIZE["low"][0]}), ("size-high", {"size": RE_T4_SIZE["high"][0]}),
+                ("size-none", {"size": 0}), ("rich-low", {"richness": RE_T4_RICH["low"]}),
+                ("rich-high", {"richness": RE_T4_RICH["high"]})]
+    t4o_freqs = (1 / 6, 1, 6)
+    # the comparator (U7: the Oil Rig against the same mods and terrain): the same world with no Earth
+    # offshore key, so the Oil Rig's own expression places the wells, at these sliders
+    t4o_raw = ("default", "freq-low", "freq-high")
+    oil_hs = next(h["names"] for h in cfg["hotspots"]["resources"] if h["resource"] == oil)
+
+    def t4o_map():
+        return (t8m3_maps[0], s6) if t8m3_maps else (None, s6)
+
+    def t4o_points(plan):
+        pts = set()
+        n = RE_T4O_LATTICE
+        for p in plan:
+            for i in range(n):
+                for j in range(n):
+                    dx, dy = (2 * (i + 0.5) / n - 1) * p["R"], (2 * (j + 0.5) / n - 1) * p["R"]
+                    if dx * dx + dy * dy <= p["R"] * p["R"]:
+                        pts.add((int(round(p["x"] + dx)), int(round(p["y"] + dy))))
+        return [(0, 0)] + sorted(pts - {(0, 0)})
+
+    def t4o_run(deadline):
+        mk, s = t4o_map()
+        if mk is None:
+            return []
+        off, plan, fields, seab, _ = t8m3_plan(mk, s)
+        lanes = re_lanes(ctx, mods, PAR_MAX, "re4o", RE_M3_LIVE, m0=False)
+        jobs = [[] for _ in lanes]
+        dirs, k = [], 0
+        for label, ctl_ in oil_vars:
+            for on in (True, False):
+                tag = f"t4o-{mk}-{label}-{'on' if on else 'off'}"
+                mgs = re_mgs(ctx, cfg, mk, s, tag, off, hotspots=on, controls={oil: ctl_} if ctl_ else None,
+                             pen=re_oil_pen(cfg))
+                ln = k % len(lanes)
+                k += 1
+                jobs[ln].append(re_dump_job(ctx, cfg, lanes[ln][0], lane_instance(ctx, ln), "t4o", ctx.out / f"re-{tag}",
+                                            mgs, fields + seab, re_on(rows, mk), types="resource"))
+                dirs.append(ctx.out / f"re-{tag}")
+        for label, ctl_ in oil_vars:
+            if label not in t4o_raw:
+                continue
+            tag = f"t4o-{mk}-{label}-raw"
+            mgs = re_mgs(ctx, cfg, mk, s, tag, off, hotspots=False, controls={oil: ctl_} if ctl_ else None)
+            ln = k % len(lanes)
+            k += 1
+            jobs[ln].append(re_dump_job(ctx, cfg, lanes[ln][0], lane_instance(ctx, ln), "t4o", ctx.out / f"re-{tag}",
+                                        mgs, fields + seab, re_on(rows, mk), types="resource"))
+            dirs.append(ctx.out / f"re-{tag}")
+        K = cfg["keys"]
+        text = ";".join(f"{x},{y}" for x, y in t4o_points(plan))
+        for freq in t4o_freqs:
+            tag = f"t4of-{mk}-{freq:g}"
+            mgs = re_mgs(ctx, cfg, mk, s, tag, off, controls={oil: {"frequency": freq}}, pen=re_oil_pen(cfg))
+            ln = k % len(lanes)
+            k += 1
+            prep = dump_settings(ctx, lanes[ln][0], lane_instance(ctx, ln), label="t4of", points=text,
+                                 names=",".join([K["map"], K["scale"], oil_hs["v"], oil_hs["p"]]))
+            jobs[ln].append((prep, scenario_args(lane_instance(ctx, ln), lanes[ln][0], 4, SEED, mgs),
+                             ctx.out / f"re-{tag}", RE_TIMEOUT))
+            dirs.append(ctx.out / f"re-{tag}")
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def t4o_derive(dirs):
+        fails, meas = [], {}
+        mk, s = t4o_map()
+        if mk is None:
+            return {}, ["no map adopts an offshore field (T4 offshore: nothing to measure, G6)"], ""
+        want = 2 * len(oil_vars) + len(t4o_raw) + len(t4o_freqs)
+        if len(dirs) != want:
+            return {}, [f"{len(dirs)} run directories, want {want}"], ""
+        by = {Path(dd).name: dd for dd in dirs}
+        got = {}
+        for label, _ in oil_vars:
+            a, b = by[f"re-t4o-{mk}-{label}-on"], by[f"re-t4o-{mk}-{label}-off"]
+            for dd in (a, b):
+                fails += g1(dd) + g3(dd) + g2(dd, [RE_OIL_RIG])
+            don, doff = ReDump(read_dump(a, "t4o")), ReDump(read_dump(b, "t4o"))
+            fails += rd_g5(cfg, don.dump, mk, s) + rd_g5(cfg, doff.dump, mk, s)
+            rand = sorted((x, y, am) for n, x, y, am in doff.resources if n == oil)
+            rpos = {(x, y) for x, y, _ in rand}
+            field = sorted((x, y, am) for n, x, y, am in don.resources if n == oil and (x, y) not in rpos)
+            got[label] = {"random": rand, "field": field, "random_amount": sum(am for _, _, am in rand),
+                          "field_amount": sum(am for _, _, am in field)}
+        meas = {k_: {"random_wells": len(v["random"]), "field_wells": len(v["field"]),
+                     "random_amount": v["random_amount"], "field_amount": v["field_amount"]} for k_, v in got.items()}
+        base = got["default"]
+        if not base["random"] or not base["field"]:
+            fails.append(f"{mk}: the default pair holds {len(base['random'])} random and {len(base['field'])} field "
+                         f"wells (G6: nothing to compare)")
+            return meas, fails, ""
+        # random wells: frequency and size move their count the Oil Rig's way, richness scales their amounts
+        # exactly at the same wells
+        lo, hi = len(got["freq-low"]["random"]), len(got["freq-high"]["random"])
+        if not lo < len(base["random"]) < hi:
+            fails.append(f"{mk}: random wells {lo}, {len(base['random'])}, {hi} at offshore-oil frequency 1/6, 1, 6 "
+                         f"(want rising)")
+        if got["size-none"]["random"]:
+            fails.append(f"{mk}: {len(got['size-none']['random'])} random wells at offshore-oil size none")
+        for kind in ("random", "field"):
+            for side in ("low", "high"):
+                g = got[f"rich-{side}"]
+                want = RE_T4_RICH[side]
+                ratio = g[f"{kind}_amount"] / base[f"{kind}_amount"] if base[f"{kind}_amount"] else None
+                meas[f"rich-{side}"][f"{kind}_ratio"] = ratio
+                same = [(x, y) for x, y, _ in g[kind]] == [(x, y) for x, y, _ in base[kind]]
+                if not same or ratio is None or abs(ratio - want) > RE_RICH_TOL * max(1, want):
+                    fails.append(f"{mk}: {kind} wells at richness {want:g} scale {ratio} at {len(g[kind])} wells "
+                                 f"(want {want:g} at the default's {len(base[kind])}, the same wells)")
+        # the vanilla way: the masked random wells move with frequency in proportion to the Oil Rig's own
+        # wells on the same world (no Earth key), within RE_T4_OIL_TOL of its ratio
+        raw = {}
+        for label in t4o_raw:
+            dd = by[f"re-t4o-{mk}-{label}-raw"]
+            fails += g1(dd) + g3(dd) + g2(dd, [RE_OIL_RIG])
+            dr_ = ReDump(read_dump(dd, "t4o"))
+            fails += rd_g5(cfg, dr_.dump, mk, s)
+            raw[label] = sum(1 for n, *_ in dr_.resources if n == oil)
+        meas["oil_rig_own"] = raw
+        for label in ("freq-low", "freq-high"):
+            r_own = raw[label] / raw["default"] if raw.get("default") else None
+            r_earth = len(got[label]["random"]) / len(base["random"])
+            meas[label]["ratio_vs_oil_rig"] = [r_earth, r_own]
+            if r_own is None or abs(r_earth - r_own) > RE_T4_OIL_TOL * r_own:
+                fails.append(f"{mk}: masked random wells at {label} move by {r_earth:.3g}, the Oil Rig's own by {r_own} "
+                             f"(want within {RE_T4_OIL_TOL:.0%}: the vanilla way)")
+        # field wells: size none removes them, size scales their amount
+        if got["size-none"]["field"]:
+            fails.append(f"{mk}: {len(got['size-none']['field'])} field wells at offshore-oil size none")
+        if not got["size-low"]["field_amount"] < base["field_amount"] < got["size-high"]["field_amount"]:
+            fails.append(f"{mk}: field amounts {got['size-low']['field_amount']:.3g}, {base['field_amount']:.3g}, "
+                         f"{got['size-high']['field_amount']:.3g} at size 1/6, 1, 6 (want rising)")
+        # frequency inert: the field bodies' values at every lattice point equal at 1/6, 1 and 6 (the random
+        # wells' rise above is the positive control that the slider reached the map)
+        vals = []
+        for freq in t4o_freqs:
+            dd = by[f"re-t4of-{mk}-{freq:g}"]
+            fails += g1(dd) + g3(dd) + g2(dd, [RE_OIL_RIG])
+            dump = read_dump(dd, "t4of")
+            fails += rd_g5(cfg, dump, mk, s)
+            vals.append({pt: (v.get(oil_hs["v"]), v.get(oil_hs["p"])) for pt, v in point_values(dump).items()
+                         if pt != (0, 0)})
+        if not (vals[0] == vals[1] == vals[2]):
+            diff = sum(1 for pt in vals[1] if not (vals[0].get(pt) == vals[1][pt] == vals[2].get(pt)))
+            fails.append(f"{mk}: the field bodies differ under the offshore-oil frequency slider at {diff} of "
+                         f"{len(vals[1])} points (T4: inert to the bit)")
+        live = sum(1 for v in vals[1].values() if isinstance(v[0], (int, float)) and v[0] > 0)
+        if not live:
+            fails.append(f"{mk}: {oil_hs['v']} reads no positive value at any of {len(vals[1])} footprint points (G6)")
+        meas["frequency_points"] = {"points": len(vals[1]), "positive": live}
+        return meas, fails, f"{mk}: " + "; ".join(f"{k_} {v['random_wells']}/{v['field_wells']}" for k_, v in meas.items()
+                                                  if "random_wells" in v)
+
+    checks["re_t4_oil"] = SuiteCheck("re_t4_oil", lambda: base_key("re_t4_oil", {
+        "vars": [v[0] for v in oil_vars], "freqs": t4o_freqs, "lattice": RE_T4O_LATTICE, "raw": t4o_raw,
+        "tol": RE_T4_OIL_TOL}), t4o_run, t4o_derive)
+
+    # -- T9 (SS; Europe and Old World; three seeds; M1): spawners per footprint against hotspots off,
+    # control boxes entity for entity, the annulus of each hotspot's region, and the start free
+    def t9_plan(mk, s, seed):
+        off = rd_offset(rd_city(mk, RE_SPAWN), s)
+        mref = mref_of(mk)
+        on = re_on(rows, mk, onshore=True)[:RE_T9_MAX_ROWS]
+        allpos = []
+        for r in re_on(rows, mk):
+            hu, hv = re_centre_px(cfg, reg[r["id"]], seed)
+            x, y = re_world(cfg, mk, s, offsets, hu, hv, off)
+            allpos.append((x, y, re_reach(cfg, r, s) + reg[r["id"]]["jitter_km"] / cfg["regions"]["km_per_px"] * s))
+        plan, areas = [], [(-RE_START_RADIUS - 32, -RE_START_RADIUS - 32, 2 * RE_START_RADIUS + 64,
+                            2 * RE_START_RADIUS + 64)]
+        for r in on:
+            tu, tv = re_table_px(cfg, reg[r["id"]])
+            tx, ty = re_world(cfg, mk, s, offsets, tu, tv, off)
+            region = re_footprint(cfg, r, s) + reg[r["id"]]["jitter_km"] / cfg["regions"]["km_per_px"] * s
+            hu, hv = re_centre_px(cfg, reg[r["id"]], seed)
+            x, y = re_world(cfg, mk, s, offsets, hu, hv, off)
+            ctrl = re_control_box(cfg, mk, s, offsets, off, tx, ty, region, allpos, mref)
+            plan.append({"id": r["id"], "row": r, "x": x, "y": y, "tx": tx, "ty": ty, "R": re_footprint(cfg, r, s),
+                         "region": region, "box": len(areas), "control": None if ctrl is None else len(areas) + 1})
+            areas.append(re_box(tx, ty, region + RE_ROUGH_PX * s))
+            if ctrl is not None:
+                areas.append(ctrl)
+        return off, plan, areas
+
+    t9_runs = [(mk, seed) for mk in RE_T9_MAPS if mk in maps for seed in SEEDS]
+
+    def t9_run(deadline):
+        s = int(cfg["settings"]["scale"]["default_value"])
+        lanes = re_lanes(ctx, mods, PAR_MAX, "re9", (), m0=False)
+        jobs = [[] for _ in lanes]
+        dirs, k = [], 0
+        for mk, seed in t9_runs:
+            off, plan, areas = t9_plan(mk, s, seed)
+            for on in (True, False):
+                tag = f"t9-{mk}-{seed}-{'on' if on else 'off'}"
+                mgs = re_mgs(ctx, cfg, mk, s, tag, off, hotspots=on)
+                ln = k % len(lanes)
+                jobs[ln].append(re_dump_job(ctx, cfg, lanes[ln][0], lane_instance(ctx, ln), "t9", ctx.out / f"re-{tag}",
+                                            mgs, areas, re_on(rows, mk), seed=seed, types=RE_ENEMY_TYPES))
+                dirs.append(ctx.out / f"re-{tag}")
+                k += 1
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def t9_derive(dirs):
+        fails, meas = [], {}
+        s = int(cfg["settings"]["scale"]["default_value"])
+        tot = {"on": 0, "off": 0, "ann_on": 0, "ann_off": 0}
+        for i, (mk, seed) in enumerate(t9_runs):
+            a, b = dirs[2 * i], dirs[2 * i + 1]
+            fails += g1(a) + g3(a) + g1(b) + g3(b)
+            don, doff = ReDump(read_dump(a, "t9")), ReDump(read_dump(b, "t9"))
+            fails += rd_g5(cfg, don.dump, mk, s)
+            off, plan, _ = t9_plan(mk, s, seed)
+            gc = re_game_centres(cfg, don.dump, [p["row"] for p in plan])
+            start = [e for e in don.others if math.hypot(e[2], e[3]) <= RE_START_RADIUS]
+            if start:
+                fails.append(f"{mk} seed {seed}: {len(start)} enemies within {RE_START_RADIUS} tiles of the spawn")
+            for p in plan:
+                x, y = p["x"], p["y"]
+                if p["id"] in gc:
+                    x, y = re_world(cfg, mk, s, offsets, gc[p["id"]][0], gc[p["id"]][1], off)
+                reach = p["R"] + RE_ROUGH_PX * s
+                n_on, n_off = len(don.enemies_in(x, y, reach)), len(doff.enemies_in(x, y, reach))
+                tot["on"] += n_on
+                tot["off"] += n_off
+
+                def annulus(dd):
+                    return len([e for e in dd.enemies_in(p["tx"], p["ty"], p["region"])
+                                if (e[2] - x) ** 2 + (e[3] - y) ** 2 > (reach + 48) ** 2])
+                tot["ann_on"] += annulus(don)
+                tot["ann_off"] += annulus(doff)
+                if p["control"] is not None:
+                    box = don.areas[p["control"]]["area"]
+                    bx = (box["x0"], box["y0"], box["w"], box["h"])
+
+                    def inbox(e):
+                        return bx[0] <= e[2] < bx[0] + bx[2] and bx[1] <= e[3] < bx[1] + bx[3]
+                    ca, cb = sorted(e for e in don.others if inbox(e)), sorted(e for e in doff.others if inbox(e))
+                    if ca != cb:
+                        fails.append(f"{mk} seed {seed} {p['id']}: the control box's enemies differ between hotspots "
+                                     f"on and off ({len(ca)} against {len(cb)})")
+            meas[f"{mk}:{seed}"] = {"start": len(start)}
+        ratio = tot["on"] / tot["off"] if tot["off"] else None
+        ann = tot["ann_on"] / tot["ann_off"] if tot["ann_off"] else None
+        meas.update({"spawners": tot, "ratio": ratio, "annulus_ratio": ann})
+        if ratio is None or not (RE_T9_BAND[0] <= ratio <= RE_T9_BAND[1]):
+            fails.append(f"spawners per hotspot disc {tot['on']} against {tot['off']} with hotspots off: ratio {ratio}, "
+                         f"want {RE_T9_BAND[0]} to {RE_T9_BAND[1]} (S6: 3.42)")
+        if ann is not None and abs(ann - 1) > RE_T9_ANNULUS:
+            fails.append(f"inside the hotspot regions but outside their discs: {tot['ann_on']} spawners against "
+                         f"{tot['ann_off']} ({ann:.2f}, want within {RE_T9_ANNULUS:.0%})")
+        return meas, fails, (f"spawners in hotspot discs {tot['on']} against {tot['off']} off (ratio "
+                             f"{None if ratio is None else round(ratio, 2)}); annulus {None if ann is None else round(ann, 2)}")
+
+    checks["re_t9"] = SuiteCheck("re_t9", lambda: base_key("re_t9", {"runs": t9_runs}), t9_run, t9_derive)
+
+    # -- T4 (SS; M1 with M0 controls; FEAS-15): sizes, richness, frequency and the enemy sliders at Europe's
+    # T4 sites; the first run measures the adopted design under the size slider (A5) and the bands then
+    # gate. Frequency: base patches (8-connected components of each site ore's base probability above 0
+    # round the spawn) move at frequency 1/6, 1 and 6 on M1 as vanilla's patches do on M0, while the
+    # hotspot bodies read on a lattice over each site's footprint stay the same to the bit. Enemies: with
+    # hotspots on, enemies outside the footprints move with the enemy sliders as they do on M0, and stay
+    # within RE_T4_ENEMY_TOL of hotspots off
+    t4_sites = [r for r in rows if r["id"] in RE_T4_SITES.get("europe", ())]
+    t4_vars = [("default", {}), ("size-low", "size"), ("size-high", "size"), ("rich-low", "richness"),
+               ("rich-high", "richness"), ("enemy-freq-low", "enemy"), ("enemy-size-high", "enemy")]
+    t4_enemy = ("default", "enemy-freq-low", "enemy-size-high")
+    t4_freqs = (1 / 6, 1, 6)
+    t4_ores = sorted({r["resource"] for r in t4_sites})
+
+    def t4_controls(label):
+        if label == "default":
+            return {}
+        side = "low" if label.endswith("low") else "high"
+        if label.startswith("size"):
+            return {c: {"size": RE_T4_SIZE[side][0]} for c in cfg["resources"]["controls"]}
+        if label.startswith("rich"):
+            return {c: {"richness": RE_T4_RICH[side]} for c in cfg["resources"]["controls"]}
+        if label.startswith("enemy-freq"):
+            return {"enemy-base": {"frequency": 1 / 6}}
+        return {"enemy-base": {"size": 6}}
+
+    def t4_m0_mgs(label, controls):
+        """M0's MGS file for a T4 control: only the autoplace controls (vanilla presets, no Earth key)."""
+        d_ = ctx.out / "mgs"
+        d_.mkdir(parents=True, exist_ok=True)
+        f = d_ / f"re-m0-{label}.json"
+        f.write_text(json.dumps({"autoplace_controls": controls}, indent=1, sort_keys=True), encoding="utf-8")
+        return f
+
+    def t4_points(seed):
+        """The lattice over every T4 site's footprint (RE_T4O_LATTICE a side), (0, 0) first for G5."""
+        s = int(cfg["settings"]["scale"]["default_value"])
+        off = rd_offset(rd_city("europe", RE_SPAWN), s)
+        pts = set()
+        n = RE_T4O_LATTICE
+        for r in t4_sites:
+            x, y = re_world(cfg, "europe", s, offsets, *re_centre_px(cfg, reg[r["id"]], seed), off)
+            R = re_footprint(cfg, r, s)
+            for i in range(n):
+                for j in range(n):
+                    dx, dy = (2 * (i + 0.5) / n - 1) * R, (2 * (j + 0.5) / n - 1) * R
+                    if dx * dx + dy * dy <= R * R:
+                        pts.add((int(round(x + dx)), int(round(y + dy))))
+        return [(0, 0)] + sorted(pts - {(0, 0)})
+
+    def t4_hs_names():
+        H = cfg["hotspots"]["resources"]
+        return [h["names"][k] for h in H if h["resource"] in t4_ores for k in ("v", "p", "r")]
+
+    def t4_run(deadline):
+        s = int(cfg["settings"]["scale"]["default_value"])
+        K = cfg["keys"]
+        lanes = re_lanes(ctx, mods, PAR_MAX, "re4", (), m0=True)
+        off = rd_offset(rd_city("europe", RE_SPAWN), s)
+        jobs = [[] for _ in lanes]
+        dirs, k = [], 0
+        n = RE_PATCH_WINDOW // RE_PATCH_STEP
+        x0 = -RE_PATCH_WINDOW // 2
+
+        def add(prep, args_of, out):
+            nonlocal k
+            ln = k % len(lanes)
+            k += 1
+            jobs[ln].append((prep(ln) if prep else None, args_of(ln), out, RE_TIMEOUT))
+            dirs.append(out)
+        for seed in SEEDS:
+            areas, _ = re_t4_areas(cfg, s, seed, t4_sites, offsets, reg, off)
+            for label, _ in t4_vars:
+                for on in (True, False):
+                    tag = f"t4-{seed}-{label}-{'on' if on else 'off'}"
+                    mgs = re_mgs(ctx, cfg, "europe", s, tag, off, hotspots=on, controls=t4_controls(label))
+                    ln = k % len(lanes)
+                    k += 1
+                    jobs[ln].append(re_dump_job(ctx, cfg, lanes[ln][0], lane_instance(ctx, ln), "t4",
+                                                ctx.out / f"re-{tag}", mgs, areas, t4_sites, seed=seed))
+                    dirs.append(ctx.out / f"re-{tag}")
+            # M0's enemies over the same areas at the enemy sliders (the vanilla way)
+            for label in t4_enemy:
+                tag = f"t4-{seed}-{label}-m0"
+                mgs0 = t4_m0_mgs(tag, t4_controls(label) or {"enemy-base": {"frequency": 1, "size": 1}})
+                ln = k % len(lanes)
+                k += 1
+                jobs[ln].append(re_dump_job(ctx, cfg, lanes[ln][1], lane_instance(ctx, ln), "t4", ctx.out / f"re-{tag}",
+                                            mgs0, areas, [], seed=seed, names="elevation"))
+                dirs.append(ctx.out / f"re-{tag}")
+            # frequency: the hotspot bodies at the lattice on M1, and base patches on M1 and M0
+            pts_text = ";".join(f"{x},{y}" for x, y in t4_points(seed))
+            for freq in t4_freqs:
+                ctl_f = {c: {"frequency": freq} for c in cfg["resources"]["controls"]}
+                tag = f"t4f-{seed}-{freq:g}"
+                mgs = re_mgs(ctx, cfg, "europe", s, tag, off, controls=ctl_f)
+                add(lambda ln: dump_settings(ctx, lanes[ln][0], lane_instance(ctx, ln), label="t4f", points=pts_text,
+                                             names=",".join([K["map"], K["scale"]] + t4_hs_names())),
+                    lambda ln: scenario_args(lane_instance(ctx, ln), lanes[ln][0], 4, seed, mgs), ctx.out / f"re-{tag}")
+                for res in t4_ores:
+                    for lab in ("m1", "m0"):
+                        tag = f"t4p-{seed}-{res}-{freq:g}-{lab}"
+                        mg = mgs if lab == "m1" else t4_m0_mgs(tag, ctl_f)
+                        which = 0 if lab == "m1" else 1
+                        grid_name = re_ore(cfg, res)["p_v1"] if lab == "m1" else f"default-{res}-patches"
+                        add(lambda ln, which=which, grid_name=grid_name, lab=lab: dump_settings(
+                                ctx, lanes[ln][which], lane_instance(ctx, ln), label="t4p", points="0,0",
+                                names=f"{K['map']},{K['scale']}" if lab == "m1" else "elevation",
+                                grid=f"{x0},{x0},{RE_PATCH_STEP},{n},{n}", grid_name=grid_name, grid_threshold="0",
+                                grid_op="gt"),
+                            lambda ln, which=which, mg=mg: scenario_args(lane_instance(ctx, ln), lanes[ln][which], 4,
+                                                                         seed, mg),
+                            ctx.out / f"re-{tag}")
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def t4_derive(dirs):
+        fails, meas = [], {}
+        s = int(cfg["settings"]["scale"]["default_value"])
+        off = rd_offset(rd_city("europe", RE_SPAWN), s)
+        by = {Path(dd).name: dd for dd in dirs}
+        want = len(SEEDS) * (2 * len(t4_vars) + len(t4_enemy) + len(t4_freqs) * (1 + 2 * len(t4_ores)))
+        if len(dirs) != want:
+            return {}, [f"{len(dirs)} run directories, want {want}"], ""
+        ratios, patches, enemies = {}, {}, {}
+        for seed in SEEDS:
+            areas, disc = re_t4_areas(cfg, s, seed, t4_sites, offsets, reg, off)
+
+            def outside(e):
+                return all((e[2] - x) ** 2 + (e[3] - y) ** 2 > (rr + 64) ** 2 for x, y, rr in disc)
+            amounts = {}
+            for label, _ in t4_vars:
+                a, b = by[f"re-t4-{seed}-{label}-on"], by[f"re-t4-{seed}-{label}-off"]
+                fails += g1(a) + g3(a) + g1(b) + g3(b)
+                don, doff = ReDump(read_dump(a, "t4")), ReDump(read_dump(b, "t4"))
+                fails += rd_g5(cfg, don.dump, "europe", s) + rd_g5(cfg, doff.dump, "europe", s)
+                amounts[label] = {r["id"]: don.ore_in(x, y, rr, r["resource"]) - doff.ore_in(x, y, rr, r["resource"])
+                                  for r, (x, y, rr) in zip(t4_sites, disc)}
+                if label in t4_enemy:
+                    # outside the footprints the wrapper is the live expression to the bit; generation order
+                    # still moves a few enemies beside the extra ore (S6 Q1), so counts carry a tolerance
+                    ea, eb = [e for e in don.others if outside(e)], [e for e in doff.others if outside(e)]
+                    if not eb or abs(len(ea) - len(eb)) > RE_T4_ENEMY_TOL * len(eb):
+                        fails.append(f"seed {seed} {label}: {len(ea)} enemies outside the hotspots with hotspots on "
+                                     f"against {len(eb)} off (want within {RE_T4_ENEMY_TOL:.0%})")
+                    enemies.setdefault("m1", {}).setdefault(label, 0)
+                    enemies["m1"][label] += len(ea)
+                    meas.setdefault("enemies_outside", {})[f"{seed}:{label}"] = [len(ea), len(eb)]
+            for label in t4_enemy:
+                dd = by[f"re-t4-{seed}-{label}-m0"]
+                fails += g1(dd) + g3(dd)
+                z = ReDump(read_dump(dd, "t4"))
+                enemies.setdefault("m0", {}).setdefault(label, 0)
+                enemies["m0"][label] += len([e for e in z.others if outside(e)])
+            for label in ("size-low", "size-high", "rich-low", "rich-high"):
+                for rid, base in amounts["default"].items():
+                    if base > 0:
+                        ratios.setdefault(label, []).append(amounts[label][rid] / base)
+            vals = []
+            for freq in t4_freqs:
+                dd = by[f"re-t4f-{seed}-{freq:g}"]
+                fails += g1(dd) + g3(dd)
+                dump = read_dump(dd, "t4f")
+                fails += rd_g5(cfg, dump, "europe", s)
+                vals.append({pt: tuple(v.get(n) for n in t4_hs_names()) for pt, v in point_values(dump).items()
+                             if pt != (0, 0)})
+                for res in t4_ores:
+                    for lab in ("m1", "m0"):
+                        dd = by[f"re-t4p-{seed}-{res}-{freq:g}-{lab}"]
+                        fails += g1(dd) + g3(dd)
+                        pd = read_dump(dd, "t4p")
+                        if lab == "m1":
+                            fails += rd_g5(cfg, pd, "europe", s)
+                        key_ = (lab, freq)
+                        patches[key_] = patches.get(key_, 0) + re_components(pd.get("grid") or {})
+            if not (vals[0] == vals[1] == vals[2]):
+                diff = sum(1 for pt in vals[1] if not (vals[0].get(pt) == vals[1][pt] == vals[2].get(pt)))
+                fails.append(f"seed {seed}: the hotspot bodies differ under the frequency slider at {diff} of "
+                             f"{len(vals[1])} footprint points (T4: bit-identical)")
+            if not any(isinstance(x, (int, float)) and x > 0 for v in vals[1].values() for x in v[0::3]):
+                fails.append(f"seed {seed}: no hotspot body reads a positive value at the T4 sites' footprints (G6)")
+        for label, rs in ratios.items():
+            lo, hi = (RE_T4_SIZE["low" if label.endswith("low") else "high"][1] if label.startswith("size") else
+                      (RE_T4_RICH["low" if label.endswith("low") else "high"] - RE_RICH_TOL,
+                       RE_T4_RICH["low" if label.endswith("low") else "high"] + RE_RICH_TOL))
+            bad = [round(r, 3) for r in rs if not (lo <= r <= hi)]
+            if bad:
+                fails.append(f"{label}: hotspot amounts scale {bad} against the default, want {lo:g} to {hi:g}")
+            meas[label] = [round(min(rs), 3), round(max(rs), 3)] if rs else None
+        # base patches: the same direction on M1 and M0, each ratio to frequency 1 within RE_T4_PATCH_TOL of M0's
+        pr = {}
+        for lab in ("m1", "m0"):
+            base = patches.get((lab, 1)) or 0
+            pr[lab] = {f"{f:g}": (patches.get((lab, f), 0) / base if base else None) for f in t4_freqs if f != 1}
+            if not base or not patches.get((lab, 1 / 6), 0) < base < patches.get((lab, 6), 0):
+                fails.append(f"{lab.upper()}: base patches {[patches.get((lab, f)) for f in t4_freqs]} at frequency "
+                             f"1/6, 1, 6 (want rising)")
+        for f, r0 in (pr.get("m0") or {}).items():
+            r1 = (pr.get("m1") or {}).get(f)
+            if r0 is None or r1 is None or abs(r1 - r0) > RE_T4_PATCH_TOL * r0:
+                fails.append(f"base patches at frequency {f} over 1: M1 {r1}, M0 {r0} (want within {RE_T4_PATCH_TOL:.0%} "
+                             f"of M0: the vanilla way)")
+        meas["patches"] = {f"{lab}@{f:g}": v for (lab, f), v in patches.items()}
+        meas["patch_ratios"] = pr
+        # enemies outside the hotspots: the sliders move them on M1 (hotspots on) as on M0, in proportion
+        er = {lab: {x: (v[x] / v["default"] if v.get("default") else None) for x in t4_enemy[1:]}
+              for lab, v in enemies.items()}
+        for x, want_up in (("enemy-freq-low", False), ("enemy-size-high", True)):
+            r1, r0 = (er.get("m1") or {}).get(x), (er.get("m0") or {}).get(x)
+            if r0 is None or r1 is None or (r0 > 1) != want_up or (r1 > 1) != want_up or \
+                    abs(r1 - r0) > RE_T4_ENEMY_PROP_TOL * r0:
+                fails.append(f"{x}: enemies outside the hotspots move by {r1} on M1 and {r0} on M0 (want the same "
+                             f"direction, {'up' if want_up else 'down'}, within {RE_T4_ENEMY_PROP_TOL:.0%} of M0's)")
+        meas["enemies"], meas["enemy_ratios"] = enemies, er
+        return meas, fails, "; ".join(f"{k_} {v}" for k_, v in meas.items() if k_ != "enemies_outside")
+
+    checks["re_t4"] = SuiteCheck("re_t4", lambda: base_key("re_t4", {
+        "vars": [v[0] for v in t4_vars], "freqs": t4_freqs, "ores": t4_ores, "m0": True,
+        "tol": [RE_T4_PATCH_TOL, RE_T4_ENEMY_PROP_TOL, RE_T4_ENEMY_TOL]}), t4_run, t4_derive)
+
+    # -- T7 (SS; every city of every map; scales 1 and 6): every spawn outside every hotspot region plus
+    # the city margin (seed-independent, APPROVALS 12), and 0 enemies within 150 tiles
+    def t7_run(deadline):
+        lanes = re_lanes(ctx, mods, PAR_MAX, "re7", (), m0=False)
+        jobs, dirs, n = [[] for _ in lanes], [], 0
+        for mk in maps:
+            for p in rd_cities(cfg, mk):
+                for s in RE_SCALES:
+                    off = rd_offset(p, s)
+                    lab = f"t7-{mk}-{city_slug(p['name'])}-s{s}"
+                    mgs = re_mgs(ctx, cfg, mk, s, lab, off)
+                    ln = n % len(lanes)
+                    area = [(-RE_START_RADIUS - 32, -RE_START_RADIUS - 32, 2 * RE_START_RADIUS + 64,
+                             2 * RE_START_RADIUS + 64)]
+                    jobs[ln].append(re_dump_job(ctx, cfg, lanes[ln][0], lane_instance(ctx, ln), "t7", ctx.out / f"re-{lab}",
+                                                mgs, area, [], types=RE_ENEMY_TYPES,
+                                                names=f"{cfg['keys']['map']},{cfg['keys']['scale']}"))
+                    dirs.append(ctx.out / f"re-{lab}")
+                    n += 1
+        run_lanes(ctx, [j for j in jobs if j])
+        return dirs
+
+    def t7_derive(dirs):
+        fails, bad, k = [], [], 0
+        kpp = cfg["regions"]["km_per_px"]
+        appr = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(encoding="utf-8"))
+        margin = float(appr["rules"]["city_margin_km"])
+        near = []
+        for mk in maps:
+            du, dv = offsets[mk]
+            for p in rd_cities(cfg, mk):
+                cu, cv = p.get("ref_pixel") or (None, None)
+                if cu is not None:
+                    for r in re_on(rows, mk):
+                        tu, tv = re_table_px(cfg, reg[r["id"]])
+                        dist_km = math.hypot(cu + du - tu, cv + dv - tv) * kpp
+                        if dist_km <= reg[r["id"]]["radius_km"] + reg[r["id"]]["jitter_km"] + margin:
+                            near.append((mk, p["name"], r["id"], round(dist_km, 1)))
+                for s in RE_SCALES:
+                    dd = dirs[k]
+                    k += 1
+                    fails += g1(dd) + g3(dd)
+                    dump = read_dump(dd, "t7")
+                    fails += rd_g5(cfg, dump, mk, s)
+                    e = [x for x in ReDump(dump).others if math.hypot(x[2], x[3]) <= RE_START_RADIUS]
+                    if e:
+                        bad.append((mk, p["name"], s, len(e)))
+        for mk, city, s, n in bad:
+            fails.append(f"{mk} {city} scale {s}: {n} enemies within {RE_START_RADIUS} tiles of the spawn")
+        for mk, city, rid, dkm in near:
+            fails.append(f"{mk} {city} lies {dkm} km from {rid}, inside its region plus the {margin:g} km margin")
+        return {"spawns": len(dirs), "bad": bad, "near": near}, fails, \
+            f"{len(dirs)} spawns: {len(bad)} with an enemy within {RE_START_RADIUS} tiles, {len(near)} inside a hotspot region"
+
+    checks["re_t7"] = SuiteCheck("re_t7", lambda: base_key("re_t7", {"scales": RE_SCALES}), t7_run, t7_derive)
+
+    # -- T2 (SS; three seeds): every hotspot centre read from the game within r/2 of its table centre,
+    # different for at least one seed pair, repeated on the same seed
+    t2_seeds = list(SEEDS) + [SEED]
+
+    def t2_run(deadline):
+        ms = probe_modset(ctx, mods, "re2")
+        mk = max(maps, key=lambda m: len(re_on(rows, m)))
+        off = rd_offset(rd_city(mk, RE_SPAWN), 1)
+        out = []
+        for i, seed in enumerate(t2_seeds):
+            mgs = re_mgs(ctx, cfg, mk, 1, f"t2-{seed}-{i}", off)
+            dump_settings(ctx, ms, ctx.instance, label="t2", points="0,0", names=re_names_text(cfg, re_on(rows, mk)),
+                          types="")()
+            out.append(ctx.fh(scenario_args(ctx.instance, ms, 4, seed, mgs), ctx.out / f"re-t2-{seed}-{i}").out)
+        return out
+
+    def t2_derive(dirs):
+        fails, meas = [], {}
+        mk = max(maps, key=lambda m: len(re_on(rows, m)))
+        kpp = cfg["regions"]["km_per_px"]
+        got = []
+        for dd in dirs:
+            fails += g1(dd) + g3(dd)
+            got.append(re_game_centres(cfg, read_dump(dd, "t2"), re_on(rows, mk)))
+        for r in re_on(rows, mk):
+            tu, tv = re_table_px(cfg, reg[r["id"]])
+            cs = [g.get(r["id"]) for g in got]
+            if any(c is None for c in cs):
+                fails.append(f"{r['id']}: the game did not read its centre")
+                continue
+            far = [round(math.hypot(c[0] - tu, c[1] - tv) * kpp, 2) for c in cs]
+            if max(far) > reg[r["id"]]["jitter_km"] + 0.01:
+                fails.append(f"{r['id']}: a centre lies {max(far)} km from the table's, beyond r/2 "
+                             f"({reg[r['id']]['jitter_km']} km)")
+            if len({cs[0], cs[1], cs[2]}) == 1:
+                fails.append(f"{r['id']}: the centre is the same at seeds {list(SEEDS)}")
+            if cs[0] != cs[-1]:
+                fails.append(f"{r['id']}: the centre at seed {SEED} differs between two runs")
+            meas[r["id"]] = far
+        return {"rows": len(meas)}, fails, f"{len(meas)} hotspot centres on {mk}: within r/2, moving per seed, repeating"
+
+    checks["re_t2"] = SuiteCheck("re_t2", lambda: base_key("re_t2", {"seeds": t2_seeds}), t2_run, t2_derive)
+
+    # -- T11 (SS): created with hotspots on, loaded with them off: blocks over Upper Silesia's
+    # disc match fresh A in resources and spawners and differ from fresh B; the drift line once. Each
+    # map's per-save stamp key tn_fields_<map> gets its own tile probe at scale 1 over one of its offshore
+    # fields: A loaded under B matches fresh A tile for tile, and where the grown footprint reaches
+    # reference land (shallow water the stamp deepens) it differs from fresh B; a map whose every field
+    # lies farther from land than its footprint (Europe's North Sea fields, 40 px and more) is reported
+    def t11_area(s):
+        site = next(r for r in rows if r["id"] == RE_T4_SITES["europe"][0])
+        off = rd_offset(rd_city("europe", RE_SPAWN), s)
+        hu, hv = re_centre_px(cfg, reg[site["id"]], SEED)
+        x, y = re_world(cfg, "europe", s, offsets, hu, hv, off)
+        return off, [re_box(x, y, re_footprint(cfg, site, s) * 0.5)]
+
+    def t11_fields(s=1):
+        """Per map with offshore fields: (map, row id, spawn offset, [box], near) of its stamp key's probe,
+        the first field whose footprint at scale s, grown by the stamp's cover, holds reference land
+        (near), else its first field."""
+        cover = cfg["fields"]["cover_px"]
+        out = []
+        for mk in maps:
+            cand = [r for r in re_on(rows, mk) if r["offshore"]]
+            if not cand:
+                continue
+            mref, (du, dv) = mref_of(mk), offsets[mk]
+            pick, near = cand[0], False
+            for r in cand:
+                hu, hv = re_centre_px(cfg, reg[r["id"]], SEED)
+                rad = re_footprint(cfg, r, s) / s + cover
+                c0, c1 = max(0, int(hu - du - rad)), min(mref.W, int(hu - du + rad) + 1)
+                r0, r1 = max(0, int(hv - dv - rad)), min(mref.H, int(hv - dv + rad) + 1)
+                if c0 < c1 and r0 < r1 and mref.land[r0:r1, c0:c1].any():
+                    pick, near = r, True
+                    break
+            off = rd_offset(rd_city(mk, RE_SPAWN), s)
+            hu, hv = re_centre_px(cfg, reg[pick["id"]], SEED)
+            x, y = re_world(cfg, mk, s, offsets, hu, hv, off)
+            out.append((mk, pick["id"], off, [re_box(x, y, re_reach(cfg, pick, s) + cover * s)], near))
+        return out
+
+    def t11_run(deadline):
+        s = int(cfg["settings"]["scale"]["default_value"])
+        name = cfg["settings"]["hotspots"]["name"]
+        msa, msb = probe_modset(ctx, mods, "re11a"), probe_modset(ctx, mods, "re11b")
+        for ms, v in ((msa, "true"), (msb, "false")):
+            res = ctx.fh_plain(["settings", ms, "--set", f"startup.{name}={v}"])
+            if not res.startswith("RESULT ok"):
+                raise GateError(f"fh.py settings {ms}: {res}")
+        off, areas = t11_area(s)
+        inst = ctx.instance
+        K = cfg["keys"]
+        outs = []
+        probes = [("", "europe", s, off, areas, "resource,unit-spawner,turret")] + \
+            [(f"-field-{mk}", mk, 1, o, ar, "resource") for mk, _, o, ar, _ in t11_fields()]
+        for tag, mk, sc, o, ar, types in probes:
+            sa, sb = ctx.out / f"re-t11{tag}-create-a" / "a.zip", ctx.out / f"re-t11{tag}-create-b" / "b.zip"
+            ma = re_mgs(ctx, cfg, mk, sc, f"t11{tag}-a", o, hotspots=True)
+            mb = re_mgs(ctx, cfg, mk, sc, f"t11{tag}-b", o, hotspots=False)
+            outs += [ctx.fh(create_args(inst, msa, sa, mgs=ma), sa.parent).out,
+                     ctx.fh(create_args(inst, msb, sb, mgs=mb), sb.parent).out]
+            for label, ms, save in (("a-under-b", msb, sa), ("a-under-a", msa, sa), ("b-under-b", msb, sb)):
+                dump_settings(ctx, ms, inst, label="t11", areas=rd_areas_text(ar), points="0,0",
+                              names=f"{K['map']},{K['scale']}", types=types)()
+                outs.append(ctx.fh(scenario_args(inst, ms, 4, save=save), ctx.out / f"re-t11{tag}-{label}").out)
+        return outs
+
+    def t11_derive(dirs):
+        fails = []
+        for dd in dirs:
+            fails += g1(dd) + g3(dd)
+        fields = t11_fields()
+        if len(dirs) != 5 * (1 + len(fields)):
+            return {}, fails + [f"{len(dirs)} run directories, want {5 * (1 + len(fields))} (Upper Silesia's and one "
+                                f"field probe per map with fields)"], ""
+        ab, aa, bb = (ReDump(read_dump(dd, "t11")) for dd in dirs[2:5])
+        ka, kb, kc = (sorted(x.resources) + sorted(x.others) for x in (ab, aa, bb))
+        if ka != kb:
+            fails.append(f"A loaded with hotspots off holds {len(ab.resources)} resources and {len(ab.others)} enemies "
+                         f"over the disc, fresh A {len(aa.resources)} and {len(aa.others)}: the save did not keep them")
+        if ka == kc:
+            fails.append("A loaded with hotspots off equals a fresh hotspots-off world (G6)")
+        line = message_prefix(cfg, "drift_toggle")
+        n_ab, n_aa, n_bb = (count_lines(log_text(dd), line) for dd in dirs[2:5])
+        if n_ab != 1 or n_aa or n_bb:
+            fails.append(f"the toggle's drift line appears {n_ab} times on A under B (want 1), {n_aa} and {n_bb} on "
+                         f"undrifted loads (want 0)")
+        meas = {"a_under_b": [len(ab.resources), len(ab.others)], "fresh_a": [len(aa.resources), len(aa.others)],
+                "fresh_b": [len(bb.resources), len(bb.others)], "drift": [n_ab, n_aa, n_bb], "fields": {}}
+        # each stamp key: the field box's tiles on A under B are fresh A's, and differ from fresh B's where the
+        # stamp can act (the grown footprint reaches land)
+        for i, (mk, fid, _, _, near) in enumerate(fields):
+            base = 5 * (i + 1)
+            fab, faa, fbb = (read_dump(dd, "t11") for dd in dirs[base + 2:base + 5])
+            for dump in (fab, faa, fbb):
+                fails += rd_g5(cfg, dump, mk, 1)
+            ta, tb, tc = area_tiles(fab), area_tiles(faa), area_tiles(fbb)
+            if ta != tb:
+                fails.append(f"{mk}: A loaded with hotspots off differs from fresh A in "
+                             f"{sum(1 for x, y in zip(ta, tb) if x != y)} tiles over {fid} at scale 1: the save did not "
+                             f"keep its stamp key")
+            differ = sum(1 for x, y in zip(ta, tc) if x != y)
+            if near and not differ:
+                fails.append(f"{mk}: over {fid} at scale 1 A loaded with hotspots off equals a fresh hotspots-off world "
+                             f"tile for tile, so the stamp key's probe sees nothing (G6)")
+            meas["fields"][mk] = {"row": fid, "tiles": len(ta), "differ_from_fresh_b": differ,
+                                  "near_land": near if near else "no field's footprint reaches land: reported"}
+        if fields and not any(v["differ_from_fresh_b"] for v in meas["fields"].values()):
+            fails.append("no map's stamp probe differs from fresh B at scale 1: the stamp keys' probes see nothing (G6)")
+        return meas, fails, (f"hotspots-on world loaded with hotspots off: {meas['a_under_b']} resources and enemies "
+                             f"over Upper Silesia, fresh A {meas['fresh_a']}, fresh B {meas['fresh_b']}; drift {n_ab}; "
+                             f"stamp keys at scale 1: " + ", ".join(f"{mk} {v['row']} kept, {v['differ_from_fresh_b']} "
+                                                                    f"tiles off fresh B" for mk, v in
+                                                                    meas["fields"].items()))
+
+    checks["re_t11"] = SuiteCheck("re_t11", lambda: base_key("re_t11", {
+        "fields": [f[:2] + (f[4],) for f in t11_fields()]}), t11_run, t11_derive)
+
+    # -- T15e driver 1 (SS): nests per chunk outside every hotspot region within 20 percent of M0 at equal
+    # distance (Europe, scale 6, London), and the hotspot sites' extra spawners (from re_t9) reported
+    def t15e_chunks():
+        s = int(cfg["settings"]["scale"]["default_value"])
+        off = rd_offset(rd_city("europe", RE_SPAWN), s)
+        regs = []
+        for r in re_on(rows, "europe"):
+            tu, tv = re_table_px(cfg, reg[r["id"]])
+            x, y = re_world(cfg, "europe", s, offsets, tu, tv, off)
+            regs.append((x, y, re_footprint(cfg, r, s) + reg[r["id"]]["jitter_km"] / cfg["regions"]["km_per_px"] * s +
+                         64))
+        out = []
+        lo, hi = RE_T15E_BAND
+        for cy in range(-hi // 32, hi // 32 + 1, RE_T15E_STRIDE):
+            for cx in range(-hi // 32, hi // 32 + 1, RE_T15E_STRIDE):
+                x, y = cx * 32 + 16, cy * 32 + 16
+                if lo <= math.hypot(x, y) <= hi and all(math.hypot(x - a, y - b) > rr for a, b, rr in regs):
+                    out.append((cx * 32, cy * 32, 32, 32))
+        return off, out
+
+    def t15e_run(deadline):
+        s = int(cfg["settings"]["scale"]["default_value"])
+        lanes = re_lanes(ctx, mods, 1, "re15e", (), m0=True)
+        off, areas = t15e_chunks()
+        mgs = re_mgs(ctx, cfg, "europe", s, "t15e", off)
+        outs = []
+        for which in (0, 1):
+            out = ctx.out / f"re-t15e-{'m1' if which == 0 else 'm0'}"
+            dump_settings(ctx, lanes[0][which], lane_instance(ctx, 0), label="t15e", areas=rd_areas_text(areas),
+                          points="0,0", names=f"{cfg['keys']['map']},{cfg['keys']['scale']}" if which == 0 else "",
+                          types="unit-spawner")()
+            outs.append(ctx.fh(scenario_args(lane_instance(ctx, 0), lanes[0][which], 4, SEED,
+                                             mgs if which == 0 else None), out, timeout=RE_TIMEOUT).out)
+        # the polluter driver: the same pollution at the hotspot site and at a control site at equal
+        # distance, pathFinder per tick over the window from --benchmark-verbose all
+        ms = mods.with_mods("repoll", [HERE / "mods" / RE_POLLUTER])
+        mods.prepare(ms, "repoll")
+        for label, (x, y) in t15e_sites():
+            vals = dict(RE_POLLUTE, label=label, site=f"{int(round(x))},{int(round(y))}")
+            re_polluter_settings(ctx, ms, ctx.instance, vals)()
+            outs.append(ctx.fh(["scenario", "--instance", ctx.instance, "--modset", ms, "--seed", str(SEED),
+                                "--map-gen-settings", mgs, "--ticks", str(RE_POLLUTE["end-tick"] + 2), "--",
+                                "--benchmark-verbose", "all"], ctx.out / f"re-t15e-poll-{label}",
+                               timeout=RE_TIMEOUT).out)
+        return outs
+
+    def t15e_sites():
+        """The polluter's two sites: Upper Silesia's jittered centre and a land point at its distance."""
+        s = int(cfg["settings"]["scale"]["default_value"])
+        off = rd_offset(rd_city("europe", RE_SPAWN), s)
+        site = next(r for r in rows if r["id"] == RE_T4_SITES["europe"][0])
+        hu, hv = re_centre_px(cfg, reg[site["id"]], SEED)
+        x, y = re_world(cfg, "europe", s, offsets, hu, hv, off)
+        avoid = []
+        for r in re_on(rows, "europe"):
+            a, b = re_world(cfg, "europe", s, offsets, *re_centre_px(cfg, reg[r["id"]], SEED), off)
+            avoid.append((a, b, re_reach(cfg, r, s) + RE_POLLUTE["radius"]))
+        box = re_control_box(cfg, "europe", s, offsets, off, x, y, 64, avoid, mref_of("europe"))
+        out = [("hotspot", (x, y))]
+        if box is not None:
+            out.append(("control", (box[0] + box[2] / 2, box[1] + box[3] / 2)))
+        return out
+
+    def t15e_derive(dirs):
+        import perf
+        fails = []
+        for dd in dirs:
+            fails += g1(dd) + g3(dd)
+        poll = {}
+        for dd in dirs[2:]:
+            label = Path(dd).name.rsplit("-", 1)[-1]
+            f = Path(dd) / "script-output" / RE_POLLUTER / f"{label}.json"
+            rec = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+            pf = rd_parse_pathfinder(perf.read(Path(dd) / "bench" / "stdout.txt")) or {}
+            win = [v for t_, v in pf.items() if RE_POLLUTE["start-tick"] <= t_ <= RE_POLLUTE["end-tick"]]
+            if not rec or not win:
+                fails.append(f"polluter {label}: no record or no pathFinder column in --benchmark-verbose all")
+                continue
+            poll[label] = {"pathfinder_ms": round(sum(win) / 1e6, 3), "before": rec.get("before"),
+                           "after": rec.get("after"), "furnaces_standing": rec.get("furnaces_standing"),
+                           "furnaces_placed": rec.get("furnaces_placed")}
+        e, z = ReDump(read_dump(dirs[0], "t15e")), ReDump(read_dump(dirs[1], "t15e"))
+        le = sum(e.land_share_box(i)[1] for i in range(len(e.areas))) / (32 * 32)
+        lz = sum(z.land_share_box(i)[1] for i in range(len(z.areas))) / (32 * 32)
+        ne_, nz = len(e.others), len(z.others)
+        de, dz = (ne_ / le if le else None), (nz / lz if lz else None)
+        ratio = de / dz if de is not None and dz else None
+        if ratio is None or abs(ratio - 1) > RE_T15E_TOL:
+            fails.append(f"nests per land chunk outside the hotspots: Earth {de}, M0 {dz} (ratio {ratio}, want within "
+                         f"{RE_T15E_TOL:.0%})")
+        meas = {"chunks": len(e.areas), "earth_nests": ne_, "m0_nests": nz, "earth_land_chunks": round(le, 1),
+                "m0_land_chunks": round(lz, 1), "ratio": ratio, "polluter": poll}
+        hp, cp = poll.get("hotspot") or {}, poll.get("control") or {}
+        extra = None
+        if hp.get("before") and cp.get("before"):
+            extra = hp["before"].get("spawners", 0) - cp["before"].get("spawners", 0)
+        meas["extra_spawners_at_site"] = extra
+        return meas, fails, (f"nests per land chunk outside every hotspot region at {RE_T15E_BAND[0]} to "
+                             f"{RE_T15E_BAND[1]} tiles: Earth {ne_} over {le:.0f}, M0 {nz} over {lz:.0f} "
+                             f"(ratio {None if ratio is None else round(ratio, 3)}); reported: the polluter at Upper "
+                             f"Silesia meets {extra} more spawners than at a control site at equal distance, pathFinder "
+                             f"{hp.get('pathfinder_ms')} ms against {cp.get('pathfinder_ms')} ms over the window")
+
+    checks["re_t15e"] = SuiteCheck("re_t15e", lambda: base_key("re_t15e", {"band": RE_T15E_BAND,
+                                                                          "stride": RE_T15E_STRIDE,
+                                                                          "pollute": RE_POLLUTE}),
+                                   t15e_run, t15e_derive)
+    # -- T5 (SS; TST-06): with the offshore stamps in place, T5 still holds for every map's waterways at
+    # scales 1 and 6: waterways' own T5 checks (every corridor at scales 1 to 6, canals on and off; every
+    # ford at scales 1 and 6 on M1 and M2) re-run on this build as this milestone's evidence. Their MGS files
+    # copy each map's preset from this build's M1 dump, so they carry the hotspots toggle on and the map's
+    # stamp key at its field body, which the derive confirms. On a main without waterways' runner the row
+    # fails closed and names the missing checks.
+    t5_parts = (("ww_t5", "ww-t5-"), ("ww_fords", "ww-fords-"))
+
+    def t5_missing():
+        return [p for p, _ in t5_parts if p not in checks]
+
+    def t5_key():
+        miss = t5_missing()
+        if miss:
+            return base_key("re_t5", {"missing": miss})
+        return key_of({"check": "re_t5", "keys": [checks[p].key_fn() for p, _ in t5_parts], "dump": dump_sha})
+
+    def t5_run(deadline):
+        miss = t5_missing()
+        if miss:
+            raise GateError(f"waterways' T5 checks {miss} are not in the suite table: re_t5 re-runs them on this build "
+                            f"and binds once waterways is on main")
+        out = []
+        for name, _ in t5_parts:
+            out += checks[name].run_fn(deadline)
+        return out
+
+    def t5_derive(dirs):
+        miss = t5_missing()
+        if miss:
+            return {}, [f"waterways' T5 checks {miss} are not in the suite table (re_t5 binds once waterways is on "
+                        f"main)"], ""
+        fails, meas = [], {}
+        K, sw = cfg["keys"], cfg["toggles"]["hotspots"]
+        for mk in maps:
+            pname = map_preset(cfg, mk)[0]
+            pen = preset_pen(ctx.shared["dump_m1"], pname)
+            if pen.get(K["fields"][mk]) != cfg["fields"]["names"][mk] or pen.get(sw["preset_key"]) != sw["on"]:
+                fails.append(f"{pname} names {K['fields'][mk]} {pen.get(K['fields'][mk])!r} and {sw['preset_key']} "
+                             f"{pen.get(sw['preset_key'])!r}: waterways' T5 runs would carry no offshore stamp")
+        for name, prefix in t5_parts:
+            part = [dd for dd in dirs if Path(dd).name.startswith(prefix)]
+            m, f, detail = checks[name].derive_fn(part)
+            meas[name] = m
+            fails += [f"{name} with the offshore stamps: {x}" for x in f]
+        if sum(len([dd for dd in dirs if Path(dd).name.startswith(px)]) for _, px in t5_parts) != len(dirs):
+            fails.append("re_t5 holds run directories no waterways T5 check claims")
+        return meas, fails, f"waterways' T5 checks {[p for p, _ in t5_parts]} on this build, stamps in place on {maps}"
+
+    checks["re_t5"] = SuiteCheck("re_t5", t5_key, t5_run, t5_derive)
+    re_t15_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+
+
+def re_polluter_settings(ctx, modset, inst, vals):
+    """A prepare() that writes every ea-polluter startup setting of `modset`, through fh.py's encoder."""
+    import dump_render
+
+    def prep():
+        fh = dump_render.load_fh()
+        f = fh.ensure_settings_file(inst, fh.MODSETS / modset)
+        doc = fh.read_mod_settings(f)
+        startup = fh._dict_get(doc["tree"], "startup")
+        for name, x in vals.items():
+            node = [6, 0, int(x)] if isinstance(x, int) and not isinstance(x, bool) else [3, 0, str(x)]
+            key = f"{RE_POLLUTER}-{name}"
+            entry = fh._dict_get(startup, key)
+            if entry is None:
+                startup[2].append((key, [5, 0, [("value", node)]]))
+            else:
+                entry[2] = [(k, node if k == "value" else c) for k, c in entry[2]]
+        f.write_bytes(fh.encode_mod_settings(doc))
+    return prep
+
+
+def re_t4_areas(cfg, s, seed, sites, offsets, reg, off):
+    """The T4 sites' dump boxes and their footprint discs [(x, y, reach)] on Europe."""
+    areas, disc = [], []
+    for r in sites:
+        hu, hv = re_centre_px(cfg, reg[r["id"]], seed)
+        x, y = re_world(cfg, "europe", s, offsets, hu, hv, off)
+        reach = re_reach(cfg, r, s)
+        areas.append(re_box(x, y, reach + 64))
+        disc.append((x, y, reach))
+    return areas, disc
+
+
+def re_components(grid):
+    """8-connected components of 1 cells in a probe grid (run-length rows of 0, 1 and 2)."""
+    rows = grid.get("rows") or grid.get("values") or []
+    if isinstance(rows, dict):
+        rows = next(iter(rows.values()), [])
+    cells = []
+    for row in rows:
+        line = []
+        for tok in str(row).split(" "):
+            if not tok:
+                continue
+            b, n = tok.split("*")
+            line += [b == "1"] * int(n)
+        cells.append(line)
+    seen = set()
+    count = 0
+    for j, line in enumerate(cells):
+        for i, v in enumerate(line):
+            if not v or (i, j) in seen:
+                continue
+            count += 1
+            stack = [(i, j)]
+            seen.add((i, j))
+            while stack:
+                a, b = stack.pop()
+                for da in (-1, 0, 1):
+                    for db in (-1, 0, 1):
+                        q = (a + da, b + db)
+                        if q not in seen and 0 <= q[1] < len(cells) and 0 <= q[0] < len(cells[q[1]]) and cells[q[1]][q[0]]:
+                            seen.add(q)
+                            stack.append(q)
+    return count
+
+
+def re_inland_boxes(cfg, mk, s, off):
+    """T8 M3's inland-feature boxes on map mk at scale s with the spawn offset `off`, [(kind, label, box)]:
+    a river mouth (the reference thin-water pixel within 2 px of the sea nearest London's pixel) and the
+    first oracle place of each kind in RE_INLAND_KINDS (a canal vertex, a marsh, a forest, where
+    spawn-cities' inland lakes fall); a kind the map lacks is left out. Computed once per map, scale and
+    offset (the mouth search reads the whole raster)."""
+    import numpy as np
+    import oracle
+    import earthgeo as eg
+    memo = (mk, int(s), tuple(off))
+    if memo in RE_INLAND_MEMO:
+        return list(RE_INLAND_MEMO[memo])
+    mref = mref_of(mk)
+    out = []
+    sea = ~mref.land & ~mref.thin
+    near = np.zeros_like(sea)
+    for dy in range(-2, 3):
+        for dx in range(-2, 3):
+            near |= np.roll(np.roll(sea, dy, axis=0), dx, axis=1)
+    rr, cc = np.nonzero(mref.thin & near)
+    if len(rr):
+        lc, lr = rd_city(mk, RE_SPAWN)["ref_pixel"]
+        i = int(np.argmin((cc - lc) ** 2 + (rr - lr) ** 2))
+        c, r = int(cc[i]), int(rr[i])
+        x = int(eg.pixel_centre_tiles([c], mref.wr, s)[0]) - off[0]
+        y = int(eg.pixel_centre_tiles([r], mref.hr, s)[0]) - off[1]
+        out.append(("mouth", f"px {c},{r}", re_box(x, y, RE_INLAND_BOX // 2)))
+    O = oracle.load_oracle(mk, TESTS / "oracle")
+    for kind in RE_INLAND_KINDS:
+        p = next((q for q in O["places"] if q.get("kind") == kind and q.get("ref_pixel") is not None
+                  and (q.get("tiles_by_scale") or {}).get(str(int(s)))), None)
+        if p is not None:
+            gx, gy = rd_offset(p, s)
+            out.append((kind, p["id"], re_box(gx - off[0], gy - off[1], RE_INLAND_BOX // 2)))
+    RE_INLAND_MEMO[memo] = list(out)
+    return out
+
+
+def re_near_mouth(mref, c, r):
+    """A reference pixel within RE_MOUTH_PX of water that is neither land nor thin water: a mouth."""
+    k = RE_MOUTH_PX
+    r0, r1, c0, c1 = max(0, r - k), min(mref.H, r + k + 1), max(0, c - k), min(mref.W, c + k + 1)
+    import numpy as np
+    sea = ~mref.land[r0:r1, c0:c1] & ~mref.thin[r0:r1, c0:c1]
+    if not sea.any():
+        return False
+    ys, xs = np.nonzero(sea)
+    return bool(((ys + r0 - r) ** 2 + (xs + c0 - c) ** 2 <= k * k).any())
+
+
+def re_t15_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """resources-enemies' timed rows: every map's program at scales 6 and 1 at 16 LP, M1t against M0t (P1)
+    and M2t against BABt (P2: TQ1's timer with Alien Biomes' live copy, with and without Earth), at 24 LP
+    at scale 6 (P3), 8 LP recorded (PERF-01); the exploring rows in real time and in benchmark mode with
+    the save increment (P4 to P7, P19; PERF-07), M1 against M0 and M2 against BAB, through europe-coast's
+    own runners on this build. climate-tiles' draft times no M2 pair, so this milestone builds its own."""
+    cfg = mods.cfg
+    dump_sha = ctx.shared.get("dump_m1_sha")
+    m1t, _ = earth_driver_modsets(ctx, mods)
+    m0t, _, _ = driver_modsets(ctx, mods)
+
+    def m2_modsets():
+        """M2t and BABt (TQ1's timer), M2d and BABd (TQ2's driver): Alien Biomes copied read-only from the
+        live mods folder beside the Earth zip and without it, made when a run first needs them."""
+        if "re_m2_modsets" not in ctx.shared:
+            z = mods.build_zip()
+            tq1, tq2 = HERE / "mods" / "tq1-gen", HERE / "mods" / "tq2-driver"
+            ctx.shared["re_m2_modsets"] = {
+                "m2t": mods.make(f"ea-rem2t-{mods.zip_sha[:8]}-{folder_hash(tq1)}", [z, tq1], from_live=RE_M2_LIVE),
+                "babt": mods.make(f"ea-rebabt-{folder_hash(tq1)}", [tq1], from_live=RE_M2_LIVE),
+                "m2d": mods.make(f"ea-rem2d-{mods.zip_sha[:8]}-{folder_hash(tq2)}", [z, tq2], from_live=RE_M2_LIVE),
+                "babd": mods.make(f"ea-rebabd-{folder_hash(tq2)}", [tq2], from_live=RE_M2_LIVE)}
+        return ctx.shared["re_m2_modsets"]
+
+    def esig(ms, mk):
+        k = f"sig-{ms}-{mk}"
+        if k not in ctx.shared:
+            ctx.shared[k] = program_signature(ctx, mods, ms, f"{ms}-{mk}", preset=map_preset(cfg, mk)[0])
+        return ctx.shared[k]
+
+    maps = [mk for mk in cfg["map_order"] if (cfg.get("geography") or {}).get(mk)]
+    import earthgeo as eg
+    _, first, _ = first_preset(cfg)
+    pos = {mk: (europe_positions(cfg, eg.MapRef(mk)) if mk == first else map_positions(cfg, mk)) for mk in maps}
+
+    def census_of(mk, s):
+        b = baseline_record()
+        if mk == first:
+            return ((b.get("t15b_europe") or {}).get("census_m0") or {}).get(str(s))
+        return (((b.get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get(str(s))
+
+    def t15_run(deadline):
+        ms2 = m2_modsets()
+        out = []
+        for mk in maps:
+            for s in T15B_SCALES:
+                mgs = preset_mgs(ctx, cfg, s) if mk == first else map_preset_mgs(ctx, cfg, mk, s)
+                blk = pos[mk]["block"][s]
+                sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", blk, f"re-m1t-{mk}-s{s}", mgs)
+                sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", blk, f"re-m0t-{mk}-s{s}")
+                masks = [getattr(ctx.perf, m) if m != "MASK24" else MASK24 for m in T15B_MASKS[s]]
+                out.append(pair_batch(ctx, {"a": (m1t, sa), "b": (m0t, sb)}, T15B["reps_suite"], masks,
+                                      f"re-t15b-{mk}-s{s}", deadline))
+                # the Alien Biomes pair on the same block (P2): the map's preset beside Alien Biomes against
+                # Alien Biomes' default world
+                s2a = make_save_mgs(ctx, mods, ms2["m2t"], "tq1-gen-block", blk, f"re-m2t-{mk}-s{s}", mgs)
+                s2b = make_save_mgs(ctx, mods, ms2["babt"], "tq1-gen-block", blk, f"re-babt-{mk}-s{s}")
+                out.append(pair_batch(ctx, {"a": (ms2["m2t"], s2a), "b": (ms2["babt"], s2b)}, T15B["reps_suite"],
+                                      masks, f"re-t15b-m2-{mk}-s{s}", deadline))
+        return out
+
+    def t15_derive(dirs):
+        fails, meas, k = [], {}, 0
+        if len(dirs) != 2 * len(maps) * len(T15B_SCALES):
+            return {}, [f"{len(dirs)} timed batches, want {2 * len(maps) * len(T15B_SCALES)} (M1t/M0t and M2t/BABt per "
+                        f"map and scale)"], ""
+        for mk in maps:
+            rec = {"blocks": pos[mk]["block"], "block_land": pos[mk]["block_land"]}
+            for s in T15B_SCALES:
+                try:
+                    lim = p1_limits(sec6, "resources-enemies", mk, scale=s) if isinstance(sec6, dict) else {}
+                except GateError as e:
+                    lim = {}
+                    fails.append(f"{mk} scale {s}: {e}")
+                m, f, _ = derive_t15b([dirs[k]], lim, T15B["reps_suite"], pair="m1_m0", label=f"{mk} M1t/M0t scale {s}",
+                                      census_m0=census_of(mk, s) or {})
+                k += 1
+                if not census_of(mk, s):
+                    f = f + [f"tests/baselines holds no M0 census of {mk}'s scale {s} block: run 'earth_test.py baseline'"]
+                fails += [f"{mk} scale {s}: {x}" for x in f]
+                rec[f"scale_{s}"] = m
+                try:
+                    lim2 = p2_limits(sec6, "resources-enemies", mk, s) if isinstance(sec6, dict) else {}
+                except GateError as e:
+                    lim2 = {}
+                    fails.append(f"{mk} scale {s} M2t/BABt: {e}")
+                m2, f2, _ = derive_t15b([dirs[k]], lim2, T15B["reps_suite"], pair="m2_bab",
+                                        label=f"{mk} M2t/BABt scale {s}", census_m0={})
+                k += 1
+                fails += [f"{mk} scale {s} M2t/BABt: {x}" for x in f2]
+                rec.setdefault("m2_bab", {})[f"scale_{s}"] = m2
+            meas[mk] = rec
+        def ratios(node):
+            return ", ".join(f"{mask} {v.get('ratio')}" for mask, v in (node or {}).items() if isinstance(v, dict))
+        return meas, fails, "; ".join(
+            f"{mk}: " + ", ".join(f"M1 scale {s} {ratios(m.get(f'scale_{s}'))}, M2 scale {s} "
+                                  f"{ratios((m.get('m2_bab') or {}).get(f'scale_{s}'))}" for s in T15B_SCALES) for mk, m in meas.items())
+
+    checks["re_t15b"] = SuiteCheck("re_t15b", lambda: key_of({
+        "check": "re_t15b", "sig": [esig(m1t, mk) for mk in maps] + [sig(m0t, "m0t")], "control": ctl,
+        "timing": timing, "config": T15B, "pos": pos, "masks": T15B_MASKS, "build": GAME_BUILD,
+        "borderline": BORDERLINE, "records": TIMED_RECORDS, "earth": [d["mod"], dump_sha],
+        "m2": {"live": RE_M2_LIVE, "pair": "m2_bab", "limits": PAIR_LIMITS.get("m2_bab")}}), t15_run, t15_derive)
+
+    # P4 to P7 and P19 on this build: europe-coast's runners with this milestone's labels, so the evidence is
+    # this milestone's own and keys on its programs; M1 against M0, then M2 against BAB (TQ2's driver with
+    # Alien Biomes' live copy, with and without Earth) through the same runners
+    parts = [("rt_m1", "re-rt"), ("walker_m1", "re-walk"), ("save_m1", "re-save")]
+    missing = [p for p, _ in parts if p not in checks]
+    if missing:
+        raise GateError(f"europe-coast's exploring checks {missing} are not in the suite table")
+    groups = ("", "-m2")
+
+    def explore_run(deadline):
+        out = []
+        for suffix in groups:
+            extra = {}
+            if suffix:
+                ms2 = m2_modsets()
+                extra = {"earth_ms": ms2["m2d"], "base_ms": ms2["babd"]}
+            for name, label in parts:
+                out += checks[name].run_fn(deadline, label=label + suffix, **extra)
+        return out
+
+    def explore_derive(dirs):
+        fails, meas, k = [], {}, 0
+        n = {"rt_m1": 2 * RT_REPS, "walker_m1": 2, "save_m1": 2}
+        if len(dirs) != len(groups) * sum(n.values()):
+            return {}, [f"{len(dirs)} exploring runs, want {len(groups) * sum(n.values())} (M1/M0 and M2/BAB)"], ""
+        for suffix in groups:
+            for name, _ in parts:
+                part = dirs[k:k + n[name]]
+                k += n[name]
+                m, f, _ = checks[name].derive_fn(part)
+                meas[name + suffix.replace("-", "_")] = m
+                fails += [f"{name}{' M2/BAB' if suffix else ''}: {x}" for x in f]
+        return meas, fails, "; ".join(f"{k_}: {v if not isinstance(v, dict) else {a: b for a, b in list(v.items())[:4]}}"
+                                      for k_, v in meas.items())
+
+    checks["re_explore"] = SuiteCheck("re_explore", lambda: key_of({
+        "check": "re_explore", "keys": [checks[p].key_fn() for p, _ in parts], "m2_live": RE_M2_LIVE}), explore_run,
+        explore_derive)
+
+
+def re_runner_controls():
+    """Offline positive controls of the milestone's runner (no game): the target mirror, the footprint,
+    the centre fold and the component count each catch what they must."""
+    cfg = tnconfig.load()
+    rows, offsets, reg = re_rows()
+    out = {}
+    kiruna = next(r for r in rows if r["id"] == "iron_kiruna_malmberget")
+    t1, t2 = re_target(cfg, kiruna, "europe", 1024), re_target(cfg, kiruna, "europe", 4096)
+    out["re: the target grows with distance (ramp and vanilla's curve)"] = (t2 > t1, [round(t1), round(t2)])
+    out["re: no target inside the fade-in"] = (re_target(cfg, kiruna, "europe", 100) == 0, "")
+    out["re: the footprint is floored at scale 1 and capped"] = (
+        re_footprint(cfg, kiruna, 1) == min(max(kiruna["radius_px"], cfg["hotspots"]["floor_tiles"]), kiruna["cap_px"]),
+        "")
+    a = re_centre_px(cfg, reg[kiruna["id"]], 1000)
+    b = re_centre_px(cfg, reg[kiruna["id"]], 1002)
+    tu, tv = re_table_px(cfg, reg[kiruna["id"]])
+    out["re: the fold moves the centre per seed, within the jitter"] = (
+        a != b and math.hypot(a[0] - tu, a[1] - tv) * cfg["regions"]["km_per_px"] <= reg[kiruna["id"]]["jitter_km"] +
+        1e-6, [a, b])
+    out["re: two separate blobs are two components"] = (
+        re_components({"rows": ["1*2 0*3 1*1", "1*1 0*5", "0*6"]}) == 2, "")
+    out["re: a diagonal touch is one component"] = (re_components({"rows": ["1*1 0*1", "0*1 1*1"]}) == 1, "")
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ waterways
+
+# Design section 10, milestone 0: per-map, per-scale waterway sets from tools/build_waterways.py
+# (data-src/waterways/, with its manifests), each map's v2 entry wrapping v1 in the dams and carves
+# through the folded scale, the water-shallow ford hook behind tn_on and the canals switch. The FG
+# rows read the M1 dump and the generator and run two small scenario probes; the suite dumps the
+# chunks along every waterway with tools/mods/ea-ww-probe (S4's corridor method) and judges them with
+# nav.py.
+WW_T5_SCALES = (1, 2, 3, 4, 5, 6)
+WW_FORD_SCALES = (1, 6)
+WW_WIDTH_SCALES = (1, 3, 6)
+WW_T1_SCALES = (1, 3, 6)
+WW_T7_SCALES = (1, 6)
+WW_V2_SCALES = (1, 3, 6)
+WW_M3_SCALES = (1, 6)
+WW_T3_SCALES = (1, 6)
+WW_PAD_TILES = 24                # corridor dumps: every chunk within hw + 24 tiles of a polyline (S4)
+WW_FORD_PAD = 40                  # a ford's dump: its rectangle plus this many tiles each way
+WW_START_RADIUS = 150             # T7 (d): the start disc the walk covers
+WW_T7_BOX = WW_START_RADIUS + 40  # T7: the corridor dump around each moved spawn, in tiles each way
+WW_MASK_SHARE = 0.05              # T1: the masked share (thin water and corridors) stays at most 5 percent
+WW_PATHS = 200                    # T15e driver 2: path requests per site (PD)
+WW_PATH_TICKS = 1800              # their deadline
+WW_WIDTH_TOL = 1                  # T5 widths: within 1 tile of the plan's width
+WW_TWO_WAY = ("gibraltar", "dover", "great_belt")   # the plan's two-way straits (11 tiles; section 10)
+# T5's bend criterion (design section 10): "basins exist for the Dardanelles at every scale and for the
+# Rhine, the Garonne and the Little Belt at scale 6 (S4)", by feature id and scale
+WW_REQUIRED_BASINS = {"dardanelles": (1, 2, 3, 4, 5, 6), "little_belt": (6,), "rhine": (6,), "garonne": (6,)}
+# The fords whose banks the generator could not clear of the coast detail (manifest bank_margin_px), by
+# (map, scale, river, interval): each may fail T5's ford check at the suite's seed only where a bank
+# reads water in the world, and is named in the design notes (waterways: a ford on every interval); any
+# other ford must pass
+WW_FORDS_EXCUSED = {("europe", 1, "dnieper", 6), ("europe", 2, "dnieper", 9), ("europe", 3, "dnieper", 9),
+                    ("europe", 4, "dnieper", 9), ("europe", 5, "dnieper", 9), ("europe", 6, "dnieper", 9),
+                    ("atlantic", 1, "zambezi", 1), ("atlantic", 1, "amazon", 8), ("olde_world", 2, "yangtze", 6),
+                    ("olde_world", 3, "zambezi", 1), ("olde_world", 4, "yenisei", 16)}
+WW_WIDTH_TRIES = (0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8)   # where in a ford interval a cross-section is tried
+WW_PROBE_TICKS = 3
+WW_LABEL = "ww"
+WW_SHALLOW = "water-shallow"
+
+
+def ww_cfg(cfg):
+    w = cfg.get("waterways")
+    if not isinstance(w, dict):
+        raise GateError("config.lua has no waterways group")
+    return w
+
+
+def ww_maps(cfg):
+    sets = ww_cfg(cfg).get("sets") or {}
+    return [mk for mk in tnconfig.map_keys(cfg) if mk in sets]
+
+
+_WW_MAN = {}
+
+
+def ww_manifest(mk):
+    if mk not in _WW_MAN:
+        p = REPO / "data-src" / "waterways" / f"manifest-{mk}.json"
+        if not p.exists():
+            raise GateError(f"{p.relative_to(REPO).as_posix()} is missing: run 'python tools/build_waterways.py emit'")
+        _WW_MAN[mk] = json.loads(p.read_text(encoding="utf-8"))
+    return _WW_MAN[mk]
+
+
+def ww_scale(mk, s):
+    rec = (ww_manifest(mk).get("scales") or {}).get(str(s))
+    if rec is None:
+        raise GateError(f"manifest-{mk}.json holds no scale {s}")
+    return rec
+
+
+def ww_num(v):
+    return f"{float(v):.9g}"
+
+
+def ww_by_scale(cfg, names):
+    """waterways.lua's pick of a set by the folded scale, as text: if(tn_scale == k, set_k, ...)."""
+    vals = cfg["scales"]["values"]
+    text = names[vals[-1] - 1]
+    for s in reversed(vals[:-1]):
+        text = f"if({cfg['keys']['scale']} == {ww_num(s)}, {names[s - 1]}, {text})"
+    return text
+
+
+def ww_hook_text(cfg, original=None):
+    """The water-shallow hook's text data-final-fixes.lua writes (Stable hooks; A-2): the ford key,
+    joined from climate-tiles by the marsh water-shallow key, in one max() with the tile's own
+    autoplace where another mod gives it one (its off value)."""
+    H = cfg["hooks"]
+    F = H["fords"]
+    gate = f"{cfg['keys']['on']} > {ww_num(H['threshold'])}"
+    keys = [F["key"]]
+    TL = cfg.get("tiles")
+    if TL:
+        keys.append(TL["marsh"]["water_shallow"]["key"])
+    if original:
+        off = f"({original})"
+        return f"if({gate}, max({', '.join(keys + [off])}), {off})"
+    on = keys[0] if len(keys) == 1 else f"max({', '.join(keys)})"
+    return f"if({gate}, {on}, {F['off']})"
+
+
+def ct_hook_text(cfg, name, original=None, ab=True):
+    """The text data-final-fixes.lua writes on a tile climate-tiles hooks (Stable hooks; A-2), or None
+    for any other tile: water-mud around the marsh key (Alien Biomes' inland shallows join the max()
+    and are the off value where AB defines them); with AB (ab=True: M2 against BAB) each vanilla land
+    tile, (score) + its key behind the gate and -inf off, and each non-adopted AB land tile, (score) +
+    the exclusion key behind the gate and its own score off; without AB (ab=False: M1 against M0) the
+    marsh grass tile, (score) + the marsh grass key behind the gate and its own score off."""
+    TL = cfg.get("tiles")
+    if not TL:
+        return None
+    gate = f"{cfg['keys']['on']} > {ww_num(cfg['hooks']['threshold'])}"
+    M = TL["marsh"]["water_mud"]
+    if name == M["tile"]:
+        if original:
+            off = f"({original})"
+            return f"if({gate}, max({M['key']}, {off}), {off})"
+        return f"if({gate}, {M['key']}, {M['off']})"
+    if not original:
+        return None
+    G = TL["marsh"].get("grass")
+    if not ab:
+        if G and name == G["tile"]:
+            return f"if({gate}, ({original}) + {G['key']}, ({original}))"
+        return None
+    V = TL["vanilla"]
+    if name in V["keys"]:
+        return f"if({gate}, ({original}) + {V['keys'][name]}, {V['off']})"
+    X = TL["exclude"]
+    if name not in TL["ab_adopted"] and any(name.startswith(pf) for pf in X["prefixes"]):
+        return f"if({gate}, ({original}) + {X['key']}, ({original}))"
+    return None
+
+
+def ct_listed_tiles(cfg):
+    """The tiles Earth may add to Nauvis's tile list (noise rule 2): the ford tile (waterways),
+    and from climate-tiles water-mud for the marshes and, with Alien Biomes, the vanilla land tiles."""
+    out = {((cfg.get("hooks") or {}).get("fords") or {}).get("tile")}
+    TL = cfg.get("tiles")
+    if TL:
+        out.add(TL["marsh"]["water_mud"]["tile"])
+        out.update(TL["vanilla"]["tiles"])
+    return {x for x in out if x}
+
+
+def ww_controls():
+    """waterways' positive controls (no game): A-1's stable-hook allowance takes the ford hook and
+    Nauvis listing the ford tile, and refuses any other change to either; the zero-cost comparison
+    lets Tile's parsed counts differ and nothing else; the oracle context follows the canals switch;
+    and a toggle map's budgets rows measure their off row."""
+    cfg = tnconfig.load()
+    out = {}
+    F = cfg["hooks"]["fords"]
+    tile0 = {"type": "tile", "name": F["tile"], "map_color": {"r": 1, "g": 2, "b": 3}}
+    hooked = dict(tile0, autoplace={"probability_expression": ww_hook_text(cfg)})
+    out["A-1: the ford hook alone on a vanilla tile passes"] = (stable_hook_change(cfg, "tile", F["tile"], hooked, tile0), "")
+    out["A-1: the ford hook plus another change fails"] = (
+        not stable_hook_change(cfg, "tile", F["tile"], dict(hooked, map_color={"r": 0, "g": 0, "b": 0}), tile0), "")
+    out["A-1: a hook text other than the gate's fails"] = (
+        not stable_hook_change(cfg, "tile", F["tile"], dict(tile0, autoplace={"probability_expression": F["key"]}),
+                               tile0), "")
+    planet0 = {"map_gen_settings": {"autoplace_settings": {"tile": {"settings": {"water": {}}}}}}
+    planet1 = {"map_gen_settings": {"autoplace_settings": {"tile": {"settings": {"water": {}, F["tile"]: {}}}}}}
+    planet2 = {"map_gen_settings": {"autoplace_settings": {"tile": {"settings": {"water": {}, "lab-dark-1": {}}}}}}
+    out["A-1: Nauvis listing the ford tile passes"] = (stable_hook_change(cfg, "planet", "nauvis", planet1, planet0), "")
+    out["A-1: Nauvis listing another tile fails"] = (not stable_hook_change(cfg, "planet", "nauvis", planet2, planet0), "")
+
+    def prog(tile_expr, ent_expr=5, ent_ops=9, cliff_expr=5):
+        return {"tile": {"operations": 9, "registers": 4, "complexity": 100, "expressions": tile_expr, "unique": 3},
+                "entity": {"operations": ent_ops, "registers": 4, "complexity": 80, "expressions": ent_expr, "unique": 3},
+                "cliff": {"operations": 9, "registers": 4, "complexity": 30, "expressions": cliff_expr, "unique": 3}}
+    out["zero cost: Tile parsed counts may differ"] = (zero_cost_diffs(prog(10), prog(12)) == [], "")
+    # trees-forests: the folded tree hooks join Entity's parsed counts; its operations still may not differ
+    out["zero cost: Entity parsed counts may differ"] = (zero_cost_diffs(prog(10), prog(10, 6)) == [], "")
+    out["zero cost: Entity operations may not"] = (bool(zero_cost_diffs(prog(10), prog(10, 5, 10))), "")
+    out["zero cost: Cliff parsed counts may not"] = (bool(zero_cost_diffs(prog(10), prog(10, cliff_expr=6))), "")
+    T = cfg["toggles"]["canals"]
+    mk = T["maps"][0]
+    out["oracle context: canals on reads true"] = (oracle_context(cfg, {T["preset_key"]: T["on"]}, mk).get("canals") is True, "")
+    out["oracle context: canals off reads false"] = (oracle_context(cfg, {T["preset_key"]: T["off"]}, mk).get("canals") is False,
+                                                     "")
+    out["budgets: a toggle map measures its off rows"] = (
+        any(off for m, s, off in budget_jobs(cfg, [mk]) if m == mk), "")
+    return out
+
+
+def stable_hook_change(cfg, t, n, earth, base, ab=False):
+    """True when a vanilla (or, against BAB, an Alien Biomes) prototype differs from the comparator's
+    by a stable hook alone (ARCHITECTURE.md, "Stable hooks"; A-1 keeps default worlds vanilla because
+    each hook's gate folds off there): from waterways the ford tile's autoplace wrapped in the gated
+    hook, from climate-tiles the marsh, vanilla-tile and exclusion hooks (ct_hook_text), and Nauvis
+    listing the tiles Earth may add (ct_listed_tiles; noise rule 2). ab=True compares M2 with
+    BAB, where the Alien Biomes hooks apply; ab=False M1 with M0, where the marsh grass hook does."""
+    import copy
+    F = (cfg.get("hooks") or {}).get("fords") or {}
+    if not F or not cfg.get("waterways") or not isinstance(earth, dict) or not isinstance(base, dict):
+        return False
+    # trees-forests: the great-forests hook on living trees, the restored vanilla trees, rocks, decals and
+    # plants beside Alien Biomes, and Nauvis listing the restored entities and decoratives
+    if cfg.get("trees") and (t in ("tree", "simple-entity", "optimized-decorative") or
+                             (t == "planet" and n == "nauvis" and tf_planet_change(cfg, earth, base))):
+        return True if t == "planet" else tf_hook_change(cfg, t, n, earth, base)
+    if t == "tile":
+        a, b = dict(earth), dict(base)
+        ea, ba = a.pop("autoplace", None) or {}, b.pop("autoplace", None) or {}
+        orig = ba.get("probability_expression")
+        orig = orig if orig not in (None, "") else None
+        text = ww_hook_text(cfg, orig) if n == F.get("tile") else ct_hook_text(cfg, n, orig, ab=ab)
+        if text is None:
+            return False
+        want = dict(ba, probability_expression=text)
+        return a == b and ea == want
+    if t == "planet" and n == "nauvis":
+        a, b = copy.deepcopy(earth), copy.deepcopy(base)
+        try:
+            sa = a["map_gen_settings"]["autoplace_settings"]["tile"]["settings"]
+            sb = b["map_gen_settings"]["autoplace_settings"]["tile"]["settings"]
+        except (KeyError, TypeError):
+            return False
+        if not isinstance(sa, dict) or not isinstance(sb, dict):
+            return False
+        added = [k for k in sa if k not in sb]
+        if not added or any(k not in ct_listed_tiles(cfg) for k in added):
+            return False
+        for k in added:
+            sa.pop(k)
+        return a == b
+    return False
+
+
+def outermost_if(text):
+    """True when `text` is one if(...) call whose closing parenthesis is the text's last character."""
+    if not text.startswith("if(") or not text.endswith(")"):
+        return False
+    depth = 0
+    for i, ch in enumerate(text):
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+            if depth == 0 and i != len(text) - 1:
+                return False
+    return depth == 0
+
+
+def ww_pen(ctx, cfg, mk, scale, canals=True, extra=None, cliffs=True, label=None, city=None):
+    """A map's preset as the M1 dump holds it, at `scale`, with the ford key at the map's set for that
+    scale, the canals switch on or off and the city offset pinned to 0 (geo = world), as a full MGS
+    file (U10). `extra` overrides keys (a test redirect). With `city` (a per-save city number, as
+    presets.lua bakes it from the spawn-city setting) the offset is not pinned: the preset's own city
+    offset names stay, and the map's city key holds that number, so the mod's city fold places the
+    spawn (T7)."""
+    pname, g = map_preset(cfg, mk)
+    pen = dict(preset_pen(ctx.shared["dump_m1"], pname))
+    if not pen:
+        raise GateError(f"the M1 dump holds no preset {pname}")
+    K, W, T = cfg["keys"], ww_cfg(cfg), cfg["toggles"]["canals"]
+    pen[K["scale"]] = int(scale)
+    pen[K["fords"]] = W["sets"][mk]["fords"][int(scale) - 1]
+    pen[K["canals"]] = T["on"] if canals else T["off"]
+    if city is None:
+        pen[g["cx"]], pen[g["cy"]] = 0, 0
+    else:
+        if not g.get("city"):
+            raise GateError(f"config.lua gives {mk} no city fold: no per-save city key to select a city by")
+        pen[g["city"]] = int(city)
+    pen.update(extra or {})
+    body = {"property_expression_names": pen}
+    if not cliffs:
+        body["cliff_settings"] = NO_CLIFFS
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"{label or 'ww'}-{mk}-s{int(scale)}-c{int(bool(canals))}{'' if cliffs else '-nocliffs'}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def lua_lit(v):
+    """A Python value as a Lua literal (the probe's staged spec): tables, strings, numbers, booleans."""
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    if isinstance(v, int):
+        return str(v)
+    if isinstance(v, float):
+        return repr(v)
+    if isinstance(v, str):
+        if not (v.isascii() and v.isprintable()):
+            raise GateError(f"cannot stage {v!r} in a probe spec")
+        return json.dumps(v)
+    if isinstance(v, dict):
+        return "{" + ", ".join(f"[{lua_lit(k)}] = {lua_lit(x)}" for k, x in v.items()) + "}"
+    if isinstance(v, (list, tuple)):
+        return "{" + ", ".join(lua_lit(x) for x in v) + "}"
+    raise GateError(f"cannot stage {type(v).__name__} in a probe spec")
+
+
+def stage_ww_probe(ctx, tag, jobs):
+    """A staged copy of tools/mods/ea-ww-probe holding `jobs` in its ww-spec.lua (test mods get every
+    position from the runner at run time)."""
+    src = HERE / "mods" / "ea-ww-probe"
+    dst = ctx.out / "stage" / f"ea-ww-probe-{tag}"
+    shutil.copytree(src, dst, dirs_exist_ok=True)
+    (dst / "ww-spec.lua").write_text("return " + lua_lit({"label": WW_LABEL, "jobs": jobs}) + "\n",
+                                     encoding="utf-8", newline="\n")
+    return dst
+
+
+def ww_probe_modset(ctx, mods, tag, jobs, live=()):
+    """M1 (or M1 plus live copies) plus a staged probe, prepared (G7)."""
+    stage = stage_ww_probe(ctx, tag, jobs)
+    if live:
+        z = mods.build_zip()
+        ms = mods.make(f"ea-{tag}-{mods.zip_sha[:8]}-{folder_hash(stage)}", [z, stage], from_live=live)
+    else:
+        ms = mods.with_mods(tag, [stage])
+    mods.prepare(ms, tag)
+    return ms
+
+
+def ww_read(run_dir, job):
+    f = Path(run_dir) / "script-output" / "ea-ww-probe" / f"{WW_LABEL}-{job}.json"
+    if not f.exists():
+        raise GateError(f"{run_dir}: the waterway probe wrote no {f.name}")
+    return json.loads(f.read_text(encoding="utf-8"))
+
+
+def chunks_along(P, reach):
+    """The chunks within `reach` tiles of a polyline (geo tiles = world tiles: the offset is pinned)."""
+    import math as _m
+    out = set()
+    for (x0, y0), (x1, y1) in zip(P[:-1], P[1:]):
+        L = _m.hypot(x1 - x0, y1 - y0)
+        n = max(int(L // 16), 1)
+        for k in range(n + 1):
+            x, y = x0 + (x1 - x0) * k / n, y0 + (y1 - y0) * k / n
+            for cx in range(int(_m.floor((x - reach) / 32)), int(_m.floor((x + reach) / 32)) + 1):
+                for cy in range(int(_m.floor((y - reach) / 32)), int(_m.floor((y + reach) / 32)) + 1):
+                    out.add((cx, cy))
+    return sorted(out)
+
+
+def chunks_box(x0, y0, x1, y1):
+    import math as _m
+    return [(cx, cy) for cx in range(int(_m.floor(x0 / 32)), int(_m.floor(x1 / 32)) + 1)
+            for cy in range(int(_m.floor(y0 / 32)), int(_m.floor(y1 / 32)) + 1)]
+
+
+def ford_box(fd):
+    (cx, cy), r = fd["centre"], fd["half_width"] + WW_FORD_PAD
+    return cx - r, cy - r, cx + r, cy + r
+
+
+def ford_ends(f, fd):
+    """Two points on the river's shipped centreline 2 tiles beyond each end of a ford, where the ford's
+    placement keeps the path straight within a tile (the channel check runs between them)."""
+    import numpy as np
+    import build_waterways as bwm
+    P = np.asarray(f["polyline_geo"], float)
+    out = []
+    for d in (-1, 1):
+        C, _, _ = bwm.point_at(P, fd["arc_tiles"] + d * (fd["half_length"] + 2))
+        out.append((float(C[0]), float(C[1])))
+    return out
+
+
+def ford_path(f, fd):
+    """The river's shipped centreline through a ford, one point per tile of path from 6 tiles before
+    the ford to 6 beyond it: T5 counts the ford's length along the river itself, which on a bending
+    reach (a ford widened by its bend) leaves the tangent line."""
+    import numpy as np
+    import build_waterways as bwm
+    P = np.asarray(f["polyline_geo"], float)
+    hl = int(fd["half_length"])
+    out = []
+    for k in range(-hl - 6, hl + 7):
+        C, _, _ = bwm.point_at(P, fd["arc_tiles"] + k)
+        out.append((float(C[0]), float(C[1])))
+    return out
+
+
+def ford_box_holds_end(f, fd):
+    """A river end inside a ford's dump box: a walk can go round the river there, so the positive
+    control (no crossing with the ford counted as water) cannot hold and is not judged."""
+    x0, y0, x1, y1 = ford_box(fd)
+    return any(x0 <= p[0] <= x1 and y0 <= p[1] <= y1 for p in (f["polyline_geo"][0], f["polyline_geo"][-1]))
+
+
+def corridor_jobs(mk, s, kinds, fords=False):
+    """One tiles job per waterway feature of `kinds` (its corridor's chunks), or per ford."""
+    jobs = []
+    for f in ww_scale(mk, s)["features"]:
+        if f["kind"] not in kinds:
+            continue
+        if fords:
+            for i, fd in enumerate(f.get("fords") or []):
+                jobs.append({"kind": "tiles", "name": f"ford-{f['id']}-{i}",
+                             "chunks": [list(c) for c in chunks_box(*ford_box(fd))]})
+        else:
+            jobs.append({"kind": "tiles", "name": f"{f['kind']}-{f['id']}",
+                         "chunks": [list(c) for c in chunks_along(f["polyline_geo"], f["hw_tiles"] + WW_PAD_TILES)]})
+    return jobs
+
+
+def nav_raster(run_dir, job):
+    import nav
+    return nav.chunk_raster(ww_read(run_dir, job))
+
+
+def square_of(cfg, f):
+    W = ww_cfg(cfg)
+    return W["two_way_tiles"] if f.get("width_class") == "two_way" else W["floor_tiles"]
+
+
+# -- FG rows
+
+def row_ww_dump_facts(ctx, mods, sec6, row, cache):
+    """T13, T16 (FG; waterways): the water-shallow hook is exactly the gate if() around the ford key,
+    outermost (A-2), its off value -inf without Alien Biomes; Nauvis lists the tile; the gate, the ford
+    key and the canals switch's neutral bodies hold their values; each preset sets the gate on, points
+    the ford key at its map's ford set for the startup scale and bakes the canals switch from the
+    setting; every entry version that composes the waterways wraps its previous version and picks
+    every scale's waterway, canal and dam set by name through the folded scale (no per-tile scale
+    condition), and no other Earth body names a set; each set binds X and Y to its own version's geo
+    tiles; the canals fallback equals what the presets bake. From climate-tiles a version whose
+    previous version already composes the waterways wraps that version's own composition (its
+    waterway wrapper removed), with the version's shore body in place of the transfer; from
+    resources-enemies a version with an offshore stamp wraps the whole in if(ev < 0, min(ev, stamp
+    key), ev)."""
+    cfg = mods.cfg
+    d1 = ctx.shared.get("dump_m1")
+    if d1 is None:
+        row.fails.append("no M1 dump")
+        return
+    fails = row.fails
+    K, H, W = cfg["keys"], cfg["hooks"], ww_cfg(cfg)
+    F = H["fords"]
+    ne = d1.get("noise-expression") or {}
+    tile = (d1.get("tile") or {}).get(F["tile"]) or {}
+    text = (tile.get("autoplace") or {}).get("probability_expression")
+    if text != ww_hook_text(cfg):
+        fails.append(f"{F['tile']} autoplace {text!r}, want {ww_hook_text(cfg)!r}")
+    if not outermost_if(str(text or "")):
+        fails.append(f"the {F['tile']} hook's outermost node is not the gate if(): {str(text)[:80]!r}")
+    settings = ((((d1.get("planet") or {}).get("nauvis") or {}).get("map_gen_settings") or {})
+                .get("autoplace_settings") or {}).get("tile", {}).get("settings") or {}
+    if F["tile"] not in settings:
+        fails.append(f"Nauvis does not list {F['tile']} (noise skill rule 2)")
+    for name, want in ((K["on"], ww_num(H["gate_off"])), (F["key"], F["off"]),
+                       (cfg["neutral"]["one"], ww_num(H["gate_on"])), (cfg["neutral"]["zero"], ww_num(H["gate_off"]))):
+        got = str((ne.get(name) or {}).get("expression"))
+        if got != want:
+            fails.append(f"{name} expression {got!r}, want {want!r}")
+    tg = cfg["toggles"]["canals"]
+    set_names = set()
+    for mk in ww_maps(cfg):
+        for v in tnconfig.geography_versions(cfg)[mk]:
+            set_names.update(tnconfig.waterway_names(v))
+    entries = {}
+    for mk in ww_maps(cfg):
+        pname, g = map_preset(cfg, mk)
+        pen = preset_pen(d1, pname)
+        s = int(pen.get(K["scale"], 0))
+        sets = W["sets"][mk]
+        if pen.get(K["on"]) != H["gate_on"]:
+            fails.append(f"preset {pname} sets {K['on']} to {pen.get(K['on'])!r}, want {H['gate_on']}")
+        if pen.get(K["fords"]) != sets["fords"][s - 1]:
+            fails.append(f"preset {pname} points {K['fords']} at {pen.get(K['fords'])!r}, want {sets['fords'][s - 1]}")
+        if pen.get(K["canals"]) != tg["on"]:
+            fails.append(f"preset {pname} bakes {K['canals']} {pen.get(K['canals'])!r} at default settings, want {tg['on']}")
+        if str((ne.get(K["canals"]) or {}).get("expression")) != str(pen.get(K["canals"])):
+            fails.append(f"the fallback {K['canals']} {(ne.get(K['canals']) or {}).get('expression')!r} is not what "
+                         f"{pname} bakes")
+        versions = tnconfig.geography_versions(cfg)[mk]
+        for i, gv in enumerate(versions):
+            vsets = tnconfig.waterways_of(gv)
+            if not vsets or i == 0:
+                continue
+            body = ne.get(gv["entry"]) or {}
+            loc = body.get("local_expressions") or {}
+            # the waterway composition around the rest of this version's own composition, which is the
+            # previous version's re-bound to this version's names (every version takes names of its
+            # own): the previous body with each of its own names, and its spawn names,
+            # renamed; where the previous version composes the waterways itself, its wrapper is removed
+            # first, and a version with a shore body (climate-tiles) reads it in place of the transfer
+            prev_v = versions[i - 1]
+            ren = {prev_v[r]: gv[r] for r in tnconfig.GEOGRAPHY_NAMES}
+            psp, nsp = tnconfig.spawn_of(prev_v), tnconfig.spawn_of(gv)
+            if psp and nsp:
+                ren.update({psp[n]: nsp[n] for n in tnconfig.SPAWN_NAMES})
+            if prev_v.get("shore") and gv.get("shore"):
+                ren[prev_v["shore"]] = gv["shore"]
+            pat = re.compile(r"(" + "|".join(re.escape(n) for n in sorted(ren, key=len, reverse=True)) + r")")
+            pb = ne.get(prev_v["entry"]) or {}
+            pexpr, ploc = str(pb.get("expression")), dict(pb.get("local_expressions") or {})
+            if prev_v.get("fields"):
+                # a previous version with an offshore stamp (resources-enemies) holds the rest in ev
+                pexpr = str(ploc.pop("ev", pexpr))
+            if tnconfig.waterways_of(prev_v):
+                head, tail = "min(max(", ", dam), carve, canal)"
+                if pexpr.startswith(head) and pexpr.endswith(tail):
+                    pexpr = pexpr[len(head):-len(tail)]
+                for k in ("dam", "carve", "canal"):
+                    ploc.pop(k, None)
+            inner = pat.sub(lambda m_: ren[m_.group(1)], pexpr)
+            want = {k: pat.sub(lambda m_: ren[m_.group(1)], str(v)) for k, v in ploc.items()}
+            if gv.get("shore") and not prev_v.get("shore"):
+                o = ww_num(cfg["coast"]["transfer_offset"])
+                transfer = f"min(if(cv > 0, {K['scale']} * cv + {o}, {K['scale']} * cv - {o}), {gv['far']})"
+                inner = inner.replace(transfer, gv["shore"])
+                want.pop("cv", None)
+            on = f"{K['canals']} > {ww_num(H['threshold'])}"
+            want.update({"dam": f"if({on}, -inf, {ww_by_scale(cfg, vsets['dams'])})",
+                         "carve": ww_by_scale(cfg, vsets["ww"]),
+                         "canal": f"if({on}, {ww_by_scale(cfg, vsets['canals'])}, inf)"})
+            expr_want = f"min(max({inner}, dam), carve, canal)"
+            if gv.get("fields"):
+                # resources-enemies: the stamp wraps the rest last, through the version's stamp key
+                want["ev"] = expr_want
+                expr_want = f"if(ev < 0, min(ev, {gv['fields']}), ev)"
+            if body.get("expression") != expr_want or loc != want:
+                fails.append(f"{gv['entry']}: {body.get('expression')!r} with locals {sorted(loc)} is not the "
+                             f"waterway composition around {prev_v['entry']}'s, re-bound to {gv['entry']}'s names")
+            entries[gv["entry"]] = mk
+            for kind in ("ww", "canals", "dams", "fords"):
+                for n in vsets[kind]:
+                    b = ne.get(n) or {}
+                    if (b.get("local_expressions") or {}) != {"X": gv["gx"], "Y": gv["gy"]}:
+                        fails.append(f"{n} binds {b.get('local_expressions')}, want X = {gv['gx']}, Y = {gv['gy']}")
+    prefix = cfg["identity"]["noise_prefix"]
+    for name, b in ne.items():
+        if not name.startswith(prefix) or name in entries:
+            continue
+        refs = set(expr_refs(b.get("expression") or ""))
+        for v in (b.get("local_expressions") or {}).values():
+            refs |= set(expr_refs(v if isinstance(v, str) else ""))
+        bad = sorted(refs & set_names)
+        if bad:
+            fails.append(f"{name} names the waterway sets {bad[:3]}: only each map's entry and the ford key may")
+    row.detail = (f"hook {ww_hook_text(cfg)!r} outermost, Nauvis lists {F['tile']}; {len(entries)} entries pick "
+                  f"{len(set_names)} sets by the folded scale; presets set the gate, fords and canals")
+
+
+def row_ww_emit(ctx, mods, sec6, row, cache):
+    """T16 (FG): tools/build_waterways.py regenerates all 18 waterway files and each map's river-safe
+    starts file twice, each byte-identical to the committed file; each committed manifest records its
+    files' sha256; the rivers equal APPROVALS 7's adopted rows (JI-03). numpy is imported here only, as
+    geo_emit does."""
+    import build_waterways
+    cfg = mods.cfg
+    maps = ww_maps(cfg)
+    row.fails += build_waterways.check(cfg, maps)
+    row.fails += build_waterways.river_findings(cfg)
+    n = 0
+    for mk in maps:
+        recs = [ww_scale(mk, s) for s in cfg["scales"]["values"]] + [ww_manifest(mk).get("starts_file") or {}]
+        for rec in recs:
+            if not rec.get("file"):
+                row.fails.append(f"manifest-{mk}.json records no starts file (rerun build_waterways.py emit)")
+                continue
+            p = REPO / rec["file"]
+            n += 1
+            if not p.exists() or sha256_file(p) != rec["sha256"]:
+                row.fails.append(f"{rec['file']}: its sha256 is not the one manifest-{mk}.json records")
+    row.detail = (f"build_waterways.py check: {n} files (the waterway sets and each map's river-safe starts), two "
+                  f"emissions byte-identical; rivers bound to APPROVALS 7")
+
+
+def ww_t3_places(mk, scale):
+    """(places, tiles) of a map's strait, isthmus and canal oracle rows at a scale."""
+    import earthgeo as eg
+    import oracle
+    mref = eg.MapRef(mk)
+    O = oracle.load_oracle(mk, TESTS / "oracle")
+    places = [p for p in O["places"] if p["kind"] in oracle.WATERWAY_KINDS]
+    return places, [tuple(oracle.place_tile(mref, p, str(scale))) for p in places]
+
+
+def ww_t3_judge(label, dirs_on_off, places, pts):
+    """The places of a canals-on and a canals-off run against their expectations (expect_when canals):
+    water means a player-blocking water tile there and an elevation below 0. (meas, fails)."""
+    import oracle
+    fails, meas = [], {}
+    for d, on in zip(dirs_on_off, (True, False)):
+        vals = point_values(read_dump(d, "t3"))
+        ok = bad = 0
+        for p, t in zip(places, pts):
+            want = oracle.effective_expect(p, {"canals": True} if on else {}).get("water")
+            if want is None:
+                continue
+            v = vals.get(t, {})
+            tile, elev = str(v.get("tile")), v.get("elevation")
+            got = "water" in tile and tile != WW_SHALLOW and elev is not None and elev < 0
+            if got != bool(want):
+                bad += 1
+                fails.append(f"{label} canals {'on' if on else 'off'}: {p['id']} tile {tile} elevation {elev}, want "
+                             f"water {want}")
+            else:
+                ok += 1
+        meas[f"canals_{'on' if on else 'off'}"] = {"pass": ok, "fail": bad}
+        if ok == 0:
+            fails.append(f"{label} canals {'on' if on else 'off'}: no strait, isthmus or canal place carries an "
+                         f"expectation")
+    return meas, fails
+
+
+def row_ww_t3(ctx, mods, sec6, row, cache):
+    """T3 (FG; Europe; scale 6): the strait and canal oracle rows are live: every strait,
+    isthmus and canal place reads its expectation in the real tile and in the elevation, with canals
+    on and with canals off (expect_when canals)."""
+    cfg = mods.cfg
+    mk = cfg["presets"][cfg["preset_order"][0]]["map"]
+    places, pts = ww_t3_places(mk, 6)
+    ms = probe_modset(ctx, mods, "m1ww3")
+    key, newest = common_key(ctx, "ww_t3", {"ms": mods.manifest(ms), "pts": pts, "dump": ctx.shared.get("dump_m1_sha")})
+
+    def live():
+        inst, dirs = ctx.instance, []
+        for on in (True, False):
+            out = ctx.out / f"ww-t3-c{int(on)}"
+            dump_settings(ctx, ms, inst, label="t3", points=";".join(f"{x},{y}" for x, y in pts), names="elevation")()
+            dirs.append(ctx.fh(scenario_args(inst, ms, 4, SEED, ww_pen(ctx, cfg, mk, 6, on)), out, timeout=600).out)
+        return dirs
+
+    def derive(dirs):
+        fails = []
+        for d in dirs:
+            fails += g1(d) + g3(d)
+        meas, f = ww_t3_judge(f"{mk} scale 6", dirs, places, pts)
+        return meas, fails + f, (f"{mk} scale 6 waterway places: canals on {meas.get('canals_on')}, off "
+                                 f"{meas.get('canals_off')} (tile and elevation)")
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def row_ww_ford(ctx, mods, sec6, row, cache):
+    """T5 (FG; one Europe ford at scale 6): the first ford of the longest river with
+    one: a character walks bank to bank through it, and not with its shallow tiles counted as water
+    (the positive control); the ford is 8 tiles long within 1 along the river and spans the carve; a
+    7-tile channel (S4's disc, at any heading) runs along the river through it (ships pass)."""
+    import nav
+    cfg = mods.cfg
+    mk = cfg["presets"][cfg["preset_order"][0]]["map"]
+    rec = ww_scale(mk, 6)
+    pick = next(((f, f["fords"][0]) for f in rec["features"] if f["kind"] == "river" and f.get("fords")), None)
+    if pick is None:
+        row.fails.append(f"{mk} scale 6 has no ford")
+        return
+    f, fd = pick
+    job = {"kind": "tiles", "name": "ford", "chunks": [list(c) for c in chunks_box(*ford_box(fd))]}
+    ms = ww_probe_modset(ctx, mods, "m1wwford", [job])
+    key, newest = common_key(ctx, "ww_ford", {"ms": mods.manifest(ms), "ford": fd, "dump": ctx.shared.get("dump_m1_sha")})
+
+    def live():
+        out = ctx.out / "ww-ford"
+        return [ctx.fh(scenario_args(ctx.instance, ms, WW_PROBE_TICKS, SEED, ww_pen(ctx, cfg, mk, 6)), out,
+                       timeout=600).out]
+
+    def derive(dirs):
+        fails = g1(dirs[0]) + g3(dirs[0])
+        names, layers, idx, x0, y0 = nav_raster(dirs[0], "ford")
+        r = nav.ford_report(names, layers, idx, x0, y0, fd["centre"], fd["tangent"], fd["half_length"],
+                            fd["half_width"] - ww_cfg(cfg)["ford"]["margin_tiles"], square=ww_cfg(cfg)["floor_tiles"],
+                            ends=ford_ends(f, fd), path=ford_path(f, fd))
+        want_len = ww_cfg(cfg)["ford"]["length_tiles"]
+        if not r.get("crosses"):
+            fails.append(f"{f['id']} ford at {fd['centre']}: no walk from bank to bank")
+        if ford_box_holds_end(f, fd):
+            fails.append(f"{f['id']} ford: its dump box holds a river end, so the positive control cannot hold "
+                         f"(pick another ford)")
+        elif r.get("control_crosses"):
+            fails.append(f"{f['id']} ford: the walk still crosses with the ford counted as water (the checker or the "
+                         f"carve is broken)")
+        if abs(r.get("length_tiles", 0) - want_len) > 1:
+            fails.append(f"{f['id']} ford: {r.get('length_tiles')} shallow tiles along the river, want {want_len} +-1")
+        if not r.get("spans"):
+            fails.append(f"{f['id']} ford: {r.get('blocking_tiles_across')} player-blocking tiles across it")
+        if not r.get("channel_through_ford"):
+            fails.append(f"{f['id']} ford: no {r.get('channel_square')}-tile channel runs through it")
+        return r, fails, (f"{mk} scale 6 {f['id']} ford at {fd['centre']}: crosses {r.get('crosses')}, control "
+                          f"{r.get('control_crosses')}, length {r.get('length_tiles')}, spans {r.get('spans')}, "
+                          f"channel {r.get('channel_through_ford')}")
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+# -- suite checks
+
+def ww_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """waterways' suite checks, added to suite_checks' table (design section 10, milestone 0)."""
+    import earthgeo as eg
+    import nav
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    W = ww_cfg(cfg)
+    maps = ww_maps(cfg)
+    eu = cfg["presets"][cfg["preset_order"][0]]["map"]
+    dump_sha = ctx.shared.get("dump_m1_sha")
+
+    def base_key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "dump": dump_sha, "extra": extra or {}})
+
+    def suite_dirs(name, deadline):
+        """Another check's run directories from this suite run, or from the manifest when its key still
+        matches, else a fresh run (owa's rule)."""
+        ent = (ctx.shared.get("suite_runs") or {}).get(name)
+        if not ent:
+            man = SUITES / "waterways.json"
+            rec = ((json.loads(man.read_text(encoding="utf-8")) if man.exists() else {}).get("checks") or {}).get(
+                name) or {}
+            if rec.get("key") == checks[name].key_fn() and rec.get("run_dirs"):
+                ent = [abs_ws(ctx, x) for x in rec["run_dirs"]]
+        return ent or checks[name].run_fn(deadline)
+
+    def probe_runs(tag, plan, live=(), timeout=1800, bench=False):
+        """plan: [(label, map, scale, canals, jobs, extra redirects[, per-save city number])], one probe
+        scenario each, in workers; with a city number the mod's city fold places the spawn (ww_pen)."""
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, (label, mk, s, on, jobs, extra, *city) in enumerate(plan):
+            ms = ww_probe_modset(ctx, mods, f"{tag}{i}", jobs, live)
+            ln = i % PAR_MAX
+            out = ctx.out / f"{tag}-{label}"
+            ticks = max([WW_PROBE_TICKS] + [j.get("deadline_ticks", 0) + 10 for j in jobs])
+            args = scenario_args(lane_instance(ctx, ln), ms, ticks, SEED,
+                                 ww_pen(ctx, cfg, mk, s, on, extra, label=label, city=city[0] if city else None))
+            if bench:
+                args = args + ["--", "--benchmark-verbose", "all"]
+            lanes[ln].append((None, args, out, timeout))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    # T5 (SS; every curated feature on every map; scales 1 to 6; canals on and off; design experiment
+    # 6). Canals on: each river reaches its sea end, each strait and canal runs end to end, through a
+    # channel of 7 tiles (11 for the two-way straits; S4's disc, at any heading) on tiles with water_tile,
+    # fords included. Canals off:
+    # each canal's two seas share no water path, not even 4-connected, and a character walks across its
+    # line; with a map's dam set redirected to a deep negative number (the no-dam control) a dammed
+    # isthmus leaks.
+    t5_plan = []
+    for mk in maps:
+        for s in WW_T5_SCALES:
+            t5_plan.append((f"{mk}-s{s}-on", mk, s, True, corridor_jobs(mk, s, ("river", "strait", "canal")), None))
+            t5_plan.append((f"{mk}-s{s}-off", mk, s, False, corridor_jobs(mk, s, ("canal",)), None))
+            if any(f["kind"] == "dam" for f in ww_scale(mk, s)["features"]):
+                t5_plan.append((f"{mk}-s{s}-nodam", mk, s, False, corridor_jobs(mk, s, ("canal",)),
+                                {W["sets"][mk]["dams"][s - 1]: -1e9}))
+
+    def t5_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(t5_plan):
+            return {}, fails + [f"{len(dirs)} corridor runs, want {len(t5_plan)}"], ""
+        for x, (label, mk, s, on, jobs, extra) in zip(dirs, t5_plan):
+            feats = {f"{f['kind']}-{f['id']}": f for f in ww_scale(mk, s)["features"]}
+            rec = {}
+            for job in jobs:
+                f = feats[job["name"]]
+                names, layers, idx, x0, y0 = nav_raster(x, job["name"])
+                water = nav.layer_mask(names, layers, idx, "water_tile")
+                P = f["polyline_geo"]
+                a, b = nav.to_cell(x0, y0, P[0]), nav.to_cell(x0, y0, P[-1])
+                if on:
+                    k = square_of(cfg, f)
+                    ok = bool(nav.connected_disc(water, a, b, k))
+                    rec[job["name"]] = {"square": k, "connected": ok}
+                    if not ok:
+                        fails.append(f"{mk} scale {s}: {f['kind']} {f['id']} has no {k}-tile channel from end to end")
+                    continue
+                leak4 = bool(nav.connected_at(water, a, b, 1))
+                free = ~nav.layer_mask(names, layers, idx, "player") & (idx >= 0)
+                i = len(P) // 2
+                tx, ty = P[min(i + 1, len(P) - 1)][0] - P[i - 1][0], P[min(i + 1, len(P) - 1)][1] - P[i - 1][1]
+                n = math.hypot(tx, ty) or 1.0
+                off = f["hw_tiles"] + 16
+                pa = nav.to_cell(x0, y0, (P[i][0] - ty / n * off, P[i][1] + tx / n * off))
+                pb = nav.to_cell(x0, y0, (P[i][0] + ty / n * off, P[i][1] - tx / n * off))
+                lab, _ = nav.labels(free)
+                inside = all(0 <= c[0] < free.shape[0] and 0 <= c[1] < free.shape[1] for c in (pa, pb))
+                walk = bool(inside and free[pa] and free[pb] and lab[pa] == lab[pb])
+                rec[job["name"]] = {"water_path_4": leak4, "walkable_across": walk}
+                if extra is None:
+                    if leak4:
+                        fails.append(f"{mk} scale {s}: with canals off {f['id']}'s seas share a water path")
+                    if not walk:
+                        fails.append(f"{mk} scale {s}: with canals off no walk crosses {f['id']}'s isthmus")
+            meas[label] = rec
+        for mk in maps:
+            ctl_runs = [v for k, v in meas.items() if k.startswith(f"{mk}-") and k.endswith("-nodam")]
+            if ctl_runs and not any(r.get("water_path_4") for v in ctl_runs for r in v.values()):
+                fails.append(f"{mk}: no dammed isthmus leaks with its dams redirected away at any scale: the no-dam "
+                             f"control cannot see a leak")
+        n_on = sum(len(v) for k, v in meas.items() if k.endswith("-on"))
+        leaks = [k for k, v in meas.items() if k.endswith("-nodam") and any(r.get("water_path_4") for r in v.values())]
+        return meas, fails, (f"{n_on} feature corridors at scales 1 to 6 on {maps}; canals off closed and walkable; "
+                             f"no-dam controls leaking {leaks}")
+
+    checks["ww_t5"] = SuiteCheck("ww_t5", lambda: base_key("ww_t5", {"plan": [(p[0], len(p[4])) for p in t5_plan]}),
+                                 lambda deadline: probe_runs("ww-t5", t5_plan, timeout=3600), t5_derive)
+
+    # T5 (SS; fords; every ford of every map at scales 1 and 6, on M1 and beside Alien Biomes' live copy
+    # on M2): each ford's walk, positive control, length, span and channel (nav.ford_report), and every
+    # river carries the fords its shipped length asks for, none skipped
+    def fords_plan(m2):
+        return [(f"{mk}-s{s}{'-m2' if m2 else ''}", mk, s, True, corridor_jobs(mk, s, ("river",), fords=True), None)
+                for mk in maps for s in WW_FORD_SCALES]
+
+    def fords_run(deadline):
+        return probe_runs("ww-fords", fords_plan(False), timeout=3600) + \
+            probe_runs("ww-fords-m2", fords_plan(True), live=("alien-biomes", "alien-biomes-graphics"), timeout=3600)
+
+    def fords_derive(dirs):
+        import build_waterways as bwm
+        fails, meas = [], {}
+        plan = fords_plan(False) + fords_plan(True)
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(plan):
+            return {}, fails + [f"{len(dirs)} ford runs, want {len(plan)}"], ""
+        want_len = W["ford"]["length_tiles"]
+        for x, (label, mk, s, on, jobs, extra) in zip(dirs, plan):
+            feats = {f["id"]: f for f in ww_scale(mk, s)["features"] if f["kind"] == "river"}
+            ok, in_lake, excused = 0, [], []
+            for job in jobs:
+                _, rest = job["name"].split("-", 1)
+                fid, i = rest.rsplit("-", 1)
+                f, fd = feats[fid], feats[fid]["fords"][int(i)]
+                names, layers, idx, x0, y0 = nav_raster(x, job["name"])
+                r = nav.ford_report(names, layers, idx, x0, y0, fd["centre"], fd["tangent"], fd["half_length"],
+                                    fd["half_width"] - W["ford"]["margin_tiles"], square=W["floor_tiles"],
+                                    ends=ford_ends(f, fd), path=ford_path(f, fd))
+                # near a river's end a walk goes round it, so the control is judged elsewhere only
+                control = ford_box_holds_end(f, fd) or not r.get("control_crosses")
+                bad = [k for k, v in (("crosses", r.get("crosses")), ("control blocks", control),
+                                      ("length", abs(r.get("length_tiles", 0) - want_len) <= 1),
+                                      ("spans", r.get("spans")), ("channel", r.get("channel_through_ford"))) if not v]
+                # every placed ford must pass: the generator stands each on banks that clear the coast
+                # detail where its interval has them (land at every seed), else marks the ford's margin
+                # (bank_margin_px). Only a ford named in WW_FORDS_EXCUSED, marked
+                # so in the manifest, may fail, and only where a bank reads water in the world; no share
+                if bad:
+                    normal = (-fd["tangent"][1], fd["tangent"][0])
+                    wet = not nav.banks_land(names, layers, idx, x0, y0, fd["centre"], normal, fd["half_width"] + 3)
+                    if wet:
+                        in_lake.append(f"{fid} {i}")
+                    named = (mk, s, fid, int(fd["interval"])) in WW_FORDS_EXCUSED and "bank_margin_px" in fd
+                    if wet and named:
+                        excused.append(f"{fid} {i}")
+                        continue
+                    note = "; a bank reads water in the world" if wet else ""
+                    if "bank_margin_px" in fd:
+                        note += f"; its banks clear the coast fit by {fd['bank_margin_px']} px, within the detail"
+                    fails.append(f"{label} {fid} ford {i} at {fd['centre']}: {bad} ({r.get('length_tiles')} long{note})")
+                else:
+                    ok += 1
+            natural = 0
+            for f in feats.values():
+                # an interval in which every position has a bank that may be water runs through a lake,
+                # a reservoir or an estuary, which no ford spans: accepted and counted only when that is
+                # its one reason; any other skip fails
+                skipped = f.get("fords_skipped") or []
+                nat = [sk for sk in skipped if (sk.get("reasons") or [sk.get("reason")]) == [bwm.NATURAL_WATER]]
+                other = [sk for sk in skipped if sk not in nat]
+                natural += len(nat)
+                if other or len(f.get("fords") or []) + len(nat) != f.get("fords_expected"):
+                    fails.append(f"{label} {f['id']}: {len(f.get('fords') or [])} fords of {f.get('fords_expected')} "
+                                 f"expected, skipped {other or skipped}")
+            meas[label] = {"fords": len(jobs), "pass": ok, "failed_with_a_wet_bank": in_lake,
+                           "excused_by_name": excused, "intervals_in_natural_water": natural}
+        return meas, fails, "; ".join(f"{k}: {v['pass']} of {v['fords']} ({len(v['excused_by_name'])} named fords "
+                                      f"excused, {v['intervals_in_natural_water']} intervals in natural water)"
+                                      for k, v in meas.items())
+
+    checks["ww_fords"] = SuiteCheck("ww_fords", lambda: base_key("ww_fords", {"scales": WW_FORD_SCALES}), fords_run,
+                                    fords_derive)
+
+    # T5 (SS; widths; every map; scales 1, 3 and 6): each river's carve, cut across midway between
+    # consecutive fords (at mid-length with fewer than two), and each strait's and canal's carve, cut
+    # across at mid-passage, measure the width the runner computes from the plan's rules within 1 tile:
+    # a river max(floor, k s) with k by its class in approvals-data.json and config.lua's river_k, a
+    # strait max(F, s, w s / km_per_px) with F 11 for the plan's two-way straits and 7 for the rest and w
+    # its real width in data-src (S4's hw rule, doubled), a canal max(floor, s); read from ww_t5's
+    # canals-on corridor dumps
+    appr_rivers = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(
+        encoding="utf-8"))["rivers"]
+
+    def want_width(mk, s, f):
+        """(width in tiles, basis) by the plan's rules, from the inputs, never from the manifest."""
+        if f["kind"] == "river":
+            cls = next((r.get("class") for r in appr_rivers.get(mk) or [] if r.get("adopted") and
+                        re.sub(r"[^a-z0-9]+", "_", r["name"].lower()).strip("_") == f["id"]), None)
+            if cls not in W["river_k"]:
+                return None, f"no adopted APPROVALS 7 row with a class for {f['id']}"
+            return max(W["floor_tiles"], W["river_k"][cls] * s), f"{cls} river"
+        data = json.loads((REPO / "data-src" / "waterways" / f"{mk}.json").read_text(encoding="utf-8"))
+        if f["kind"] == "strait":
+            t = next((t for t in data["straits"] if t["id"] == f["id"]), None)
+            if t is None:
+                return None, f"no data-src strait {f['id']}"
+            F = W["two_way_tiles"] if f["id"] in WW_TWO_WAY else W["floor_tiles"]
+            return max(F, s, float(t["real_width_km"]) * s / W["km_per_px"]), \
+                ("two-way" if f["id"] in WW_TWO_WAY else "single") + f" strait, {t['real_width_km']} km"
+        return max(W["floor_tiles"], s), "canal"
+
+    def width_samples(f):
+        """Arc positions to cut across: a river's ford intervals (midway, then the WW_WIDTH_TRIES
+        fractions), a strait's or canal's whole passage once (mid-passage first)."""
+        if f["kind"] == "river":
+            arcs = [fd["arc_tiles"] for fd in f.get("fords") or []]
+            return list(zip(arcs[:-1], arcs[1:])) or [(0.0, f["length_tiles"])]
+        return [(0.0, f["length_tiles"])]
+
+    def widths_derive(dirs):
+        import numpy as np
+        import build_waterways as bwm
+        fails, meas = [], {}
+        by_label = {p[0]: x for p, x in zip(t5_plan, dirs)}
+        for mk in maps:
+            for s in WW_WIDTH_SCALES:
+                x = by_label.get(f"{mk}-s{s}-on")
+                if x is None:
+                    fails.append(f"{mk} scale {s}: no corridor dump")
+                    continue
+                rows = {}
+                for f in ww_scale(mk, s)["features"]:
+                    if f["kind"] not in ("river", "strait", "canal"):
+                        continue
+                    want, basis = want_width(mk, s, f)
+                    if want is None:
+                        fails.append(f"{mk} scale {s} {f['kind']} {f['id']}: {basis}")
+                        continue
+                    names, layers, idx, x0, y0 = nav_raster(x, f"{f['kind']}-{f['id']}")
+                    P = np.asarray(f["polyline_geo"], float)
+                    got, natural = [], 0
+                    for a0, a1 in width_samples(f):
+                        # the cross-section nearest the span's middle whose banks are land 1 and 3 tiles
+                        # beyond the carve: a river through a lake or an estuary, or a strait where the
+                        # coast fit's own sea reaches the carve, measures that water there, not the carve
+                        g = None
+                        for frac in WW_WIDTH_TRIES:
+                            C, T, _ = bwm.point_at(P, a0 + (a1 - a0) * frac)
+                            pt, nrm = (float(C[0]), float(C[1])), (-float(T[1]), float(T[0]))
+                            if all(nav.banks_land(names, layers, idx, x0, y0, pt, nrm, want / 2 + o) for o in (1, 3)):
+                                g = nav.section_width_min(names, layers, idx, x0, y0, pt, nrm, want * 3)
+                                break
+                        if g is None:
+                            natural += 1
+                        else:
+                            got.append(g)
+                    off = [g for g in got if abs(g - want) > WW_WIDTH_TOL]
+                    rows[f"{f['kind']}-{f['id']}"] = {"kind": f["kind"], "want": round(want, 3), "basis": basis,
+                                                      "got": got, "in_natural_water": natural}
+                    if off:
+                        fails.append(f"{mk} scale {s} {f['kind']} {f['id']}: cross-sections {off} tiles, want "
+                                     f"{want:.2f} +-{WW_WIDTH_TOL} ({basis})")
+                meas[f"{mk}_s{s}"] = rows
+        by_kind = {k: sum(len(r["got"]) for v in meas.values() for r in v.values() if r["kind"] == k)
+                   for k in ("river", "strait", "canal")}
+        lake = sum(r["in_natural_water"] for v in meas.values() for r in v.values())
+        for k, n in by_kind.items():
+            if not n:
+                fails.append(f"no {k} cross-section had land on both banks: the width check measured no {k}")
+        return meas, fails, (f"cross-sections at scales {WW_WIDTH_SCALES}: {by_kind}; {lake} spans in natural water "
+                             f"skipped")
+
+    checks["ww_widths"] = SuiteCheck("ww_widths", lambda: base_key("ww_widths", {"t5": checks["ww_t5"].key_fn()}),
+                                     lambda deadline: suite_dirs("ww_t5", deadline), widths_derive)
+
+    # T5 (SS; bend rule after simplification), from the manifests: every failing 17-tile stretch of a
+    # shipped polyline lies inside a turning basin, and the basins the criterion names exist on every map
+    # that carries the feature (the Dardanelles at every scale, the Rhine, the Garonne and the Little Belt
+    # at scale 6; S4)
+    def bend_run(deadline):
+        out = ctx.out / "ww-bend"
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "run.json").write_text(json.dumps({"exit": 0, "isolated": True, "error_lines": [], "images": {}}),
+                                      encoding="utf-8")
+        return [out]
+
+    def bend_derive(dirs):
+        fails, meas = [], {}
+        for mk in maps:
+            for s in cfg["scales"]["values"]:
+                for f in ww_scale(mk, s)["features"]:
+                    b = f.get("bend") or {}
+                    if b.get("violations") and not b.get("covered"):
+                        fails.append(f"{mk} scale {s} {f['id']}: {b['violations']} failing stretches outside a basin")
+                    if b.get("basins"):
+                        meas.setdefault(f"{mk}_s{s}", {})[f["id"]] = len(b["basins"])
+        # the criterion's basins (design section 10, milestone 0), on every map that carries the feature at that
+        # scale; Europe carries all four at every scale
+        miss, held = [], {}
+        for mk in maps:
+            for fid, scales in WW_REQUIRED_BASINS.items():
+                for s in scales:
+                    ids = {f["id"] for f in ww_scale(mk, s)["features"]}
+                    if fid not in ids:
+                        if mk == eu:
+                            miss.append(f"{mk} scale {s} {fid} (not carved)")
+                        continue
+                    n = meas.get(f"{mk}_s{s}", {}).get(fid, 0)
+                    held[f"{mk}_{fid}_s{s}"] = n
+                    if not n:
+                        miss.append(f"{mk} scale {s} {fid}")
+        if miss:
+            fails.append(f"the criterion's turning basins are missing: {miss} (the Dardanelles at every scale, the "
+                         f"Rhine, the Garonne and the Little Belt at scale 6)")
+        passages = {f["id"] for f in ww_scale(eu, 1)["features"] if f["kind"] in ("strait", "canal")}
+        if not any(x in passages for x in meas.get(f"{eu}_s1", {})):
+            fails.append(f"{eu}: no strait or canal takes a basin at scale 1: the bend check found nothing to cover "
+                         f"(positive control)")
+        return dict(meas, required_basins=held), fails, (
+            f"basins per map and scale {[(k, sum(v.values())) for k, v in meas.items()]}; the criterion's basins "
+            f"held at {sum(1 for v in held.values() if v)} of {len(held)} map, feature and scale rows")
+
+    checks["ww_bend"] = SuiteCheck("ww_bend", lambda: base_key("ww_bend"), bend_run, bend_derive)
+
+    # T1, T3 (SS; every map): grid T1 at scales 1, 3 and 6 with the corridors masked: the masked share
+    # (thin water plus corridors) at most 5 percent, T1 at its bar, and on Europe every reference land
+    # component of 65 px or more present and separate (T1-e; Sicily from Italy through Messina); the
+    # strait rows of every map are ww_t3's
+    t1_jobs = [(mk, s) for mk in maps for s in WW_T1_SCALES]
+
+    def t1_run(deadline):
+        lanes_ms = [probe_modset(ctx, mods, f"m1wwg{i + 1}") for i in range(PAR_MAX)]
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, (mk, s) in enumerate(t1_jobs):
+            ln = i % PAR_MAX
+            ms, inst = lanes_ms[ln], lane_instance(ctx, ln)
+            mref = eg.MapRef(mk)
+            out = ctx.out / f"ww-grid-{mk}-s{s}"
+            lanes[ln].append((dump_settings(ctx, ms, inst, label="grid", grid=grid_spec(mref, s)),
+                              scenario_args(inst, ms, 4, SEED, ww_pen(ctx, cfg, mk, s, label="ww-grid")), out,
+                              int(600 + 30 * mref.W * mref.H / 1e6)))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def t1_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        for x, (mk, s) in zip(dirs, t1_jobs):
+            mref = eg.MapRef(mk)
+            L, C = grid_land(mref, x, s)
+            rec = t1_eval(mref, L, C, scale=s)
+            bar = map_t1_bar(mk)
+            meas[f"{mk}_s{s}"] = {"agreement": rec["agreement"], "masked_share": rec["masked_share"],
+                                  "masked_px": rec["masked_px"], "islands_65": rec["islands_conn4"].get("65+"),
+                                  "merged_65": rec["islands_65_merged"], "thin_water_became_land": rec["thin_water_became_land"]}
+            if rec["masked_share"] > WW_MASK_SHARE:
+                fails.append(f"{mk} scale {s}: masked share {rec['masked_share']} over {WW_MASK_SHARE}")
+            if rec["agreement"] is None or rec["agreement"] < bar:
+                fails.append(f"{mk} scale {s}: masked agreement {rec['agreement']} under {bar} (T1-a)")
+            if mk == eu and (any(rec["islands_65_missing"]) or any(rec["islands_65_merged"])):
+                fails.append(f"{mk} scale {s}: land components of 65 px or more missing {rec['islands_65_missing']} or "
+                             f"merged {rec['islands_65_merged']} (T1-e)")
+        return meas, fails, "; ".join(f"{k}: {v['agreement']} masked {v['masked_share']}" for k, v in meas.items())
+
+    checks["ww_t1"] = SuiteCheck("ww_t1", lambda: base_key("ww_t1", {"jobs": t1_jobs}), t1_run, t1_derive)
+
+    # T11 (SS; canals): a world created with canals on and loaded with them off keeps its
+    # canals: blocks over the Kiel Canal and Corinth match a fresh canals-on world and differ from a fresh
+    # canals-off world
+    def t11_jobs():
+        jobs = []
+        for f in ww_scale(eu, 6)["features"]:
+            if f["kind"] == "canal" and f["id"] in ("kiel", "corinth"):
+                P = f["polyline_geo"]
+                mx, my = P[len(P) // 2]
+                jobs.append({"kind": "tiles", "name": f"canal-{f['id']}",
+                             "chunks": [list(c) for c in chunks_box(mx - 48, my - 48, mx + 48, my + 48)]})
+        return jobs
+
+    def t11_run(deadline):
+        jobs = t11_jobs()
+        msa, msb = ww_probe_modset(ctx, mods, "m1wwt11a", jobs), ww_probe_modset(ctx, mods, "m1wwt11b", jobs)
+        name = cfg["settings"]["canals"]["name"]
+        for ms, v in ((msa, "true"), (msb, "false")):
+            res = ctx.fh_plain(["settings", ms, "--set", f"startup.{name}={v}"])
+            if not res.startswith("RESULT ok"):
+                raise GateError(f"fh.py settings {ms}: {res}")
+        inst = ctx.instance
+        pname, _ = map_preset(cfg, eu)
+        sa, sb = ctx.out / "ww-t11-create-a" / "a.zip", ctx.out / "ww-t11-create-b" / "b.zip"
+        outs = [ctx.fh(create_args(inst, msa, sa, preset=pname), sa.parent).out]
+        outs.append(ctx.fh(scenario_args(inst, msb, WW_PROBE_TICKS, save=sa), ctx.out / "ww-t11-a-under-b").out)
+        outs.append(ctx.fh(scenario_args(inst, msa, WW_PROBE_TICKS, save=sa), ctx.out / "ww-t11-a-under-a").out)
+        outs.append(ctx.fh(create_args(inst, msb, sb, preset=pname), sb.parent).out)
+        outs.append(ctx.fh(scenario_args(inst, msb, WW_PROBE_TICKS, save=sb), ctx.out / "ww-t11-b-under-b").out)
+        return outs
+
+    def t11_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        for job in t11_jobs():
+            ab, aa, bb = (nav_raster(dirs[i], job["name"])[2] for i in (1, 2, 4))
+            d_aa = int((ab != aa).sum()) if ab.shape == aa.shape else -1
+            d_bb = int((ab != bb).sum()) if ab.shape == bb.shape else -1
+            meas[job["name"]] = {"vs_fresh_on": d_aa, "vs_fresh_off": d_bb}
+            if d_aa != 0:
+                fails.append(f"{job['name']}: the canals-on world loaded with canals off differs from a fresh on world "
+                             f"in {d_aa} tiles")
+            if d_bb == 0:
+                fails.append(f"{job['name']}: it equals a fresh canals-off world: the setting shaped nothing (G6)")
+        return meas, fails, "; ".join(f"{k}: {v}" for k, v in meas.items())
+
+    checks["ww_t11"] = SuiteCheck("ww_t11", lambda: base_key("ww_t11"), t11_run, t11_derive)
+
+    # T5, T13 (SS; M3; FEAS-09): beside Cargo Ships' live copy, a straight waterway piece
+    # places across every ford of every map at scales 1 and 6 (T5's fords criterion: every tested
+    # ford), straight pieces place along each river's centreline and some curve piece places at each
+    # river's tightest bend, on Europe at scales 1 and 6 and on Atlantic's first river beyond Europe's set
+    # at scale 1, where the Niger to the Orinoco are carved (the cut order keeps only Europe's 22 on
+    # Atlantic from scale 3 up)
+    dirs8 = [(0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)]
+
+    def nearest_dir(hx, hy):
+        return max(range(8), key=lambda i: (dirs8[i][0] * hx + dirs8[i][1] * hy) / math.hypot(*dirs8[i]))
+
+    def rail(v):
+        return 2 * math.floor(v / 2) + 1     # straight rails centre on odd tiles of the 2-tile rail grid
+
+    def m3_lines(mk, s):
+        """The rivers whose centrelines and tightest bends M3 tries on a map and scale: all of Europe's at
+        scales 1 and 6, and Atlantic's first river beyond Europe's set at scale 1 (empty elsewhere)."""
+        rivers = [f for f in ww_scale(mk, s)["features"] if f["kind"] == "river"]
+        if mk == eu:
+            return rivers
+        if mk == "atlantic" and s == min(WW_M3_SCALES):
+            eu_ids = {g["id"] for g in ww_scale(eu, s)["features"]}
+            return [f for f in rivers if f["id"] not in eu_ids][:1]
+        return []
+
+    def m3_plan():
+        plan = []
+        for mk in maps:
+            for s in WW_M3_SCALES:
+                plan.append((f"{mk}-s{s}", mk, s, True, [{"kind": "placements", "name": "place",
+                                                          "placements": m3_placements(mk, s)}], None))
+        return plan
+
+    def m3_placements(mk, s):
+        pl = []
+        lines = {f["id"] for f in m3_lines(mk, s)}
+        for f in ww_scale(mk, s)["features"]:
+            if f["kind"] != "river":
+                continue
+            for fd in f.get("fords") or []:
+                (cx, cy), (tx, ty) = fd["centre"], fd["tangent"]
+                pl.append({"name": "straight-waterway", "x": rail(cx), "y": rail(cy),
+                           "direction": 2 * nearest_dir(tx, ty), "ford": f"{f['id']}-{fd['interval']}"})
+            if f["id"] in lines:
+                P = f["polyline_geo"]
+                for (x0, y0), (x1, y1) in zip(P[:-1], P[1:]):
+                    L = math.hypot(x1 - x0, y1 - y0)
+                    if L >= 8:
+                        pl.append({"name": "straight-waterway", "x": rail((x0 + x1) / 2), "y": rail((y0 + y1) / 2),
+                                   "direction": 2 * nearest_dir((x1 - x0) / L, (y1 - y0) / L)})
+                if len(P) > 2:
+                    turns = []
+                    for i in range(1, len(P) - 1):
+                        a1 = math.atan2(P[i][1] - P[i - 1][1], P[i][0] - P[i - 1][0])
+                        a2 = math.atan2(P[i + 1][1] - P[i][1], P[i + 1][0] - P[i][0])
+                        turns.append((abs((a2 - a1 + math.pi) % (2 * math.pi) - math.pi), i))
+                    _, i = max(turns)
+                    for name in ("curved-waterway-a", "curved-waterway-b"):
+                        for dd in range(16):
+                            pl.append({"name": name, "x": rail(P[i][0]), "y": rail(P[i][1]), "direction": dd,
+                                       "curve": f["id"]})
+        return pl
+
+    def m3_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        plan = m3_plan()
+        if len(dirs) != len(plan):
+            return {}, fails + [f"{len(dirs)} M3 runs, want {len(plan)}"], ""
+        if "atlantic" in maps and not m3_lines("atlantic", min(WW_M3_SCALES)):
+            fails.append(f"atlantic scale {min(WW_M3_SCALES)}: no river beyond Europe's set is carved, so M3 tries "
+                         f"no Atlantic river (the criterion asks at least one)")
+        for x, p in zip(dirs, plan):
+            rows = ww_read(x, "place")["placements"]
+            spec = p[4][0]["placements"]
+            if len(rows) != len(spec):
+                fails.append(f"{p[0]}: the probe answered {len(rows)} of {len(spec)} placements")
+                continue
+            straight = [(r, sp) for r, sp in zip(rows, spec) if sp["name"] == "straight-waterway"]
+            if any(not r[4] for r, _ in straight):
+                fails.append(f"{p[0]}: straight-waterway is not a prototype here (M3 needs Cargo Ships)")
+            ok = sum(1 for r, _ in straight if r[5])
+            fords = [(r, sp) for r, sp in straight if sp.get("ford")]
+            want_fords = sum(len(f.get("fords") or []) for f in ww_scale(p[1], p[2])["features"] if f["kind"] == "river")
+            curves = {}
+            for r, sp in zip(rows, spec):
+                if sp.get("curve"):
+                    curves[sp["curve"]] = curves.get(sp["curve"], False) or bool(r[5])
+            meas[p[0]] = {"straight": [ok, len(straight)], "fords": [sum(1 for r, _ in fords if r[5]), len(fords)],
+                          "curves": [sum(curves.values()), len(curves)]}
+            if len(fords) != want_fords or not want_fords:
+                fails.append(f"{p[0]}: {len(fords)} ford placements for the manifest's {want_fords} fords")
+            refused = [sp["ford"] for r, sp in fords if not r[5]]
+            if refused:
+                fails.append(f"{p[0]}: a straight waterway piece is refused across {len(refused)} of {len(fords)} fords: "
+                             f"{refused[:8]}")
+            if ok != len(straight) and len(straight) - ok != len(refused):
+                fails.append(f"{p[0]}: {len(straight) - ok - len(refused)} straight pieces refused along the centrelines")
+            if m3_lines(p[1], p[2]) and not curves:
+                fails.append(f"{p[0]}: no curve piece tried at a tightest bend")
+            if curves and not all(curves.values()):
+                fails.append(f"{p[0]}: no curve piece places at the tightest bend of {[k for k, v in curves.items() if not v]}")
+        return meas, fails, "; ".join(f"{k}: {v}" for k, v in meas.items())
+
+    checks["ww_m3"] = SuiteCheck("ww_m3", lambda: base_key("ww_m3", {"scales": WW_M3_SCALES, "maps": maps}),
+                                 lambda deadline: probe_runs("ww-m3", m3_plan(), live=("cargo-ships", "cargo-ships-graphics"),
+                                                             timeout=3600),
+                                 m3_derive)
+
+    # T15 (SS; T15e driver 2; PERF-09): 200 path requests from the far bank of a curated river with its
+    # fords in place, 200 on open ground and 200 from Jutland behind the Kiel Canal (canals on), each to
+    # a target on the mainland side, sent as scripted enemy-force requests with a biter's box in place of
+    # nests attacking a polluter; pathFinder summed from the
+    # bench step's --benchmark-verbose rows and the failure share, recorded. Above 2 times open ground in
+    # pathFinder or above 10 percent failed is the trigger for a the design notes entry proposing denser fords
+    # (a data edit); the check reports the trigger and never fails on it, and fails when pathFinder is
+    # unread or open ground spent none (no comparison possible)
+    def paths_plan():
+        rec = ww_scale(eu, 6)
+        river = next(f for f in rec["features"] if f["kind"] == "river" and len(f.get("fords") or []) >= 2)
+        (cx, cy), (tx, ty) = river["fords"][1]["centre"], river["fords"][1]["tangent"]
+        nx, ny = -ty, tx
+        far = [(cx + nx * 80 + tx * (k - 100) * 3, cy + ny * 80 + ty * (k - 100) * 3) for k in range(WW_PATHS)]
+        target = (cx - nx * 120, cy - ny * 120)
+        open_starts = [(target[0] - nx * 160 + tx * (k - 100) * 3, target[1] - ny * 160 + ty * (k - 100) * 3)
+                       for k in range(WW_PATHS)]
+        kiel = next(f for f in rec["features"] if f["kind"] == "canal" and f["id"] == "kiel")
+        mx, my = kiel["polyline_geo"][len(kiel["polyline_geo"]) // 2]
+        jut = [(mx + (k % 20 - 10) * 4, my - 200 - (k // 20) * 6) for k in range(WW_PATHS)]
+        out = []
+        for name, starts, tg in (("river", far, target), ("open", open_starts, target), ("jutland", jut, (mx, my + 200))):
+            xs, ys = [p[0] for p in starts] + [tg[0]], [p[1] for p in starts] + [tg[1]]
+            job = {"kind": "paths", "name": name, "starts": [[round(a, 1), round(b, 1)] for a, b in starts],
+                   "target": [round(tg[0], 1), round(tg[1], 1)], "deadline_ticks": WW_PATH_TICKS,
+                   "chunks": [list(c) for c in chunks_box(min(xs) - 64, min(ys) - 64, max(xs) + 64, max(ys) + 64)]}
+            out.append((name, eu, 6, True, [job], None))
+        return out
+
+    def paths_derive(dirs):
+        import perf
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        for x, p in zip(dirs, paths_plan()):
+            rec = ww_read(x, p[0])
+            rows = rec["paths"]
+            # pathFinder (ns per tick) from the bench step's --benchmark-verbose rows, summed over the
+            # ticks the requests ran: from the first row to the tick the probe wrote the job (all
+            # answered or the deadline), one tick of slack for the row numbering; nothing else asks
+            # the pathfinder for work in these runs
+            vb = perf.parse_verbose(perf.read(Path(x) / "bench" / "stdout.txt"), extra=("pathFinder",))
+            pf = None
+            if not vb or "pathFinder" not in vb or not vb["tick"]:
+                fails.append(f"{p[0]}: pathFinder unread: no --benchmark-verbose pathFinder column in "
+                             f"{rel_ws(ctx, Path(x) / 'bench' / 'stdout.txt')}")
+            else:
+                end = int(rec.get("tick") or vb["tick"][-1]) + 1
+                ticks = [i for i, t in enumerate(vb["tick"]) if t <= end]
+                pf = round(sum(vb["pathFinder"][i] for i in ticks) / 1e6, 3)
+            meas[p[0]] = {"requests": len(rows), "failed": sum(1 for r in rows if r[2] != "ok"),
+                          "pathFinder_ms": pf, "answered_by_tick": rec.get("tick")}
+        if any(m.get("requests") != WW_PATHS for m in meas.values()):
+            fails.append(f"a path site did not send {WW_PATHS} requests: "
+                         f"{ {k: m.get('requests') for k, m in meas.items()} }")
+        o = meas.get("open", {})
+        trigger = []
+        for site in ("river", "jutland"):
+            m = meas.get(site, {})
+            if m.get("requests") and m["failed"] / m["requests"] > 0.10:
+                trigger.append(f"{site}: {m['failed']} of {m['requests']} failed")
+            if all(isinstance(v, (int, float)) for v in (m.get("pathFinder_ms"), o.get("pathFinder_ms"))):
+                if o["pathFinder_ms"] <= 0:
+                    fails.append(f"open ground spent {o['pathFinder_ms']} ms in pathFinder on {WW_PATHS} requests: "
+                                 f"the column cannot compare the sites (positive control)")
+                elif m["pathFinder_ms"] > 2 * o["pathFinder_ms"]:
+                    trigger.append(f"{site}: pathFinder {m['pathFinder_ms']} ms, over twice open ground's "
+                                   f"{o['pathFinder_ms']} ms")
+        meas["denser_fords_trigger"] = trigger
+        return meas, fails, (f"river {meas.get('river')}, open {o}, jutland {meas.get('jutland')}; trigger "
+                             f"{trigger or 'none'} (set: record the DECISIONS.md entry)")
+
+    checks["ww_paths"] = SuiteCheck("ww_paths", lambda: base_key("ww_paths"),
+                                    lambda deadline: probe_runs("ww-paths", paths_plan(), bench=True), paths_derive)
+
+    # V2 (SS renders): a 256 px preview centred on every strait, isthmus and canal and every river mouth
+    # at scales 1, 3 and 6, listed for the verification pass (never a verdict)
+    def v2_plan():
+        out = []
+        for mk in maps:
+            for s in WW_V2_SCALES:
+                for f in ww_scale(mk, s)["features"]:
+                    P = f["polyline_geo"]
+                    at = P[len(P) // 2] if f["kind"] in ("strait", "canal", "dam") else P[-1]
+                    out.append((f"{mk}-s{s}-{f['kind']}-{f['id']}", mk, s,
+                                (int(at[0] // 32) * 32, int(at[1] // 32) * 32)))
+        return out
+
+    def v2_run(deadline):
+        lane_ms = [mods.make(f"ea-m1v2l{i}-{mods.zip_sha[:8] if mods.zip_sha else ''}", [mods.build_zip()])
+                   for i in range(PAR_MAX)]
+        for i, ms in enumerate(lane_ms):
+            mods.prepare(ms, f"m1v2l{i}")
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, (label, mk, s, off) in enumerate(v2_plan()):
+            ln = i % PAR_MAX
+            out = ctx.out / f"ww-v2-{label}"
+            lanes[ln].append((None, preview_args(lane_instance(ctx, ln), lane_ms[ln], 256, SEED,
+                                                 ww_pen(ctx, cfg, mk, s, label="ww-v2"), off), out, 600))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def v2_derive(dirs):
+        fails, listing = [], []
+        for x, (label, mk, s, off) in zip(dirs, v2_plan()):
+            fails += g1(x) + g3(x) + images_rehash(x)
+            listing.append({"crop": label, "map": mk, "scale": s, "offset": list(off), "run": rel_ws(ctx, x)})
+        return {"crops": listing}, fails, f"{len(listing)} V2 crops rendered for the verification pass"
+
+    checks["ww_v2"] = SuiteCheck("ww_v2", lambda: base_key("ww_v2"), v2_run, v2_derive)
+
+    # T7 (SS; every city of every map; scales 1 and 6, TST-06), through the mod's own path:
+    # each city is selected by its per-save city number on the map's preset, as presets.lua bakes it from
+    # the spawn-city setting, so the mod's city fold places the spawn, never the runner. The city offset
+    # read back at the spawn must be the city's tile plus the generator's recorded move (manifest starts;
+    # starts_<map>_v1.lua), else the moves are not wired; then no player-blocking water lies within 12
+    # tiles of the spawn, a walk from the spawn reaches the start lake (the spawn lake's footprint) and
+    # each of the four starting patches without crossing water (T7 (d)), and T5 holds through the start
+    # area for every corridor that meets the city's start disc, with that city as spawn. A map whose
+    # preset has no city fold fails at once with "spawn moves not wired": spawn-cities' fold, spawn lake
+    # and start mask take the moves and bank half-planes in their next versions
+    t7_ores = ("iron-ore", "copper-ore", "coal", "stone")
+
+    def t7_fold(mk):
+        g = map_preset(cfg, mk)[1]
+        return g if g.get("city") and g.get("city_setting") else None
+
+    def t7_plan():
+        """(label, map, scale, city, per-save city number, moved spawn in geo tiles) for every city of
+        every map with a city fold."""
+        out = []
+        for mk in maps:
+            g = t7_fold(mk)
+            if g is None:
+                continue
+            values = cfg["settings"][g["city_setting"]]["allowed_values"]
+            for s in WW_T7_SCALES:
+                for city, st in sorted(ww_scale(mk, s)["starts"].items()):
+                    mv = st.get("move") or [0, 0]
+                    num = values.index(city) if city in values else None
+                    out.append((f"{mk}-s{s}-{city}", mk, s, city, num,
+                                (st["spawn_geo"][0] + mv[0], st["spawn_geo"][1] + mv[1])))
+        return out
+
+    def t7c_plan():
+        """One corridor probe per city whose start disc a corridor meets: (label, map, scale, canals on,
+        jobs, redirects, city number, corridor ids, moved spawn); the chunks around the spawn, in world
+        tiles (the fold puts the spawn at world (0, 0))."""
+        out = []
+        job = {"kind": "tiles", "name": "disc",
+               "chunks": [list(c) for c in chunks_box(-WW_T7_BOX, -WW_T7_BOX, WW_T7_BOX, WW_T7_BOX)]}
+        for label, mk, s, city, num, sp in t7_plan():
+            ids = sorted({c[0] for c in ww_scale(mk, s)["starts"][city].get("corridors") or []})
+            if ids and num is not None:
+                out.append((f"{label}-corridors", mk, s, True, [job], None, num, ids, sp))
+        return out
+
+    def inside_runs(P, lim):
+        """Polyline P sampled every 2 tiles, split into the maximal runs of samples within `lim` tiles of
+        the origin (Chebyshev), in order: a corridor that leaves the dump and comes back is judged
+        run by run."""
+        runs, cur = [], []
+        for (ax, ay), (bx, by) in zip(P[:-1], P[1:]):
+            n = max(int(math.hypot(bx - ax, by - ay) // 2), 1)
+            for k in range(n + 1):
+                px, py = ax + (bx - ax) * k / n, ay + (by - ay) * k / n
+                if max(abs(px), abs(py)) <= lim:
+                    cur.append((px, py))
+                elif cur:
+                    runs.append(cur)
+                    cur = []
+        return [r for r in runs + [cur] if len(r) >= 2]
+
+    def t7_run(deadline):
+        plan = [p for p in t7_plan() if p[4] is not None]
+        if not plan:
+            return []
+        lane_ms = [probe_modset(ctx, mods, f"m1wwt7{i + 1}") for i in range(PAR_MAX)]
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        r = WW_START_RADIUS
+        for i, (label, mk, s, city, num, _) in enumerate(plan):
+            ln = i % PAR_MAX
+            ms, inst = lane_ms[ln], lane_instance(ctx, ln)
+            g = t7_fold(mk)
+            # the start disc's tiles and resources, the city offset at the spawn and, where the map has a
+            # spawn lake, its footprint (1 where its expression is below 0) over the disc
+            extra = {"grid": f"{-r},{-r},1,{2 * r},{2 * r}", "grid_name": g["spawn_lake"], "grid_threshold": "0",
+                     "grid_op": "lt"} if g.get("spawn_lake") else {}
+            out = ctx.out / f"ww-t7-{label}"
+            lanes[ln].append((dump_settings(ctx, ms, inst, label="t7", areas=f"{-r},{-r},{2 * r},{2 * r}",
+                                            types="resource", points="0,0", names=f"{g['cx']},{g['cy']}", **extra),
+                              scenario_args(inst, ms, 4, SEED, ww_pen(ctx, cfg, mk, s, label=f"t7-{label}", city=num)),
+                              out, 900))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs + probe_runs("ww-t7c", [p[:7] for p in t7c_plan()], timeout=1800)
+
+    def t7_grid(dump):
+        """The dump's grid as (bits, x0, y0) for bit 1 (value op threshold), or None."""
+        import numpy as np
+        g = dump.get("grid") or {}
+        if not g.get("rows") or not g.get("recognised", True):
+            return None
+        arr = np.empty((int(g["ny"]), int(g["nx"])), np.uint8)
+        for j, row in enumerate(g["rows"]):
+            v, n = zip(*(tok.split("*") for tok in row.split(" ")))
+            arr[j] = np.repeat(np.array(v, np.uint8), np.array(n, np.int64))
+        return arr, int(g.get("x0", 0)), int(g.get("y0", 0))
+
+    def t7_lake(d, g, a, free, lab, home, label, fails):
+        """Whether a walkable tile beside the spawn lake's footprint lies in the spawn's component (None
+        where the map has no spawn lake)."""
+        import numpy as np
+        if not g.get("spawn_lake"):
+            return None
+        grid = t7_grid(d)
+        if grid is None:
+            fails.append(f"{label}: the spawn lake's footprint was not dumped (the dump probe's grid)")
+            return False
+        bits, gx0, gy0 = grid
+        fp = np.zeros(free.shape, bool)
+        ys, xs = np.nonzero(bits)
+        rr, cc = ys + gy0 - a["y0"], xs + gx0 - a["x0"]
+        ok = (rr >= 0) & (rr < free.shape[0]) & (cc >= 0) & (cc < free.shape[1])
+        fp[rr[ok], cc[ok]] = True
+        if not fp.any():
+            fails.append(f"{label}: the spawn lake has no footprint in the start disc")
+            return False
+        ring = np.zeros(fp.shape, bool)
+        ring[1:, :] |= fp[:-1, :]
+        ring[:-1, :] |= fp[1:, :]
+        ring[:, 1:] |= fp[:, :-1]
+        ring[:, :-1] |= fp[:, 1:]
+        shore = ring & free & ~fp
+        reached = bool(home is not None and (lab[shore] == home).any())
+        if not reached:
+            fails.append(f"{label}: no walk from the spawn reaches the start lake (T7 (d))")
+        return reached
+
+    def t7_derive(dirs):
+        fails, meas = [], {}
+        for mk in maps:
+            if t7_fold(mk) is None:
+                fails.append(f"spawn moves not wired: {mk}'s preset has no city fold (spawn-cities' mechanism), so "
+                             f"no preset spawns a player at a city and the generator's moves and bank half-planes "
+                             f"reach no world; T7 runs only through the mod's own city selection")
+        full = t7_plan()
+        missing = [p[0] for p in full if p[4] is None]
+        if missing:
+            fails.append(f"{len(missing)} cities of the manifests are not values of their map's spawn-city setting: "
+                         f"{missing[:6]}")
+        plan, cplan = [p for p in full if p[4] is not None], t7c_plan()
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(plan) + len(cplan):
+            return {}, fails + [f"{len(dirs)} start runs, want {len(plan) + len(cplan)}"], ""
+        got_spawn = {}
+        for x, (label, mk, s, city, num, want) in zip(dirs, plan):
+            g = t7_fold(mk)
+            d = read_dump(x, "t7")
+            v = point_values(d).get((0, 0), {})
+            got = (v.get(g["cx"]), v.get(g["cy"]))
+            got_spawn[label] = got
+            rec = {"city_number": num, "spawn_geo": list(got), "want_geo": list(want)}
+            meas[label] = rec
+            if any(not isinstance(c, (int, float)) for c in got) or \
+                    any(abs(float(c) - w) > 1e-6 for c, w in zip(got, want)):
+                fails.append(f"spawn moves not wired: {label} spawns at geo {got}, the generator's moved spawn is "
+                             f"{list(want)} (city tile plus move)")
+            area = (d.get("areas") or [None])[0]
+            if area is None:
+                fails.append(f"{label}: no area dumped")
+                continue
+            a = area["area"]
+            water = nav.tile_mask(area, "player")
+            r0, c0 = -a["y0"], -a["x0"]
+            near = water[max(r0 - 12, 0):r0 + 13, max(c0 - 12, 0):c0 + 13]
+            free = ~water
+            lab, _ = nav.labels(free)
+            home = lab[r0, c0] if free[r0, c0] else None
+            names = [e["name"] for e in area.get("entity_names") or []]
+            patches = {}
+            for e in area.get("entities") or []:
+                patches.setdefault(names[e[0]], []).append((e[1], e[2]))
+            unreached = []
+            for ore in t7_ores:
+                pts = patches.get(ore) or []
+                hit = False
+                for (px, py) in pts[::max(len(pts) // 20, 1)]:
+                    cell = (int(math.floor(py - a["y0"])), int(math.floor(px - a["x0"])))
+                    if 0 <= cell[0] < free.shape[0] and 0 <= cell[1] < free.shape[1] and free[cell] and \
+                            home is not None and lab[cell] == home:
+                        hit = True
+                        break
+                if not hit:
+                    unreached.append(ore if pts else f"{ore} (no patch in the start disc)")
+            lake = t7_lake(d, g, a, free, lab, home, label, fails)
+            rec.update({"water_within_12": int(near.sum()), "patches": sorted(patches), "unreached": unreached,
+                        "start_lake_reached": lake})
+            if near.any():
+                fails.append(f"{label}: {int(near.sum())} player-blocking water tiles within 12 tiles of the spawn")
+            if unreached:
+                fails.append(f"{label}: no walk from the spawn reaches {unreached} (T7 (d))")
+        for x, (label, mk, s, on, jobs, extra, num, ids, sp) in zip(dirs[len(plan):], cplan):
+            names, layers, idx, x0, y0 = nav_raster(x, "disc")
+            water = nav.layer_mask(names, layers, idx, "water_tile")
+            feats = {f["id"]: f for f in ww_scale(mk, s)["features"] if f["kind"] in ("river", "strait", "canal")}
+            # the frame the fold gave this city: world = geo - spawn (the dump run's read-back)
+            got = got_spawn.get(label[:-len("-corridors")])
+            frame = got if got and all(isinstance(c, (int, float)) for c in got) else sp
+            rec = {}
+            for fid in ids:
+                f = feats.get(fid)
+                if f is None:
+                    continue    # a dam: canals off only
+                runs = inside_runs([(px - frame[0], py - frame[1]) for px, py in f["polyline_geo"]], WW_T7_BOX - 12)
+                if not runs:
+                    rec[fid] = "outside"
+                    continue
+                k = square_of(cfg, f)
+                ok = all(nav.connected_disc(water, nav.to_cell(x0, y0, r[0]), nav.to_cell(x0, y0, r[-1]), k) for r in runs)
+                rec[fid] = bool(ok)
+                if not ok:
+                    fails.append(f"{label}: {f['kind']} {fid} has no {k}-tile channel through the start area with the "
+                                 f"city as spawn (T7, T5)")
+            meas[label] = rec
+        spawns = [v for k, v in meas.items() if not k.endswith("-corridors")]
+        bad = sum(1 for v in spawns if v.get("unreached") or v.get("water_within_12") or
+                  v.get("start_lake_reached") is False)
+        through = [v for k, v in meas.items() if k.endswith("-corridors")]
+        return meas, fails, (f"{len(spawns)} spawns through the city fold at scales {WW_T7_SCALES} on "
+                             f"{[mk for mk in maps if t7_fold(mk)]}; failing {bad}; corridors through start areas "
+                             f"{sum(1 for v in through for r in v.values() if r is True)} of "
+                             f"{sum(len(v) for v in through)}; maps without a fold "
+                             f"{[mk for mk in maps if not t7_fold(mk)]}")
+
+    checks["ww_t7"] = SuiteCheck("ww_t7", lambda: base_key("ww_t7", {"plan": [p[:5] for p in t7_plan()]}), t7_run,
+                                 t7_derive)
+
+    # T5 (SS; Europe; scales 1 and 6; M2): beside Alien Biomes' banks and mud each river's player-blocking
+    # core still runs from its inland end to the sea, at least 3 tiles thick (S4)
+    def ab_plan():
+        return [(f"{eu}-s{s}-m2", eu, s, True, corridor_jobs(eu, s, ("river",)), None) for s in (1, 6)]
+
+    def ab_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        for x, (label, mk, s, on, jobs, extra) in zip(dirs, ab_plan()):
+            feats = {f"{f['kind']}-{f['id']}": f for f in ww_scale(mk, s)["features"]}
+            rec = {}
+            for job in jobs:
+                f = feats[job["name"]]
+                names, layers, idx, x0, y0 = nav_raster(x, job["name"])
+                core = nav.layer_mask(names, layers, idx, "player") & nav.layer_mask(names, layers, idx, "water_tile")
+                P = f["polyline_geo"]
+                ok = bool(nav.connected_disc(core, nav.to_cell(x0, y0, P[0]), nav.to_cell(x0, y0, P[-1]), 3))
+                rec[f["id"]] = ok
+                if not ok:
+                    fails.append(f"{label}: {f['id']}'s core is not continuous at 3 tiles beside Alien Biomes")
+            meas[label] = rec
+        return meas, fails, "; ".join(f"{k}: {sum(v.values())} of {len(v)} continuous" for k, v in meas.items())
+
+    checks["ww_ab"] = SuiteCheck("ww_ab", lambda: base_key("ww_ab"),
+                                 lambda deadline: probe_runs("ww-ab", ab_plan(), live=("alien-biomes",
+                                                                                       "alien-biomes-graphics"),
+                                                             timeout=3600), ab_derive)
+
+    # T1, T3 (SS; every map; scales 1 and 6): the strait rows hold on every map: every strait,
+    # isthmus and canal oracle place reads its expectation in tile and elevation with canals on and off
+    # (ww_t3's judge; the gate row holds Europe at scale 6)
+    t3m_plan = [(mk, s, on) for mk in maps for s in WW_T3_SCALES for on in (True, False)]
+
+    def t3m_run(deadline):
+        lane_ms = [probe_modset(ctx, mods, f"m1wwt3m{i + 1}") for i in range(PAR_MAX)]
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, (mk, s, on) in enumerate(t3m_plan):
+            ln = i % PAR_MAX
+            ms, inst = lane_ms[ln], lane_instance(ctx, ln)
+            _, pts = ww_t3_places(mk, s)
+            out = ctx.out / f"ww-t3m-{mk}-s{s}-c{int(on)}"
+            lanes[ln].append((dump_settings(ctx, ms, inst, label="t3", points=";".join(f"{x},{y}" for x, y in pts),
+                                            names="elevation"),
+                              scenario_args(inst, ms, 4, SEED, ww_pen(ctx, cfg, mk, s, on, label="ww-t3m")), out, 900))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def t3m_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(t3m_plan):
+            return {}, fails + [f"{len(dirs)} oracle runs, want {len(t3m_plan)}"], ""
+        for mk in maps:
+            for s in WW_T3_SCALES:
+                pair = [x for x, (m, sc, _) in zip(dirs, t3m_plan) if m == mk and sc == s]
+                places, pts = ww_t3_places(mk, s)
+                m, f = ww_t3_judge(f"{mk} scale {s}", pair, places, pts)
+                meas[f"{mk}_s{s}"] = m
+                fails += f
+        return meas, fails, "; ".join(f"{k}: {v}" for k, v in meas.items())
+
+    checks["ww_t3_maps"] = SuiteCheck("ww_t3_maps", lambda: base_key("ww_t3_maps", {"plan": t3m_plan}), t3m_run,
+                                      t3m_derive)
+
+    # T13 (SS; M2 against BAB): with the gated water-shallow hook beside Alien Biomes' live copy, a
+    # default-preset world is hash-identical to Alien Biomes alone at seeds 1000, 1002 and 1004 (256 px)
+    # and complexity-identical by zero_cost_diffs (64 px --verbose), as on M1
+    ab_live = ["alien-biomes"] + LIVE_DEPS["alien-biomes"]
+    m2_ms = {}
+
+    def m2_modsets():
+        if not m2_ms:
+            m2_ms["m2"] = mods.with_live("m2ww", ab_live)
+            m2_ms["bab"] = mods.make("ea-bab-ww", from_live=ab_live)
+        return m2_ms["m2"], m2_ms["bab"]
+
+    def m2_run(deadline):
+        m2, bab = m2_modsets()
+        mods.prepare(m2, "m2ww")
+        mods.prepare(bab, "babww")
+        inst, out = ctx.instance, []
+        for ms, tag in ((bab, "bab"), (m2, "m2")):
+            out.append(ctx.fh(["preview", "--instance", inst, "--modset", ms, "--seed", str(SEEDS[0]), "--seed-max",
+                               str(SEEDS[-1]), "--size", "256"], ctx.out / f"ww-t13-{tag}-256").out)
+        for ms, tag in ((bab, "bab"), (m2, "m2")):
+            out.append(ctx.fh(preview_args(inst, ms, 64, verbose=True), ctx.out / f"ww-t13-{tag}-64v").out)
+        return out
+
+    def m2_derive(dirs):
+        fails = []
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        fails += g2(dirs[1], [cfg["identity"]["id"]] + ab_live) + g2(dirs[0], ab_live)
+        a, b = derive_preview(dirs[0], seeds=len(SEEDS)), derive_preview(dirs[1], seeds=len(SEEDS))
+        c, e = derive_preview(dirs[2]), derive_preview(dirs[3])
+        if a["images"] != b["images"]:
+            fails.append(f"a default-preset world with Earth beside Alien Biomes differs from Alien Biomes alone: "
+                         f"{b['images']} vs {a['images']}")
+        fails += [f"M2's default-preset complexity differs from BAB's in {x}" for x in
+                  zero_cost_diffs(c["complexity"], e["complexity"])]
+        if not c["complexity"] or {k: v.get("complexity") for k, v in c["complexity"].items()} == VANILLA:
+            fails.append("BAB's complexity is missing or vanilla's: Alien Biomes did not load (G5)")
+        meas = {"bab_256": a["images"], "m2_256": b["images"], "bab_64": c["complexity"], "m2_64": e["complexity"]}
+        return meas, fails, (f"M2 default preview at seeds {', '.join(map(str, SEEDS))} hash-identical to BAB "
+                             f"({len(a['images'])} images); complexity {e['complexity'].get('tile')} vs "
+                             f"{c['complexity'].get('tile')} (Tile)")
+
+    checks["ww_t13_m2"] = SuiteCheck("ww_t13_m2", lambda: base_key("ww_t13_m2", {
+        "m2": mods.manifest(m2_modsets()[0]), "bab": mods.manifest(m2_modsets()[1])}), m2_run, m2_derive)
+
+    # T15 (SS; every map; scales 1 to 6; S4): canals off costs no complexity. A canals-off world's
+    # --verbose counts equal those of the same world with every canal set of the map redirected to a
+    # number (the unselected branch compiles to nothing, by zero_cost_diffs), and they are
+    # tests/budgets.json's toggles-off rows
+    off_plan = [(mk, s, ctl) for mk in maps for s in cfg["scales"]["values"] for ctl in (False, True)]
+
+    def off_mgs(mk, s, ctl):
+        pname, _ = map_preset(cfg, mk)
+        pen = pin_scale(cfg, mk, dict(preset_pen(ctx.shared["dump_m1"], pname)), s)
+        for t in tnconfig.toggles(cfg):
+            if mk in (t.get("maps") or []):
+                pen[t["preset_key"]] = t["off"]
+        if ctl:
+            pen.update({n: 0 for n in W["sets"][mk]["canals"]})
+        return write_mgs(ctx, f"ww-off-{mk}-s{s}{'-nocanals' if ctl else ''}", pen)
+
+    def off_run(deadline):
+        lane_ms = [mods.make(f"ea-m1wwoff{i}-{mods.zip_sha[:8] if mods.zip_sha else ''}", [mods.build_zip()])
+                   for i in range(PAR_MAX)]
+        for i, ms in enumerate(lane_ms):
+            mods.prepare(ms, f"m1wwoff{i}")
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, (mk, s, ctl) in enumerate(off_plan):
+            ln = i % PAR_MAX
+            out = ctx.out / f"ww-off-{mk}-s{s}{'-nocanals' if ctl else ''}"
+            lanes[ln].append((None, preview_args(lane_instance(ctx, ln), lane_ms[ln], 64, SEED, off_mgs(mk, s, ctl),
+                                                 verbose=True), out, 600))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def off_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(off_plan):
+            return {}, fails + [f"{len(dirs)} previews, want {len(off_plan)}"], ""
+        got = {(mk, s, ctl): ctx_complexity(x) for x, (mk, s, ctl) in zip(dirs, off_plan)}
+        rows = json.loads(BUDGETS.read_text(encoding="utf-8")).get("rows", []) if BUDGETS.exists() else []
+        for mk in maps:
+            for s in cfg["scales"]["values"]:
+                off, ctl = got[(mk, s, False)], got[(mk, s, True)]
+                meas[f"{mk}_s{s}"] = {k: v.get("complexity") for k, v in off.items()}
+                fails += [f"{mk} scale {s}: canals off compiles the canal sets: {x}" for x in zero_cost_diffs(ctl, off)]
+                row = next((r for r in rows if r.get("row") == "map" and r.get("map") == mk and r.get("scale") == s
+                            and r.get("toggles") == "off" and r.get("modset") == "M1"), None)
+                if row is None or row.get("programs") != off:
+                    fails.append(f"{mk} scale {s}: tests/budgets.json's toggles-off row is not this canals-off "
+                                 f"measurement: run 'python tools/earth_test.py baseline' and commit it (rule 5)")
+        return meas, fails, "; ".join(f"{k}: {v.get('tile')}" for k, v in meas.items())
+
+    checks["ww_off"] = SuiteCheck("ww_off", lambda: base_key("ww_off", {"plan": off_plan}), off_run, off_derive)
+
+    # T15 (SS; every map; P1, P3; PERF-01): each map's program with waterways timed against M0
+    # in one group at scales 6 and 1 at 16 LP and at scale 6 at 24 LP, 8 LP recorded; P1 holds the
+    # waterways allocation's relative rule (main's recorded ratio plus 0.35, times 1.10, under 1.5); the
+    # flip rule is evaluated per map with waterways in place. The canals-off rows' complexity is
+    # tests/budgets.json's (toggles off), written by baseline.
+    m1t, _ = earth_driver_modsets(ctx, mods)
+    m0t, _, _ = driver_modsets(ctx, mods)
+    pos = {}
+    for mk in maps:
+        if mk == eu:
+            p = europe_positions(cfg, eg.MapRef(mk))
+            pos[mk] = {"block": p["block"], "block_land": p["block_land"]}
+        else:
+            pos[mk] = map_positions(cfg, mk)
+
+    def census(mk, s):
+        b = baseline_record()
+        if mk == eu:
+            return ((b.get("t15b_europe") or {}).get("census_m0") or {}).get(str(s)) or {}
+        return ((((b.get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get(str(s))) or {}
+
+    def t15_run(deadline):
+        out = []
+        for mk in maps:
+            for s in T15B_SCALES:
+                sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos[mk]["block"][s], f"ww-m1t-{mk}-s{s}",
+                                   ww_pen(ctx, cfg, mk, s, label="ww-t15"))
+                sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos[mk]["block"][s], f"ww-m0t-{mk}-s{s}")
+                masks = [getattr(ctx.perf, m) if m != "MASK24" else MASK24 for m in T15B_MASKS[s]]
+                out.append(pair_batch(ctx, {"a": (m1t, sa), "b": (m0t, sb)}, T15B["reps_suite"], masks,
+                                      f"ww-t15b-{mk}-s{s}", deadline))
+        return out
+
+    def t15_derive(dirs):
+        fails, meas = [], {}
+        k = 0
+        for mk in maps:
+            rec = {"blocks": pos[mk]["block"]}
+            fired = []
+            for s in T15B_SCALES:
+                lim = p1_limits(sec6, "waterways", mk, scale=s) if isinstance(sec6, dict) else {}
+                p1 = ((lim.get("P1") or {}).get("limit") or {}).get("max")
+                m, f, _ = derive_t15b([dirs[k]], lim, T15B["reps_suite"], pair="m1_m0",
+                                      label=f"{mk} M1t/M0t scale {s}", census_m0=census(mk, s))
+                k += 1
+                fails += [f"{mk} scale {s}: {x}" for x in f]
+                rec[f"scale_{s}"] = m
+                r16 = (m.get(f"{0xFFFF:#x}") or {}).get("ratio")
+                if p1 is not None and r16 is not None and r16 > p1:
+                    fired.append(s)
+            rec["flip_rule"] = {"fired": bool(fired), "scales": fired, "t1_bar": t1_bars().get(mk)}
+            if fired and mk not in t1_bars():
+                fails.append(f"{mk}: the flip rule fires with waterways in place (scales {fired}): the waterway cut "
+                             f"order first (plan 6.3), then the runner-up fit, each with its DECISIONS entry (ruling 10)")
+            meas[mk] = rec
+        return meas, fails, "; ".join(
+            f"{mk}: " + ", ".join(f"scale {s} " + ", ".join(f"{mask} {v.get('ratio')}" for mask, v in
+                                                          (m.get(f'scale_{s}') or {}).items() if isinstance(v, dict))
+                                  for s in T15B_SCALES) for mk, m in meas.items())
+
+    esig_cache = {}
+
+    def esig(mk):
+        if mk not in esig_cache:
+            esig_cache[mk] = program_signature(ctx, mods, m1t, f"e-ww-{mk}", preset=map_preset(cfg, mk)[0])
+        return esig_cache[mk]
+
+    checks["ww_t15b"] = SuiteCheck("ww_t15b", lambda: key_of({
+        "check": "ww_t15b", "sig": [esig(mk) for mk in maps] + [sig(m0t, "m0t")], "control": ctl, "timing": timing,
+        "config": T15B, "pos": pos, "masks": T15B_MASKS, "build": GAME_BUILD, "borderline": BORDERLINE,
+        "records": TIMED_RECORDS, "earth": [d["mod"], dump_sha]}), t15_run, t15_derive)
+
+    # The Map type route of every map, timed and reported (Contradictions item 15; T15): from waterways
+    # each map's newest entry (v2, the Map type entry) wraps the fit in the save's scale's waterway,
+    # canal and dam sets, and a world made from that entry alone also compiles them for the vanilla
+    # starting-ore mask, which reads elevation in the Entity program. Per map, at scale 6 (the M1t
+    # driver's startup scale, which the Map type fallback follows) and 16 LP: Tile, Entity and Cliff
+    # complexity from a 64 px --verbose preview and forced generation of the map's T15b block against
+    # M0t in one group. Reported, never gated (never P1, P2 or the isolation checks). europe-coast's
+    # maptype_cost and olde-world-atlantic's owa_maptype_cost timed version 1; the key names each
+    # map's entry, so a later entry version that takes the Map type fields re-times it
+    def mt_entry(mk):
+        return map_preset(cfg, mk)[1]["entry"]
+
+    def mt_run(deadline):
+        out = []
+        for mk in maps:
+            mt = map_maptype_mgs(ctx, cfg, mk)
+            out.append(ctx.fh(preview_args(ctx.instance, ctx.shared["m1"], 64, mgs=mt, verbose=True),
+                              ctx.out / f"ww-mt-cx-{mk}").out)
+            sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos[mk]["block"][6], f"ww-mt-{mk}-a", mt)
+            sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos[mk]["block"][6], f"ww-mt-{mk}-b")
+            out.append(pair_batch(ctx, {"a": (m1t, sa), "b": (m0t, sb)}, T15B["reps_suite"], [ctx.perf.MASK16],
+                                  f"ww-t15b-maptype-{mk}", deadline))
+        return out
+
+    def mt_derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != 2 * len(maps):
+            return {}, [f"{len(dirs)} Map type run directories, want {2 * len(maps)}"], ""
+        for i, mk in enumerate(maps):
+            fails += g1(dirs[2 * i])
+            cx = ctx_complexity(dirs[2 * i])
+            if not cx or {k: v.get("complexity") for k, v in cx.items()} == VANILLA:
+                fails.append(f"{mk}: the Map type preview compiled vanilla's programs or none: {mt_entry(mk)} did not "
+                             f"load (G5)")
+            m, f, _ = derive_t15b([dirs[2 * i + 1]], {}, T15B["reps_suite"], pair="m1_m0",
+                                  label=f"{mk} Map type/M0t", census_m0=census(mk, 6))
+            fails += [f"{mk}: {x}" for x in f]
+            meas[mk] = {"entry": mt_entry(mk), "scale": 6, "complexity": cx, "forced_16lp": m}
+        return meas, fails, "; ".join(
+            f"{mk} ({m['entry']} alone, scale 6): reported, not gated: Tile "
+            f"{m['complexity'].get('tile', {}).get('complexity')}, Entity "
+            f"{m['complexity'].get('entity', {}).get('complexity')}, Cliff "
+            f"{m['complexity'].get('cliff', {}).get('complexity')}; forced generation "
+            f"{(m['forced_16lp'].get(f'{0xFFFF:#x}') or {}).get('ratio')}x M0 at 16 LP" for mk, m in meas.items())
+
+    checks["ww_maptype_cost"] = SuiteCheck("ww_maptype_cost", lambda: key_of({
+        "check": "ww_maptype_cost", "sig": [esig(mk) for mk in maps] + [sig(m0t, "m0t")],
+        "entries": [mt_entry(mk) for mk in maps], "control": ctl, "timing": timing, "config": T15B, "pos": pos,
+        "build": GAME_BUILD, "records": TIMED_RECORDS, "earth": [d["mod"], dump_sha]}), mt_run, mt_derive)
+    return checks
+
+
+def live_t15b_ww(ctx, mods, sec6, mk):
+    """The gate's live timed sample of waterways (rule 3): one map's block at scale 6, M1t (waterways in
+    place) against M0t at 16 LP (P1 with waterways' relative rule), with rule 5's extra group when the
+    ratio sits within 0.03 of the bar and the group fits the budget, else fail closed."""
+    import earthgeo as eg
+    cfg = mods.cfg
+    eu = cfg["presets"][cfg["preset_order"][0]]["map"]
+    pos = europe_positions(cfg, eg.MapRef(mk)) if mk == eu else map_positions(cfg, mk)
+    m1t, _ = earth_driver_modsets(ctx, mods)
+    m0t, _, _ = driver_modsets(ctx, mods)
+    lim = p1_limits(sec6, "waterways", mk, scale=6) if isinstance(sec6, dict) else {}
+    b = baseline_record()
+    census = (((b.get("t15b_europe") or {}).get("census_m0") or {}).get("6") if mk == eu else
+              (((b.get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get("6")) or {}
+    sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos["block"][6], f"live-ww-m1t-{mk}",
+                       ww_pen(ctx, cfg, mk, 6, label="live-ww"))
+    sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos["block"][6], f"live-ww-m0t-{mk}")
+    cfgs = {"a": (m1t, sa), "b": (m0t, sb)}
+    t0 = time.time()
+    dirs = [pair_batch(ctx, cfgs, T15B["reps_gate"], [ctx.perf.MASK16], f"live-ww-t15b-{mk}", ctx.deadline)]
+    took = time.time() - t0
+    meas, f, detail = derive_t15b(dirs, lim, T15B["reps_gate"], pair="m1_m0", label=f"{mk} M1t/M0t", census_m0=census)
+    rec = meas.get(f"{ctx.perf.MASK16:#x}") or {}
+    if rec.get("undecided"):
+        fits, need = extra_batch_fits(took, 2 * T15B["reps_gate"], 2 * T15B["reps_extra"], time.time(), ctx.deadline)
+        if fits:
+            dirs.append(pair_batch(ctx, cfgs, T15B["reps_extra"], [ctx.perf.MASK16], f"live-ww-t15b-{mk}-x",
+                                   ctx.deadline))
+            meas, f, detail = derive_t15b(dirs, lim, T15B["reps_gate"], pair="m1_m0", label=f"{mk} M1t/M0t",
+                                          census_m0=census)
+        else:
+            f = [f"P1: {mk} M1t/M0t at 16 LP is {rec['ratio']}, within {BORDERLINE} of its bound {rec['borderline']:g}, "
+                 f"and rule 5's batch needs about {need:.0f} s, more than the gate has left: fail closed"]
+    return dirs, meas, f, detail
+
+
+def live_t15b_ct(ctx, mods, sec6, mk):
+    """The gate's live timed sample of climate-tiles (rule 3): one map's block at scale 6, M2t (Earth
+    beside Alien Biomes, the constant switch on) against BABt at 16 LP (P2), with rule 5's extra group
+    when the ratio sits within 0.03 of the bar and the group fits the budget, else fail closed."""
+    import earthgeo as eg
+    cfg = mods.cfg
+    eu = cfg["presets"][cfg["preset_order"][0]]["map"]
+    pos = europe_positions(cfg, eg.MapRef(mk)) if mk == eu else map_positions(cfg, mk)
+    m2t, babt, _, _ = ab_driver_modsets(ctx, mods)
+    lim = p2_limits(sec6, "climate-tiles", mk, 6) if isinstance(sec6, dict) else {}
+    sa = make_save_mgs(ctx, mods, m2t, "tq1-gen-block", pos["block"][6], f"live-ct-m2t-{mk}",
+                       ct_mgs(ctx, cfg, mk, 6, True, label="-live-t15"))
+    sb = make_save_mgs(ctx, mods, babt, "tq1-gen-block", pos["block"][6], f"live-ct-babt-{mk}")
+    cfgs = {"a": (m2t, sa), "b": (babt, sb)}
+    t0 = time.time()
+    dirs = [pair_batch(ctx, cfgs, T15B["reps_gate"], [ctx.perf.MASK16], f"live-ct-t15b-{mk}", ctx.deadline)]
+    took = time.time() - t0
+    meas, f, detail = derive_t15b(dirs, lim, T15B["reps_gate"], pair="m2_bab", label=f"{mk} M2t/BABt")
+    rec = meas.get(f"{ctx.perf.MASK16:#x}") or {}
+    if rec.get("undecided"):
+        fits, need = extra_batch_fits(took, 2 * T15B["reps_gate"], 2 * T15B["reps_extra"], time.time(), ctx.deadline)
+        if fits:
+            dirs.append(pair_batch(ctx, cfgs, T15B["reps_extra"], [ctx.perf.MASK16], f"live-ct-t15b-{mk}-x",
+                                   ctx.deadline))
+            meas, f, detail = derive_t15b(dirs, lim, T15B["reps_gate"], pair="m2_bab", label=f"{mk} M2t/BABt")
+        else:
+            f = [f"P2: {mk} M2t/BABt at 16 LP is {rec['ratio']}, within {BORDERLINE} of its bound {rec['borderline']:g}, "
+                 f"and rule 5's batch needs about {need:.0f} s, more than the gate has left: fail closed"]
+    return dirs, meas, f, detail
+
+
+# ================================================================================================ climate-tiles
+
+# Milestone climate-tiles (part 5, milestone 0): the Earth climate after EarthMaps' layout with and without
+# Alien Biomes, the vanilla tiles beside AB, the fallback, marshes, the palm switch and each map's
+# third elevation entry. From here M2 joins the gate (design section 5, steps 2, 3, 4, 6, 7 and 13): its
+# dump (row dumps), its zero-cost row, the isolation checks on M2 and the climate oracle rows.
+CT_BIAS = 0.15                       # T4's bias steps (S3 section 3)
+CT_GRID = (64, 128)                  # the climate rows' expression grid: points per side, step in tiles
+CT_T3_SCALES = (1, 3, 6)             # T3's suite scales
+CT_D11_SCALES = (1, 6)               # D11's scales
+CT_D11_POINTS = 80                   # D11's probe grid per map and scale: points per side over the map
+# Alien Biomes' alien palette (R3 2.2; APPROVALS 9's left-out row): no tile of these colours at aux bias 0
+CT_ALIEN = ("-blue-", "-mauve-", "-purple-", "-violet-", "-black-", "-dustyrose-", "-aubergine-", "-red-")
+
+
+def uses_m2(ctx):
+    """M2 joins a command from climate-tiles on (the registry's dumps)."""
+    try:
+        return any("m2" in s.get("dumps", []) for s in registry_upto(ctx.slice))
+    except GateError:
+        return False
+
+
+def ct_band(cfg, t, m):
+    """The climate band of an AB-unit temperature and moisture (config.lua climate.bands; R3 4.1): the
+    names the oracle's brief rows use (coldest, cold, hot_desert) plus temperate and hot."""
+    B = cfg["climate"]["bands"]
+    if t is None:
+        return None
+    if t < B["frozen_below"]:
+        return "coldest"
+    if t < B["cold_below"]:
+        return "cold"
+    if t < B["hot_from"]:
+        return "temperate"
+    return "hot_desert" if m is not None and m < B["dry_below"] else "hot"
+
+
+def ct_band_holds(want, got):
+    """The brief rows' reading (oracle.py BRIEF_PLACES): cold is cold or colder, coldest the coldest band,
+    hot_desert hot and dry; any other name must match exactly."""
+    if want == "cold":
+        return got in ("cold", "coldest")
+    return got == want
+
+
+def ct_family(name):
+    """A tile's family for T3's tile rows and D11: frozen, volcanic, wetland, water, sand, dirt, grass."""
+    n = str(name or "")
+    if n.startswith("frozen-snow-"):
+        return "frozen"
+    if n.startswith("volcanic-"):
+        return "volcanic"
+    if n in ("water-mud", "water-shallow"):
+        return "wetland"
+    if n in ("water", "deepwater", "water-green", "deepwater-green"):
+        return "water"
+    if "-sand-" in n or n.startswith("sand-") or n.startswith("red-desert-"):
+        return "sand"
+    if "-dirt-" in n or n.startswith("dirt-") or n == "dry-dirt":
+        return "dirt"
+    if n.startswith("vegetation-") or n.startswith("grass-"):
+        return "grass"
+    return "other"
+
+
+# The tile families each brief band admits, with Alien Biomes and without (S3 sections 2 and 4): the far
+# north is AB snow and ice, or the fallback's dry and dead ground; hot desert is sand either way.
+CT_FAMILIES = {True: {"coldest": ("frozen",), "cold": ("grass", "dirt", "sand", "frozen"),
+                      "hot_desert": ("sand", "dirt")},
+               False: {"coldest": ("dirt", "sand"), "cold": ("grass", "dirt", "sand"),
+                       "hot_desert": ("sand", "dirt")}}
+
+
+def ct_controls(dump, controls, label):
+    """MapGenSettings autoplace_controls for `controls` {name: {size, frequency, richness}} (each field 1
+    unless given), every name an autoplace-control of `dump` (U10: a slider the modset lacks would be
+    ignored by the game and test nothing)."""
+    have = (dump or {}).get("autoplace-control") or {}
+    out = {}
+    for name, c in sorted((controls or {}).items()):
+        if name not in have:
+            raise GateError(f"{label}: autoplace control {name!r} is not in the dump's autoplace-control prototypes "
+                            f"(U10)")
+        out[name] = {"frequency": c.get("frequency", 1), "size": c.get("size", 1), "richness": c.get("richness", 1)}
+    return out
+
+
+def ct_mgs(ctx, cfg, map_key, scale, ab, extra=None, label="", controls=None, cliffs=True):
+    """A map's preset as the M1 (or, ab=True, the M2) dump holds it, as a full MGS file at `scale`, with
+    `extra` property_expression_names (a climate slider) merged in and `controls` written as
+    autoplace_controls (Alien Biomes' hot and cold, validated against the dump); never combined with
+    --preset (U10)."""
+    pname, _ = map_preset(cfg, map_key)
+    dump = ctx.shared["dump_m2" if ab else "dump_m1"]
+    pen = dict(preset_pen(dump, pname))
+    if not pen:
+        raise GateError(f"the {'M2' if ab else 'M1'} dump holds no preset {pname}")
+    pin_scale(cfg, map_key, pen, scale)
+    body = {"property_expression_names": dict(pen, **(extra or {}))}
+    if controls:
+        body["autoplace_controls"] = ct_controls(dump, controls, f"{'M2' if ab else 'M1'} {label}")
+    if not cliffs:
+        body["cliff_settings"] = NO_CLIFFS
+        label += "-nocliffs"
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"ct-{map_key}-s{scale}-{'m2' if ab else 'm1'}{label}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def ct_plain_mgs(ctx, tag, label, extra=None, controls=None):
+    """A comparator's world (M0 or BAB: no Earth preset) with only the sliders: `extra`
+    property_expression_names and `controls` as autoplace_controls, validated against the comparator's
+    dump."""
+    dump = ctx.shared.get("dump_bab" if tag == "bab" else "dump_m0")
+    body = {"property_expression_names": dict(extra or {})}
+    if controls:
+        body["autoplace_controls"] = ct_controls(dump, controls, f"{tag.upper()} {label}")
+    d = ctx.out / "mgs"
+    d.mkdir(parents=True, exist_ok=True)
+    f = d / f"ct-{tag}-{label}.json"
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+# The properties a comparator's probe reads (M0 and BAB define no Earth name).
+CT_PROPERTY_NAMES = "temperature,moisture,aux,elevation"
+
+
+def ct_lane_modset(ctx, mods, name, tag):
+    """A probe modset of one worker: M1 or M2 plus ep-s8-dump (ct_probe_modset), or the comparators M0 and
+    BAB plus ep-s8-dump, prepared (G7)."""
+    if tag in ("m1", "m2"):
+        return ct_probe_modset(ctx, mods, name, tag == "m2")
+    probe = HERE / "mods" / "ep-s8-dump"
+    if tag == "m0":
+        ms = mods.with_mods(name, [probe], earth=False)
+    else:
+        ms = mods.make(f"ea-{name}-{folder_hash(probe)}", [probe], from_live=["alien-biomes"] + LIVE_DEPS["alien-biomes"])
+    mods.prepare(ms, name)
+    return ms
+
+
+def ct_probe_modset(ctx, mods, tag, ab):
+    """M1 (or M2, ab=True) plus the dump probe ep-s8-dump, prepared (G7)."""
+    probe = HERE / "mods" / "ep-s8-dump"
+    if ab:
+        z = mods.build_zip()
+        ms = mods.make(f"ea-{tag}-{mods.zip_sha[:8]}-{folder_hash(probe)}", [z, probe],
+                       from_live=["alien-biomes"] + LIVE_DEPS["alien-biomes"])
+    else:
+        ms = mods.with_mods(tag, [probe])
+    mods.prepare(ms, tag)
+    return ms
+
+
+def ct_grid(mref, scale, n):
+    """n x n probe points spread over a map's extent at `scale` (tiles, spawn offset 0): every place a
+    climate band can sit, for D11 and the class agreement."""
+    W, H = mref.W * scale, mref.H * scale
+    x0, y0 = -(mref.W // 2) * scale, -(mref.H // 2) * scale
+    return [(int(x0 + (i + 0.5) * W / n), int(y0 + (j + 0.5) * H / n)) for j in range(n) for i in range(n)]
+
+
+def ct_names(cfg):
+    """The climate names a probe reads: the AB-unit core, the redirected properties and the marsh
+    weight (the region layer's interface name)."""
+    return ",".join([cfg["climate"]["names"]["core"], "temperature", "moisture", "aux", "elevation",
+                     cfg["regions"]["names"]["marsh_w"]])
+
+
+def ct_brief_places(O):
+    """The oracle places with a climate band (the brief rows) or a marsh row."""
+    return [p for p in O["places"] if p["expect"].get("climate_band") is not None or p.get("kind") == "marsh"]
+
+
+def ct_judge_places(cfg, places, vals, mref, scale, ab, label):
+    """T3's climate rows at expression level and in real tiles: each place's band from the AB-unit core
+    and the redirected moisture (ct_band_holds), each brief place's tile in its band's families (AB on
+    or off), and each adopted marsh's centre (the map's oracle lists its row) with the marsh weight
+    above marsh_cut, failing when it reads 0 or nothing (a moved row, a renamed interface, a map without
+    the row), its land or water class EarthMaps', and with AB its moisture at least the lift
+    min(1, marsh times the weight) on land. The marsh census (ct_marsh_census) judges its tiles."""
+    import oracle
+    fails, rows = [], []
+    core = cfg["climate"]["names"]["core"]
+    mw = cfg["regions"]["names"]["marsh_w"]
+    for p in places:
+        pt = tuple(oracle.place_tile(mref, p, str(scale)))
+        v = vals.get(pt) or {}
+        want = p["expect"].get("climate_band")
+        if want is not None:
+            got = ct_band(cfg, v.get(core), v.get("moisture"))
+            fam = ct_family(v.get("tile"))
+            ok = ct_band_holds(want, got)
+            okf = fam in CT_FAMILIES[ab].get(want, (fam,))
+            rows.append({"id": p["id"], "want": want, "got": got, "tile": v.get("tile"), "family": fam})
+            if not ok:
+                fails.append(f"{label} {p['id']}: band {got} (core {v.get(core)}, moisture {v.get('moisture')}), "
+                             f"want {want}")
+            if not okf and band_edge_free(p):
+                fails.append(f"{label} {p['id']}: tile {v.get('tile')} ({fam}) is not in {want}'s families "
+                             f"{CT_FAMILIES[ab].get(want)} ({'AB' if ab else 'fallback'})")
+        if p.get("kind") == "marsh" and p.get("adopted"):
+            w = v.get(mw)
+            cut = cfg["tiles"]["vanilla"]["marsh_cut"]
+            if not isinstance(w, (int, float)) or w <= cut:
+                fails.append(f"{label} {p['id']}: marsh weight {w} at the centre of an adopted marsh, want above {cut} "
+                             f"(the region row is missing, moved or renamed on this map)")
+            elif isinstance(v.get("elevation"), (int, float)):
+                land = v["elevation"] > 0
+                if land != bool(p.get("on_reference_land", land)):
+                    fails.append(f"{label} {p['id']}: land {land} differs from EarthMaps' class at the marsh centre")
+                lift = min(1.0, cfg["climate"]["moisture"]["marsh"] * w)
+                if ab and land and (v.get("moisture") or 0) < lift - 1e-6:
+                    fails.append(f"{label} {p['id']}: moisture {v.get('moisture')} inside the marsh, want at least the "
+                                 f"wetland lift {lift:.3f} (marsh {cfg['climate']['moisture']['marsh']} times the "
+                                 f"weight {w:.3f})")
+            rows.append({"id": p["id"], "marsh_w": w, "tile": v.get("tile"), "family": ct_family(v.get("tile"))})
+    return rows, fails
+
+
+def band_edge_free(p):
+    """A place tagged band_edge accepts either neighbouring band (T3, PD), so its tile is not judged."""
+    return not p.get("band_edge")
+
+
+# Design review experiment 9, elevation part (SS; Europe; M2; scales 1 and 6; seeds 1000 to 1004): with Alien
+# Biomes, preview-mode T1 meets the map's bar, the beach band lies along the coast, offshore deep water
+# sits below AB's deepwater line (R3 3.1) and so does water beyond the map edges (D15). PD: land within
+# beach_strip tiles of water is at least beach_min sand and beach_factor times the sand share of land
+# beyond inland_from tiles; water offshore_tiles or more from any land is at least deep_share deepwater
+# in the previews; at probe points offshore_tiles from reference land, at least offshore_share read
+# elevation below deep_below; every far probe does.
+CT_CE9 = {"deep_below": -5.5, "offshore_tiles": 24, "offshore_points": 200, "offshore_share": 0.98,
+          "deep_share": 0.95, "beach_strip": 2, "inland_from": 10, "beach_min": 0.15, "beach_factor": 2.0,
+          "scales": (1, 6), "seeds": (1000, 1001, 1002, 1003, 1004)}
+
+
+def ct_offshore_points(mref, scale, tiles, count):
+    """Up to `count` probe tiles at reference water pixels at least `tiles` tiles (at `scale`) from any
+    reference land pixel, spread evenly over the candidates, with the spawn offset 0."""
+    import numpy as np
+    land = np.asarray(mref.land, bool)
+    r = max(1, -(-int(tiles) // int(scale)))
+    near = ct_dilate(land, r)
+    rows, cols = np.nonzero(~near)
+    if not len(rows):
+        return []
+    idx = np.linspace(0, len(rows) - 1, min(count, len(rows))).astype(int)
+    return [(int((cols[i] - mref.wr) * scale + scale // 2), int((rows[i] - mref.hr) * scale + scale // 2)) for i in idx]
+
+
+def ct_dilate(mask, r):
+    """A boolean mask grown by r steps of its 4-neighbours."""
+    out = mask.copy()
+    for _ in range(int(r)):
+        m = out.copy()
+        m[1:] |= out[:-1]
+        m[:-1] |= out[1:]
+        m[:, 1:] |= out[:, :-1]
+        m[:, :-1] |= out[:, 1:]
+        out = m
+    return out
+
+
+def ct_tile_colours(dump):
+    """{"water", "sand", "deep"}: the preview colour sets of the placeable player-blocking water tiles,
+    of the sand family's land tiles and of deepwater, each without a colour another class shares."""
+    import t1_metrics as t1
+    by = {"sand": [], "deep": [], "other": [], "water": []}
+    for name, t in (dump.get("tile") or {}).items():
+        mc = t.get("map_color")
+        if not t.get("autoplace") or mc is None:
+            continue
+        rgb = (mc.get("r", 0), mc.get("g", 0), mc.get("b", 0)) if isinstance(mc, dict) else tuple(mc[:3])
+        layers = (t.get("collision_mask") or {}).get("layers") or {}
+        if "water_tile" in layers:
+            by["deep" if name.startswith("deepwater") else "water"].append(rgb)
+        elif ct_family(name) == "sand":
+            by["sand"].append(rgb)
+        else:
+            by["other"].append(rgb)
+    sets = {k: t1.water_colour_set(v) for k, v in by.items()}
+    return {"water": t1.water_colour_set(blocking_water_colours(dump)),
+            "sand": sets["sand"] - sets["other"] - sets["water"] - sets["deep"],
+            "deep": sets["deep"] - sets["water"] - sets["other"] - sets["sand"]}
+
+
+def ct_coast_census(run_dirs, seed, colours):
+    """Pixel counts over one seed's preview images (each pixel a tile): land within beach_strip tiles of
+    water and its sand, land beyond inland_from tiles and its sand, water offshore_tiles or more from
+    land and its deepwater."""
+    import numpy as np
+    from PIL import Image
+    C = CT_CE9
+
+    def keyset(cs):
+        return np.array(sorted((r << 16) | (g << 8) | b for r, g, b in cs), dtype=np.int64)
+
+    water_k, sand_k, deep_k = keyset(colours["water"]), keyset(colours["sand"]), keyset(colours["deep"])
+    out = {"coast": 0, "coast_sand": 0, "inland": 0, "inland_sand": 0, "offshore": 0, "offshore_deep": 0}
+    for d in run_dirs:
+        imgs = sorted(Path(d).glob(f"{seed}.png"))
+        if len(imgs) != 1:
+            raise GateError(f"{d}: {len(imgs)} images for seed {seed} (G4)")
+        a = np.asarray(Image.open(imgs[0]).convert("RGB")).astype(np.int64)
+        key = (a[..., 0] << 16) | (a[..., 1] << 8) | a[..., 2]
+        water = np.isin(key, water_k)
+        land = ~water
+        sand = np.isin(key, sand_k)
+        near_water = ct_dilate(water, C["beach_strip"])
+        far_water = ~ct_dilate(water, C["inland_from"])
+        coast, inland = land & near_water, land & far_water
+        offshore = water & ~ct_dilate(land, C["offshore_tiles"])
+        out["coast"] += int(coast.sum())
+        out["coast_sand"] += int((coast & sand).sum())
+        out["inland"] += int(inland.sum())
+        out["inland_sand"] += int((inland & sand).sum())
+        out["offshore"] += int(offshore.sum())
+        out["offshore_deep"] += int((offshore & np.isin(key, deep_k)).sum())
+    return out
+
+
+# T3's marsh census (SS; every map with adopted marshes; M1 and M2; scales 1, 3 and 6): per scale the
+# window around each adopted marsh's centre and its probe step in tiles; the control window is the
+# temperate variety anchor (CT_VARIETY_ZONES), far from every marsh. PD: inside a marsh (weight above
+# marsh_cut) wetland tiles cover more than 0 and, between the pools, the approved grass (M1 grass-1,
+# M2 Alien Biomes vegetation) at least grass_share of the land; the control holds no marsh water-mud
+# on M1, and less wetland than the marsh on M2 (Alien Biomes places its own inland shallows).
+CT_MARSH = {"window": {1: (32, 1), 3: (48, 2), 6: (96, 3)}, "control": (96, 3), "min_inside": 10,
+            "grass_share": 0.5, "min_land": 5, "scales": (1, 3, 6)}
+
+
+def ct_adopted_marshes(O):
+    return [p for p in O["places"] if p.get("kind") == "marsh" and p.get("adopted")]
+
+
+def ct_marsh_points(mref, O, scale):
+    """{marsh id: [points]} on each adopted marsh's window at `scale` and the control window
+    ("control"), as tiles with the spawn offset 0."""
+    import oracle
+    size, step = CT_MARSH["window"][int(scale)]
+    out = {}
+    for p in ct_adopted_marshes(O):
+        cx, cy = oracle.place_tile(mref, p, str(scale))
+        x0, y0 = int(cx) - size // 2, int(cy) - size // 2
+        out[p["id"]] = [(x0 + i, y0 + j) for j in range(0, size, step) for i in range(0, size, step)]
+    zone = next(z for z in CT_VARIETY_ZONES if z[0] == "temperate")
+    ctl = ct_window_points(mref, zone[1], zone[2], scale, *CT_MARSH["control"])
+    if ctl:
+        out["control"] = ctl
+    return out
+
+
+def ct_marsh_judge(cfg, windows, vals, ab, label):
+    """The marsh census of one run: per adopted marsh, wetland tiles inside, the approved grass between
+    the pools; the control window without marsh water-mud (M1) or with less wetland than every marsh
+    (M2)."""
+    mw = cfg["regions"]["names"]["marsh_w"]
+    cut = cfg["tiles"]["vanilla"]["marsh_cut"]
+    M = CT_MARSH
+    grass = cfg["tiles"]["marsh"].get("grass", {}).get("tile", "grass-1")
+    mud = cfg["tiles"]["marsh"]["water_mud"]["tile"]
+    fails, rec = [], {}
+    ctl = [vals.get(p) or {} for p in windows.get("control", [])]
+    ctl_wet = sum(1 for v in ctl if ct_family(v.get("tile")) == "wetland") / max(len(ctl), 1)
+    ctl_mud = sum(1 for v in ctl if v.get("tile") == mud)
+    rec["control"] = {"points": len(ctl), "wetland_share": round(ctl_wet, 4), "water_mud": ctl_mud}
+    if not ctl:
+        fails.append(f"{label}: no control window (the temperate anchor lies outside the map)")
+    elif not ab and ctl_mud:
+        fails.append(f"{label}: {ctl_mud} water-mud tiles in the control window, far from every marsh (M1 places "
+                     f"water-mud only in marshes)")
+    for mid, pts in windows.items():
+        if mid == "control":
+            continue
+        inside = [vals.get(p) or {} for p in pts]
+        inside = [v for v in inside if isinstance(v.get(mw), (int, float)) and v[mw] > cut]
+        wet = sum(1 for v in inside if ct_family(v.get("tile")) == "wetland")
+        land = [v for v in inside if ct_family(v.get("tile")) not in ("water", "wetland", "other") and
+                isinstance(v.get("elevation"), (int, float)) and v["elevation"] > 0]
+        if ab:
+            good = sum(1 for v in land if str(v.get("tile")).startswith("vegetation-"))
+        else:
+            good = sum(1 for v in land if v.get("tile") == grass)
+        r = {"inside": len(inside), "wetland_share": round(wet / max(len(inside), 1), 4), "land": len(land),
+             "grass_share": round(good / max(len(land), 1), 4)}
+        rec[mid] = r
+        if len(inside) < M["min_inside"]:
+            fails.append(f"{label} {mid}: {len(inside)} points inside the marsh's window, want at least {M['min_inside']}")
+            continue
+        if not wet:
+            fails.append(f"{label} {mid}: no water-mud or water-shallow inside the marsh (T3: its wetland tiles)")
+        if ab and ctl and r["wetland_share"] <= ctl_wet:
+            fails.append(f"{label} {mid}: wetland share {r['wetland_share']} inside, not above the control's {ctl_wet:.4f}")
+        if len(land) >= M["min_land"] and r["grass_share"] < M["grass_share"]:
+            fails.append(f"{label} {mid}: {r['grass_share']:.0%} of the land between the pools is "
+                         f"{'Alien Biomes vegetation' if ab else grass}, want at least {M['grass_share']:.0%} "
+                         f"(APPROVALS 8)")
+    return rec, fails
+
+
+# The quality bar: a real biome never reads as one tile. Every climate zone is a patchwork of several tiles
+# that changes with the seed (config.lua climate: spread). PD, from the Monte Carlo of the climate on
+# vanilla's tile boxes: in a 512 x 512 tile window inside one zone at least
+# min_tiles tiles each cover tile_share of its land and none more than max_share; seeds 1000 and 1002
+# lay at least seed_change of the window's land out differently; over a map's probe grid each climate
+# band's land holds at least min_tiles tiles of tile_share and none above band_max (bands with min_band
+# points or more).
+CT_VARIETY = {"window": 512, "step": 16, "scale": 6, "min_tiles": 3, "tile_share": 0.05, "max_share": 0.70,
+              "seed_change": 0.2, "band_max": 0.8, "min_land": 200, "min_band": 100, "seeds": (1000, 1002)}
+# One inland anchor (lon, lat) per climate zone; a map judges the anchors whose window lies inside it.
+CT_VARIETY_ZONES = (("temperate", 10.0, 50.5), ("cold", 26.0, 62.5), ("frozen", 33.0, 68.0),
+                    ("hot_desert", 10.0, 24.0), ("frozen_siberia", 95.0, 71.0))
+# The negative control: a constant climate (every moisture and aux redirected to one number) leaves a
+# zone to vanilla's tie noise between the boxes holding that point, which the variety rule must fail.
+CT_CONSTANT_CLIMATE = {"moisture": "0.68", "aux": "0.35"}
+
+
+def ct_window_points(mref, lon, lat, scale, size=None, step=None):
+    """The lattice of a size x size tile window centred on (lon, lat) at `scale`, or None when the window
+    leaves the map's extent."""
+    size, step = size or CT_VARIETY["window"], step or CT_VARIETY["step"]
+    _, (tx, ty) = mref.lonlat_to_tile(lon, lat, scale)
+    x0, y0 = tx - size // 2, ty - size // 2
+    left, top = -mref.wr * scale, -mref.hr * scale
+    right, bottom = left + mref.W * scale, top + mref.H * scale
+    if x0 < left or y0 < top or x0 + size > right or y0 + size > bottom:
+        return None
+    return [(x0 + i, y0 + j) for j in range(step // 2, size, step) for i in range(step // 2, size, step)]
+
+
+def ct_land(v):
+    return isinstance(v.get("elevation"), (int, float)) and v["elevation"] > 0 and \
+        ct_family(v.get("tile")) not in ("water", "wetland", "other")
+
+
+def ct_shares(tiles):
+    n = len(tiles)
+    counts = {}
+    for t in tiles:
+        counts[t] = counts.get(t, 0) + 1
+    return {t: c / n for t, c in sorted(counts.items(), key=lambda kv: -kv[1])} if n else {}
+
+
+def ct_variety_judge(shares, n, label, max_share=None, min_n=None):
+    """The quality bar on one tile census: at least min_tiles tiles of tile_share each and none above
+    max_share (CT_VARIETY); fails closed on a census of fewer than min_n land points."""
+    V = CT_VARIETY
+    max_share = V["max_share"] if max_share is None else max_share
+    min_n = V["min_land"] if min_n is None else min_n
+    if n < min_n:
+        return [f"{label}: {n} land points, want at least {min_n} to judge the patchwork"]
+    big = [t for t, s in shares.items() if s >= V["tile_share"]]
+    out = []
+    if len(big) < V["min_tiles"]:
+        out.append(f"{label}: {len(big)} tiles cover {V['tile_share']:.0%} of the land each ({list(shares.items())[:3]}), "
+                   f"want at least {V['min_tiles']}: the zone reads as one tile")
+    top = max(shares.values()) if shares else 1.0
+    if top > max_share:
+        out.append(f"{label}: one tile covers {top:.0%} of the land, want at most {max_share:.0%}")
+    return out
+
+
+def ct_band_variety(cfg, vals, label):
+    """Per climate band over a probe grid (core and moisture, ct_band): each band with min_band land
+    points or more holds at least min_tiles tiles of tile_share and none above band_max."""
+    core = cfg["climate"]["names"]["core"]
+    by = {}
+    for v in vals.values():
+        if ct_land(v):
+            b = ct_band(cfg, v.get(core), v.get("moisture"))
+            if b:
+                by.setdefault(b, []).append(v["tile"])
+    rec, fails = {}, []
+    for b, tiles in sorted(by.items()):
+        sh = ct_shares(tiles)
+        rec[b] = {"land": len(tiles), "tiles": {t: round(s, 3) for t, s in list(sh.items())[:6]}}
+        if len(tiles) >= CT_VARIETY["min_band"]:
+            fails += ct_variety_judge(sh, len(tiles), f"{label} band {b}", CT_VARIETY["band_max"], CT_VARIETY["min_band"])
+    return rec, fails
+
+
+def row_ct_dump_facts(ctx, mods, sec6, row, cache):
+    """T13, T16 (FG; D13 and D14 dump facts; climate-tiles): on M1 and M2 every preset's redirects equal
+    config.lua's (the fallback climate on M1, the Alien Biomes variant and the AB-only keys on M2), and
+    no M2 redirect target reads the property it replaces (A-3); water-shallow and water-mud carry no
+    player collision layer; their hooks are exactly the gated texts, outermost, and Nauvis lists both,
+    so without AB the mod autoplaces them for Earth presets only; with AB each vanilla land tile and
+    each non-adopted AB land tile on Nauvis carries its gated hook, and M2 differs from BAB by stable
+    hooks alone (A-1); the marsh bodies read the region layer's marsh weight and no other region name;
+    the AB-only climate body exists on M2 alone; every tree on M2 whose autoplace reads elevation has
+    both palm keys pointed at Earth copies that read the palm constant and never elevation."""
+    cfg = mods.cfg
+    d1, d2, db = ctx.shared.get("dump_m1"), ctx.shared.get("dump_m2"), ctx.shared.get("dump_bab")
+    if d1 is None or d2 is None or db is None:
+        row.fails.append("no M1, M2 and BAB dumps (row dumps failed)")
+        return
+    fails = row.fails
+    TL, CL = cfg["tiles"], cfg["climate"]
+    scale = int(cfg["settings"]["scale"]["default_value"])
+    for label, d, ab in (("M1", d1, False), ("M2", d2, True)):
+        for key in cfg["preset_order"]:
+            pc = cfg["presets"][key]
+            got = preset_pen(d, pc["name"])
+            want = expected_pen(cfg, pc["map"], scale, ab=ab)
+            if got != want:
+                diff = sorted(k for k in set(got) | set(want) if got.get(k) != want.get(k))
+                fails.append(f"{label} preset {pc['name']}: keys {diff[:6]} differ from config.lua's")
+            if ab:
+                graph = NoiseGraph(d, got)
+                for k, target in sorted(got.items()):
+                    if isinstance(target, str) and not redirect_constant(target) and \
+                            d["noise-expression"].get(target) is not None:
+                        loop = graph.reads_property(target, k)
+                        if loop:
+                            fails.append(f"M2 {pc['name']}: {target} reads the property {k} it replaces (A-3)")
+        tiles = d.get("tile") or {}
+        settings = ((((d.get("planet") or {}).get("nauvis") or {}).get("map_gen_settings") or {})
+                    .get("autoplace_settings") or {}).get("tile", {}).get("settings") or {}
+        for name in (cfg["hooks"]["fords"]["tile"], TL["marsh"]["water_mud"]["tile"]):
+            tp = tiles.get(name) or {}
+            layers = ((tp.get("collision_mask") or {}).get("layers") or {})
+            if not tp or layers.get("player"):
+                fails.append(f"{label}: {name} carries the player collision layer or is missing (D14: walkable)")
+            if name not in settings:
+                fails.append(f"{label}: Nauvis does not list {name} (noise skill rule 2)")
+            text = str((tp.get("autoplace") or {}).get("probability_expression") or "")
+            if not outermost_if(text):
+                fails.append(f"{label}: the {name} hook's outermost node is not the gate if(): {text[:80]!r}")
+        G = TL["marsh"].get("grass")
+        if not ab and G:
+            gp = ((tiles.get(G["tile"]) or {}).get("autoplace") or {}).get("probability_expression")
+            d0 = ctx.shared.get("dump_m0") or {}
+            orig = (((d0.get("tile") or {}).get(G["tile"]) or {}).get("autoplace") or {}).get("probability_expression")
+            if not orig or gp != ct_hook_text(cfg, G["tile"], orig, ab=False):
+                fails.append(f"M1: {G['tile']} autoplace {str(gp)[:80]!r} is not the marsh grass hook around vanilla's "
+                             f"score (APPROVALS 8: the pools sit in {G['tile']} without Alien Biomes)")
+        mud = (tiles.get(TL["marsh"]["water_mud"]["tile"]) or {}).get("autoplace") or {}
+        if not ab and mud.get("probability_expression") != ct_hook_text(cfg, TL["marsh"]["water_mud"]["tile"]):
+            fails.append(f"M1: water-mud autoplace {mud.get('probability_expression')!r}, want "
+                         f"{ct_hook_text(cfg, TL['marsh']['water_mud']['tile'])!r}")
+        ne = d.get("noise-expression") or {}
+        if (CL["names"]["ab"]["temperature"] in ne) != ab:
+            fails.append(f"{label}: {CL['names']['ab']['temperature']} must exist with Alien Biomes only (R3 6)")
+        for v in CL["names"]["fallback"].values():
+            if v not in ne:
+                fails.append(f"{label}: the fallback climate body {v} is missing")
+    # M2 against BAB: every changed AB or vanilla prototype is a stable hook (A-1 beside AB)
+    changed = []
+    for t, protos in d2.items():
+        if not isinstance(protos, dict) or not isinstance(db.get(t), dict):
+            continue
+        for n, v in protos.items():
+            b = db[t].get(n)
+            if b is not None and v != b and not (t == "map-gen-presets" and n == "default") and \
+                    not stable_hook_change(cfg, t, n, v, b, ab=True):
+                changed.append((t, n))
+    if changed:
+        fails.append(f"Earth changed Alien Biomes or vanilla prototypes beside AB {changed[:5]} beyond the stable "
+                     f"hooks (A-1)")
+    hooked = [n for n, tp in (d2.get("tile") or {}).items() if (tp.get("autoplace") or {}).get("probability_expression")
+              and ct_hook_text(cfg, n, ((db.get("tile") or {}).get(n) or {}).get("autoplace", {}).get(
+                  "probability_expression"), ab=True) == (tp.get("autoplace") or {}).get("probability_expression")]
+    # marshes read the shared region expressions only (T16; D13): of the region layer, the marsh weight
+    R = cfg["regions"]["names"]
+    region_names = {v for k, v in R.items() if isinstance(v, str) and k not in ("suffix", "share")}
+    ne2 = d2.get("noise-expression") or {}
+    grass_body = (TL["marsh"]["grass"]["body"],) if TL["marsh"].get("grass") else ()
+    for body in (TL["marsh"]["water_mud"]["body"], TL["marsh"]["water_shallow"]["body"], TL["vanilla"]["body"],
+                 TL["exclude"]["body"], CL["names"]["ab"]["moisture"]) + grass_body:
+        b = ne2.get(body) or {}
+        refs = set(expr_refs(b.get("expression") or ""))
+        for lv in (b.get("local_expressions") or {}).values():
+            refs |= set(expr_refs(lv if isinstance(lv, str) else ""))
+        stray = sorted(r for r in refs if (r in region_names or r.startswith(R["row"]["sd"]) or
+                                          r.startswith(R["row"]["w"])) and r != R["marsh_w"])
+        if stray:
+            fails.append(f"{body} reads region names {stray[:3]}: marshes read the marsh weight only (D13)")
+    # the palm switch: every M2 tree reading elevation has both keys on Earth copies of the constant
+    P = TL["palm"]
+    copies = {}
+    for c in P["copies"]:
+        copies.setdefault(c["tree"], {})[c["field"]] = c
+    readers = []
+    for n, tp in (d2.get("tree") or {}).items():
+        ap = tp.get("autoplace") or {}
+        texts = [ap.get("probability_expression"), ap.get("richness_expression")] + list(
+            (ap.get("local_expressions") or {}).values())
+        if any(P["reads"] in expr_refs(x) for x in texts if isinstance(x, str)):
+            readers.append(n)
+            for field in ("probability", "richness"):
+                c = (copies.get(n) or {}).get(field)
+                b = ne2.get(c["body"]) if c else None
+                if not b:
+                    fails.append(f"M2 tree {n} reads {P['reads']} and has no Earth copy of its {field}")
+                    continue
+                refs = set(expr_refs(str(b.get("expression") or "")))
+                for lv in (b.get("local_expressions") or {}).values():
+                    refs |= set(expr_refs(lv if isinstance(lv, str) else ""))
+                if P["reads"] in refs:
+                    fails.append(f"{c['body']} still reads {P['reads']}")
+    fails += palm_table_fails(ctx, mods, d1, d2, db)
+    # the vanilla bonus stops at the temperate band's top, so vanilla never reaches D11's desert bin (the
+    # lean plus patch passed up to about 73.5): the dumped body is tiles.lua's text from config.lua
+    want = ct_vtile_bonus_text(cfg)
+    for label, d in (("M1", d1), ("M2", d2)):
+        got = ((d.get("noise-expression") or {}).get(TL["vanilla"]["body"]) or {}).get("expression")
+        if got != want:
+            fails.append(f"{label}: {TL['vanilla']['body']} is {str(got)[:100]!r}, not the hot-capped lean "
+                         f"{want[:100]!r} (vanilla would reach the desert band)")
+    row.detail = (f"M1 and M2 presets equal config.lua's; water-shallow and water-mud walkable and hooked on both; "
+                  f"{len(hooked)} tiles carry climate-tiles hooks beside AB, M2 differs from BAB by stable hooks "
+                  f"only; marshes read {R['marsh_w']} only; palms {sorted(readers)} read the Earth copies, built from "
+                  f"the frozen Alien Biomes table, which the installed palms and AB zip match")
+
+
+def ct_vtile_bonus_text(cfg):
+    """The vanilla bonus body's expression as tiles.lua writes it from config.lua: -inf inside marshes,
+    on water and from the temperate band's top up; +bonus where the lean plus patch passes; 0 elsewhere
+    in the band; -inf below it."""
+    V, X = cfg["tiles"]["vanilla"], cfg["tiles"]["exclude"]
+    n = ww_num
+    return (f"if({cfg['regions']['names']['marsh_w']} > {n(V['marsh_cut'])}, -inf, if(elevation > 0, "
+            f"if(temperature >= {n(X['temperate_below'])}, -inf, if(1 - abs(temperature - {n(V['lean_t'])}) / "
+            f"{n(V['lean_span'])} + patch - {n(V['lean_cut'])} > 0, {n(V['bonus'])}, if(temperature >= "
+            f"{n(X['temperate_from'])}, 0, -inf))), -inf))")
+
+
+def palm_table_fails(ctx, mods, d1, d2, db):
+    """The palm copies are Earth-owned data (design constraint 2; tools/build_palms.py): the generated
+    table passes its own digest; the M2 and BAB modsets copy the Alien Biomes zip the table records
+    (an Alien Biomes update is a deliberate change, never a silent one); the installed palms in the M2
+    and BAB dumps equal the table, so data-final-fixes.lua keeps the Earth copies on Earth presets;
+    and M1 and M2 define every copy alike, each carrying the table's functions as local functions and
+    reading the palm constant, never elevation or an Alien Biomes function by its global name."""
+    import build_palms
+    cfg = mods.cfg
+    P = cfg["tiles"]["palm"]
+    fails = [f"palm table: {x}" for x in build_palms.check(cfg)]
+    if fails:
+        return fails
+    table = tnconfig.load(build_palms.table_path(cfg))
+    src = table["source"]
+    for tag in ("m2", "bab"):
+        ms = ctx.shared.get(tag)
+        zips = [h for n, h in (mods.manifest(ms) if ms else []) if n.startswith(f"{build_palms.AB}_")]
+        if zips != [src["zip_sha256"]]:
+            fails.append(f"{tag.upper()} copies Alien Biomes zips {zips}, the palm table records {src['version']} "
+                         f"({src['zip_sha256'][:12]}): an Alien Biomes update is a deliberate change (rebuild the table "
+                         f"with tools/build_palms.py and ship the copies' next version)")
+    trees = build_palms.trees_of(cfg)
+    for label, d in (("M2", d2), ("BAB", db)):
+        try:
+            live = build_palms.palm_table(d, trees)
+        except build_palms.PalmError as e:
+            fails.append(f"{label}: the installed palms cannot be read against the table: {e}")
+            continue
+        if build_palms.digest(live) != src["digest"]:
+            fails.append(f"{label}: the installed palms differ from the frozen {build_palms.AB} {src['version']} table, "
+                         f"so Earth presets fall back to the neutral body: rebuild the table and ship the copies' "
+                         f"next version")
+    names = sorted(table["functions"])
+    for label, d in (("M1", d1), ("M2", d2)):
+        ne = d.get("noise-expression") or {}
+        for c in P["copies"]:
+            b = ne.get(c["body"])
+            if not b:
+                fails.append(f"{label}: the palm copy {c['body']} is missing (the copies are defined on every load)")
+                continue
+            lf = b.get("local_functions") or {}
+            if sorted(lf) != [P["local_prefix"] + n for n in names]:
+                fails.append(f"{label}: {c['body']} carries local functions {sorted(lf)}, want the table's {names} under "
+                             f"{P['local_prefix']!r}")
+            texts = [b.get("expression")] + list((b.get("local_expressions") or {}).values()) + \
+                [f.get("expression") for f in lf.values() if isinstance(f, dict)]
+            refs = set()
+            for x in texts:
+                refs |= set(expr_refs(x)) if isinstance(x, str) else set()
+            bad = sorted(refs & ({P["reads"]} | set(names)))
+            if bad:
+                fails.append(f"{label}: {c['body']} reads {bad} (the constant replaces elevation, local functions the "
+                             f"Alien Biomes ones)")
+        if label == "M2" and d1 is not None:
+            m1 = d1.get("noise-expression") or {}
+            for c in P["copies"]:
+                if c["body"] in ne and c["body"] in m1 and body_hash(ne[c["body"]]) != body_hash(m1[c["body"]]):
+                    fails.append(f"{c['body']} differs between M1 and M2: the copies never follow the installed mods")
+    return fails
+
+
+def row_ct_zero_cost_m2(ctx, mods, sec6, row, cache):
+    """T13 (FG; M2 against BAB): a default-preset world with Earth beside Alien Biomes is hash-identical
+    to Alien Biomes alone at seeds 1000, 1002 and 1004 (256 px) and complexity-identical by
+    zero_cost_diffs (64 px --verbose); BAB's complexity is not vanilla's (G5: AB loaded)."""
+    m2, bab = ctx.shared["m2"], ctx.shared["bab"]
+    key, newest = common_key(ctx, "ct_zero_cost_m2", {"m2": mods.manifest(m2), "bab": mods.manifest(bab),
+                                                      "dump": ctx.shared.get("dump_m2_sha")})
+
+    def live():
+        inst = ctx.instance
+        out = []
+        for ms, tag in ((bab, "bab"), (m2, "m2")):
+            out.append(ctx.fh(["preview", "--instance", inst, "--modset", ms, "--seed", str(SEEDS[0]), "--seed-max",
+                               str(SEEDS[-1]), "--size", "256"], ctx.out / f"ct-zc-{tag}-256").out)
+        for ms, tag in ((bab, "bab"), (m2, "m2")):
+            out.append(preview(ctx, ms, f"ct-zc-{tag}-64v", 64, verbose=True).out)
+        return out
+
+    def derive(dirs):
+        fails = []
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        a, b = derive_preview(dirs[0], seeds=len(SEEDS)), derive_preview(dirs[1], seeds=len(SEEDS))
+        c, e = derive_preview(dirs[2]), derive_preview(dirs[3])
+        if a["images"] != b["images"]:
+            fails.append(f"a default-preset world with Earth beside Alien Biomes differs from AB alone: {b['images']} "
+                         f"vs {a['images']}")
+        fails += [f"M2's default-preset programs differ from BAB's in {x}" for x in
+                  zero_cost_diffs(c["complexity"], e["complexity"])]
+        if not c["complexity"] or {k: v.get("complexity") for k, v in c["complexity"].items()} == VANILLA:
+            fails.append("BAB's complexity is missing or vanilla's: Alien Biomes did not load (G5)")
+        meas = {"bab_256": a["images"], "m2_256": b["images"], "bab_64": c["complexity"], "m2_64": e["complexity"]}
+        return meas, fails, (f"M2 default at seeds {', '.join(map(str, SEEDS))} hash-identical to BAB; Tile "
+                             f"{(e['complexity'].get('tile') or {}).get('complexity')} and Entity "
+                             f"{(e['complexity'].get('entity') or {}).get('complexity')} equal BAB's")
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def row_ct_isolation_m2(ctx, mods, sec6, row, cache):
+    """T15 (FG; isolation, AB part): (a) Entity and Cliff identical between the real Europe
+    build and its constant-coast twin on M2 while Tile differs; (b) the M2 dump walk finds no firewall
+    name under any Entity, decorative or Cliff root on any Terra Nauvis preset, and it reaches each
+    palm copy the presets name (the walk followed the AB keys)."""
+    cfg = mods.cfg
+    d2 = ctx.shared.get("dump_m2")
+    if d2 is None:
+        row.fails.append("no M2 dump")
+        return
+    fw = set(firewall_names(cfg))
+    parts = []
+    for pname in earth_presets(cfg):
+        pen = preset_pen(d2, pname)
+        rep = walk_roots(d2, pen, fw)
+        for g in ("entity", "decorative", "cliff"):
+            if rep[g]["hits"]:
+                row.fails.append(f"M2 {pname}: {g} roots reach the firewall in {rep[g]['hits']} paths, e.g. "
+                                 f"{' > '.join(rep[g]['example'][-5:])} (sacred constraint 3)")
+        for c in cfg["tiles"]["palm"]["copies"]:
+            if pen.get(c["key"]) == c["body"] and c["body"] not in rep["entity"]["reached"]:
+                row.fails.append(f"M2 {pname}: the walk never reached {c['body']}: it did not follow {c['key']}")
+        parts.append(f"{pname}: Entity {rep['entity']['roots']} roots, decorative {rep['decorative']['roots']}: "
+                     f"{sum(rep[g]['hits'] for g in rep)} firewall paths")
+    m2 = ctx.shared["m2"]
+    twin_src = stage_twin(ctx, cfg)
+    z = mods.build_zip()
+    m2c = mods.make(f"ea-m2c-{mods.zip_sha[:8]}-{folder_hash(twin_src)}", [z, twin_src],
+                    from_live=["alien-biomes"] + LIVE_DEPS["alien-biomes"])
+    pname = cfg["presets"][cfg["preset_order"][0]]["name"]
+    key, newest = common_key(ctx, "ct_isolation_m2", {"m2c": mods.manifest(m2c), "dump": ctx.shared.get("dump_m2_sha")})
+
+    def live():
+        mods.prepare(m2c, "m2c")
+        return [preview(ctx, m2, "ct-iso-real", 64, preset=pname, verbose=True).out,
+                preview(ctx, m2c, "ct-iso-twin", 64, preset=pname, verbose=True).out]
+
+    def derive(dirs):
+        fails = []
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        real, twin = ctx_complexity(dirs[0]), ctx_complexity(dirs[1])
+        if not real or real.get("tile") == twin.get("tile"):
+            fails.append(f"M2 {pname}: the twin's Tile equals the real build's: the positive control failed (TST-08)")
+        for prog in ("entity", "cliff"):
+            if real.get(prog) != twin.get(prog):
+                fails.append(f"M2 {pname}: {prog.title()} differs between the real build {real.get(prog)} and its "
+                             f"constant-coast twin {twin.get(prog)} (sacred constraint 3)")
+        return ({"real": real, "twin": twin}, fails,
+                "; ".join(parts) + f"; (a) {pname} on M2: Tile {(real.get('tile') or {}).get('complexity')} vs twin "
+                f"{(twin.get('tile') or {}).get('complexity')}, Entity and Cliff equal")
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def row_ct_t3(ctx, mods, sec6, row, cache):
+    """T3 (FG; Europe at scale 6 on M1 and M2): every oracle place with a climate band (the
+    brief rows) reads its band at expression level and its band's tile family in its real tile, AB on
+    and off, and every adopted marsh's centre reads its wetland biome while its class stays
+    EarthMaps' (ct_judge_places)."""
+    import earthgeo as eg
+    import oracle
+    cfg = mods.cfg
+    _, mk, _ = first_preset(cfg)
+    mref = eg.MapRef(mk)
+    O = oracle.load_oracle(mk, TESTS / "oracle")
+    places = ct_brief_places(O)
+    pts = list(dict.fromkeys(tuple(oracle.place_tile(mref, p, "6")) for p in places))
+    lanes = {ab: ct_probe_modset(ctx, mods, f"ct3{'b' if ab else 'a'}", ab) for ab in (False, True)}
+    key, newest = common_key(ctx, "ct_t3", {"ms": [mods.manifest(m) for m in lanes.values()], "pts": pts,
+                                              "dump": [ctx.shared.get("dump_m1_sha"), ctx.shared.get("dump_m2_sha")]})
+
+    def live():
+        jobs, dirs = [], []
+        for i, ab in enumerate((False, True)):
+            ms, inst = lanes[ab], lane_instance(ctx, i)
+            out = ctx.out / f"ct-t3-{'m2' if ab else 'm1'}"
+            jobs.append([(dump_settings(ctx, ms, inst, label="ct3", points=";".join(f"{x},{y}" for x, y in pts),
+                                        names=ct_names(cfg)),
+                          scenario_args(inst, ms, 4, SEED, ct_mgs(ctx, cfg, mk, 6, ab)), out, 900)])
+            dirs.append(out)
+        run_lanes(ctx, jobs)
+        return dirs
+
+    def derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        for x, ab in zip(dirs, (False, True)):
+            vals = point_values(read_dump(x, "ct3"))
+            rows, f = ct_judge_places(cfg, places, vals, mref, 6, ab, f"{'M2' if ab else 'M1'} {mk} s6")
+            meas["m2" if ab else "m1"] = rows
+            fails += f
+        n = sum(1 for p in places if p["expect"].get("climate_band") is not None)
+        return meas, fails, f"{n} brief climate places and {len(places) - n} marsh centres on M1 and M2, {mk} scale 6"
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def row_ct_t4_moisture(ctx, mods, sec6, row, cache):
+    """T4 (FG; moisture bias; Europe at scale 6; M1 and M2 with M0 and BAB controls; TST-13): with the
+    moisture bias at +0.15 the dry share of sampled land (moisture below the dry cut) falls and the wet
+    share (0.6 and up) rises against bias 0, the reverse at -0.15; the same slider moves M0's and BAB's
+    own moisture (the positive control, G6)."""
+    cfg = mods.cfg
+    _, mk, _ = first_preset(cfg)
+    n, step = CT_GRID
+    dry = cfg["climate"]["bands"]["dry_below"]
+    ms = {"m1": probe_modset(ctx, mods, "ct4a"), "m2": ct_probe_modset(ctx, mods, "ct4b", True),
+          "m0": mods.with_mods("ct4m0", [HERE / "mods" / "ep-s8-dump"], earth=False),
+          "bab": mods.make(f"ea-ct4bab-{folder_hash(HERE / 'mods' / 'ep-s8-dump')}", [HERE / "mods" / "ep-s8-dump"],
+                           from_live=["alien-biomes"] + LIVE_DEPS["alien-biomes"])}
+    for tag in ("m0", "bab"):
+        mods.prepare(ms[tag], f"ct4{tag}")
+    pts = [(x, y) for y in range(-n // 2 * step, n // 2 * step, step) for x in range(-n // 2 * step, n // 2 * step, step)]
+    plan = [(tag, b) for tag in ("m1", "m2", "m0", "bab") for b in (0, CT_BIAS, -CT_BIAS)]
+    key, newest = common_key(ctx, "ct_t4_moisture", {"ms": {k: mods.manifest(v) for k, v in ms.items()}, "plan": plan,
+                                                       "dump": [ctx.shared.get("dump_m1_sha"),
+                                                                ctx.shared.get("dump_m2_sha")]})
+
+    def live():
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, (tag, b) in enumerate(plan):
+            ln = i % PAR_MAX
+            inst = lane_instance(ctx, ln)
+            extra = {"control:moisture:bias": str(b)} if b else {}
+            if tag in ("m1", "m2"):
+                mgs = ct_mgs(ctx, cfg, mk, 6, tag == "m2", extra, label=f"-mb{b:+.2f}")
+            else:
+                mgs = write_mgs(ctx, f"ct4-{tag}-mb{b:+.2f}", extra)
+            out = ctx.out / f"ct-t4-{tag}-mb{b:+.2f}"
+            lanes[ln].append((dump_settings(ctx, ms[tag], inst, label="ct4", points=";".join(f"{x},{y}" for x, y in pts),
+                                            names="moisture,elevation"),
+                              scenario_args(inst, ms[tag], 4, SEED, mgs), out, 900))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        shares = {}
+        for x, (tag, b) in zip(dirs, plan):
+            vals = point_values(read_dump(x, "ct4"))
+            land = [v["moisture"] for v in vals.values() if isinstance(v.get("elevation"), (int, float)) and
+                    v["elevation"] > 0 and isinstance(v.get("moisture"), (int, float))]
+            shares[(tag, b)] = (sum(1 for m in land if m < dry) / max(len(land), 1),
+                                sum(1 for m in land if m >= 0.6) / max(len(land), 1),
+                                sum(land) / max(len(land), 1))
+            meas[f"{tag}_{b:+.2f}"] = {"dry": shares[(tag, b)][0], "wet": shares[(tag, b)][1],
+                                       "mean": shares[(tag, b)][2], "land": len(land)}
+        for tag in ("m1", "m2"):
+            d0, w0, _ = shares[(tag, 0)]
+            dp, wp, _ = shares[(tag, CT_BIAS)]
+            dn, wn, _ = shares[(tag, -CT_BIAS)]
+            if not (dp <= d0 and wp > w0):
+                fails.append(f"{tag.upper()}: moisture bias +{CT_BIAS} gives dry {dp:.3f} and wet {wp:.3f} against "
+                             f"{d0:.3f} and {w0:.3f}: want dry down, wet up (S3)")
+            if not (dn >= d0 and wn < w0):
+                fails.append(f"{tag.upper()}: moisture bias -{CT_BIAS} gives dry {dn:.3f} and wet {wn:.3f} against "
+                             f"{d0:.3f} and {w0:.3f}: want dry up, wet down (S3)")
+        for tag in ("m0", "bab"):
+            if shares[(tag, CT_BIAS)][2] <= shares[(tag, 0)][2]:
+                fails.append(f"positive control: moisture bias +{CT_BIAS} did not raise {tag.upper()}'s mean moisture "
+                             f"(G6): the slider did not reach the run")
+        return meas, fails, "; ".join(f"{k}: dry {v['dry']:.3f} wet {v['wet']:.3f}" for k, v in meas.items())
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+# -- climate-tiles' suite checks
+
+def ct_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """climate-tiles' suite checks, added to suite_checks' table (design section 11, milestone 0): the climate
+    and tile rows, and the timed rows on the t15b, rt, walker and save machinery: every map's M1t/M0t
+    and M2t/BABt at 16 LP at scales 6 and 1, scale 6 also at 24 LP, 8 LP recorded (ct_t15b: P1 to P3,
+    the Alien Biomes flip rule's guard), the exploring runs and the save pair M2 against BAB (rt_m2: P4
+    to P6 with P6's M2 limit; save_m2: P19; walker_m2: the phase split, recorded), and the Map type
+    route's ratio against BAB (ct_maptype_t15b, recorded)."""
+    import earthgeo as eg
+    import oracle
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    maps = [cfg["presets"][k]["map"] for k in cfg["preset_order"]]
+    eu = maps[0]
+    dump_shas = [ctx.shared.get("dump_m1_sha"), ctx.shared.get("dump_m2_sha")]
+
+    def base_key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "dump": dump_shas, "extra": extra or {}})
+
+    def plan_tag(e):
+        return e[3] if isinstance(e[3], str) else ("m2" if e[3] else "m1")
+
+    def probe_plan_runs(tag, plan, names, timeout=1800):
+        """plan: [(label, map, scale, ab or a modset tag, points, extra redirects, seed[, controls])], one
+        probe scenario each, in workers; each worker keeps one probe modset per tag the plan uses. M1 and M2
+        run the map's preset (ct_mgs) and read `names`; the comparators M0 and BAB a default world with
+        only the sliders (ct_plain_mgs), reading the properties alone."""
+        tags = sorted({plan_tag(e) for e in plan})
+        lane_ms = {(i, t): ct_lane_modset(ctx, mods, f"{tag}{i}{t}", t) for i in range(min(PAR_MAX, len(plan)))
+                   for t in tags}
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, e in enumerate(plan):
+            label, mk, s, _, pts, extra, seed = e[:7]
+            controls = e[7] if len(e) > 7 else None
+            t = plan_tag(e)
+            ln = i % PAR_MAX
+            ms, inst = lane_ms[(ln, t)], lane_instance(ctx, ln)
+            out = ctx.out / f"{tag}-{label}"
+            if t in ("m1", "m2"):
+                mgs, nm = ct_mgs(ctx, cfg, mk, s, t == "m2", extra, label=f"-{label}", controls=controls), names
+            else:
+                mgs, nm = ct_plain_mgs(ctx, t, f"{tag}-{label}", extra, controls), CT_PROPERTY_NAMES
+            lanes[ln].append((dump_settings(ctx, ms, inst, label=tag, points=";".join(f"{x},{y}" for x, y in pts),
+                                            names=nm),
+                              scenario_args(inst, ms, 4, seed, mgs), out, timeout))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    # T3 (SS; every map at scales 1, 3 and 6 on M1 and M2): the brief rows' bands and tile
+    # families and the marsh centres (ct_judge_places), and EarthMaps' painted classes agree at least
+    # 0.80 per class (PD, calibrated here): ice and tundra (class d north of 60 N) cold or frozen, Sahara
+    # and Arabia sand (s and S inside their boxes) hot and dry, on a probe grid over each map.
+    t3_plan = []
+    for mk in maps:
+        mref = eg.MapRef(mk)
+        O = oracle.load_oracle(mk, TESTS / "oracle")
+        for s in CT_T3_SCALES:
+            pts = [tuple(oracle.place_tile(mref, p, str(s))) for p in ct_brief_places(O)]
+            pts = list(dict.fromkeys(pts + ct_grid(mref, s, CT_D11_POINTS)))
+            for ab in (False, True):
+                t3_plan.append((f"{mk}-s{s}-{'m2' if ab else 'm1'}", mk, s, ab, pts, None, SEED))
+
+    def t3_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(t3_plan):
+            return {}, fails + [f"{len(dirs)} runs, want {len(t3_plan)}"], ""
+        for x, (label, mk, s, ab, pts, _, _) in zip(dirs, t3_plan):
+            mref = eg.MapRef(mk)
+            O = oracle.load_oracle(mk, TESTS / "oracle")
+            vals = point_values(read_dump(x, "ct3s"))
+            rows, f = ct_judge_places(cfg, ct_brief_places(O), vals, mref, s, ab, label)
+            agree = ct_class_agreement(cfg, mk, s, vals)
+            for cls, (n, ok) in agree.items():
+                if n and ok / n < 0.80:
+                    fails.append(f"{label}: EarthMaps class {cls} agrees {ok}/{n} = {ok / n:.3f}, want at least 0.80")
+            # The quality bar per climate band over the map's grid: no band reads as one tile
+            bands, fb = ct_band_variety(cfg, vals, label)
+            meas[label] = {"places": rows, "class_agreement": agree, "band_variety": bands}
+            fails += f + fb
+            # T13: the fallback's far north (M1) is dry and dead ground on every map and scale
+            if not ab:
+                dry, n, fn = ct_far_north(cfg, vals, label)
+                meas[label]["far_north"] = {"dry": round(dry, 4), "points": n}
+                fails += fn
+        return meas, fails, "; ".join(f"{k}: {v['class_agreement']}" for k, v in meas.items())
+
+    checks["ct_t3_maps"] = SuiteCheck("ct_t3_maps", lambda: base_key("ct_t3_maps", {"n": len(t3_plan)}),
+                                      lambda deadline: probe_plan_runs("ct3s", t3_plan, ct_names(cfg)), t3_derive)
+
+    # T3 (SS; every map's adopted marshes; M1 and M2; scales 1, 3 and 6): each marsh carries its
+    # climate's wetland tiles (water-mud pools, the water-shallow fringe) with the approved grass between
+    # the pools, against a control window far from every marsh (ct_marsh_judge)
+    marsh_windows, marsh_plan = {}, []
+    for mk in maps:
+        mref = eg.MapRef(mk)
+        O = oracle.load_oracle(mk, TESTS / "oracle")
+        if not ct_adopted_marshes(O):
+            continue
+        for s in CT_MARSH["scales"]:
+            w = ct_marsh_points(mref, O, s)
+            marsh_windows[(mk, s)] = w
+            pts = list(dict.fromkeys(p for v in w.values() for p in v))
+            for ab in (False, True):
+                marsh_plan.append((f"{mk}-s{s}-{'m2' if ab else 'm1'}", mk, s, ab, pts, None, SEED))
+
+    def marsh_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(marsh_plan):
+            return {}, fails + [f"{len(dirs)} runs, want {len(marsh_plan)}"], ""
+        if not marsh_plan:
+            return {}, fails + ["no map lists an adopted marsh: the census judges nothing"], ""
+        for x, (label, mk, s, ab, pts, _, _) in zip(dirs, marsh_plan):
+            vals = point_values(read_dump(x, "ctm"))
+            rec, f = ct_marsh_judge(cfg, marsh_windows[(mk, s)], vals, ab, label)
+            meas[label] = rec
+            fails += f
+        return meas, fails, "; ".join(f"{k}: " + ", ".join(f"{m} {r.get('wetland_share')}" for m, r in v.items()
+                                                          if m != "control") for k, v in meas.items())
+
+    checks["ct_marsh_census"] = SuiteCheck("ct_marsh_census", lambda: base_key("ct_marsh_census", {
+        "n": len(marsh_plan), "rule": {k: v for k, v in CT_MARSH.items() if k != "window"}}),
+        lambda deadline: probe_plan_runs("ctm", marsh_plan, ct_names(cfg)), marsh_derive)
+
+    # D11 (SS; M2; every map; seeds 1000, 1002 and 1004; scales 1 and 6, JI-06, TST-07): on a
+    # probe grid over each map, from the real tiles: the vanilla share of land at least 0.8 where the AB
+    # temperature is 40 to 50, 0 below 0 and in the desert band (hot and dry); outside marshes, every AB
+    # tile in the temperate band (the exclusion's) in APPROVALS 9's adopted set; no alien-palette AB tile;
+    # every vanilla land tile sampled somewhere on M2 (all maps, scales and seeds together).
+    d11_plan = []
+    for mk in maps:
+        mref = eg.MapRef(mk)
+        for s in CT_D11_SCALES:
+            for seed in SEEDS:
+                d11_plan.append((f"{mk}-s{s}-{seed}", mk, s, True, ct_grid(mref, s, CT_D11_POINTS), None, seed))
+
+    def d11_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        V, X = cfg["tiles"]["vanilla"], cfg["tiles"]["exclude"]
+        vanilla, adopted = set(V["tiles"]), set(cfg["tiles"]["ab_adopted"])
+        mw = cfg["regions"]["names"]["marsh_w"]
+        seen = set()
+        for x, (label, mk, s, ab, pts, _, seed) in zip(dirs, d11_plan):
+            vals = point_values(read_dump(x, "ct11"))
+            bins = {"below_0": [0, 0], "40_50": [0, 0], "desert": [0, 0]}
+            bad_ab, alien = {}, {}
+            for v in vals.values():
+                tile, t, m = v.get("tile"), v.get("temperature"), v.get("moisture")
+                if not isinstance(t, (int, float)) or ct_family(tile) in ("water", "other") or tile is None:
+                    continue
+                if not (isinstance(v.get("elevation"), (int, float)) and v["elevation"] > 0):
+                    continue
+                isv = tile in vanilla
+                if isv:
+                    seen.add(tile)
+                band = "below_0" if t < 0 else "40_50" if 40 <= t < 50 else \
+                    "desert" if ct_band(cfg, t, m) == "hot_desert" else None
+                if band:
+                    bins[band][0] += 1
+                    bins[band][1] += int(isv)
+                in_marsh = isinstance(v.get(mw), (int, float)) and v[mw] > X["marsh_cut"]
+                if not isv and not in_marsh and X["temperate_from"] <= t < X["temperate_below"] and \
+                        tile not in adopted and ct_family(tile) not in ("wetland",):
+                    bad_ab[tile] = bad_ab.get(tile, 0) + 1
+                if not isv and any(a in tile for a in CT_ALIEN):
+                    alien[tile] = alien.get(tile, 0) + 1
+            share = {k: (b / a if a else None) for k, (a, b) in bins.items()}
+            meas[label] = {"vanilla_share": share, "counts": bins, "non_adopted_temperate": bad_ab, "alien": alien}
+            if share["40_50"] is not None and share["40_50"] < 0.8:
+                fails.append(f"{label}: vanilla share {share['40_50']:.3f} at 40 to 50, want at least 0.8 (D11)")
+            for k in ("below_0", "desert"):
+                if share[k]:
+                    fails.append(f"{label}: vanilla share {share[k]:.3f} {k.replace('_', ' ')}, want 0 (D11)")
+            if bad_ab:
+                fails.append(f"{label}: non-adopted AB tiles in temperate bands {sorted(bad_ab)[:4]} (D11, APPROVALS 9)")
+            if alien:
+                fails.append(f"{label}: alien-palette tiles {sorted(alien)[:4]} at aux bias 0 (D11)")
+        missing = sorted(vanilla - seen)
+        meas["vanilla_tiles_seen"] = sorted(seen)
+        if missing:
+            fails.append(f"vanilla tiles {missing} never appear on M2 at the sampled maps, scales and seeds (D11)")
+        return meas, fails, f"{len(d11_plan)} grids; vanilla tiles seen {len(seen)} of {len(vanilla)}"
+
+    checks["ct_d11"] = SuiteCheck("ct_d11", lambda: base_key("ct_d11", {"n": len(d11_plan)}),
+                                  lambda deadline: probe_plan_runs("ct11", d11_plan, ct_names(cfg)), d11_derive)
+
+    # The quality bar (SS; every map; M1 and M2; seeds 1000 and 1002; scale 6): inside each climate zone a
+    # 512 x 512 tile window (CT_VARIETY_ZONES, the anchors inside the map) holds at least three tiles of
+    # 5 percent each and none above 70 percent, and the two seeds lay the window out differently; the
+    # negative control, Europe's temperate window under a constant climate (CT_CONSTANT_CLIMATE), must
+    # fail the same rule (G6: the rule can fail).
+    V = CT_VARIETY
+    var_windows = {}
+    for mk in maps:
+        mref = eg.MapRef(mk)
+        for zone, lon, lat in CT_VARIETY_ZONES:
+            pts = ct_window_points(mref, lon, lat, V["scale"])
+            if pts:
+                var_windows.setdefault(mk, []).append((zone, pts))
+    var_plan = [(f"{mk}-{'m2' if ab else 'm1'}-{seed}", mk, V["scale"], ab,
+                 [p for _, pts in var_windows[mk] for p in pts], None, seed)
+                for mk in var_windows for ab in (False, True) for seed in V["seeds"]]
+    ctl_zone = next((z for z in var_windows.get(eu, []) if z[0] == "temperate"), None)
+    if ctl_zone:
+        var_plan.append((f"{eu}-m1-constant", eu, V["scale"], False, ctl_zone[1], dict(CT_CONSTANT_CLIMATE), SEED))
+
+    def variety_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(var_plan):
+            return {}, fails + [f"{len(dirs)} runs, want {len(var_plan)}"], ""
+        if not var_windows:
+            return {}, fails + ["no climate zone window lies inside any map"], ""
+        tiles_at = {}
+        for x, (label, mk, s, ab, pts, extra, seed) in zip(dirs, var_plan):
+            vals = point_values(read_dump(x, "ctv"))
+            if extra:
+                land = [vals.get(p) or {} for p in pts]
+                land = [v["tile"] for v in land if ct_land(v)]
+                sh = ct_shares(land)
+                f = ct_variety_judge(sh, len(land), f"{label} temperate")
+                meas[label] = {"land": len(land), "tiles": {t: round(v, 3) for t, v in list(sh.items())[:4]},
+                               "fails_as_it_must": bool(f)}
+                if not f:
+                    fails.append(f"negative control {label}: a constant climate passed the variety rule (G6): the rule "
+                                 f"cannot fail, so it proves nothing")
+                continue
+            rec = {}
+            for zone, zpts in var_windows[mk]:
+                land_pts = [p for p in zpts if ct_land(vals.get(p) or {})]
+                sh = ct_shares([vals[p]["tile"] for p in land_pts])
+                rec[zone] = {"land": len(land_pts), "tiles": {t: round(v, 3) for t, v in list(sh.items())[:6]}}
+                fails += ct_variety_judge(sh, len(land_pts), f"{label} {zone}")
+                tiles_at[(mk, ab, zone, seed)] = {p: vals[p]["tile"] for p in land_pts}
+            meas[label] = rec
+        s0, s1 = V["seeds"]
+        for mk in var_windows:
+            for ab in (False, True):
+                for zone, _ in var_windows[mk]:
+                    a, b = tiles_at.get((mk, ab, zone, s0)) or {}, tiles_at.get((mk, ab, zone, s1)) or {}
+                    both = [p for p in a if p in b]
+                    diff = sum(1 for p in both if a[p] != b[p]) / max(len(both), 1)
+                    meas.setdefault("seed_change", {})[f"{mk}-{'m2' if ab else 'm1'}-{zone}"] = round(diff, 3)
+                    if len(both) < V["min_land"] or diff < V["seed_change"]:
+                        fails.append(f"{mk} {'M2' if ab else 'M1'} {zone}: seeds {s0} and {s1} lay {diff:.0%} of "
+                                     f"{len(both)} land points out differently, want at least {V['seed_change']:.0%}")
+        return meas, fails, "; ".join(f"{k}: " + ", ".join(f"{z} {list(r['tiles'])[:3]}" for z, r in v.items())
+                                      for k, v in meas.items() if k != "seed_change" and "fails_as_it_must" not in v)
+
+    checks["ct_variety"] = SuiteCheck("ct_variety", lambda: base_key("ct_variety", {"n": len(var_plan),
+                                                                                       "rule": CT_VARIETY}),
+                                      lambda deadline: probe_plan_runs("ctv", var_plan, ct_names(cfg)),
+                                      variety_derive)
+
+    # T4 (SS; Europe; scale 6; three seeds; TST-13; S3 section 3): on M1 and M2, moisture and aux bias
+    # +-0.15 move the dry and wet shares and the aux mean, and moisture and aux frequency 2 roughen them;
+    # M0 and BAB run the same rows as positive controls (G6: each slider reaches its run). On M2 Alien
+    # Biomes' hot and cold sliders, written as autoplace_controls (ct_controls, validated against the M2
+    # and BAB dumps): cold size 2 raises and 0.5 lowers the frozen share, hot size 2 raises and 0.5
+    # lowers the hot share, and hot and cold frequency 2 roughen the temperature and 0.5 smooth it; BAB
+    # runs the same rows as the positive control.
+    n_, step_ = CT_GRID
+    grid = [(x, y) for y in range(-n_ // 2 * step_, n_ // 2 * step_, step_)
+            for x in range(-n_ // 2 * step_, n_ // 2 * step_, step_)]
+    bias_sliders = [("base", {}), ("mb+", {"control:moisture:bias": str(CT_BIAS)}),
+                    ("mb-", {"control:moisture:bias": str(-CT_BIAS)}), ("ab+", {"control:aux:bias": str(CT_BIAS)}),
+                    ("ab-", {"control:aux:bias": str(-CT_BIAS)}), ("mf2", {"control:moisture:frequency": "2"}),
+                    ("af2", {"control:aux:frequency": "2"})]
+    temp_sliders = [("hs2", {"hot": {"size": 2}}), ("hs05", {"hot": {"size": 0.5}}), ("cs2", {"cold": {"size": 2}}),
+                    ("cs05", {"cold": {"size": 0.5}}), ("tf2", {"hot": {"frequency": 2}, "cold": {"frequency": 2}}),
+                    ("tf05", {"hot": {"frequency": 0.5}, "cold": {"frequency": 0.5}})]
+    t4_plan = [(f"{eu}-{nm}-{tag}-{seed}", eu, 6, tag, grid, ex, seed)
+               for nm, ex in bias_sliders for tag in ("m1", "m2", "m0", "bab") for seed in SEEDS]
+    t4_plan += [(f"{eu}-{nm}-{tag}-{seed}", eu, 6, tag, grid, None, seed, ctl)
+                for nm, ctl in temp_sliders for tag in ("m2", "bab") for seed in SEEDS]
+    B = cfg["climate"]["bands"]
+
+    def t4_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(t4_plan):
+            return {}, fails + [f"{len(dirs)} runs, want {len(t4_plan)}"], ""
+        stat = {}
+        for x, e in zip(dirs, t4_plan):
+            vals = point_values(read_dump(x, "ct4s"))
+            land = {p: v for p, v in vals.items() if isinstance(v.get("elevation"), (int, float)) and v["elevation"] > 0}
+            m = [v["moisture"] for v in land.values() if isinstance(v.get("moisture"), (int, float))]
+            a = [v["aux"] for v in land.values() if isinstance(v.get("aux"), (int, float))]
+            t = [v["temperature"] for v in land.values() if isinstance(v.get("temperature"), (int, float))]
+            stat[e[0]] = {"dry": sum(1 for q in m if q < B["dry_below"]) / max(len(m), 1),
+                          "wet": sum(1 for q in m if q >= 0.6) / max(len(m), 1), "moisture": sum(m) / max(len(m), 1),
+                          "aux": sum(a) / max(len(a), 1), "dm": ct_roughness(land, "moisture", step_),
+                          "da": ct_roughness(land, "aux", step_), "dt": ct_roughness(land, "temperature", step_),
+                          "frozen": sum(1 for q in t if q < B["frozen_below"]) / max(len(t), 1),
+                          "hot": sum(1 for q in t if q >= B["hot_from"]) / max(len(t), 1), "land": len(land)}
+        meas.update(stat)
+
+        def k(nm, tag, seed):
+            return f"{eu}-{nm}-{tag}-{seed}"
+
+        def falls(lo, base):
+            return lo < base if base > 0 else lo == 0
+
+        for seed in SEEDS:
+            for tag in ("m1", "m2"):
+                b, mp, mn = stat[k("base", tag, seed)], stat[k("mb+", tag, seed)], stat[k("mb-", tag, seed)]
+                if not (mp["dry"] <= b["dry"] and mp["wet"] > b["wet"] and mn["dry"] >= b["dry"] and mn["wet"] < b["wet"]):
+                    fails.append(f"{k('mb+', tag, seed)}: moisture bias does not move dry and wet the S3 way")
+                if not (stat[k("ab+", tag, seed)]["aux"] > b["aux"] > stat[k("ab-", tag, seed)]["aux"]):
+                    fails.append(f"{k('ab+', tag, seed)}: aux bias does not move the aux mean")
+                if not (stat[k("mf2", tag, seed)]["dm"] > b["dm"] and stat[k("af2", tag, seed)]["da"] > b["da"]):
+                    fails.append(f"{k('mf2', tag, seed)}: frequency 2 does not roughen moisture and aux")
+            for tag in ("m0", "bab"):
+                b = stat[k("base", tag, seed)]
+                ctl = (stat[k("mb+", tag, seed)]["moisture"] > b["moisture"] > stat[k("mb-", tag, seed)]["moisture"] and
+                       stat[k("ab+", tag, seed)]["aux"] > b["aux"] > stat[k("ab-", tag, seed)]["aux"] and
+                       stat[k("mf2", tag, seed)]["dm"] > b["dm"] and stat[k("af2", tag, seed)]["da"] > b["da"])
+                if not ctl:
+                    fails.append(f"positive control {tag.upper()} seed {seed}: the moisture and aux sliders did not move "
+                                 f"{tag.upper()}'s own climate (G6): they did not reach the run")
+            for tag in ("m2", "bab"):
+                b = stat[k("base", tag, seed)]
+                who = "M2" if tag == "m2" else "positive control BAB"
+                if not (stat[k("cs2", tag, seed)]["frozen"] > b["frozen"] and
+                        falls(stat[k("cs05", tag, seed)]["frozen"], b["frozen"])):
+                    fails.append(f"{who} seed {seed}: cold size 2 and 0.5 give frozen shares "
+                                 f"{stat[k('cs2', tag, seed)]['frozen']:.3f} and {stat[k('cs05', tag, seed)]['frozen']:.3f} "
+                                 f"against {b['frozen']:.3f}: want up and down (S3)")
+                if not (stat[k("hs2", tag, seed)]["hot"] > b["hot"] and falls(stat[k("hs05", tag, seed)]["hot"], b["hot"])):
+                    fails.append(f"{who} seed {seed}: hot size 2 and 0.5 give hot shares "
+                                 f"{stat[k('hs2', tag, seed)]['hot']:.3f} and {stat[k('hs05', tag, seed)]['hot']:.3f} "
+                                 f"against {b['hot']:.3f}: want up and down (S3)")
+                if not (stat[k("tf2", tag, seed)]["dt"] > b["dt"] > stat[k("tf05", tag, seed)]["dt"]):
+                    fails.append(f"{who} seed {seed}: hot and cold frequency 2 and 0.5 give temperature roughness "
+                                 f"{stat[k('tf2', tag, seed)]['dt']:.3f} and {stat[k('tf05', tag, seed)]['dt']:.3f} against "
+                                 f"{b['dt']:.3f}: want rougher and smoother (S3)")
+        return meas, fails, f"{len(t4_plan)} slider grids on {eu} at scale 6 (M1, M2, M0 and BAB)"
+
+    checks["ct_t4"] = SuiteCheck("ct_t4", lambda: base_key("ct_t4", {"n": len(t4_plan)}),
+                                 lambda deadline: probe_plan_runs("ct4s", t4_plan, ct_names(cfg)), t4_derive)
+
+    # V3 (SS renders): biome maps per map with AB on and off at seeds 1000, 1002 and 1004, at scale 1,
+    # listed for the verification pass (never a verdict here; the reviewer judges them).
+    def v3_run(deadline):
+        dirs = []
+        for mk in maps:
+            for ab in (False, True):
+                ms = ctx.shared["m2"] if ab else ctx.shared["m1"]
+                mgs = ct_mgs(ctx, cfg, mk, 1, ab, label="-v3")
+                for seed in SEEDS:
+                    dirs.append(preview(ctx, ms, f"ct-v3-{mk}-{'m2' if ab else 'm1'}-{seed}", PREVIEW_MAX, seed=seed,
+                                        mgs=mgs).out)
+        return dirs
+
+    def v3_derive(dirs):
+        fails = []
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        return ({"renders": [rel_ws(ctx, x) for x in dirs]}, fails,
+                f"{len(dirs)} biome renders listed for the verification pass (V3)")
+
+    checks["ct_v3"] = SuiteCheck("ct_v3", lambda: base_key("ct_v3"), v3_run, v3_derive)
+
+    # T13, T15 (SS; measured; the Map type route on M2; Contradictions item 15): an elevation-only world
+    # of each map on M2 creates with exit 0 and no error line (AB's palms read elevation through their
+    # own autoplace there); its complexity is recorded for review, never gated. Its forced-generation ratio
+    # against BAB at 16 LP joins the timed rows still to be built (report).
+    def mt_run(deadline):
+        dirs = []
+        for mk in maps:
+            g = tnconfig.geography(cfg)[mk]
+            mgs = write_mgs(ctx, f"ct-maptype-{mk}", {cfg["keys"]["elevation"]: g["entry"]})
+            dirs.append(ctx.fh(scenario_args(ctx.instance, ctx.shared["m2"], 4, SEED, mgs), ctx.out / f"ct-mt-{mk}").out)
+            dirs.append(preview(ctx, ctx.shared["m2"], f"ct-mt-{mk}-64v", 64, mgs=mgs, verbose=True).out)
+        return dirs
+
+    def mt_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        for i, mk in enumerate(maps):
+            meas[mk] = ctx_complexity(dirs[2 * i + 1])
+        return meas, fails, "; ".join(f"{k}: {v}" for k, v in meas.items())
+
+    checks["ct_maptype_m2"] = SuiteCheck("ct_maptype_m2", lambda: base_key("ct_maptype_m2"), mt_run, mt_derive)
+
+    # T10 (SS; reference; FEAS-11): living trees per land chunk on M1 and M2 against M0 and BAB at three
+    # seeds, in fixed 8 x 8 chunk blocks: at the spawn and, on Earth, at Europe's far north, the
+    # Mediterranean and North Africa (CT_T10_PLACES at scale 6, spawn offset 0; the comparators dump the
+    # same tiles). Recorded in the suite manifest as the reference trees-forests reports against.
+    mref_eu = eg.MapRef(eu)
+    blocks = [("spawn", -128, -128)]
+    for name, lon, lat in CT_T10_PLACES:
+        _, (tx, ty) = mref_eu.lonlat_to_tile(lon, lat, 6)
+        blocks.append((name, int(tx) // 32 * 32 - 128, int(ty) // 32 * 32 - 128))
+    areas = ";".join(f"{x},{y},256,256" for _, x, y in blocks)
+    t10_cfgs = [(tag, seed) for tag in ("m0", "m1", "bab", "m2") for seed in SEEDS]
+
+    def t10_run(deadline):
+        probe = HERE / "mods" / "ep-s8-dump"
+        ms = {"m1": ct_probe_modset(ctx, mods, "ct10a", False), "m2": ct_probe_modset(ctx, mods, "ct10b", True),
+              "m0": mods.with_mods("ct10m0", [probe], earth=False),
+              "bab": mods.make(f"ea-ct10bab-{folder_hash(probe)}", [probe],
+                               from_live=["alien-biomes"] + LIVE_DEPS["alien-biomes"])}
+        for tag in ("m0", "bab"):
+            mods.prepare(ms[tag], f"ct10{tag}")
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, (tag, seed) in enumerate(t10_cfgs):
+            ln = i % PAR_MAX
+            inst = lane_instance(ctx, ln)
+            mgs = ct_mgs(ctx, cfg, eu, 6, tag == "m2", label="-t10") if tag in ("m1", "m2") else None
+            out = ctx.out / f"ct-t10-{tag}-{seed}"
+            lanes[ln].append((dump_settings(ctx, ms[tag], inst, label="ct10", areas=areas, types="tree",
+                                            decoratives=False),
+                              scenario_args(inst, ms[tag], 4, seed, mgs), out, 1800))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def t10_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        for x, (tag, seed) in zip(dirs, t10_cfgs):
+            d10 = read_dump(x, "ct10")
+            rec = {}
+            for (name, _, _), ar in zip(blocks, d10.get("areas") or []):
+                if ar.get("chunks_not_generated"):
+                    fails.append(f"{tag} {seed} {name}: {ar['chunks_not_generated']} chunks not generated")
+                rec[name] = ct_tree_census(ar)
+            meas[f"{tag}_{seed}"] = rec
+        return meas, fails, "; ".join(f"{k}: " + ", ".join(f"{b} {v['living_per_land_chunk']:.1f}" for b, v in r.items())
+                                      for k, r in meas.items())
+
+    checks["ct_t10"] = SuiteCheck("ct_t10", lambda: base_key("ct_t10", {"blocks": blocks}), t10_run, t10_derive)
+
+    # T13, T3 (SS; M6, the full pack on the fallback; test notes 4.1 and 221): M6 loads clean with
+    # Earth (G1 to G3 on its dump); on every map at scales 1, 3 and 6 the brief rows hold with their
+    # fallback tile families, every climate band is a patchwork (ct_band_variety) and the far north
+    # (AB-unit core below 0) reads dry or dead ground (ct_far_north). M6 is about 1.73 GiB, so one probe
+    # copy serves every job, in one worker (run_lanes allows no two workers one modset).
+    m6_plan = [(mk, s) for mk in maps for s in CT_T3_SCALES]
+
+    def m6_points(mk, s):
+        mref = eg.MapRef(mk)
+        O = oracle.load_oracle(mk, TESTS / "oracle")
+        pts = [tuple(oracle.place_tile(mref, p_, str(s))) for p_ in ct_brief_places(O)]
+        return list(dict.fromkeys(pts + ct_grid(mref, s, CT_D11_POINTS)))
+
+    def m6_run(deadline):
+        live = ct_m6_live()
+        probe = HERE / "mods" / "ep-s8-dump"
+        z = mods.build_zip()
+        m6 = mods.make(f"ea-m6p-{mods.zip_sha[:8]}-{folder_hash(probe)}", [z, probe], from_live=live)
+        r = mods.prepare(m6, "m6p")
+        jobs = []
+        for mk, s in m6_plan:
+            prep = dump_settings(ctx, m6, ctx.instance, label="ct6",
+                                 points=";".join(f"{x},{y}" for x, y in m6_points(mk, s)), names=ct_names(cfg))
+            jobs.append((prep, scenario_args(ctx.instance, m6, 4, SEED, ct_mgs(ctx, cfg, mk, s, False, label="-m6")),
+                         ctx.out / f"ct-m6-{mk}-s{s}", 3600))
+        run_lanes(ctx, [jobs])
+        return [r.out] + [j[2] for j in jobs]
+
+    def m6_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != 1 + len(m6_plan):
+            return {}, fails + [f"{len(dirs)} runs, want {1 + len(m6_plan)}"], ""
+        fails += g2(dirs[0], [cfg["identity"]["id"], "base"] + ct_m6_live())
+        for x, (mk, s) in zip(dirs[1:], m6_plan):
+            label = f"M6 {mk} s{s}"
+            mref = eg.MapRef(mk)
+            O = oracle.load_oracle(mk, TESTS / "oracle")
+            vals = point_values(read_dump(x, "ct6"))
+            rows, f = ct_judge_places(cfg, ct_brief_places(O), vals, mref, s, False, label)
+            bands, fb = ct_band_variety(cfg, vals, label)
+            dry, n, fn = ct_far_north(cfg, vals, label)
+            meas[f"{mk}_s{s}"] = {"places": rows, "band_variety": bands, "far_north_dry": round(dry, 4),
+                                  "far_north_points": n}
+            fails += f + fb + fn
+        return meas, fails, (f"M6 ({len(ct_m6_live())} live mods) loads clean; {len(m6_plan)} grids: far north dry "
+                             + ", ".join(f"{k} {v['far_north_dry']}" for k, v in meas.items()))
+
+    checks["ct_m6"] = SuiteCheck("ct_m6", lambda: base_key("ct_m6", {"live": ct_m6_live(), "plan": m6_plan}), m6_run,
+                                 m6_derive)
+
+    # T1, T3 (SS; Europe; M2; design experiment 9, elevation part; CT_CE9): with Alien Biomes the
+    # recalibrated transfer keeps preview-mode T1 at the map's bar (t1-bars.json for a flipped map), lays
+    # the beach band along the coast, puts offshore water below AB's deepwater line as deepwater tiles,
+    # and keeps water beyond the map edges deep, at scales 1 and 6 and seeds 1000 to 1004 (each preview
+    # renders every seed: --seed-max)
+    E9 = CT_CE9
+    ce9_mref = eg.MapRef(eu)
+    ce9_plans = {sc: preview_plan(ce9_mref, sc) for sc in E9["scales"]}
+    ce9_pts = {sc: (ct_offshore_points(ce9_mref, sc, E9["offshore_tiles"], E9["offshore_points"]),
+                    far_points(ce9_mref, sc)[0]) for sc in E9["scales"]}
+    ce9_probe = [(f"{eu}-s{sc}-m2-{seed}", eu, sc, True, ce9_pts[sc][0] + ce9_pts[sc][1], None, seed)
+                 for sc in E9["scales"] for seed in E9["seeds"]]
+    ce9_npv = sum(len(ce9_plans[sc][1]) for sc in E9["scales"])
+
+    def ce9_run(deadline):
+        ab_live = ["alien-biomes"] + LIVE_DEPS["alien-biomes"]
+        ms = [mods.with_live(f"m2v{i + 1}", ab_live) for i in range(PAR_MAX)]
+        for i, m in enumerate(ms):
+            mods.prepare(m, f"m2v{i + 1}")
+        jobs = []
+        for sc in E9["scales"]:
+            size, offs = ce9_plans[sc]
+            mgs = ct_mgs(ctx, cfg, eu, sc, True, label="-ce9", cliffs=False)
+            for j, off in enumerate(offs):
+                jobs.append((ctx.out / f"ce9pv-s{sc}-{j:02d}", size, mgs, off))
+        lanes = [[] for _ in range(PAR_MAX)]
+        for i, (out, size, mgs, off) in enumerate(jobs):
+            ln = i % PAR_MAX
+            a = preview_args(lane_instance(ctx, ln), ms[ln], size, E9["seeds"][0], mgs, off)
+            k = a.index("--seed")
+            a[k + 2:k + 2] = ["--seed-max", str(E9["seeds"][-1])]
+            lanes[ln].append((None, a, out, 1800))
+        run_lanes(ctx, [l for l in lanes if l])
+        return [j[0] for j in jobs] + probe_plan_runs("ce9", ce9_probe, "elevation")
+
+    def ce9_derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != ce9_npv + len(ce9_probe):
+            return {}, [f"{len(dirs)} runs, want {ce9_npv + len(ce9_probe)}"], ""
+        for x in dirs[:ce9_npv]:
+            fails += g1(x) + g3(x) + images_rehash(x)
+        for x in dirs[ce9_npv:]:
+            fails += g1(x) + g3(x)
+        d2 = ctx.shared["dump_m2"]
+        colours = blocking_water_colours(d2)
+        tc = ct_tile_colours(d2)
+        if not tc["sand"] or not tc["deep"]:
+            fails.append(f"M2 holds no unambiguous sand ({len(tc['sand'])}) or deepwater ({len(tc['deep'])}) preview "
+                         f"colour: the beach and deep-water census cannot judge")
+        bar = map_t1_bar(eu)
+        k = 0
+        for sc in E9["scales"]:
+            size, offs = ce9_plans[sc]
+            runs = [(dirs[k + j], off) for j, off in enumerate(offs)]
+            k += len(offs)
+            for seed in E9["seeds"]:
+                L, C, Hd = previews_land(ce9_mref, runs, sc, colours, cliff_colours(d2), seed=seed)
+                rec = t1_eval(ce9_mref, L, C, scale=sc)
+                meas[f"t1_s{sc}_{seed}"] = {"agreement": rec["agreement"], "covered_px": rec["covered_px"],
+                                            "islands_65_missing": rec["islands_65_missing"]}
+                fails += t1_fails(f"M2 {eu} scale {sc} seed {seed}", rec, bar=bar)
+                cen = ct_coast_census([d for d, _ in runs], seed, tc)
+                meas[f"census_s{sc}_{seed}"] = cen
+                beach = cen["coast_sand"] / max(cen["coast"], 1)
+                inland = cen["inland_sand"] / max(cen["inland"], 1)
+                deep = cen["offshore_deep"] / max(cen["offshore"], 1)
+                if beach < E9["beach_min"] or beach < E9["beach_factor"] * inland:
+                    fails.append(f"M2 {eu} scale {sc} seed {seed}: the coastal strip is {beach:.3f} sand against "
+                                 f"{inland:.3f} inland: want at least {E9['beach_min']} and {E9['beach_factor']} times "
+                                 f"inland (the beach band, R3 2.1)")
+                if not cen["offshore"] or deep < E9["deep_share"]:
+                    fails.append(f"M2 {eu} scale {sc} seed {seed}: water {E9['offshore_tiles']} tiles or more offshore is "
+                                 f"{deep:.3f} deepwater over {cen['offshore']} tiles, want at least {E9['deep_share']}")
+        for x, (label, mk, sc, _, pts, _, seed) in zip(dirs[ce9_npv:], ce9_probe):
+            vals = point_values(read_dump(x, "ce9"))
+            off, far = ce9_pts[sc]
+
+            def deep_at(pt):
+                e = (vals.get(pt) or {}).get("elevation")
+                return isinstance(e, (int, float)) and e < E9["deep_below"]
+
+            share = sum(1 for p_ in off if deep_at(p_)) / max(len(off), 1)
+            bad_far = [p_ for p_ in far if not deep_at(p_)]
+            meas[label] = {"offshore_points": len(off), "offshore_deep_share": round(share, 4), "far_not_deep": bad_far}
+            if not off or share < E9["offshore_share"]:
+                fails.append(f"{label}: {share:.3f} of {len(off)} points {E9['offshore_tiles']} tiles offshore read "
+                             f"elevation below {E9['deep_below']}, want at least {E9['offshore_share']} (R3 3.1)")
+            if bad_far:
+                fails.append(f"{label}: water beyond the map edges is not below {E9['deep_below']} at {bad_far[:4]} (D15)")
+        return meas, fails, "; ".join(f"{k_}: {v.get('agreement')}" for k_, v in meas.items() if k_.startswith("t1_"))
+
+    checks["ct_ce9"] = SuiteCheck("ct_ce9", lambda: base_key("ct_ce9", {"rule": CT_CE9, "plans": ce9_plans,
+                                                                       "bar": map_t1_bar(eu)}), ce9_run, ce9_derive)
+
+    # T15 (SS; design experiment 1, AB part; P1 to P3): every map's program timed at scales 6
+    # and 1 at 16 LP against M0 on base (M1t/M0t, P1 with climate-tiles' +0.05 relative rule) and, with
+    # Alien Biomes plus the constant switch, against AB alone (M2t/BABt, P2: 'first', the absolute bar);
+    # scale 6 also at 24 LP (P3); the 8 LP pairs recorded. The Alien Biomes flip rule's guard: a map whose
+    # M2t/BABt exceeds P2's bar at 16 LP fails here, naming the steps design notes 10:20 orders, after the
+    # exploring run's phase split (walker_m2) is on record.
+    m1t, _ = earth_driver_modsets(ctx, mods)
+    m0t, _, _ = driver_modsets(ctx, mods)
+    m2t, babt, m2d, babd = ab_driver_modsets(ctx, mods)
+    tpos = {}
+    for mk in maps:
+        if mk == eu:
+            pe_ = europe_positions(cfg, eg.MapRef(mk))
+            tpos[mk] = {"block": pe_["block"], "block_land": pe_["block_land"]}
+        else:
+            tpos[mk] = map_positions(cfg, mk)
+
+    def t15_census(mk, s_):
+        b = baseline_record()
+        if mk == eu:
+            return ((b.get("t15b_europe") or {}).get("census_m0") or {}).get(str(s_)) or {}
+        return ((((b.get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get(str(s_))) or {}
+
+    def t15_masks(s_):
+        return [getattr(ctx.perf, m) if m != "MASK24" else MASK24 for m in T15B_MASKS[s_]]
+
+    def t15_run(deadline):
+        out = []
+        for mk in maps:
+            for s_ in T15B_SCALES:
+                blk = tpos[mk]["block"][s_]
+                sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", blk, f"ct-m1t-{mk}-s{s_}",
+                                   ct_mgs(ctx, cfg, mk, s_, False, label="-t15"))
+                sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", blk, f"ct-m0t-{mk}-s{s_}")
+                out.append(pair_batch(ctx, {"a": (m1t, sa), "b": (m0t, sb)}, T15B["reps_suite"], t15_masks(s_),
+                                      f"ct-t15b-m1-{mk}-s{s_}", deadline))
+                sa = make_save_mgs(ctx, mods, m2t, "tq1-gen-block", blk, f"ct-m2t-{mk}-s{s_}",
+                                   ct_mgs(ctx, cfg, mk, s_, True, label="-t15"))
+                sb = make_save_mgs(ctx, mods, babt, "tq1-gen-block", blk, f"ct-babt-{mk}-s{s_}")
+                out.append(pair_batch(ctx, {"a": (m2t, sa), "b": (babt, sb)}, T15B["reps_suite"], t15_masks(s_),
+                                      f"ct-t15b-m2-{mk}-s{s_}", deadline))
+        return out
+
+    def t15_derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != 2 * len(maps) * len(T15B_SCALES):
+            return {}, [f"{len(dirs)} batches, want {2 * len(maps) * len(T15B_SCALES)}"], ""
+        k = 0
+        for mk in maps:
+            rec = {"blocks": tpos[mk]["block"], "m2_bab": {}}
+            over = []
+            for s_ in T15B_SCALES:
+                lim1 = p1_limits(sec6, "climate-tiles", mk, scale=s_) if isinstance(sec6, dict) else {}
+                m, f, _ = derive_t15b([dirs[k]], lim1, T15B["reps_suite"], pair="m1_m0",
+                                      label=f"{mk} M1t/M0t scale {s_}", census_m0=t15_census(mk, s_))
+                k += 1
+                fails += [f"{mk} scale {s_}: {x}" for x in f]
+                rec[f"scale_{s_}"] = m
+                lim2 = p2_limits(sec6, "climate-tiles", mk, s_) if isinstance(sec6, dict) else {}
+                m2, f2, _ = derive_t15b([dirs[k]], lim2, T15B["reps_suite"], pair="m2_bab",
+                                        label=f"{mk} M2t/BABt scale {s_}")
+                k += 1
+                fails += [f"{mk} scale {s_}: {x}" for x in f2]
+                rec["m2_bab"][f"scale_{s_}"] = m2
+                bar = (((lim2.get("P2") or {}).get("limit")) or {}).get("max")
+                r16 = (m2.get(f"{0xFFFF:#x}") or {}).get("ratio")
+                if bar is None or r16 is None:
+                    fails.append(f"{mk} scale {s_}: no M2t/BABt ratio at 16 LP or no P2 bar: the flip rule's guard "
+                                 f"cannot decide (fail closed)")
+                elif r16 > bar:
+                    over.append(s_)
+            rec["flip_rule"] = {"fired": bool(over), "scales": over, "t1_bar": t1_bars().get(mk)}
+            if over:
+                fails.append(f"{mk}: M2t/BABt at 16 LP exceeds P2's bar at scales {over}: the Alien Biomes flip rule "
+                             f"fires (DECISIONS 10:20). With walker_m2's phase split on record, run step 1 (the map's "
+                             f"waterway sets cut to a 1 px tolerance as their next versioned sets) and, if still over, "
+                             f"step 2 (an Alien Biomes geography from tools/build_geo.py), each re-timed in one batch "
+                             f"and recorded in a DECISIONS entry; if tents 4,096 still exceeds it, stop for a plan "
+                             f"revision (U15)")
+            meas[mk] = rec
+        return meas, fails, "; ".join(
+            f"{mk}: " + ", ".join(f"scale {s_} M1/M0 {((v.get(f'scale_{s_}') or {}).get(f'{0xFFFF:#x}') or {}).get('ratio')}"
+                                  f" M2/BAB {((v['m2_bab'].get(f'scale_{s_}') or {}).get(f'{0xFFFF:#x}') or {}).get('ratio')}"
+                                  for s_ in T15B_SCALES) for mk, v in meas.items())
+
+    esig_cache = {}
+
+    def esig(ms, mk, tag):
+        if (ms, mk) not in esig_cache:
+            esig_cache[(ms, mk)] = program_signature(ctx, mods, ms, f"e-ct-{tag}-{mk}", preset=map_preset(cfg, mk)[0])
+        return esig_cache[(ms, mk)]
+
+    timed_key = {"control": ctl, "timing": timing, "config": T15B, "masks": T15B_MASKS, "build": GAME_BUILD,
+                 "borderline": BORDERLINE, "records": TIMED_RECORDS, "earth": [d["mod"], dump_shas]}
+    checks["ct_t15b"] = SuiteCheck("ct_t15b", lambda: key_of(dict(timed_key, check="ct_t15b", pos=tpos, sig=(
+        [esig(m1t, mk, "m1") for mk in maps] + [esig(m2t, mk, "m2") for mk in maps] + [sig(m0t, "m0t"),
+                                                                                         sig(babt, "babt")]))),
+        t15_run, t15_derive)
+
+    # T13, T15 (SS; measured; the Map type route on M2; Contradictions item 15): each map's elevation-only
+    # world on M2 against BAB, forced generation of the map's block at 16 LP at scale 6 (the startup scale
+    # the Map type fallbacks mirror), recorded for review and never gated (pair maptype_bab binds no row)
+    def mt_t15_run(deadline):
+        out = []
+        for mk in maps:
+            g = tnconfig.geography(cfg)[mk]
+            mgs = write_mgs(ctx, f"ct-maptype-t15-{mk}", {cfg["keys"]["elevation"]: g["entry"]})
+            blk = tpos[mk]["block"][6]
+            sa = make_save_mgs(ctx, mods, m2t, "tq1-gen-block", blk, f"ct-mt-m2t-{mk}", mgs)
+            sb = make_save_mgs(ctx, mods, babt, "tq1-gen-block", blk, f"ct-mt-babt-{mk}")
+            out.append(pair_batch(ctx, {"a": (m2t, sa), "b": (babt, sb)}, T15B["reps_suite"], [ctx.perf.MASK16],
+                                  f"ct-mt-t15b-{mk}", deadline))
+        return out
+
+    def mt_t15_derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != len(maps):
+            return {}, [f"{len(dirs)} batches, want {len(maps)}"], ""
+        for x, mk in zip(dirs, maps):
+            m, f, _ = derive_t15b([x], {}, T15B["reps_suite"], pair="maptype_bab", label=f"{mk} Map type M2t/BABt")
+            fails += [f"{mk}: {y}" for y in f]
+            meas[mk] = m
+        return meas, fails, "; ".join(f"{mk}: {(v.get(f'{0xFFFF:#x}') or {}).get('ratio')} (recorded, not gated)"
+                                      for mk, v in meas.items())
+
+    checks["ct_maptype_t15b"] = SuiteCheck("ct_maptype_t15b", lambda: key_of(dict(
+        timed_key, check="ct_maptype_t15b", pos={mk: tpos[mk]["block"][6] for mk in maps},
+        sig=[sig(m2t, "m2t"), sig(babt, "babt")])), mt_t15_run, mt_t15_derive)
+
+    # P4 to P6, P19 and the phase split, M2 against BAB on Europe (Phase 4's positions, fixed in geo
+    # coordinates): the exploring frontier in real time on a loopback server (rt_m2: P4, P5, P6's M2
+    # limit of 550 ms), the save pair (save_m2: P19), and the walker in benchmark mode (walker_m2): the
+    # phase split design notes 10:20 asks for before any cut, BasicTilesSupportCompute and EntitiesCompute
+    # per column and for the first column, recorded
+    pe = europe_positions(cfg, eg.MapRef(eu))
+    walk_spec = "walk:nauvis:{x0}:{y0}:{dx}:{dy}:{R}:{P}:{N}:{D}:{T0}".format(**pe["walk"])
+    rt_spec = "rtexplore:nauvis:{cx0}:{cy}:{R}:{K}:{P}:{D}:{T0}".format(**pe["explore"])
+    save_spec = "save:nauvis:{}:{}:1".format(*pe["save_block"])
+
+    def m2_perf_mgs():
+        return ct_mgs(ctx, cfg, eu, 6, True, label="-perf")
+
+    def walker2_run(deadline):
+        out = []
+        for lab, mset, m in (("walk2-m2", m2d, m2_perf_mgs()), ("walk2-bab", babd, None)):
+            save = make_save_mgs(ctx, mods, mset, "tq2-mode", walk_spec, lab, m)
+            ticks = pe["walk"]["T0"] + pe["walk"]["N"] * pe["walk"]["P"] + pe["walk"]["D"] + 2
+            ctx.perf.wait_quiet(deadline)
+            watcher = ctx.perf.Watcher(ctx.out / f"{lab}-affinity.jsonl", ctx.perf.MASK16, ctx.job)
+            r = ctx.fh(["scenario", "--instance", "ea-time", "--modset", mset, "--save", save, "--ticks", str(ticks), "--",
+                        "--benchmark-verbose", "all", "--threads", str(T15B["threads"])], ctx.out / lab, timeout=900,
+                       watcher=watcher, monitor=True)
+            after = ctx.perf.tasklist_game()
+            watcher.finish()
+            persist_monitor(r.out.parent / f"{r.out.name}-monitor.json", r.mon, ctx.perf.MASK16, None, after)
+            if r.mon:
+                r.mon.close()
+            out.append(r.out)
+        return out
+
+    def walker2_derive(dirs):
+        a, fa, _ = derive_walker(dirs[0])
+        b, fb, _ = derive_walker(dirs[1])
+        fails = [f"M2: {x}" for x in fa] + [f"BAB: {x}" for x in fb]
+        if fails:
+            return {}, fails, ""
+        split = {}
+        for tag, w in (("m2", a), ("bab", b)):
+            split[tag] = {c: v for c, v in w["columns"].items()
+                          if "BasicTilesSupportCompute" in c or "EntitiesCompute" in c}
+        if not split["m2"] or not split["bab"]:
+            fails.append("the phase split's columns (BasicTilesSupportCompute, EntitiesCompute) are missing from "
+                         "--benchmark-verbose all")
+        w1, w0 = a["columns"]["wholeUpdate"], b["columns"]["wholeUpdate"]
+        meas = {"phase_split": split, "wholeUpdate": {"mean_ratio": round(w1["mean"] / w0["mean"], 4),
+                                                      "p99_m2": w1["p99"], "p99_bab": w0["p99"]}}
+        return meas, fails, (f"benchmark mode M2 against BAB: wholeUpdate mean {meas['wholeUpdate']['mean_ratio']}x "
+                             f"BAB's; phase split {sorted(split['m2'])} recorded (DECISIONS 10:20)")
+
+    checks["walker_m2"] = SuiteCheck("walker_m2", lambda: key_of(dict(
+        timed_key, check="walker_m2", walk=walk_spec, sig=[esig(m2d, eu, "m2d"), sig(babd, "babd")])),
+        walker2_run, walker2_derive)
+
+    def rt2_runs(deadline):
+        out = {"m2": [], "bab": []}
+        for i in range(RT_REPS):
+            for cfg_, mset, m in (("m2", m2d, m2_perf_mgs()), ("bab", babd, None)):
+                lab = f"rt2-{cfg_}-{i + 1}"
+                save = make_save_mgs(ctx, mods, mset, "tq2-mode", rt_spec, f"save-{lab}", m)
+                out[cfg_].append(server_run_save(ctx, mset, save, lab, SERVER["rt_timeout"], ["tq2-rt"]))
+        return out["m2"] + out["bab"]
+
+    checks["rt_m2"] = SuiteCheck("rt_m2", lambda: key_of(dict(
+        timed_key, check="rt_m2", spec=rt_spec, reps=RT_REPS, server=[SERVER, sha256_file(HERE / "perf-server-settings.json")],
+        sig=[esig(m2d, eu, "m2d"), sig(babd, "babd")])), rt2_runs,
+        lambda dirs: derive_rt_pair({"m2": dirs[:RT_REPS], "bab": dirs[RT_REPS:]}, limits, earth="m2", comp="bab"))
+
+    def save2_runs(deadline):
+        out = []
+        for cfg_, mset, m in (("m2", m2d, m2_perf_mgs()), ("bab", babd, None)):
+            save = make_save_mgs(ctx, mods, mset, "tq2-mode", save_spec, f"save-save2-{cfg_}", m)
+            out.append(server_run_save(ctx, mset, save, f"save2-{cfg_}", SERVER["save_timeout"], ["tq2-pre", "tq2-post"]))
+        return out
+
+    checks["save_m2"] = SuiteCheck("save_m2", lambda: key_of(dict(
+        timed_key, check="save_m2", spec=save_spec, server=[SERVER, sha256_file(HERE / "perf-server-settings.json")],
+        sig=[esig(m2d, eu, "m2d"), sig(babd, "babd")])), save2_runs,
+        lambda dirs: derive_save_pair(dirs, limits, earth="m2", comp="bab"))
+
+
+# T10's blocks beside the spawn's (lon, lat): Lapland (frozen), Tuscany (temperate) and the Tunisian
+# Sahara (hot desert), each an 8 x 8 chunk block at Europe's scale 6
+CT_T10_PLACES = (("far_north", 26.0, 68.5), ("mediterranean", 11.0, 43.3), ("north_africa", 9.0, 33.0))
+CT_DEAD_TREES = ("dead-", "dry-")
+
+
+CT_FAR_NORTH_DRY = 0.8              # the fallback's far north: at least this share of land dirt or sand
+
+
+def ct_far_north(cfg, vals, label):
+    """T13's fallback far north on one probe grid (M1 or M6): of the land where the AB-unit core is
+    below frozen_below, at least CT_FAR_NORTH_DRY in the dirt and sand families (dry and dead ground,
+    S3 section 4). Returns (share, points, fails); a grid with no far-north land fails (every map
+    reaches it)."""
+    core = cfg["climate"]["names"]["core"]
+    north = [ct_family(v.get("tile")) for v in vals.values()
+             if isinstance(v.get(core), (int, float)) and v[core] < cfg["climate"]["bands"]["frozen_below"] and
+             isinstance(v.get("elevation"), (int, float)) and v["elevation"] > 0]
+    dry = sum(1 for fam in north if fam in ("dirt", "sand")) / max(len(north), 1)
+    if not north or dry < CT_FAR_NORTH_DRY:
+        return dry, len(north), [f"{label}: the far north's land is {dry:.3f} dirt and sand over {len(north)} points, "
+                                 f"want at least {CT_FAR_NORTH_DRY} (the fallback's dry and dead ground)"]
+    return dry, len(north), []
+
+
+def ct_m6_live():
+    """M6's live mods (test notes 4.1; R5 section 7): R5's enabled live mods less rso-mod,
+    alien-biomes and alien-biomes-graphics, by info.json name (fh.py --from-live)."""
+    rows = json.loads((REPO / "docs" / "plan" / "research" / "R5-modlist.json").read_text(encoding="utf-8"))
+    drop = {"rso-mod", "alien-biomes", "alien-biomes-graphics"}
+    return [m["name"] for m in rows if m.get("enabled") is not False and m["name"] not in drop]
+
+
+def ct_tree_census(area):
+    """Living trees, land tiles and trees per land chunk of one ep-s8-dump area (T10): trees are every
+    dumped tree but vanilla's dead and dry ones; land is every tile but water (S3's counter)."""
+    names = [e.get("name") for e in area.get("entity_names") or []]
+    living = sum(1 for e in area.get("entities") or []
+                 if 0 <= e[0] < len(names) and not str(names[e[0]]).startswith(CT_DEAD_TREES))
+    tiles = area.get("tiles") or {}
+    palette = tiles.get("palette") or []
+    land = 0
+    for row_ in tiles.get("rows") or []:
+        for part in str(row_).split():
+            i, _, n = part.partition("*")
+            if i.isdigit() and n.isdigit() and ct_family(palette[int(i)]) not in ("water", "wetland"):
+                land += int(n)
+    return {"living": living, "land_tiles": land,
+            "living_per_land_chunk": living / (land / 1024) if land else 0.0}
+
+
+def ct_roughness(land, name, step):
+    """The mean absolute change of `name` between grid neighbours one step apart (S3's frequency measure)."""
+    diffs = []
+    for (x, y), v in land.items():
+        w = land.get((x + step, y))
+        if w and isinstance(v.get(name), (int, float)) and isinstance(w.get(name), (int, float)):
+            diffs.append(abs(v[name] - w[name]))
+    return sum(diffs) / max(len(diffs), 1)
+
+
+_CT_CLASSES = {}
+
+
+def ct_class_codes(map_key):
+    """EarthMaps' painted class codes per reference pixel (data-src/earthmaps/<map>-classes.png and the
+    class legend of <map>.json; R1 section 5), cached per map."""
+    if map_key not in _CT_CLASSES:
+        import numpy as np
+        from PIL import Image
+        Image.MAX_IMAGE_PIXELS = None
+        src = REPO / "data-src" / "earthmaps"
+        legend = json.loads((src / f"{map_key}.json").read_text(encoding="utf-8"))["class_legend"]["classes"]
+        im = np.asarray(Image.open(src / f"{map_key}-classes.png").convert("RGB")).astype(np.int32)
+        key = (im[..., 0] << 16) | (im[..., 1] << 8) | im[..., 2]
+        codes = np.full(key.shape, "?", dtype="<U1")
+        for c in legend:
+            r, g, b = c["png_rgb"]
+            codes[key == ((r << 16) | (g << 8) | b)] = c["code"]
+        _CT_CLASSES[map_key] = codes
+    return _CT_CLASSES[map_key]
+
+
+def ct_class_agreement(cfg, map_key, scale, vals):
+    """EarthMaps' painted classes against the Earth climate at probe points (T3; R1 section 6; PD,
+    calibrated here): ice and tundra, class d at 60 N and north, cold or frozen; Sahara sand (s, S at 15
+    to 33 N, 17 W to 33 E) and Arabia sand (s, S at 15 to 30 N, 35 E to 58 E) hot and dry. Points are
+    tiles at `scale` with the spawn offset 0. {class: (points, agreeing)}."""
+    import earthgeo as eg
+    mref = eg.MapRef(map_key)
+    codes = ct_class_codes(map_key)
+    core = cfg["climate"]["names"]["core"]
+    windows = {"ice_tundra": ("d", 60, 90, -180, 180), "sahara": ("sS", 15, 33, -17, 33),
+               "arabia": ("sS", 15, 30, 35, 58)}
+    out = {k: [0, 0] for k in windows}
+    for (tx, ty), v in vals.items():
+        col = (tx - scale // 2) // scale + mref.wr
+        row_ = (ty - scale // 2) // scale + mref.hr
+        if not (0 <= col < mref.W and 0 <= row_ < mref.H):
+            continue
+        code = codes[row_, col]
+        lon, lat = mref.pixel_lonlat(col, row_)
+        for k, (cc, la0, la1, lo0, lo1) in windows.items():
+            if code in cc and la0 <= lat < la1 and lo0 <= lon < lo1:
+                band = ct_band(cfg, v.get(core), v.get("moisture"))
+                ok = band in ("cold", "coldest") if k == "ice_tundra" else band == "hot_desert"
+                out[k][0] += 1
+                out[k][1] += int(ok)
+    return {k: tuple(v) for k, v in out.items()}
+
+
+# ================================================================================================ trees-forests
+
+# Milestone trees-forests (part 5, milestone 1): trees by climate, the great forests through the region layer's
+# multiplier, and the base game's trees, rocks, decals and plants restored beside Alien Biomes. From here
+# every living tree carries the great-forests hook on every world, whose folded nodes join the Entity
+# program's parsed counts (zero_cost_diffs), and the oracle's forest property is live: its expectations
+# come from the region table's forest rows at check time (tf_forest_expectations).
+
+TF_RATIO = (1.6, 2.5)           # T10: trees per land tile in a great forest, boost on against off
+TF_INSIDE_W = 0.9               # a forest chunk: its mean forest weight (S10 4.1)
+TF_OUTSIDE_W = 0.01             # outside every forest: every probe of the chunk at most this
+TF_MIN_RADIUS_TILES = 64        # T10 gates every forest of at least this equivalent radius; smaller are reported
+TF_MIN_TREES = 50               # reported only: a cell under this many boost-off trees inside is flagged, still judged
+TF_MOVED_MAX = 0.001            # at most 0.1 percent of the trees outside forests change
+TF_BLOCK_GROWTH = {"europe": 0.27, "atlantic": 0.17, "olde_world": 0.19}  # trees per generated block
+TF_SAVE_GROWTH = 0.03           # the T10 block's save, forests on against off
+TF_BYTES_PER_TREE = 20          # compressed bytes per extra tree
+TF_DESERT_SHARE = 0.1           # the desert band holds at most this of the temperate band's trees per land chunk
+TF_M0_SHARE = 0.5               # temperate and wet bands hold at least half of M0's mean near spawn (R8)
+TF_SCATTER = 0.10               # across chunk edges the cell variance stays within 10 percent of inside
+TF_PEAK = 0.2                   # no autocorrelation peak above this at the chunk period in row or column sums
+TF_PERIOD = 32                  # the chunk period in tiles
+TF_CELL = 8                     # scatter cells, tiles a side
+TF_FOREST_CHUNKS = 8            # a forest block: up to 8 x 8 chunks at the forest's interior point
+TF_RING = (1.0, 2.0)            # T10's ring (reported): 1 to 2 equivalent radii outside a forest's outline
+TF_RING_CHUNKS = 16             # the ring's chunks per forest, one per angular sector (PD)
+TF_SAMPLE = (8, 6)              # each map's sample: columns x rows of blocks over the map's land
+TF_SAMPLE_CHUNKS = 4            # a sample block, chunks a side
+TF_SAMPLE_MIN = 40              # the grid densifies (2x, 3x, 4x) until this many sample blocks sit on land
+TF_POINTS = 4                   # forest-weight probes per chunk side (16 per chunk)
+TF_SCALES = (6, 1)              # T10 gates scale 6; scale 1 is reported
+TF_WET = 0.6                    # the wet band: moisture at least this outside the frozen and cold bands
+TF_SPAWN_CHUNKS = 8             # M0's near-spawn block, chunks a side
+TF_T4 = (("base", None), ("size0.5", ("size", 0.5)), ("size2", ("size", 2)), ("none", ("size", 0)),
+         ("freq0.5", ("frequency", 0.5)), ("freq2", ("frequency", 2)))
+TF_T4_INERT = 0.01              # AB trees under the coverage slider: within 1 percent of the default count (S3)
+TF_T4_MEAN = 0.25               # frequency rows: each count change within 25 percent of its comparator's (PD)
+TF_T4_LAND = 0.9                # patch edge density: neighbouring cells both at least this share land
+TF_PALMS = ("tree-palm-a", "tree-palm-b")
+TF_SAVE_SIDE = 16               # the T10 save block, chunks a side (tq2-driver's save job)
+TF_T17_M0_GRID = (9, 7, 2048)   # T17's calibration on M0: 9 x 7 sample-sized blocks, 2,048 tiles apart (PD)
+TF_V4_MIN_TREES = 160           # V4's plain woodland: at least 10 living trees per chunk of its 4 x 4 block (PD)
+
+
+def tf_t17_m0_blocks():
+    """M0's own T17 block set (the exit-0 guard's calibration): blocks of TF_SAMPLE_CHUNKS chunks a side on
+    a TF_T17_M0_GRID grid centred on the spawn, wide enough to cross vanilla Nauvis' climates."""
+    nx, ny, step = TF_T17_M0_GRID
+    side = TF_SAMPLE_CHUNKS * 32
+    return [(x * step - side // 2, y * step - side // 2, side, side)
+            for y in range(-(ny // 2), ny // 2 + 1) for x in range(-(nx // 2), nx // 2 + 1)]
+
+
+def tf_regions():
+    """region-layer's tools/build_regions.py: the forest rows' nominal shapes, frame offsets and drift."""
+    import build_regions
+    return build_regions
+
+
+def tf_vanilla():
+    """prototypes/tables/vanilla.lua, the base game's autoplace Earth restores beside Alien Biomes."""
+    return tnconfig.load(MOD / "prototypes" / "tables" / "vanilla.lua")
+
+
+def tf_preset_keys(cfg, ab):
+    """The tree keys an Earth preset sets (presets.lua tree_names): the multiplier key at the region
+    layer's multiplier; with Alien Biomes each restored entity's key at its body and each palm's
+    probability key at its second version. The gate is a toggle (expected_pen's toggle loop)."""
+    TR = cfg["trees"]
+    R = TR["restore"]
+    out = {TR["boost"]["key"]: cfg["regions"]["names"]["tree_mult"]}
+    if ab:
+        for n in R["trees"].values():
+            out[n["p"]] = n["body"]
+            out[n["r"]] = R["richness"]
+        for n in R["rocks"].values():
+            out[n["key"]] = n["body"]
+        for key in R["decoratives"].values():
+            out[key] = R["deco_body"]
+        for p in TR["palm"]:
+            out[p["key"]] = p["body"]
+    return out
+
+
+def tf_gate(cfg, name):
+    return f"{name} > {ww_num(cfg['hooks']['threshold'])}"
+
+
+def tf_boost_text(cfg, own):
+    """The great-forests hook around a tree's own probability (trees.lua M.boost)."""
+    B = cfg["trees"]["boost"]
+    return f"if({tf_gate(cfg, B['gate'])}, min({ww_num(B['cap'])}, ({own}) * {B['key']}), {own})"
+
+
+def tf_restore_text(cfg, on_branch, off):
+    """A restored entity's gated autoplace text (data-final-fixes.lua hook)."""
+    return f"if({tf_gate(cfg, cfg['keys']['on'])}, {on_branch}, {off})"
+
+
+def tf_lua_text(v):
+    """A probability expression as Lua's tostring() writes it into the hook."""
+    if isinstance(v, str):
+        return v
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return str(v).lower()
+    return str(int(v)) if float(v).is_integer() else format(v, ".14g")
+
+
+def tf_land(cfg):
+    return list(cfg["tiles"]["vanilla"]["tiles"])
+
+
+def tf_extended(cfg, base_list):
+    """An AB tile restriction with the vanilla land tiles appended (data-final-fixes.lua extend_restriction)."""
+    out = list(base_list or [])
+    for t in tf_land(cfg):
+        if t not in out:
+            out.append(t)
+    return out
+
+
+def tf_hook_change(cfg, t, n, earth, base):
+    """True when a tree, rock entity or decorative differs from its comparator (M0 or BAB) by trees-
+    forests' stable hooks alone: a living tree's probability wrapped in the great-forests hook; beside
+    Alien Biomes a restored vanilla tree, rock or decal rebuilt behind tn_on from vanilla.lua (restricted
+    to vanilla land, the trees under the boost too), a re-listed decorative's (score) + key behind tn_on
+    with vanilla land as its restriction, and an AB restriction with the vanilla land tiles appended."""
+    TR = cfg["trees"]
+    R = TR["restore"]
+    V = tf_vanilla()
+    a, b = dict(earth), dict(base)
+    ea, ba = a.pop("autoplace", None), b.pop("autoplace", None)
+    if a != b or not isinstance(ea, dict):
+        return False
+    dead = set(V["dead_trees"])
+    if t == "tree":
+        if n in R["trees"] and not ba:
+            row = next((r for r in V["trees"] if r["tree"] == n), None)
+            names = R["trees"][n]
+            if row is None:
+                return False
+            want = {"control": row["control"], "order": row["order"],
+                    "probability_expression": tf_boost_text(cfg, tf_restore_text(cfg, names["p"], R["tree_off"])),
+                    "richness_expression": tf_restore_text(cfg, names["r"], R["tree_off"]),
+                    "tile_restriction": tf_land(cfg)}
+            return ea == want
+        if not isinstance(ba, dict):
+            return False
+        if n in dead:
+            return ba.get("tile_restriction") is not None and \
+                ea == dict(ba, tile_restriction=tf_extended(cfg, ba.get("tile_restriction")))
+        own = ba.get("probability_expression")
+        if own in (None, ""):
+            return False
+        return ea == dict(ba, probability_expression=tf_boost_text(cfg, tf_lua_text(own)))
+    if n in R["rocks"] and not ba:
+        row = next((r for r in V["rocks"] if r["name"] == n and r["type"] == t), None)
+        if row is None:
+            return False
+        want = {k: row[k] for k in ("control", "order", "placement_density") if row.get(k) is not None}
+        want.update(probability_expression=tf_restore_text(cfg, R["rocks"][n]["key"], R["rock_off"]),
+                    tile_restriction=tf_land(cfg))
+        return ea == want
+    if not isinstance(ba, dict):
+        return False
+    if t == "optimized-decorative" and n in R["decoratives"]:
+        own = ba.get("probability_expression")
+        on = f"({tf_lua_text(own)}) + {R['decoratives'][n]}"
+        return ea == dict(ba, probability_expression=tf_restore_text(cfg, on, R["deco_off"]),
+                          tile_restriction=tf_land(cfg))
+    if t == "optimized-decorative" and n in V["extend"] and ba.get("tile_restriction") is not None:
+        return ea == dict(ba, tile_restriction=tf_extended(cfg, ba.get("tile_restriction")))
+    return False
+
+
+def tf_planet_change(cfg, earth, base):
+    """True when Nauvis differs from its comparator by Earth's listings alone: the tiles climate-tiles and
+    waterways may list (ct_listed_tiles) and, beside Alien Biomes, the restored rock entities and the
+    restored and re-listed decoratives (noise rule 2; trees ride the trees control)."""
+    import copy
+    R = cfg["trees"]["restore"]
+    V = tf_vanilla()
+    ent = {r["name"] for r in V["rocks"] if r["type"] == "simple-entity"}
+    dec = {r["name"] for r in V["rocks"] if r["type"] == "optimized-decorative"} | set(R["decoratives"])
+    allowed = {"tile": ct_listed_tiles(cfg), "entity": ent, "decorative": dec}
+    a, b = copy.deepcopy(earth), copy.deepcopy(base)
+    try:
+        sa_all = a["map_gen_settings"]["autoplace_settings"]
+        sb_all = b["map_gen_settings"]["autoplace_settings"]
+    except (KeyError, TypeError):
+        return False
+    for kind, ok in allowed.items():
+        sa = (sa_all.get(kind) or {}).get("settings")
+        sb = (sb_all.get(kind) or {}).get("settings")
+        if not isinstance(sa, dict) or not isinstance(sb, dict):
+            continue
+        for k in [k for k in sa if k not in sb]:
+            if k not in ok:
+                return False
+            sa.pop(k)
+    return a == b
+
+
+def tf_controls():
+    """trees-forests' positive controls (no game): the hook allowance takes the boost on a living tree and
+    refuses another change; a dead tree's restriction may only gain the vanilla land tiles; Nauvis may list
+    a restored rock but no other entity; the forest expectations read a disc's inside, edge and outside;
+    the scatter and periodicity metrics see a chunk-aligned step and a 32-tile period."""
+    cfg = tnconfig.load()
+    out = {}
+    tree0 = {"type": "tree", "name": "tree-01", "autoplace": {"control": "trees", "probability_expression": "tree_01"}}
+    tree1 = {"type": "tree", "name": "tree-01", "autoplace": {"control": "trees",
+                                                             "probability_expression": tf_boost_text(cfg, "tree_01")}}
+    out["trees: the boost alone on a living tree passes"] = (tf_hook_change(cfg, "tree", "tree-01", tree1, tree0), "")
+    out["trees: the boost plus another change fails"] = (
+        not tf_hook_change(cfg, "tree", "tree-01", dict(tree1, max_health=1), tree0), "")
+    out["trees: a text other than the boost fails"] = (
+        not tf_hook_change(cfg, "tree", "tree-01", dict(tree0, autoplace={"control": "trees",
+                                                                          "probability_expression": "1"}), tree0), "")
+    dead0 = {"type": "tree", "name": "dry-tree", "autoplace": {"probability_expression": "x", "tile_restriction": ["a"]}}
+    dead1 = {"type": "tree", "name": "dry-tree",
+             "autoplace": {"probability_expression": "x", "tile_restriction": tf_extended(cfg, ["a"])}}
+    out["trees: a dead tree's restriction gaining vanilla land passes"] = (
+        tf_hook_change(cfg, "tree", "dry-tree", dead1, dead0), "")
+    out["trees: a boosted dead tree fails"] = (
+        not tf_hook_change(cfg, "tree", "dry-tree", dict(dead0, autoplace={"probability_expression":
+                                                                           tf_boost_text(cfg, "x"),
+                                                                           "tile_restriction": ["a"]}), dead0), "")
+    p0 = {"map_gen_settings": {"autoplace_settings": {"entity": {"settings": {"iron-ore": {}}},
+                                                      "tile": {"settings": {"water": {}}}}}}
+    p1 = {"map_gen_settings": {"autoplace_settings": {"entity": {"settings": {"iron-ore": {}, "huge-rock": {}}},
+                                                      "tile": {"settings": {"water": {}}}}}}
+    p2 = {"map_gen_settings": {"autoplace_settings": {"entity": {"settings": {"iron-ore": {}, "small-worm-turret": {}}},
+                                                      "tile": {"settings": {"water": {}}}}}}
+    out["trees: Nauvis listing a restored rock passes"] = (tf_planet_change(cfg, p1, p0), "")
+    out["trees: Nauvis listing another entity fails"] = (not tf_planet_change(cfg, p2, p0), "")
+    cells = [[(x % 2) + (10 if (x // (TF_PERIOD // TF_CELL)) % 2 else 2) for x in range(16)] for _ in range(16)]
+    st = tf_scatter_stats(cells)
+    out["scatter: a chunk-aligned step is seen"] = (st["ratio"] is not None and st["ratio"] > 1 + TF_SCATTER, st)
+    flat = [[5 + ((x * 7 + y * 13) % 5) for x in range(16)] for y in range(16)]
+    st2 = tf_scatter_stats(flat)
+    out["scatter: a scatter without a chunk step passes"] = (st2["ratio"] is not None and
+                                                             abs(st2["ratio"] - 1) <= 0.5, st2)
+    rows = [3 + (5 if (i % TF_PERIOD) < 4 else 0) for i in range(256)]
+    out["periodicity: a 32-tile period is seen"] = (tf_period_peak(rows) > TF_PEAK, tf_period_peak(rows))
+    # the forests' interior point: the vectorized search keeps the scalar search's first maximum (ties, strips)
+    br = tf_regions()
+    for what, pts in (("a rectangle (a ridge of ties)", [(0.0, 0.0), (40.0, 0.0), (40.0, 20.0), (0.0, 20.0)]),
+                      ("a skew quadrilateral", [(0.3, 0.7), (60.2, 5.1), (55.9, 40.4), (2.5, 33.2)])):
+        sh = {"kind": "polygon", "pts": pts}
+        scal = max(((u, v, br.sd_px(sh, u, v)) for u in range(0, 62) for v in range(0, 42)),
+                   key=lambda t: (t[2], -t[0], -t[1]))[:2]
+        got = tf_deepest_point(br, sh, strip=7)
+        out[f"forests: the deepest point of {what} equals the scalar search's"] = (got == scal, (got, scal))
+    # G5 on every Earth probe run: the per-save map id is probed and must read the map's id
+    key = cfg["keys"]["map"]
+    mk0 = cfg["presets"][cfg["preset_order"][0]]["map"]
+    p_ = {"label": "fx", "kind": "m1", "mk": mk0, "areas": [(0, 0, 128, 128)], "names": "a"}
+    names_, pts_ = tf_probe_g5(cfg, p_)
+    out["G5: an Earth entry without points probes the map id inside its first area"] = (
+        names_ == f"a,{key}" and pts_ == [(64, 64)], (names_, pts_))
+    out["G5: a comparator entry probes nothing extra"] = (tf_probe_g5(cfg, dict(p_, kind="m0")) == ("a", []), "")
+
+    def dmp_(v):
+        return {"names": [key], "points": [{"x": 64, "y": 64, "tile": "grass-1", "values": [v]}]}
+    want_id = cfg["maps"][mk0]["id"]
+    out["G5: the map's id passes"] = (tf_earth_active(cfg, p_, dmp_(want_id)) == [], "")
+    out["G5: an unrecognized map id fails (the preset did not apply)"] = (
+        bool(tf_earth_active(cfg, p_, dmp_("unrecognized"))), "")
+    out["G5: another map's id fails"] = (bool(tf_earth_active(cfg, p_, dmp_(want_id + 1))), "")
+    out["G5: a dump without points fails"] = (bool(tf_earth_active(cfg, p_, {"names": [key], "points": []})), "")
+    # T4's patch edge density: finer patches of the same trees read higher, water cells stay out of the pairs
+    def area_(trees, water_cols=()):
+        rows = []
+        for y in range(64):
+            rows.append(" ".join(f"{1 if x in water_cols else 0}*1" for x in range(64)))
+        return {"area": {"x0": 0, "y0": 0, "w": 64, "h": 64},
+                "tiles": {"palette": ["grass-1", "water"], "rows": rows},
+                "entity_names": [{"name": "tree-01"}, {"name": "dead-tree-desert"}],
+                "entities": [[0, x + 0.5, y + 0.5] for x, y in trees] + [[1, 0.5, 0.5]]}
+    coarse = [(x, y) for x in range(64) for y in range(64) if x < 32 and (x + y) % 4 == 0]
+    fine = [(x, y) for x in range(64) for y in range(64) if (x // 8) % 2 == 0 and (x + y) % 4 == 0]
+    sc, sf = (tf_cell_stats({"areas": [area_(t)]}, {"t": lambda n: True})["t"] for t in (coarse, fine))
+    out["T4: finer patches of as many trees read a higher patch edge density"] = (
+        sc["count"] == sf["count"] and sf["rough"] > sc["rough"] > 0, (sc, sf))
+    sw = tf_cell_stats({"areas": [area_(fine, water_cols=range(8, 16))]}, {"t": lambda n: True})["t"]
+    out["T4: cells that are not land and dead trees stay out of the measure"] = (
+        sw["cells"] == sf["cells"] - 8 and sw["count"] == sf["count"], (sw["cells"], sf["cells"], sw["count"]))
+    # T10's forest cells: every seed on its own, no tree floor, a missing ratio fails for a decision
+    split = {1000: (10, 300, 150), 1002: (10, 300, 150), 1004: (10, 400, 120)}
+    f_ = tf_forest_fails("M1 europe s6", "fx", split)
+    out["T10: one seed outside 1.6 to 2.5 fails though the pooled ratio (2.38) is inside"] = (
+        len(f_) == 1 and "seed 1004" in f_[0], f_)
+    f_ = tf_forest_fails("M1 europe s6", "fx", {1000: (64, 0, 0), 1002: (64, 3, 0), 1004: (64, 300, 150)})
+    out["T10: a forest with no boost-off tree fails for a planner ruling at each such seed"] = (
+        len(f_) == 2 and all("U15" in x for x in f_), f_)
+    f_ = tf_forest_fails("M1 europe s6", "fx", {1000: (4, 90, 30), 1002: (4, 60, 30), 1004: (4, 60, 30)})
+    out["T10: a forest under the 50-tree floor is still judged"] = (len(f_) == 1 and "3.000" in f_[0], f_)
+    out["T10: a missing seed fails"] = (bool(tf_forest_fails("M1 europe s6", "fx", {1000: (4, 60, 30)})), "")
+    # P2's relative rule: tf_t15b's per-map summary holds its M2t/BABt ratio in climate-tiles' shape
+    # (RATIO_CHECKS_M2; its M1t/M0t ratio is RATIO_CHECKS' per-map record), and P2 is built as P1 is
+    man = {"checks": {"tf_t15b": {"summary": {"atlantic": {"scale_6": {"0xffff": {"ratio": 1.1}},
+                                                           "m2_bab": {"scale_6": {"0xffff": {"ratio": 1.3}}}}}}}}
+    out["ratios: trees-forests' recorded M2t/BABt ratio is read for P2"] = (
+        manifest_ratio_m2(man, "atlantic", 6) == 1.3, manifest_ratio_m2(man, "atlantic", 6))
+    rule = {"modset": None, "maps": ["europe"], "variant": None}
+    sec = {"limits": {"P2": {"limit": {"max": 1.5, "relative_factor": 1.1, "relative_rule": "P1"}}},
+           "allocations": {"fx": {"time": {"cell": "+0.05", "rules": [dict(rule, kind="add", value=0.05)]}},
+                           "fy": {"time": {"cell": "+0.05; P2 first", "rules": [
+                               dict(rule, kind="add", value=0.05), dict(rule, modset="M2", kind="first")]}},
+                           "fz": {"time": {"cell": "+0.05 (M2, key on)", "rules": [
+                               dict(rule, modset="M2", variant="key on", kind="add", value=0.05)]}}}}
+    asked = []
+
+    def rec_(*a, **k):
+        asked.append(k.get("modset"))
+        return 1.2
+    got = p2_limits(sec, "fx", "europe", 6, {}, recorded=rec_)["P2"]["limit"]
+    out["P2: an added allocation binds min(1.5, (main's M2 ratio + 0.05) x 1.10)"] = (
+        got.get("max") == round((1.2 + 0.05) * 1.1, 6) and len(asked) == 1, (got, asked))
+    try:
+        p2_limits(sec, "fx", "europe", 6, {}, recorded=lambda *a, **k: None)
+        out["P2: main recording no M2 ratio fails closed"] = (False, "built a limit")
+    except GateError:
+        out["P2: main recording no M2 ratio fails closed"] = (True, "")
+    first = p2_limits(sec, "fy", "europe", 6, {}, recorded=lambda *a, **k: None)["P2"]["limit"]
+    out["P2: a 'P2 first' allocation applies the bar alone"] = (first == {"max": 1.5}, first)
+    on_ = p2_limits(sec, "fz", "europe", 6, {}, recorded=lambda *a, **k: 1.2, variant="key on")["P2"]["limit"]
+    off_ = p2_limits(sec, "fz", "europe", 6, {}, recorded=lambda *a, **k: 1.2)["P2"]["limit"]
+    out["P2: a keyed M2 allocation binds only its variant"] = (
+        on_.get("allocation") == 0.05 and off_.get("allocation") == 0.0, (on_, off_))
+    return out
+
+
+def tf_scatter_stats(cells):
+    """Neighbouring 8 x 8-tile cells' squared count differences across a chunk edge against inside one
+    chunk: {"across", "inside", "ratio"}. `cells` is a list of rows of tree counts."""
+    per = TF_PERIOD // TF_CELL
+    across, inside = [], []
+    for y, row_ in enumerate(cells):
+        for x, c in enumerate(row_):
+            for dx, dy in ((1, 0), (0, 1)):
+                x2, y2 = x + dx, y + dy
+                if y2 >= len(cells) or x2 >= len(cells[y2]):
+                    continue
+                d = (c - cells[y2][x2]) ** 2
+                edge = (x2 % per == 0) if dx else (y2 % per == 0)
+                (across if edge else inside).append(d)
+    a = sum(across) / len(across) if across else None
+    i = sum(inside) / len(inside) if inside else None
+    return {"across": a, "inside": i, "ratio": (a / i) if a is not None and i else None,
+            "pairs": [len(across), len(inside)]}
+
+
+def tf_period_peak(series):
+    """The autocorrelation of a row or column sum series at the chunk period, when it is a local peak
+    (TST-14: a periodic peak), else 0."""
+    n = len(series)
+    if n < 3 * TF_PERIOD:
+        return 0.0
+    m = sum(series) / n
+    xs = [s - m for s in series]
+    var = sum(x * x for x in xs)
+    if var == 0:
+        return 0.0
+
+    def r(k):
+        return sum(xs[i] * xs[i + k] for i in range(n - k)) / var
+    p = r(TF_PERIOD)
+    return p if p > r(TF_PERIOD - 1) and p > r(TF_PERIOD + 1) else 0.0
+
+
+def tf_frame_to_tile(cfg, mk, mref, u, v, scale):
+    """The tile whose integer corner reads the region frame's (u, v) on map `mk` at `scale`: the chain's
+    u = (x - floor(s / 2)) / s + wr plus the map's whole-pixel frame offset (spawn offset 0)."""
+    du, dv = tf_regions().map_offset(cfg, mk)
+    return (int(math.floor((u - du - mref.wr) * scale + scale // 2)),
+            int(math.floor((v - dv - mref.hr) * scale + scale // 2)))
+
+
+def tf_tile_to_frame(cfg, mk, mref, x, y, scale):
+    du, dv = tf_regions().map_offset(cfg, mk)
+    return (x - scale // 2) / scale + mref.wr + du, (y - scale // 2) / scale + mref.hr + dv
+
+
+_TF_FORESTS = {}
+
+
+def tf_forests(cfg, mk, scale):
+    """Each adopted forest whose interior lies on map `mk`: id, its interior point in tiles at `scale`
+    (a disc's centre; a polygon's deepest point on a 1 px grid), its equivalent radius in tiles and its
+    block of up to TF_FOREST_CHUNKS chunks a side around that point, plus the radius and interior point in
+    reference pixels. Cached per map and scale for the process (the deepest-point search is slow); each
+    call returns fresh dicts."""
+    if (mk, scale) not in _TF_FORESTS:
+        _TF_FORESTS[(mk, scale)] = _tf_forests(cfg, mk, scale)
+    return [dict(f) for f in _TF_FORESTS[(mk, scale)]]
+
+
+def tf_deepest_point(br, sh, strip=128):
+    """A polygon's deepest point on the 1 px grid over its bounding box: the first maximum of sd_px in
+    u-major order (u outer, v inner), computed with build_regions' vectorized sd_grid (the same formulas)
+    in strips of `strip` columns; the scalar search took minutes on the taigas' boxes."""
+    import numpy as np
+    xs, ys = [p[0] for p in sh["pts"]], [p[1] for p in sh["pts"]]
+    us = np.arange(int(math.floor(min(xs))), int(math.ceil(max(xs))) + 1)
+    vs = np.arange(int(math.floor(min(ys))), int(math.ceil(max(ys))) + 1)
+    best = None
+    for k in range(0, len(us), strip):
+        U, V = np.meshgrid(us[k:k + strip], vs, indexing="ij")
+        D = br.sd_grid(sh, U, V)
+        i = int(np.argmax(D))
+        if best is None or D.flat[i] > best[2]:
+            best = (int(U.flat[i]), int(V.flat[i]), float(D.flat[i]))
+    return best[0], best[1]
+
+
+def _tf_forests(cfg, mk, scale):
+    import earthgeo as eg
+    br = tf_regions()
+    mref = eg.MapRef(mk)
+    out = []
+    for r in br.rows_on(br.load_table(), mk):
+        if r["layer"] != "forest":
+            continue
+        sh = br.shape_px(r, cfg)
+        if sh["kind"] == "disc":
+            cu, cv, rad = sh["cu"], sh["cv"], sh["r"]
+        else:
+            cu, cv = tf_deepest_point(br, sh)
+            area, _ = br.polygon_area_perimeter(sh["pts"])
+            rad = math.sqrt(area / math.pi)
+        if not br.in_map(cfg, mk, cu, cv):
+            continue
+        tx, ty = tf_frame_to_tile(cfg, mk, mref, cu, cv, scale)
+        n = max(1, min(TF_FOREST_CHUNKS, int(math.ceil(2 * rad * scale / 32))))
+        cx0, cy0 = tx // 32 - n // 2, ty // 32 - n // 2
+        out.append({"id": r["id"], "tile": (tx, ty), "radius_tiles": round(rad * scale, 1), "chunks": n,
+                    "area": (cx0 * 32, cy0 * 32, n * 32, n * 32), "rad_px": rad, "centre_px": (cu, cv)})
+    return out
+
+
+_TF_RINGS = {}
+
+
+def tf_rings(cfg, mk, scale, forests):
+    """{forest id: [chunk areas]}: T10's same-climate ring around each adopted forest of map `mk` at
+    `scale` (test notes T10, reported): up to TF_RING_CHUNKS chunks whose centres lie TF_RING[0] to
+    TF_RING[1] equivalent radii outside the forest's nominal outline (signed distance, and at least its
+    drift plus half the ramp, so outside the ramp at any seed), on reference land and outside every other
+    forest of the map by that margin; one per angular sector around the interior point, the one nearest
+    the band's middle. The derive keeps those whose centre shares the forest centre's climate band.
+    `forests` is tf_forests' list for the map and scale."""
+    import numpy as np
+    import earthgeo as eg
+    if (mk, scale) in _TF_RINGS:
+        return _TF_RINGS[(mk, scale)]
+    br = tf_regions()
+    mref = eg.MapRef(mk)
+    du, dv = br.map_offset(cfg, mk)
+    half = float(cfg["regions"]["ramp"]["width_px"]) / 2
+    rows = [r for r in br.rows_on(br.load_table(), mk) if r["layer"] == "forest"]
+    shapes = {r["id"]: br.shape_px(r, cfg) for r in rows}
+    margin = {r["id"]: br.max_drift_px(r, cfg) + half for r in rows}
+
+    def bbox(sh, pad):
+        if sh["kind"] == "disc":
+            r = sh["r"] + pad
+            return sh["cu"] - r, sh["cv"] - r, sh["cu"] + r, sh["cv"] + r
+        us, vs = [p[0] for p in sh["pts"]], [p[1] for p in sh["pts"]]
+        r = sh.get("r", 0.0)
+        return min(us) - r - pad, min(vs) - r - pad, max(us) + r + pad, max(vs) + r + pad
+    out = {}
+    for f in forests:
+        sh, rad, (cu, cv) = shapes[f["id"]], f["rad_px"], f["centre_px"]
+        lo, hi = max(TF_RING[0] * rad, margin[f["id"]]), TF_RING[1] * rad
+        if hi <= lo:
+            out[f["id"]] = []
+            continue
+        u0, v0, u1, v1 = bbox(sh, hi)
+        (tx0, ty0), (tx1, ty1) = (tf_frame_to_tile(cfg, mk, mref, u0, v0, scale),
+                                  tf_frame_to_tile(cfg, mk, mref, u1, v1, scale))
+        CX, CY = np.meshgrid(np.arange(tx0 // 32, tx1 // 32 + 1), np.arange(ty0 // 32, ty1 // 32 + 1))
+        U = (CX * 32 + 16 - scale // 2) / scale + mref.wr + du
+        V = (CY * 32 + 16 - scale // 2) / scale + mref.hr + dv
+        D = br.sd_grid(sh, U, V)
+        ok = (D <= -lo) & (D >= -hi)
+        col, row_ = np.floor(U - du + 0.5).astype(int), np.floor(V - dv + 0.5).astype(int)
+        inb = (col >= 0) & (col < mref.W) & (row_ >= 0) & (row_ < mref.H)
+        land = np.zeros(U.shape, bool)
+        land[inb] = np.asarray(mref.land)[row_[inb], col[inb]]
+        ok &= land
+        for fid2, sh2 in shapes.items():
+            if fid2 == f["id"]:
+                continue
+            b0, b1, b2, b3 = bbox(sh2, margin[fid2])
+            if b2 < u0 or b0 > u1 or b3 < v0 or b1 > v1:
+                continue
+            ok &= br.sd_grid(sh2, U, V) <= -margin[fid2]
+        turn = (np.arctan2(V - cv, U - cu) + math.pi) / (2 * math.pi)
+        sector = (turn * TF_RING_CHUNKS).astype(int) % TF_RING_CHUNKS
+        miss = np.abs(D + (lo + hi) / 2)
+        pick = []
+        for k in range(TF_RING_CHUNKS):
+            m = ok & (sector == k)
+            if m.any():
+                i = int(np.argmin(np.where(m, miss, np.inf)))
+                pick.append((int(CX.flat[i]) * 32, int(CY.flat[i]) * 32, 32, 32))
+        out[f["id"]] = sorted(set(pick))
+    _TF_RINGS[(mk, scale)] = out
+    return out
+
+
+def tf_sample_blocks(mk, scale):
+    """Blocks of TF_SAMPLE_CHUNKS chunks a side, centred on a grid over the map's extent (TF_SAMPLE, made
+    denser until TF_SAMPLE_MIN blocks sit on land) and kept where the reference pixel at the centre is
+    land: the map-wide sample (trees per generated block)."""
+    import earthgeo as eg
+    mref = eg.MapRef(mk)
+    side = TF_SAMPLE_CHUNKS * 32
+    for k in range(4):
+        nx, ny = TF_SAMPLE[0] * (k + 1), TF_SAMPLE[1] * (k + 1)
+        out = []
+        for j in range(ny):
+            for i in range(nx):
+                col, row_ = int((i + 0.5) * mref.W / nx), int((j + 0.5) * mref.H / ny)
+                if not mref.land[row_, col]:
+                    continue
+                tx = (col - mref.wr) * scale + scale // 2
+                ty = (row_ - mref.hr) * scale + scale // 2
+                out.append((tx // 32 * 32 - side // 2, ty // 32 * 32 - side // 2, side, side))
+        if len(out) >= TF_SAMPLE_MIN:
+            break
+    return out
+
+
+def tf_probe_points(areas, per_side=TF_POINTS):
+    """per_side x per_side probes inside every chunk of every area."""
+    pts = []
+    step = 32 // per_side
+    for x0, y0, w, h in areas:
+        for cy in range(y0 // 32, (y0 + h) // 32):
+            for cx in range(x0 // 32, (x0 + w) // 32):
+                for j in range(per_side):
+                    for i in range(per_side):
+                        pts.append((cx * 32 + step // 2 + i * step, cy * 32 + step // 2 + j * step))
+    return list(dict.fromkeys(pts))
+
+
+def tf_chunks(dump, names=(), dead=CT_DEAD_TREES):
+    """{(cx, cy): {"living", "land", "trees": [(name, x, y)], "values": {name: [values]}}} over every
+    dumped area, with each named probe value of the points inside the chunk. A chunk two areas cover (a
+    sample block over a forest block or a ring chunk) is counted once, from the first area that covers
+    it; the areas are chunk-aligned."""
+    out = {}
+    claimed = set()
+
+    def chunk(k):
+        return out.setdefault(k, {"living": 0, "land": 0, "trees": [], "values": {}})
+    for a in dump.get("areas") or []:
+        x0, y0, w, h = a["area"]["x0"], a["area"]["y0"], a["area"]["w"], a["area"]["h"]
+        mine = {(cx, cy) for cy in range(y0 // 32, -(-(y0 + h) // 32))
+                for cx in range(x0 // 32, -(-(x0 + w) // 32))} - claimed
+        claimed |= mine
+        enames = [e.get("name") for e in a.get("entity_names") or []]
+        for e in a.get("entities") or []:
+            n = enames[e[0]] if 0 <= e[0] < len(enames) else None
+            k_ = (int(e[1] // 32), int(e[2] // 32))
+            if n is None or str(n).startswith(dead) or k_ not in mine:
+                continue
+            c = chunk(k_)
+            c["living"] += 1
+            c["trees"].append((n, e[1], e[2]))
+        tiles = a.get("tiles") or {}
+        pal = tiles.get("palette") or []
+        land = [ct_family(t) not in ("water", "wetland") for t in pal]
+        for r_, row_ in enumerate(tiles.get("rows") or []):
+            x, cy = x0, (y0 + r_) // 32
+            for part in str(row_).split():
+                i, _, k = part.partition("*")
+                end = x + int(k)
+                if land[int(i)]:
+                    while x < end:
+                        nxt = min(end, (x // 32 + 1) * 32)
+                        if (x // 32, cy) in mine:
+                            chunk((x // 32, cy))["land"] += nxt - x
+                        x = nxt
+                x = end
+    for (x, y), v in point_values(dump).items():
+        c = out.setdefault((int(x // 32), int(y // 32)), {"living": 0, "land": 0, "trees": [], "values": {}})
+        for n in names:
+            if isinstance(v.get(n), (int, float)):
+                c["values"].setdefault(n, []).append(v[n])
+    return out
+
+
+def tf_mean(xs):
+    return sum(xs) / len(xs) if xs else None
+
+
+def tf_cell_stats(dmp, series, cell=TF_CELL, land_min=TF_T4_LAND, dead=CT_DEAD_TREES):
+    """T4's tree statistics of one probe run per series ({series: predicate on a tree name}): living trees
+    over every dumped area, and the patch edge density of cell x cell-tile cells, the mean absolute
+    count difference between neighbouring cells that are both at least land_min land over the mean count
+    of those cells (ct_roughness' measure on trees; a frequency slider moves it). {series: {"count",
+    "rough", "pairs", "cells"}}; rough None without a land pair or a tree."""
+    import numpy as np
+    import dump_render
+    acc = {k: {"count": 0, "diff": 0.0, "pairs": 0, "sum": 0.0, "cells": 0} for k in series}
+    for a in dmp.get("areas") or []:
+        x0, y0, w, h = a["area"]["x0"], a["area"]["y0"], a["area"]["w"], a["area"]["h"]
+        pal, idx = dump_render.decode_tiles(a)
+        land = np.array([ct_family(n) not in ("water", "wetland") for n in pal], bool)[idx]
+        ny, nx = h // cell, w // cell
+        ok = land[:ny * cell, :nx * cell].reshape(ny, cell, nx, cell).mean(axis=(1, 3)) >= land_min
+        hp, vp = ok[:, 1:] & ok[:, :-1], ok[1:, :] & ok[:-1, :]
+        enames = [e.get("name") for e in a.get("entity_names") or []]
+        grids = {k: np.zeros((ny, nx)) for k in series}
+        for e in a.get("entities") or []:
+            n = enames[e[0]] if 0 <= e[0] < len(enames) else None
+            if n is None or str(n).startswith(dead):
+                continue
+            gx, gy = int((e[1] - x0) // cell), int((e[2] - y0) // cell)
+            for k, pred in series.items():
+                if pred(n):
+                    acc[k]["count"] += 1
+                    if 0 <= gx < nx and 0 <= gy < ny:
+                        grids[k][gy, gx] += 1
+        for k, g in grids.items():
+            acc[k]["diff"] += float(np.abs(g[:, 1:] - g[:, :-1])[hp].sum() + np.abs(g[1:, :] - g[:-1, :])[vp].sum())
+            acc[k]["pairs"] += int(hp.sum() + vp.sum())
+            acc[k]["sum"] += float(g[ok].sum())
+            acc[k]["cells"] += int(ok.sum())
+    out = {}
+    for k, v in acc.items():
+        mad = v["diff"] / v["pairs"] if v["pairs"] else None
+        mean = v["sum"] / v["cells"] if v["cells"] else None
+        out[k] = {"count": v["count"], "rough": round(mad / mean, 6) if mad is not None and mean else None,
+                  "pairs": v["pairs"], "cells": v["cells"]}
+    return out
+
+
+def tf_mgs(ctx, cfg, kind, mk, scale, extra=None, controls=None, label=""):
+    """The MGS file of one probe run: an Earth map's preset as the M1 (kind m1) or M2 dump holds it at
+    `scale` with `extra` redirects (ct_mgs), or a default world (m0, bab) with only the controls; trees
+    slider rows add autoplace_controls (U10: never --preset)."""
+    if kind in ("m1", "m2"):
+        f = ct_mgs(ctx, cfg, mk, scale, kind == "m2", extra, label=label)
+        if not controls:
+            return f
+        body = json.loads(f.read_text(encoding="utf-8"))
+    else:
+        if not controls:
+            return None
+        body = {}
+        f = ctx.out / "mgs" / f"tf-{kind}{label}.json"
+        f.parent.mkdir(parents=True, exist_ok=True)
+    body["autoplace_controls"] = controls
+    f = f.with_name(f.stem + "-ctl.json")
+    f.write_text(json.dumps(body, indent=1, sort_keys=True), encoding="utf-8")
+    return f
+
+
+def tf_forests_on(cfg, on):
+    """The redirect that bakes the great-forests gate on or off (the toggle's values)."""
+    t = cfg["toggles"]["great_forests"]
+    return {t["preset_key"]: t["on"] if on else t["off"]}
+
+
+def tf_forest_expectations(cfg, mk, places, scale):
+    """{place id: (tile, want)}: want True where the place's tile lies inside an adopted forest of the map
+    by more than the row's drift (its warp share of the clamp, the roughness clamp; build_regions'
+    max_drift_px) plus half the ramp, False where it lies that far outside every forest, None between
+    (listed, never judged): the boost acts where the multiplier exceeds 1 (D13)."""
+    import earthgeo as eg
+    import oracle
+    br = tf_regions()
+    mref = eg.MapRef(mk)
+    rows = [r for r in br.rows_on(br.load_table(), mk) if r["layer"] == "forest"]
+    shapes = [(r, br.shape_px(r, cfg)) for r in rows]
+    half = float(cfg["regions"]["ramp"]["width_px"]) / 2
+    out = {}
+    for p in places:
+        try:
+            tile = tuple(oracle.place_tile(mref, p, str(scale)))
+        except Exception:
+            continue
+        u, v = tf_tile_to_frame(cfg, mk, mref, tile[0], tile[1], scale)
+        inside, near = False, False
+        for r, sh in shapes:
+            sd = br.sd_px(sh, u, v)
+            m = br.max_drift_px(r, cfg) + half
+            if sd > m:
+                inside = True
+            elif sd > -m:
+                near = True
+        out[p["id"]] = (tile, True if inside else None if near else False)
+    return out
+
+
+def tf_judge_forest(cfg, expect, vals, label):
+    """T3's forest rows: inside a forest the multiplier key reads above 1, outside every forest exactly 1."""
+    key = cfg["trees"]["boost"]["key"]
+    fails, counts = [], {"inside": 0, "outside": 0, "listed": 0}
+    for pid, (tile, want) in expect.items():
+        if want is None:
+            counts["listed"] += 1
+            continue
+        v = (vals.get(tile) or {}).get(key)
+        if not isinstance(v, (int, float)):
+            fails.append(f"{label} {pid}: {key} reads {v!r} at {tile} (the preset did not apply, G5)")
+            continue
+        if want and not v > 1 + 1e-6:
+            fails.append(f"{label} {pid}: {key} {v} at {tile}, want above 1 inside the forest")
+        elif not want and abs(v - 1) > 1e-6:
+            fails.append(f"{label} {pid}: {key} {v} at {tile}, want 1 outside every forest")
+        counts["inside" if want else "outside"] += 1
+    if not counts["inside"] or not counts["outside"]:
+        fails.append(f"{label}: {counts['inside']} places inside and {counts['outside']} outside a forest: the "
+                     f"check needs both (G6)")
+    return counts, fails
+
+
+def tf_ring_ratio(inside, inside_land, ring, ring_land):
+    """Trees per land tile inside a forest over the same in its same-climate ring, or None without land
+    or ring trees (test notes T10: the ring ratio, reported with the forests on and off)."""
+    if not inside_land or not ring_land or not ring:
+        return None
+    return round((inside / inside_land) / (ring / ring_land), 4)
+
+
+def tf_probe_g5(cfg, p):
+    """An Earth probe run's (kind m1 or m2) names and points with the per-save map id added (U1, G5): the
+    id is probed at every point, and an entry without points gets the centre of its first area, a chunk
+    it requests anyway (no new chunk, so the request order is unchanged, G10)."""
+    names = [n for n in str(p.get("names") or "").split(",") if n]
+    pts = list(p.get("points") or [])
+    if p.get("kind") in ("m1", "m2"):
+        if cfg["keys"]["map"] not in names:
+            names.append(cfg["keys"]["map"])
+        if not pts:
+            x0, y0, w, h = (p.get("areas") or [(-16, -16, 32, 32)])[0]
+            pts = [(x0 + w // 2, y0 + h // 2)]
+    return ",".join(names), pts
+
+
+def tf_earth_active(cfg, p, dmp):
+    """G5 (U1) for one probe run on an Earth modset: the per-save map id reads the map's id at every probed
+    point through calculate_tile_properties, so the run's MGS applied; on a vanilla Nauvis the name is
+    unrecognized. Comparator runs (M0, BAB) have nothing to prove here."""
+    if p.get("kind") not in ("m1", "m2"):
+        return []
+    key, want = cfg["keys"]["map"], cfg["maps"][p["mk"]]["id"]
+    vals = [v.get(key) for v in point_values(dmp).values()]
+    bad = [v for v in vals if isinstance(v, bool) or not isinstance(v, (int, float)) or v != want]
+    if not vals or bad:
+        return [f"{p['label']}: {key} reads {bad[:1] or 'nothing'} at {len(bad)} of {len(vals)} probed points, want "
+                f"{want}: the preset did not apply (G5)"]
+    return []
+
+
+def tf_forest_fails(label, fid, cells, seeds=SEEDS):
+    """T10's gated cells of one forest on one modset: {seed: (inside chunks, trees on, trees off)}, each
+    seed judged on its own (every canonical seed, never pooled, so one seed outside 1.6 to 2.5 fails
+    whatever the others hold). A seed with no inside chunk or no boost-off tree has no ratio and fails,
+    naming the forest, modset and seed, for a planner decision (U15); a missing seed fails."""
+    fails = []
+    for seed in seeds:
+        lab = f"{label} seed {seed} {fid}"
+        if seed not in cells:
+            fails.append(f"{lab}: no cell (the seed's runs are missing)")
+            continue
+        n_in, a_, b_ = cells[seed]
+        if not n_in:
+            fails.append(f"{lab}: no chunk of its block has a mean forest weight of at least {TF_INSIDE_W}, so the "
+                         f"forest has no ratio: for a planner ruling (U15)")
+        elif not b_:
+            fails.append(f"{lab}: 0 living trees with the boost off in its {n_in} inside chunks ({a_} with it on), so "
+                         f"no ratio exists: for a planner ruling (U15)")
+        elif not (TF_RATIO[0] <= a_ / b_ <= TF_RATIO[1]):
+            fails.append(f"{lab}: trees per land tile on against off {a_ / b_:.3f}, want {TF_RATIO[0]} to "
+                         f"{TF_RATIO[1]} (ruling 15)")
+    return fails
+
+
+def row_tf_dump_facts(ctx, mods, sec6, row, cache):
+    """T16, T13 (FG; D13 dump facts; trees-forests): on M1 and M2 the great-forests gate and multiplier key
+    hold their off values (0 and 1); every living tree's probability is exactly the great-forests hook
+    around its comparator's own (M0's, BAB's, or the restored tree's gated key), outermost, reading the
+    gate and tn_tree_mult only, and the dead and dry trees are not boosted; every preset points the key at
+    the region layer's multiplier; with Alien Biomes each restored vanilla tree, rock and decal is rebuilt
+    from vanilla.lua behind tn_on on vanilla land, each body is vanilla.lua's text (the restored trees'
+    with the vanilla-scale temperature), every vanilla.lua text equals the base game's own in M0's dump (a
+    game update changes them), Nauvis lists the restored rocks and decoratives, the re-listed decoratives
+    carry their gated hook, the AB-restricted ones the vanilla land tiles, and the palms' second versions
+    are the boost around their first; without AB nothing is restored."""
+    cfg = mods.cfg
+    d0, d1, d2, db = (ctx.shared.get(k) for k in ("dump_m0", "dump_m1", "dump_m2", "dump_bab"))
+    if any(x is None for x in (d0, d1, d2, db)):
+        row.fails.append("no M0, M1, M2 and BAB dumps (row dumps failed)")
+        return
+    fails = row.fails
+    TR = cfg["trees"]
+    B, R = TR["boost"], TR["restore"]
+    V = tf_vanilla()
+    dead = set(V["dead_trees"])
+    boosted = {}
+    for label, d, base, ab in (("M1", d1, d0, False), ("M2", d2, db, True)):
+        ne = d.get("noise-expression") or {}
+        for name, want in ((B["gate"], B["gate_off"]), (B["key"], B["key_off"])):
+            got = str((ne.get(name) or {}).get("expression"))
+            if got != want:
+                fails.append(f"{label}: {name} holds {got!r}, want its off value {want!r}")
+        n_boost = 0
+        for n, tp in sorted((d.get("tree") or {}).items()):
+            ap = tp.get("autoplace") or {}
+            text = ap.get("probability_expression")
+            own_b = (((base.get("tree") or {}).get(n) or {}).get("autoplace") or {}).get("probability_expression")
+            if text in (None, ""):
+                continue
+            if n in dead:
+                if own_b is not None and text != own_b:
+                    fails.append(f"{label}: the dead tree {n} carries {str(text)[:60]!r}, want its own autoplace")
+                continue
+            own = tf_restore_text(cfg, R["trees"][n]["p"], R["tree_off"]) if ab and n in R["trees"] and \
+                own_b is None else tf_lua_text(own_b) if own_b is not None else None
+            if own is None:
+                fails.append(f"{label}: tree {n} has an autoplace its comparator lacks and is no restored tree")
+                continue
+            want = tf_boost_text(cfg, own)
+            if text != want:
+                fails.append(f"{label}: tree {n} probability {str(text)[:90]!r}, want the great-forests hook around "
+                             f"its own")
+                continue
+            extra = set(expr_refs(text)) - set(expr_refs(own)) - {"if", "min"}
+            if extra != {B["gate"], B["key"]}:
+                fails.append(f"{label}: the boost on {n} reads {sorted(extra)}: it reads the gate and {B['key']} only")
+            n_boost += 1
+        boosted[label] = n_boost
+        if not n_boost:
+            fails.append(f"{label}: no living tree carries the great-forests hook")
+        for key in cfg["preset_order"]:
+            pen = preset_pen(d, cfg["presets"][key]["name"])
+            if pen.get(B["key"]) != cfg["regions"]["names"]["tree_mult"]:
+                fails.append(f"{label} {cfg['presets'][key]['name']}: {B['key']} names {pen.get(B['key'])!r}, want "
+                             f"{cfg['regions']['names']['tree_mult']}")
+    # every vanilla.lua text is the base game's own (M0)
+    ne0 = d0.get("noise-expression") or {}
+    for r_ in V["trees"]:
+        if (ne0.get(r_["expression"]) or {}).get("expression") != r_["text"]:
+            fails.append(f"vanilla.lua's {r_['expression']} differs from the base game's (a game update): ship the "
+                         f"table's next version")
+        ap0 = ((d0.get("tree") or {}).get(r_["tree"]) or {}).get("autoplace") or {}
+        if (ap0.get("order"), ap0.get("control"), ap0.get("richness_expression")) != \
+                (r_["order"], r_["control"], V["tree_richness"]):
+            fails.append(f"vanilla.lua's {r_['tree']} order, control or richness differs from the base game's")
+    for r_ in V["rocks"]:
+        ap0 = ((d0.get(r_["type"]) or {}).get(r_["name"]) or {}).get("autoplace") or {}
+        if ap0.get("probability_expression") != r_["probability_expression"] or \
+                (ap0.get("local_expressions") or {}) != (r_.get("local_expressions") or {}):
+            fails.append(f"vanilla.lua's {r_['name']} differs from the base game's (a game update)")
+    # M2: the restored bodies, lists and restrictions
+    ne2 = d2.get("noise-expression") or {}
+    for r_ in V["trees"]:
+        body = (ne2.get(R["trees"][r_["tree"]]["body"]) or {}).get("expression")
+        want = re.sub(r"(?<![A-Za-z0-9_])temperature(?![A-Za-z0-9_])", TR["temperature"], r_["text"])
+        if body != want:
+            fails.append(f"M2: {R['trees'][r_['tree']]['body']} is not vanilla's {r_['expression']} with "
+                         f"{TR['temperature']}")
+    for r_ in V["rocks"]:
+        b = ne2.get(R["rocks"][r_["name"]]["body"]) or {}
+        if b.get("expression") != r_["probability_expression"] or \
+                (b.get("local_expressions") or {}) != (r_.get("local_expressions") or {}):
+            fails.append(f"M2: {R['rocks'][r_['name']]['body']} is not vanilla.lua's {r_['name']}")
+    if str((ne2.get(R["richness"]) or {}).get("expression")) != V["tree_richness"]:
+        fails.append(f"M2: {R['richness']} is not the base game's tree richness")
+    for p in TR["palm"]:
+        if (ne2.get(p["body"]) or {}).get("expression") != tf_boost_text(cfg, p["base"]):
+            fails.append(f"M2: {p['body']} is not the boost around {p['base']}")
+        if p["body"] in (d1.get("noise-expression") or {}):
+            fails.append(f"M1: {p['body']} exists without Alien Biomes")
+    ms2 = (((d2.get("planet") or {}).get("nauvis") or {}).get("map_gen_settings") or {}).get("autoplace_settings") or {}
+    for r_ in V["rocks"]:
+        kind = "entity" if r_["type"] == "simple-entity" else "decorative"
+        if r_["name"] not in ((ms2.get(kind) or {}).get("settings") or {}):
+            fails.append(f"M2: Nauvis does not list the restored {r_['name']} (noise skill rule 2)")
+    for n in V["relist"]:
+        if n not in ((ms2.get("decorative") or {}).get("settings") or {}):
+            fails.append(f"M2: Nauvis does not list the re-listed {n}")
+    changed = []
+    for t in ("tree", "simple-entity", "optimized-decorative"):
+        for n, v in (d2.get(t) or {}).items():
+            b = (db.get(t) or {}).get(n)
+            if b is not None and v != b and not tf_hook_change(cfg, t, n, v, b):
+                changed.append((t, n))
+    if changed:
+        fails.append(f"M2: {changed[:5]} differ from BAB beyond trees-forests' hooks (A-1)")
+    land = set(tf_land(cfg))
+    for n in V["extend"]:
+        ap = ((d2.get("optimized-decorative") or {}).get(n) or {}).get("autoplace") or {}
+        if ap and not land <= set(ap.get("tile_restriction") or []):
+            fails.append(f"M2: {n}'s restriction lacks vanilla land tiles")
+    # M1: nothing restored (the base game's own autoplace stays, under the hook)
+    for r_ in V["rocks"]:
+        ap1 = ((d1.get(r_["type"]) or {}).get(r_["name"]) or {}).get("autoplace") or {}
+        if ap1.get("probability_expression") != r_["probability_expression"]:
+            fails.append(f"M1: {r_['name']}'s autoplace changed without Alien Biomes")
+    row.detail = (f"the great-forests hook on {boosted.get('M1')} living trees on M1 and {boosted.get('M2')} on M2, "
+                  f"reading {B['gate']} and {B['key']} only; {len(V['trees'])} trees, {len(V['rocks'])} rocks and "
+                  f"decals rebuilt and {len(V['relist'])} decoratives re-listed beside AB from vanilla.lua")
+
+
+def row_tf_t3(ctx, mods, sec6, row, cache):
+    """T3, T16 (FG; Europe at scale 6 on M1; D13): at every oracle place the multiplier key reads above 1
+    inside an adopted forest and 1 outside every forest (places near a forest's edge are listed), so the
+    boost reads the region layer through tn_tree_mult alone (tf_forest_expectations)."""
+    import oracle
+    cfg = mods.cfg
+    _, mk, _ = first_preset(cfg)
+    O = oracle.load_oracle(mk, TESTS / "oracle")
+    expect = tf_forest_expectations(cfg, mk, O["places"], 6)
+    pts = list(dict.fromkeys(t for t, _ in expect.values()))
+    ms = ct_probe_modset(ctx, mods, "tf3a", False)
+    names = ",".join([cfg["trees"]["boost"]["key"], cfg["regions"]["names"]["forest_w"]])
+    key, newest = common_key(ctx, "tf_t3", {"ms": mods.manifest(ms), "pts": pts, "dump": ctx.shared.get("dump_m1_sha")})
+
+    def live():
+        out = ctx.out / "tf-t3-m1"
+        run_lanes(ctx, [[(dump_settings(ctx, ms, ctx.instance, label="tf3", points=";".join(f"{x},{y}" for x, y in pts),
+                                        names=names),
+                          scenario_args(ctx.instance, ms, 4, SEED, ct_mgs(ctx, cfg, mk, 6, False, label="-tf3")),
+                          out, 900)]])
+        return [out]
+
+    def derive(dirs):
+        fails = []
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        counts, f = tf_judge_forest(cfg, expect, point_values(read_dump(dirs[0], "tf3")), f"M1 {mk} s6")
+        return counts, fails + f, f"{mk} scale 6: {counts}"
+
+    cached_or_live(ctx, row, cache, key, newest, live, derive)
+
+
+def tf_server_run(ctx, mods, modset, spec, label, timeout, saves, mgs):
+    """server_run for an Earth world: the save made from a full MGS file (make_save_mgs), then the loopback
+    server whose saves are copied into the run directory (the server clause)."""
+    save = make_save_mgs(ctx, mods, modset, "tq2-mode", spec, label, mgs)
+    wd = ctx.ws / "test-instance" / "instances" / "ea-srv" / "write-data"
+    (wd / "saves").mkdir(parents=True, exist_ok=True)
+    t0 = time.time()
+    ctx.perf.wait_quiet(ctx.deadline or time.time() + 3600)
+    r = ctx.fh(["run", "--instance", "ea-srv", "--modset", modset, "--", "--start-server", save, "--server-settings",
+                HERE / "perf-server-settings.json", "--port", str(SERVER["port"]), "--bind", "127.0.0.1"],
+               ctx.out / label, timeout=timeout, monitor=True)
+    got = {}
+    for name in saves:
+        f = wd / "saves" / f"{name}.zip"
+        if f.exists() and f.stat().st_mtime >= t0:
+            dst = r.out / f"{name}.zip"
+            shutil.copy2(f, dst)
+            got[name] = {"bytes": dst.stat().st_size, "sha256": sha256_file(dst)}
+    (r.out / "server-saves.json").write_text(json.dumps({"since": t0, "saves": got}, indent=1), encoding="utf-8")
+    if r.mon:
+        r.mon.close()
+    return r.out
+
+
+# -- trees-forests' suite checks
+
+def tf_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """trees-forests' suite checks, added to suite_checks' table (design section 11, milestone 1)."""
+    import earthgeo as eg
+    import oracle
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    maps = [cfg["presets"][k]["map"] for k in cfg["preset_order"]]
+    eu = maps[0]
+    dump_shas = [ctx.shared.get("dump_m1_sha"), ctx.shared.get("dump_m2_sha")]
+    probe = HERE / "mods" / "ep-s8-dump"
+    ab_live = ["alien-biomes"] + LIVE_DEPS["alien-biomes"]
+    wname = cfg["regions"]["names"]["forest_w"]
+    core = cfg["climate"]["names"]["core"]
+
+    def base_key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "dump": dump_shas, "extra": extra or {}})
+
+    lane_ms = {}
+
+    def lane_modset(tag, ln, kind):
+        """One probe modset per worker and kind: M1 or M2 with ep-s8-dump, or M0 or BAB with it (prepared)."""
+        k = (tag, ln, kind)
+        if k not in lane_ms:
+            if kind in ("m1", "m2"):
+                lane_ms[k] = ct_probe_modset(ctx, mods, f"{tag}{ln}{kind}", kind == "m2")
+            else:
+                ms = mods.with_mods(f"{tag}{ln}m0", [probe], earth=False) if kind == "m0" else \
+                    mods.make(f"ea-{tag}{ln}bab-{folder_hash(probe)}", [probe], from_live=ab_live)
+                mods.prepare(ms, f"{tag}{ln}{kind}")
+                lane_ms[k] = ms
+        return lane_ms[k]
+
+    def dump_plan(tag, plan, timeout=3600):
+        """plan: [{label, kind, mk, scale, seed, extra, controls, areas, points, names, types, decoratives}],
+        one probe scenario each, in workers; returns the run directories in plan order. Every M1 and M2 run
+        also probes the per-save map id (tf_probe_g5), which each derive checks (tf_earth_active, G5)."""
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, p in enumerate(plan):
+            ln = i % PAR_MAX
+            ms, inst = lane_modset(tag, ln, p["kind"]), lane_instance(ctx, ln)
+            out = ctx.out / f"{tag}-{p['label']}"
+            mgs = tf_mgs(ctx, cfg, p["kind"], p.get("mk"), p.get("scale"), p.get("extra"), p.get("controls"),
+                         label=f"-{tag}-{p['label']}")
+            names, pts = tf_probe_g5(cfg, p)
+            prep = dump_settings(ctx, ms, inst, label=tag,
+                                 areas=";".join(f"{x},{y},{w},{h}" for x, y, w, h in p.get("areas") or []),
+                                 points=";".join(f"{x},{y}" for x, y in pts),
+                                 names=names, types=p.get("types", "tree"),
+                                 decoratives=bool(p.get("decoratives")))
+            lanes[ln].append((prep, scenario_args(inst, ms, 4, p.get("seed", SEED), mgs), out, timeout))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def band_of(vals):
+        """The T10 climate band of one probe's values (the forest rings and the climate check share it)."""
+        B = cfg["climate"]["bands"]
+        c, m = vals.get(core), vals.get("moisture")
+        if isinstance(c, bool) or not isinstance(c, (int, float)):
+            return None
+        if c < B["frozen_below"]:
+            return "frozen"
+        if c < B["cold_below"]:
+            return "cold"
+        if isinstance(m, (int, float)) and m >= TF_WET:
+            return "wet"
+        if c < B["hot_from"]:
+            return "temperate"
+        return "desert" if isinstance(m, (int, float)) and m < B["dry_below"] else "hot"
+
+    # T10 (SS; forest budget, S10 4.4; M1 and M2; scale 6 gated, scale 1 reported; three seeds):
+    # per map one run with the great forests on and one off per modset and seed, over every adopted
+    # forest's block and the map's sample blocks, in one request order (G10). Gated at every seed on its
+    # own (never pooled): per forest of equivalent radius at least 64 tiles, trees per land tile in its
+    # inside chunks (mean weight at least 0.9) on against off in 1.6 to 2.5, a forest with no boost-off
+    # tree there failing for a planner decision (U15); at most 0.1 percent of the trees in chunks outside
+    # every forest (every probe at most 0.01) change; the sample blocks' trees grow at most the map's
+    # share. Reported: scale 1, smaller forests, the pooled values and, per forest, the same-climate ring
+    # ratio with the forests on and off (tf_rings: chunks 1 to 2 equivalent radii outside the outline,
+    # kept where the chunk centre shares the forest centre's climate band, area roles in fmeta).
+    fplan, fmeta = [], {}
+    for mk in maps:
+        for s in TF_SCALES:
+            forests = tf_forests(cfg, mk, s)
+            sample = tf_sample_blocks(mk, s)
+            rings = tf_rings(cfg, mk, s, forests)
+            covered = {(cx, cy) for x0, y0, w, h in [f["area"] for f in forests] + sample
+                       for cy in range(y0 // 32, (y0 + h) // 32) for cx in range(x0 // 32, (x0 + w) // 32)}
+            ring_areas = list(dict.fromkeys(a for f in forests for a in rings.get(f["id"]) or []
+                                            if (a[0] // 32, a[1] // 32) not in covered))
+            areas = [f["area"] for f in forests] + sample + ring_areas
+            roles = ["forest"] * len(forests) + ["sample"] * len(sample) + ["ring"] * len(ring_areas)
+            fmeta[(mk, s)] = {"forests": forests, "sample": sample, "rings": rings, "roles": roles}
+            pts = list(dict.fromkeys(tf_probe_points(areas) + [f["tile"] for f in forests] +
+                                     [(x0 + 16, y0 + 16) for x0, y0, _, _ in ring_areas]))
+            for kind in ("m1", "m2"):
+                for seed in SEEDS:
+                    for on in (True, False):
+                        fplan.append({"label": f"{mk}-s{s}-{kind}-{seed}-{'on' if on else 'off'}", "kind": kind,
+                                      "mk": mk, "scale": s, "seed": seed, "extra": tf_forests_on(cfg, on),
+                                      "areas": areas, "points": pts, "names": f"{wname},{core},moisture",
+                                      "types": "tree"})
+
+    # M0's own woodland, the scatter's calibration: four 8 x 8 chunk blocks away from the start area
+    wood0 = [(x0, y0, 256, 256) for x0, y0 in ((1024, 1024), (-1280, 1024), (1024, -1280), (-1280, -1280))]
+    for seed in SEEDS:
+        fplan.append({"label": f"m0-wood-{seed}", "kind": "m0", "seed": seed, "areas": wood0, "types": "tree"})
+
+    def forests_derive(dirs):
+        """Every gated cell per seed: each forest of equivalent radius at least TF_MIN_RADIUS_TILES on each
+        modset at each seed (its own ratio, never pooled over seeds), and the outside and sample cells per
+        modset and seed. A forest whose inside chunks hold no tree with the boost off has no ratio: the cell
+        fails, naming forest, modset and seed, for a planner decision (U15); TF_MIN_TREES is reported only.
+        Pooled values over the three seeds are reported beside the cells."""
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(fplan):
+            return {}, fails + [f"{len(dirs)} runs, want {len(fplan)}"], ""
+        runs = {p["label"]: x for p, x in zip(fplan, dirs)}
+        plans = {p["label"]: p for p in fplan}
+
+        def share(a, b):
+            return round(a / b, 6) if b else None
+        for mk in maps:
+            for s in TF_SCALES:
+                fm = fmeta[(mk, s)]
+                gated = s == TF_SCALES[0]
+                for kind in ("m1", "m2"):
+                    rec = {"forests": {f["id"]: {"radius_tiles": f["radius_tiles"],
+                                                 "judged": gated and f["radius_tiles"] >= TF_MIN_RADIUS_TILES,
+                                                 "seeds": {}} for f in fm["forests"]},
+                           "seeds": {}, "min_trees_reported": TF_MIN_TREES}
+                    pool = {f["id"]: [0, 0, 0] for f in fm["forests"]}
+                    ring_pool = {f["id"]: [0, 0, 0] for f in fm["forests"]}
+                    cells = {}
+                    tot = {"moved": 0, "shifted": 0, "out_off": 0, "blk_on": 0, "blk_off": 0}
+                    for seed in SEEDS:
+                        lab = f"{mk}-s{s}-{kind}-{seed}"
+                        cell_lab = f"{mk} s{s} {kind} seed {seed}"
+                        d_on, d_off = read_dump(runs[f"{lab}-on"], "tf10"), read_dump(runs[f"{lab}-off"], "tf10")
+                        fails += tf_earth_active(cfg, plans[f"{lab}-on"], d_on)
+                        fails += tf_earth_active(cfg, plans[f"{lab}-off"], d_off)
+                        on = tf_chunks(d_on, (wname,))
+                        off = tf_chunks(d_off, (wname,))
+                        pv_on = point_values(d_on)
+                        for f in fm["forests"]:
+                            x0, y0, w, h = f["area"]
+                            a_ = b_ = land = n_in = 0
+                            for cy in range(y0 // 32, (y0 + h) // 32):
+                                for cx in range(x0 // 32, (x0 + w) // 32):
+                                    c1, c0 = on.get((cx, cy)) or {}, off.get((cx, cy)) or {}
+                                    ws = (c1.get("values") or {}).get(wname) or []
+                                    mw = tf_mean(ws)
+                                    if mw is not None and mw >= TF_INSIDE_W:
+                                        a_ += c1.get("living", 0)
+                                        b_ += c0.get("living", 0)
+                                        land += c1.get("land", 0)
+                                        n_in += 1
+                            ratio = (a_ / b_) if b_ else None
+                            # the same-climate ring (reported): ring chunks outside every forest whose centre
+                            # shares the forest centre's band, against the inside chunks, forests on and off
+                            cband = band_of(pv_on.get(tuple(f["tile"])) or {})
+                            rg = {"band": cband, "chunks": 0, "rejected_band": 0, "rejected_forest": 0,
+                                  "trees_on": 0, "trees_off": 0, "land_tiles": 0}
+                            for rx, ry, _, _ in fm["rings"].get(f["id"]) or []:
+                                c1, c0 = on.get((rx // 32, ry // 32)) or {}, off.get((rx // 32, ry // 32)) or {}
+                                ws = (c1.get("values") or {}).get(wname) or []
+                                if not ws or max(ws) > TF_OUTSIDE_W:
+                                    rg["rejected_forest"] += 1
+                                elif cband is None or band_of(pv_on.get((rx + 16, ry + 16)) or {}) != cband:
+                                    rg["rejected_band"] += 1
+                                else:
+                                    rg["chunks"] += 1
+                                    rg["trees_on"] += c1.get("living", 0)
+                                    rg["trees_off"] += c0.get("living", 0)
+                                    rg["land_tiles"] += c1.get("land", 0)
+                            rg["ring_ratio"] = [tf_ring_ratio(a_, land, rg["trees_on"], rg["land_tiles"]),
+                                                tf_ring_ratio(b_, land, rg["trees_off"], rg["land_tiles"])]
+                            fr = rec["forests"][f["id"]]
+                            fr["seeds"][str(seed)] = {"trees_on": a_, "trees_off": b_, "land_tiles": land,
+                                                      "inside_chunks": n_in,
+                                                      "ratio": round(ratio, 4) if ratio is not None else None,
+                                                      "below_min_trees": b_ < TF_MIN_TREES, "ring": rg}
+                            for i_, v_ in enumerate((a_, b_, land)):
+                                pool[f["id"]][i_] += v_
+                            for i_, k_ in enumerate(("trees_on", "trees_off", "land_tiles")):
+                                ring_pool[f["id"]][i_] += rg[k_]
+                            cells.setdefault(f["id"], {})[seed] = (n_in, a_, b_)
+                        moved = shifted = out_off = blk_on = blk_off = 0
+                        for k_, c0 in off.items():
+                            ws = (c0.get("values") or {}).get(wname) or []
+                            if not ws or max(ws) > TF_OUTSIDE_W:
+                                continue
+                            c1 = on.get(k_) or {}
+                            a_, b_ = c1.get("trees") or [], c0.get("trees") or []
+                            moved += abs(len(a_) - len(b_))
+                            shifted += (len(set(a_) ^ set(b_)) + 1) // 2
+                            out_off += len(b_)
+                        for x0, y0, w, h in fm["sample"]:
+                            for cy in range(y0 // 32, (y0 + h) // 32):
+                                for cx in range(x0 // 32, (x0 + w) // 32):
+                                    blk_on += (on.get((cx, cy)) or {}).get("living", 0)
+                                    blk_off += (off.get((cx, cy)) or {}).get("living", 0)
+                        for k_, v_ in (("moved", moved), ("shifted", shifted), ("out_off", out_off), ("blk_on", blk_on),
+                                       ("blk_off", blk_off)):
+                            tot[k_] += v_
+                        growth = round(blk_on / blk_off - 1, 4) if blk_off else None
+                        rec["seeds"][str(seed)] = {"outside_trees": out_off, "outside_moved": moved,
+                                                   "outside_shifted": shifted, "moved_share": share(moved, out_off),
+                                                   "sample_trees": [blk_on, blk_off], "sample_growth": growth}
+                        if not gated:
+                            continue
+                        if not out_off:
+                            fails.append(f"{cell_lab}: no tree outside every forest: the check is blind (G6)")
+                        elif moved / out_off > TF_MOVED_MAX:
+                            fails.append(f"{cell_lab}: {moved} of {out_off} trees outside forests change "
+                                         f"({moved / out_off:.4%}), want at most {TF_MOVED_MAX:.1%}")
+                        if not blk_off:
+                            fails.append(f"{cell_lab}: no tree in the sample blocks with the forests off: the growth "
+                                         f"check is blind (G6)")
+                        elif growth > TF_BLOCK_GROWTH[mk]:
+                            fails.append(f"{cell_lab}: forests add {growth:.1%} trees to the sample blocks, want at "
+                                         f"most {TF_BLOCK_GROWTH[mk]:.0%}")
+                    for fid, (a_, b_, land) in pool.items():
+                        ro, rf, rl = ring_pool[fid]
+                        rec["forests"][fid]["pooled"] = {"trees_on": a_, "trees_off": b_, "land_tiles": land,
+                                                         "ratio": round(a_ / b_, 4) if b_ else None,
+                                                         "ring_ratio": [tf_ring_ratio(a_, land, ro, rl),
+                                                                        tf_ring_ratio(b_, land, rf, rl)]}
+                        if rec["forests"][fid]["judged"]:
+                            fails += tf_forest_fails(f"{mk} s{s} {kind}", fid, cells.get(fid) or {})
+                    rec.update({"outside_trees": tot["out_off"], "outside_moved": tot["moved"],
+                                "outside_shifted": tot["shifted"], "moved_share": share(tot["moved"], tot["out_off"]),
+                                "sample_trees": [tot["blk_on"], tot["blk_off"]],
+                                "sample_growth": (round(tot["blk_on"] / tot["blk_off"] - 1, 4) if tot["blk_off"]
+                                                  else None)})
+                    if gated and not any(v["judged"] for v in rec["forests"].values()):
+                        fails.append(f"{mk} s{s} {kind}: no forest of equivalent radius at least {TF_MIN_RADIUS_TILES} "
+                                     f"tiles: the boost shows nowhere (G6)")
+                    meas[f"{mk}-s{s}-{kind}"] = rec
+        return meas, fails, "; ".join(
+            f"{k}: " + ", ".join(f"{fid} " + "/".join(str(c["ratio"]) for c in v["seeds"].values())
+                                 for fid, v in r["forests"].items() if v["judged"]) +
+            ", moved " + "/".join(str(c["moved_share"]) for c in r["seeds"].values()) +
+            ", sample +" + "/".join(str(c["sample_growth"]) for c in r["seeds"].values())
+            for k, r in meas.items() if "-s6-" in k)
+
+    checks["tf_t10_forests"] = SuiteCheck("tf_t10_forests", lambda: base_key("tf_t10_forests", {"n": len(fplan)}),
+                                          lambda deadline: dump_plan("tf10", fplan), forests_derive)
+
+    # T10 (SS; forest budget, save part): the block's save grows at most 3 percent with the forests on, at
+    # most 20 compressed bytes per extra tree: tq2-driver's save job (a 16 x 16 chunk block forced between
+    # two server saves) centred on the Black Forest at scale 6, on M1 and M2, forests on and off. The same
+    # job over the same block on M0 and BAB (default worlds) gives criterion 2's report: Earth against M0
+    # and BAB in living trees and save bytes per generated chunk, beside climate-tiles' reference (JI-07,
+    # never gated).
+    bf = next((f for f in tf_forests(cfg, eu, 6) if f["id"] == "black_forest"), None)
+    save_spec = None
+    if bf:
+        bx, by = bf["tile"][0] // 32 - TF_SAVE_SIDE // 2, bf["tile"][1] // 32 - TF_SAVE_SIDE // 2
+        save_spec = f"save:nauvis:{bx}:{by}:1"
+    save_cfgs = [("m1", True), ("m1", False), ("m2", True), ("m2", False), ("m0", None), ("bab", None)]
+
+    def save_modsets():
+        tq2 = HERE / "mods" / "tq2-driver"
+        m1d = mods.with_mods("tf-m1d", [tq2])
+        z = mods.build_zip()
+        m2d = mods.make(f"ea-tf-m2d-{mods.zip_sha[:8]}-{folder_hash(tq2)}", [z, tq2], from_live=ab_live)
+        m0d = mods.with_mods("tf-m0d", [tq2], earth=False)
+        babd = mods.make(f"ea-tf-babd-{folder_hash(tq2)}", [tq2], from_live=ab_live)
+        return {"m1": m1d, "m2": m2d, "m0": m0d, "bab": babd}
+
+    def save_run(deadline):
+        out = []
+        ms = save_modsets()
+        for kind, on in save_cfgs:
+            mgs = ct_mgs(ctx, cfg, eu, 6, kind == "m2", tf_forests_on(cfg, on), label=f"-tfsave-{kind}-{on}") \
+                if kind in ("m1", "m2") else None
+            lab = f"tf-save-{kind}" + ("" if on is None else f"-{'on' if on else 'off'}")
+            out.append(tf_server_run(ctx, mods, ms[kind], save_spec, lab, SERVER["save_timeout"],
+                                     ["tq2-pre", "tq2-post"], mgs))
+        return out
+
+    def save_derive(dirs):
+        fails, meas = [], {}
+        import perf
+        if len(dirs) != len(save_cfgs):
+            return {}, [f"{len(dirs)} save runs, want {len(save_cfgs)}"], ""
+        per = {}
+        for (kind, on), x in zip(save_cfgs, dirs):
+            r_, f, _ = derive_save([x])
+            lab = kind + ("" if on is None else f"_{'on' if on else 'off'}")
+            fails += [f"{lab}: {y}" for y in f]
+            blk = json.loads(perf.read(Path(x) / "script-output" / "tq2" / "save-block.json") or "{}")
+            hist = blk.get("tree_histogram")
+            living = sum(v for n_, v in hist.items() if not str(n_).startswith(CT_DEAD_TREES)) \
+                if isinstance(hist, dict) else None
+            gen = (blk.get("generated_after") or 0) - (blk.get("generated_before") or 0)
+            inc = r_.get("increment") or 0
+            if living is None:
+                fails.append(f"{lab}: the save block records no tree histogram: no living-tree count")
+            if gen <= 0:
+                fails.append(f"{lab}: the save job generated {gen} chunks")
+            per[lab] = {"increment": inc, "trees": blk.get("trees") or 0, "living_trees": living,
+                        "generated_chunks": gen,
+                        "bytes_per_generated_chunk": round(inc / gen, 1) if gen > 0 else None,
+                        "living_per_generated_chunk": round(living / gen, 3) if gen > 0 and living is not None
+                        else None}
+        for kind in ("m1", "m2"):
+            on_, off_ = per[f"{kind}_on"], per[f"{kind}_off"]
+            (inc_on, t_on), (inc_off, t_off) = (on_["increment"], on_["trees"]), (off_["increment"], off_["trees"])
+            growth = inc_on / inc_off - 1 if inc_off else None
+            per_tree = (inc_on - inc_off) / (t_on - t_off) if t_on > t_off else None
+            meas[kind] = {"increment_on": inc_on, "increment_off": inc_off, "trees_on": t_on, "trees_off": t_off,
+                          "growth": round(growth, 5) if growth is not None else None,
+                          "bytes_per_extra_tree": round(per_tree, 2) if per_tree is not None else None}
+            if growth is None or growth > TF_SAVE_GROWTH:
+                fails.append(f"{kind}: the T10 block's save grows {growth}, want at most {TF_SAVE_GROWTH:.0%}")
+            if t_on <= t_off:
+                fails.append(f"{kind}: the forests added no tree to the save block ({t_on} against {t_off}; G6)")
+            elif per_tree > TF_BYTES_PER_TREE:
+                fails.append(f"{kind}: {per_tree:.1f} compressed bytes per extra tree, want at most {TF_BYTES_PER_TREE}")
+
+        def against(a, b, k):
+            x_, y_ = per[a].get(k), per[b].get(k)
+            return round(x_ / y_, 4) if isinstance(x_, (int, float)) and isinstance(y_, (int, float)) and y_ else None
+        meas["per_generated_chunk"] = per
+        meas["earth_against_comparator"] = {
+            f"{a} against {b}": {"living_trees": against(a, b, "living_per_generated_chunk"),
+                                 "save_bytes": against(a, b, "bytes_per_generated_chunk")}
+            for a, b in (("m1_on", "m0"), ("m1_off", "m0"), ("m2_on", "bab"), ("m2_off", "bab"))}
+        ref = json.loads(git_show("main:tests/baselines/suites/climate-tiles.json") or "{}")
+        meas["climate_tiles_reference"] = ((ref.get("checks") or {}).get("ct_t10") or {}).get("summary")
+        return meas, fails, "; ".join(
+            [f"{k}: save +{meas[k]['growth']}, {meas[k]['bytes_per_extra_tree']} B per extra tree"
+             for k in ("m1", "m2")] +
+            [f"{k}: living x{v['living_trees']}, save bytes x{v['save_bytes']} per generated chunk"
+             for k, v in meas["earth_against_comparator"].items()])
+
+    if save_spec:
+        checks["tf_t10_save"] = SuiteCheck("tf_t10_save", lambda: base_key("tf_t10_save", {
+            "spec": save_spec, "server": [SERVER, sha256_file(HERE / "perf-server-settings.json")],
+            "driver": folder_hash(HERE / "mods" / "tq2-driver"), "configs": save_cfgs}), save_run, save_derive)
+
+    # T10 (SS; climate; every map; scales 1 and 6; M1 and M2, M0 and BAB near spawn): living trees per land
+    # chunk by the band at each chunk's centre (frozen: centre and four corner probes below 0; cold; wet,
+    # moisture at least 0.6 from 25 up; temperate; hot; desert, hot and dry). Gated: no living tree in M1's
+    # frozen band; the desert band at most 0.1 of the temperate band's per land chunk; temperate and wet
+    # bands at least half of M0's mean near spawn. Earth against M0 and BAB in living trees per generated
+    # chunk reported against climate-tiles' tree reference (ct_t10), not gated (JI-07); their save bytes per
+    # generated chunk are tf_t10_save's report.
+    cplan = []
+    for mk in maps:
+        for s in TF_SCALES:
+            sample = tf_sample_blocks(mk, s)
+            pts = []
+            for x0, y0, w, h in sample:
+                for cy in range(y0 // 32, (y0 + h) // 32):
+                    for cx in range(x0 // 32, (x0 + w) // 32):
+                        pts += [(cx * 32 + 16, cy * 32 + 16), (cx * 32 + 2, cy * 32 + 2), (cx * 32 + 29, cy * 32 + 2),
+                                (cx * 32 + 2, cy * 32 + 29), (cx * 32 + 29, cy * 32 + 29)]
+            for kind in ("m1", "m2"):
+                for seed in SEEDS:
+                    cplan.append({"label": f"{mk}-s{s}-{kind}-{seed}", "kind": kind, "mk": mk, "scale": s,
+                                  "seed": seed, "areas": sample, "points": pts, "names": f"{core},moisture",
+                                  "types": "tree"})
+    half = TF_SPAWN_CHUNKS * 16
+    for kind in ("m0", "bab"):
+        for seed in SEEDS:
+            cplan.append({"label": f"spawn-{kind}-{seed}", "kind": kind, "seed": seed,
+                          "areas": [(-half, -half, 2 * half, 2 * half)], "types": "tree"})
+
+    def climate_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(cplan):
+            return {}, fails + [f"{len(dirs)} runs, want {len(cplan)}"], ""
+        spawn = {"m0": [], "bab": []}
+        bands_all, per_gen = {}, {}
+        for p, x in zip(cplan, dirs):
+            dmp = read_dump(x, "tf10c")
+            fails += tf_earth_active(cfg, p, dmp)
+            ch = tf_chunks(dmp)
+            gen = sum((a["area"]["w"] // 32) * (a["area"]["h"] // 32) - (a.get("chunks_not_generated") or 0)
+                      for a in dmp.get("areas") or [])
+            per_gen[p["label"]] = round(sum(c["living"] for c in ch.values()) / gen, 3) if gen > 0 else None
+            if p["kind"] in ("m0", "bab"):
+                for c in ch.values():
+                    if c["land"]:
+                        spawn[p["kind"]].append(c["living"] / (c["land"] / 1024))
+                continue
+            pv = point_values(dmp)
+            bands = {}
+            for (cx, cy), c in ch.items():
+                if not c["land"]:
+                    continue
+                ctr = pv.get((cx * 32 + 16, cy * 32 + 16)) or {}
+                b = band_of(ctr)
+                if b == "frozen":
+                    corners = [pv.get((cx * 32 + dx, cy * 32 + dy)) or {} for dx, dy in ((2, 2), (29, 2), (2, 29),
+                                                                                        (29, 29))]
+                    if any(band_of(v) != "frozen" for v in corners):
+                        b = "frozen_edge"
+                if b is None:
+                    continue
+                agg = bands.setdefault(b, [0, 0])
+                agg[0] += c["living"]
+                agg[1] += c["land"]
+            bands_all[p["label"]] = {b: {"living": a[0], "land_chunks": round(a[1] / 1024, 2),
+                                         "per_land_chunk": round(a[0] / (a[1] / 1024), 3) if a[1] else None}
+                                     for b, a in bands.items()}
+        m0_mean = tf_mean(spawn["m0"])
+        meas["m0_near_spawn"] = round(m0_mean, 3) if m0_mean is not None else None
+        meas["bab_near_spawn"] = round(tf_mean(spawn["bab"]), 3) if spawn["bab"] else None
+        meas["bands"] = bands_all
+        if not m0_mean:
+            fails.append("M0's near-spawn block holds no living tree: the comparator is blind (G6)")
+        for mk in maps:
+            for s in TF_SCALES:
+                for kind in ("m1", "m2"):
+                    tot = {}
+                    for seed in SEEDS:
+                        for b, v in bands_all.get(f"{mk}-s{s}-{kind}-{seed}", {}).items():
+                            t_ = tot.setdefault(b, [0, 0.0])
+                            t_[0] += v["living"]
+                            t_[1] += v["land_chunks"]
+                    per = {b: (a[0] / a[1] if a[1] else None) for b, a in tot.items()}
+                    lab = f"{mk} s{s} {kind}"
+                    # every gated band cell needs land in its band, or it holds vacuously (U1: a presence
+                    # control beside each no-change or ceiling assertion)
+                    for b in (("frozen",) if kind == "m1" else ()) + ("desert", "temperate", "wet"):
+                        if per.get(b) is None:
+                            fails.append(f"{lab}: no land chunk in the {b} band over the sample at three seeds: its "
+                                         f"cell is blind (U1, G6)")
+                    if kind == "m1" and tot.get("frozen", [0])[0]:
+                        fails.append(f"{lab}: {tot['frozen'][0]} living trees in the frozen band, want 0 (D10)")
+                    if per.get("desert") is not None and per.get("temperate") is not None:
+                        if per["desert"] > TF_DESERT_SHARE * per["temperate"]:
+                            fails.append(f"{lab}: the desert band holds {per['desert']:.2f} living trees per land chunk, "
+                                         f"more than {TF_DESERT_SHARE} of the temperate band's {per['temperate']:.2f}")
+                    for b in ("temperate", "wet"):
+                        if per.get(b) is not None and m0_mean and per[b] < TF_M0_SHARE * m0_mean:
+                            fails.append(f"{lab}: the {b} band holds {per[b]:.2f} living trees per land chunk, under half "
+                                         f"of M0's {m0_mean:.2f} near spawn (R8)")
+                    meas[f"{mk}-s{s}-{kind}"] = {b: round(v, 3) for b, v in per.items() if v is not None}
+
+        # criterion 2's report (JI-07, never gated): living trees per generated chunk, Earth's sample blocks on
+        # M1 against M0's near-spawn block and on M2 against BAB's (U7), means over the three seeds; the save
+        # bytes per generated chunk are tf_t10_save's
+        def over_seeds(prefix):
+            v_ = [per_gen.get(f"{prefix}-{seed}") for seed in SEEDS]
+            v_ = [x_ for x_ in v_ if x_ is not None]
+            return round(tf_mean(v_), 3) if v_ else None
+        rep = {"m0_near_spawn": over_seeds("spawn-m0"), "bab_near_spawn": over_seeds("spawn-bab")}
+        for mk in maps:
+            for s in TF_SCALES:
+                for kind in ("m1", "m2"):
+                    e_ = over_seeds(f"{mk}-s{s}-{kind}")
+                    c_ = rep["m0_near_spawn" if kind == "m1" else "bab_near_spawn"]
+                    rep[f"{mk}-s{s}-{kind}"] = {"earth": e_, "against": "M0" if kind == "m1" else "BAB",
+                                                "ratio": round(e_ / c_, 4) if e_ is not None and c_ else None}
+        meas["living_per_generated_chunk"] = rep
+        ref = ((json.loads(git_show("main:tests/baselines/suites/climate-tiles.json") or "{}").get("checks") or {})
+               .get("ct_t10") or {}).get("summary")
+        meas["climate_tiles_reference"] = ref
+        return meas, fails, "; ".join(f"{k}: {v}" for k, v in meas.items() if k.startswith(tuple(maps)))
+
+    checks["tf_t10_climate"] = SuiteCheck("tf_t10_climate", lambda: base_key("tf_t10_climate", {"n": len(cplan)}),
+                                          lambda deadline: dump_plan("tf10c", cplan), climate_derive)
+
+    # T10 (SS; scatter; TST-14): from the forest runs, 8 x 8-tile cells of living trees in the inside chunks
+    # of the great forests (boost on) and in the woodland of the sample blocks outside every forest: the
+    # squared count difference between neighbouring cells across a chunk edge within TF_SCATTER of the same
+    # inside one chunk, and no autocorrelation peak above TF_PEAK at the 32-tile period in row or column sums.
+    def scatter_derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != len(fplan):
+            return {}, [f"{len(dirs)} runs, want {len(fplan)}"], ""
+        groups = {"forest": [], "forest_off": [], "woodland": [], "m0": []}
+        series = {"forest": [], "forest_off": [], "woodland": [], "m0": []}
+        for p, x in zip(fplan, dirs):
+            m0 = p["kind"] == "m0"
+            off = p["label"].endswith("-off")
+            if not m0 and p["scale"] != TF_SCALES[0]:
+                continue
+            dmp = read_dump(x, "tf10")
+            fails += tf_earth_active(cfg, p, dmp)
+            ch = tf_chunks(dmp, (wname,))
+            for i_, a in enumerate(p["areas"]):
+                x0, y0, w, h = a
+                role = "m0" if m0 else fmeta[(p["mk"], p["scale"])]["roles"][i_]
+                if role == "ring":
+                    continue   # the ring chunks serve T10's ring ratio, not the scatter's populations
+                kind = "m0" if m0 else "forest" if role == "forest" else "woodland"
+                if off and kind == "woodland":
+                    continue
+                if off:
+                    kind = "forest_off"
+                grid = [[0] * (w // TF_CELL) for _ in range(h // TF_CELL)]
+                rows_, cols_ = [0] * h, [0] * w
+                ok_cells = set()
+                for cy in range(y0 // 32, (y0 + h) // 32):
+                    for cx in range(x0 // 32, (x0 + w) // 32):
+                        ws = ((ch.get((cx, cy)) or {}).get("values") or {}).get(wname) or []
+                        good = True if kind == "m0" else (tf_mean(ws) or 0) >= TF_INSIDE_W if kind.startswith(
+                            "forest") else bool(ws) and max(ws) <= TF_OUTSIDE_W
+                        if good:
+                            ok_cells.add((cx, cy))
+                        for n_, tx, ty in (ch.get((cx, cy)) or {}).get("trees") or []:
+                            gx, gy = int((tx - x0) // TF_CELL), int((ty - y0) // TF_CELL)
+                            if 0 <= gy < len(grid) and 0 <= gx < len(grid[0]):
+                                grid[gy][gx] += 1
+                            if 0 <= int(ty - y0) < h:
+                                rows_[int(ty - y0)] += 1
+                            if 0 <= int(tx - x0) < w:
+                                cols_[int(tx - x0)] += 1
+                if ok_cells:
+                    # keep only the cells of judged chunks: others count 0 and are left out of the pairs
+                    keep = [[grid[j][i2] if ((x0 + i2 * TF_CELL) // 32, (y0 + j * TF_CELL) // 32) in ok_cells else None
+                             for i2 in range(len(grid[0]))] for j in range(len(grid))]
+                    groups[kind].append(keep)
+                    if sum(rows_) >= 200 and len(ok_cells) >= 16:
+                        series[kind] += [rows_, cols_]
+        for kind, grids in groups.items():
+            across, inside = [], []
+            for g in grids:
+                st = tf_scatter_pairs(g)
+                across += st[0]
+                inside += st[1]
+            a_, i_ = tf_mean(across), tf_mean(inside)
+            ratio = a_ / i_ if a_ is not None and i_ else None
+            peaks = [tf_period_peak(s_) for s_ in series[kind]]
+            meas[kind] = {"across": a_, "inside": i_, "ratio": round(ratio, 4) if ratio else None,
+                          "pairs": [len(across), len(inside)], "max_period_peak": round(max(peaks), 4) if peaks else None,
+                          "series": len(peaks)}
+        # the base game's own step at chunk edges calibrates the bar (PD): a great forest against the same
+        # chunks with the boost off (the step the boost adds), woodland against M0's own woodland (the step
+        # the climate adds), each within TF_SCATTER; the absolute ratios are recorded
+        for kind, ref in (("forest", "forest_off"), ("woodland", "m0")):
+            base = (meas.get(ref) or {}).get("ratio")
+            ratio = meas[kind]["ratio"]
+            if ratio is None or base is None:
+                fails.append(f"{kind}: no cell pairs to judge against {ref} (G6)")
+            elif abs(ratio / base - 1) > TF_SCATTER:
+                fails.append(f"{kind}: across chunk edges the cells' squared differences are {ratio:.3f} times those "
+                             f"inside chunks against {ref}'s {base:.3f}: a step Earth adds at chunk edges (TST-14)")
+            peak = meas[kind]["max_period_peak"]
+            if peak is not None and peak > TF_PEAK:
+                fails.append(f"{kind}: a row or column sum peaks at {peak:.3f} at the 32-tile period (TST-14)")
+        return meas, fails, "; ".join(f"{k}: ratio {v['ratio']}, peak {v['max_period_peak']}" for k, v in meas.items())
+
+    checks["tf_t10_scatter"] = SuiteCheck("tf_t10_scatter", lambda: base_key("tf_t10_scatter", {"n": len(fplan)}),
+                                          lambda deadline: suite_dirs_of("tf_t10_forests", deadline), scatter_derive)
+
+    def suite_dirs_of(name, deadline):
+        ent = (ctx.shared.get("suite_runs") or {}).get(name)
+        if not ent:
+            man = SUITES / "trees-forests.json"
+            rec = ((json.loads(man.read_text(encoding="utf-8")) if man.exists() else {}).get("checks") or {}).get(
+                name) or {}
+            if rec.get("key") == checks[name].key_fn() and rec.get("run_dirs"):
+                ent = [abs_ws(ctx, x) for x in rec["run_dirs"]]
+        return ent or checks[name].run_fn(deadline)
+
+    # T17 (SS; every map at defaults; M1 and M2): over each map's sample blocks at scale 6 with the preset's
+    # defaults, every vanilla tree, rock and decorative name with Nauvis autoplace in M0's dump appears at
+    # least once on the map; on M2 the restored vanilla names appear beside Alien Biomes' own. Exit-0 guard
+    # (test notes T17): the name list from M0's dump is non-empty, every Earth run reads the map's id
+    # (G5), and the probe finds every listed name on M0's own block set (TF_T17_M0_BLOCKS, the calibration).
+    t17_plan = []
+    for mk in maps:
+        sample = tf_sample_blocks(mk, 6) + [f["area"] for f in tf_forests(cfg, mk, 6)]
+        for kind in ("m1", "m2"):
+            t17_plan.append({"label": f"{mk}-{kind}", "kind": kind, "mk": mk, "scale": 6, "seed": SEED,
+                             "areas": sample, "types": "tree,simple-entity", "decoratives": True})
+    t17_plan.append({"label": "m0-calibration", "kind": "m0", "seed": SEED, "areas": tf_t17_m0_blocks(),
+                     "types": "tree,simple-entity", "decoratives": True})
+
+    def t17_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(t17_plan):
+            return {}, fails + [f"{len(dirs)} runs, want {len(t17_plan)}"], ""
+        d0 = ctx.shared["dump_m0"]
+        placed = placed_autoplace(d0)
+        want = {n for t_, n in placed["entity"] if t_ in ("tree", "simple-entity")} | \
+            {n for _, n in placed["decorative"]}
+        if not want:
+            fails.append("M0's dump lists no tree, rock or decorative with Nauvis autoplace: the name list is empty "
+                         "(T17 exit-0 guard)")
+        R = cfg["trees"]["restore"]
+        V = tf_vanilla()
+        restored = set(R["trees"]) | {r_["name"] for r_ in V["rocks"]} | set(R["decoratives"])
+        for p, x in zip(t17_plan, dirs):
+            dmp = read_dump(x, "tf17")
+            fails += tf_earth_active(cfg, p, dmp)
+            seen = set()
+            for a in dmp.get("areas") or []:
+                seen |= {e.get("name") for e in a.get("entity_names") or []}
+                seen |= set((a.get("decoratives") or {}).keys())
+            missing = sorted(want - seen)
+            ab_names = sorted(n for n in seen if n not in want and isinstance(n, str))
+            meas[p["label"]] = {"vanilla_seen": len(want & seen), "vanilla_names": len(want), "missing": missing,
+                                "restored_seen": sorted(restored & seen) if p["kind"] == "m2" else None,
+                                "other_names": len(ab_names)}
+            if p["kind"] == "m0":
+                if missing:
+                    fails.append(f"the probe misses {missing[:8]} on M0's own block set: T17's block set is not "
+                                 f"calibrated for these names (exit-0 guard, G6)")
+                continue
+            if missing:
+                fails.append(f"{p['label']}: vanilla names never placed: {missing[:8]} (T17)")
+            if p["kind"] == "m2" and not ab_names:
+                fails.append(f"{p['label']}: no Alien Biomes tree, rock or decorative placed: AB did not load (G5)")
+        return meas, fails, "; ".join(f"{k}: {v['vanilla_seen']}/{v['vanilla_names']}" for k, v in meas.items())
+
+    checks["tf_t17"] = SuiteCheck("tf_t17", lambda: base_key("tf_t17", {"n": len(t17_plan)}),
+                                  lambda deadline: dump_plan("tf17", t17_plan), t17_derive)
+
+    # T4 (SS; Europe; scale 6; every row at seeds 1000, 1002 and 1004, test notes T4): the trees slider on
+    # M1 against M0 and on M2 against BAB, over Europe's sample blocks (comparators: 7 x 5 blocks of 8 x 8
+    # chunks around their spawn). Coverage (size 0.5 and 2) moves the vanilla trees the way it moves M0's
+    # (the sign of the count change) and leaves Alien Biomes' within TF_T4_INERT (S3); none places no tree.
+    # Frequency (0.5 and 2) is judged the way ct_t4 judges the climate frequencies, not by the sign of a
+    # count change: the vanilla trees read it only as their noise's input scale (vanilla.lua), so their
+    # count barely moves and its sign is noise. Each Earth series' living-tree count changes as its
+    # comparator's does within TF_T4_MEAN, and the patch edge density of 8 x 8-tile cells (tf_cell_stats)
+    # rises at frequency 2 and falls at 0.5, on the comparator (the positive control) and on Earth alike.
+    eu_sample = tf_sample_blocks(eu, 6)
+    grid_cmp = [(x * 512 - 64, y * 512 - 64, 128, 128) for y in range(-2, 3) for x in range(-3, 4)]
+    t4_cmp = [(x * 512 - 128, y * 512 - 128, 256, 256) for y in range(-2, 3) for x in range(-3, 4)]
+    t4_plan = []
+    for nm, ctl_ in TF_T4:
+        controls = {"trees": {"frequency": 1, "size": 1, "richness": 1}} if ctl_ else None
+        if ctl_:
+            controls["trees"][ctl_[0]] = ctl_[1]
+        for kind in ("m1", "m2", "m0", "bab"):
+            for seed in SEEDS:
+                t4_plan.append({"label": f"{nm}-{kind}-{seed}", "kind": kind, "mk": eu, "scale": 6, "seed": seed,
+                                "controls": controls, "areas": eu_sample if kind in ("m1", "m2") else t4_cmp,
+                                "types": "tree"})
+
+    def t4_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(t4_plan):
+            return {}, fails + [f"{len(dirs)} runs, want {len(t4_plan)}"], ""
+        vanilla_trees = set(cfg["trees"]["restore"]["trees"])
+        series = {"vanilla": lambda n_: n_ in vanilla_trees, "other": lambda n_: n_ not in vanilla_trees}
+        st = {}
+        for p, x in zip(t4_plan, dirs):
+            dmp = read_dump(x, "tf4")
+            fails += tf_earth_active(cfg, p, dmp)
+            st[p["label"]] = tf_cell_stats(dmp, series)
+        meas["stats"] = {k: {s_: {"count": v["count"], "edge_density": v["rough"]} for s_, v in r.items()}
+                         for k, r in st.items()}
+        rows = (("M1 vanilla trees", "m1", "vanilla", "m0", "vanilla"),
+                ("M2 restored vanilla trees", "m2", "vanilla", "m0", "vanilla"),
+                ("M2 Alien Biomes trees", "m2", "other", "bab", "other"))
+        cmps = (("M0's vanilla trees", "m0", "vanilla"), ("BAB's Alien Biomes trees", "bab", "other"))
+
+        def sign(a, b):
+            return (a > b) - (a < b)
+        for seed in SEEDS:
+            def g(nm, kind, ser):
+                return st[f"{nm}-{kind}-{seed}"][ser]
+            blind = [lab for lab, k_, s_ in cmps if not g("base", k_, s_)["count"]]
+            if blind:
+                fails.append(f"seed {seed}: {blind} placed no tree at the defaults: the slider rows are blind (G6)")
+                continue
+            for nm, ctl_ in TF_T4[1:]:
+                if nm == "none":
+                    for lab, k_, s_ in [(a, b, c) for a, b, c, _, _ in rows] + list(cmps):
+                        if g(nm, k_, s_)["count"]:
+                            fails.append(f"seed {seed} {nm}: {lab} {g(nm, k_, s_)['count']} with the trees slider at "
+                                         f"none")
+                    continue
+                if ctl_[0] == "frequency":
+                    up = ctl_[1] > 1
+                    for lab, k_, s_ in cmps:
+                        r0, r1 = g("base", k_, s_)["rough"], g(nm, k_, s_)["rough"]
+                        if r0 is None or r1 is None or r1 == r0 or (r1 > r0) != up:
+                            fails.append(f"seed {seed} {nm}: {lab}' patch edge density {r0} -> {r1} does not "
+                                         f"{'rise' if up else 'fall'}: the measure cannot see the slider (G6)")
+                for lab, ek, es, ck, cs in rows:
+                    e0, e1, c0, c1 = g("base", ek, es), g(nm, ek, es), g("base", ck, cs), g(nm, ck, cs)
+                    row = f"seed {seed} {nm} {lab}"
+                    if not e0["count"]:
+                        fails.append(f"{row}: none at the defaults: the row is blind (G6)")
+                        continue
+                    if ctl_[0] == "size":
+                        if es == "other":
+                            for who, a0, a1 in (("Earth", e0, e1), ("BAB", c0, c1)):
+                                if abs(a1["count"] / a0["count"] - 1) > TF_T4_INERT:
+                                    fails.append(f"{row}: {who} {a0['count']} -> {a1['count']}: the coverage slider "
+                                                 f"is not inert (S3)")
+                        elif sign(e1["count"], e0["count"]) != sign(c1["count"], c0["count"]):
+                            fails.append(f"{row}: {e0['count']} -> {e1['count']}, M0's {c0['count']} -> "
+                                         f"{c1['count']}: not the vanilla way")
+                        continue
+                    e_r, c_r = e1["count"] / e0["count"], c1["count"] / c0["count"]
+                    if abs(e_r / c_r - 1) > TF_T4_MEAN:
+                        fails.append(f"{row}: the count moves x{e_r:.3f}, its comparator's x{c_r:.3f}: more than "
+                                     f"{TF_T4_MEAN:.0%} apart")
+                    r0, r1 = e0["rough"], e1["rough"]
+                    if r0 is None or r1 is None or r1 == r0 or (r1 > r0) != (ctl_[1] > 1):
+                        fails.append(f"{row}: patch edge density {r0} -> {r1}, its comparator's {c0['rough']} -> "
+                                     f"{c1['rough']}: not the comparator's way")
+        return meas, fails, "; ".join(
+            f"{k}: " + ", ".join(f"{s_} {v['count']}" for s_, v in r.items()) for k, r in meas["stats"].items()
+            if k.startswith("base-"))
+
+    checks["tf_t4"] = SuiteCheck("tf_t4", lambda: base_key("tf_t4", {"n": len(t4_plan)}),
+                                 lambda deadline: dump_plan("tf4", t4_plan), t4_derive)
+
+    # T3 (SS; every map; scales 1 and 6; M1 and M2): forest membership at every oracle place (tf_judge_forest).
+    t3_plan, t3_exp = [], {}
+    for mk in maps:
+        O = oracle.load_oracle(mk, TESTS / "oracle")
+        for s in TF_SCALES:
+            exp_ = tf_forest_expectations(cfg, mk, O["places"], s)
+            t3_exp[(mk, s)] = exp_
+            pts = list(dict.fromkeys(t for t, _ in exp_.values()))
+            for kind in ("m1", "m2"):
+                t3_plan.append({"label": f"{mk}-s{s}-{kind}", "kind": kind, "mk": mk, "scale": s, "seed": SEED,
+                                "points": pts, "names": f"{cfg['trees']['boost']['key']},{wname}"})
+
+    def t3_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        for p, x in zip(t3_plan, dirs):
+            dmp = read_dump(x, "tf3s")
+            fails += tf_earth_active(cfg, p, dmp)
+            counts, f = tf_judge_forest(cfg, t3_exp[(p["mk"], p["scale"])], point_values(dmp), p["label"])
+            meas[p["label"]] = counts
+            fails += f
+        return meas, fails, "; ".join(f"{k}: {v}" for k, v in meas.items())
+
+    checks["tf_t3_maps"] = SuiteCheck("tf_t3_maps", lambda: base_key("tf_t3_maps", {"n": len(t3_plan)}),
+                                      lambda deadline: dump_plan("tf3s", t3_plan), t3_derive)
+
+    # T15, T16 (SS; design experiment 9, palm part; reported): palms per 1,000 beach tiles (sand-family land
+    # beside water) on M2 Europe at scale 6 against Alien Biomes alone (design review contradiction 6: they sit
+    # differently from AB's own).
+    palm_plan = [{"label": "m2", "kind": "m2", "mk": eu, "scale": 6, "seed": SEED, "areas": eu_sample,
+                  "types": "tree"},
+                 {"label": "bab", "kind": "bab", "seed": SEED, "areas": grid_cmp, "types": "tree"}]
+
+    def palms_derive(dirs):
+        import dump_render
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        for p, x in zip(palm_plan, dirs):
+            palms = beach = 0
+            dmp = read_dump(x, "tfpalm")
+            fails += tf_earth_active(cfg, p, dmp)
+            for a in dmp.get("areas") or []:
+                enames = [e.get("name") for e in a.get("entity_names") or []]
+                palms += sum(1 for e in a.get("entities") or [] if enames[e[0]] in TF_PALMS)
+                pal, idx = dump_render.decode_tiles(a)
+                fam = [ct_family(n_) for n_ in pal]
+                h_, w_ = idx.shape
+                for yy in range(h_):
+                    for xx in range(w_):
+                        if fam[idx[yy, xx]] != "sand":
+                            continue
+                        if any(0 <= yy + dy < h_ and 0 <= xx + dx < w_ and fam[idx[yy + dy, xx + dx]] in
+                               ("water", "wetland") for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                            beach += 1
+            meas[p["label"]] = {"palms": palms, "beach_tiles": beach,
+                                "palms_per_1000_beach": round(1000 * palms / beach, 3) if beach else None}
+        return meas, fails, "; ".join(f"{k}: {v['palms_per_1000_beach']} palms per 1,000 beach tiles" for k, v in
+                                      meas.items())
+
+    checks["tf_palms"] = SuiteCheck("tf_palms", lambda: base_key("tf_palms"),
+                                    lambda deadline: dump_plan("tfpalm", palm_plan), palms_derive)
+
+    # T16 (SS; D27): the per-tile pollution absorption of every tile Nauvis autoplaces, and each living tree's,
+    # on M1 and M2, from their dumps, written to tests/baselines/ (the suite manifest's summary): a report.
+    def d27_run(deadline):
+        return [mods.prepare(ctx.shared["m1"], "m1").out, mods.prepare(ctx.shared["m2"], "m2").out]
+
+    def d27_derive(dirs):
+        fails, meas = [], {}
+        for x, lab in zip(dirs, ("m1", "m2")):
+            fails += g1(x) + g3(x)
+            dmp = json.loads((Path(x) / "data-raw-dump.json").read_text(encoding="utf-8"))
+            ms_ = (((dmp.get("planet") or {}).get("nauvis") or {}).get("map_gen_settings") or {}).get(
+                "autoplace_settings") or {}
+            tiles = {}
+            for n_ in sorted(((ms_.get("tile") or {}).get("settings") or {})):
+                tp = (dmp.get("tile") or {}).get(n_) or {}
+                tiles[n_] = ((tp.get("absorptions_per_second") or {}).get("pollution"))
+            trees = {}
+            for n_, tp in sorted((dmp.get("tree") or {}).items()):
+                if tp.get("autoplace"):
+                    trees[n_] = -((tp.get("emissions_per_second") or {}).get("pollution") or 0)
+            meas[lab] = {"tiles": tiles, "trees": trees}
+            if not tiles or any(v is None for v in tiles.values()):
+                fails.append(f"{lab}: tiles without a pollution absorption {[k for k, v in tiles.items() if v is None][:5]}")
+        return meas, fails, "; ".join(f"{k}: {len(v['tiles'])} tiles, {len(v['trees'])} trees" for k, v in meas.items())
+
+    checks["tf_d27"] = SuiteCheck("tf_d27", lambda: base_key("tf_d27"), d27_run, d27_derive)
+
+    # T11 (SS; great forests): a Europe world created with the great forests on and loaded with
+    # the setting off keeps them: the trees of a block over the Black Forest match a fresh forests-on world's
+    # and differ from a fresh forests-off world's.
+    t11_area = bf["area"] if bf else None
+
+    def t11_run(deadline):
+        ms = {k: ct_probe_modset(ctx, mods, f"tf11{k}", False) for k in ("a", "b")}
+        name = cfg["settings"]["great_forests"]["name"]
+        for k, v in (("a", "true"), ("b", "false")):
+            res = ctx.fh_plain(["settings", ms[k], "--set", f"startup.{name}={v}"])
+            if not res.startswith("RESULT ok"):
+                raise GateError(f"fh.py settings {ms[k]}: {res}")
+            dump_settings(ctx, ms[k], ctx.instance, label="tf11", areas="{},{},{},{}".format(*t11_area),
+                          types="tree")()
+        inst = ctx.instance
+        pname, _ = map_preset(cfg, eu)
+        sa, sb = ctx.out / "tf-t11-create-a" / "a.zip", ctx.out / "tf-t11-create-b" / "b.zip"
+        outs = [ctx.fh(create_args(inst, ms["a"], sa, preset=pname), sa.parent).out]
+        outs.append(ctx.fh(scenario_args(inst, ms["b"], 4, save=sa), ctx.out / "tf-t11-a-under-b").out)
+        outs.append(ctx.fh(scenario_args(inst, ms["a"], 4, save=sa), ctx.out / "tf-t11-a-under-a").out)
+        outs.append(ctx.fh(create_args(inst, ms["b"], sb, preset=pname), sb.parent).out)
+        outs.append(ctx.fh(scenario_args(inst, ms["b"], 4, save=sb), ctx.out / "tf-t11-b-under-b").out)
+        return outs
+
+    def t11_derive(dirs):
+        fails = []
+        for x in dirs:
+            fails += g1(x) + g3(x)
+
+        def trees(x):
+            return sorted(t_ for c in tf_chunks(read_dump(x, "tf11")).values() for t_ in c["trees"])
+        ab, aa, bb = trees(dirs[1]), trees(dirs[2]), trees(dirs[4])
+        meas = {"a_under_b": len(ab), "a_under_a": len(aa), "b_under_b": len(bb),
+                "differ_from_fresh_on": len(set(ab) ^ set(aa)), "differ_from_fresh_off": len(set(ab) ^ set(bb))}
+        if ab != aa:
+            fails.append(f"the forests-on world loaded with forests off differs from a fresh forests-on world in "
+                         f"{meas['differ_from_fresh_on']} trees (ruling 13)")
+        if ab == bb:
+            fails.append("it equals a fresh forests-off world: the setting shaped nothing (G6)")
+        return meas, fails, (f"Black Forest block: {len(ab)} trees under B, {len(aa)} fresh on, {len(bb)} fresh off")
+
+    if t11_area:
+        checks["tf_t11"] = SuiteCheck("tf_t11", lambda: base_key("tf_t11", {"area": t11_area}), t11_run, t11_derive)
+
+    # V4 (SS renders; TST-14): real-terrain renders of dumped tiles and trees at a great forest (the Black
+    # Forest) and in plain woodland at scales 1 and 6, seeds 1000, 1002 and 1004, on M1, listed for the
+    # verification pass (never a verdict on the look here). The woodland block comes from evidence: of the
+    # map's sample blocks outside every forest (every forest-weight probe of its chunks at most
+    # TF_OUTSIDE_W), the one holding the most boost-off living trees in tf_t10_forests' M1 runs at that
+    # scale (v4_woodland); each run's own probes re-check it lies outside every forest and holds at least
+    # TF_V4_MIN_TREES living trees, or the render is not plain woodland and the check fails.
+    v4_forest = {}
+    v4_plan = []
+    for s in TF_SCALES:
+        fo = next((f for f in tf_forests(cfg, eu, s) if f["id"] == "black_forest"), None)
+        v4_forest[s] = fo["area"] if fo else None
+        for seed in SEEDS:
+            v4_plan.append({"label": f"s{s}-{seed}", "kind": "m1", "mk": eu, "scale": s, "seed": seed,
+                            "areas": [fo["area"]] if fo else [], "names": wname, "types": "tree,simple-entity",
+                            "decoratives": True})
+    v4_woods = {}
+
+    def v4_woodland(s, deadline):
+        """The plain-woodland block at scale s, chosen from tf_t10_forests' boost-off M1 runs (three seeds)."""
+        if s not in v4_woods:
+            fdirs = suite_dirs_of("tf_t10_forests", deadline)
+            runs = {p["label"]: x for p, x in zip(fplan, fdirs)}
+            sample = fmeta[(eu, s)]["sample"]
+            trees, outside = [0] * len(sample), [True] * len(sample)
+            for seed in SEEDS:
+                ch = tf_chunks(read_dump(runs[f"{eu}-s{s}-m1-{seed}-off"], "tf10"), (wname,))
+                for i_, (x0, y0, w, h) in enumerate(sample):
+                    for cy in range(y0 // 32, (y0 + h) // 32):
+                        for cx in range(x0 // 32, (x0 + w) // 32):
+                            c = ch.get((cx, cy)) or {}
+                            ws = (c.get("values") or {}).get(wname) or []
+                            if not ws or max(ws) > TF_OUTSIDE_W:
+                                outside[i_] = False
+                            trees[i_] += c.get("living", 0)
+            cand = [(t, i_) for i_, t in enumerate(trees) if outside[i_]]
+            if not cand:
+                raise GateError(f"V4: no sample block of {eu} at scale {s} lies outside every forest")
+            v4_woods[s] = sample[max(cand)[1]]
+        return v4_woods[s]
+
+    def v4_run(deadline):
+        import dump_render
+        plan = []
+        for p in v4_plan:
+            wood = v4_woodland(p["scale"], deadline)
+            plan.append(dict(p, areas=p["areas"] + [wood], points=tf_probe_points([wood])))
+        dirs = dump_plan("tfv4", plan)
+        for x in dirs:
+            f = Path(x) / "script-output" / "ep-s8-dump" / "tfv4.json"
+            if f.exists():
+                dmp = dump_render.load_json(f)
+                for i_ in range(len(dmp.get("areas") or [])):
+                    canvas, _ = dump_render.render(dmp, i_, False, True)
+                    canvas.save(Path(x) / f"v4-{i_}.png")
+        return dirs
+
+    def v4_derive(dirs):
+        fails, meas = [], {"woodland": {}}
+        if len(dirs) != len(v4_plan):
+            return {}, [f"{len(dirs)} runs, want {len(v4_plan)}"], ""
+        for p, x in zip(v4_plan, dirs):
+            fails += g1(x) + g3(x)
+            dmp = read_dump(x, "tfv4")
+            fails += tf_earth_active(cfg, p, dmp)
+            if not sorted(Path(x).glob("v4-*.png")):
+                fails.append(f"{x}: no render")
+            fo = v4_forest[p["scale"]]
+            wood = [a["area"] for a in dmp.get("areas") or []
+                    if (a["area"]["x0"], a["area"]["y0"], a["area"]["w"], a["area"]["h"]) != fo]
+            if len(wood) != 1:
+                fails.append(f"V4 {p['label']}: {len(wood)} woodland areas in the dump, want 1")
+                continue
+            wa = wood[0]
+            ch = tf_chunks(dmp, (wname,))
+            living, ws = 0, []
+            for cy in range(wa["y0"] // 32, (wa["y0"] + wa["h"]) // 32):
+                for cx in range(wa["x0"] // 32, (wa["x0"] + wa["w"]) // 32):
+                    c = ch.get((cx, cy)) or {}
+                    living += c.get("living", 0)
+                    ws += (c.get("values") or {}).get(wname) or []
+            meas["woodland"][p["label"]] = {"area": [wa["x0"], wa["y0"], wa["w"], wa["h"]], "living_trees": living,
+                                            "max_forest_weight": max(ws) if ws else None}
+            if not ws or max(ws) > TF_OUTSIDE_W:
+                fails.append(f"V4 {p['label']}: the woodland block's forest weight reaches {max(ws) if ws else None}, "
+                             f"want every probe at most {TF_OUTSIDE_W}: not outside every forest")
+            if living < TF_V4_MIN_TREES:
+                fails.append(f"V4 {p['label']}: the woodland block holds {living} living trees, want at least "
+                             f"{TF_V4_MIN_TREES}: not plain woodland")
+        meas["renders"] = [rel_ws(ctx, f) for x in dirs for f in sorted(Path(x).glob("v4-*.png"))]
+        return (meas, fails, f"{len(dirs)} great-forest and woodland renders listed for the verification pass (V4); "
+                             f"woodland living trees " + ", ".join(f"{k} {v['living_trees']}"
+                                                                   for k, v in meas["woodland"].items()))
+
+    checks["tf_v4"] = SuiteCheck("tf_v4", lambda: base_key("tf_v4", {"n": len(v4_plan), "min_trees": TF_V4_MIN_TREES,
+                                                                       "woodland": "most boost-off trees outside forests"}),
+                                 v4_run, v4_derive)
+
+    # T15 (SS; every map; P1, P2): each map's program at scales 6 and 1 at 16 LP (8 LP recorded,
+    # scale 6 also at 24 LP for P3), base M1t against M0t and, with Alien Biomes, M2t against BABt, in one
+    # group per pair; P1 and P2 hold trees-forests' allocation (+0.05) through the relative rule (p1_limits,
+    # p2_limits: main's recorded M1t/M0t and M2t/BABt ratios; none recorded fails closed, the ratio recorded).
+    m1t, _ = earth_driver_modsets(ctx, mods)
+    m0t, _, _ = driver_modsets(ctx, mods)
+    tq1 = HERE / "mods" / "tq1-gen"
+    pos = {}
+    for mk in maps:
+        pos[mk] = europe_positions(cfg, eg.MapRef(mk)) if mk == eu else map_positions(cfg, mk)
+
+    def ab_driver():
+        z = mods.build_zip()
+        m2t = mods.make(f"ea-tf-m2t-{mods.zip_sha[:8]}-{folder_hash(tq1)}", [z, tq1], from_live=ab_live)
+        babt = mods.make(f"ea-tf-babt-{folder_hash(tq1)}", [tq1], from_live=ab_live)
+        return m2t, babt
+
+    def t15_run(deadline):
+        out = []
+        m2t, babt = ab_driver()
+        for mk in maps:
+            for s in T15B_SCALES:
+                masks = [getattr(ctx.perf, m) if m != "MASK24" else MASK24 for m in T15B_MASKS[s]]
+                sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos[mk]["block"][s], f"tf-m1t-{mk}-s{s}",
+                                   ct_mgs(ctx, cfg, mk, s, False, label="-tf15"))
+                sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos[mk]["block"][s], f"tf-m0t-{mk}-s{s}")
+                out.append(pair_batch(ctx, {"a": (m1t, sa), "b": (m0t, sb)}, T15B["reps_suite"], masks,
+                                      f"tf-t15b-m1-{mk}-s{s}", deadline))
+                sc = make_save_mgs(ctx, mods, m2t, "tq1-gen-block", pos[mk]["block"][s], f"tf-m2t-{mk}-s{s}",
+                                   ct_mgs(ctx, cfg, mk, s, True, label="-tf15ab"))
+                sd = make_save_mgs(ctx, mods, babt, "tq1-gen-block", pos[mk]["block"][s], f"tf-babt-{mk}-s{s}")
+                out.append(pair_batch(ctx, {"a": (m2t, sc), "b": (babt, sd)}, T15B["reps_suite"], masks,
+                                      f"tf-t15b-m2-{mk}-s{s}", deadline))
+        return out
+
+    def tf_limits(build, pid, mk, s):
+        """A pair's limits from p1_limits or p2_limits; a limit the rule cannot build (main records no
+        ratio) fails closed here while the pair's ratio is still derived and recorded without that bar."""
+        try:
+            return build(), []
+        except GateError as e:
+            base = dict(sec6["limits"]) if isinstance(sec6, dict) else {}
+            base.pop(pid, None)
+            return base, [f"{mk} scale {s}: {e}"]
+
+    def t15_derive(dirs):
+        fails, meas = [], {}
+        k = 0
+        for mk in maps:
+            rec = {"blocks": pos[mk]["block"]}
+            for s in T15B_SCALES:
+                lim, lf = tf_limits(lambda: p1_limits(sec6, "trees-forests", mk, scale=s) if isinstance(sec6, dict) else {},
+                                    "P1", mk, s)
+                lim2, lf2 = tf_limits(lambda: p2_limits(sec6, "trees-forests", mk, s, lim)
+                                      if isinstance(sec6, dict) else {}, "P2", mk, s)
+                fails += lf + lf2
+                b = baseline_record()
+                cen = ((b.get("t15b_europe") or {}).get("census_m0") or {}).get(str(s)) if mk == eu else \
+                    ((((b.get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get(str(s)))
+                m, f, _ = derive_t15b([dirs[k]], lim, T15B["reps_suite"], pair="m1_m0",
+                                      label=f"{mk} M1t/M0t scale {s}", census_m0=cen or {})
+                rec[f"scale_{s}"] = m
+                fails += [f"{mk} scale {s}: {x}" for x in f]
+                m2, f2, _ = derive_t15b([dirs[k + 1]], lim2, T15B["reps_suite"], pair="m2_bab",
+                                        label=f"{mk} M2t/BABt scale {s}")
+                rec.setdefault("m2_bab", {})[f"scale_{s}"] = m2
+                fails += [f"{mk} scale {s}: {x}" for x in f2]
+                k += 2
+            meas[mk] = rec
+        return meas, fails, "; ".join(
+            f"{mk}: " + ", ".join(f"s{s} M1 {((m.get(f'scale_{s}') or {}).get(f'{0xFFFF:#x}') or {}).get('ratio')} M2 "
+                                  f"{(((m.get('m2_bab') or {}).get(f'scale_{s}') or {}).get(f'{0xFFFF:#x}') or {}).get('ratio')}"
+                                  for s in T15B_SCALES) for mk, m in meas.items())
+
+    tsig = {}
+
+    def tsigs():
+        if not tsig:
+            m2t, babt = ab_driver()
+            for mk in maps:
+                tsig[f"m1-{mk}"] = program_signature(ctx, mods, m1t, f"tf-{mk}", preset=map_preset(cfg, mk)[0])
+                tsig[f"m2-{mk}"] = program_signature(ctx, mods, m2t, f"tf-ab-{mk}", preset=map_preset(cfg, mk)[0])
+            tsig["babt"] = sig(babt, "babt")
+        return tsig
+
+    checks["tf_t15b"] = SuiteCheck("tf_t15b", lambda: key_of({
+        "check": "tf_t15b", "sig": tsigs(), "m0": sig(m0t, "m0t"), "control": ctl, "timing": timing, "config": T15B,
+        "pos": pos, "masks": T15B_MASKS, "build": GAME_BUILD, "borderline": BORDERLINE, "records": TIMED_RECORDS,
+        "earth": [d["mod"], dump_shas]}), t15_run, t15_derive)
+    return checks
+
+
+def live_t15b_tf(ctx, mods, sec6, mk, kind):
+    """The gate's live timed sample of trees-forests (rule 3): one map's block at scale 6 at 16 LP, M1t
+    against M0t (P1 with the milestone's relative rule) or M2t against BABt (P2 with the same rule,
+    p2_limits; both built before any group runs, so a missing record fails closed at once), with rule
+    5's extra group when the ratio sits within 0.03 of a bound and the group fits the budget, else fail
+    closed."""
+    import earthgeo as eg
+    cfg = mods.cfg
+    eu = cfg["presets"][cfg["preset_order"][0]]["map"]
+    pos = europe_positions(cfg, eg.MapRef(mk)) if mk == eu else map_positions(cfg, mk)
+    ab_live = ["alien-biomes"] + LIVE_DEPS["alien-biomes"]
+    tq1 = HERE / "mods" / "tq1-gen"
+    if kind == "m2":
+        # P2 alone binds this pair at 16 LP (PAIR_LIMITS), so P1's base is not needed here
+        lim = p2_limits(sec6, "trees-forests", mk, 6, {}) if isinstance(sec6, dict) else {}
+        z = mods.build_zip()
+        a_ms = mods.make(f"ea-tf-m2t-{mods.zip_sha[:8]}-{folder_hash(tq1)}", [z, tq1], from_live=ab_live)
+        b_ms = mods.make(f"ea-tf-babt-{folder_hash(tq1)}", [tq1], from_live=ab_live)
+        pair, census, label = "m2_bab", {}, f"{mk} M2t/BABt"
+    else:
+        lim = p1_limits(sec6, "trees-forests", mk, scale=6) if isinstance(sec6, dict) else {}
+        a_ms, _ = earth_driver_modsets(ctx, mods)
+        b_ms, _, _ = driver_modsets(ctx, mods)
+        b = baseline_record()
+        census = (((b.get("t15b_europe") or {}).get("census_m0") or {}).get("6") if mk == eu else
+                  (((b.get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get("6")) or {}
+        pair, label = "m1_m0", f"{mk} M1t/M0t"
+    sa = make_save_mgs(ctx, mods, a_ms, "tq1-gen-block", pos["block"][6], f"live-tf-{kind}-{mk}",
+                       ct_mgs(ctx, cfg, mk, 6, kind == "m2", label="-live-tf"))
+    sb = make_save_mgs(ctx, mods, b_ms, "tq1-gen-block", pos["block"][6], f"live-tf-{kind}-cmp-{mk}")
+    cfgs = {"a": (a_ms, sa), "b": (b_ms, sb)}
+    t0 = time.time()
+    dirs = [pair_batch(ctx, cfgs, T15B["reps_gate"], [ctx.perf.MASK16], f"live-tf-t15b-{kind}-{mk}", ctx.deadline)]
+    took = time.time() - t0
+    meas, f, detail = derive_t15b(dirs, lim, T15B["reps_gate"], pair=pair, label=label, census_m0=census)
+    rec = meas.get(f"{ctx.perf.MASK16:#x}") or {}
+    if rec.get("undecided"):
+        fits, need = extra_batch_fits(took, 2 * T15B["reps_gate"], 2 * T15B["reps_extra"], time.time(), ctx.deadline)
+        if fits:
+            dirs.append(pair_batch(ctx, cfgs, T15B["reps_extra"], [ctx.perf.MASK16], f"live-tf-t15b-{kind}-{mk}-x",
+                                   ctx.deadline))
+            meas, f, detail = derive_t15b(dirs, lim, T15B["reps_gate"], pair=pair, label=label, census_m0=census)
+        else:
+            f = [f"{label} at 16 LP is {rec['ratio']}, within {BORDERLINE} of its bound {rec['borderline']:g}, and "
+                 f"rule 5's batch needs about {need:.0f} s, more than the gate has left: fail closed"]
+    return dirs, meas, f, detail
+
+def tf_scatter_pairs(grid):
+    """(across, inside): squared count differences of neighbouring cells across a chunk edge and inside one
+    chunk, skipping cells set to None (outside the judged chunks)."""
+    per = TF_PERIOD // TF_CELL
+    across, inside = [], []
+    for y, row_ in enumerate(grid):
+        for x, c in enumerate(row_):
+            if c is None:
+                continue
+            for dx, dy in ((1, 0), (0, 1)):
+                x2, y2 = x + dx, y + dy
+                if y2 >= len(grid) or x2 >= len(grid[y2]) or grid[y2][x2] is None:
+                    continue
+                d_ = (c - grid[y2][x2]) ** 2
+                edge = (x2 % per == 0) if dx else (y2 % per == 0)
+                (across if edge else inside).append(d_)
+    return across, inside
+
+
+def live_maptype_ww(ctx, mods, mk):
+    """The gate's live timed sample of ww_maptype_cost (rule 3): one map's newest entry picked alone,
+    its 64 px --verbose complexity and its T15b block at scale 6 against M0t at 16 LP with the gate's
+    reps. Reported, never gated (Contradictions item 15): only G1, G5 and the group's own validity
+    can fail it."""
+    import earthgeo as eg
+    cfg = mods.cfg
+    eu = cfg["presets"][cfg["preset_order"][0]]["map"]
+    pos = europe_positions(cfg, eg.MapRef(mk)) if mk == eu else map_positions(cfg, mk)
+    m1t, _ = earth_driver_modsets(ctx, mods)
+    m0t, _, _ = driver_modsets(ctx, mods)
+    b = baseline_record()
+    census = (((b.get("t15b_europe") or {}).get("census_m0") or {}).get("6") if mk == eu else
+              (((b.get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get("6")) or {}
+    mt = map_maptype_mgs(ctx, cfg, mk)
+    cx_dir = ctx.fh(preview_args(ctx.instance, ctx.shared["m1"], 64, mgs=mt, verbose=True),
+                    ctx.out / f"live-ww-mt-cx-{mk}").out
+    sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos["block"][6], f"live-ww-mt-{mk}-a", mt)
+    sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos["block"][6], f"live-ww-mt-{mk}-b")
+    bdir = pair_batch(ctx, {"a": (m1t, sa), "b": (m0t, sb)}, T15B["reps_gate"], [ctx.perf.MASK16],
+                      f"live-ww-t15b-maptype-{mk}", ctx.deadline)
+    f = g1(cx_dir)
+    cx = ctx_complexity(cx_dir)
+    if not cx or {k: v.get("complexity") for k, v in cx.items()} == VANILLA:
+        f.append(f"{mk}: the Map type preview compiled vanilla's programs or none (G5)")
+    meas, f2, _ = derive_t15b([bdir], {}, T15B["reps_gate"], pair="m1_m0", label=f"{mk} Map type/M0t",
+                              census_m0=census)
+    r = (meas.get(f"{ctx.perf.MASK16:#x}") or {}).get("ratio")
+    detail = (f"{mk} Map type route (reported, not gated): Tile {cx.get('tile', {}).get('complexity')}, Entity "
+              f"{cx.get('entity', {}).get('complexity')}, Cliff {cx.get('cliff', {}).get('complexity')}; forced "
+              f"generation {r}x M0 at 16 LP")
+    return [cx_dir, bdir], {"complexity": cx, "forced_16lp": meas}, f + f2, detail
 
 
 # -- the water slider (D15: inert on Earth presets; config.lua's water_slider)
@@ -5494,6 +18928,7 @@ def row_water_inert(ctx, mods, sec6, row, cache):
     cached_or_live(ctx, row, cache, key, newest, live, derive)
 
 
+
 ROW_FUNCS = {
     "static": row_static, "plan_main": row_plan_main, "section6": row_section6,
     "frozen": row_frozen, "data_src": row_data_src, "offline_selftests": row_offline_selftests,
@@ -5505,6 +18940,23 @@ ROW_FUNCS = {
     "ec_dump_facts": row_ec_dump_facts, "geo_emit": row_geo_emit, "t1_t2_grids": row_t1_t2_grids,
     "t3_oracle": row_t3_oracle, "t11_pair": row_t11_pair, "t12_twice": row_t12_twice, "t13_routes": row_t13_routes,
     "maptype_route": row_maptype_route, "t16_guard": row_t16_guard, "water_inert": row_water_inert,
+    # olde-world-atlantic
+    "owa_dump_facts": row_owa_dump_facts, "owa_routes": row_owa_routes, "owa_maptype": row_owa_maptype,
+    "owa_t7_random": row_owa_t7_random,
+    # waterways
+    "ww_dump_facts": row_ww_dump_facts, "ww_emit": row_ww_emit, "ww_t3": row_ww_t3, "ww_ford": row_ww_ford,
+    # region-layer
+    "rl_dump_facts": row_rl_dump_facts, "rl_t3_oracle": row_rl_t3_oracle, "zero_change": row_zero_change,
+    # climate-tiles
+    "ct_dump_facts": row_ct_dump_facts, "ct_zero_cost_m2": row_ct_zero_cost_m2, "ct_isolation_m2": row_ct_isolation_m2,
+    "ct_t3": row_ct_t3, "ct_t4_moisture": row_ct_t4_moisture,
+    # trees-forests
+    "tf_dump_facts": row_tf_dump_facts, "tf_t3": row_tf_t3,
+    # ridges
+    "rd_dump_facts": row_rd_dump_facts, "rd_offline": row_rd_offline, "rd_t4_fg": row_rd_t4_fg,
+    "rd_t7_fg": row_rd_t7_fg,
+    # resources-enemies
+    "re_dump_facts": row_re_dump_facts, "re_t4_fg": row_re_t4_fg,
 }
 
 
@@ -6271,6 +19723,20 @@ def suite_checks(ctx, mods, sec6):
         ec_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     if any(s["id"] == "spawn-cities" for s in registry_upto(ctx.slice)):
         sc_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "olde-world-atlantic" for s in registry_upto(ctx.slice)):
+        owa_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "waterways" for s in registry_upto(ctx.slice)):
+        ww_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "region-layer" for s in registry_upto(ctx.slice)):
+        rl_suite_checks(ctx, mods, sec6, checks, d)
+    if any(s["id"] == "climate-tiles" for s in registry_upto(ctx.slice)):
+        ct_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "trees-forests" for s in registry_upto(ctx.slice)):
+        tf_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "ridges" for s in registry_upto(ctx.slice)):
+        rd_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
+    if any(s["id"] == "resources-enemies" for s in registry_upto(ctx.slice)):
+        re_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig)
     return checks
 
 
@@ -6297,6 +19763,11 @@ RT_REPS = 3
 CHORD = {"terms": (4096, 16384), "lp8": (0.993, 1.641), "lp24": (1.018, 1.488)}
 COMPOSITE = {"tq3_16lp": 1.045, "phase4_8lp": 1.26, "phase4_24lp": 1.03}
 PAIR_LIMITS["m1_m0"] = {0xFFFF: ["P1"], MASK24: ["P3"]}
+# From climate-tiles M2t/BABt at 16 LP is held to P2 and at 24 LP to P3 (6.2); the Map type route's
+# ratio against BAB is recorded, never gated (Contradictions item 15), so its pair binds no row.
+PAIR_LIMITS["m2_bab"] = {0xFFFF: ["P2"], MASK24: ["P3"]}
+PAIR_LIMITS["maptype_bab"] = {}
+PAIR_VANILLA["maptype_bab"] = ()
 # T15-f (test notes 5.5; design section 6.2: recorded, never gated): preview time by Phase 4's method
 # (BENCHMARKS.md section 3) at 1024 px, and at 256 px, the plan's second size, centred on the T15b
 # block, seed 1000, --threads 8, 7 valid repetitions per config interleaved in one group, read from
@@ -6410,6 +19881,21 @@ def earth_driver_modsets(ctx, mods):
             mods.with_mods("m1d", [HERE / "mods" / "tq2-driver"]))
 
 
+def ab_driver_modsets(ctx, mods):
+    """M2t and M2d (M2 plus TQ1's timer or TQ2's driver) and BABt and BABd (Alien Biomes alone plus the
+    same), the Alien Biomes zips copied from the live folder (climate-tiles; U7: M2 against BAB); each is
+    prepared (G7) where a save is made from it (make_save_mgs)."""
+    ab = ["alien-biomes"] + LIVE_DEPS["alien-biomes"]
+    out = []
+    for tag, mod in (("t", "tq1-gen"), ("d", "tq2-driver")):
+        d = HERE / "mods" / mod
+        z = mods.build_zip()
+        out.append(mods.make(f"ea-m2{tag}-{mods.zip_sha[:8]}-{folder_hash(d)}", [z, d], from_live=ab))
+        out.append(mods.make(f"ea-bab{tag}-{folder_hash(d)}", [d], from_live=ab))
+    m2t, babt, m2d, babd = out
+    return m2t, babt, m2d, babd
+
+
 def make_save_mgs(ctx, mods, modset, setting, spec, label, mgs=None):
     """make_save with the world made from a full MGS file (the preset route's equal, T13), so the
     Earth configs' saves carry the preset's keys; mgs None makes a default world (M0)."""
@@ -6457,13 +19943,16 @@ def pair_batch(ctx, configs, reps, masks, label, deadline):
     return out_root
 
 
-def p1_limits(sec6, slice_id, map_key="europe", pending=None):
+def p1_limits(sec6, slice_id, map_key="europe", pending=None, scale=None, recorded=None):
     """The 6.2 limits a timed pair meets for `slice_id`: P1's relative rule reads main's recorded ratio
     plus the time allocation of the pending milestones (pending_slices: a group's gate meets its milestones'
     allocations together); a 'first' allocation records the first ratio and only the absolute bar
     applies (6.3). An added allocation reads the landed ratio from the reference refs' suite
     manifests (landed_p1_ratio) and bounds the pair at min(the absolute bar, (that ratio plus the
-    allocation) x 1.10), failing closed when no ref recorded one."""
+    allocation) x 1.10), failing closed when no ref recorded one. With `scale` (waterways' timed rows,
+    which bind per map and scale) the landed ratio is the one main recorded for the map's block at
+    that scale (main_recorded_ratio, or `recorded` with the same arguments, which the runner controls
+    pass; ridges), and the limit also carries the ratio and the allocation."""
     lim = dict(sec6["limits"])
     if "P1" in lim:
         pend = pending_slices(slice_id) if pending is None else list(pending)
@@ -6472,16 +19961,104 @@ def p1_limits(sec6, slice_id, map_key="europe", pending=None):
         if alloc["kind"] in ("first", "cap"):
             rec["limit"] = {"max": rec["limit"]["max"]}
         elif alloc["kind"] == "add":
-            base = landed_p1_ratio(slice_id, map_key)
+            base = landed_p1_ratio(slice_id, map_key) if scale is None else (recorded or main_recorded_ratio)(
+                slice_id, map_key, scale)
             if base is None:
-                raise GateError(f"P1's relative rule for {pend} needs the landed M1t/M0t ratio, which no reference "
+                raise GateError(f"P1's relative rule for {pend} needs the landed M1t/M0t ratio"
+                                f"{'' if scale is None else f' of {map_key} at scale {scale}'}, which no reference "
                                 f"ref's suite manifest records (fail closed)")
             rel = round((base + alloc["value"]) * P1_RELATIVE, 4)
             rec["limit"] = {"max": min(rec["limit"]["max"], rel)}
+            if scale is not None:
+                rec["limit"].update(relative_to=base, allocation=alloc["value"])
         else:
             raise GateError(f"P1 has no rule for a {alloc['kind']} time allocation of {pend}")
         lim["P1"] = rec
     return lim
+
+
+# The suite checks that record a map block's 16 LP M1t/M0t ratio, by summary shape: Europe's at the
+# summary's top level (europe-coast), every other map's under its key (olde-world-atlantic, waterways,
+# climate-tiles, trees-forests, ridges). climate-tiles, trees-forests and ridges record each map's
+# M2t/BABt under the map's "m2_bab" key (RATIO_CHECKS_M2). Each manifest holds only its own milestone's checks, so the order
+# here does not matter.
+RATIO_CHECKS = (("ct_t15b", True), ("ww_t15b", True), ("owa_t15b", True), ("t15b_m1", False), ("tf_t15b", True),
+                ("rd_t15b", True))
+RATIO_CHECKS_M2 = (("ct_t15b", "m2_bab"), ("tf_t15b", "m2_bab"), ("rd_t15b", "m2_bab"), ("re_t15b", "m2_bab"))
+
+
+def manifest_ratio_m2(man, map_key, scale):
+    """One suite manifest's recorded 16 LP M2t/BABt ratio of `map_key`'s block at `scale`
+    (RATIO_CHECKS_M2), or None."""
+    for name, sub in RATIO_CHECKS_M2:
+        summ = (((man or {}).get("checks") or {}).get(name) or {}).get("summary") or {}
+        node = ((summ.get(map_key) or {}).get(sub) or {}).get(f"scale_{scale}") or {}
+        r = (node.get(f"{0xFFFF:#x}") or {}).get("ratio")
+        if isinstance(r, (int, float)):
+            return float(r)
+    return None
+
+
+def main_recorded_ratio_m2(slice_id, map_key, scale):
+    """main's newest recorded 16 LP M2t/BABt ratio of `map_key`'s block at `scale` (manifest_ratio_m2):
+    the suite manifests on main of the milestones before `slice_id`, newest first."""
+    ids = [s["id"] for s in REGISTRY]
+    for sid in reversed(ids[:ids.index(slice_id)]):
+        try:
+            man = json.loads(git_show(f"main:tests/baselines/suites/{sid}.json"))
+        except Exception:
+            continue
+        r = manifest_ratio_m2(man, map_key, scale)
+        if r is not None:
+            return r
+    return None
+
+
+def p2_limits(sec6, slice_id, map_key, scale, p1lim=None, recorded=None, variant=None):
+    """The 6.2 limits an M2t/BABt pair meets for `slice_id` (P2 at 16 LP, P3 at 24 LP): P2's relative
+    rule reads main's recorded M2t/BABt ratio plus the milestone's M2 time allocation; 'first' (climate-tiles:
+    the first M2 rows) records the first ratio and only the absolute bar applies (6.3). None recorded
+    for an added allocation fails closed. From trees-forests: `p1lim` (limits a caller already built,
+    P1's) seeds the result in place of section 6's rows, `variant` picks a keyed allocation ("key on"
+    for destroyed-europe's M2 row) and `recorded` replaces main_recorded_ratio_m2 in the controls."""
+    if not isinstance(sec6, dict):
+        return dict(p1lim or {})
+    lim = dict(sec6["limits"]) if p1lim is None else dict(p1lim)
+    if "P2" in sec6["limits"]:
+        alloc = alloc_for(sec6["allocations"][slice_id]["time"], "M2", map_key, variant)
+        rec = dict(sec6["limits"]["P2"])
+        if alloc["kind"] in ("first", "cap"):
+            rec["limit"] = {"max": rec["limit"]["max"]}
+        elif alloc["kind"] == "add" and rec["limit"].get("relative_factor"):
+            base = (recorded or main_recorded_ratio_m2)(slice_id, map_key, scale)
+            if base is None:
+                raise GateError(f"P2's relative rule for {slice_id}: main records no 16 LP M2t/BABt ratio for {map_key} "
+                                f"at scale {scale} in tests/baselines/suites (fail closed)")
+            top = (base + alloc["value"]) * rec["limit"]["relative_factor"]
+            rec["limit"] = {"max": round(min(rec["limit"]["max"], top), 6), "relative_to": base,
+                            "allocation": alloc["value"]}
+        else:
+            raise GateError(f"P2 for {slice_id}: allocation {alloc} is not one this runner reads")
+        lim["P2"] = rec
+    return lim
+
+
+def main_recorded_ratio(slice_id, map_key, scale):
+    """main's newest recorded 16 LP ratio of `map_key`'s block at `scale`: the suite manifests on main of
+    the milestones before `slice_id`, newest first."""
+    ids = [s["id"] for s in REGISTRY]
+    for sid in reversed(ids[:ids.index(slice_id)]):
+        try:
+            man = json.loads(git_show(f"main:tests/baselines/suites/{sid}.json"))
+        except Exception:
+            continue
+        for name, per_map in RATIO_CHECKS:
+            summ = ((man.get("checks") or {}).get(name) or {}).get("summary") or {}
+            node = summ.get(map_key) if per_map else (summ if map_key == "europe" else None)
+            r = (((node or {}).get(f"scale_{scale}") or {}).get(f"{0xFFFF:#x}") or {}).get("ratio")
+            if isinstance(r, (int, float)):
+                return float(r)
+    return None
 
 
 def derive_t15b_europe(dirs, limits, reps, mask_names, census_want=None):
@@ -6509,6 +20086,20 @@ def derive_t15b_europe(dirs, limits, reps, mask_names, census_want=None):
                                   for s, m in ((k[6:], v) for k, v in meas.items() if k.startswith("scale_")))
 
 
+LIVE_T15B_SCALE = 6      # the scale whose block the gate's live sample t15b_m1 times
+
+
+def live_t15b_limits(sec6, slice_id, cfg, recorded=None):
+    """The 6.2 limits of the live sample t15b_m1 for `slice_id`: it times the first preset's map at
+    LIVE_T15B_SCALE, so P1's relative rule (an added allocation: spawn-cities, region-layer, ridges)
+    reads main's recorded ratio of that map at that scale. The runner controls call it as the live
+    sample does, so a call that names no map or scale fails a cheap row, not the gate."""
+    if not isinstance(sec6, dict):
+        return {}
+    _, mk, _ = first_preset(cfg)
+    return p1_limits(sec6, slice_id, mk, scale=LIVE_T15B_SCALE, recorded=recorded)
+
+
 def live_t15b_m1(ctx, mods, sec6):
     """The gate's live timed sample of europe-coast (rule 3): one gate-sized group of M1t against M0t
     on the map's block at scale 6 at 16 LP (P1), with rule 5's extra group when the ratio sits within
@@ -6517,13 +20108,14 @@ def live_t15b_m1(ctx, mods, sec6):
     import earthgeo as eg
     cfg = mods.cfg
     _, mk, _ = first_preset(cfg)
+    s = LIVE_T15B_SCALE
     pos = europe_positions(cfg, eg.MapRef(mk))
     m1t, _ = earth_driver_modsets(ctx, mods)
     m0t, _, _ = driver_modsets(ctx, mods)
-    lim = p1_limits(sec6, ctx.slice) if isinstance(sec6, dict) else {}
-    census = ((baseline_record().get("t15b_europe") or {}).get("census_m0") or {}).get("6") or {}
-    sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos["block"][6], "live-m1t", preset_mgs(ctx, cfg, 6))
-    sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos["block"][6], "live-m0t")
+    lim = live_t15b_limits(sec6, ctx.slice, cfg)
+    census = ((baseline_record().get("t15b_europe") or {}).get("census_m0") or {}).get(str(s)) or {}
+    sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos["block"][s], "live-m1t", preset_mgs(ctx, cfg, s))
+    sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos["block"][s], "live-m0t")
     cfgs = {"a": (m1t, sa), "b": (m0t, sb)}
     t0 = time.time()
     dirs = [pair_batch(ctx, cfgs, T15B["reps_gate"], [ctx.perf.MASK16], "live-t15b-m1", ctx.deadline)]
@@ -6551,14 +20143,17 @@ def run_peak_mb(d):
         return None
 
 
-def derive_rt_pair(dirs, limits):
-    """P4 to P6 from interleaved real-time runs of M1 and M0 (one group): each M1 run at most P4's ticks
-    over 20 ms and P6's longest interval; the median M1 p99 over the median M0 p99 at most P5. The
+def derive_rt_pair(dirs, limits, earth="m1", comp="m0"):
+    """P4 to P6 from interleaved real-time runs of an Earth modset and its comparator (one group; M1 and
+    M0, or from climate-tiles M2 and BAB): each Earth run at most P4's ticks over 20 ms and P6's longest
+    interval for its modset (M1_ms, M2_ms); the median Earth p99 over the comparator's at most P5. The
     peak working set while exploring at 24 LP (T15-h) is recorded per run from the monitor record
-    beside it, with the median M1 minus the median M0; a run without one fails (incomplete evidence)."""
+    beside it, with the median Earth minus the median comparator; a run without one fails (incomplete
+    evidence)."""
     import perf
-    fails, meas = [], {"m1": [], "m0": []}
-    peaks = {"m1": [], "m0": []}
+    E, Cm = earth.upper(), comp.upper()
+    fails, meas = [], {earth: [], comp: []}
+    peaks = {earth: [], comp: []}
     for cfg, ds in dirs.items():
         for d in ds:
             m, f, _ = derive_rt([d])
@@ -6568,32 +20163,33 @@ def derive_rt_pair(dirs, limits):
             if pk is None:
                 fails.append(f"{cfg} {Path(d).name}: no peak working set beside the run ({Path(d).name}-monitor.json)")
             peaks[cfg].append(pk)
-    if not meas["m1"] or not meas["m0"]:
+    if not meas[earth] or not meas[comp]:
         return meas, fails + ["no real-time runs"], ""
     if all(p is not None for v in peaks.values() for p in v):
-        p1, p0 = perf.median(peaks["m1"]), perf.median(peaks["m0"])
-        meas["peak_mb"] = {"m1": peaks["m1"], "m0": peaks["m0"], "m1_median": p1, "m0_median": p0,
-                           "m1_minus_m0": round(p1 - p0, 1)}
+        p1, p0 = perf.median(peaks[earth]), perf.median(peaks[comp])
+        meas["peak_mb"] = {earth: peaks[earth], comp: peaks[comp], f"{earth}_median": p1, f"{comp}_median": p0,
+                           f"{earth}_minus_{comp}": round(p1 - p0, 1)}
     p4 = (limits.get("P4") or {}).get("limit", {}).get("max")
     p5 = (limits.get("P5") or {}).get("limit", {}).get("max")
-    p6 = (limits.get("P6") or {}).get("limit", {}).get("M1_ms")
-    over = [m.get("over_20ms") for m in meas["m1"]]
-    longest = [m.get("max") for m in meas["m1"]]
-    ratio = perf.median([m["p99"] for m in meas["m1"]]) / perf.median([m["p99"] for m in meas["m0"]])
+    p6 = (limits.get("P6") or {}).get("limit", {}).get(f"{E}_ms")
+    over = [m.get("over_20ms") for m in meas[earth]]
+    longest = [m.get("max") for m in meas[earth]]
+    ratio = perf.median([m["p99"] for m in meas[earth]]) / perf.median([m["p99"] for m in meas[comp]])
     meas["p5_ratio"] = round(ratio, 4)
     if p4 is None or p5 is None or p6 is None:
-        fails.append(f"P4 to P6 limits unreadable: {p4}, {p5}, {p6}")
+        fails.append(f"P4 to P6 limits unreadable for {E}: {p4}, {p5}, {p6}")
     else:
         if any(o is None or o > p4 for o in over):
-            fails.append(f"P4: M1 ticks over 20 ms {over}, at most {p4:g} per window")
+            fails.append(f"P4: {E} ticks over 20 ms {over}, at most {p4:g} per window")
         if ratio > p5:
-            fails.append(f"P5: p99 interval M1/M0 {ratio:.4f}, at most {p5:g}")
+            fails.append(f"P5: p99 interval {E}/{Cm} {ratio:.4f}, at most {p5:g}")
         if any(x is None or x > p6 for x in longest):
-            fails.append(f"P6: M1 longest interval {longest} ms, at most {p6:g}")
+            fails.append(f"P6: {E} longest interval {longest} ms, at most {p6:g}")
     pk = meas.get("peak_mb") or {}
-    return meas, fails, (f"real time at 60 UPS: M1 ticks over 20 ms {over} (P4), p99 ratio {ratio:.4f} (P5), "
-                         f"longest {longest} ms (P6); M0 {[m.get('over_20ms') for m in meas['m0']]} over 20 ms; peak "
-                         f"working set {pk.get('m1_median')} against {pk.get('m0_median')} MB (recorded)")
+    return meas, fails, (f"real time at 60 UPS: {E} ticks over 20 ms {over} (P4), p99 ratio {ratio:.4f} (P5), "
+                         f"longest {longest} ms (P6); {Cm} {[m.get('over_20ms') for m in meas[comp]]} over 20 ms; "
+                         f"peak working set {pk.get(f'{earth}_median')} against {pk.get(f'{comp}_median')} MB "
+                         f"(recorded)")
 
 
 def walker_pair_rows(a, b):
@@ -6656,23 +20252,24 @@ def derive_walker_pair(dirs, limits, masks=PROXY_MASKS):
                          + (f"; {diag}" if diag else ""))
 
 
-def derive_save_pair(dirs, limits):
-    """P19: the block's increment between the two server saves, M1 against M0; the whole save's
-    ratio recorded."""
+def derive_save_pair(dirs, limits, earth="m1", comp="m0"):
+    """P19: the block's increment between the two server saves, the Earth modset against its comparator
+    (M1 and M0, or from climate-tiles M2 and BAB); the whole save's ratio recorded."""
+    E, Cm = earth.upper(), comp.upper()
     a, fa, _ = derive_save([dirs[0]])
     b, fb, _ = derive_save([dirs[1]])
-    fails = [f"M1: {x}" for x in fa] + [f"M0: {x}" for x in fb]
+    fails = [f"{E}: {x}" for x in fa] + [f"{Cm}: {x}" for x in fb]
     if fails or not b.get("increment"):
-        return {"m1": a, "m0": b}, fails or ["M0's save increment is 0"], ""
+        return {earth: a, comp: b}, fails or [f"{Cm}'s save increment is 0"], ""
     r = a["increment"] / b["increment"]
     whole = a["post"] / b["post"] if b.get("post") else None
     lim = (limits.get("P19") or {}).get("limit", {}).get("max")
     if lim is None:
         fails.append("P19's limit is unreadable")
     elif r > lim:
-        fails.append(f"P19: the block's save increment {r:.4f}x M0's, at most {lim:g}")
-    return {"m1": a, "m0": b, "increment_ratio": round(r, 4), "whole_save_ratio": round(whole, 4) if whole else None}, \
-        fails, f"server save: block increment {r:.4f}x M0's (P19), whole save {whole and round(whole, 4)}x (recorded)"
+        fails.append(f"P19: the block's save increment {r:.4f}x {Cm}'s, at most {lim:g}")
+    return {earth: a, comp: b, "increment_ratio": round(r, 4), "whole_save_ratio": round(whole, 4) if whole else None}, \
+        fails, f"server save: block increment {r:.4f}x {Cm}'s (P19), whole save {whole and round(whole, 4)}x (recorded)"
 
 
 def preview_time_from_raw(run):
@@ -6876,7 +20473,7 @@ def ec_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
             runs = [(dirs[k + j], off) for j, off in enumerate(offs)]
             k += len(offs)
             L, C, Hd = previews_land(mref, runs, s, colours, cliff_colours(ctx.shared["dump_m1"]))
-            rec = t1_eval(mref, L, C)
+            rec = t1_eval(mref, L, C, scale=s)
             rec["hidden_by_cliffs_px"] = int(Hd.sum())
             if rec["covered_px"] != mref.W * mref.H or rec["hidden_by_cliffs_px"]:
                 fails.append(f"scale {s}: the cliff-free previews cover {rec['covered_px']} of {mref.W * mref.H} "
@@ -7009,8 +20606,8 @@ def ec_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
         for x in dirs:
             fails += g1(x) + g3(x) + dump_seed_fails(x, "grid", SEED)
         for i, s in enumerate(corner_scales):
-            a = t1_eval(mref, *grid_land(mref, dirs[2 * i], s))
-            b = t1_eval(mref, *grid_land(mref, dirs[2 * i + 1], s))
+            a = t1_eval(mref, *grid_land(mref, dirs[2 * i], s), scale=s)
+            b = t1_eval(mref, *grid_land(mref, dirs[2 * i + 1], s), scale=s)
             meas[f"scale_{s}"] = {"with_offset": a["agreement"], "without_offset": b["agreement"]}
             if not (b["agreement"] < a["agreement"]):
                 fails.append(f"scale {s}: the build without the corner offset scores {b['agreement']}, not lower than "
@@ -7369,7 +20966,8 @@ def ec_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
     # P7 and the recorded benchmark-mode rows: the walker on Europe and on M0
     walk_spec = "walk:nauvis:{x0}:{y0}:{dx}:{dy}:{R}:{P}:{N}:{D}:{T0}".format(**pos["walk"])
 
-    def walker_run_pair(deadline, label="walk", earth_ms=None, mgs=None, masks=(PROXY_MASKS[0],)):
+    def walker_run_pair(deadline, label="walk", earth_ms=None, mgs=None, masks=(PROXY_MASKS[0],), base_ms=None):
+        # base_ms: the comparator's driver modset (M0's by default; BAB's for an Alien Biomes pair)
         """M1 then M0 on the walker at each mask in turn: [M1, M0] per mask, the 16 LP pair under its
         own names and each further mask's pair suffixed with the mask (walk-m1-ff, walk-m0-ff)."""
         ms = earth_ms or m1d
@@ -7377,7 +20975,7 @@ def ec_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
         out = []
         for mask in masks:
             sfx = "" if mask == PROXY_MASKS[0] else f"-{mask:x}"
-            for lab, mset, m in ((f"{label}-m1{sfx}", ms, mgs), (f"{label}-m0{sfx}", m0d, None)):
+            for lab, mset, m in ((f"{label}-m1{sfx}", ms, mgs), (f"{label}-m0{sfx}", base_ms or m0d, None)):
                 save = make_save_mgs(ctx, mods, mset, "tq2-mode", walk_spec, lab, m)
                 ticks = pos["walk"]["T0"] + pos["walk"]["N"] * pos["walk"]["P"] + pos["walk"]["D"] + 2
                 _, load_pre = ctx.perf.wait_quiet(deadline)
@@ -7443,12 +21041,12 @@ def ec_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
     # loopback server at 60 UPS, M1 against M0 interleaved in one group
     rt_spec = "rtexplore:nauvis:{cx0}:{cy}:{R}:{K}:{P}:{D}:{T0}".format(**pos["explore"])
 
-    def rt_runs(deadline, label="rt", earth_ms=None, mgs=None):
+    def rt_runs(deadline, label="rt", earth_ms=None, mgs=None, base_ms=None):
         ms = earth_ms or m1d
         mgs = mgs or preset_mgs(ctx, cfg, 6)
         out = {"m1": [], "m0": []}
         for i in range(RT_REPS):
-            for cfg_, mset, m in (("m1", ms, mgs), ("m0", m0d, None)):
+            for cfg_, mset, m in (("m1", ms, mgs), ("m0", base_ms or m0d, None)):
                 lab = f"{label}-{cfg_}-{i + 1}"
                 save = make_save_mgs(ctx, mods, mset, "tq2-mode", rt_spec, f"save-{lab}", m)
                 out[cfg_].append(server_run_save(ctx, mset, save, lab, SERVER["rt_timeout"], ["tq2-rt"]))
@@ -7465,10 +21063,10 @@ def ec_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
     # P19: the save increment of the forced block, M1 against M0 (Phase 4's server-save job)
     save_spec = "save:nauvis:{}:{}:1".format(*pos["save_block"])
 
-    def save_runs(deadline, label="save", earth_ms=None, mgs=None, m0=True):
+    def save_runs(deadline, label="save", earth_ms=None, mgs=None, m0=True, base_ms=None):
         ms = earth_ms or m1d
         mgs = mgs or preset_mgs(ctx, cfg, 6)
-        cfgs = [("m1", ms, mgs)] + ([("m0", m0d, None)] if m0 else [])
+        cfgs = [("m1", ms, mgs)] + ([("m0", base_ms or m0d, None)] if m0 else [])
         out = []
         for cfg_, mset, m in cfgs:
             save = make_save_mgs(ctx, mods, mset, "tq2-mode", save_spec, f"save-{label}-{cfg_}", m)
@@ -7559,6 +21157,1110 @@ def ec_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
         "server": [SERVER, sha256_file(HERE / "perf-server-settings.json")], "build": GAME_BUILD,
         "earth": [d["mod"], dump_sha]}), excess_run, excess_derive)
     return checks
+
+
+# -- olde-world-atlantic's suite checks
+
+def fit_record(map_key):
+    """T1 (SS; design review experiments 4 and 5), re-derived from the committed fit records of a map
+    (data-src/fits/<map>/: curve.json from build_geo.py fit and curve, fit.json, manifest.json): the
+    agreement against terms at growth 1.25, the shipped checkpoint the smallest at or above
+    FIT_BAR (every smaller step's own count under it), the coarse field the 256-term checkpoint,
+    the terms saved against 8,192 and the Tile they free (S1-fit's model, beside the review's
+    estimate), and the fit's peak memory. Returns (record, failures)."""
+    try:
+        curve, spec, man = fit_records(map_key)
+    except (OSError, ValueError) as e:
+        return {}, [f"{map_key}: the fit records are unreadable: {e}"]
+    return fit_findings(map_key, curve, spec, man, t1_bars())
+
+
+def fit_records(map_key):
+    """(curve.json, fit.json, manifest.json) of data-src/fits/<map>/, parsed."""
+    d = REPO / "data-src" / "fits" / map_key
+    return tuple(json.loads((d / f).read_text(encoding="utf-8")) for f in ("curve.json", "fit.json", "manifest.json"))
+
+
+def fit_findings(map_key, curve, spec, man, bars):
+    """fit_record's rules over the parsed records (pure, so owa_controls feeds it fixtures): growth
+    1.25 at step 1; the shipped checkpoint the smallest at or above FIT_BAR_T1, or, for a map the flip
+    rule fired for (`bars`, t1_bars), exactly the best fit t1-bars.json records; the
+    coarse field the 256-term step; the manifest emitted from fit.json's checkpoints."""
+    fails = []
+    pts = sorted(curve.get("points") or [], key=lambda p: p["terms"])
+    params = curve.get("params") or {}
+    if params.get("growth") != 1.25 or params.get("step") != 1:
+        fails.append(f"{map_key}: the fit ran at growth {params.get('growth')} and step {params.get('step')}, want "
+                     f"1.25 at native resolution (council experiments 4 and 5)")
+    geo = (spec.get("bodies") or {}).get("geo") or {}
+    coarse = (spec.get("bodies") or {}).get("land_coarse") or {}
+    ship = next((p for p in pts if p["checkpoint"] == geo.get("checkpoint")), None)
+    if ship is None or "t1" not in ship:
+        fails.append(f"{map_key}: the shipped checkpoint {geo.get('checkpoint')} has no evaluated curve point")
+    elif map_key in bars:
+        # a flipped map ships its recorded best fit, held to its own bar
+        if geo.get("checkpoint") != bars[map_key][2]:
+            fails.append(f"{map_key}: fit.json ships {geo.get('checkpoint')}, but tests/baselines/t1-bars.json records "
+                         f"the best fit {bars[map_key][2]} (ruling 10)")
+    else:
+        if ship["t1"]["agreement"] < FIT_BAR_T1:
+            fails.append(f"{map_key}: the shipped checkpoint scores {ship['t1']['agreement']}, under {FIT_BAR_T1}")
+        smaller = [p for p in pts if p["terms"] < ship["terms"] and
+                   max(p.get("sample_agreement", 0), (p.get("t1") or {}).get("agreement") or 0) >= FIT_BAR_T1]
+        if smaller:
+            fails.append(f"{map_key}: a smaller checkpoint reaches {FIT_BAR_T1}: {[p['terms'] for p in smaller][:3]} "
+                         f"(the smallest ships)")
+    cpt = next((p for p in pts if p["checkpoint"] == coarse.get("checkpoint")), None)
+    if cpt is None or cpt.get("terms_target") != 256:
+        fails.append(f"{map_key}: the coarse field's checkpoint {coarse.get('checkpoint')} is not the fit's 256-term step")
+    for body, b in (man.get("bodies") or {}).items():
+        want = (spec.get("bodies") or {}).get(body, {}).get("checkpoint")
+        if not str(b.get("checkpoint", "")).endswith("/" + str(want)):
+            fails.append(f"{map_key}: manifest.json emitted {body} from {b.get('checkpoint')}, fit.json names {want}")
+    ref = next((p for p in pts if p.get("terms_target") == FIT_TERMS_REF), None)
+    rec = {"curve": [[p["terms"], (p.get("t1") or {}).get("agreement", p.get("sample_agreement"))] for p in pts],
+           "shipped": {k: (ship or {}).get(k) for k in ("checkpoint", "terms", "tile_estimate")},
+           "shipped_t1": (ship or {}).get("t1", {}).get("agreement") if ship else None,
+           "shipped_p99_px": ((ship or {}).get("t1") or {}).get("coast_p99_px"),
+           "shipped_max_px": ((ship or {}).get("t1") or {}).get("coast_max_px"),
+           "islands": ((ship or {}).get("t1") or {}).get("islands"),
+           "coarse": {k: (cpt or {}).get(k) for k in ("checkpoint", "terms")},
+           "coarse_t1": ((cpt or {}).get("t1") or {}).get("agreement"),
+           "peak_memory_mb": max([p.get("peak_memory_mb") or 0 for p in pts] +
+                                 [((p.get("t1") or {}).get("peak_memory_mb") or 0) for p in pts] or [0]),
+           "fit_seconds": round(sum(p.get("fit_seconds") or 0 for p in pts), 1),
+           "flipped": bars.get(map_key)}
+    if ship and ref:
+        saved = ref["terms"] - ship["terms"]
+        rec["vs_8192"] = {"terms_saved": saved, "tile_freed_model": ref["tile_estimate"] - ship["tile_estimate"],
+                          "tile_freed_council": round(saved * COUNCIL_TILE_PER_KTERMS / 1000),
+                          "agreement_at_8192": (ref.get("t1") or {}).get("agreement", ref.get("sample_agreement"))}
+    elif ship:
+        rec["vs_8192"] = {"note": "the fit stopped before 8,192 terms"}
+    return rec, fails
+
+
+FIT_BAR_T1 = T1_BAR                     # the fits' selection bar is T1-a's (design section 9)
+
+
+def coast_windows(mref, n=OWA_WINDOW, count=OWA_WINDOWS):
+    """T1 (SS): the `count` windows of n x n reference pixels (n tiles at scale 1) on the densest
+    coast: the raster tiled from its north-west corner (the last row and column of windows pulled
+    inside it), ranked by reference coast pixels (land 4-adjacent to water, thin water excluded),
+    ties by position. Each is (col, row, preview offset), the offset the 32-snapped centre the
+    preview of that window uses at scale 1 in T1's geo frame (t1_frame_mgs: world tile = geo tile,
+    the city offset 0 whatever city the map's preset picks)."""
+    import numpy as np
+    land, thin = mref.land, mref.thin
+    water = ~land & ~thin
+    coast = np.zeros_like(land)
+    coast[1:, :] |= land[1:, :] & water[:-1, :]
+    coast[:-1, :] |= land[:-1, :] & water[1:, :]
+    coast[:, 1:] |= land[:, 1:] & water[:, :-1]
+    coast[:, :-1] |= land[:, :-1] & water[:, 1:]
+    del water
+    cand = []
+    for r0 in sorted({min(r, mref.H - n) for r in range(0, mref.H, n)}):
+        for c0 in sorted({min(c, mref.W - n) for c in range(0, mref.W, n)}):
+            cand.append((-int(coast[r0:r0 + n, c0:c0 + n].sum()), r0, c0))
+    out = []
+    for _, r0, c0 in sorted(cand)[:count]:
+        cx, cy = ((c0 - mref.wr + n // 2) // 32) * 32, ((r0 - mref.hr + n // 2) // 32) * 32
+        out.append((c0, r0, (cx, cy)))
+    return out
+
+
+def owa_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
+    """olde-world-atlantic's suite checks, added to suite_checks' table (design section 9)."""
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    maps = new_maps(cfg)
+    dump_sha = ctx.shared.get("dump_m1_sha")
+    mrefs = {mk: mref_of(mk) for mk in maps}
+    m1t, m1d = earth_driver_modsets(ctx, mods)
+    m0t, m0d, _ = driver_modsets(ctx, mods)
+
+    def base_key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "extra": extra or {}})
+
+    esig_cache = {}
+
+    def esig(modset, mk):
+        """The compiled programs' --verbose signature with the map's preset applied (rule 2)."""
+        k = (modset, mk)
+        if k not in esig_cache:
+            esig_cache[k] = program_signature(ctx, mods, modset, f"e-{mk}-{modset[-8:]}", preset=map_preset(cfg, mk)[0])
+        return esig_cache[k]
+
+    def suite_dirs(name, run_fn, deadline):
+        """Another check's run directories from this suite run, or from the manifest when its key still
+        matches, else a fresh run (v1_sheets' rule)."""
+        ent = (ctx.shared.get("suite_runs") or {}).get(name)
+        if not ent:
+            man = SUITES / "olde-world-atlantic.json"
+            rec = ((json.loads(man.read_text(encoding="utf-8")) if man.exists() else {}).get("checks") or {}).get(
+                name) or {}
+            if rec.get("key") == checks[name].key_fn() and rec.get("run_dirs"):
+                ent = [abs_ws(ctx, x) for x in rec["run_dirs"]]
+        return ent or run_fn(deadline)
+
+    # T1 (SS; design review experiments 4 and 5): the fit records, re-derived from data-src/fits (no game)
+    def fits_run(deadline):
+        out = ctx.out / "owa-fits"
+        out.mkdir(parents=True, exist_ok=True)
+        recs = {mk: fit_record(mk)[0] for mk in maps}
+        (out / "fits.json").write_text(json.dumps(recs, indent=1, default=str), encoding="utf-8")
+        (out / "run.json").write_text(json.dumps({"exit": 0, "isolated": True, "error_lines": [], "images": {}},
+                                                 indent=1), encoding="utf-8")
+        return [out]
+
+    def fits_derive(dirs):
+        fails, meas = [], {}
+        for mk in maps:
+            rec, f = fit_record(mk)
+            fails += f
+            meas[mk] = rec
+        # Atlantic's waterway allocation (6.3): P10 minus its coast, base and the later reserves, from
+        # the coast's measured Tile row at scale 6 (tests/budgets.json, written by baseline)
+        rows = json.loads(BUDGETS.read_text(encoding="utf-8")).get("rows", [])
+        for mk in maps:
+            r6 = next((r for r in rows if r.get("row") == "map" and r.get("map") == mk and r.get("scale") == 6
+                       and r.get("toggles") == "on"), None)
+            if r6 is None:
+                fails.append(f"{mk}: tests/budgets.json holds no scale 6 row: run 'earth_test.py baseline'")
+                continue
+            tile = r6["programs"]["tile"]["complexity"]
+            try:
+                top = headroom_limit(sec6, "waterways", "tile", "M1", mk, "P10") if isinstance(sec6, dict) else None
+            except GateError as e:
+                top, fails = None, fails + [f"{mk}: {e}"]
+            meas[mk]["tile_s6"] = tile
+            meas[mk]["waterway_tile_allocation"] = None if top is None else round(top - tile)
+        detail = "; ".join(f"{mk}: {m.get('shipped', {}).get('terms')} terms at {m.get('shipped_t1')} "
+                           f"(p99 {m.get('shipped_p99_px')}, max {m.get('shipped_max_px')} px), vs 8,192 "
+                           f"{m.get('vs_8192')}, peak {m.get('peak_memory_mb')} MB, waterway Tile left "
+                           f"{m.get('waterway_tile_allocation')}" for mk, m in meas.items())
+        return meas, fails, detail
+
+    checks["owa_fits"] = SuiteCheck("owa_fits", lambda: base_key("owa_fits", {"maps": maps}), fits_run, fits_derive)
+
+    # T1 and T2 (SS; both maps; grid mode): the thresholded elevation at every pixel centre at scales
+    # 1, 3 and 6 (seed 1000) and at scales 1 and 6 at seeds 1002 and 1004
+    grid_jobs = [(mk, s, seed) for mk in maps for s in OWA_T1_SCALES for seed in SEEDS
+                 if seed == SEED or s in OWA_T2_SCALES]
+
+    def grid_timeout(mk):
+        return int(600 + 30 * mrefs[mk].W * mrefs[mk].H / 1e6)     # Europe's 4.1 M px took 40 to 46 s
+
+    def grids_run(deadline):
+        lanes_ms = [probe_modset(ctx, mods, f"m1g{i + 1}") for i in range(PAR_MAX)]
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, (mk, s, seed) in enumerate(grid_jobs):
+            ln = i % PAR_MAX
+            ms, inst = lanes_ms[ln], lane_instance(ctx, ln)
+            out = ctx.out / f"owa-grid-{mk}-s{s}-{seed}"
+            lanes[ln].append((dump_settings(ctx, ms, inst, label="grid", grid=grid_spec(mrefs[mk], s)),
+                              scenario_args(inst, ms, 4, seed, t1_frame_mgs(ctx, cfg, mk, s)), out, grid_timeout(mk)))
+            dirs.append(out)
+        run_lanes(ctx, [l for l in lanes if l])
+        return dirs
+
+    def grids_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != len(grid_jobs):
+            return {}, fails + [f"{len(dirs)} grid runs, want {len(grid_jobs)}"], ""
+        at = {job: dirs[i] for i, job in enumerate(grid_jobs)}
+        for mk in maps:
+            mref, bar = mrefs[mk], map_t1_bar(mk)
+            for s in OWA_T1_SCALES:
+                L, C = grid_land(mref, at[(mk, s, SEED)], s)
+                rec = t1_eval(mref, L, C, scale=s)
+                rec["bar"] = bar
+                meas[f"{mk}_s{s}"] = rec
+                if rec["covered_px"] != mref.W * mref.H:
+                    fails.append(f"{mk} scale {s}: the grid covers {rec['covered_px']} of {mref.W * mref.H} pixels")
+                # T1-e is reported per size bucket on the new maps until island discs land (6.1)
+                if rec["agreement"] is None or rec["agreement"] < bar:
+                    fails.append(f"{mk} scale {s}: grid-mode masked agreement {rec['agreement']} under {bar} (T1-a)")
+                if s in OWA_T2_SCALES:
+                    for seed in SEEDS[1:]:
+                        L2, C2 = grid_land(mref, at[(mk, s, seed)], s)
+                        diff = int(((L2 != L) & C2 & C & ~mref.thin).sum())
+                        meas[f"t2_{mk}_s{s}_{seed}"] = diff
+                        if diff:
+                            fails.append(f"T2: {mk} scale {s} seed {seed}: {diff} grid bits differ from seed {SEED} "
+                                         f"outside the masks")
+                        del L2, C2
+                del L, C
+        return meas, fails, "; ".join(
+            f"{k}: {v['agreement']} (bar {v['bar']}, p99 {v['p99_px']}, max {v['max_px']} px, 65+ "
+            f"{v['islands_conn4']['65+']}, thin water become land {v['thin_water_became_land']['pixels']} px)"
+            for k, v in meas.items() if not k.startswith("t2_")) + \
+            f"; T2 differing bits {[v for k, v in meas.items() if k.startswith('t2_')]}"
+
+    checks["owa_t1_grids"] = SuiteCheck("owa_t1_grids", lambda: base_key("owa_t1_grids", {
+        "jobs": grid_jobs, "dump": dump_sha}), grids_run, grids_derive)
+
+    # T1 (SS): twenty 1024 px preview windows per map at scale 1 on the densest coast confirm the
+    # grid: every pixel where preview tiles and grid bits disagree lies in S8's uncertain band
+    win_cache = {}
+
+    def windows_of(mk):
+        if mk not in win_cache:
+            win_cache[mk] = coast_windows(mrefs[mk])
+        return win_cache[mk]
+
+    def windows_run(deadline):
+        import numpy as np
+        gdirs = suite_dirs("owa_t1_grids", grids_run, deadline)
+        at = {job: gdirs[i] for i, job in enumerate(grid_jobs)}
+        ms = [mods.make(f"ea-m1v{i + 1}-{mods.zip_sha[:8]}", [mods.build_zip()]) for i in range(PAR_MAX)]
+        for i, m in enumerate(ms):
+            mods.prepare(m, f"m1v{i + 1}")
+        jobs = [(mk, j, off) for mk in maps for j, (_, _, off) in enumerate(windows_of(mk))]
+        lanes, dirs = [[] for _ in range(PAR_MAX)], []
+        for i, (mk, j, off) in enumerate(jobs):
+            ln = i % PAR_MAX
+            out = ctx.out / f"owa-win-{mk}-{j:02d}"
+            lanes[ln].append((None, preview_args(lane_instance(ctx, ln), ms[ln], OWA_WINDOW, SEED,
+                                                 t1_frame_mgs(ctx, cfg, mk, 1, cliffs=False), off), out, 900))
+            dirs.append(out)
+        run_lanes(ctx, lanes)
+        # the elevation at every disagreeing tile (scale 1), probed per map on the probe modset
+        pm = probe_modset(ctx, mods, "m1g1")
+        for mk in maps:
+            mref = mrefs[mk]
+            L1, C1 = grid_land(mref, at[(mk, 1, SEED)], 1)
+            runs = [(dirs[k], off) for k, (m_, _, off) in enumerate(jobs) if m_ == mk]
+            Lp, Cp, _ = previews_land(mref, runs, 1, blocking_water_colours(ctx.shared["dump_m1"]),
+                                      cliff_colours(ctx.shared["dump_m1"]))
+            rr, cc = np.nonzero((L1 != Lp) & C1 & Cp)
+            pts = [(int(c) - mref.wr, int(r) - mref.hr) for r, c in zip(rr.tolist(), cc.tolist())][:2000]
+            out = ctx.out / f"owa-band-{mk}"
+            if pts:
+                dump_settings(ctx, pm, ctx.instance, label="band", points=";".join(f"{x},{y}" for x, y in pts),
+                              names="elevation")()
+                ctx.fh(scenario_args(ctx.instance, pm, 4, SEED, t1_frame_mgs(ctx, cfg, mk, 1)), out)
+            else:
+                out.mkdir(parents=True, exist_ok=True)
+                (out / "run.json").write_text(json.dumps({"exit": 0, "isolated": True, "error_lines": [],
+                                                          "images": {}}), encoding="utf-8")
+            dirs.append(out)
+        return dirs + list(gdirs)
+
+    def windows_derive(dirs):
+        fails, meas = [], {}
+        nwin = sum(len(windows_of(mk)) for mk in maps)
+        pv, band, gdirs = dirs[:nwin], dirs[nwin:nwin + len(maps)], dirs[nwin + len(maps):]
+        for x in pv + band:
+            fails += g1(x) + g3(x)
+        at = {job: gdirs[i] for i, job in enumerate(grid_jobs)}
+        colours, hidden = blocking_water_colours(ctx.shared["dump_m1"]), cliff_colours(ctx.shared["dump_m1"])
+        k = 0
+        for mi, mk in enumerate(maps):
+            mref, wins = mrefs[mk], windows_of(mk)
+            runs = [(pv[k + j], off) for j, (_, _, off) in enumerate(wins)]
+            k += len(wins)
+            if len(wins) != OWA_WINDOWS:
+                fails.append(f"{mk}: {len(wins)} coast windows, want {OWA_WINDOWS}")
+            Lp, Cp, Hd = previews_land(mref, runs, 1, colours, hidden)
+            if Hd.any():
+                fails.append(f"{mk}: {int(Hd.sum())} cliff pixels in the cliff-free window previews")
+            L1, C1 = grid_land(mref, at[(mk, 1, SEED)], 1)
+            dis = (L1 != Lp) & C1 & Cp
+            rec = t1_eval(mref, Lp, Cp, scale=1)
+            rec["grid_vs_preview_px"] = int(dis.sum())
+            vals = point_values(read_dump(band[mi], "band")) if dis.any() else {}
+            out_band = [p for p, v in vals.items()
+                        if not (UNCERTAIN_BAND[0] <= (v.get("elevation") or 0) < UNCERTAIN_BAND[1])]
+            rec["probed"], rec["outside_band"] = len(vals), len(out_band)
+            if dis.any() and (out_band or int(dis.sum()) > len(vals)):
+                fails.append(f"{mk}: {int(dis.sum())} pixels disagree between grid bits and preview tiles; "
+                             f"{len(out_band)} probed outside S8's band {UNCERTAIN_BAND}, e.g. {out_band[:3]}"
+                             f"{' (more than the 2,000 probed)' if int(dis.sum()) > len(vals) else ''}")
+            rec["windows"] = [[c0, r0] for c0, r0, _ in wins]
+            meas[mk] = rec
+            del L1, C1, Lp, Cp, Hd
+        return meas, fails, "; ".join(
+            f"{mk}: {OWA_WINDOWS} windows, preview agreement {m['agreement']} (p99 {m['p99_px']}, max {m['max_px']} px), "
+            f"grid against preview {m['grid_vs_preview_px']} px apart, all in S8's band" for mk, m in meas.items())
+
+    checks["owa_t1_windows"] = SuiteCheck("owa_t1_windows", lambda: base_key("owa_t1_windows", {
+        "jobs": grid_jobs, "windows": OWA_WINDOWS, "size": OWA_WINDOW, "dump": dump_sha}), windows_run, windows_derive)
+
+    # V1 (SS renders; TST-14): contact sheets of both maps against their reference rasters at
+    # scales 1, 3 and 6, from the T1 grids (and the window previews at scale 1), listed in the manifest
+    def v1_run(deadline):
+        import contact_sheet
+        gdirs = suite_dirs("owa_t1_grids", grids_run, deadline)
+        at = {job: gdirs[i] for i, job in enumerate(grid_jobs)}
+        wdirs = suite_dirs("owa_t1_windows", windows_run, deadline)
+        out = ctx.out / "owa-v1"
+        out.mkdir(parents=True, exist_ok=True)
+        k = 0
+        for mk in maps:
+            mref, wins = mrefs[mk], windows_of(mk)
+            runs = [(wdirs[k + j], off) for j, (_, _, off) in enumerate(wins)]
+            k += len(wins)
+            sheets = {"whole": (0, 0, mref.W, mref.H)}
+            for j, (c0, r0, _) in enumerate(wins[:3]):
+                sheets[f"coast{j + 1}"] = (c0 + 256, r0 + 312, 512, 400)
+            for s in OWA_T1_SCALES:
+                L, C = grid_land(mref, at[(mk, s, SEED)], s)
+                for name, win in sheets.items():
+                    pvp, po = None, (0, 0)
+                    if s == 1 and name != "whole":
+                        j = int(name[-1]) - 1
+                        pvp, po = Path(runs[j][0]) / f"{SEED}.png", runs[j][1]
+                    contact_sheet.build(mref, win, L, C, pvp, po, str(s), "floor", 480, out / f"{mk}-s{s}-{name}.png",
+                                        fh_compare=False)
+                del L, C
+        (out / "run.json").write_text(json.dumps({"exit": 0, "isolated": True, "error_lines": [],
+                                                  "images": {p.name: sha256_file(p) for p in sorted(out.glob("*.png"))}},
+                                                 indent=1), encoding="utf-8")
+        return [out]
+
+    def v1_derive(dirs):
+        rj = load_run_json(dirs[0]) or {}
+        fails = images_rehash(dirs[0])
+        sheets = sorted(rj.get("images") or {})
+        for mk in maps:
+            for s in OWA_T1_SCALES:
+                if not any(n.startswith(f"{mk}-s{s}-") for n in sheets):
+                    fails.append(f"no contact sheet of {mk} at scale {s}")
+        return {"sheets": sheets}, fails, f"{len(sheets)} contact sheets of {maps} for the verification pass's reviewer (V1)"
+
+    checks["owa_v1_sheets"] = SuiteCheck("owa_v1_sheets", lambda: base_key("owa_v1_sheets", {
+        "jobs": grid_jobs, "windows": OWA_WINDOWS, "dump": dump_sha}), v1_run, v1_derive)
+
+    # T7 (SS): T7 (a) against the reference data first (owa_t7_reference, no game); then, through
+    # spawn-cities' machinery, every city plus random at scales 1, 3 and 6 on each new map at seed 1000
+    # (sc_t7_eval: (a) land at the spawn, (b) and (c), T18 (a)) and random's read-back at S7's other
+    # seeds against the float32 model; the in-game part fails closed while owa_t7_gaps names a gap
+    t7_values = {mk: list((city_setting_of(cfg, mk) or {}).get("allowed_values") or []) for mk in maps}
+    t7_jobs = ([(mk, city, s, SEED) for mk in maps for s in OWA_T7_SCALES for city in t7_values[mk]] +
+               [(mk, t7_values[mk][0], 6, seed) for mk in maps if t7_values[mk] for seed in OWA_T7_SEEDS
+                if seed != SEED])
+
+    def t7_run(deadline):
+        out = ctx.out / "owa-t7-reference"
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "reference.json").write_text(json.dumps(owa_t7_reference(cfg, maps)[0], indent=1, default=str),
+                                            encoding="utf-8")
+        (out / "run.json").write_text(json.dumps({"exit": 0, "isolated": True, "error_lines": [], "images": {}},
+                                                 indent=1), encoding="utf-8")
+        if owa_t7_gaps(cfg, maps):
+            return [out]
+        sc = spawn_machinery()
+        lanes = sc["sc_lane_modsets"](ctx, mods, "owat7", PAR_MAX - 1)
+        jobs = []
+        for i, (mk, city, s, seed) in enumerate(t7_jobs):
+            ln = i % len(lanes)
+            inst = lane_instance(ctx, ln)
+            label = f"owa-t7-{mk}-{city}-s{s}-{seed}"
+            jobs.append((sc["sc_t7_settings"](ctx, lanes[ln], inst, cfg, tnconfig.geography(cfg)[mk]),
+                         scenario_args(inst, lanes[ln], 3, seed, sc["sc_mgs"](ctx, cfg, mk, s, city, label)),
+                         ctx.out / label, ln))
+        dirs = sc["sc_scenarios"](ctx, jobs)
+        m0p = sc["sc_m0_probe"](ctx, mods)
+        inst = lane_instance(ctx, PAR_MAX - 1)
+        sc["sc_m0_settings"](ctx, m0p, inst)()
+        return [out] + dirs + [ctx.fh(scenario_args(inst, m0p, 3, SEED), ctx.out / "owa-t7-m0").out]
+
+    def t7_derive(dirs):
+        ref, fails = owa_t7_reference(cfg, maps)
+        meas = {"reference": ref}
+        gaps = owa_t7_gaps(cfg, maps)
+        if gaps:
+            return meas, fails + gaps, f"T7 (a) on the reference data {ref}; the in-game T7 did not run: {gaps[0]}"
+        sc = spawn_machinery()
+        for d_ in dirs[1:]:
+            fails += g1(d_) + g3(d_)
+        if len(dirs) != len(t7_jobs) + 2:
+            return meas, fails + [f"{len(dirs)} run directories, want {len(t7_jobs) + 2}"], ""
+        m0 = sc["sc_m0_ore"](dirs[-1])
+        for (mk, city, s, seed), d_ in zip(t7_jobs, dirs[1:-1]):
+            g = tnconfig.geography(cfg)[mk]
+            number, label = t7_values[mk].index(city), f"{mk} {city} scale {s} seed {seed}"
+            if seed == SEED:
+                rec, f = sc["sc_t7_eval"](cfg, mk, g, d_, m0, seed, number, s, label)
+            else:
+                # (c) alone: vanilla's ore is compared at seed 1000 only
+                got = point_values(read_dump(d_, "t7")).get((0, 0), {}).get(g["city_index"])
+                want, n = sc["resolved_city"](cfg, mk, seed, number), len(t7_values[mk]) - 1
+                rec, f = {"city_index": got, "model": want}, []
+                if got != want:
+                    f.append(f"{label}: city index {got} read back at (0, 0); the float32 model gives {want}")
+                if not (isinstance(got, (int, float)) and 1 <= got <= n):
+                    f.append(f"{label}: city index {got} is no city of the table (1 to {n})")
+            meas[f"{mk}-{city}-s{s}-{seed}"] = rec
+            fails += f
+        for mk in maps:
+            picks = {(meas.get(f"{mk}-{t7_values[mk][0]}-s6-{seed}") or {}).get("city_index") for seed in OWA_T7_SEEDS}
+            if len(picks) < 3:
+                fails.append(f"{mk}: random picks {sorted(map(str, picks))} over S7's five seeds, fewer than three cities "
+                             f"(G6)")
+        meas["m0_ore"] = m0
+        return meas, fails, (f"T7 (a) on the reference data {ref}; {len(t7_jobs)} scenarios on {maps} (every city plus "
+                             f"random at scales {list(OWA_T7_SCALES)}, random at S7's seeds): {len(fails)} failures")
+
+    checks["owa_t7"] = SuiteCheck("owa_t7", lambda: base_key("owa_t7", {
+        "jobs": t7_jobs, "dump": dump_sha, "folds": sorted(mk for mk in maps if city_fold(cfg, mk))}), t7_run, t7_derive)
+
+    # T11 (SS): one A then B pair per new map with the scale (A 3, B 5) and the city flipped
+    # (A the setting's default, random; B the dropdown's last city: t11_cities), over S2's probe set
+    # plus a coast at scale A. A map without spawn-cities' city fold fails closed: its city flip
+    # cannot run, and its per-save city would otherwise go untested.
+    a_s, b_s = T11_AB
+    flips = {mk: t11_cities(cfg, mk) for mk in maps}
+
+    def t11_areas(mk):
+        (vx, vy), _ = map_view(cfg, mk, scale=a_s, size=96)
+        return f"{T11_AREAS};{vx - 48},{vy - 48},96,96"
+
+    def t11_run(deadline):
+        msa = probe_modset(ctx, mods, f"m1t11a{a_s}", scale=a_s)
+        msb = probe_modset(ctx, mods, f"m1t11b{b_s}", scale=b_s)
+        set_startup(ctx, msa, [(f[0], f[1]) for f in flips.values() if f])
+        set_startup(ctx, msb, [(f[0], f[2]) for f in flips.values() if f])
+        inst, outs = ctx.instance, []
+        for mk in maps:
+            pname, _ = map_preset(cfg, mk)
+            fold = city_fold(cfg, mk)
+            names = f"{cfg['keys']['scale']},elevation" + (f",{fold['city_index']}" if fold else "")
+            sa = ctx.out / f"owa-t11-{mk}-create-a" / "a.zip"
+            sb = ctx.out / f"owa-t11-{mk}-create-b" / "b.zip"
+            outs += [ctx.fh(create_args(inst, msa, sa, preset=pname), sa.parent).out,
+                     ctx.fh(create_args(inst, msb, sb, preset=pname), sb.parent).out]
+            for label, ms, save in (("a-under-b", msb, sa), ("a-under-a", msa, sa), ("b-under-b", msb, sb)):
+                dump_settings(ctx, ms, inst, label="t11", areas=t11_areas(mk), points="0,0", names=names)()
+                outs.append(ctx.fh(scenario_args(inst, ms, 4, save=save), ctx.out / f"owa-t11-{mk}-{label}").out)
+        return outs
+
+    def t11_derive(dirs):
+        fails, meas = [], {}
+        for x in dirs:
+            fails += g1(x) + g3(x)
+        if len(dirs) != 5 * len(maps):
+            return {}, fails + [f"{len(dirs)} run directories, want {5 * len(maps)}"], ""
+        K = cfg["keys"]
+        for i, mk in enumerate(maps):
+            ds = dirs[5 * i:5 * i + 5]
+            ab, aa, bb = (read_dump(x, "t11") for x in ds[2:5])
+            tab, taa, tbb = (area_tiles(x) for x in (ab, aa, bb))
+            d_aa = sum(1 for x, y in zip(tab, taa) if x != y)
+            d_bb = sum(1 for x, y in zip(tab, tbb) if x != y)
+            ea, eaa = area_entities(ab), area_entities(aa)
+            v = point_values(ab).get((0, 0), {}).get(K["scale"])
+            drift = count_lines(log_text(ds[2]), render_message(cfg, "drift_scale", a_s, b_s))
+            meas[mk] = {"tiles": len(tab), "vs_a": d_aa, "vs_b": d_bb, "entities_vs_a": ea == eaa,
+                        "scale_read_back": v, "drift_lines": drift}
+            if d_aa or not tab or len(taa) != len(tab) or len(tbb) != len(tab):
+                fails.append(f"{mk}: A loaded under B differs from fresh A in {d_aa} of {len(tab)} tiles (want 0)")
+            if ea != eaa:
+                fails.append(f"{mk}: A loaded under B differs from fresh A in entities ({len(ea)} against {len(eaa)})")
+            if not d_bb:
+                fails.append(f"{mk}: A loaded under B equals a fresh B world: the scale and city did not shape the map "
+                             f"(G6)")
+            if v != a_s or drift != 1:
+                fails.append(f"{mk}: {K['scale']} reads {v} under B (want {a_s}); drift lines {drift} (want 1)")
+            m, f = t11_city_findings(cfg, mk, flips[mk], ab, aa, bb, [log_text(x) for x in ds[2:5]])
+            meas[mk]["city_flip"] = m
+            fails += f
+        return meas, fails, "; ".join(f"{mk}: scale {a_s} loaded under {b_s}: {m['vs_a']} of {m['tiles']} tiles differ "
+                                      f"from fresh A, {m['vs_b']} from fresh B, entities equal {m['entities_vs_a']}; "
+                                      f"city flip {m['city_flip'] or 'not run (no city fold)'}"
+                                      for mk, m in meas.items())
+
+    checks["owa_t11"] = SuiteCheck("owa_t11", lambda: base_key("owa_t11", {"ab": T11_AB, "maps": maps,
+                                                                           "cities": flips}), t11_run, t11_derive)
+
+    # The positions every timed check uses: each map's T15b blocks (map_positions)
+    pos = {mk: map_positions(cfg, mk) for mk in maps}
+
+    def census_of(mk, s):
+        return ((((baseline_record().get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get(str(s))) or {}
+
+    # The Map type route of each new map, measured and reported (Contradictions item 15; T15)
+    def mt_run(deadline):
+        out = []
+        for mk in maps:
+            mt = map_maptype_mgs(ctx, cfg, mk)
+            out.append(ctx.fh(preview_args(ctx.instance, ctx.shared["m1"], 64, mgs=mt, verbose=True),
+                              ctx.out / f"owa-mt-cx-{mk}").out)
+            sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos[mk]["block"][6], f"owa-mt-{mk}-a", mt)
+            sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos[mk]["block"][6], f"owa-mt-{mk}-b")
+            out.append(pair_batch(ctx, {"a": (m1t, sa), "b": (m0t, sb)}, T15B["reps_suite"], [ctx.perf.MASK16],
+                                  f"owa-t15b-maptype-{mk}", deadline))
+        return out
+
+    def mt_derive(dirs):
+        fails, meas = [], {}
+        for i, mk in enumerate(maps):
+            fails += g1(dirs[2 * i])
+            cx = ctx_complexity(dirs[2 * i])
+            m, f, _ = derive_t15b([dirs[2 * i + 1]], {}, T15B["reps_suite"], pair="m1_m0", label=f"{mk} Map type/M0t",
+                                  census_m0=census_of(mk, 6))
+            fails += f
+            meas[mk] = {"complexity": cx, "forced_16lp": m}
+        return meas, fails, "; ".join(
+            f"{mk}: reported, not gated: Tile {m['complexity'].get('tile', {}).get('complexity')}, Entity "
+            f"{m['complexity'].get('entity', {}).get('complexity')}, Cliff {m['complexity'].get('cliff', {}).get('complexity')}; "
+            f"forced generation {(m['forced_16lp'].get(f'{0xFFFF:#x}') or {}).get('ratio')}x M0 at 16 LP"
+            for mk, m in meas.items())
+
+    checks["owa_maptype_cost"] = SuiteCheck("owa_maptype_cost", lambda: key_of({
+        "check": "owa_maptype_cost", "sig": [esig(m1t, mk) for mk in maps], "timing": timing, "control": ctl,
+        "pos": pos, "records": TIMED_RECORDS, "earth": [d["mod"], dump_sha]}), mt_run, mt_derive)
+
+    # T15 (SS; per map; P1, P3): forced generation of each new map's block at scales 6 and 1 at 16 LP and
+    # at scale 6 at 24 LP against M0 in one group, 8 LP recorded; the flip rule evaluated and recorded
+    def t15b_run(deadline):
+        out = []
+        for mk in maps:
+            for s in T15B_SCALES:
+                sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos[mk]["block"][s], f"owa-m1t-{mk}-s{s}",
+                                   map_preset_mgs(ctx, cfg, mk, s))
+                sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos[mk]["block"][s], f"owa-m0t-{mk}-s{s}")
+                masks = [getattr(ctx.perf, m) if m != "MASK24" else MASK24 for m in T15B_MASKS[s]]
+                out.append(pair_batch(ctx, {"a": (m1t, sa), "b": (m0t, sb)}, T15B["reps_suite"], masks,
+                                      f"owa-t15b-{mk}-s{s}", deadline))
+        return out
+
+    def t15b_derive(dirs):
+        fails, meas = [], {}
+        k = 0
+        bars = t1_bars(cfg)
+        for mk in maps:
+            lim = p1_limits(sec6, "olde-world-atlantic", mk) if isinstance(sec6, dict) else {}
+            p1 = ((lim.get("P1") or {}).get("limit") or {}).get("max")
+            rec = {"blocks": pos[mk]["block"], "block_land": pos[mk]["block_land"]}
+            fired = []
+            for s in T15B_SCALES:
+                m, f, _ = derive_t15b([dirs[k]], lim, T15B["reps_suite"], pair="m1_m0", label=f"{mk} M1t/M0t scale {s}",
+                                      census_m0=census_of(mk, s))
+                k += 1
+                if not census_of(mk, s):
+                    f = f + [f"tests/baselines holds no M0 census of {mk}'s scale {s} block: run 'earth_test.py baseline'"]
+                fails += [f"{mk} scale {s}: {x}" for x in f]
+                rec[f"scale_{s}"] = m
+                r16 = (m.get(f"{0xFFFF:#x}") or {}).get("ratio")
+                if p1 is not None and r16 is not None and r16 > p1:
+                    fired.append(s)
+                frac = pos[mk]["block_land"][s]
+                if not (BLOCK_LAND[0] <= frac <= BLOCK_LAND[1]):
+                    fails.append(f"{mk} scale {s}: the block {pos[mk]['block'][s]} holds {frac:.1%} reference land")
+            # the flip rule: a map over P1 at 16 LP
+            # takes the runner-up (tents 4,096 plus the band fix) under its next versioned geography,
+            # with a design note and its bar in tests/baselines/t1-bars.json; a bar
+            # there for a map whose flip did not fire fails too
+            rec["flip_rule"] = {"fired": bool(fired), "scales": fired, "bar": p1, "t1_bar": bars.get(mk)}
+            fails += flip_findings(mk, fired, bars, p1)
+            meas[mk] = rec
+        return meas, fails, "; ".join(
+            f"{mk}: " + ", ".join(f"scale {s} " + ", ".join(f"{mask} {v.get('ratio')}" for mask, v in
+                                                          (m.get(f'scale_{s}') or {}).items())
+                                  for s in T15B_SCALES) + f"; flip rule fired {m['flip_rule']['fired']}"
+            for mk, m in meas.items())
+
+    checks["owa_t15b"] = SuiteCheck("owa_t15b", lambda: key_of({
+        "check": "owa_t15b", "sig": [esig(m1t, mk) for mk in maps] + [sig(m0t, "m0t")], "control": ctl,
+        "timing": timing, "config": T15B, "pos": pos, "masks": T15B_MASKS, "build": GAME_BUILD,
+        "borderline": BORDERLINE, "records": TIMED_RECORDS, "earth": [d["mod"], dump_sha]}), t15b_run, t15b_derive)
+    return checks
+
+
+def rl_suite_checks(ctx, mods, sec6, checks, d):
+    """region-layer's suite checks, added to suite_checks' table (design section 10, milestone 1)."""
+    import build_regions as br
+    import numpy as np
+    import oracle
+    ensure_dumps(ctx, mods)
+    cfg = mods.cfg
+    rows = rl_rows()
+    names = rl_names(cfg, rows)
+    maps = [k for k in cfg["map_order"] if (cfg.get("geography") or {}).get(k)]
+    frame = cfg["regions"]["frame"]
+    kpp = br.km_per_px(cfg)
+    dump_sha = ctx.shared.get("dump_m1_sha")
+
+    def base_key(name, extra=None):
+        return key_of({"check": name, "mod": d["mod"], "tools": d["tools"], "test_mods": d["test_mods"],
+                       "data_src": d["data_src"], "tests": d["tests"], "fh": d["fh"], "build": GAME_BUILD,
+                       "dump": dump_sha, "extra": extra or {}})
+
+    def lanes_of(n, tag):
+        return [rl_modset(ctx, mods, f"{tag}{i + 1}") for i in range(min(PAR_MAX, n))]
+
+    def run_jobs(jobs, tag):
+        """jobs: [(mk, scale, seed, label, out, vals)] over at most PAR_MAX workers."""
+        ms = lanes_of(len(jobs), tag)
+        lanes = [[] for _ in ms]
+        for i, (mk, s, seed, label, out, vals) in enumerate(jobs):
+            ln = i % len(ms)
+            lanes[ln].append(rl_job(ctx, cfg, ms[ln], lane_instance(ctx, ln), mk, s, seed, label, out, **vals))
+        run_lanes(ctx, [l for l in lanes if l])
+        return [j[4] for j in jobs]
+
+    # T3 (SS; every map at scales 1 and 6; seeds 1000, 1002 and 1004)
+    t3_jobs = [(mk, s, seed) for mk in maps for s in RL_T3_SCALES for seed in SEEDS]
+    t3_pts = {}
+
+    def t3_points(mk, s):
+        if (mk, s) not in t3_pts:
+            t3_pts[(mk, s)] = rl_points(cfg, oracle.load_oracle(mk, TESTS / "oracle"), mk, s)
+        return t3_pts[(mk, s)]
+
+    def t3_run(deadline):
+        jobs = []
+        for mk, s, seed in t3_jobs:
+            pts = t3_points(mk, s)
+            jobs.append((mk, s, seed, "t3", ctx.out / f"rl-t3-{mk}-s{s}-{seed}",
+                         {"points": ";".join(f"{x},{y}" for _, (x, y) in pts), "names": ",".join(rl_point_names(cfg, pts))}))
+        return run_jobs(jobs, "rlt")
+
+    def t3_derive(dirs):
+        fails, meas, listed = [], {}, []
+        if len(dirs) != len(t3_jobs):
+            return {}, [f"{len(dirs)} T3 runs, want {len(t3_jobs)}"], ""
+        for (mk, s, seed), dr in zip(t3_jobs, dirs):
+            fails += g1(dr) + g3(dr)
+            probe = rl_read(dr, "t3")
+            fails += rl_g5(cfg, probe, mk, s, seed)
+            c, f, lst = rl_t3_eval(cfg, t3_points(mk, s), probe, f"{mk} scale {s} seed {seed}")
+            fails += f
+            listed += lst
+            meas[f"{mk}_s{s}_{seed}"] = c
+        meas["listed"] = listed
+        tot = {k: sum(v[k] for kk, v in meas.items() if kk != "listed") for k in ("pass", "listed", "fail")}
+        return meas, fails, f"every map at scales {list(RL_T3_SCALES)} and seeds {list(SEEDS)}: {tot}; listed {listed[:4]}"
+
+    checks["rl_t3_maps"] = SuiteCheck("rl_t3_maps", lambda: base_key("rl_t3_maps", {"jobs": t3_jobs}), t3_run, t3_derive)
+
+    # T2 (SS; seeds 1000, 1002 and 1004; every map at scales 1 and 6): the zone, each warped or
+    # roughened row at scale 6, the hotspot centres; seed 1000 repeated on every map at both scales,
+    # every grid and every read constant of a repeat compared bit for bit with the first run's
+    zone_row = next(r for r in rows if r["layer"] == "destroyed" and r.get("mode") != "exclude")
+    zone_shape = br.shape_px(zone_row, cfg)
+    s6 = RL_T2_SCALES[0]
+
+    def edge_rows(mk):
+        return [r for r in br.rows_on(rows, mk) if r["layer"] in ("forest", "marsh")]
+
+    def row_grid(mk, r):
+        sh = br.shape_px(r, cfg)
+        g = rl_grid(cfg, mk, s6, sh)
+        step = max(1, int(math.ceil(max(g["nx"], g["ny"]) / RL_ROW_SIDE)))
+        return rl_grid(cfg, mk, s6, sh, step_px=step) if step > 1 else g
+
+    def hot_consts(mk):
+        return [names["rows"][r["id"]][k] for r in br.rows_on(rows, mk) if r["layer"] == "hotspot" for k in ("hu", "hv")]
+
+    def t2_vals(mk, s):
+        grids = [rl_grid_arg("zone", rl_grid(cfg, mk, s, zone_shape), "sign", [names["aggregates"]["destroyed_sd"]])]
+        if s == s6:
+            grids += [rl_grid_arg(f"row-{r['id']}", row_grid(mk, r), "sign", [names["rows"][r["id"]]["sd"]])
+                      for r in edge_rows(mk)]
+        K = cfg["keys"]
+        return {"grids": ";".join(grids), "constants": ",".join([K["map"], K["scale"]] + hot_consts(mk))}
+
+    t2_jobs = ([(mk, s, seed, False) for mk in maps for s in RL_T2_SCALES for seed in SEEDS] +
+               [(mk, s, SEED, True) for mk in maps for s in RL_T2_SCALES])
+
+    def t2_run(deadline):
+        jobs = [(mk, s, seed, "t2", ctx.out / f"rl-t2-{mk}-s{s}-{seed}{'-repeat' if rep else ''}", t2_vals(mk, s))
+                for mk, s, seed, rep in t2_jobs]
+        return run_jobs(jobs, "rlz")
+
+    def iou(a, b):
+        u = int((a | b).sum())
+        return round(int((a & b).sum()) / u, 4) if u else None
+
+    pairs = ((SEEDS[0], SEEDS[1]), (SEEDS[0], SEEDS[2]), (SEEDS[1], SEEDS[2]))
+
+    def t2_derive(dirs):
+        fails, meas = [], {}
+        if len(dirs) != len(t2_jobs):
+            return {}, [f"{len(dirs)} T2 runs, want {len(t2_jobs)}"], ""
+        at = {}
+        for job, dr in zip(t2_jobs, dirs):
+            mk, s, seed, rep = job
+            fails += g1(dr) + g3(dr)
+            probe = rl_read(dr, "t2")
+            fails += rl_g5(cfg, probe, mk, s, seed)
+            at[job] = probe
+        zname = names["aggregates"]["destroyed_sd"]
+        zone = {}
+        for mk in maps:
+            masks = {}
+            for s in RL_T2_SCALES:
+                g = rl_grid(cfg, mk, s, zone_shape)
+                U, V = rl_uv(g)
+                sdp = br.sd_grid(zone_shape, U, V)
+                poly = sdp > 0
+                for seed in SEEDS:
+                    b = rl_bits(rl_probe_grid(at[(mk, s, seed, False)], "zone"), zname)
+                    if (b == 2).any():
+                        fails.append(f"{mk} scale {s} seed {seed}: {int((b == 2).sum())} zone samples not finite")
+                    m = b == 1
+                    masks[(s, seed)] = m
+                    ip = iou(m, poly)
+                    beyond = round(float(-sdp[m].min()), 3) if m.any() else None
+                    zone[f"{mk}_s{s}_{seed}"] = {"iou_polygon": ip, "beyond_px": beyond, "zone_px": int(m.sum())}
+                    if ip is None or ip < RL_IOU_POLYGON:
+                        fails.append(f"{mk} scale {s} seed {seed}: the zone's IoU with the approved polygon {ip} under "
+                                     f"{RL_IOU_POLYGON} (T2)")
+                    if beyond is None or beyond > RL_BEYOND_PX + RL_EPS_PX:
+                        fails.append(f"{mk} scale {s} seed {seed}: a zone pixel {beyond} px beyond the polygon (at most "
+                                     f"{RL_BEYOND_PX}, T2)")
+                for a, b in pairs:
+                    v = iou(masks[(s, a)], masks[(s, b)])
+                    zone[f"{mk}_s{s}_iou_{a}_{b}"] = v
+                    if v is None or not (RL_IOU_PAIRS[0] <= v <= RL_IOU_PAIRS[1]):
+                        fails.append(f"{mk} scale {s}: the zone's IoU between seeds {a} and {b} is {v}, outside "
+                                     f"{RL_IOU_PAIRS} (T2)")
+            if all((s, SEED) in masks for s in RL_T2_SCALES) and len(RL_T2_SCALES) == 2:
+                m6, m1 = masks[(RL_T2_SCALES[0], SEED)], masks[(RL_T2_SCALES[1], SEED)]
+                zone[f"{mk}_scales_differing_px"] = int((m6 != m1).sum()) if m6.shape == m1.shape else None
+            for s in RL_T2_SCALES:
+                rep = rl_bits(rl_probe_grid(at[(mk, s, SEED, True)], "zone"), zname) == 1
+                same_shape = rep.shape == masks[(s, SEED)].shape
+                zone[f"{mk}_s{s}_repeat_differing_px"] = int((rep != masks[(s, SEED)]).sum()) if same_shape else None
+        # one realization in geography (the warp is anchored to the region frame): every map's zone at
+        # scale 6 equals the frame map's over the same frame pixels, and each map's equals itself at
+        # scale 1
+        base = rl_bits(rl_probe_grid(at[(frame, s6, SEED, False)], "zone"), zname) == 1
+        for mk in maps:
+            if mk == frame:
+                continue
+            g0, g1_ = rl_grid(cfg, frame, s6, zone_shape), rl_grid(cfg, mk, s6, zone_shape)
+            if (g0["u0"], g0["v0"], g0["nx"], g0["ny"]) != (g1_["u0"], g1_["v0"], g1_["nx"], g1_["ny"]):
+                fails.append(f"{mk}: the zone grid covers other frame pixels than {frame}'s")
+                continue
+            b = rl_bits(rl_probe_grid(at[(mk, s6, SEED, False)], "zone"), zname) == 1
+            zone[f"{mk}_vs_{frame}_differing_px"] = int((b != base).sum())
+            if zone[f"{mk}_vs_{frame}_differing_px"]:
+                fails.append(f"{mk}: the zone at seed {SEED} differs from {frame}'s in {zone[f'{mk}_vs_{frame}_differing_px']} "
+                             f"frame pixels (one realization in geography on every map)")
+        for mk in maps:
+            if zone.get(f"{mk}_scales_differing_px"):
+                fails.append(f"{mk}: the zone at seed {SEED} differs between scales {list(RL_T2_SCALES)} in "
+                             f"{zone[f'{mk}_scales_differing_px']} pixels (the warp reads reference pixels)")
+        meas["zone"] = zone
+        # every warped or roughened row on every map at scale 6: its edge moves per seed and never past
+        # its drift bound (the warp clamp times its share plus the roughness clamp)
+        rp = {}
+        for mk in maps:
+            for r in edge_rows(mk):
+                sh = br.shape_px(r, cfg)
+                g = row_grid(mk, r)
+                Ur, Vr = rl_uv(g)
+                nom = br.sd_grid(sh, Ur, Vr)
+                bound = br.max_drift_px(r, cfg)
+                rec, bits = {"bound_px": bound, "step_px": g["step"]}, []
+                for seed in SEEDS:
+                    b = rl_bits(rl_probe_grid(at[(mk, s6, seed, False)], f"row-{r['id']}"), names["rows"][r["id"]]["sd"]) == 1
+                    bits.append(b)
+                    out_most = float(-nom[b].min()) if b.any() else None
+                    in_most = float(nom[~b].max()) if (~b).any() else None
+                    rec[str(seed)] = {"iou_nominal": iou(b, nom > 0), "beyond_px": out_most, "short_px": in_most}
+                    if out_most is not None and out_most > bound + RL_EPS_PX:
+                        fails.append(f"{mk} row {r['id']} seed {seed}: inside {out_most:.2f} px beyond its shape (bound "
+                                     f"{bound})")
+                    if in_most is not None and in_most > bound + RL_EPS_PX:
+                        fails.append(f"{mk} row {r['id']} seed {seed}: outside {in_most:.2f} px inside its shape (bound "
+                                     f"{bound})")
+                rec["moved"] = any((bits[0] != x).any() for x in bits[1:])
+                if not rec["moved"]:
+                    fails.append(f"{mk} row {r['id']}: its edge is the same at every seed (T2: soft per-seed edges)")
+                rp[f"{mk}:{r['id']}"] = rec
+        meas["rows"] = rp
+        # hotspot centres (test notes T2): read from the game, within the jitter radius of the adopted
+        # centre at every seed, different for a seed pair, equal on the repeat
+        hc, fr = {}, br.frame(cfg)
+        for mk in maps:
+            for r in br.rows_on(rows, mk):
+                if r["layer"] != "hotspot":
+                    continue
+                cu, cv = br.to_px(r["lat"], r["lon"], fr)
+                nm = names["rows"][r["id"]]
+                pos = {}
+                for job in [(mk, s6, seed, False) for seed in SEEDS] + [(mk, s6, SEED, True)]:
+                    c = at[job].get("constants") or {}
+                    hu, hv = c.get(nm["hu"]), c.get(nm["hv"])
+                    if not isinstance(hu, (int, float)) or not isinstance(hv, (int, float)):
+                        fails.append(f"{mk} {r['id']}: its centre did not resolve ({hu!r}, {hv!r})")
+                        continue
+                    key = f"{job[2]}{'-repeat' if job[3] else ''}"
+                    pos[key] = (hu, hv)
+                    dist_km = math.hypot(hu - cu, hv - cv) * kpp
+                    if dist_km > r["jitter_km"] + RL_EPS_PX * kpp:
+                        fails.append(f"{mk} {r['id']} seed {job[2]}: centre {dist_km:.1f} km from its adopted centre "
+                                     f"(jitter {r['jitter_km']} km)")
+                if len({pos.get(str(x)) for x in SEEDS}) < 2:
+                    fails.append(f"{mk} {r['id']}: its centre is the same at every seed (T2)")
+                if f"{SEED}-repeat" in pos and pos[f"{SEED}-repeat"] != pos.get(str(SEED)):
+                    fails.append(f"{mk} {r['id']}: its centre differs on a repeat of seed {SEED} (T2)")
+                hc[f"{mk}:{r['id']}"] = {k: [round(v[0], 3), round(v[1], 3)] for k, v in pos.items()}
+        meas["hotspot_centres"] = hc
+        # every mask repeats exactly on the same seed (T2): on every map at both scales, each grid of
+        # the repeat run (the zone; at scale 6 every forest and marsh row) and each constant it read
+        # (the map's hotspot centres) equals the first run's, bit for bit
+        reps, fails_rep = rl_repeat_findings({(mk, s): (at[(mk, s, SEED, False)], at[(mk, s, SEED, True)])
+                                              for mk in maps for s in RL_T2_SCALES}, SEED)
+        fails += fails_rep
+        meas["repeats"] = reps
+        ious = [zone[k] for k in sorted(zone) if "_iou_" in k]
+        pol = [zone[k]["iou_polygon"] for k in sorted(zone) if isinstance(zone[k], dict)]
+        bey = [zone[k]["beyond_px"] for k in sorted(zone) if isinstance(zone[k], dict)]
+        return meas, fails, (f"zone on {maps} at scales {list(RL_T2_SCALES)}: seed-pair IoU {min(ious)} to {max(ious)}, "
+                             f"IoU with the polygon {min(pol)} to {max(pol)}, furthest beyond {max(bey)} px; seed "
+                             f"{SEED} repeated on every map at both scales: {sum(v['grids'] for v in reps.values())} "
+                             f"grids and {sum(v['constants'] for v in reps.values())} constants compared, "
+                             f"{sum(len(v['grids_differing']) + len(v['constants_differing']) for v in reps.values())} "
+                             f"differing; rows moved {sum(1 for v in rp.values() if v['moved'])} of {len(rp)} within "
+                             f"their bounds; {len(hc)} hotspot centres within their jitter")
+
+    checks["rl_t2_zone"] = SuiteCheck("rl_t2_zone", lambda: base_key("rl_t2_zone", {"jobs": t2_jobs}), t2_run, t2_derive)
+
+    # T3 (SS; locality; D13): S10's Spessart row added in a test copy changes the layer only inside
+    # that row's region and ramp, and no code file changes
+    def staged_locality():
+        import shutil as _sh
+        src = MOD
+        dst = ctx.out / "stage" / "locality" / src.name
+        if dst.exists():
+            _sh.rmtree(dst)
+        _sh.copytree(src, dst)
+        appr = json.loads(br.APPROVALS.read_text(encoding="utf-8"))
+        r7b = json.loads(br.R7B.read_text(encoding="utf-8"))
+        extra = br.spessart_row(cfg, appr, r7b)
+        text = br.emit_text(rows + [extra], "the staged locality copy", "the staged locality copy")
+        (dst / tnconfig.REGION_TABLE).write_text(text, encoding="utf-8", newline="\n")
+        return dst, extra
+
+    def file_hashes(root):
+        return {p.relative_to(root).as_posix(): sha256_file(p) for p in sorted(Path(root).rglob("*")) if p.is_file()}
+
+    loc_label = "loc"
+
+    def loc_vals(extra):
+        sh = br.shape_px(extra, cfg)
+        reach = br.max_drift_px(extra, cfg) + cfg["regions"]["ramp"]["width_px"] / 2
+        fine = rl_grid(cfg, frame, RL_T2_SCALES[0], sh, pad=int(math.ceil(reach)) + 4)
+        m = cfg["maps"][frame]
+        whole = {"kind": "polygon", "pts": [(0, 0), (m["width_px"] - 1, 0), (m["width_px"] - 1, m["height_px"] - 1),
+                                            (0, m["height_px"] - 1)]}
+        coarse = rl_grid(cfg, frame, RL_T2_SCALES[0], whole, pad=0, step_px=RL_COARSE_PX)
+        nm = list(names["aggregates"].values()) + [tnconfig.region_row_name(cfg, "w", extra["id"])]
+        return fine, coarse, nm, {"grids": ";".join([rl_grid_arg("fine", fine, "raw", nm), rl_grid_arg("coarse", coarse, "raw",
+                                                                                                         nm)])}
+
+    def loc_run(deadline):
+        dst, extra = staged_locality()
+        zdir = ctx.out / "stage" / "locality-zip"
+        zpath, digest, _ = build_zip.build(zdir, mod_dir=dst)
+        ms_new = rl_modset(ctx, mods, "rll", build=(zpath, digest))
+        ms_old = rl_modset(ctx, mods, "rlo")
+        _, _, _, vals = loc_vals(extra)
+        outs = [ctx.out / "rl-locality-before", ctx.out / "rl-locality-after"]
+        lanes = [[rl_job(ctx, cfg, ms_old, lane_instance(ctx, 0), frame, RL_T2_SCALES[0], SEED, loc_label, outs[0], **vals)],
+                 [rl_job(ctx, cfg, ms_new, lane_instance(ctx, 1), frame, RL_T2_SCALES[0], SEED, loc_label, outs[1], **vals)]]
+        run_lanes(ctx, lanes)
+        rec = {"exit": 0, "isolated": True, "error_lines": [], "images": {}, "files_before": file_hashes(MOD),
+               "files_after": file_hashes(dst), "dump_before": rl_dump_hashes(mods.dumps.get(ms_old)),
+               "dump_after": rl_dump_hashes(mods.dumps.get(ms_new))}
+        meta = ctx.out / "rl-locality-stage"
+        meta.mkdir(parents=True, exist_ok=True)
+        (meta / "run.json").write_text(json.dumps(rec, indent=1), encoding="utf-8")
+        return outs + [meta]
+
+    def loc_derive(dirs):
+        fails, meas = [], {}
+        before, after, meta = dirs
+        for dr in (before, after):
+            fails += g1(dr) + g3(dr)
+        rec = load_run_json(meta) or {}
+        fb, fa = rec.get("files_before") or {}, rec.get("files_after") or {}
+        table = tnconfig.REGION_TABLE
+        changed = sorted(k for k in set(fb) | set(fa) if fb.get(k) != fa.get(k))
+        meas["files_changed"] = changed
+        if changed != [table]:
+            fails.append(f"the test copy changes {changed}, not only {table} (no code file changes; D13)")
+        appr = json.loads(br.APPROVALS.read_text(encoding="utf-8"))
+        r7b = json.loads(br.R7B.read_text(encoding="utf-8"))
+        extra = br.spessart_row(cfg, appr, r7b)
+        fine, coarse, nm, _ = loc_vals(extra)
+        wname = nm[-1]
+        pa, pb = rl_read(after, loc_label), rl_read(before, loc_label)
+        for label, grid in (("fine", fine), ("coarse", coarse)):
+            ga, gb = rl_probe_grid(pa, label), rl_probe_grid(pb, label)
+            w = rl_raw(ga, wname)
+            if w is None:
+                fails.append(f"{label}: the new row's weight {wname} did not resolve in the test copy")
+                continue
+            inside = w > 0
+            for n in nm[:-1]:
+                a, b = rl_raw(ga, n), rl_raw(gb, n)
+                if a is None or b is None or a.shape != b.shape:
+                    fails.append(f"{label}: {n} did not resolve in both builds")
+                    continue
+                diff = a != b
+                out_n = int((diff & ~inside).sum())
+                meas[f"{label}_{n}"] = {"changed_inside": int((diff & inside).sum()), "changed_outside": out_n}
+                if out_n:
+                    fails.append(f"{label}: {n} changed at {out_n} samples outside the new row's region and ramp (D13)")
+            meas[f"{label}_row_samples"] = int(inside.sum())
+        fw = names["aggregates"]["forest_w"]
+        if not meas.get(f"fine_{fw}", {}).get("changed_inside"):
+            fails.append(f"positive control: {fw} did not change inside the new row (the test copy tested nothing)")
+        da, db = rec.get("dump_after") or {}, rec.get("dump_before") or {}
+        body_changed = sorted(n for n in set(da) | set(db) if da.get(n) != db.get(n))
+        meas["bodies_changed"] = body_changed
+        new_names = {tnconfig.region_row_name(cfg, k, extra["id"]) for k in tnconfig.REGION_ROW_KINDS}
+        want = {names["aggregates"]["forest_w"], names["aggregates"]["forest_sum"]} | new_names
+        if da and db and set(body_changed) != want:
+            fails.append(f"the test copy changes the bodies {body_changed[:6]}, want {sorted(want)}")
+        return meas, fails, (f"Spessart in a test copy: files changed {changed}; bodies changed {body_changed}; "
+                             f"{ {k: v for k, v in meas.items() if k.startswith(('fine_', 'coarse_')) and isinstance(v, dict) and k.endswith(fw)} }")
+
+    checks["rl_locality"] = SuiteCheck("rl_locality", lambda: base_key("rl_locality", {"seed": SEED}), loc_run, loc_derive)
+
+    # T15, T13 (SS; read cost): read through a test MGS, the layer compiles and costs Tile and Entity
+    # complexity on every map, while the presets themselves read none of it (the FG rows)
+    def cost_run(deadline):
+        ms = mods.m1()
+        mods.prepare(ms, "m1")
+        dirs = []
+        for mk in maps:
+            pname, _ = map_preset(cfg, mk)
+            pen = dict(preset_pen(ctx.shared["dump_m1"], pname), **{p: names["aggregates"][a]
+                                                                   for p, a in zip(RL_READERS, RL_READ_BY)})
+            for label, mgs in (("plain", map_preset_mgs(ctx, cfg, mk, RL_T2_SCALES[0])),
+                               ("readers", write_mgs(ctx, f"rl-readers-{mk}", pen))):
+                dirs.append(preview(ctx, ms, f"rl-cost-{mk}-{label}", 64, verbose=True, mgs=mgs).out)
+        return dirs
+
+    def cost_derive(dirs):
+        fails, meas = [], {}
+        for i, mk in enumerate(maps):
+            a, b = dirs[2 * i], dirs[2 * i + 1]
+            for dr in (a, b):
+                fails += g1(dr) + g3(dr)
+            ca, cb = ctx_complexity(a), ctx_complexity(b)
+            if set(ca) != {"tile", "entity", "cliff"} or set(cb) != set(ca):
+                fails.append(f"{mk}: no Tile, Entity and Cliff complexity lines (--verbose)")
+                continue
+            inc = {p: cb[p]["complexity"] - ca[p]["complexity"] for p in ca}
+            meas[mk] = inc
+            if inc["tile"] <= 0 or inc["entity"] <= 0:
+                fails.append(f"{mk}: reading {list(RL_READ_BY)} through {list(RL_READERS)} adds Tile {inc['tile']} and "
+                             f"Entity {inc['entity']}: the layer must cost something when read")
+            if inc["cliff"] != 0:
+                fails.append(f"{mk}: the readers changed the Cliff program by {inc['cliff']}")
+        return meas, fails, f"complexity added by reading {list(RL_READ_BY)}: {meas}"
+
+    checks["rl_read_cost"] = SuiteCheck("rl_read_cost", lambda: base_key("rl_read_cost", {"maps": maps}), cost_run,
+                                        cost_derive)
+
+
+def rl_dump_hashes(run):
+    """{region body: generation hash} of a prepare() run's dump, for the locality check."""
+    if run is None:
+        return {}
+    f = Path(run.out) / "data-raw-dump.json"
+    if not f.exists():
+        return {}
+    d = json.loads(f.read_text(encoding="utf-8"))
+    cfg = tnconfig.load()
+    prefix = cfg["identity"]["noise_prefix"]
+    return {n: body_hash(b) for n, b in (d.get("noise-expression") or {}).items() if n.startswith(prefix)}
+
+
+def rl_runner_controls():
+    """region-layer's offline positive controls: the T3 evaluator fails a protected feature inside the
+    zone and an unresolved name, lists a flip within 40 km of an edge and fails one beyond it; the
+    map-fold parser reads each map's branch; the sign-grid decoder round-trips."""
+    import oracle
+    cfg = tnconfig.load()
+    out = {}
+    zn = oracle.region_names(cfg, "destroyed")
+    near = {"id": "fixture:near", "expect": {"region": {"destroyed": True}}, "region_margin_km": {"destroyed": 12.0}}
+    far = {"id": "fixture:far", "expect": {"region": {"destroyed": True}}, "region_margin_km": {"destroyed": 43.0}}
+    hard = {"id": "fixture:pass", "expect": {"region": {"destroyed": False}}, "region_margin_km": {"destroyed": 5.0},
+            "region_hard": ["destroyed"]}
+    out_ok = {"id": "fixture:out", "expect": {"region": {"destroyed": False}}, "region_margin_km": {"destroyed": 90.0}}
+    pts = [(near, (0, 0)), (far, (1, 0)), (hard, (2, 0)), (out_ok, (3, 0))]
+
+    def probe(vals):
+        return {"names": [zn], "points": [{"x": x, "y": 0, "values": [v]} for x, v in enumerate(vals)]}
+    c, f, lst = rl_t3_eval(cfg, pts, probe([-1.0, 5.0, -2.0, -9.0]), "fixture")
+    out["region T3: a flip within 40 km of an edge is listed, not failed"] = bool(lst) and not f
+    c, f, _ = rl_t3_eval(cfg, pts, probe([5.0, -1.0, -2.0, -9.0]), "fixture")
+    out["region T3: a flip beyond 40 km of an edge fails"] = any("fixture:far" in x for x in f)
+    c, f, _ = rl_t3_eval(cfg, pts, probe([5.0, 5.0, 0.5, -9.0]), "fixture")
+    out["region T3: a protected feature inside the zone fails"] = any("fixture:pass" in x for x in f)
+    c, f, _ = rl_t3_eval(cfg, pts, probe([5.0, 5.0, -2.0, "unrecognized"]), "fixture")
+    out["region T3: a name that does not resolve fails"] = any("resolve" in x for x in f)
+    maps = [k for k in cfg["map_order"] if (cfg.get("geography") or {}).get(k)]
+    K = cfg["keys"]["map"]
+    text = "a"
+    for mk in reversed(maps[:-1]):
+        text = f"if({K} == {cfg['number_format'] % cfg['maps'][mk]['id']}, b_{mk}, {text})"
+    got = rl_fold_branches(cfg, text)
+    out["region fold: each map's branch is read"] = got == dict({mk: f"b_{mk}" for mk in maps[:-1]}, **{maps[-1]: "a"})
+    rec = {"nx": 5, "ny": 2, "values": {"n": ["0*2 1*3", "2*1 1*4"]}}
+    b = rl_bits(rec, "n")
+    out["region grid: the sign runs decode"] = b.tolist() == [[0, 0, 1, 1, 1], [2, 1, 1, 1, 1]]
+    # T2's repeat check: an identical repeat passes; a flipped run in a row grid, a hotspot centre
+    # read differently and a grid the repeat lacks each fail
+    first = {"constants": {"hu": 1.5, "hv": 2.5}, "grids": [dict(rec, label="zone"), dict(rec, label="row-x")]}
+
+    def rep_fails(mutate):
+        second = json.loads(json.dumps(first))
+        mutate(second)
+        return rl_repeat_findings({(maps[0], 6): (first, second)}, SEED)[1]
+    out["region T2 repeat: an identical repeat passes"] = not rep_fails(lambda p: None)
+    out["region T2 repeat: a row grid differing in one sample fails"] = bool(rep_fails(
+        lambda p: p["grids"][1]["values"]["n"].__setitem__(0, "0*3 1*2")))
+    out["region T2 repeat: a hotspot centre read differently fails"] = bool(rep_fails(
+        lambda p: p["constants"].__setitem__("hu", 1.75)))
+    out["region T2 repeat: a grid the repeat lacks fails"] = bool(rep_fails(lambda p: p["grids"].pop()))
+    return {k: (v, "") for k, v in out.items()}
+
+
+def live_t15b_map(ctx, mods, sec6, mk):
+    """The gate's live timed sample of olde-world-atlantic (rule 3): live_t15b_m1's group for one new
+    map, M1t against M0t on the map's block at scale 6 at 16 LP (P1), with rule 5's extra group when
+    the ratio sits within 0.03 of the bar and the group fits the budget, else fail closed."""
+    cfg = mods.cfg
+    pos = map_positions(cfg, mk)
+    m1t, _ = earth_driver_modsets(ctx, mods)
+    m0t, _, _ = driver_modsets(ctx, mods)
+    lim = p1_limits(sec6, "olde-world-atlantic", mk) if isinstance(sec6, dict) else {}
+    census = ((((baseline_record().get("t15b_maps") or {}).get(mk) or {}).get("census_m0") or {}).get("6")) or {}
+    sa = make_save_mgs(ctx, mods, m1t, "tq1-gen-block", pos["block"][6], f"live-m1t-{mk}", map_preset_mgs(ctx, cfg, mk, 6))
+    sb = make_save_mgs(ctx, mods, m0t, "tq1-gen-block", pos["block"][6], f"live-m0t-{mk}")
+    cfgs = {"a": (m1t, sa), "b": (m0t, sb)}
+    t0 = time.time()
+    dirs = [pair_batch(ctx, cfgs, T15B["reps_gate"], [ctx.perf.MASK16], f"live-t15b-{mk}", ctx.deadline)]
+    took = time.time() - t0
+    meas, f, detail = derive_t15b(dirs, lim, T15B["reps_gate"], pair="m1_m0", label=f"{mk} M1t/M0t", census_m0=census)
+    rec = meas.get(f"{ctx.perf.MASK16:#x}") or {}
+    if rec.get("undecided"):
+        fits, need = extra_batch_fits(took, 2 * T15B["reps_gate"], 2 * T15B["reps_extra"], time.time(), ctx.deadline)
+        if fits:
+            dirs.append(pair_batch(ctx, cfgs, T15B["reps_extra"], [ctx.perf.MASK16], f"live-t15b-{mk}-x", ctx.deadline))
+            meas, f, detail = derive_t15b(dirs, lim, T15B["reps_gate"], pair="m1_m0", label=f"{mk} M1t/M0t",
+                                          census_m0=census)
+        else:
+            f = [f"P1: {mk} M1t/M0t at 16 LP is {rec['ratio']}, within {BORDERLINE} of its bound {rec['borderline']:g}, "
+                 f"and rule 5's batch needs about {need:.0f} s, more than the gate has left: fail closed"]
+    return dirs, meas, f, detail
 
 
 def stage_constant(ctx, cfg, names, value, tag):
@@ -9437,6 +24139,21 @@ def suite_gate(ctx, mods, sec6, entries):
         try:
             if pick == "t15b_m1":
                 dirs, meas, f, detail = live_t15b_m1(ctx, mods, sec6)
+            elif pick == "owa_t15b":
+                mk = rng.choice(new_maps(mods.cfg))
+                dirs, meas, f, detail = live_t15b_map(ctx, mods, sec6, mk)
+            elif pick == "ww_t15b":
+                mk = rng.choice(ww_maps(mods.cfg))
+                dirs, meas, f, detail = live_t15b_ww(ctx, mods, sec6, mk)
+            elif pick == "ww_maptype_cost":
+                mk = rng.choice(ww_maps(mods.cfg))
+                dirs, meas, f, detail = live_maptype_ww(ctx, mods, mk)
+            elif pick == "ct_t15b":
+                mk = rng.choice(budget_maps(mods.cfg))
+                dirs, meas, f, detail = live_t15b_ct(ctx, mods, sec6, mk)
+            elif pick == "tf_t15b":
+                mk = rng.choice([mods.cfg["presets"][k]["map"] for k in mods.cfg["preset_order"]])
+                dirs, meas, f, detail = live_t15b_tf(ctx, mods, sec6, mk, rng.choice(("m1", "m2")))
             elif pick == "t15b_m0":
                 limits = sec6["limits"] if isinstance(sec6, dict) else {}
                 t0 = time.time()
@@ -9597,22 +24314,46 @@ def cmd_baseline(a):
 
         c0 = checked(preview(ctx, m0, "cx-m0", 64, verbose=True), False, True)["complexity"]
         cd = checked(preview(ctx, m1, "cx-default", 64, verbose=True), True, True)["complexity"]
-        cmap = {s: checked(preview(ctx, m1, f"cx-map-s{s}", 64, verbose=True, mgs=preset_mgs(ctx, cfg, s)), True,
-                           True)["complexity"] for s in BUDGET_SCALES}
+        bmaps = budget_maps(cfg)
+        cmaps, coff = {}, {}
+        for bk, s, off in budget_jobs(cfg, bmaps):
+            got = checked(preview(ctx, m1, budget_label(bmaps, bk, s, off), 64, verbose=True,
+                                  mgs=map_preset_mgs(ctx, cfg, bk, s, toggles_off=off)), True, True)["complexity"]
+            (coff if off else cmaps).setdefault(bk, {})[s] = got
+        # from climate-tiles the M2 rows beside the M1 rows, BAB their comparator (P11, P13 and P14 bind them)
+        m2rows = None
+        if budget_m2(entry["id"]):
+            m2, bab = mods.m2(), mods.bab()
+            r2 = mods.prepare(m2, "m2")
+            mods.prepare(bab, "bab")
+            ctx.shared["dump_m2"] = json.loads((r2.out / "data-raw-dump.json").read_text(encoding="utf-8"))
+            m2rows = {"bab": checked(preview(ctx, bab, "cx-bab", 64, verbose=True), False, True)["complexity"],
+                      "map": {}, "off": {}}
+            if {k: v.get("complexity") for k, v in m2rows["bab"].items()} == VANILLA:
+                fails.append("BAB's complexity is vanilla's: Alien Biomes did not load (G5)")
+            for bk, s, off in budget_jobs(cfg, bmaps):
+                got = checked(preview(ctx, m2, budget_label_m2(bk, s, off), 64, verbose=True,
+                                      mgs=map_preset_mgs(ctx, cfg, bk, s, toggles_off=off, ab=True)), True, True)
+                m2rows["off" if off else "map"].setdefault(bk, {})[s] = got["complexity"]
         if {k: v.get("complexity") for k, v in c0.items()} != VANILLA:
             fails.append(f"M0 complexity {c0} is not vanilla's {VANILLA} (G8: re-baseline the build pin first)")
-        if cd != c0:
-            fails.append("the default preset with Earth loaded compiles differently from M0 (T13 zero cost)")
+        if zero_cost_diffs(c0, cd):
+            fails.append(f"the default preset with Earth loaded compiles differently from M0 (T13 zero cost): "
+                         f"{zero_cost_diffs(c0, cd)}")
         vanilla, earth = {}, {}
         for seed in SEEDS:
             g = checked(preview(ctx, m0, f"m0-256-{seed}", 256, seed=seed), False)
             vanilla[str(seed)] = g["images"].get(f"{seed}.png")
-            g = checked(preview(ctx, m1, f"preset-256-{seed}", 256, preset=pname, seed=seed), True)
-            earth[str(seed)] = g["images"].get(f"{seed}.png")
-            if not vanilla[str(seed)] or not earth[str(seed)]:
-                fails.append(f"seed {seed}: a preview wrote no {seed}.png")
-            elif vanilla[str(seed)] == earth[str(seed)]:
-                fails.append(f"seed {seed}: the {pname} preview equals M0's (G5)")
+            # every map's preset preview (the first preset's labels as before, so its runs keep their names)
+            for bk in bmaps:
+                bname, _ = map_preset(cfg, bk)
+                lab = f"preset-256-{seed}" if bk == bmaps[0] else f"preset-{bk}-256-{seed}"
+                g = checked(preview(ctx, m1, lab, 256, preset=bname, seed=seed), True)
+                earth.setdefault(bk, {})[str(seed)] = g["images"].get(f"{seed}.png")
+                if not vanilla[str(seed)] or not earth[bk][str(seed)]:
+                    fails.append(f"seed {seed}: a preview wrote no {seed}.png")
+                elif vanilla[str(seed)] == earth[bk][str(seed)]:
+                    fails.append(f"seed {seed}: the {bname} preview equals M0's (G5)")
         m0t, _, _ = driver_modsets(ctx, mods)
         save = make_save(ctx, mods, m0t, "tq1-gen-block", T15B["block"], "census")
         r = ctx.fh(["scenario", "--instance", ctx.instance, "--modset", m0t, "--save", save, "--ticks", "10", "--",
@@ -9639,12 +24380,29 @@ def cmd_baseline(a):
                 fails.append(f"census run {mk} scale {s}: block generated {c.get('block_generated_before')} -> "
                              f"{c.get('block_generated_after')} chunks, want 0 -> 256")
             eu_census[str(s)] = {k: c.get(k) for k in keep}
+        # M0's census of each new map's own T15b blocks (olde-world-atlantic; map_positions)
+        maps_census = {}
+        for nk in (new_maps(cfg) if any(s_["id"] == "olde-world-atlantic" for s_ in REGISTRY) else []):
+            npos = map_positions(cfg, nk)
+            cen = {}
+            for s, spec in sorted(npos["block"].items()):
+                sv = make_save(ctx, mods, m0t, "tq1-gen-block", spec, f"census-{nk}-s{s}")
+                rr = ctx.fh(["scenario", "--instance", ctx.instance, "--modset", m0t, "--save", sv, "--ticks", "10",
+                             "--", "--threads", str(T15B["threads"])], ctx.out / f"census-{nk}-s{s}")
+                fails.extend(g1(rr.out) + g3(rr.out))
+                c = ctx.perf.parse_forced(rr.out).get("census") or {}
+                if c.get("block_generated_before") != 0 or c.get("block_generated_after") != 256:
+                    fails.append(f"census run {nk} scale {s}: block generated {c.get('block_generated_before')} -> "
+                                 f"{c.get('block_generated_after')} chunks, want 0 -> 256")
+                cen[str(s)] = {k: c.get(k) for k in keep}
+            maps_census[nk] = {"blocks": {str(s): v for s, v in npos["block"].items()},
+                               "block_land": {str(s): v for s, v in npos["block_land"].items()}, "census_m0": cen}
         if fails:
             for f in fails[:20]:
                 ctx.say(f"FAIL {f}")
             raise GateError(f"baseline refused: {len(fails)} run checks failed; tests/budgets.json and "
                             f"tests/baselines/build-{GAME_BUILD}.json are unchanged")
-        rows = budgets_rows(cfg, cmap, c0, cd)
+        rows = budgets_rows(cfg, cmaps, c0, cd, coff, m2=m2rows)
         write_atomic(BUDGETS, json.dumps({
             "format": "tn-budgets/1",
             "note": "Measured values only (ruling 3): complexity rows from 64 px --verbose previews at seed 1000. "
@@ -9657,10 +24415,11 @@ def cmd_baseline(a):
                     "preview hashes, the T15b block's census on M0, and M0's census of each map's own T15b "
                     "blocks (fixed in geo coordinates through the spawn offset). Written by 'earth_test.py "
                     "baseline'.",
-            "previews_256": {"M0": vanilla, mk: earth},
+            "previews_256": dict({"M0": vanilla}, **earth),
             "t15b_block": {"chunks": T15B["block"], "census_m0": {k: census.get(k) for k in keep}},
             "t15b_europe": {"map": mk, "blocks": {str(s): v for s, v in pos["block"].items()},
                             "block_land": {str(s): v for s, v in pos["block_land"].items()}, "census_m0": eu_census},
+            **({"t15b_maps": maps_census} if maps_census else {}),
         }, indent=1) + "\n")
         ctx.say(f"wrote {BUDGETS} ({len(rows)} rows) and {BASELINES / ('build-' + GAME_BUILD + '.json')}")
         return 0
@@ -9681,15 +24440,12 @@ def cmd_freeze(a):
         schema = tnconfig.schema_problems(cfg)
         if schema:
             raise GateError(f"config.lua schema: {schema[:2]}; freeze registers nothing")
-        # every dump the gate's frozen row reads (the registry's `dumps`): M1 is the one this runner
-        # produces; a milestone that adds M2 adds its dump here and in the dumps row
+        # every dump the gate's frozen row reads (the registry's `dumps`, in registry order, so a body in
+        # M1 and another dump registers from M1), each through dump_modset as the frozen row produces it:
+        # M1, from climate-tiles M2 (the Alien Biomes-only bodies), from resources-enemies M3 (the Oil
+        # Rig's offshore-oil wrappers)
         labels = [lb for s in registry_upto(entry["id"]) for lb in s.get("dumps", [])]
-        dumps = {}
-        for label in dict.fromkeys(labels):
-            if label != "m1":
-                raise GateError(f"freeze cannot produce the {label} dump yet; the slice that adds it extends freeze")
-            r = mods.prepare(mods.m1(), "m1")
-            dumps[label] = json.loads((r.out / "data-raw-dump.json").read_text(encoding="utf-8"))
+        dumps = {label: produce_dump(ctx, mods, label) for label in dict.fromkeys(labels)}
         fz = json.loads((TESTS / "frozen.json").read_text(encoding="utf-8"))
         # every existing record checked against the contract and its own dump before anything is
         # appended; the placeholder's names and the setting-mirroring fallbacks are never registered

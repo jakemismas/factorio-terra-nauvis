@@ -83,6 +83,31 @@ for _, key in ipairs(cfg.map_order) do
   end
 end
 
+-- The toggle a per-save key belongs to (waterways: the canals switch), by its preset key.
+local TOGGLE_OF = {}
+for _, key in ipairs(cfg.toggle_order) do
+  local tg = cfg.toggles[key]
+  TOGGLE_OF[tg.preset_key] = tg
+end
+
+-- A version's offshore stamp key (resources-enemies), a Map type fallback that follows the hotspots
+-- toggle under a name of its own: the map's stamp body when on, the neutral zero when off
+-- (presets.lua stamp_values), so its drift line names the hotspots setting.
+local function stamp_keys()
+  local out = {}
+  local hotspots = cfg.toggles.hotspots
+  for _, key in ipairs(cfg.map_order) do
+    local g = cfg.geography[key]
+    for _, v in ipairs(g and g.versions or {}) do
+      if v.fields and hotspots and cfg.fields and cfg.fields.names[key] then
+        out[v.fields] = {setting = hotspots.setting, on = cfg.fields.names[key], off = cfg.neutral.zero}
+      end
+    end
+  end
+  return out
+end
+local STAMP_OF = stamp_keys()
+
 -- A map's name in every message: its preset's name (presets are named by map, so no version changes
 -- it), or the map's display name for a map without a preset.
 local function map_label(map_key)
@@ -160,6 +185,10 @@ local function setting_label(name)
   if sp then
     return {"mod-setting-name." .. cfg.settings[sp.city_setting].name}
   end
+  local tg = TOGGLE_OF[name] or STAMP_OF[name]
+  if tg then
+    return {"mod-setting-name." .. cfg.settings[tg.setting].name}
+  end
   return name
 end
 
@@ -173,11 +202,18 @@ local function city_label(sp, number)
   return {"string-mod-setting." .. s.name .. "-" .. value}
 end
 
--- A fallback value as a drift line shows it: a city number as its dropdown label.
+-- A per-save value as a drift line shows it: a city number as its dropdown label, a toggle's on or
+-- off body (a stamp key's stamp or zero body) as on or off.
 local function fallback_label(name, value)
   local sp = CITY_SPAWN[name]
   if sp then
     return city_label(sp, tonumber(value))
+  end
+  local tg = TOGGLE_OF[name] or STAMP_OF[name]
+  if tg and value == tg.on then
+    return message("toggle_on")
+  elseif tg and value == tg.off then
+    return message("toggle_off")
   end
   return value
 end
@@ -303,8 +339,9 @@ function M.missing_names(surface)
   return found
 end
 
--- An Earth world keeps its scale and spawn city: one info line per value the startup settings now
--- set differently. The city is the one of the world's own geography release (its tn_geo).
+-- An Earth world keeps its scale, spawn city and toggles: one info line per value the startup
+-- settings now set differently. The city is the one of the world's own geography release (its
+-- tn_geo); a toggle is checked only where the world's preset baked it.
 local function drift_earth(surface)
   local pen = pen_of(surface)
   local saved = tonumber(pen[K.scale])
@@ -319,6 +356,15 @@ local function drift_earth(surface)
     local now_city = setting_city(sp)
     if saved_city and now_city and saved_city ~= now_city then
       say(message("drift_city", city_label(sp, saved_city), city_label(sp, now_city)))
+    end
+  end
+  for _, key in ipairs(cfg.toggle_order) do
+    local tg = cfg.toggles[key]
+    local was = pen[tg.preset_key]
+    local want = settings.startup[cfg.settings[tg.setting].name].value and tg.on or tg.off
+    if was ~= nil and was ~= want then
+      say(message("drift_toggle", setting_label(tg.preset_key), fallback_label(tg.preset_key, was),
+        fallback_label(tg.preset_key, want)))
     end
   end
 end
@@ -346,9 +392,37 @@ local function drift_map_type(state, settings_changed)
   end
 end
 
--- Whether `s` is a Terra Nauvis name: a per-save key or a noise expression only this mod defines.
-local function ours(s)
-  return type(s) == "string" and s:sub(1, #cfg.identity.noise_prefix) == cfg.identity.noise_prefix
+-- D33's strip rule (ARCHITECTURE.md, "D33 surface guard"): a surface other than Nauvis drops a listed
+-- key only when the save's default value names an Earth body or the key is an Earth per-save key. From
+-- ridges the listed keys include vanilla properties (cliff_elevation, cliffiness, the ore
+-- probabilities, the water pins' readers), and vanilla's Lakes and Island presets set cliffiness and
+-- cliff_elevation to the very values Space Age's planets set themselves, so comparing the value alone
+-- would blank those planets' own keys on a world that is no Earth map. The guard's comparison with the
+-- default value stays; this predicate gates it (the static d33_guard row requires the call).
+function M.earth_valued(key, value)
+  local prefix = cfg.identity.noise_prefix
+  local function earth(s)
+    return type(s) == "string" and s:sub(1, #prefix) == prefix
+  end
+  return earth(key) or earth(value)
+end
+
+
+-- "earth", "map_type" (with its map key) or nil.
+function M.kind(surface)
+  local pen = pen_of(surface)
+  if pen[K.geo] ~= nil then
+    return "earth"
+  end
+  local entry = pen[K.elevation]
+  local key = entry and ENTRY_MAP[entry]
+  if key then
+    local proto = prototypes.named_noise_expression[entry]
+    if proto and proto.intended_property == K.elevation then
+      return "map_type", key
+    end
+  end
+  return nil
 end
 
 -- D33 (ARCHITECTURE.md, "D33 surface guard"; S11): a surface other than Nauvis inherits the save's
@@ -378,7 +452,7 @@ function M.surface_guard(surface)
   for _, key in ipairs(cfg.preset_keys) do
     local v, d = pen[key], default[key]
     if v ~= nil and v ~= "" and d ~= nil and tostring(v) == tostring(d)
-        and (earth_defaults or ours(key) or ours(d)) then
+        and (earth_defaults or M.earth_valued(key, d)) then
       pen[key] = ""
       removed = removed + 1
     end

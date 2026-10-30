@@ -19,6 +19,51 @@
     "vaduz", "vilnius", "chisinau", "monaco", "podgorica", "amsterdam", "skopje", "oslo", "warsaw", "lisbon",
     "bucharest", "moscow", "san-marino", "belgrade", "bratislava", "ljubljana", "madrid", "stockholm", "bern",
     "ankara", "kyiv", "london"]
+  },
+  "spawn_city_atlantic": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-spawn-city-atlantic (random plus 50 of 50, default random; EM:settings.lua:92-105); section 12 removes none on this map (data-src/approvals/approvals-data.json cities.atlantic.dropdown)",
+   "type": "string-setting",
+   "setting_type": "startup",
+   "default_value": "random",
+   "allowed_values": ["random", "prague", "madrid", "london", "kovdor", "munguy", "xeta", "yakutia", "zyryanka",
+    "kharkiv", "huambo", "mongo", "dangila", "bamako", "akka", "waddan", "johannesburg", "songea", "tabuk", "chengdu",
+    "nanchang", "songling", "delhi", "hampi", "bam", "aktobe", "semey", "moron", "bangkok", "mexico-city",
+    "ellesmere-island", "fort-liard", "hearst", "mid-baffin", "okak", "saskatoon", "yellowknife", "qaanaaq",
+    "summit-camp", "uranienborg", "albany", "boise", "minneapolis", "el-paso", "hughes", "montgomery", "cordoba",
+    "palmas", "iquitos", "griffith", "newman"]
+  },
+  "spawn_city_olde_world": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-spawn-city-old-world (random plus 30 of 30, default random; EM:settings.lua:124-137); section 12 removes none on this map (data-src/approvals/approvals-data.json cities.olde_world.dropdown)",
+   "type": "string-setting",
+   "setting_type": "startup",
+   "default_value": "random",
+   "allowed_values": ["random", "prague", "madrid", "london", "kovdor", "munguy", "xeta", "yakutia", "zyryanka",
+    "kharkiv", "huambo", "mongo", "dangila", "bamako", "akka", "waddan", "johannesburg", "songea", "tabuk", "chengdu",
+    "nanchang", "songling", "delhi", "hampi", "bam", "aktobe", "semey", "moron", "bangkok", "griffith", "newman"]
+  },
+  "canals": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-canals (startup, bool, default on; D18) and section 6",
+   "type": "bool-setting",
+   "setting_type": "startup",
+   "default_value": true
+  },
+  "great_forests": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-great-forests (startup, bool, default on; D26) and section 4",
+   "type": "bool-setting",
+   "setting_type": "startup",
+   "default_value": true
+  },
+  "ridges": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-ridges (startup, bool, default on; D19)",
+   "type": "bool-setting",
+   "setting_type": "startup",
+   "default_value": true
+  },
+  "hotspots": {
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-hotspots (startup, bool, default on; D21 to D24)",
+   "type": "bool-setting",
+   "setting_type": "startup",
+   "default_value": true
   }
  },
  "numeric_literals_allowed": [0, 1, 2]

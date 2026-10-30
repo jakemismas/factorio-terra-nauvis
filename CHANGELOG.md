@@ -239,6 +239,278 @@ versions follow [Semantic Versioning](https://semver.org/).
   to the suite. Earlier trees: 407.2 s cold and 200.9 s warm at 04:40
   (`gate/20261029-043618-spawn-cities`, `gate/20261029-044334-spawn-cities`), and 430.5 s and
   231.4 s on 2.1.24 before this change, when the gate held `spawn-cities`' evidence alone (09:00).
+- Milestone `olde-world-atlantic`: the presets "Terra Nauvis: Atlantic" and "Terra Nauvis: Old
+  World" (`terra-nauvis-atlantic`, `terra-nauvis-old-world`, orders "a-tn-b" and "a-tn-c", after
+  Europe and before Rich resources, withheld beside Alien Biomes as Europe's is), each from its own native-resolution fit at the smallest
+  growth-1.25 checkpoint at or above 99.1 percent (Old World 4,096 tents at 0.991420, Atlantic
+  8,674 at 0.991198, offline T1 from `curve.json`), with each map's 256-term coarse land field
+  and descriptions naming the world size; their Map type entries `tn_elevation_atlantic_v1` and
+  `tn_elevation_olde_world_v1` (orders "3000-tn-b" and "-c", so the Terrain tab lists Nauvis, Lakes,
+  Europe, Atlantic, Old World, Island), each reading only its own chain, fit, detail, box and
+  map-qualified city offsets, with fallbacks valued as its own preset bakes them; `tools/build_geo.py`
+  `fit` (S1-fit's fitter ported operation for operation, resumable from a work folder outside the
+  repo; it reproduces Europe's 256-term checkpoint bit for bit), `curve` and `adopt`; each map's
+  geography version 1 (`tn_geo` 3 for Atlantic, 4 for Old World), with its city offset names
+  `tn_cx_<map>_v1` and `tn_cy_<map>_v1` baked 0 under frozen fallbacks of 0, and its 11 bodies
+  registered in `tests/frozen.json` (22 new, every group 0 record unchanged; restacked onto group
+  0's tree, design notes 2026-10-29 10:30); the three maps' complexity rows in
+  `tests/budgets.json`; the startup settings `terra-nauvis-spawn-city-atlantic` (random plus 50
+  cities) and `terra-nauvis-spawn-city-old-world` (random plus 30), default random, with each map's
+  table in `prototypes/tables/cities.lua`, which the gate refuses until `spawn-cities`' city fold
+  reads them (`city_fold_findings`); and the runner's rows for every map (`owa_dump_facts`,
+  `owa_routes`, `owa_maptype`, `owa_t7_random` in the gate; `owa_fits`, `owa_t1_grids`,
+  `owa_t1_windows`, `owa_v1_sheets`, `owa_t7`, `owa_t11`, `owa_maptype_cost`, `owa_t15b` in the suite;
+  T15a, the baseline and isolation (a) on every map), whose city parts (T7, T11's city flip, T13's
+  read-back city index) fail closed on a map without the fold.
+- Evidence (draft, on the draft's own isolated instance): Old World's fit 29 steps in 41 minutes at a 1.7 GB peak, Atlantic's 32 steps in 85 minutes at 3.4 GB (native resolution, no subsample); the port reproduces Europe's 256-term checkpoint array for array; Old World compiles Tile 51,438 to 51,544 at scales 6 to 1 (its 8,192-term step 89,154, so the 4,096 terms saved free 37,716 Tile), Entity 8,553 and Cliff 287 on every new map, Europe's rows unchanged; isolation (a) holds on all three presets at scales 6 and 1 and the dump walk (b) finds no firewall path; Old World's in-game grid equals its offline model on all 1,048,576 pixels of its densest coast window at scales 1 and 6, and at seeds 1000 and 1002; route parity, the Map type route over each new map's coast view and the notice naming each map's preset hold; T11 on Old World (scale 3 loaded under 5) matches fresh A in all 51,200 tiles and differs from fresh B in 17,564; `earth_test.py static` passes 14 of 14 rows. Atlantic's measured rows, the suite (timing, full grids, windows, contact sheets) and the gate remain for the build.
+- Milestone `waterways`: APPROVALS 7's curated rivers, the nine D17 straits and the D18 canals
+  carved on every map at every scale by `tools/build_waterways.py` from `data-src/waterways/`
+  (APPROVALS 7's adopted rivers in priority order with their class, S4's paths, provenance) into
+  `terra-nauvis/prototypes/generated/waterways_<map>_s<k>_v1.lua` (18 files, each with its rivers,
+  straits and turning basins, canals, dams and fords) and `data-src/waterways/manifest-<map>.json`;
+  rivers `max(7, k x scale)` tiles wide by class (18 and 12 at scale 6) on S4's smoothed paths;
+  straits and canals on their drawn passages, every strait through its R7b narrowest point (the
+  Dardanelles re-routed: S4's path ran north of the Gallipoli peninsula) and every canal along its
+  R7b route, straight between its vertices; Gibraltar, Dover and the Great Belt two-way at 11
+  tiles; a walkable `water-shallow`
+  ford every 60 reference px of every river, 8 tiles long and spanning it, through the gated hook on
+  `water-shallow` (`tn_on`, `tn_fords`), registered on Nauvis, on banks the coast fit holds as land
+  beyond its detail where the interval has them, widened on a bending reach where no straight one
+  does, an interval going without one only where every position has a bank in reference or fit
+  water; turning basins where the
+  bend rule fails on a shipped polyline (the Rhine and the Garonne at scale 6, as S4 found) and,
+  where it places none, the criterion's others (the Dardanelles at every scale, the Little Belt at
+  scale 6) at the passage's sharpest stretch; each map's river-safe starts as name-free data
+  (`terra-nauvis/prototypes/generated/starts_<map>_v1.lua`: per city and scale the spawn's move and
+  bank half-planes), which the next versions of spawn-cities' city fold, spawn lake and start mask
+  read once spawn-cities is on main; each
+  map's next geography version, every name its own (Europe's version 3, `tn_elevation_europe_v3`,
+  over version 2's spawn at the city, `tn_geo` 5; Atlantic's and Old World's version 2,
+  `tn_elevation_<map>_v2`, `tn_geo` 6 and 7; restacked onto group 0's tree, design notes 2026-10-29
+  12:00), now the Map type entries, composing the canals-off dams and the carves around the rest of
+  the version's composition, picking the save's scale's sets through the folded scale; the
+  startup setting Canals (`terra-nauvis-canals`, default on: Kiel and Corinth on every map, Suez on
+  Atlantic and Old World, Panama on Atlantic), baked per save as `tn_canals` with its Map type
+  fallback and drift line; the Map type notice naming rivers and fords; the plan's waterway cut
+  order per map and scale (Europe scale 6 at a 4-tile tolerance; Old World scales 5 and 6 at 4 and 6
+  tiles; Atlantic keeps all 32 rivers at scale 1, 24 at scale 2 and Europe's 22 from scale 3, the
+  Niger, Mackenzie, Mississippi, Congo, Nile, Zambezi, Amazon, St. Lawrence, Parana and Orinoco
+  leaving Atlantic's larger scales from the bottom of its list); the 110 new Earth bodies
+  registered in `tests/frozen.json` (every earlier record unchanged); the strait, isthmus and canal oracle rows live;
+  every T1 row masking the D16 corridors; and the runner's rows (`ww_dump_facts`, `ww_emit`, `ww_t3`,
+  `ww_ford` in the gate; `ww_t5`, `ww_fords`, `ww_widths`, `ww_bend`, `ww_t1`, `ww_t3_maps`,
+  `ww_t11`, `ww_m3`, `ww_paths`, `ww_v2`, `ww_t7`, `ww_ab`, `ww_t13_m2`, `ww_off`, `ww_t15b`,
+  `ww_maptype_cost` and the exploring rows in the suite), with `tools/mods/ea-ww-probe`, `nav.py`'s
+  ford and cross-section reports, P1's relative rule for an added time allocation, and the budgets rows' toggles-off
+  measurement on every map the canals toggle lists.
+- Evidence (draft, on the draft's own isolated instance): `build_waterways.py check` re-emits all 18
+  files twice byte for byte (51 s; with the three river-safe starts files, 21 files in 218 s on the
+  E-cores); 2,853 fords on all maps and scales, 6 widened on a bending reach, 29 intervals in
+  reference or fit water without one and 11 named fords whose banks lie within the coast detail
+; the criterion's basins at the Dardanelles' and the Little Belt's sharpest stretches
+  where the bend rule places none; `earth_test.py static` passes 14 of 14 rows; Europe at scale 6 reproduces S9's 844 river and strait segments
+  before the cut; Tile with waterways at most 111,005 (Europe), 111,930 (Atlantic) and 111,799 (Old
+  World) over scales 1 to 6 with canals on or off, Entity 8,553 and Cliff 287 unchanged on the
+  presets (the Map type route, each map's v2 entry picked alone, also compiles the waterway sets
+  for vanilla's starting-ore mask in Entity: `ww_maptype_cost` times and reports its Tile, Entity
+  and Cliff complexity and its forced generation against M0 at scale 6 and 16 LP, never gated); the
+  strait, isthmus and canal places of Europe at scale 6 reading their expectations in the real tile
+  with canals on and off (21 and 21), and the first Danube ford walked, blocked without it, 8 tiles
+  long, spanning and passing a 7-tile channel; in game every corridor of Europe at scales 1 and 6
+  and of Atlantic and Old World at scale 1 (33, 33, 45 and 49) carrying S4's 7 or 11-tile channel
+  end to end, no canal's seas sharing a water path with canals off on any map at scales 1 and 6,
+  every strait reading water and every isthmus land with canals off on every map at scales 1 and
+  6, and the fords and widths design notes records; the default preset byte-identical
+  to M0 at seeds 1000, 1002 and 1004 with identical operations, registers and complexity; every
+  oracle strait, canal and isthmus place inside its carve at every scale; `oracle.py validate` passes
+  1,486 checks with waterways live; previews show the carve and a shallow ford across the Rhine and
+  the Elbe at scale 6. The gate's cold and warm times, the suite and the baseline remain for the
+  build engine.
+- Milestone `region-layer`: the shared region layer (S10 design (d)) that marshes, great forests,
+  hotspots, the biter multiplier and Destroyed Europe will read by name: 112 rows in
+  `prototypes/tables/regions.lua` (R7b's destroyed polygon with S10's six exclusion rows, 16
+  adopted forests, 12 marshes, 77 hotspots at their adopted centres with S6's jitter), written by
+  the new `tools/build_regions.py` from `approvals-data.json` and R7b; each row's signed distance,
+  weight and depth, each hotspot's jittered centre and the layer aggregates (`tn_destroyed_sd`,
+  `_w`, `_depth`, `tn_forest_w`, `tn_forest_sum`, `tn_tree_mult`, `tn_marsh_w`, `tn_hotspot_w`,
+  `tn_enemy_mult`), built in `prototypes/expressions/regions.lua` in one region frame for all three
+  maps, with one shared warp anchored to it (S10's octaves as `basis_noise`, because
+  `multioctave_noise` offsets do not shift its input in 2.1.23) and a radial 24 px clamp; the query
+  point on each map's newest geography version's chain (Europe's version 3, Atlantic's and Old
+  World's version 2; restacked onto the waterways restack, design notes 2026-10-29 13:30); the 515
+  bodies registered in `tests/frozen.json`, each a name config.lua defines (`tools/tnconfig.py`
+  composes the row names from config.lua's stems and suffix and the table's ids, as `regions.lua`
+  does, so the dump facts, the static frozen row and `build_zip.py --release` see every one); the T3
+  oracle's region expectations, strait ends and interior places (`oracle.py regions`, re-derived by
+  `validate`); the test mod `tools/mods/ea-region-probe`; the static `regions` row (the table
+  re-emits byte for byte, no region formula outside `regions.lua`); and the runner's rows
+  (`rl_dump_facts`, `rl_t3_oracle` and `zero_change`, the recorded preview hashes against main's
+  copy, with T15a's rows held equal to main's, in the gate;
+  `rl_t3_maps`, `rl_t2_zone`, `rl_locality`, `rl_read_cost` in the suite). Nothing reads the layer
+  yet, so no map changes.
+- Evidence (draft, on the draft's own isolated instance, through the runner's own row and check
+  functions): every program's complexity and every 256 px preview hash at seeds 1000, 1002 and 1004
+  equal the build before it on every preset at scales 1 and 6 and on the default world; isolation (a)
+  and (b) hold on every preset; T3 at the three seeds on every map at scales 1 and 6: 5,134 pass, 92
+  listed within 40 km of an edge, 0 fail, every protected feature outside the zone; T2: the zone's
+  seed-pair IoU 0.9153 to 0.9225 and IoU with the polygon 0.9429 to 0.9443 on every map at scales 1
+  and 6, its furthest pixel 22.5 px beyond the polygon, the same zone on all three maps and at both
+  scales, Europe's repeat at scale 6 identical (the suite now repeats seed 1000 on every map at both
+  scales and compares every grid and hotspot centre), 66 forest and marsh edges moving per seed
+  within their bounds, 161 hotspot centres within their jitter; the Spessart test copy changes only
+  the table and only the
+  forest aggregates inside the new row; read through a test MGS the layer adds Entity +3,234 and
+  Tile +2,029 on Europe; `earth_test.py static` passes 15 of 15 rows. The gate's cold and warm wall
+  times, `baseline` and the suite remain for the build.
+- Milestone `climate-tiles`: the Earth climate after EarthMaps' layout on every Terra Nauvis preset:
+  temperature from latitude on each map's chain with Eurasia's continental cold (D9: Russia cold)
+  and seven dry belts cut from EarthMaps' painted sand, in an Alien Biomes variant (AB's hot, cold,
+  moisture and aux sliders) and a fallback without AB (the far north dry and dead ground), reached
+  through the presets' `temperature`, `moisture` and `aux` redirects, each the Earth mean plus a
+  seeded spread so every climate zone is a patchwork of several tiles that changes with the seed;
+  beside Alien Biomes the 19
+  vanilla land tiles re-listed behind gated hooks with S3's temperate lean, the non-adopted AB land
+  tiles excluded from temperate bands by a gated hook (D11; APPROVALS 9), and AB's palms on Earth
+  copies that read a constant (the palm leak closed; ARCHITECTURE's preset-key fallback); the 12
+  adopted marshes (APPROVALS 8) from the region layer's marsh weight, with water-mud pools on land and
+  water-shallow along open water joined to the ford hook, and AB's wetland biome; each map's third
+  elevation entry, the waterways around a shore body recalibrated for AB's beach band and deepwater
+  line, carrying the Map type fields (geography 3); AB 0.8.0's palms frozen as Earth data
+  (`tools/build_palms.py`, `prototypes/generated/palms_ab_v1.lua`) with a check of the installed palms;
+  without AB `grass-1` between the marsh pools; the milestone's bodies registered in `tests/frozen.json` by
+  `freeze`, which now hashes every registered body in every dump that holds it; M2 in the gate (its
+  dump, dump facts, zero-cost row, isolation (a) and (b), the climate oracle rows, the M2 budget rows
+  under P11 and P13) and the T3, marsh census, D11, zone variety, T4 (with Alien Biomes' hot and cold
+  sliders and M0 and BAB controls), V3, Map type, M6, design experiment 9 and timed suite checks
+  (`ct_t15b` with the flip rule's guard, `walker_m2`, `rt_m2`, `save_m2`, `ct_maptype_t15b`). Gate cold
+  and warm wall time: not yet measured (the build records them).
+- Evidence (draft, on its own isolated instances, `previews/earth-build/draft-climate-tiles/`): M1
+  default hash-identical to M0 and M2 default to BAB at seeds 1000, 1002 and 1004 with identical
+  operations, registers and complexity; every brief climate row holds on all three maps at scale 1;
+  EarthMaps' class agreement 1.000 per class; M2 Europe at scale 6 Tile 171,748 and Entity 17,414
+  (base build 168,746 and 121,448, the palm leak); M1 Europe at scale 6 Tile 110,343 and Entity 8,352
+  (base 110,490 and 8,553); the M2 isolation walk finds no firewall path on any preset.
+- Milestone `trees-forests`: the great forests, the startup setting Great forests (default on,
+  baked per save through the hook gate `tn_forests_on`): every living tree's own probability under
+  the great-forests hook `if(tn_forests_on > 0.5, min(1, (own) * tn_tree_mult), own)` on every world,
+  which Earth presets point at the region layer's multiplier for the 16 adopted forests (boost 2, S10),
+  the base game's dead and dry trees left alone, and the palms' second probability versions carrying
+  the boost around climate-tiles' copies; beside Alien Biomes the base game's 15 living trees, its
+  rocks and its decals rebuilt from `prototypes/tables/vanilla.lua` (the 2.1.23 texts) behind `tn_on`,
+  each with its key and Earth body (the trees on the vanilla-scale Earth temperature) and restricted
+  to vanilla land, the 11 vanilla decoratives AB takes off Nauvis re-listed behind the same gate, and
+  the AB-restricted vanilla decoratives and dead trees extended onto vanilla land; 85 bodies
+  registered in `tests/frozen.json` (2 from the M2 dump); the zero-cost comparison letting the folded
+  tree hooks join Entity's parsed counts (operations, registers and complexity identical); the dump
+  facts and the FG forest-membership row; the T10 forest (every forest judged at every seed, ring
+  ratios reported), save (M0 and BAB per generated chunk reported), climate and scatter, T17 (with its
+  M0 calibration), T4 (every row at three seeds, frequency by patch texture), T3, palms, D27, T11, V4
+  (woodland chosen from the forest runs) and timed suite checks (P2 bound to M2t/BABt by its relative
+  rule, tf_t15b registered as later milestones' P1 and P2 base), every Earth probe run proving its preset
+  applied (G5). Gate cold and warm wall time: not yet measured (the build records them).
+- Evidence (draft, on its own isolated instances, `previews/earth-build/draft-trees-forests/`): M1
+  and M2 default Entity programs keep 600 operations, 92 registers and complexity 8,549 and 1,743,
+  187 and 24,377 (parsed expressions 2,097 and 4,899 against 2,063 and 4,607); on Europe at scale 6
+  the Black Forest's 21 inside chunks hold 1.93 times the trees with the forests on (M1 1,155 to
+  2,233; M2 1,158 to 2,234) at seed 1000; the isolation walk finds no firewall path on any preset on
+  M1 or M2; Entity at scale 6 grows by +2,369, +5,733 and +5,122 on M1 (Europe, Atlantic, Old World)
+  and by +6,848, +10,205 and +9,595 on M2, over the M2 allocation.
+- Milestone `ridges`: cliff ridges along the 16 adopted ranges, the only cliffs on a Terra Nauvis
+  world: `prototypes/tables/ranges.lua` (R7b's crest polylines, the 54 adopted passes at their
+  approvals arcs, the 53 unnamed gaps the 400 km rule places at the middle of the longest straight
+  piece of crest in each window, Europe's two map-edge openings, and the segments each map reads),
+  written by the new `tools/build_ranges.py` from `approvals-data.json` and R7b; the cliff bodies in
+  `prototypes/expressions/ridges.lua` in contour units (one contour 16.37 tiles out each side, so the
+  frequency, continuity and richness sliders are inert; S5), rail-width openings as 20-tile slots
+  across the crest (across the bend's bisector on a crest vertex, and on 24 tiles past a crest's end
+  vertex), the ridge-free start disc `max(150, starting_area_radius) + 8` and an edge band
+  where a cut range meets a map's edge; the startup setting Ridges (on; off gives 0 cliffs), baked per
+  save as the name switch `tn_ridges` with the drift line; the cliff "none" reset in
+  `scripts/start.lua`; the ore clearance that `data-final-fixes.lua` multiplies into the live
+  probability of iron, copper, coal, stone, uranium and crude oil through each Earth preset's ore keys,
+  reading a cheap crest band at each tile's centre in the Entity program, with no
+  `cliff_removal_probability` edit; the water frequency slider's two vanilla
+  readers, `segmentation_multiplier` and `nauvis_segmentation_multiplier`, pinned on every Earth preset
+  to registered constant bodies holding their default-slider values (T4); `guards.earth_valued`, the
+  D33 strip rule, with the static `d33_guard` row; the static `ranges` row; the runner's rows
+  (`rd_dump_facts`, `rd_offline`, `rd_t4_fg`, `rd_t7_fg` in the gate; `rd_t6`, `rd_t6_start`, `rd_t4`,
+  `rd_t7`, `rd_t8`, `rd_t11`, `rd_v2`, `rd_t15b`, `rd_t15e` in the suite), M1 against M0 and M2 against
+  BAB wherever the criteria name M2; and the test mod `tools/mods/ea-path-probe` (T15e driver 2). The
+  T1 previews without cliffs now also turn the ridges off.
+- Evidence (draft, M1 on the draft's own isolated instance, through the runner's own row and check
+  functions): against the build before it, every map's preset at scales 6 and 1 compiles Tile +0,
+  Entity +1,098 and +1,086 on Europe, +1,961 and +1,949 on Atlantic, +1,591 and +1,579 on Old World
+  (allocation +2,000), and Cliff 351, 706 and 526 at scale 6 (+64, +419, +239; allocation +1,300, P14
+  2,000) and 336, 671 and 502 at scale 1. T6 at London's spawn: facing 0.9962 to 0.9973 and both-flank
+  coverage 0.9426 to 0.9878 at scale 6, facing 0.9694 to 0.9792 and coverage 0.8741 to 0.981 at scale
+  1; every opening at least 9.75 on nav.py walk (Cadibona at scale 1 listed as coastal); with every
+  opening closed the sides never connect, open they do (the run's 96-tile end walls tested little of
+  the Pyrenees at scale 1; re-evaluated offline on the run's retained dumps at London, Bern and
+  Andorra, the walls sized from the ridge keep the sides apart and test 0.79 to 0.84 of each crest
+  less its openings and wet ends at scale 1 and 0.91 to 0.98 at scale 6); the longest pass-free crest
+  334.5 km; 0 cliffs beyond 48 tiles of a crest; rocks within 32 tiles 0.25 to 1.07 times the band
+  beyond 48; ridges off 0 cliffs against 842 and 5,237 on. T6 at Bern and Andorra la Vella: 0 cliffs
+  within 150 tiles, the ranges resuming beyond (106 and 1,665 cliffs at Bern, 12 and 624 at Andorra),
+  coverage 0.9851 and 0.9313 at scale 6, the sides never meeting outside the openings. T4 at the Alps'
+  Ligurian end, scale 6, the three seeds: the Earth preview stays byte-identical under water size none
+  and 6 and the cliff sliders, the cliff signature identical; at cliffs none the start area holds 0
+  cliffs (143 at normal) and the reset logs once and restores all 1,305 cliffs beyond it; water
+  frequency moved the Earth preview at every seed, since vanilla trees (and on M2 Alien Biomes'
+  shallows) read it through `segmentation_multiplier` and `nauvis_segmentation_multiplier`, which the
+  water pins added afterwards hold constant (not yet run in game). T7 on 11 cities on or near crests
+  (30 spawns at scales 1 and 6): 0 cliffs and 0 ridge cliffiness within 150 tiles. T8: 0 ore entities
+  on a ridge cell at the three seeds at scales 1 and 6 (125 to 8,719 resources a dump), the
+  vanilla-keys control 10,040 of 20,090, the default preset hash- and complexity-identical to M0. T11:
+  an Alpine block keeps its 57 cliffs loaded with ridges off (fresh B 0), the drift line once. T15e
+  driver 2 fires its trigger. On the final build `rd_dump_facts`, isolation (a) and
+  (b) on every preset at scales 6 and 1, and the frozen row pass, and `rd_t4_fg` held every slider but
+  water frequency before the pins, M0 changing under each. Offline after that run (no game):
+  `earth_test.py static` passes 17 of 17 rows (187 fixture controls, the new `d33_guard` among them);
+  `rd_offline` holds 31 of 31 checks and controls, among them the crest band mirror (0 of 8.2 million
+  tile centres within the ore clearance outside the band on the three maps at scale 6), rd_geo equal
+  to `oracle.place_tile` at pixel centres, and the live sample's P1 call resolving for every milestone
+  whose timed_ss names t15b_m1; the pins pass `rd_dump_facts` on the draft's M1 dump with the pins
+  added, with its controls. The M2 halves, `rd_t7_fg`, `rd_v2`, T8 on Atlantic and Old World, the
+  timed T15 rows, the full T7 run, `baseline`, the suite and the gate remain for the build.
+- Milestone `resources-enemies`: historical ore hotspots, offshore fields, a richness ramp, sparser
+  base ore and heavier biters inside hotspots. `prototypes/tables/hotspots.lua` (the 77 adopted rows of
+  APPROVALS 2 and 3: Europe 21, Atlantic 77, Old World 63, offshore fields included, each keyed by the
+  region layer's hotspot row that holds its disc, with its strength, biter multiplier, radius and
+  r + 50 km cap in reference pixels, and its land share per map), written by the new
+  `tools/build_hotspots.py` and checked by the static `hotspots` row; `prototypes/expressions/
+  resources.lua`: one spot noise per resource in its own `seed1` over its rows' footprints
+  `min(max(r s, 48), cap s)` tiles (S6 A5 with the shared blob), each row's amount vanilla's patch
+  amount at the candidate's distance times its strength and the ramp, spread over the land candidates
+  of its start disc (`tn_land_coarse` above -4) with a region target equal to their sum, so rows
+  sharing a region never draw on each other's target and the land share applies in game, size and
+  richness acting and frequency inert; the richness ramp `1 + 0.5 clamp((d - 450) / 3550, 0, 1)` on the
+  four solid ores; the random offshore-oil sea mask `tn_land_coarse < -7`; each map's offshore field
+  stamp; `prototypes/expressions/enemies.lua`: S6 A6E's enemy layer (multiplier 4 inside each
+  footprint, none within twice the starting area); each map's next elevation entry (Europe's v5,
+  Atlantic's and Old World's v4; geography ids 11 to 13) composing the stamp last (`min(e, -6)` where
+  the ground is water) through the map-qualified fallback key `tn_fields_<map>`, which a
+  Map-type-only world follows with the hotspots setting under a drift line naming that setting,
+  carrying the Map type fields; the wrappers in `data-final-fixes.lua` around the
+  pack's live autoplace (ore probability v2 over ridges' v1, ore richness, `enemy_base_probability`,
+  and the Oil Rig's offshore oil when it is loaded); the startup setting Ore hotspots (on), baked per
+  save as the name switch `tn_hotspots` with the drift line; ore frequency 0.75 for the six base
+  resources in every preset. The runner's rows: `re_dump_facts` and `re_t4_fg` in the gate;
+  `re_t8`, `re_t8_base`, `re_t8_m3`, `re_t4_oil`, `re_t9`, `re_t4` (with M0 controls), `re_t7`, `re_t2`,
+  `re_t11`, `re_t5` (waterways' T5 with the offshore stamps), `re_t15b` and `re_explore` (M1 against M0
+  and M2 against BAB) and `re_t15e` in the suite; the Oil Rig's offshore-oil wrappers registered from
+  the M3 dump with the live text masked, which the frozen row and `freeze` now produce; and the test mod `tools/mods/ea-polluter` (T15e driver
+  1); a full preset MGS file now carries the preset's autoplace controls.
+- Evidence (draft, M1 on the draft's own isolated instance): against the build before it, every
+  map's preset compiles Entity +1,611 (scale 6) and +1,885 (scale 1) on Europe, +1,840 and +2,190 on
+  Atlantic, +1,830 and +2,176 on Old World (allocation +2,300), Tile +80, +260 and +194 (allocations
+  +200, +700, +500), Cliff unchanged; a 1,024-tile preview over Upper Silesia and Legnica at scale 6,
+  seed 1000, holds 40.9 M of coal and 20.1 M of copper with hotspots on against 18.9 M and 13.7 M off,
+  iron, stone and crude oil unchanged; every static row passes (187 positive controls). T8 on Europe,
+  seed 1000, M1, passes at scale 1 (12 rows judged, 0.49 to 1.05 of their land-scaled targets, 83 to
+  719 times vanilla's mean density; run before the density floor, which binds on no row at scale 1,
+  the largest floor 0.17 of the strength term) and at scale 6 with it (15 rows, 0.47 to 1.48, 7.0 to
+  259 times; the floor binds on 19 of 77 rows there), Entity 11,262 on Europe's default preset. The gate, the
+  suite and the baseline are the build's: the workspace lock was held through most of the draft.
 
 ### Changed
 

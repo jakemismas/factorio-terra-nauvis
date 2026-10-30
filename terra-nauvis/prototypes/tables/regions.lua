@@ -1,0 +1,718 @@
+-- Region layer rows (ARCHITECTURE.md, "Region layer"; S10 design (d), DECISIONS 07:45; slice region-layer).
+-- Written by tools/build_regions.py (writer 1) from
+--   data-src/approvals/approvals-data.json sha256 33ce91d5e5303fb47825d52593e942d22f2d16e7f03b3d11cab4fd97eaa24c5a
+--   docs/plan/research/R7b-geography.json sha256 480c9f20e0a33decc79786b2c4b7a38fe3b8ba8d8b5d8706783f11d913be7729
+-- Never edit by hand: an approval edit is an edit of approvals-data.json, then
+-- `python tools/build_regions.py emit`; the static gate row re-emits this file and fails on a difference.
+--
+-- Pure data, like config.lua: the data stage reads it through require, the Python tools through
+-- tools/tnconfig.py's loader. prototypes/expressions/regions.lua turns every row into its named
+-- signed distance, weight and depth, and each layer's rows into the layer's aggregates.
+-- Fields: id (the names' row part); layer (destroyed, forest, marsh, hotspot); mode (destroyed:
+-- include, or exclude to keep a protected feature out of the zone); shape (disc: lat, lon,
+-- radius_km; polygon: latlon vertices; path: latlon and radius_km, buffered); warp (the row's share
+-- of the shared domain warp); maps (the maps that adopt it); boost (forest strength); mult, resource,
+-- jitter_km and phase (hotspot: biter multiplier, resource, jitter radius and the phase of its fold).
+-- Degrees throughout; sizes in km at regions.km_per_px (config.lua).
+return {
+  rows = {
+    {
+      id = "destroyed_europe", layer = "destroyed", mode = "include", shape = "polygon", warp = 1,
+      maps = {"europe", "atlantic", "olde_world"},
+      latlon = {
+        {45.6, -1.6}, {48.4, -5.4}, {51.0072, 1.4786}, {53.5, 4.6}, {53.75, 8.7}, {55.3, 17}, {54.45, 19.6},
+        {54.36, 23.1}, {52.0766, 23.6161}, {49.7833, 22.7667}, {49.55, 17.85}, {47.8333, 16.75}, {47.5833, 9.4667},
+        {46.45, 6.55},
+      },
+      source = "approvals-data.json destroyed_europe_polygon (APPROVALS 10; R7b destroyed_europe)",
+    },
+    {
+      id = "keep_kiel_canal", layer = "destroyed", mode = "exclude", shape = "path", warp = 0, radius_km = 25,
+      maps = {"europe", "atlantic", "olde_world"},
+      latlon = {
+        {53.88937, 9.13653}, {53.98838, 9.28512}, {54.14027, 9.34224}, {54.21388, 9.5841}, {54.28238, 9.63961},
+        {54.35821, 9.78246}, {54.34082, 9.94224}, {54.36572, 10.14463},
+      },
+      source = "R7b-geography.json canals kiel route_polyline, 6.3 km outside (S10 3)",
+    },
+    {
+      id = "keep_brenner", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0, lat = 47.0033,
+      lon = 11.5075, radius_km = 20,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "R7b-geography.json passes brenner, 72.2 km outside (S10 3)",
+    },
+    {
+      id = "keep_gotthard", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0, lat = 46.5562,
+      lon = 8.5678, radius_km = 20,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "R7b-geography.json passes gotthard, 70.3 km outside (S10 3)",
+    },
+    {
+      id = "keep_semmering", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0, lat = 47.6325,
+      lon = 15.8297, radius_km = 20,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "R7b-geography.json passes semmering, 18.8 km outside (S10 3)",
+    },
+    {
+      id = "keep_dukla", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0, lat = 49.418, lon = 21.696,
+      radius_km = 20,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "R7b-geography.json passes dukla, 34.9 km outside (S10 3)",
+    },
+    {
+      id = "keep_south_foreland_england", layer = "destroyed", mode = "exclude", shape = "disc", warp = 0,
+      lat = 51.1436, lon = 1.3736, radius_km = 20,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "R7b-geography.json straits dover endpoint south_foreland_england, 18.3 km outside (S10 3)",
+    },
+    {
+      id = "bialowieza", layer = "forest", shape = "disc", warp = 0.25, boost = 1, lat = 52.75, lon = 23.95,
+      radius_km = 31.3,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json forests bialowieza, a disc of its equivalent radius (APPROVALS 4)",
+    },
+    {
+      id = "black_forest", layer = "forest", shape = "disc", warp = 0.25, boost = 1, lat = 48.25, lon = 8.05,
+      radius_km = 43.7,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json forests black_forest, a disc of its equivalent radius (APPROVALS 4)",
+    },
+    {
+      id = "ardennes", layer = "forest", shape = "disc", warp = 0.25, boost = 1, lat = 50.25, lon = 5.6667,
+      radius_km = 59.7,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json forests ardennes, a disc of its equivalent radius (APPROVALS 4)",
+    },
+    {
+      id = "bohemian_forest", layer = "forest", shape = "disc", warp = 0.25, boost = 1, lat = 49, lon = 13.3833,
+      radius_km = 35.4,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json forests bohemian_forest, a disc of its equivalent radius (APPROVALS 4)",
+    },
+    {
+      id = "landes", layer = "forest", shape = "disc", warp = 0.25, boost = 1, lat = 44.18, lon = -0.5822,
+      radius_km = 56.4,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json forests landes, a disc of its equivalent radius (APPROVALS 4)",
+    },
+    {
+      id = "tuchola", layer = "forest", shape = "disc", warp = 0.25, boost = 1, lat = 53.6, lon = 18, radius_km = 31.9,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json forests tuchola, a disc of its equivalent radius (APPROVALS 4)",
+    },
+    {
+      id = "carpathian_montane", layer = "forest", shape = "polygon", warp = 0.4, boost = 1,
+      maps = {"europe", "atlantic", "olde_world"},
+      latlon = {
+        {50.1, 21.8}, {48.22, 26.34}, {45.31, 26.44}, {45.16, 22.45}, {45.87, 22.75}, {46.04, 26.36}, {49.25, 21.87},
+        {48.6, 18.63}, {49.31, 17.66},
+      },
+      source = "R7b-geography.json forests carpathian_montane outline, 9 vertices (APPROVALS 4)",
+    },
+    {
+      id = "dinaric_mixed", layer = "forest", shape = "polygon", warp = 0.4, boost = 1,
+      maps = {"europe", "atlantic", "olde_world"},
+      latlon = {
+        {46.37, 14.1}, {44.46, 16.11}, {44.81, 16.33}, {44.33, 18.94}, {43.39, 18.76}, {43.72, 19.47}, {42.87, 20.62},
+        {42.12, 19.84}, {44.5, 15.12}, {46.27, 13.19},
+      },
+      source = "R7b-geography.json forests dinaric_mixed outline, 10 vertices (APPROVALS 4)",
+    },
+    {
+      id = "scandinavian_taiga", layer = "forest", shape = "polygon", warp = 1, boost = 1,
+      maps = {"europe", "atlantic", "olde_world"},
+      latlon = {
+        {69.61, 28.4}, {66.83, 40.59}, {67.18, 31.7}, {63.79, 37.37}, {66.77, 62.41}, {60.86, 53.89}, {57.88, 57.82},
+        {59.8, 22.94}, {66.09, 23.9}, {58.21, 7.31}, {64.41, 10.47},
+      },
+      source = "R7b-geography.json forests scandinavian_taiga outline, 11 vertices (APPROVALS 4)",
+    },
+    {
+      id = "hyrcanian", layer = "forest", shape = "polygon", warp = 0.4, boost = 1,
+      maps = {"atlantic", "olde_world"},
+      latlon = {
+        {39.21, 48.43}, {37.68, 49.06}, {36.58, 51.89}, {37.78, 56.65}, {36.02, 53.46}, {36.16, 51.28}, {36.92, 49.35},
+        {38.04, 48.56}, {37.68, 47.96}, {38.63, 48.24}, {38.69, 47},
+      },
+      source = "R7b-geography.json forests hyrcanian outline, 11 vertices (APPROVALS 4)",
+    },
+    {
+      id = "west_siberian_taiga", layer = "forest", shape = "polygon", warp = 1, boost = 1,
+      maps = {"atlantic", "olde_world"},
+      latlon = {
+        {57.02, 93.47}, {56.04, 91.97}, {57.59, 84.84}, {56.52, 80.56}, {57.41, 65.94}, {54.38, 58.97}, {64.47, 60.14},
+        {66.74, 65.41}, {65.53, 75.03}, {66.28, 84.64}, {68.33, 86.35}, {63.41, 87.15},
+      },
+      source = "R7b-geography.json forests west_siberian_taiga outline, 12 vertices (APPROVALS 4)",
+    },
+    {
+      id = "east_siberian_taiga", layer = "forest", shape = "polygon", warp = 1, boost = 1,
+      maps = {"atlantic", "olde_world"},
+      latlon = {
+        {71.25, 114.27}, {60.17, 142.57}, {52.78, 131.91}, {55.91, 110.22}, {51.42, 104.41}, {53.01, 92.96},
+        {68.33, 86.35}, {64.75, 97.44},
+      },
+      source = "R7b-geography.json forests east_siberian_taiga outline, 8 vertices (APPROVALS 4)",
+    },
+    {
+      id = "congolian", layer = "forest", shape = "polygon", warp = 1, boost = 1,
+      maps = {"atlantic", "olde_world"},
+      latlon = {
+        {5.76, 23.28}, {4.29, 23.06}, {2.2, 30.11}, {-2.08, 28.69}, {-1.71, 27.17}, {-3.57, 28.15}, {-3.41, 26.21},
+        {0.51, 25.27}, {3.29, 18.83}, {5.14, 19.44}, {4.39, 21.39},
+      },
+      source = "R7b-geography.json forests congolian outline, 11 vertices (APPROVALS 4)",
+    },
+    {
+      id = "upper_guinean", layer = "forest", shape = "polygon", warp = 1, boost = 1,
+      maps = {"atlantic", "olde_world"},
+      latlon = {
+        {6.2, -10.56}, {8.17, -13.17}, {8.63, -12.61}, {9.94, -13.7}, {8.65, -11.77}, {9.35, -10.76}, {7.72, -7.69},
+        {7.42, -8.69}, {7.72, -7.08}, {4.96, -6.07}, {4.37, -7.72},
+      },
+      source = "R7b-geography.json forests upper_guinean outline, 11 vertices (APPROVALS 4)",
+    },
+    {
+      id = "amazon", layer = "forest", shape = "disc", warp = 0.25, boost = 1, lat = -3, lon = -60, radius_km = 1323.1,
+      maps = {"atlantic"},
+      source = "approvals-data.json forests amazon, a disc of its equivalent radius (APPROVALS 4)",
+    },
+    {
+      id = "atlantic_forest", layer = "forest", shape = "polygon", warp = 1, boost = 1,
+      maps = {"atlantic"},
+      latlon = {
+        {-17.88, -48.79}, {-19.73, -50.94}, {-22.37, -48.38}, {-22.16, -51.25}, {-23.66, -49.28}, {-24.5, -53.69},
+        {-25.72, -52.06}, {-26.93, -54.44}, {-27.37, -51.94}, {-28.1, -55.45}, {-23.43, -57.28},
+      },
+      source = "R7b-geography.json forests atlantic_forest outline, 11 vertices (APPROVALS 4)",
+    },
+    {
+      id = "pripet", layer = "marsh", shape = "polygon", warp = 0,
+      maps = {"europe", "atlantic", "olde_world"},
+      latlon = {
+        {53.011736, 24.84163}, {53.011736, 29.15837}, {50.988264, 29.15837}, {50.988264, 24.84163},
+      },
+      source = "R7b-geography.json marshes pripet box 480 x 225 km (APPROVALS 8)",
+    },
+    {
+      id = "danube_delta", layer = "marsh", shape = "disc", warp = 0, lat = 45.2, lon = 29.5, radius_km = 36.4,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "R7b-geography.json marshes danube_delta, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "camargue", layer = "marsh", shape = "disc", warp = 0, lat = 43.5333, lon = 4.5, radius_km = 17.2,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "R7b-geography.json marshes camargue, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "po_delta", layer = "marsh", shape = "disc", warp = 0, lat = 44.9525, lon = 12.4319, radius_km = 7.6,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "R7b-geography.json marshes po_delta, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "wadden_sea", layer = "marsh", shape = "path", warp = 0, radius_km = 10.253,
+      maps = {"europe", "atlantic", "olde_world"},
+      latlon = {
+        {53.3908, 5.6658}, {53.7, 7.3333}, {53.9353, 8.4728}, {54.4564, 8.6464}, {55.4167, 8.4664},
+      },
+      source = "R7b-geography.json marshes wadden_sea coast_polyline, a band of 10000 km2 (APPROVALS 8)",
+    },
+    {
+      id = "vasyugan", layer = "marsh", shape = "disc", warp = 0, lat = 57.2333, lon = 76.5, radius_km = 129.9,
+      maps = {"atlantic", "olde_world"},
+      source = "R7b-geography.json marshes vasyugan, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "sudd", layer = "marsh", shape = "disc", warp = 0, lat = 8, lon = 31, radius_km = 97.7,
+      maps = {"atlantic", "olde_world"},
+      source = "R7b-geography.json marshes sudd, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "okavango", layer = "marsh", shape = "disc", warp = 0, lat = -19.4, lon = 22.9, radius_km = 69.1,
+      maps = {"atlantic", "olde_world"},
+      source = "R7b-geography.json marshes okavango, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "mesopotamian", layer = "marsh", shape = "disc", warp = 0, lat = 31, lon = 47, radius_km = 79.8,
+      maps = {"atlantic", "olde_world"},
+      source = "R7b-geography.json marshes mesopotamian, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "everglades", layer = "marsh", shape = "disc", warp = 0, lat = 26, lon = -80.7, radius_km = 80.2,
+      maps = {"atlantic"},
+      source = "R7b-geography.json marshes everglades, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "pantanal", layer = "marsh", shape = "disc", warp = 0, lat = -17.4, lon = -57.5, radius_km = 232.6,
+      maps = {"atlantic"},
+      source = "R7b-geography.json marshes pantanal, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "volga_delta", layer = "marsh", shape = "disc", warp = 0, lat = 46.733, lon = 47.85, radius_km = 93.1,
+      maps = {"atlantic", "olde_world"},
+      source = "R7b-geography.json marshes volga_delta, a disc of its equivalent radius (APPROVALS 8)",
+    },
+    {
+      id = "iron_kiruna_malmberget", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore",
+      lat = 67.5086, lon = 20.4299, radius_km = 50, jitter_km = 25, phase = 0.866216646,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-kiruna-malmberget (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_lorraine_minette", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore",
+      lat = 49.3731, lon = 5.9604, radius_km = 40, jitter_km = 20, phase = 0.6004138,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-lorraine-minette (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_kryvbas", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore", lat = 48,
+      lon = 33.417, radius_km = 50, jitter_km = 25, phase = 0.856921397,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-kryvbas (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_kursk_magnetic_anomaly", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore",
+      lat = 51.2536, lon = 37.6694, radius_km = 100, jitter_km = 50, phase = 0.854076942,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-kursk-magnetic-anomaly (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_kediet_ej_jill", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore",
+      lat = 22.6511, lon = -12.5742, radius_km = 40, jitter_km = 20, phase = 0.280493657,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-kediet-ej-jill (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_gara_djebilet", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore",
+      lat = 26.7352, lon = -7.4678, radius_km = 40, jitter_km = 20, phase = 0.861218965,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-gara-djebilet (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_simandou", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore", lat = 8.533,
+      lon = -8.9, radius_km = 55, jitter_km = 27.5, phase = 0.58371913,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-simandou (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_sishen", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore", lat = -27.75,
+      lon = 23, radius_km = 40, jitter_km = 20, phase = 0.710419018,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-sishen (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_carajas", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore", lat = -6.0586,
+      lon = -50.1769, radius_km = 50, jitter_km = 25, phase = 0.851547404,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots iron-carajas (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_labrador_trough", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore",
+      lat = 56, lon = -67.5, radius_km = 150, jitter_km = 75, phase = 0.732325961,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots iron-labrador-trough (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_mesabi_range", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore",
+      lat = 47.5, lon = -93.0667, radius_km = 70, jitter_km = 35, phase = 0.101399414,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots iron-mesabi-range (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_anshan", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore", lat = 41.108,
+      lon = 122.994, radius_km = 40, jitter_km = 20, phase = 0.177928915,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-anshan (APPROVALS 2; R7a)",
+    },
+    {
+      id = "iron_barbil", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "iron-ore", lat = 22.12,
+      lon = 85.4, radius_km = 50, jitter_km = 25, phase = 0.729314044,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots iron-barbil (APPROVALS 2; R7a)",
+    },
+    {
+      id = "copper_iberian_pyrite_belt", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "copper-ore",
+      lat = 37.628, lon = -7.2769, radius_km = 90, jitter_km = 45, phase = 0.483765599,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots copper-iberian-pyrite-belt (APPROVALS 2; R7a)",
+    },
+    {
+      id = "copper_legnica_glogow", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "copper-ore",
+      lat = 51.5015, lon = 16.1073, radius_km = 30, jitter_km = 15, phase = 0.621650259,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots copper-legnica-glogow (APPROVALS 2; R7a)",
+    },
+    {
+      id = "copper_bor", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "copper-ore", lat = 44.0764,
+      lon = 22.1103, radius_km = 30, jitter_km = 15, phase = 0.272469658,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots copper-bor (APPROVALS 2; R7a)",
+    },
+    {
+      id = "copper_sarcheshmeh", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "copper-ore",
+      lat = 29.9847, lon = 55.8539, radius_km = 30, jitter_km = 15, phase = 0.970868719,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots copper-sarcheshmeh (APPROVALS 2; R7a)",
+    },
+    {
+      id = "copper_central_african_copperbelt", layer = "hotspot", shape = "disc", warp = 0, mult = 4,
+      resource = "copper-ore", lat = -11.7667, lon = 26.8333, radius_km = 200, jitter_km = 100, phase = 0.540152713,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots copper-central-african-copperbelt (APPROVALS 2; R7a)",
+    },
+    {
+      id = "copper_zhezkazgan", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "copper-ore",
+      lat = 47.7833, lon = 67.7, radius_km = 40, jitter_km = 20, phase = 0.053575303,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots copper-zhezkazgan (APPROVALS 2; R7a)",
+    },
+    {
+      id = "copper_norilsk", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "copper-ore",
+      lat = 69.333, lon = 88.217, radius_km = 40, jitter_km = 20, phase = 0.811918967,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots copper-norilsk (APPROVALS 2; R7a)",
+    },
+    {
+      id = "copper_oyu_tolgoi", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "copper-ore",
+      lat = 43.0083, lon = 106.8431, radius_km = 25, jitter_km = 12.5, phase = 0.68189393,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots copper-oyu-tolgoi (APPROVALS 2; R7a)",
+    },
+    {
+      id = "copper_atacama", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "copper-ore",
+      lat = -23.2877, lon = -68.9861, radius_km = 120, jitter_km = 60, phase = 0.141374704,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots copper-atacama (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_ruhr", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal", lat = 51.5,
+      lon = 7.25, radius_km = 40, jitter_km = 20, phase = 0.885680713,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-ruhr (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_upper_silesia", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal", lat = 50.25,
+      lon = 19, radius_km = 45, jitter_km = 22.5, phase = 0.359843624,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-upper-silesia (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_donbas", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal", lat = 48.0158,
+      lon = 37.8028, radius_km = 110, jitter_km = 55, phase = 0.21429346,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-donbas (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_south_wales", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal", lat = 51.6159,
+      lon = -3.4175, radius_km = 40, jitter_km = 20, phase = 0.911389775,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-south-wales (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_nord_pas_de_calais", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal",
+      lat = 50.4625, lon = 3.5461, radius_km = 35, jitter_km = 17.5, phase = 0.185773468,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-nord-pas-de-calais (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_kuzbass", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal", lat = 55.3544,
+      lon = 86.0886, radius_km = 90, jitter_km = 45, phase = 0.606827666,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-kuzbass (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_ekibastuz", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal", lat = 51.6667,
+      lon = 75.3667, radius_km = 30, jitter_km = 15, phase = 0.021446165,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-ekibastuz (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_ordos", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal", lat = 39.604,
+      lon = 109.785, radius_km = 150, jitter_km = 75, phase = 0.288758844,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-ordos (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_jharia_damodar", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal",
+      lat = 23.7516, lon = 86.4203, radius_km = 40, jitter_km = 20, phase = 0.459432194,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-jharia-damodar (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_witbank_highveld", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal",
+      lat = -25.877, lon = 29.201, radius_km = 60, jitter_km = 30, phase = 0.363947629,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots coal-witbank-highveld (APPROVALS 2; R7a)",
+    },
+    {
+      id = "coal_pocahontas", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "coal", lat = 37.3,
+      lon = -81.3333, radius_km = 100, jitter_km = 50, phase = 0.561437637,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots coal-pocahontas (APPROVALS 2; R7a)",
+    },
+    {
+      id = "stone_carrara", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "stone", lat = 44.0792,
+      lon = 10.1, radius_km = 15, jitter_km = 7.5, phase = 0.92402872,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots stone-carrara (APPROVALS 2; R7a)",
+    },
+    {
+      id = "stone_portland", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "stone", lat = 50.55,
+      lon = -2.44, radius_km = 10, jitter_km = 5, phase = 0.929378212,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots stone-portland (APPROVALS 2; R7a)",
+    },
+    {
+      id = "stone_pentelicus", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "stone", lat = 38.0808,
+      lon = 23.8997, radius_km = 10, jitter_km = 5, phase = 0.30135054,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots stone-pentelicus (APPROVALS 2; R7a)",
+    },
+    {
+      id = "stone_marmara_island", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "stone",
+      lat = 40.62, lon = 27.63, radius_km = 15, jitter_km = 7.5, phase = 0.806501323,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots stone-marmara-island (APPROVALS 2; R7a)",
+    },
+    {
+      id = "stone_aswan", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "stone", lat = 24.0769,
+      lon = 32.8954, radius_km = 15, jitter_km = 7.5, phase = 0.794963629,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots stone-aswan (APPROVALS 2; R7a)",
+    },
+    {
+      id = "stone_makrana", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "stone", lat = 27.05,
+      lon = 74.72, radius_km = 15, jitter_km = 7.5, phase = 0.215667165,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots stone-makrana (APPROVALS 2; R7a)",
+    },
+    {
+      id = "stone_indiana_limestone", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "stone",
+      lat = 39.0147, lon = -86.5135, radius_km = 25, jitter_km = 12.5, phase = 0.663017097,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots stone-indiana-limestone (APPROVALS 2; R7a)",
+    },
+    {
+      id = "uranium_athabasca_basin", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "uranium-ore",
+      lat = 57.9149, lon = -104.7961, radius_km = 70, jitter_km = 35, phase = 0.911066509,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots uranium-athabasca-basin (APPROVALS 2; R7a)",
+    },
+    {
+      id = "uranium_chu_sarysu", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "uranium-ore",
+      lat = 45.12, lon = 68.64, radius_km = 110, jitter_km = 55, phase = 0.380004023,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots uranium-chu-sarysu (APPROVALS 2; R7a)",
+    },
+    {
+      id = "uranium_erongo", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "uranium-ore",
+      lat = -22.4842, lon = 15.0489, radius_km = 40, jitter_km = 20, phase = 0.815091669,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots uranium-erongo (APPROVALS 2; R7a)",
+    },
+    {
+      id = "uranium_arlit", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "uranium-ore",
+      lat = 18.733, lon = 7.383, radius_km = 40, jitter_km = 20, phase = 0.978968929,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots uranium-arlit (APPROVALS 2; R7a)",
+    },
+    {
+      id = "uranium_kyzylkum", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "uranium-ore",
+      lat = 41.1206, lon = 64.4674, radius_km = 140, jitter_km = 70, phase = 0.311861439,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots uranium-kyzylkum (APPROVALS 2; R7a)",
+    },
+    {
+      id = "uranium_ore_mountains", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "uranium-ore",
+      lat = 50.6155, lon = 12.5903, radius_km = 45, jitter_km = 22.5, phase = 0.504742782,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots uranium-ore-mountains (APPROVALS 2; R7a)",
+    },
+    {
+      id = "uranium_krasnokamensk", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "uranium-ore",
+      lat = 50.1, lon = 118.0333, radius_km = 30, jitter_km = 15, phase = 0.315685335,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots uranium-krasnokamensk (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_ghawar", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil", lat = 25.2,
+      lon = 49.3167, radius_km = 100, jitter_km = 50, phase = 0.800865886,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-ghawar (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_basra_kuwait", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil",
+      lat = 29.6335, lon = 47.6872, radius_km = 80, jitter_km = 40, phase = 0.718285808,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-basra-kuwait (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_ahvaz", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil", lat = 31.3203,
+      lon = 48.6692, radius_km = 80, jitter_km = 40, phase = 0.864062,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-ahvaz (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_kirkuk", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil", lat = 35.5329,
+      lon = 44.3357, radius_km = 40, jitter_km = 20, phase = 0.605266559,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-kirkuk (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_samotlor", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil", lat = 61.117,
+      lon = 76.75, radius_km = 150, jitter_km = 75, phase = 0.208293453,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-samotlor (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_volga_ural", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil",
+      lat = 54.5729, lon = 52.37, radius_km = 60, jitter_km = 30, phase = 0.749267165,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-volga-ural (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_baku_absheron", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil",
+      lat = 40.439478, lon = 49.742222, radius_km = 40, jitter_km = 20, phase = 0.79196388,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-baku-absheron (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_hassi_messaoud", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil",
+      lat = 30.4763, lon = 5.2401, radius_km = 50, jitter_km = 25, phase = 0.50488822,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-hassi-messaoud (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_sirte_basin", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil",
+      lat = 28.22, lon = 19.13, radius_km = 150, jitter_km = 75, phase = 0.53724836,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-sirte-basin (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_niger_delta", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil",
+      lat = 5.3167, lon = 6.4667, radius_km = 100, jitter_km = 50, phase = 0.376464008,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-niger-delta (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_tengiz", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil", lat = 46.1528,
+      lon = 53.3833, radius_km = 30, jitter_km = 15, phase = 0.197518255,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-tengiz (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_daqing", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil", lat = 46.6,
+      lon = 124.9, radius_km = 60, jitter_km = 30, phase = 0.915614779,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots oil-daqing (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_orinoco_belt", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil",
+      lat = 8.8861, lon = -64.2611, radius_km = 130, jitter_km = 65, phase = 0.074993421,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots oil-orinoco-belt (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_athabasca_oil_sands", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil",
+      lat = 57.02, lon = -111.65, radius_km = 150, jitter_km = 75, phase = 0.369475452,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots oil-athabasca-oil-sands (APPROVALS 2; R7a)",
+    },
+    {
+      id = "oil_permian_basin", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "crude-oil",
+      lat = 32.5, lon = -103, radius_km = 200, jitter_km = 100, phase = 0.517797622,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots oil-permian-basin (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_ekofisk", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 56.5492, lon = 3.21, radius_km = 40, jitter_km = 20, phase = 0.914785076,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-ekofisk (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_forties", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 57.7167, lon = 1.0167, radius_km = 40, jitter_km = 20, phase = 0.178755045,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-forties (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_utsira_high", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 59.22, lon = 2.49, radius_km = 40, jitter_km = 20, phase = 0.852810245,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-utsira-high (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_tampen_east_shetland", layer = "hotspot", shape = "disc", warp = 0, mult = 4,
+      resource = "offshore-oil", lat = 61.0778, lon = 1.8269, radius_km = 50, jitter_km = 25, phase = 0.090242319,
+      maps = {"europe", "atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-tampen-east-shetland (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_caspian_acg", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 40.0178, lon = 51.2661, radius_km = 30, jitter_km = 15, phase = 0.315517171,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-caspian-acg (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_kashagan", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 46.1667, lon = 51.5833, radius_km = 40, jitter_km = 20, phase = 0.306972818,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-kashagan (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_safaniya", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 28.28, lon = 48.75, radius_km = 40, jitter_km = 20, phase = 0.998438244,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-safaniya (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_upper_zakum", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 24.853, lon = 53.662, radius_km = 30, jitter_km = 15, phase = 0.987725574,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-upper-zakum (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_mumbai_high", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 19.4167, lon = 71.3333, radius_km = 40, jitter_km = 20, phase = 0.635422383,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-mumbai-high (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_nigeria_deepwater", layer = "hotspot", shape = "disc", warp = 0, mult = 4,
+      resource = "offshore-oil", lat = 3.9932, lon = 5.0832, radius_km = 100, jitter_km = 50, phase = 0.188457964,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-nigeria-deepwater (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_angola_block_17", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = -7.6554, lon = 11.7143, radius_km = 50, jitter_km = 25, phase = 0.837073602,
+      maps = {"atlantic", "olde_world"},
+      source = "approvals-data.json hotspots offshore-angola-block-17 (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_gulf_of_mexico_deepwater", layer = "hotspot", shape = "disc", warp = 0, mult = 4,
+      resource = "offshore-oil", lat = 28.1091, lon = -88.4944, radius_km = 150, jitter_km = 75, phase = 0.616153955,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots offshore-gulf-of-mexico-deepwater (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_cantarell", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 19.7525, lon = -92.5161, radius_km = 40, jitter_km = 20, phase = 0.487367792,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots offshore-cantarell (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_guyana_stabroek", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = 8.111, lon = -56.928, radius_km = 90, jitter_km = 45, phase = 0.456004422,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots offshore-guyana-stabroek (APPROVALS 2; R7a)",
+    },
+    {
+      id = "offshore_tupi_presalt", layer = "hotspot", shape = "disc", warp = 0, mult = 4, resource = "offshore-oil",
+      lat = -25.5, lon = -43.5, radius_km = 150, jitter_km = 75, phase = 0.804575045,
+      maps = {"atlantic"},
+      source = "approvals-data.json hotspots offshore-tupi-presalt (APPROVALS 2; R7a)",
+    },
+  },
+}

@@ -14,8 +14,13 @@ Function calls, globals, assignments to fields and every other statement raise C
 is what "pure data" means for this file.
 
 Lua tables become dicts when they have any keyed field, lists when every field is positional.
-Numbers keep Lua's value (an integral float such as 6.0 is returned as the int 6).
+Numbers keep Lua's value (an integral float such as 6.0 is returned as the int 6). A loaded table
+remembers its file (Config.source), so the accessors read the region table beside the config.lua
+they were given, in a staged mod copy as in the repo.
 """
+import hashlib
+import math
+import re
 import sys
 from pathlib import Path
 
@@ -25,6 +30,12 @@ CONFIG = REPO / "terra-nauvis" / "prototypes" / "config.lua"
 
 class ConfigError(ValueError):
     pass
+
+
+class Config(dict):
+    """A loaded pure-data table: a dict that also remembers the file it came from (None for a dict
+    built in code, whose region table is then the repo's)."""
+    source = None
 
 
 def _ast():
@@ -162,10 +173,21 @@ def parse_lua(text, where="<lua>"):
         raise ConfigError(f"{where}: Lua syntax error: {e}") from e
 
 
+def _eval_text(text, path):
+    tree = parse_lua(text, str(path))
+    _, astnodes = _ast()
+    data = _Evaluator(astnodes, path.name).chunk(tree)
+    if not isinstance(data, dict):
+        raise ConfigError(f"{path}: the returned value is not a keyed table")
+    out = Config(data)
+    out.source = path.resolve()
+    return out
+
+
 def load(path=CONFIG):
-    """The config table of a pure-data Lua file as Python data."""
+    """The config table of a pure-data Lua file as Python data (a Config that remembers `path`)."""
     path = Path(path)
-    return loads(path.read_text(encoding="utf-8"), str(path), path.name)
+    return _eval_text(path.read_text(encoding="utf-8"), path)
 
 
 def loads(text, where="<lua>", name=None):
@@ -308,8 +330,18 @@ def frozen_fallback_names(cfg):
 # its coarse land field, its coordinate chain and its city offset names.
 GEOGRAPHY_NAMES = ("entry", "geo", "land_coarse", "detail", "far", "gx", "gy", "u", "v", "cx", "cy")
 VERSION_FIELDS = set(GEOGRAPHY_NAMES) | {"geo_id", "city_offset", "start_mask", "fits", "fallbacks"}
-# A version's optional fields: `spawn` (spawn-cities), the spawn at the chosen city.
-OPTIONAL_VERSION_FIELDS = {"spawn"}
+# A version's optional fields: `spawn` (spawn-cities), the spawn at the chosen city, `waterways`
+# (waterways), the map's waterway sets the version composes, bound to its chain, and `shore`
+# (climate-tiles), the shore body its entry composes in place of the transfer: it reads the version's
+# fit, detail and box, so it is the version's own and in its fine field; and `fields`
+# (resources-enemies), the map-qualified per-save key of the map's offshore field stamp, which its entry
+# composes last (a Map type fallback mirroring the hotspots setting; the stamp body reads the layer
+# chain, so it is no version's own).
+OPTIONAL_VERSION_FIELDS = {"spawn", "waterways", "shore", "fields"}
+# A waterways record: per kind, the set names by scale. The sets read the version's chain, so they are
+# its own: a later version that composes the waterways names sets of its own, and config.lua's
+# waterways.sets[map] is the record of the map's newest version that has one.
+WATERWAY_KINDS = ("ww", "canals", "dams", "fords")
 # The fit bodies a version binds to generated files (tools/build_geo.py's bodies).
 FIT_ROLES = ("geo", "land_coarse")
 GENERATED_DIR = "prototypes/generated/"
@@ -337,18 +369,38 @@ def spawn_of(version):
     return version.get("spawn") or None
 
 
+def waterways_of(version):
+    """A geography version's waterways record ({kind: [set name by scale]}), or None."""
+    return version.get("waterways") or None
+
+
+def waterway_names(version):
+    """Every waterway set name a version composes (they read its chain, so they are its own and in its
+    fine field), in kind and scale order; [] without a waterways record."""
+    ww = waterways_of(version)
+    return [n for k in WATERWAY_KINDS for n in ww[k]] if ww else []
+
+
+def shore_names(version):
+    """A version's shore body (climate-tiles) as a one-name list, or []."""
+    return [version["shore"]] if version.get("shore") else []
+
+
 def fine_names(version):
     """A version's fine field: its entry, the bodies only it reads and, with a spawn record, the
-    inland lakes and the start land guarantee."""
+    inland lakes and the start land guarantee; its waterway sets and its shore body."""
     sp = spawn_of(version)
-    return [version[n] for n in FINE_ROLES] + ([sp[n] for n in SPAWN_FINE] if sp else [])
+    return ([version[n] for n in FINE_ROLES] + ([sp[n] for n in SPAWN_FINE] if sp else []) + waterway_names(version) +
+            shore_names(version))
 
 
 def own_names(version):
     """The noise names a version takes as its own, which no other version may name: its
-    GEOGRAPHY_NAMES and, with a spawn record, the spawn names that read its chain."""
+    GEOGRAPHY_NAMES and, with a spawn record, the spawn names that read its chain; its waterway sets
+    and its shore body."""
     sp = spawn_of(version)
-    return [version[n] for n in GEOGRAPHY_NAMES] + ([sp[n] for n in SPAWN_OWN] if sp else [])
+    return ([version[n] for n in GEOGRAPHY_NAMES] + ([sp[n] for n in SPAWN_OWN] if sp else []) + waterway_names(version) +
+            shore_names(version))
 
 
 def _spawn_record(sp, where, cfg):
@@ -370,6 +422,16 @@ def _spawn_record(sp, where, cfg):
         raise ConfigError(f"config.lua {where}.spawn.city_setting {sp['city_setting']!r}: its allowed values must start "
                           f"with spawn.random_value {random_value!r} (the per-save number 0) and list each city once")
     return sp
+
+
+def _waterways_record(ww, where, cfg, key):
+    n = len(((cfg.get("scales") or {}).get("values")) or [])
+    if not isinstance(ww, dict) or set(ww) != set(WATERWAY_KINDS) or not all(
+            isinstance(ww[k], list) and len(ww[k]) == n and all(isinstance(x, str) and x for x in ww[k])
+            for k in WATERWAY_KINDS):
+        raise ConfigError(f"config.lua {where}.waterways must map exactly {list(WATERWAY_KINDS)} to one set name per "
+                          f"scale ({n})")
+    return ww
 
 
 def city_number(cfg, version, value=None):
@@ -417,6 +479,12 @@ def geography_versions(cfg):
                                   f"{sorted(OPTIONAL_VERSION_FIELDS)}")
             if "spawn" in v:
                 _spawn_record(v["spawn"], where, cfg)
+            if "waterways" in v:
+                _waterways_record(v["waterways"], where, cfg, key)
+            if "shore" in v and (not isinstance(v["shore"], str) or not v["shore"]):
+                raise ConfigError(f"config.lua {where}.shore must be a noise name (the version's shore body)")
+            if "fields" in v and (not isinstance(v["fields"], str) or not v["fields"]):
+                raise ConfigError(f"config.lua {where}.fields must be a noise name (the map's offshore stamp key)")
             for n in GEOGRAPHY_NAMES + ("start_mask",):
                 if not isinstance(v[n], str) or not v[n]:
                     raise ConfigError(f"config.lua {where}.{n} must be a noise name")
@@ -458,6 +526,133 @@ def geography(cfg):
             for key, versions in geography_versions(cfg).items()}
 
 
+# ------------------------------------------------------------------------------------------------ regions
+#
+# The region layer (milestone region-layer). prototypes/expressions/regions.lua defines the layer's
+# fixed names from config.lua's regions.names, and for every row of the region table beside
+# config.lua the names that config.lua's row stem, the row's id and config.lua's version suffix
+# make, plus one warped query point per distinct warp share. The accessors below compose the same
+# names by the same rule, and the release_registry row that lists the table under `files` releases
+# them, so every reader of config's names (the gate's dump facts, the T16 name and frozen rows,
+# build_zip.py --release) sees each one: a row name derives from config.lua through its stem and
+# suffix (design constraint 5), and a row edit stays a data edit of the table (D13).
+
+REGION_TABLE = "prototypes/tables/regions.lua"     # relative to the mod folder, as `files` spells it
+REGION_ROW_KINDS = ("sd", "w", "depth")            # every row's signed distance, weight and depth
+REGION_CENTRE_KINDS = ("hu", "hv")                 # a hotspot disc's jittered centre
+REGION_AGGREGATES = ("destroyed_sd", "destroyed_w", "destroyed_depth", "forest_w", "forest_sum", "tree_mult",
+                     "marsh_w", "hotspot_w", "enemy_mult")
+REGION_OWN = ("ox", "oy", "ax", "ay", "wk", "wx", "wy", "rough")   # the noise anchor, the warp, the roughness
+_ROW_ID = re.compile(r"[a-z0-9]+(?:_[a-z0-9]+)*")
+_TABLES = {}
+
+
+def region_table_path(cfg):
+    """The region table beside the config.lua `cfg` was loaded from (the repo's for a dict built in
+    code): <mod>/prototypes/tables/regions.lua."""
+    src = getattr(cfg, "source", None)
+    mod = Path(src).parents[1] if src else CONFIG.parents[1]
+    return mod / REGION_TABLE
+
+
+def region_table_rows(cfg):
+    """The region table's rows (the table beside cfg's config.lua), read with the pure-data loader;
+    each row is a keyed table with an id (lower-case letters and digits joined by single underscores,
+    unique), a layer, a shape and a warp share in [0, 1]. The parse is cached by the file's sha256."""
+    p = region_table_path(cfg)
+    try:
+        raw = p.read_bytes()
+    except OSError as e:
+        raise ConfigError(f"{p}: the region table is unreadable ({e})") from e
+    key = hashlib.sha256(raw).hexdigest()
+    if key not in _TABLES:
+        rows = _eval_text(raw.decode("utf-8"), p).get("rows")
+        if not isinstance(rows, list) or not rows:
+            raise ConfigError(f"{p}: the region table holds no rows list")
+        seen = set()
+        for r in rows:
+            rid = r.get("id") if isinstance(r, dict) else None
+            if not isinstance(rid, str) or not _ROW_ID.fullmatch(rid) or rid in seen:
+                raise ConfigError(f"{p}: row id {rid!r} is not a unique id of lower-case letters and digits joined by "
+                                  f"single underscores")
+            seen.add(rid)
+            w = r.get("warp")
+            if not isinstance(r.get("layer"), str) or not isinstance(r.get("shape"), str) or \
+                    isinstance(w, bool) or not isinstance(w, (int, float)) or not 0 <= w <= 1:
+                raise ConfigError(f"{p}: row {rid} needs a layer, a shape and a warp share in [0, 1]")
+        _TABLES[key] = rows
+    return _TABLES[key]
+
+
+def _region_group(cfg):
+    R = cfg.get("regions")
+    n = R.get("names") if isinstance(R, dict) else None
+    stems = n.get("row") if isinstance(n, dict) else None
+    keys = ("suffix", "share", "u", "v") + REGION_AGGREGATES + REGION_OWN
+    if not isinstance(stems, dict) or not all(isinstance(n.get(k), str) and n[k] for k in keys) or \
+            not all(isinstance(stems.get(k), str) and stems[k] for k in REGION_ROW_KINDS + REGION_CENTRE_KINDS):
+        raise ConfigError(f"config.lua regions.names must name {list(keys)} and the row stems "
+                          f"{list(REGION_ROW_KINDS + REGION_CENTRE_KINDS)}")
+    h = R.get("share_hundredths")
+    if isinstance(h, bool) or not isinstance(h, int) or h <= 0:
+        raise ConfigError("config.lua regions.share_hundredths must be a positive integer")
+    return R, n
+
+
+def region_row_name(cfg, kind, row_id):
+    """A row's name of one kind (sd, w, depth; hu, hv for a hotspot): config.lua's stem, the row id,
+    config.lua's version suffix, as regions.lua spells it (row.<kind> .. id .. suffix)."""
+    _, n = _region_group(cfg)
+    if kind not in REGION_ROW_KINDS + REGION_CENTRE_KINDS:
+        raise ConfigError(f"no region row name kind {kind!r}")
+    return n["row"][kind] + row_id + n["suffix"]
+
+
+def region_query_names(cfg, share):
+    """The (u, v) names of the query point for a warp share, as regions.lua's query() spells them:
+    h = floor(share * share_hundredths + 1/2); the unwarped point at h = 0, else u, v .. share .. h ..
+    suffix."""
+    R, n = _region_group(cfg)
+    h = _share_h(R, share)
+    if h == 0:
+        return n["u"] + n["suffix"], n["v"] + n["suffix"]
+    return n["u"] + n["share"] + str(h) + n["suffix"], n["v"] + n["share"] + str(h) + n["suffix"]
+
+
+def _share_h(R, share):
+    return int(math.floor(share * R["share_hundredths"] + 0.5))
+
+
+def region_names(cfg, rows=None):
+    """Every noise name regions.lua defines, composed as it composes them from config.lua's
+    regions.names and the table's rows (`rows`, else the table beside cfg's config.lua):
+    {"aggregates": {key: name}, "internal": [names], "rows": {id: {kind: name}}}. Internal names are
+    the layer's own (the query point and its warped shares, the noise anchor, the warp and the
+    roughness); consumers read the aggregates and the row names. Empty parts without a regions group."""
+    if not cfg.get("regions"):
+        return {"aggregates": {}, "internal": [], "rows": {}}
+    R, n = _region_group(cfg)
+    rows = region_table_rows(cfg) if rows is None else rows
+    internal = list(region_query_names(cfg, 0)) + [n[k] for k in REGION_OWN]
+    shares = {_share_h(R, r["warp"]): r["warp"] for r in rows}
+    for h in sorted(set(shares) - {0}):
+        internal += list(region_query_names(cfg, shares[h]))
+    per = {}
+    for r in rows:
+        kinds = REGION_ROW_KINDS + (REGION_CENTRE_KINDS if r["layer"] == "hotspot" and r["shape"] == "disc" else ())
+        per[r["id"]] = {k: region_row_name(cfg, k, r["id"]) for k in kinds}
+    return {"aggregates": {k: n[k] for k in REGION_AGGREGATES}, "internal": internal, "rows": per}
+
+
+def region_noise_names(cfg, rows=None):
+    """region_names as one sorted list."""
+    names = region_names(cfg, rows)
+    out = set(names["aggregates"].values()) | set(names["internal"])
+    for d in names["rows"].values():
+        out |= set(d.values())
+    return sorted(out)
+
+
 def start_masks(cfg):
     """`start_mask` is {versions = {...}}: every version of the start mask, oldest first, each
     {name = <noise name>, formula = <positive integer>, <parameter> = <number>, ...} (spawn.lua
@@ -483,13 +678,17 @@ def start_masks(cfg):
     return out
 
 
-def baked_names(cfg, map_key, version, scale, city=None):
+def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     """The property_expression_names a geography version's preset bakes at a startup scale (and,
     for a version with a spawn record, a spawn-city setting value, default the setting's default),
     as presets.lua builds them from the same rows: the version's entry, start mask and coarse field,
     the map's tn_map id, the scale, the version's tn_geo id, its city offset under its own names,
     and vanilla's water-slider readers at their default-slider values (D15); with a spawn record
-    also the distance redirect, the map's city number and the spawn lake and bias keys."""
+    also the distance redirect, the map's city number and the spawn lake and bias keys; from
+    climate-tiles the climate redirects and the marsh keys, and with ab=True (Alien Biomes loaded,
+    the M2 dump) the AB climate variant, the vanilla tile keys, the exclusion key and the palm keys,
+    else the fallback climate and the marsh grass key; from trees-forests the tree keys; from ridges the
+    cliff properties, the map's ridge keys and the Earth ores' wrapper keys."""
     K, m = cfg["keys"], cfg["maps"][map_key]
     pen = {K["elevation"]: version["entry"], K["start_mask"]: version["start_mask"],
            K["land_coarse"]: version["land_coarse"], K["map"]: m["id"], K["scale"]: int(scale),
@@ -500,6 +699,74 @@ def baked_names(cfg, map_key, version, scale, city=None):
     if sp:
         pen.update({K["distance"]: sp["distance"], sp["city"]: city_number(cfg, version, city),
                     K["spawn_lake"]: sp["spawn_lake"], K["spawn_bias"]: sp["spawn_bias"]})
+    # waterways: the hook gate on and the ford key at the map's ford set for the scale
+    ww = waterways_of(version)
+    if ww:
+        pen.update({K["on"]: cfg["hooks"]["gate_on"],
+                    K["fords"]: ww["fords"][list(cfg["scales"]["values"]).index(int(scale))]})
+    # each toggle of the map at its setting's default: its on or off body
+    for tg in toggles(cfg):
+        if map_key in (tg.get("maps") or []):
+            on = cfg["settings"][tg["setting"]]["default_value"]
+            pen[tg["preset_key"]] = tg["on"] if on else tg["off"]
+    # the climate and tile keys (climate-tiles; presets.lua climate_names), the same on every version
+    cl, tl = cfg.get("climate"), cfg.get("tiles")
+    if cl and tl:
+        variant = cl["names"]["ab" if ab else "fallback"]
+        for prop in ("temperature", "moisture", "aux"):
+            pen[prop] = variant[prop]
+        for k in ("water_mud", "water_shallow"):
+            pen[tl["marsh"][k]["key"]] = tl["marsh"][k]["body"]
+        if ab:
+            for tile in tl["vanilla"]["tiles"]:
+                pen[tl["vanilla"]["keys"][tile]] = tl["vanilla"]["body"]
+            pen[tl["exclude"]["key"]] = tl["exclude"]["body"]
+            for c in tl["palm"]["copies"]:
+                pen[c["key"]] = c["body"]
+        else:
+            pen[tl["marsh"]["grass"]["key"]] = tl["marsh"]["grass"]["body"]
+    # the tree keys (trees-forests; presets.lua tree_names), after the climate keys: the multiplier key at
+    # the region layer's multiplier, and with ab=True every restored tree's, rock's and decorative's key
+    # at its body and each palm's probability key at its second version
+    tr = cfg.get("trees")
+    if tr:
+        rs = tr["restore"]
+        pen[tr["boost"]["key"]] = cfg["regions"]["names"]["tree_mult"]
+        if ab:
+            for n in rs["trees"].values():
+                pen[n["p"]] = n["body"]
+                pen[n["r"]] = rs["richness"]
+            for n in rs["rocks"].values():
+                pen[n["key"]] = n["body"]
+            for key in rs["decoratives"].values():
+                pen[key] = rs["deco_body"]
+            for pm in tr["palm"]:
+                pen[pm["key"]] = pm["body"]
+    # the ridges (ridges; presets.lua ridge_values): the two cliff properties at the ridge bodies and the
+    # map's crest, openings and band keys; and every Earth ore's probability key at its clearance wrapper,
+    # which data-final-fixes.lua adds to every preset (M1 holds all six resources)
+    rd = cfg.get("ridges")
+    if rd:
+        n = rd["names"]
+        if all(map_key in n[k] for k in ("crest", "openings", "band")):
+            pen.update({K["cliff_elevation"]: n["cliff_elevation"], K["cliffiness"]: n["cliffiness"],
+                        K["crest"]: n["crest"][map_key], K["openings"]: n["openings"][map_key],
+                        K["band"]: n["band"][map_key]})
+        pen.update({o["key"]: o["name"] for o in rd["ores"]})
+    # resources-enemies: the ore keys at the next probability wrappers and the richness keys at theirs,
+    # the enemy property at its wrapper (data-final-fixes.lua adds them to every preset; the Oil Rig's
+    # keys exist only beside it), and a version with an offshore stamp bakes its stamp key, the map's
+    # stamp body with hotspots on and the neutral zero off (presets.lua)
+    rs = cfg.get("resources")
+    if rs:
+        for o in rs["ores"]:
+            pen[o["probability"]] = o["p"]
+            pen[o["richness"]] = o["r"]
+        pen[K["enemy"]] = cfg["enemies"]["wrapper"]
+    if version.get("fields"):
+        tg = cfg["toggles"]["hotspots"]
+        on = cfg["settings"][tg["setting"]]["default_value"]
+        pen[version["fields"]] = cfg["fields"]["names"][map_key] if on else cfg["neutral"]["zero"]
     return pen
 
 
@@ -529,6 +796,19 @@ def release_registry(cfg):
         _names(r.get("names", []), f"release_registry {r['release']} names")
         _names(r.get("files", []), f"release_registry {r['release']} files")
         out.append(r)
+    return out
+
+
+def release_of(cfg):
+    """{noise name: release} of every released name: a row's `names`, and every name of the region
+    layer for a row whose `files` lists the region table (REGION_TABLE)."""
+    out = {}
+    for r in release_registry(cfg):
+        names = list(r.get("names") or [])
+        if REGION_TABLE in (r.get("files") or []):
+            names += region_noise_names(cfg)
+        for n in names:
+            out[n] = r["release"]
     return out
 
 
@@ -619,7 +899,7 @@ def id_space_problems(cfg):
 
 
 def release_names(cfg):
-    return sorted({n for r in release_registry(cfg) for n in (r.get("names") or [])})
+    return sorted(release_of(cfg))
 
 
 TOGGLE_FIELDS = {"setting", "preset_key", "default", "mechanism", "on", "off", "maps"}
@@ -704,6 +984,20 @@ def schema_problems(cfg):
     except ConfigError as e:
         out.append(str(e))
     out += id_space_problems(cfg)
+    # The region layer's names are released through the row that lists its table: a regions group
+    # whose table no release row lists would leave every row name unreleased and unregistered.
+    try:
+        listed = [r["release"] for r in release_registry(cfg) if REGION_TABLE in (r.get("files") or [])]
+        if cfg.get("regions"):
+            region_noise_names(cfg)
+            if not listed:
+                out.append(f"config.lua regions: no release_registry row lists {REGION_TABLE} under files, so no "
+                           f"release carries the region layer's row names")
+        elif listed:
+            out.append(f"config.lua release_registry {listed} lists {REGION_TABLE}, but config.lua has no regions "
+                       f"group")
+    except ConfigError as e:
+        out.append(str(e))
     ph = cfg.get("placeholder") or {}
     if ph:
         names = ph.get("names") or {}
@@ -742,6 +1036,10 @@ def schema_problems(cfg):
                 missing += [v["start_mask"]] if v["start_mask"] not in rel else []
                 # a spawn record's bodies and the fold its offset names are released bodies; the city
                 # number is a fallback that mirrors the setting (checked with the fallbacks)
+                missing += [n for n in waterway_names(v) if n not in rel]
+                if waterways_of(v):
+                    shared = [cfg["keys"]["on"], cfg["keys"]["fords"]] + list((cfg.get("neutral") or {}).values())
+                    missing += [n for n in shared if n not in rel]
                 if sp:
                     missing += [sp[n] for n in SPAWN_NAMES if n != "city" and sp[n] not in rel]
                     missing += [x for x in v["city_offset"] if isinstance(x, str) and x not in rel]
@@ -779,6 +1077,15 @@ def schema_problems(cfg):
                 if unkeyed:
                     out.append(f"config.lua {where}: its preset bakes {unkeyed}, which preset_keys lacks (the "
                                f"guards strip and check only preset_keys)")
+        # each map's waterways.sets is the record of its newest version that composes the waterways
+        all_sets = ((cfg.get("waterways") or {}).get("sets")) or {}
+        for key, versions in geography_versions(cfg).items():
+            composing = [v["waterways"] for v in versions if "waterways" in v]
+            if (composing[-1] if composing else None) != all_sets.get(key):
+                out.append(f"config.lua waterways.sets.{key} must be the waterways record of {key}'s newest version "
+                           f"that has one (the sets its preset names)")
+        for key in sorted(set(all_sets) - set(geography_versions(cfg))):
+            out.append(f"config.lua waterways.sets.{key} names sets for a map without a geography")
         for m in start_masks(cfg):
             if m["name"] not in rel:
                 out.append(f"config.lua start mask {m['name']} is in no release_registry row (every version is a "
@@ -811,8 +1118,10 @@ def placeholder_names(cfg):
 
 
 def noise_names(cfg):
-    """Every noise name config.lua defines: released bodies, Map type fallbacks, firewall bodies, the
-    start mask versions, every geography version's spawn bodies and the placeholder's names."""
+    """Every noise name config.lua defines: released bodies (the region layer's every name among
+    them, its row names composed from config.lua's stems and suffix and the table's ids), Map type
+    fallbacks, firewall bodies, the start mask versions, every geography version's spawn bodies
+    and the placeholder's names."""
     spawn = {sp[n] for vs in geography_versions(cfg).values() for v in vs for sp in [spawn_of(v)] if sp
              for n in SPAWN_NAMES}
     return sorted(set(release_names(cfg)) | set(fallback_names(cfg)) | set(firewall_names(cfg)) |
@@ -821,17 +1130,18 @@ def noise_names(cfg):
 
 def unregistered_names(cfg, registered):
     """The noise names config.lua defines that tests/frozen.json must hold but does not: every one
-    but the placeholder's names and the Map type fallbacks that mirror a startup setting (U3's one
-    exemption; a frozen fallback is registered). `registered` is frozen.json's bodies table (or any
-    collection of names)."""
+    (the region layer's row names included) but the placeholder's names and the Map type fallbacks
+    that mirror a startup setting (U3's one exemption; a frozen fallback is registered).
+    `registered` is frozen.json's bodies table (or any collection of names)."""
     exempt = set(placeholder_names(cfg)) | set(exempt_fallback_names(cfg))
     return sorted(n for n in noise_names(cfg) if n not in exempt and n not in registered)
 
 
 def defined_names(cfg):
     """Every name config.lua defines for the game: mod ID, settings and their dropdown labels'
-    locale keys, presets and noise names (released bodies, Map type fallbacks, firewall bodies and
-    the placeholder's names). Used by the T16 name scan, the locale check and the dump facts."""
+    locale keys, presets and noise names (released bodies with the region layer's composed names,
+    Map type fallbacks, firewall bodies and the placeholder's names). Used by the T16 name scan, the
+    locale check and the dump facts."""
     ident = cfg["identity"]
     out = {"mod": {ident["id"]}, "setting": set(), "string_setting_value": set(), "preset": set(),
            "noise": set(), "placeholder_noise": set(), "fallback_noise": set()}

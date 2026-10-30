@@ -1,0 +1,9 @@
+{
+  "name": "ea-polluter",
+  "version": "0.1.0",
+  "title": "ea-polluter",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only polluter driver for T15e driver 1 (slice resources-enemies): generates the chunks round a site, places fuelled stone furnaces there and adds pollution at the site on a fixed period, so the nests round it absorb it and send attacks, then writes script-output/ea-polluter/<label>.json with the spawners, worms and units round the site and the units that reached it; the runner times the window with --benchmark-verbose all (pathFinder per tick). Configured by startup settings the runner writes; it gets every position from the runner at run time. Never shipped.",
+  "dependencies": ["base >= 2.1.23"]
+}

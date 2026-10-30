@@ -8,7 +8,9 @@ Every reader and writer of the registry holds it to this module: the gate's froz
 
 A record holds exactly RECORD_KEYS: `type` (a noise type), `sha256` (64 lower-case hex over the
 body's HASH_FIELDS), `dump` (the label of the dump freeze read the body from), `milestone` (the milestone
-of the runner's registry that registered it) and `registered` (the date freeze wrote it). The dump
+of the runner's registry that registered it) and `registered` (the date freeze wrote it), and
+optionally OPTIONAL_RECORD_KEYS: `mask` (resources-enemies), one of MASK_NAMES, for a wrapper of an
+optional mod's live autoplace whose hash leaves out the live text it wraps (earth_test.body_hash). The dump
 label decides which dump the gate's frozen row reads the body from, so a label that no entry of the
 runner's milestone registry (earth_test.py REGISTRY) assigns would switch that row off for the body;
 such a label, a missing one and one its milestone could not have produced fail in every reader instead
@@ -47,6 +49,8 @@ NOISE_TYPES = ("noise-expression", "noise-function")
 # The generation fields a body's sha256 covers (never intended_property, localised_name or order).
 HASH_FIELDS = ("type", "name", "expression", "local_expressions", "local_functions", "parameters")
 RECORD_KEYS = ("type", "sha256", "dump", "slice", "registered")
+OPTIONAL_RECORD_KEYS = ("mask",)
+MASK_NAMES = ("live",)
 FILE_KEYS = ("format", "note", "hash_fields", "bodies")
 SHA256_RE = re.compile(r"[0-9a-f]{64}")
 DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
@@ -155,9 +159,12 @@ def assigned_labels(registry):
     return sorted({lb for s in registry for lb in (s.get("dumps") or [])})
 
 
-def record(type_, sha256, dump, slice_id, registered):
-    """A record as freeze writes it: RECORD_KEYS, in that order."""
-    return {"type": type_, "sha256": sha256, "dump": dump, "slice": slice_id, "registered": registered}
+def record(type_, sha256, dump, slice_id, registered, mask=None):
+    """A record as freeze writes it: RECORD_KEYS, in that order, and the mask when it has one."""
+    out = {"type": type_, "sha256": sha256, "dump": dump, "slice": slice_id, "registered": registered}
+    if mask is not None:
+        out["mask"] = mask
+    return out
 
 
 def _is_date(v):
@@ -172,18 +179,20 @@ def _is_date(v):
 
 def record_problems(name, rec, registry):
     """Every way one record breaks the contract against the runner's milestone registry ([] when it
-    holds): exactly RECORD_KEYS; a noise type; 64 lower-case hex; a milestone of the registry; a dump
+    holds): exactly RECORD_KEYS, and a mask of MASK_NAMES where one is given; a noise type; 64 lower-case hex; a milestone of the registry; a dump
     label that some registry entry assigns and that freeze produces through that milestone; a date."""
     where = f"tests/frozen.json {name}"
     if not isinstance(rec, dict):
         return [f"{where}: the record is a {type(rec).__name__}, not a table"]
     out = []
     missing = [k for k in RECORD_KEYS if k not in rec]
-    extra = sorted(str(k) for k in rec if k not in RECORD_KEYS)
+    extra = sorted(str(k) for k in rec if k not in RECORD_KEYS and k not in OPTIONAL_RECORD_KEYS)
     if missing:
         out.append(f"{where}: the record lacks {missing} (a {FORMAT} record holds {list(RECORD_KEYS)})")
     if extra:
         out.append(f"{where}: the record holds {extra}, which a {FORMAT} record does not define")
+    if "mask" in rec and rec["mask"] not in MASK_NAMES:
+        out.append(f"{where}: mask {rec['mask']!r} is not one of {list(MASK_NAMES)}")
     if "type" in rec and rec["type"] not in NOISE_TYPES:
         out.append(f"{where}: type {rec['type']!r} is not one of {list(NOISE_TYPES)}")
     if "sha256" in rec and not (isinstance(rec["sha256"], str) and SHA256_RE.fullmatch(rec["sha256"])):
@@ -248,9 +257,16 @@ def key_of(obj):
     return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
-def body_hash(proto):
-    """sha256 of a noise body's generation fields only (never intended_property, localised_name, order)."""
-    return key_of({k: proto.get(k) for k in HASH_FIELDS if k in proto})
+def body_hash(proto, mask=None):
+    """sha256 of a noise body's generation fields only (never intended_property, localised_name, order),
+    with a frozen record's mask applied (MASK_NAMES): "live" leaves out the local tables a wrapper
+    rebuilds from live settings."""
+    if mask is None:
+        return key_of({k: proto.get(k) for k in HASH_FIELDS if k in proto})
+    if mask == "live":
+        rec = {k: proto.get(k) for k in HASH_FIELDS if k in proto and k not in ("local_expressions", "local_functions")}
+        return key_of(dict(rec, mask="live"))
+    raise ValueError(f"unknown frozen mask {mask!r} (known: {list(MASK_NAMES)})")
 
 
 def earth_bodies(dump, cfg):
@@ -307,7 +323,7 @@ def body_problems(bodies, fz, cfg, where="the offline data stage"):
         t, proto = got
         if t != rec.get("type"):
             out.append(f"registered body {name} is a {t} in {where}, registered as a {rec.get('type')}")
-        h = body_hash(proto)
+        h = body_hash(proto, rec.get("mask"))
         if h != rec.get("sha256"):
             out.append(f"registered body {name} changed in place: registered {str(rec.get('sha256'))[:12]}, {where} "
                        f"builds {h[:12]} (a registered body never changes; ship it under the next _v<n>)")

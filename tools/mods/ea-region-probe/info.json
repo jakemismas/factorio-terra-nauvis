@@ -1,0 +1,9 @@
+{
+  "name": "ea-region-probe",
+  "version": "0.1.0",
+  "title": "ea-region-probe",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only probe for the region layer (slice region-layer). On a chosen tick it reads named noise expressions with calculate_tile_properties, without generating a chunk: at points given in geo tiles, and on regular grids as raw values or as signs. Geo tiles become world tiles by subtracting the spawn offset it reads in the game from the offset names the runner gives it. Writes script-output/ea-region-probe/<label>.json. Configured by startup settings the runner writes; it gets every Earth name from the runner at run time. Never shipped.",
+  "dependencies": ["base >= 2.1.23"]
+}

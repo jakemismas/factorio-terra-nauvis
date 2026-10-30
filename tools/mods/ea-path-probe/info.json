@@ -1,0 +1,9 @@
+{
+  "name": "ea-path-probe",
+  "version": "0.1.0",
+  "title": "ea-path-probe",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only path-request driver for T15e driver 2 (slice ridges): generates the chunks round given start and goal pairs, then sends surface.request_path for each pair a set number of times with a small biter's box and collision mask, counts the finished, failed and retried requests and the ticks they took, and writes script-output/ea-path-probe/<label>.json; the runner times the window with --benchmark-verbose all. Configured by startup settings the runner writes; it gets every position from the runner at run time. Never shipped.",
+  "dependencies": ["base >= 2.1.23"]
+}

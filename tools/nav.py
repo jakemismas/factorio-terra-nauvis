@@ -80,6 +80,62 @@ def connected_at(mask, a, b, k, to_border=False):
     return bool(la & placements_covering(lab, b[0], b[1], k))
 
 
+def disc_offsets(r):
+    """The cells of a disc of radius r about the origin (r = 3 holds 29 cells)."""
+    return [(dy, dx) for dy in range(-r, r + 1) for dx in range(-r, r + 1) if dy * dy + dx * dx <= r * r]
+
+
+def erode_disc(mask, r):
+    """Cells whose whole disc of radius r lies in mask (cells within r of the edge drop out)."""
+    H, W = mask.shape
+    out = np.zeros((H, W), bool)
+    if r <= 0:
+        return mask.astype(bool).copy()
+    if H <= 2 * r or W <= 2 * r:
+        return out
+    core = np.ones((H - 2 * r, W - 2 * r), bool)
+    for dy, dx in disc_offsets(r):
+        core &= mask[r + dy:H - r + dy, r + dx:W - r + dx]
+    out[r:H - r, r:W - r] = core
+    return out
+
+
+def disc_cover(lab, cell, r):
+    """Labels of the eroded cells whose disc of radius r covers `cell`."""
+    rr, cc = cell
+    out = set()
+    for dy, dx in disc_offsets(r):
+        y, x = rr + dy, cc + dx
+        if 0 <= y < lab.shape[0] and 0 <= x < lab.shape[1] and lab[y, x] >= 0:
+            out.add(int(lab[y, x]))
+    return out
+
+
+def connected_disc(mask, a, b, width, to_border=False):
+    """S4's channel test (T5 for waterways): a disc of diameter `width` (radius (width - 1) // 2) can
+    travel from a placement covering cell a to one covering cell b (or to the mask border when
+    to_border), so the channel is `width` tiles wide at any heading. S4 eroded the water by a disc of
+    radius 3 and flood-filled from the inland end; the disc steps between valid centres 8-connected,
+    because a band holding exactly `width` tiles per row erodes to a core one cell wide that shifts
+    diagonally where the band does (Old World's Yenisei at scale 1). An axis-aligned k x k square
+    (connected_at) needs a channel k times the square root of 2 wide on a diagonal."""
+    r = max((int(width) - 1) // 2, 0)
+    e = erode_disc(mask, r)
+    if not e.any():
+        return False
+    lab, _ = labels(e, conn=8)
+    la = disc_cover(lab, a, r)
+    if not la:
+        return False
+    if to_border:
+        H, W = lab.shape
+        edge = (set(lab[r, :].tolist()) | set(lab[H - 1 - r, :].tolist()) | set(lab[:, r].tolist()) |
+                set(lab[:, W - 1 - r].tolist()))
+        edge.discard(-1)
+        return bool(la & edge)
+    return bool(la & disc_cover(lab, b, r))
+
+
 def max_passable(mask, a, b, kmax, to_border=False):
     """Largest k <= kmax with connected_at true (connectivity is monotone in k); 0 if none."""
     if not connected_at(mask, a, b, 1, to_border):
@@ -304,6 +360,156 @@ def cmd_cliff_check(a):
 # ------------------------------------------------------------------------------------------------
 # Self-tests
 
+# ------------------------------------------------------------------------------------------------
+# Waterways (milestone waterways): the corridor raster from ea-ww-probe's chunk dumps, fords and widths
+
+def chunk_raster(dump):
+    """(names, layers, idx, x0, y0) from an ea-ww-probe tiles dump: the tiles of every dumped chunk
+    placed in their bounding box (tile index -1 where no chunk was dumped), so T5 rebuilds S4's
+    corridor raster from the chunks along a waterway alone."""
+    pal = dump["palette"]
+    names = [p["name"] for p in pal]
+    layers = {p["name"]: set(p.get("layers") or []) for p in pal}
+    cs = [(c[0], c[1]) for c in dump["chunks"]]
+    if not cs:
+        raise SystemExit("RESULT fail the dump holds no chunk")
+    cx0, cy0 = min(c[0] for c in cs), min(c[1] for c in cs)
+    cx1, cy1 = max(c[0] for c in cs), max(c[1] for c in cs)
+    idx = np.full(((cy1 - cy0 + 1) * 32, (cx1 - cx0 + 1) * 32), -1, np.int32)
+    for cx, cy, rows, *_ in dump["chunks"]:
+        r0, c0 = (cy - cy0) * 32, (cx - cx0) * 32
+        for j, row in enumerate(rows):
+            x = c0
+            for part in row.split():
+                i, n = (int(v) for v in part.split("*"))
+                idx[r0 + j, x:x + n] = i
+                x += n
+    return names, layers, idx, cx0 * 32, cy0 * 32
+
+
+def layer_mask(names, layers, idx, layer):
+    hit = [i for i, nm in enumerate(names) if layer in layers.get(nm, set())]
+    return np.isin(idx, hit)
+
+
+def name_mask(names, idx, wanted):
+    hit = [i for i, nm in enumerate(names) if nm in wanted]
+    return np.isin(idx, hit)
+
+
+def to_cell(x0, y0, p):
+    return int(math.floor(p[1] - y0)), int(math.floor(p[0] - x0))
+
+
+def ford_report(names, layers, idx, x0, y0, centre, tangent, half_length, half_width, bank=6, square=7,
+                shallow=("water-shallow",), ends=None, path=None):
+    """T5 at one ford: a character walks from one bank to the other through the
+    dumped tiles (tiles with the player layer block it, as in the game); counted as water, the ford's
+    shallow tiles block the same walk (the positive control: the reach is a barrier but for the ford);
+    the shallow run along the centreline through the ford (its length: `path`, the river's own
+    centreline sampled every tile through the ford, or the tangent line's points when not given) and
+    the shallow-or-land run across it (it spans the river); and a square of side `square` travels
+    through the ford along the river on tiles with water_tile (ships pass; fords count), between `ends`,
+    two points on the river's centreline beyond the ford (the tangent line's points when not given: on
+    a bend they leave the carve)."""
+    cx, cy = centre
+    tx, ty = tangent
+    nx, ny = -ty, tx
+    blocked = layer_mask(names, layers, idx, "player") | (idx < 0)
+    shal = name_mask(names, idx, set(shallow))
+    water = layer_mask(names, layers, idx, "water_tile")
+    reach = half_width + bank
+    a = (cx + nx * reach, cy + ny * reach)
+    b = (cx - nx * reach, cy - ny * reach)
+    ca, cb = to_cell(x0, y0, a), to_cell(x0, y0, b)
+    H, W = idx.shape
+    inside = all(0 <= c[0] < H and 0 <= c[1] < W for c in (ca, cb))
+    rep = {"centre": [cx, cy], "banks": [list(a), list(b)], "banks_inside": inside}
+    if not inside:
+        rep["crosses"] = rep["control_crosses"] = False
+        return rep
+    free = ~blocked
+    lab, _ = labels(free)
+    rep["bank_tiles_free"] = [bool(free[ca]), bool(free[cb])]
+    rep["crosses"] = bool(free[ca] and free[cb] and lab[ca] == lab[cb])
+    free2 = free & ~shal
+    lab2, _ = labels(free2)
+    rep["control_crosses"] = bool(free2[ca] and free2[cb] and lab2[ca] == lab2[cb])
+    # the shallow run along the centreline and the crossing line's tiles
+    run = 0
+    line = path if path is not None else \
+        [(cx + tx * k, cy + ty * k) for k in range(-int(half_length) - 6, int(half_length) + 7)]
+    for p in line:
+        r, c = to_cell(x0, y0, p)
+        if 0 <= r < H and 0 <= c < W and shal[r, c]:
+            run += 1
+    rep["length_tiles"] = run
+    rep["length_along"] = "centreline" if path is not None else "tangent"
+    across_blocking = 0
+    for k in range(-int(reach), int(reach) + 1):
+        r, c = to_cell(x0, y0, (cx + nx * k, cy + ny * k))
+        if 0 <= r < H and 0 <= c < W and blocked[r, c]:
+            across_blocking += 1
+    rep["blocking_tiles_across"] = across_blocking
+    rep["spans"] = across_blocking == 0
+    if ends is not None:
+        up, down = to_cell(x0, y0, ends[0]), to_cell(x0, y0, ends[1])
+    else:
+        up = to_cell(x0, y0, (cx - tx * (half_length + 12), cy - ty * (half_length + 12)))
+        down = to_cell(x0, y0, (cx + tx * (half_length + 12), cy + ty * (half_length + 12)))
+    ok = all(0 <= c[0] < H and 0 <= c[1] < W for c in (up, down))
+    rep["channel_square"] = square
+    rep["channel_through_ford"] = bool(ok and connected_disc(water, up, down, square))
+    return rep
+
+
+def section_width_min(names, layers, idx, x0, y0, point, normal, reach, spread=40, step=5):
+    """The narrowest section_width through the point over normals turned up to `spread` degrees either
+    way: near a polyline vertex the carve's own direction differs from the segment's, and a section
+    across it obliquely reads wide (a 7.5-tile band read 30 degrees off measures 9)."""
+    best = None
+    for d in range(-spread, spread + 1, step):
+        a = math.radians(d)
+        n = (normal[0] * math.cos(a) - normal[1] * math.sin(a), normal[0] * math.sin(a) + normal[1] * math.cos(a))
+        w = section_width(names, layers, idx, x0, y0, point, n, reach)
+        best = w if best is None else min(best, w)
+    return best
+
+
+def banks_land(names, layers, idx, x0, y0, point, normal, out):
+    """Both tiles `out` tiles from the point along the normal are inside the raster and lack water_tile
+    (land on both banks there, so a cross-section measures the carve, not a lake it runs through)."""
+    water = layer_mask(names, layers, idx, "water_tile")
+    H, W = idx.shape
+    for sign in (1, -1):
+        r, c = to_cell(x0, y0, (point[0] + sign * normal[0] * out, point[1] + sign * normal[1] * out))
+        if not (0 <= r < H and 0 <= c < W) or idx[r, c] < 0 or water[r, c]:
+            return False
+    return True
+
+
+def section_width(names, layers, idx, x0, y0, point, normal, reach):
+    """The water across a river at a point: the run of tiles with water_tile along the normal through
+    the point, counted outward from it both ways until the first tile without (T5's width check)."""
+    water = layer_mask(names, layers, idx, "water_tile")
+    H, W = idx.shape
+    r, c = to_cell(x0, y0, point)
+    if not (0 <= r < H and 0 <= c < W) or not water[r, c]:
+        return 0
+    n = 1
+    for sign in (1, -1):
+        for k in range(1, int(reach) + 1):
+            # step half a tile at a time so a diagonal normal visits every tile it crosses once
+            seen = set()
+            for h in (k - 0.5, k):
+                rr, cc = to_cell(x0, y0, (point[0] + sign * normal[0] * h, point[1] + sign * normal[1] * h))
+                seen.add((rr, cc))
+            if not all(0 <= rr < H and 0 <= cc < W and water[rr, cc] for rr, cc in seen):
+                break
+            n += 1
+    return n
+
+
 def selftest():
     checks = []
 
@@ -371,6 +577,22 @@ def selftest():
     dia = [(0, -1), (1, 0), (0, 1), (-1, 0)]
     hit = sat_blocked(dia, np.array([1.0, 1.25]), np.array([0.0, 0.0]), 0.2)
     ck("sat_diamond", bool(hit[0]) and not bool(hit[1]))
+    # T5 for waterways (S4's disc): a diagonal carve of half-width 3.75 (the floor) passes a 7-tile
+    # disc end to end, which no 7 x 7 square can; pinched to half-width 2 it does not
+    Yg, Xg = np.mgrid[0:80, 0:80].astype(float)
+    dist = np.abs(Xg - Yg) / math.sqrt(2)
+    diag = dist < 3.75
+    ends = ((10, 10), (69, 69))
+    ck("t5_disc_diagonal_floor", connected_disc(diag, *ends, 7) and not connected_at(diag, *ends, 7))
+    pinch = diag & ~((dist >= 2.0) & (np.abs(Xg + Yg - 80) < 4))
+    ck("t5_disc_pinched", not connected_disc(pinch, *ends, 7) and connected_disc(pinch, *ends, 3))
+    # a vertical band exactly 7 tiles wide that shifts one column every 6 rows erodes to a core one
+    # cell wide that steps diagonally: the disc still travels (8-connected centres)
+    step = np.zeros((60, 40), bool)
+    for r in range(60):
+        c = 10 + r // 6
+        step[r, c:c + 7] = True
+    ck("t5_disc_band_shift", connected_disc(step, (3, 13), (56, 22), 7))
     bad = [c for c in checks if not c[1]]
     for name, ok, detail in checks:
         print(f"  {'ok  ' if ok else 'FAIL'} {name} {detail}")

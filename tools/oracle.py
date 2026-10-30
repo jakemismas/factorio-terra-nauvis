@@ -15,6 +15,7 @@ Commands (from the Factorio workspace):
   python mod/tools/oracle.py check --map europe --scale 6 --sample <fh.py sample run dirs> [--expr land=<expression>] [--context canals=false] --out-json t3.json
   python mod/tools/oracle.py check ... --probe <ep-s8-dump points.json>   (calculate_tile_properties and real tiles at the exact place tiles)
   python mod/tools/oracle.py selftest
+  python tools/oracle.py regions     the region layer's places and expectations (milestone region-layer)
 """
 import argparse
 import copy
@@ -366,9 +367,22 @@ def tile_family(spec, tile_name):
     return "other"
 
 
-def check(mref, O, scale, origin, E, ctx, sample=None, probe=None):
+def region_status(cfg, p, key, want, value):
+    """One region key of a place: pass, listed (a flip within REGION_LIST_KM of its nominal edge, not a
+    protected feature) or fail."""
+    if value is None or not np.isfinite(value):
+        return "fail"
+    if (value > 0) == want:
+        return "pass"
+    margin = (p.get("region_margin_km") or {}).get(key)
+    if key not in (p.get("region_hard") or []) and margin is not None and margin <= REGION_LIST_KM:
+        return "listed"
+    return "fail"
+
+
+def check(mref, O, scale, origin, E, ctx, sample=None, probe=None, cfg=None):
     out = []
-    counts = {"pass": 0, "fail": 0, "skip": 0, "not_covered": 0}
+    counts = {"pass": 0, "fail": 0, "skip": 0, "not_covered": 0, "listed": 0}
     for p in O["places"]:
         tx, ty = place_tile(mref, p, scale, origin)
         ex = effective_expect(p, ctx)
@@ -377,6 +391,27 @@ def check(mref, O, scale, origin, E, ctx, sample=None, probe=None):
             want = ex.get(prop)
             spec = E.get(prop) or {}
             if want is None:
+                continue
+            if spec.get("source") == "regions":
+                # the region property: {key: inside}, each key's noise name from config.lua
+                cfg = cfg or eg.tnconfig.load()
+                rc = {}
+                for key, inside in want.items():
+                    name = region_names(cfg, key)
+                    value = None
+                    for idx in (probe, sample):
+                        if idx is not None:
+                            value, _ = idx.value(name, tx, ty)
+                            if value is not None:
+                                break
+                    if value is None:
+                        rc[key] = {"want": inside, "expr": name, "status": "not_covered"}
+                        counts["not_covered"] += 1
+                        continue
+                    st = region_status(cfg, p, key, inside, value)
+                    rc[key] = {"want": inside, "value": value, "expr": name, "status": st}
+                    counts[st] += 1
+                rec["checks"][prop] = rc
                 continue
             if spec.get("source") == "tile":
                 tname = probe.tile(tx, ty) if probe else None
@@ -428,9 +463,10 @@ def cmd_check(a):
     if a.out_json:
         Path(a.out_json).parent.mkdir(parents=True, exist_ok=True)
         Path(a.out_json).write_text(json.dumps(rep, indent=1, ensure_ascii=False), encoding="utf-8")
-    fails = [f"{r['name']}.{k}" for r in out for k, c in r["checks"].items() if c["status"] == "fail"]
+    fails = [f"{r['name']}.{k}" for r in out for k, c in r["checks"].items()
+             if (c.get("status") == "fail" if "status" in c else any(x["status"] == "fail" for x in c.values()))]
     print(f"RESULT {'ok' if not fails else 'fail'} oracle map={a.map} scale={a.scale} pass={counts['pass']} "
-          f"fail={counts['fail']} skip={counts['skip']} not_covered={counts['not_covered']} "
+          f"fail={counts['fail']} skip={counts['skip']} not_covered={counts['not_covered']} listed={counts['listed']} "
           f"json={a.out_json or '-'}" + (f" first_fails={','.join(fails[:5])}" if fails else ""))
     return 0 if not fails else 1
 
@@ -698,6 +734,235 @@ def cmd_extend(a):
     return 0
 
 
+# ------------------------------------------------------------------------------------------------
+# Region layer (design section 10, milestone region-layer; T3)
+#
+# The `region` property of a place is a table {key: inside} over the region layer's quantities:
+# "destroyed" (the zone after its exclusion rows) and "row:<id>" (one row's own signed distance).
+# `regions` writes, from terra-nauvis/prototypes/tables/regions.lua and R7b, on every map:
+#   - the strait ends R7b names (kind strait_end), protected when outside the destroyed polygon;
+#   - one interior place per polygon or path row (kind region_interior), at the reference pixel
+#     deepest inside the row's nominal shape;
+#   - each place's expectation from the nominal shapes (no warp, no roughness, no jitter): the
+#     destroyed probes, every protected feature (passes, canal route vertices, strait ends outside
+#     the polygon; S10's protected points) for the zone, and each forest, marsh, hotspot and interior
+#     place for its own row. `region_margin_km` holds each key's distance to the nominal edge; a key
+#     within REGION_LIST_KM of its edge that flips is listed, not failed (T3; S10: cities within
+#     about 40 km of the zone edge flip per seed), except the protected features in `region_hard`,
+#     which must hold at every seed (their exclusion rows or their distance guarantee it). The design
+#     lets an edge move further than 40 km (the zone's warp share 1: 27 px, 66.7 km); the layer's
+#     realization at the canonical seeds is fixed in geography, and none of it flips a place there.
+# Every other expectation stays null, and the S8 rows are never touched.
+
+REGION_LIST_KM = 40.0
+REGION_ORIGIN = "regions"
+REGION_KINDS = ("strait_end", "region_interior")
+
+
+def _regions_mod():
+    import build_regions
+    return build_regions
+
+
+def region_rows(cfg=None):
+    br = _regions_mod()
+    return br.load_table()
+
+
+def region_names(cfg, key):
+    """The noise name a region key reads: the zone's signed distance or a row's (tnconfig's one
+    naming rule, as regions.lua spells it)."""
+    if key == "destroyed":
+        return cfg["regions"]["names"]["destroyed_sd"]
+    if key.startswith("row:"):
+        return eg.tnconfig.region_row_name(cfg, "sd", key[4:])
+    raise ValueError(f"unknown region key {key!r}")
+
+
+def _map_uv(cfg, mref, key, c, r):
+    """The region-frame (u, v) of a map pixel's centre."""
+    br = _regions_mod()
+    du, dv = br.map_offset(cfg, key)
+    return c + du, r + dv
+
+
+def region_expectations(cfg, key, mref, place, rows):
+    """({region key: inside}, {key: margin km}, [hard keys]) of one place, or (None, None, None)."""
+    br = _regions_mod()
+    if place.get("ref_pixel") is None or place.get("origin") == "s8":
+        return None, None, None
+    on = br.rows_on(rows, key)
+    by_id = {r["id"]: r for r in on}
+    u, v = _map_uv(cfg, mref, key, *place["ref_pixel"])
+    kpp = br.km_per_px(cfg)
+    exp, margin, hard = {}, {}, []
+
+    def zone():
+        sd = br.zone_sd(on, cfg, u, v)
+        exp["destroyed"] = bool(sd > 0)
+        margin["destroyed"] = round(abs(sd) * kpp, 1)
+
+    def own(rid):
+        r = by_id.get(rid)
+        if r is None:
+            return
+        sd = br.sd_px(br.shape_px(r, cfg), u, v)
+        k = f"row:{rid}"
+        exp[k] = bool(sd > 0)
+        margin[k] = round(abs(sd) * kpp, 1)
+
+    kind = place["kind"]
+    has_zone = any(r["layer"] == "destroyed" for r in on)
+    if kind == "destroyed_probe" and has_zone:
+        zone()
+    elif kind in ("pass", "canal", "strait_end") and has_zone:
+        poly = [r for r in on if r["layer"] == "destroyed" and r.get("mode") != "exclude"]
+        outside = all(br.sd_px(br.shape_px(r, cfg), u, v) < 0 for r in poly)
+        if outside:
+            zone()
+            if exp["destroyed"]:
+                raise ValueError(f"{key} {place['id']}: a protected feature lies inside the nominal zone")
+            hard.append("destroyed")
+    elif kind in ("forest", "marsh"):
+        own(br.slug(place["id"].split(":", 1)[1]))
+    elif kind == "hotspot":
+        own(br.slug(place["id"].split(":", 1)[1]))
+    elif kind == "region_interior":
+        rid = place.get("region_row")
+        if by_id.get(rid, {}).get("layer") == "destroyed":
+            zone()
+        else:
+            own(rid)
+    if not exp:
+        return None, None, None
+    return exp, margin, hard
+
+
+def interior_pixel(cfg, key, mref, row):
+    """The map pixel deepest inside a row's nominal shape (within the map), with its depth in px."""
+    import numpy as np
+    br = _regions_mod()
+    sh = br.shape_px(row, cfg)
+    du, dv = br.map_offset(cfg, key)
+    xs = [p[0] for p in sh["pts"]]
+    ys = [p[1] for p in sh["pts"]]
+    pad = (sh.get("r") or 0) + 1
+    c0, c1 = max(0, int(math.floor(min(xs) - pad)) - du), min(mref.W - 1, int(math.ceil(max(xs) + pad)) - du)
+    r0, r1 = max(0, int(math.floor(min(ys) - pad)) - dv), min(mref.H - 1, int(math.ceil(max(ys) + pad)) - dv)
+    if c0 > c1 or r0 > r1:
+        return None
+    C, R = np.meshgrid(np.arange(c0, c1 + 1), np.arange(r0, r1 + 1))
+    sd = br.sd_grid(sh, C + du, R + dv)
+    k = np.unravel_index(int(np.argmax(sd)), sd.shape)
+    if sd[k] <= 0:
+        return None
+    return int(C[k]), int(R[k]), float(sd[k])
+
+
+def region_extend_map(cfg, key, O, geo, rows):
+    """The oracle of one map with the region layer's rows and expectations (idempotent: earlier
+    region rows are dropped and rebuilt, every other place is kept as it is)."""
+    br = _regions_mod()
+    mref = eg.MapRef(key)
+    O = json.loads(json.dumps(O))
+    keep = [p for p in O["places"] if p.get("origin") != REGION_ORIGIN and p.get("kind") != "strait_end"]
+    added = []
+    r7b = "docs/plan/research/R7b-geography.json"
+    for s in geo["straits"]:
+        for e in s.get("endpoints") or []:
+            if in_extent(mref, e["lon"], e["lat"]):
+                added.append(_row(mref, f"strait-end:{s['id']}:{br.slug(e['name'])}", e["name"], "strait_end",
+                                  e["lon"], e["lat"], f"{r7b} straits {s['id']} endpoints ({s.get('citation_url', '')})",
+                                  origin="r7b", strait=s["id"], layer="region-layer"))
+    for r in br.rows_on(rows, key):
+        if r["shape"] == "disc" or r.get("mode") == "exclude":
+            continue
+        got = interior_pixel(cfg, key, mref, r)
+        if got is None:
+            continue
+        c, rr, depth = got
+        lon, lat = mref.pixel_lonlat(c, rr)
+        added.append(_row(mref, f"region-interior:{r['id']}", f"{r['id']} interior", "region_interior", lon, lat,
+                          f"tools/build_regions.py: the reference pixel deepest inside row {r['id']}'s nominal shape "
+                          f"({round(depth * br.km_per_px(cfg), 1)} km from its edge)",
+                          origin=REGION_ORIGIN, region_row=r["id"], layer="region-layer"))
+    places = keep + added
+    for p in places:
+        for fld in ("region_margin_km", "region_hard"):
+            p.pop(fld, None)
+        if p.get("origin") == "s8":
+            continue
+        exp, margin, hard = region_expectations(cfg, key, mref, p, rows)
+        p["expect"]["region"] = exp
+        if exp:
+            p["region_margin_km"] = margin
+            if hard:
+                p["region_hard"] = hard
+    return dict(O, places=places)
+
+
+def cmd_regions(a):
+    cfg = eg.tnconfig.load()
+    geo = json.loads(R7B.read_text(encoding="utf-8"))
+    rows = region_rows(cfg)
+    oracle_dir = Path(a.oracle_dir)
+    for key in eg.MAPS:
+        O = region_extend_map(cfg, key, load_oracle(key, oracle_dir), geo, rows)
+        (oracle_dir / f"{key}.json").write_text(json.dumps(O, indent=1, ensure_ascii=False) + "\n",
+                                                encoding="utf-8", newline="\n")
+        n = sum(1 for p in O["places"] if p["expect"].get("region"))
+        print(f"{key}: {len(O['places'])} places, {n} with a region expectation, "
+              f"{sum(1 for p in O['places'] if p.get('region_hard'))} protected")
+    exp = oracle_dir / "expressions.json"
+    E = json.loads(exp.read_text(encoding="utf-8"))
+    E["region"] = REGION_SPEC
+    exp.write_text(json.dumps(E, indent=1) + "\n", encoding="utf-8", newline="\n")
+    print(f"RESULT ok oracle region expectations written maps={','.join(eg.MAPS)} dir={oracle_dir}")
+    return 0
+
+
+# The region property's reading: each key's noise name comes from config.lua (regions.names), a
+# value above 0 is inside, and a flipped key within list_within_km of its edge is listed.
+REGION_SPEC = {"source": "regions", "rule": "gt", "threshold": 0, "list_within_km": REGION_LIST_KM,
+               "hard": "a key in a place's region_hard never flips: it is not listed whatever its margin",
+               "names": "config.lua regions.names: destroyed_sd for 'destroyed', row.sd .. id .. suffix for 'row:<id>'"}
+
+
+def region_findings(cfg, key, O, geo, rows, live):
+    """validate()'s region checks on one map: the region rows and expectations equal what `regions`
+    writes now (so they never drift from the table), each key names a row of the map, and the
+    expectations exist only while region-layer is live."""
+    out = []
+    if "region-layer" not in live:
+        for p in O["places"]:
+            if p.get("origin") == REGION_ORIGIN or p.get("region_margin_km") or p["expect"].get("region"):
+                out.append(f"{p['id']}: region rows or expectations before region-layer is live")
+                break
+        return out
+    want = region_extend_map(cfg, key, O, geo, rows)
+    have = {p["id"]: p for p in O["places"]}
+    wanted = {p["id"]: p for p in want["places"]}
+    if set(have) != set(wanted):
+        out.append(f"places differ from `oracle.py regions`: missing {sorted(set(wanted) - set(have))[:3]}, extra "
+                   f"{sorted(set(have) - set(wanted))[:3]}")
+    for pid, p in wanted.items():
+        h = have.get(pid)
+        if h is None:
+            continue
+        for fld in ("region_margin_km", "region_hard"):
+            if h.get(fld) != p.get(fld):
+                out.append(f"{pid}: {fld} {h.get(fld)} differs from `oracle.py regions` ({p.get(fld)})")
+        if h["expect"].get("region") != p["expect"].get("region"):
+            out.append(f"{pid}: region expectation {h['expect'].get('region')} differs from `oracle.py regions` "
+                       f"({p['expect'].get('region')})")
+    ids = {r["id"] for r in _regions_mod().rows_on(rows, key)}
+    for p in O["places"]:
+        for k in (p["expect"].get("region") or {}):
+            if k != "destroyed" and not (k.startswith("row:") and k[4:] in ids):
+                out.append(f"{p['id']}: region key {k!r} names no row of {key}")
+    return out
+
+
 def owner(O, p, prop):
     """The milestone that ships a row's property: the row's pending tag, else the oracle's layers map."""
     return (p.get("pending") or {}).get(prop) or (O.get("layers") or LAYERS).get(prop)
@@ -757,7 +1022,7 @@ def validate(live=(), oracle_dir=None):
                 ck(f"{key}_{p['id']}_brief", "brief" in p.get("tags", []) and BRIEF in p["source"] and
                    str(p.get("locked", "")).startswith("brief") and
                    ex["climate_band"] == brief_band.get(p["id"]), str(ex))
-            if p.get("origin") in ("brief", "r7b", "r7a", "r1"):
+            if p.get("origin") in ("brief", "r7b", "r7a", "r1", REGION_ORIGIN):
                 early = [kk for kk, v in ex.items() if v is not None and owner(O, p, kk) not in live
                          and not (kk == "climate_band" and p.get("origin") == "brief")]
                 ck(f"{key}_{p['id']}_staged", not early,
@@ -774,6 +1039,11 @@ def validate(live=(), oracle_dir=None):
                 ck(f"{key}_{p['id']}_polygon_side", ok or p.get("band_edge"),
                    f"edge distance {polygon_edge_distance(p['lon'], p['lat'], poly):.4f} deg")
         counts[key] = k
+        try:
+            rf = region_findings(eg.tnconfig.load(), key, O, geo, region_rows(), live)
+        except Exception as e:  # a region table or geometry that fails to load fails closed
+            rf = [f"region checks crashed: {type(e).__name__}: {e}"]
+        ck(f"{key}_region_expectations", not rf, "; ".join(rf[:3]))
         ck(f"{key}_brief_rows", sum(1 for p in O["places"] if p.get("origin") == "brief") >= 5,
            f"{sum(1 for p in O['places'] if p.get('origin') == 'brief')} brief rows")
     eu = load_oracle("europe", oracle_dir)
@@ -1118,6 +1388,9 @@ def main():
     p.set_defaults(fn=cmd_build)
     p = sub.add_parser("extend", help="write tests/oracle/<map>.json: S8's places plus the toolchain rows")
     p.set_defaults(fn=cmd_extend)
+    p = sub.add_parser("regions", help="write the region layer's rows and expectations into tests/oracle/<map>.json")
+    p.add_argument("--oracle-dir", default=str(ORACLE_DIR))
+    p.set_defaults(fn=cmd_regions)
     p = sub.add_parser("validate", help="validate tests/oracle/<map>.json against its sources and the fixture")
     p.add_argument("--live", default="", help="comma list of the slices whose oracle properties are live")
     p.set_defaults(fn=lambda a: validate([x for x in a.live.split(",") if x]))

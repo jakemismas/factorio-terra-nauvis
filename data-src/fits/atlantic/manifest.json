@@ -1,0 +1,28 @@
+{
+ "format": "tn-geo-manifest/1",
+ "tool": "tools/build_geo.py",
+ "emitter_version": 1,
+ "map": "atlantic",
+ "bodies": {
+  "geo": {
+   "terms": 8674,
+   "factors": 4575,
+   "row_groups": 1563,
+   "checkpoint": "data-src/fits/atlantic/model-8674.npz",
+   "checkpoint_sha256": "9ff17ccafb972b0d1e6c40d00dc193d8797f32dd21634c6d3c7b13f7f2280fe9",
+   "file": "terra-nauvis/prototypes/generated/geo_atlantic_v1.lua",
+   "sha256": "7cb622d445add7a4c7f126907d5efbaa36a3d9859e37e8c4a00cc9be84ee495b",
+   "bytes": 496317
+  },
+  "land_coarse": {
+   "terms": 256,
+   "factors": 205,
+   "row_groups": 76,
+   "checkpoint": "data-src/fits/atlantic/model-256.npz",
+   "checkpoint_sha256": "a793e2c60335f0b55a05641426be0f105a1c8feff09d346f4719da9c2ce6de90",
+   "file": "terra-nauvis/prototypes/generated/land_coarse_atlantic_v1.lua",
+   "sha256": "f1a4ebba378603f2ef2bf9eafa28854c7da7d352848c43b874372e8611a8911d",
+   "bytes": 19472
+  }
+ }
+}

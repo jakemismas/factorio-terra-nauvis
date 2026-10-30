@@ -1,0 +1,17 @@
+{
+ "format": "tn-fit/1",
+ "map": "olde_world",
+ "note": "Which checkpoint each generated body of Old World is emitted from (tools/build_geo.py). See PROVENANCE.md.",
+ "bodies": {
+  "geo": {
+   "checkpoint": "model-4096.npz",
+   "file": "geo_olde_world_v1.lua",
+   "note": "Old World's coast fit, the smallest checkpoint at or above 0.991"
+  },
+  "land_coarse": {
+   "checkpoint": "model-256.npz",
+   "file": "land_coarse_olde_world_v1.lua",
+   "note": "Old World's coarse land field, the 256-tent checkpoint of the same fit"
+  }
+ }
+}

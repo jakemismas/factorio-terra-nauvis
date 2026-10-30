@@ -488,8 +488,10 @@ def parse_forced(run_dir, tag="tq1"):
             "census": json.loads(gen) if gen else None}
 
 
-def parse_verbose(text):
-    """--benchmark-verbose all: a header 'tick,timestamp,...' then one 't<i>,...' row per tick (ns)."""
+def parse_verbose(text, extra=()):
+    """--benchmark-verbose all: a header 'tick,timestamp,...' then one 't<i>,...' row per tick (ns).
+    Keeps wholeUpdate, scriptUpdate and every mapGenerator* column, plus the named `extra` columns
+    present in the header (PERF-09 reads pathFinder); `columns` lists the kept ones."""
     lines = text.splitlines()
     try:
         h = next(i for i, l in enumerate(lines) if l.startswith("tick,timestamp,"))
@@ -497,7 +499,7 @@ def parse_verbose(text):
         return None
     cols = lines[h].rstrip(",").split(",")
     idx = {c: i for i, c in enumerate(cols)}
-    want = [c for c in cols if c in ("wholeUpdate", "scriptUpdate") or c.startswith("mapGenerator")]
+    want = [c for c in cols if c in ("wholeUpdate", "scriptUpdate") or c.startswith("mapGenerator") or c in extra]
     out = {c: [] for c in want}
     out["tick"] = []
     for l in lines[h + 1:]:
@@ -577,6 +579,9 @@ def selftest():
                        "t0,1,2000000,1000000,500000,1000,\nt1,2,4000000,3000000,2500000,2000,\n")
     st = window_stats(vb, 0, 1)
     checks.append(("verbose", st["columns"]["mapGeneratorBasicTilesSupportCompute"]["sum_ms"] == 3.0))
+    pf_text = "tick,timestamp,wholeUpdate,pathFinder,scriptUpdate,\nt0,1,2000000,700,1000,\nt1,2,4000000,300,2000,\n"
+    pf = parse_verbose(pf_text, extra=("pathFinder",))
+    checks.append(("verbose_extra", pf["pathFinder"] == [700, 300] and "pathFinder" not in parse_verbose(pf_text)))
     iv = interval_stats([16.6, 16.7, 25.0, 300.0])
     checks.append(("intervals", iv["over_20ms"] == 2 and iv["max"] == 300.0))
     j = Job()

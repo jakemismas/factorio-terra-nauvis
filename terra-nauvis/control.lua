@@ -4,9 +4,10 @@
 -- guards: world detection and the Map type notice in on_init, the missing-name guard and the drift
 -- line in on_configuration_changed, the withheld-preset warning in both, and the notice and the
 -- stored warnings to each created player. Milestone spawn-cities adds the start (the resolved city, the
--- start message and the RSO warning) after world detection, and the D33 surface guard on every new
--- surface and as a sweep in on_init and on_configuration_changed (surfaces made inside an on_init
--- raise no event, S11). Nothing is registered conditionally, so on_load has nothing to restore.
+-- start message and the RSO warning; from ridges also the cliff "none" reset) after world detection,
+-- and the D33 surface guard on every new surface and as a sweep in on_init and on_configuration_changed
+-- (surfaces made inside an on_init raise no event, S11). Nothing is registered conditionally, so
+-- on_load has nothing to restore.
 local guards = require("scripts.guards")
 local start = require("scripts.start")
 

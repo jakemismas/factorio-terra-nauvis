@@ -458,6 +458,14 @@ def row_locale(mod=MOD):
         for k in sorted(keys - have):
             fails.append(f"locale lacks [{sec}] {k}")
     fails += scale_label_findings(cfg, merged)
+    # waterways on: the Map type notice names fords among what the preset adds (plan T16; ARCHITECTURE.md,
+    # "Map type entries")
+    msgs = cfg.get("messages") or {}
+    if cfg.get("waterways") and msgs:
+        notice = (merged.get(msgs.get("section"), {}) or {}).get((msgs.get("keys") or {}).get("notice"), "")
+        if "ford" not in notice.lower():
+            fails.append(f"the Map type notice [{msgs.get('section')}] {(msgs.get('keys') or {}).get('notice')} does "
+                         f"not name fords among the preset's additions")
     for sec, kv in merged.items():
         for k, v in kv.items():
             if not v.strip():
@@ -658,6 +666,89 @@ def row_registration(mod=MOD):
 
 # The stored-records contract (ARCHITECTURE.md, "Guards"): the per-player warning store has one owner.
 GUARDS_FILE = "scripts/guards.lua"
+
+
+# ------------------------------------------------------------------------------------------------ D33
+
+# D33's strip rule (ARCHITECTURE.md, "D33 surface guard"; milestone ridges): from ridges config.lua's
+# preset_keys lists vanilla properties (cliff_elevation, cliffiness, the ore probabilities, the water
+# pins' readers) whose vanilla values Space Age's planets also set themselves, so the guard that strips
+# keys from surfaces other than Nauvis may strip one only through guards.lua's M.earth_valued (the
+# save's default value names an Earth body, or the key is an Earth per-save key).
+D33_PREDICATE = "earth_valued"
+
+
+def lua_function_body(text, name):
+    """The text of `function <name>(...)` up to its closing `end` at column 0, or None."""
+    m = re.search(rf"^function {re.escape(name)}\(", text, flags=re.M)
+    if not m:
+        return None
+    end = re.search(r"^end\b", text[m.end():], flags=re.M)
+    return text[m.start(): m.end() + (end.end() if end else len(text) - m.end())]
+
+
+def d33_findings(text):
+    """The D33 rule on guards.lua's text: M.earth_valued is defined, reads config.lua's noise prefix and
+    tests both the key and the value; and the surface guard, once a milestone adds it, strips a listed key
+    only through it."""
+    out = []
+    pred = lua_function_body(text, f"M.{D33_PREDICATE}")
+    if pred is None:
+        out.append(f"{GUARDS_FILE} defines no M.{D33_PREDICATE}(key, value), D33's strip rule")
+    elif "noise_prefix" not in pred or not re.search(r"\(\s*key\s*\)", pred) or not re.search(r"\(\s*value\s*\)", pred):
+        out.append(f"M.{D33_PREDICATE} must test the key and the value against config.lua's noise prefix")
+    guard = lua_function_body(text, "M.surface_guard")
+    if guard is not None and "preset_keys" in guard and f"{D33_PREDICATE}(" not in guard:
+        out.append(f"M.surface_guard strips config.lua's preset_keys without M.{D33_PREDICATE}: on a world that is no "
+                   f"Earth map it would blank a planet's own vanilla key (Lakes and Island: cliffiness, "
+                   f"cliff_elevation on Space Age's planets; ARCHITECTURE.md, D33)")
+    return out
+
+
+def row_d33(mod=MOD):
+    text = read_text_or_none(mod / GUARDS_FILE)
+    if text is None:
+        return [f"{GUARDS_FILE} is missing"], ""
+    f = d33_findings(text)
+    has_guard = lua_function_body(text, "M.surface_guard") is not None
+    return f, (f"guards.lua's M.{D33_PREDICATE} holds D33's strip rule" +
+               ("; M.surface_guard strips through it" if has_guard else "; no surface guard in this tree yet"))
+
+
+D33_UNRESTRICTED = """function M.surface_guard(surface)
+  local default = game.default_map_gen_settings.property_expression_names or {}
+  local pen = surface.map_gen_settings.property_expression_names or {}
+  for _, key in ipairs(cfg.preset_keys) do
+    local v, d = pen[key], default[key]
+    if v ~= nil and v ~= "" and d ~= nil and tostring(v) == tostring(d) then
+      pen[key] = ""
+    end
+  end
+end
+"""
+
+
+def d33_fixtures():
+    """The d33 row's positive controls: a surface guard that compares values alone fails, the same guard
+    through M.earth_valued passes, and a guards.lua without the predicate fails."""
+    out = []
+    real = read_text_or_none(MOD / GUARDS_FILE) or ""
+    pred = lua_function_body(real, f"M.{D33_PREDICATE}") or ""
+    out.append(("d33: the real guards.lua passes", not d33_findings(real), d33_findings(real)[:1]))
+    # the fixture guards stand in for the real one (group 0's spawn-cities ships M.surface_guard, and
+    # lua_function_body reads the first definition), or join a guards.lua that has none
+    guard = lua_function_body(real, "M.surface_guard")
+
+    def with_guard(text):
+        return real.replace(guard, text.rstrip("\n")) if guard else real + "\n" + text
+    bad = with_guard(D33_UNRESTRICTED)
+    out.append(("d33: a surface guard that compares values alone fails", bool(d33_findings(bad)), ""))
+    good = with_guard(D33_UNRESTRICTED.replace(
+        "tostring(v) == tostring(d) then", "tostring(v) == tostring(d) and M.earth_valued(key, d) then"))
+    out.append(("d33: the guard through M.earth_valued passes", not d33_findings(good), d33_findings(good)[:1]))
+    out.append(("d33: a guards.lua without the predicate fails", bool(d33_findings(real.replace(pred, ""))) if pred
+                else False, ""))
+    return out
 STORED_FIELDS = {"warnings", "sent"}
 WARNING_WRITER = "record_warning"
 
@@ -1445,6 +1536,107 @@ def data_src_findings(repo=REPO):
     for key in (cfg.get("geography") or {}):
         if not (fits / key / "PROVENANCE.md").exists():
             out.append(f"config.lua gives {key} a geography, but data-src/fits/{key}/ holds no provenance")
+    # the waterways (milestone waterways): every file re-hashes to its PROVENANCE.md row, and each map's
+    # rivers are APPROVALS 7's adopted rows with their class (JI-03)
+    ww = repo / "data-src" / "waterways"
+    if ww.is_dir():
+        wprov = provenance_hashes(ww / "PROVENANCE.md") if (ww / "PROVENANCE.md").exists() else {}
+        if not wprov:
+            out.append("data-src/waterways has no PROVENANCE.md table")
+        names = sorted(p.name for p in ww.iterdir() if p.is_file() and p.name != "PROVENANCE.md")
+        for name in names:
+            if name not in wprov:
+                out.append(f"data-src/waterways/{name} is not in its PROVENANCE.md")
+            elif sha256_file(ww / name) != wprov[name]:
+                out.append(f"data-src/waterways/{name} sha256 differs from its PROVENANCE.md")
+        for name in wprov:
+            if name not in names:
+                out.append(f"data-src/waterways/PROVENANCE.md lists {name}, which is missing")
+        out += waterway_river_findings(repo, cfg)
+        out += waterway_basin_findings(repo, cfg)
+    elif cfg.get("waterways"):
+        out.append("config.lua has a waterways group, but data-src/waterways/ is missing")
+    # the frozen palm table (climate-tiles): generated by tools/build_palms.py, its digest over its own
+    # data, so a hand edit fails here
+    if ((cfg.get("tiles") or {}).get("palm") or {}).get("table"):
+        import build_palms
+        out += [f"palm table: {x}" for x in build_palms.check(cfg)]
+    return out
+
+
+def waterway_river_findings(repo, cfg):
+    """T16 (JI-03): each map's rivers in data-src/waterways/<map>.json are the adopted rows of APPROVALS 7
+    in approvals-data.json, in order and with their major or minor class; a cut (the plan's waterway cut
+    order, section 6.3) only carves fewer rivers from the top of that list at a scale, never fewer than
+    the map's rows of Europe's block (Europe keeps all 22), and only raises the tolerance."""
+    repo = Path(repo)
+    out = []
+    A = load_json(repo / "data-src" / "approvals" / "approvals-data.json")
+    w = cfg.get("waterways") or {}
+    tol = w.get("tolerance_tiles") or []
+    for key in cfg.get("map_order", []):
+        p = repo / "data-src" / "waterways" / f"{key}.json"
+        if not p.exists():
+            out.append(f"data-src/waterways/{key}.json is missing")
+            continue
+        D = load_json(p)
+        want = [(r["name"], r["class"]) for r in A["rivers"][key] if r["adopted"]]
+        have = [(r.get("name"), r.get("class")) for r in D.get("rivers", [])]
+        if have != want:
+            out.append(f"data-src/waterways/{key}.json rivers {[n for n, _ in have]} are not APPROVALS 7's adopted rows "
+                       f"{[n for n, _ in want]} in order with their class")
+        floor = sum(1 for r in A["rivers"][key] if r["adopted"] and r.get("block") == "europe")
+        for s, c in sorted((D.get("cuts") or {}).items()):
+            n = c.get("rivers", len(have))
+            if not isinstance(n, int) or n < floor or n > len(have):
+                out.append(f"data-src/waterways/{key}.json cuts scale {s} to {n} rivers: a cut keeps between "
+                           f"Europe's {floor} and all {len(have)}")
+            t_ = c.get("tolerance_tiles")
+            base = tol[int(s) - 1] if str(s).isdigit() and 0 < int(s) <= len(tol) else None
+            if t_ is not None and base is not None and t_ < base:
+                out.append(f"data-src/waterways/{key}.json lowers scale {s}'s tolerance to {t_} below config.lua's {base}")
+    return out
+
+
+def lua_set_strings(text):
+    """The S.<set> = "..." strings of a generated waterway file, with Lua's \\z continuations applied."""
+    out = {}
+    for m in re.finditer(r'^S\.(\w+) = "', text, re.M):
+        i, buf = m.end(), []
+        while text[i] != '"':
+            if text[i] == "\\" and text[i + 1] == "z":
+                i += 2
+                while text[i] in " \t\r\n":
+                    i += 1
+                continue
+            buf.append(text[i])
+            i += 1
+        out[m.group(1)] = "".join(buf)
+    return out
+
+
+def waterway_basin_findings(repo, cfg):
+    """A canal's turning basins lie in its map's canal set, carved only with canals on, and every other
+    basin in the waterway set: a canal basin in the waterway set would open the isthmus with canals
+    off (each manifest's basins against its generated file)."""
+    repo = Path(repo)
+    out = []
+    for key in cfg.get("map_order", []):
+        p = repo / "data-src" / "waterways" / f"manifest-{key}.json"
+        if not p.exists():
+            continue
+        for s, rec in sorted((load_json(p).get("scales") or {}).items()):
+            f = repo / str(rec.get("file", ""))
+            if not f.is_file():
+                out.append(f"manifest-{key}.json scale {s} names {rec.get('file')}, which is missing")
+                continue
+            sets = lua_set_strings(f.read_text(encoding="utf-8"))
+            for b in rec.get("basins") or []:
+                term = f"abs(X - {float(b['centre'][0]):.9g}), abs(Y - {float(b['centre'][1]):.9g})"
+                home, other = ("canals", "ww") if b.get("kind") == "canal" else ("ww", "canals")
+                if term not in sets.get(home, "") or term in sets.get(other, ""):
+                    out.append(f"{key} scale {s}: the {b.get('kind')} basin of {b.get('feature')} at {b['centre']} is not "
+                               f"in the {home} set alone")
     return out
 
 
@@ -1465,8 +1657,10 @@ def config_frozen_findings(cfg, fz, registry=None):
     produced, so no record can switch the gate's frozen row off for its body); every Earth noise
     body config.lua defines, released or a firewall body, is registered, the placeholder's names and
     the Map type fallbacks that mirror a startup setting excepted and never registered (a frozen
-    fallback is registered like every body). The gate's frozen row checks the dumped bodies and
-    their hashes; this row needs no game, so CI runs it too. `registry` defaults to the runner's,
+    fallback is registered like every body). The region layer's row names count (tnconfig composes
+    them from config.lua's stems and the table's ids), so a table row added without a freeze fails
+    here. The gate's frozen row checks the dumped bodies and their hashes; this row needs no game, so
+    CI runs it too. `registry` defaults to the runner's,
     read statically (fail closed)."""
     if registry is None:
         try:
@@ -1477,7 +1671,15 @@ def config_frozen_findings(cfg, fz, registry=None):
     ph = set(tnconfig.placeholder_names(cfg))
     fb = set(tnconfig.exempt_fallback_names(cfg))
     bodies = fz.get("bodies") if isinstance(fz, dict) and isinstance(fz.get("bodies"), dict) else {}
+    # the live mask (tnfrozen's optional mask) belongs to the Oil Rig's offshore-oil wrappers only
+    # (resources-enemies), and they always carry it
+    offshore = ((cfg.get("resources") or {}).get("offshore")) or {}
+    live = {n for n in (offshore.get("p"), offshore.get("r")) if n}
     for name in bodies:
+        rec = bodies[name] if isinstance(bodies[name], dict) else {}
+        if (rec.get("mask") == "live") != (name in live):
+            out.append(f"tests/frozen.json {name}: mask {rec.get('mask')!r}; only the Oil Rig's wrappers {sorted(live)} "
+                       f"carry the live mask, and they always do")
         if name in ph:
             out.append(f"placeholder name {name} is registered in tests/frozen.json")
         if name in fb:
@@ -1886,6 +2088,14 @@ def release_input_findings(work, refs):
                            f"an append (ship a new setting under the next geography version)")
         wrows = [r for r in (wcfg.get("release_registry") or []) if isinstance(r, dict)]
         for r in rows:
+            if r.get("geography") is None and r.get("map") is None:
+                # a row of no geography (a layer's or a milestone's shared bodies, from region-layer and
+                # climate-tiles several): no id names it, so the landed row must stand here unchanged
+                if r not in wrows:
+                    out.append(f"config.lua release_registry row of no geography naming "
+                               f"{sorted(map(str, r.get('names') or []))[:2]} is landed on {ref} and changed or "
+                               f"missing here (a landed row never changes)")
+                continue
             mine = [w for w in wrows if w.get("geography") == r.get("geography") and w.get("map") == r.get("map")]
             if mine != [r]:
                 state = "changed" if mine else "missing"
@@ -2353,6 +2563,10 @@ def fixture_controls():
         results += landing_fixtures(td, cfg, fz)
         results += landed_tag_fixtures(td)
         results += snapshot_file_fixtures(td)
+        results += region_fixtures(td, cfg)
+        results += ranges_fixtures(td)
+        results += hotspots_fixtures(td)
+        results += d33_fixtures()
     return results
 
 
@@ -2427,6 +2641,15 @@ def europe_coast_fixtures(td, cfg):
     (m / "locale" / "en" / "terra-nauvis.cfg").write_text(bad, encoding="utf-8")
     f, _ = row_locale(m)
     out.append(("locale: a scale label with a wrong world size fails", any("world size" in x for x in f), f[:1]))
+    if cfg.get("waterways"):
+        m = td / "loc-notice" / "terra-nauvis"
+        shutil.copytree(MOD, m)
+        msgs = cfg["messages"]
+        nkey = msgs["keys"]["notice"] + "="
+        bad = "\n".join((l.replace("ford", "crossing") if l.startswith(nkey) else l) for l in text.split("\n"))
+        (m / "locale" / "en" / "terra-nauvis.cfg").write_text(bad, encoding="utf-8")
+        f, _ = row_locale(m)
+        out.append(("locale: a Map type notice that does not name fords fails", any("ford" in x for x in f), f[:1]))
     r = td / "fits-repo"
     shutil.copytree(REPO / "data-src", r / "data-src")
     shutil.copytree(MOD, r / "terra-nauvis")
@@ -2439,6 +2662,36 @@ def europe_coast_fixtures(td, cfg):
                     any(victim.name in x for x in f), f[:1]))
     else:
         out.append(("data-src: a fit checkpoint differing from its provenance fails", False, "no fit checkpoint"))
+    wwd = r / "data-src" / "waterways"
+    if cfg.get("waterways") and wwd.is_dir():
+        k0 = cfg["map_order"][0]
+        src = wwd / f"{k0}.json"
+        D = load_json(src)
+        D2 = dict(D, rivers=list(reversed(D["rivers"])))
+        src.write_text(json.dumps(D2), encoding="utf-8")
+        f = data_src_findings(r)
+        out.append(("data-src: a waterway input differing from its provenance fails",
+                    any(src.name in x and "PROVENANCE" in x for x in f), f[:1]))
+        out.append(("data-src: rivers out of APPROVALS 7's order fail", any("not APPROVALS 7" in x for x in f), f[:1]))
+        D3 = dict(D, cuts={"6": {"rivers": 1, "tolerance_tiles": 0}})
+        src.write_text(json.dumps(D3), encoding="utf-8")
+        f = data_src_findings(r)
+        out.append(("data-src: a cut below Europe's rivers fails", any("a cut keeps between" in x for x in f), f[:1]))
+        out.append(("data-src: a cut lowering the tolerance fails", any("lowers scale" in x for x in f), f[:1]))
+        man = wwd / f"manifest-{k0}.json"
+        M = load_json(man)
+        flip = next(((s, i) for s, rec in sorted(M["scales"].items()) for i, b in enumerate(rec.get("basins") or [])
+                     if b.get("kind") == "canal"), None)
+        if flip:
+            M["scales"][flip[0]]["basins"][flip[1]]["kind"] = "river"
+            man.write_text(json.dumps(M), encoding="utf-8")
+            f = waterway_basin_findings(r, cfg)
+            out.append(("data-src: a canal basin outside its canal set fails", any("basin" in x for x in f), f[:1]))
+        else:
+            out.append(("data-src: a canal basin outside its canal set fails", False, "no canal basin to move"))
+    else:
+        out.append(("data-src: waterway inputs present with config.lua's waterways group", not cfg.get("waterways"),
+                    "no data-src/waterways"))
     geo = tnconfig.geography(cfg)
     if geo:
         key0 = next(iter(geo))
@@ -2517,9 +2770,21 @@ def next_version(cfg, map_key=None):
     spawn_new = {r: bump(sp[r]) for r in tnconfig.SPAWN_OWN} if sp else {}
     if sp:
         v["spawn"] = dict(sp, **spawn_new)
+    # waterway sets read the version's chain too, so a version that composes them takes sets of its own,
+    # and the map's sets are then the newest version's
+    ww = tnconfig.waterways_of(last)
+    ww_new = {k: [bump(n) for n in names] for k, names in ww.items()} if ww else {}
+    if ww:
+        v["waterways"] = ww_new
+        out["waterways"]["sets"][key] = ww_new
+    # a shore body (climate-tiles) reads the version's fit, detail and box, so it is the version's own too
+    shore_new = {bump(last["shore"])} if last.get("shore") else set()
+    if shore_new:
+        v["shore"] = next(iter(shore_new))
     vs.append(v)
     out["release_registry"].append({"release": out["release_registry"][-1]["release"], "map": key, "geography": gid,
-                                    "names": sorted(set(new.values()) | {mask["name"]} | set(spawn_new.values())),
+                                    "names": sorted(set(new.values()) | {mask["name"]} | set(spawn_new.values()) |
+                                                    {n for names in ww_new.values() for n in names} | shore_new),
                                     "files": []})
     out["preset_keys"] = list(out["preset_keys"]) + [new["cx"], new["cy"]]
     out["firewall"][key] = list(out["firewall"][key]) + [n for n in tnconfig.fine_names(v)
@@ -2629,6 +2894,11 @@ def spawn_record_fixtures(cfg):
     frozen_city = copy.deepcopy(cfg)
     for vv in frozen_city["geography"][key]["versions"]:
         vv["fallbacks"] = [dict(e, frozen=True) if e["name"] == sp["city"] else e for e in vv["fallbacks"]]
+    # the city number dropped from every version's fallbacks (one prototype serves every version that
+    # lists it, so a later version with the same fold would keep it a fallback)
+    no_city_fallback = copy.deepcopy(cfg)
+    for vv in no_city_fallback["geography"][key]["versions"]:
+        vv["fallbacks"] = [e for e in vv["fallbacks"] if e["name"] != sp["city"]]
     setting = cfg["settings"][sp["city_setting"]]
     unrandom = dict(cfg, settings=dict(cfg["settings"], **{sp["city_setting"]: dict(
         setting, allowed_values=list(setting["allowed_values"][1:]) + setting["allowed_values"][:1])}))
@@ -2643,9 +2913,7 @@ def spawn_record_fixtures(cfg):
             "must stay firewall-clean"),
         "city offset numbers beside a city fold": (cfg_version(cfg, key, i, city_offset=[0, 0]), "must name the city fold"),
         "a city number that is a frozen fallback": (frozen_city, "mirrors a startup setting"),
-        "a city number that is no fallback": (
-            cfg_version(cfg, key, i, fallbacks=[e for e in v["fallbacks"] if e["name"] != sp["city"]]),
-            "mirrors a startup setting"),
+        "a city number that is no fallback": (no_city_fallback, "mirrors a startup setting"),
         "a bearings file no release row lists": (
             with_spawn(bearings="prototypes/generated/spawn_nowhere_v9.lua"), "no release_registry row lists"),
         "a city setting whose first value is not random": (unrandom, "must start with spawn.random_value"),
@@ -2821,12 +3089,12 @@ def schema_fixtures(td, cfg):
     in_release = dict(cfg, release_registry=[dict(rows[0], names=list(rows[0]["names"]) + [sk])] + rows[1:])
     out.append(("schema: a fallback that mirrors a setting in a release row fails the names row (U3)",
                 any(sk in x and "U3" in x for x in tnconfig.schema_problems(in_release)), ""))
-    gk = next(iter(cfg["geography"]))
-    # the scale's fallback marked frozen in every version that lists it (one prototype serves them
-    # all, so a version that kept it unfrozen would fail on the differing flags instead)
+    # the scale's fallback marked frozen in every version of every map that lists it (one prototype
+    # serves them all, so a version that kept it unfrozen would fail on the differing flags instead)
     frozen_fb = copy.deepcopy(cfg)
-    for v in frozen_fb["geography"][gk]["versions"]:
-        v["fallbacks"] = [dict(e, frozen=True) if e["name"] == sk else e for e in v["fallbacks"]]
+    for g in frozen_fb["geography"].values():
+        for v in g["versions"]:
+            v["fallbacks"] = [dict(e, frozen=True) if e["name"] == sk else e for e in v["fallbacks"]]
     out.append(("schema: a frozen fallback in no release row fails the names row",
                 any(sk in x and "frozen fallback" in x for x in tnconfig.schema_problems(frozen_fb)), ""))
     out.append(("release: a frozen fallback left unregistered fails the release build",
@@ -2840,8 +3108,8 @@ def schema_fixtures(td, cfg):
     # a synthetic config of one released body, for the release build and the frozen rows
     fb = dict(cfg, release_registry=[{"release": "0.1.0", "map": "europe", "geography": 1, "names": ["tn_geo_v1"],
                                       "files": []}],
-              placeholder=None, presets={"europe": dict(cfg["presets"]["europe"], placeholder=None)}, firewall={},
-              geography={}, start_mask=None)
+              placeholder=None, presets={"europe": dict(cfg["presets"]["europe"], placeholder=None)},
+              preset_order=["europe"], firewall={}, geography={}, start_mask=None, regions=None)
     bad_tg = dict(cfg, toggles={"canals": {"setting": "scale", "preset_key": "tn_canals", "mechanism": "name switch"}},
                   toggle_order=[])
     out.append(("schema: toggles without their toggle_order entry fail", bool(tnconfig.schema_problems(bad_tg)), ""))
@@ -3443,6 +3711,285 @@ def row_fixtures():
     return bad, f"{len(res)} positive controls, {len(res) - len(bad)} behaved"
 
 
+# ------------------------------------------------------------------------------------------------ regions
+
+# The region layer (milestone region-layer; T16, D13, A-7): one file builds every region formula. What a
+# consumer may read of config.lua's regions group is the interface (ARCHITECTURE.md, "Region layer"):
+# an aggregate's name, the version suffix, or a row name stem (sd, w, depth, and a hotspot's centre hu,
+# hv) to name one row's output.
+REGION_FILE = "prototypes/expressions/regions.lua"
+REGION_TABLE_MODULE = tnconfig.REGION_TABLE[:-len(".lua")].replace("/", ".")
+REGION_INTERFACE = {"destroyed_sd", "destroyed_w", "destroyed_depth", "forest_w", "forest_sum", "tree_mult",
+                    "marsh_w", "hotspot_w", "enemy_mult", "suffix"}
+REGION_ROW_INTERFACE = {"sd", "w", "depth", "hu", "hv"}
+
+
+def region_formula_findings(mod=MOD):
+    """No region formula outside prototypes/expressions/regions.lua: no other mod Lua file requires the
+    region table, and every read of config.lua's regions group outside it is a full dotted path to an
+    interface name (regions.names.<aggregate>, regions.names.suffix, regions.names.row.<sd|w|depth|hu|hv>).
+    The warp, roughness, ramp, jitter, frame and query-point names stay the layer's own, and an alias
+    of the group (or of its names table) or a bracket index would hide what is read, so both fail."""
+    from luaparser import astnodes
+    DOT = astnodes.IndexNotation.DOT
+    out = []
+    for p in mod_lua(mod):
+        r = rel(p, mod)
+        if r in (REGION_FILE, "prototypes/config.lua"):
+            continue
+        tree = parse_lua_file(p)
+        nodes = list(tnconfig_walk(tree))
+        parent = {}
+        for n in nodes:
+            for c in _children(n, astnodes):
+                parent[id(c)] = n
+        for n in nodes:
+            line = getattr(n, "line", None) or getattr(parent.get(id(n)), "line", "?")
+            if isinstance(n, astnodes.Call) and isinstance(n.func, astnodes.Name) and n.func.id == "require" and n.args:
+                a = n.args[0]
+                s = (a.s.decode() if isinstance(a.s, bytes) else a.s) if isinstance(a, astnodes.String) else ""
+                if s.replace("/", ".") == REGION_TABLE_MODULE:
+                    out.append(f"{r}:{line}: requires the region table outside {REGION_FILE}")
+            if not isinstance(n, astnodes.Index):
+                continue
+            if n.notation != DOT and isinstance(n.idx, astnodes.String):
+                s = n.idx.s.decode() if isinstance(n.idx.s, bytes) else n.idx.s
+                if s == "regions":
+                    out.append(f"{r}:{line}: a bracket index of regions (read the interface by its dotted path)")
+                continue
+            if not (n.notation == DOT and isinstance(n.idx, astnodes.Name) and n.idx.id == "regions"):
+                continue
+            chain, cur = [], n
+            while True:
+                par = parent.get(id(cur))
+                if isinstance(par, astnodes.Index) and par.value is cur and par.notation == DOT and \
+                        isinstance(par.idx, astnodes.Name):
+                    chain.append(par.idx.id)
+                    cur = par
+                else:
+                    break
+            ok = (len(chain) >= 2 and chain[0] == "names" and chain[1] in REGION_INTERFACE) or \
+                (len(chain) >= 3 and chain[:2] == ["names", "row"] and chain[2] in REGION_ROW_INTERFACE)
+            if not ok:
+                out.append(f"{r}:{line}: reads regions.{'.'.join(chain) or '(the whole group)'} outside {REGION_FILE}: "
+                           f"only the interface names (a region formula lives in one file; T16, A-7)")
+    return out
+
+
+def row_regions(repo=REPO):
+    import build_regions
+    repo = Path(repo)
+    f = build_regions.check_table()
+    try:
+        rows = build_regions.load_table()
+    except build_regions.RegionError as e:
+        rows, f = [], f + [str(e)]
+    f += region_formula_findings(repo / "terra-nauvis")
+    return f, (f"prototypes/tables/regions.lua re-emits byte for byte from its sources ({len(rows)} rows); no region "
+               f"formula outside {REGION_FILE}")
+
+
+def region_fixtures(td, cfg):
+    """The regions row's positive controls: a consumer requiring the table, reading the warp, aliasing
+    the group or bracket-indexing it fails; reading an interface name stays clean; a hand edit of the
+    table fails the re-emission; a malformed row fails the table loader."""
+    import build_regions
+    out = []
+    head = 'local cfg = require("prototypes.config")\n'
+    forms = {
+        "regions: a consumer requiring the region table fails": 'local t = require("prototypes.tables.regions")\n'
+                                                                "return t\n",
+        "regions: a consumer reading the shared warp fails": head + "local a = cfg.regions.warp.amplitude_px\nreturn a\n",
+        "regions: a consumer reading the query point fails": head + "local q = cfg.regions.names.u\nreturn q\n",
+        "regions: an alias of the regions group fails": head + "local R = cfg.regions\nreturn R\n",
+        "regions: a bracket index of the regions group fails": head + 'local R = cfg["regions"]\nreturn R\n',
+    }
+    for label, text in forms.items():
+        m = td / ("rg-" + str(abs(hash(label)) % 10 ** 8)) / "terra-nauvis"
+        shutil.copytree(MOD, m)
+        _write(m, "prototypes/expressions/consumer.lua", text)
+        f = region_formula_findings(m)
+        out.append((label, bool(f), f[:1]))
+    m = td / "rg-clean" / "terra-nauvis"
+    shutil.copytree(MOD, m)
+    _write(m, "prototypes/expressions/consumer.lua", head + "local n = cfg.regions.names.tree_mult .. cfg.regions.names."
+                                                           "row.w .. cfg.regions.names.suffix\nreturn n\n")
+    f = region_formula_findings(m)
+    out.append(("regions: a consumer reading interface names stays clean", not f, f[:1]))
+    edited = td / "regions-edited.lua"
+    edited.write_text(build_regions.TABLE.read_text(encoding="utf-8").replace("warp = 0.25", "warp = 0.3", 1),
+                      encoding="utf-8")
+    f = build_regions.check_table(edited)
+    out.append(("regions: a hand edit of the region table fails its re-emission", bool(f), f[:1]))
+    out.append(("regions: a row without a shape fails the table loader",
+                bool(build_regions.row_problems({"id": "x", "layer": "forest", "warp": 1, "maps": ["europe"]})), ""))
+    out += region_name_fixtures(td, cfg)
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ ranges
+
+def row_ranges(repo=REPO):
+    """T16 (FG; milestone ridges): prototypes/tables/ranges.lua re-emits byte for byte from
+    approvals-data.json and R7b, and its rows are the approval data's: the 16 ranges, exactly the
+    adopted passes (Khyber and Bolan, which approvals-data.json drops, absent), the unnamed gaps the
+    400 km rule gives per pass-free stretch, computed by tools/build_ranges.py and never placed by
+    hand, and no pass-free stretch over 400 km on the whole crest or on any map."""
+    import build_ranges
+    f = build_ranges.table_findings()
+    try:
+        ranges = build_ranges.load_table()
+    except (build_ranges.RangeError, tnconfig.ConfigError) as e:
+        ranges, f = [], f + [str(e)]
+    kinds = {k: sum(1 for r in ranges for o in r.get("openings") or [] if o.get("kind") == k)
+             for k in build_ranges.KINDS}
+    return f, (f"prototypes/tables/ranges.lua re-emits byte for byte from its sources ({len(ranges)} ranges; openings "
+               f"{kinds}); the passes are approvals-data.json's adopted ones and the unnamed gaps its rule's")
+
+
+def ranges_fixtures(td):
+    """The ranges row's positive controls: a hand edit of the table fails its re-emission; a hand-placed
+    gap, a dropped pass and a stretch over the rule's km fail the table checks; the real table passes."""
+    import build_ranges
+    out = []
+    text = build_ranges.TABLE.read_text(encoding="utf-8")
+    edited = td / "ranges-edited.lua"
+    edited.write_text(text.replace("crest_km = 1016.3", "crest_km = 1016.4", 1), encoding="utf-8")
+    f = build_ranges.check_table(edited)
+    out.append(("ranges: a hand edit of the ranges table fails its re-emission", bool(f), f[:1]))
+    cfg = tnconfig.load()
+    appr, r7b = build_ranges.sources()
+    ranges = build_ranges.derive(cfg, appr, r7b)
+
+    def findings_of(rs):
+        p = td / ("ranges-" + str(abs(hash(json.dumps(rs, sort_keys=True))) % 10 ** 8) + ".lua")
+        p.write_text(build_ranges.emit_text(cfg, rs, appr, "fixture", "fixture"), encoding="utf-8")
+        return [x for x in build_ranges.table_findings(cfg, p) if "fresh emission" not in x]
+    import copy
+    extra = copy.deepcopy(ranges)
+    o = dict(extra[0]["openings"][0], kind="gap", id="hand_placed_gap")
+    extra[0]["openings"].append(o)
+    out.append(("ranges: a hand-placed unnamed gap fails the rule's count", bool(findings_of(extra)), ""))
+    dropped = copy.deepcopy(ranges)
+    dropped[0]["openings"] = [x for x in dropped[0]["openings"] if x["kind"] != "pass"][:0] + \
+        [x for x in dropped[0]["openings"] if x["kind"] == "pass"][1:]
+    out.append(("ranges: a missing adopted pass fails", bool(findings_of(dropped)), ""))
+    long_ = copy.deepcopy(ranges)
+    andes = next(r for r in long_ if r["id"] == "andes")
+    andes["openings"] = [x for x in andes["openings"] if x["kind"] != "gap"]
+    out.append(("ranges: a pass-free stretch over the rule's km fails", bool(findings_of(long_)), ""))
+    out.append(("ranges: the real table passes its checks", not findings_of(ranges), findings_of(ranges)[:1]))
+    return out
+
+
+# ------------------------------------------------------------------------------------------------ hotspots
+
+def row_hotspots(repo=REPO):
+    """T16 (FG; milestone resources-enemies): prototypes/tables/hotspots.lua re-emits byte for byte from
+    approvals-data.json, and its rows are the region table's hotspot rows (ids, resources, maps, radii
+    and biter multipliers), so the bodies read the same discs the region layer draws."""
+    import build_hotspots
+    f = build_hotspots.table_findings()
+    try:
+        rows, _ = build_hotspots.load_table()
+    except (build_hotspots.HotspotError, tnconfig.ConfigError) as e:
+        rows, f = [], f + [str(e)]
+    return f, (f"prototypes/tables/hotspots.lua re-emits byte for byte from its sources ({len(rows)} rows, "
+               f"{sum(1 for r in rows if r['offshore'])} offshore fields) and matches the region table's hotspot rows")
+
+
+def hotspots_fixtures(td):
+    """The hotspots row's positive controls: a hand edit fails the re-emission; a row the region table
+    lacks, or with another radius, fails the cross-check; the real table passes."""
+    import build_hotspots
+    import build_regions
+    out = []
+    text = build_hotspots.TABLE.read_text(encoding="utf-8")
+    edited = td / "hotspots-edited.lua"
+    edited.write_text(text.replace("strength = 3", "strength = 2", 1), encoding="utf-8")
+    f = build_hotspots.check_table(edited)
+    out.append(("hotspots: a hand edit of the hotspot table fails its re-emission", bool(f), f[:1]))
+    cfg = tnconfig.load()
+    rows, _ = build_hotspots.load_table()
+    reg = build_regions.load_table()
+    extra = [dict(rows[0], id="hand_added_hotspot")] + rows
+    out.append(("hotspots: a row the region table lacks fails", bool(build_hotspots.region_findings(extra, reg, cfg)),
+                ""))
+    wider = [dict(rows[0], radius_px=rows[0]["radius_px"] + 1)] + rows[1:]
+    out.append(("hotspots: a radius unlike the region row's fails", bool(build_hotspots.region_findings(wider, reg, cfg)),
+                ""))
+    f = build_hotspots.region_findings(rows, reg, cfg)
+    out.append(("hotspots: the real table matches the region table", not f, f[:1]))
+    return out
+
+
+def region_name_fixtures(td, cfg):
+    """The region layer's composed names are config.lua's names (design constraints 2 and 5): a row
+    added to the table in a staged copy makes config.lua define the row's names and its new warped
+    query point, and while tests/frozen.json lacks them the static frozen row fails and
+    `build_zip.py --release` refuses; a frozen.json missing one row body fails both; a regions group
+    whose table no release row lists fails the schema; the committed tree passes the release check."""
+    import build_regions
+    out = []
+    names = tnconfig.region_names(cfg)
+    if not names["rows"]:
+        return [("regions: the composed-name controls need a regions group", False, "config.lua has none")]
+    frozen_path = REPO / "tests" / "frozen.json"
+    extra = {"id": "fixture_extra_row", "layer": "hotspot", "shape": "disc", "warp": 0.63, "mult": 4,
+             "resource": "fixture", "lat": 50.0, "lon": 9.0, "radius_km": 30, "jitter_km": 15, "phase": 0.5,
+             "maps": [cfg["map_order"][0]], "source": "a tn_static fixture row"}
+    want = {tnconfig.region_row_name(cfg, k, extra["id"]) for k in tnconfig.REGION_ROW_KINDS +
+            tnconfig.REGION_CENTRE_KINDS} | set(tnconfig.region_query_names(cfg, extra["warp"]))
+    sd = tnconfig.region_row_name(cfg, "sd", extra["id"])
+    root = td / "rg-names"
+    shutil.copytree(MOD, root / "terra-nauvis")
+    (root / "tests").mkdir(parents=True)
+    for f in ("frozen.json", "budgets.json"):
+        shutil.copy2(REPO / "tests" / f, root / "tests" / f)
+    # the static frozen row reads the runner's milestone registry from the tree it checks
+    (root / "tools").mkdir(parents=True)
+    shutil.copy2(REPO / "tools" / "earth_test.py", root / "tools" / "earth_test.py")
+    text = build_regions.emit_text(build_regions.load_table() + [extra], "a fixture", "a fixture")
+    _write(root / "terra-nauvis", tnconfig.REGION_TABLE, text)
+    staged = tnconfig.load(root / "terra-nauvis" / "prototypes" / "config.lua")
+    got = tnconfig.defined_names(staged)["noise"]
+    out.append(("regions: a staged table row's names and its warped query point are names config.lua defines",
+                want <= got and sd not in tnconfig.defined_names(cfg)["noise"], sorted(want - got)[:2]))
+    f = frozen_static_findings(root)
+    out.append(("regions: a staged table row frozen.json lacks fails the static frozen row",
+                all(any(n in x for x in f) for n in want), f[:1]))
+    probs = build_zip.release_problems(staged, frozen_path)
+    out.append(("regions: build_zip --release names a staged row's unregistered bodies with their release",
+                all(any(n in p and "of release" in p for p in probs) for n in want), probs[:1]))
+    try:
+        build_zip.build(td / "rg-names-dist", release=True, mod_dir=root / "terra-nauvis", frozen_path=frozen_path)
+        refused = []
+    except build_zip.BuildError as e:
+        refused = [str(e)]
+    out.append(("regions: build_zip --release --mod-dir refuses a staged table row frozen.json lacks",
+                bool(refused) and sd in refused[0], refused[:1] or ["built"]))
+    fz = load_json(frozen_path)
+    hot = next((d for d in names["rows"].values() if "hu" in d), next(iter(names["rows"].values())))
+    victim = hot.get("hu") or hot["sd"]
+    minus = td / "frozen-minus-one-row-body.json"
+    minus.write_text(json.dumps(dict(fz, bodies={k: v for k, v in (fz.get("bodies") or {}).items() if k != victim})),
+                     encoding="utf-8")
+    probs = build_zip.release_problems(cfg, minus)
+    out.append(("regions: a frozen.json missing one region row body refuses the release build",
+                any(victim in p for p in probs), probs[:1]))
+    f = config_frozen_findings(cfg, load_json(minus))
+    out.append(("regions: a frozen.json missing one region row body fails the static frozen row",
+                any(victim in x for x in f), f[:1]))
+    unlisted = dict(cfg, release_registry=[r for r in tnconfig.release_registry(cfg)
+                                           if tnconfig.REGION_TABLE not in (r.get("files") or [])])
+    out.append(("regions: a regions group whose table no release row lists fails the schema",
+                any(tnconfig.REGION_TABLE in x for x in tnconfig.schema_problems(unlisted)), ""))
+    probs = build_zip.release_problems(cfg, frozen_path)
+    out.append(("regions: the committed config, region table and frozen.json pass the release check", not probs,
+                probs[:1]))
+    return out
+
+
 # ------------------------------------------------------------------------------------------------ all rows
 
 ROWS = [
@@ -3450,7 +3997,8 @@ ROWS = [
     ("registration", row_registration), ("storage", row_storage), ("names", row_names),
     ("design_rules", row_design), ("workflow_scan", row_workflow), ("attribution_scan", row_attribution),
     ("data_src", row_data_src), ("frozen_static", row_frozen), ("bodies", row_bodies), ("append_only", row_append_only),
-    ("fallbacks", row_fallbacks), ("zip", row_zip), ("fixtures", row_fixtures),
+    ("fallbacks", row_fallbacks), ("zip", row_zip), ("regions", row_regions), ("ranges", row_ranges), ("hotspots", row_hotspots),
+    ("d33_guard", row_d33), ("fixtures", row_fixtures),
 ]
 
 

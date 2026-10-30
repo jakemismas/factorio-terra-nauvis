@@ -1889,8 +1889,8 @@
    ],
    "snap_px": 0.223,
    "expect": {
-    "land": null,
-    "water": null,
+    "land": false,
+    "water": true,
     "river": null,
     "climate_band": null,
     "tile_family_ab": null,
@@ -1935,7 +1935,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: strait and isthmus rows carry the S8 fixture's values from waterways",
    "origin": "s8"
   },
   {
@@ -1952,8 +1952,8 @@
    ],
    "snap_px": 0.024,
    "expect": {
-    "land": null,
-    "water": null,
+    "land": false,
+    "water": true,
     "river": null,
     "climate_band": null,
     "tile_family_ab": null,
@@ -1998,7 +1998,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: strait and isthmus rows carry the S8 fixture's values from waterways",
    "origin": "s8"
   },
   {
@@ -2015,8 +2015,8 @@
    ],
    "snap_px": 0.369,
    "expect": {
-    "land": null,
-    "water": null,
+    "land": false,
+    "water": true,
     "river": null,
     "climate_band": null,
     "tile_family_ab": null,
@@ -2061,7 +2061,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: strait and isthmus rows carry the S8 fixture's values from waterways",
    "origin": "s8"
   },
   {
@@ -2078,8 +2078,8 @@
    ],
    "snap_px": 0.181,
    "expect": {
-    "land": null,
-    "water": null,
+    "land": false,
+    "water": true,
     "river": null,
     "climate_band": null,
     "tile_family_ab": null,
@@ -2124,7 +2124,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: strait and isthmus rows carry the S8 fixture's values from waterways",
    "origin": "s8"
   },
   {
@@ -2141,8 +2141,8 @@
    ],
    "snap_px": 0.536,
    "expect": {
-    "land": null,
-    "water": null,
+    "land": false,
+    "water": true,
     "river": null,
     "climate_band": null,
     "tile_family_ab": null,
@@ -2187,7 +2187,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: strait and isthmus rows carry the S8 fixture's values from waterways",
    "origin": "s8"
   },
   {
@@ -2204,8 +2204,8 @@
    ],
    "snap_px": 0.696,
    "expect": {
-    "land": null,
-    "water": null,
+    "land": false,
+    "water": true,
     "river": null,
     "climate_band": null,
     "tile_family_ab": null,
@@ -2250,7 +2250,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: strait and isthmus rows carry the S8 fixture's values from waterways",
    "origin": "s8"
   },
   {
@@ -2267,8 +2267,8 @@
    ],
    "snap_px": 0.374,
    "expect": {
-    "land": null,
-    "water": null,
+    "land": false,
+    "water": true,
     "river": null,
     "climate_band": null,
     "tile_family_ab": null,
@@ -2313,7 +2313,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: strait and isthmus rows carry the S8 fixture's values from waterways",
    "origin": "s8"
   },
   {
@@ -2330,8 +2330,8 @@
    ],
    "snap_px": 0.146,
    "expect": {
-    "land": null,
-    "water": null,
+    "land": true,
+    "water": false,
     "river": null,
     "climate_band": null,
     "tile_family_ab": null,
@@ -2348,8 +2348,8 @@
       "canals": true
      },
      "expect": {
-      "land": null,
-      "water": null
+      "water": true,
+      "land": false
      },
      "note": "the point lies on the canal line (R7b canals)"
     }
@@ -2388,7 +2388,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: strait and isthmus rows carry the S8 fixture's values from waterways",
    "origin": "s8"
   },
   {
@@ -2405,8 +2405,8 @@
    ],
    "snap_px": 1.015,
    "expect": {
-    "land": null,
-    "water": null,
+    "land": true,
+    "water": false,
     "river": null,
     "climate_band": null,
     "tile_family_ab": null,
@@ -2423,8 +2423,8 @@
       "canals": true
      },
      "expect": {
-      "land": null,
-      "water": null
+      "water": true,
+      "land": false
      },
      "note": "the point lies on the canal line (R7b canals)"
     }
@@ -2463,7 +2463,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: strait and isthmus rows carry the S8 fixture's values from waterways",
    "origin": "s8"
   },
   {
@@ -2485,7 +2485,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -2525,7 +2527,13 @@
      -18603,
      -8067
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 71.3
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:gotthard",
@@ -2546,7 +2554,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -2586,7 +2596,13 @@
      -19395,
      -7947
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 69.1
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:simplon",
@@ -2607,7 +2623,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -2647,7 +2665,13 @@
      -19539,
      -7863
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 79.9
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:great_st_bernard",
@@ -2668,7 +2692,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -2708,7 +2734,13 @@
      -19773,
      -7761
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 84.1
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:mont_cenis",
@@ -2729,7 +2761,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -2769,7 +2803,13 @@
      -19845,
      -7593
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 138.4
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:little_st_bernard",
@@ -2790,7 +2830,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -2830,7 +2872,13 @@
      -19851,
      -7707
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 93.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:montgenevre",
@@ -2851,7 +2899,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -2891,7 +2941,13 @@
      -19893,
      -7503
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 171.0
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:col_de_tende",
@@ -2912,7 +2968,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -2952,7 +3010,13 @@
      -19665,
      -7293
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 279.9
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:reschen",
@@ -2973,7 +3037,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3013,7 +3079,13 @@
      -18873,
      -8025
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 84.8
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:splugen",
@@ -3034,7 +3106,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3074,7 +3148,13 @@
      -19191,
      -7929
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 106.5
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:semmering",
@@ -3095,7 +3175,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3135,7 +3217,13 @@
      -17433,
      -8235
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 19.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:cadibona",
@@ -3156,7 +3244,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3196,7 +3286,13 @@
      -19455,
      -7347
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 290.5
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:somport",
@@ -3217,7 +3313,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3257,7 +3355,13 @@
      -21855,
      -6927
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 323.1
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:roncevaux",
@@ -3278,7 +3382,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3318,7 +3424,13 @@
      -22065,
      -6987
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 289.5
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:le_perthus",
@@ -3339,7 +3451,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3379,7 +3493,13 @@
      -20937,
      -6837
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 399.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:puymorens",
@@ -3400,7 +3520,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3440,7 +3562,13 @@
      -21219,
      -6867
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 374.8
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:dukla",
@@ -3461,7 +3589,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3501,7 +3631,13 @@
      -15849,
      -8715
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 35.7
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:verecke",
@@ -3522,7 +3658,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3562,7 +3700,13 @@
      -15453,
      -8559
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 114.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:uzhok",
@@ -3583,7 +3727,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3623,7 +3769,13 @@
      -15531,
      -8607
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 86.8
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:tihuta",
@@ -3644,7 +3796,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3684,7 +3838,13 @@
      -14949,
      -8139
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 375.7
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:turnu_rosu",
@@ -3705,7 +3865,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3745,7 +3907,13 @@
      -15153,
      -7671
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 500.4
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:predeal",
@@ -3766,7 +3934,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3806,7 +3976,13 @@
      -14805,
      -7665
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 567.0
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:iron_gates",
@@ -3827,7 +4003,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3867,7 +4045,13 @@
      -15627,
      -7437
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 565.8
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:darial",
@@ -3888,7 +4072,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3928,7 +4114,13 @@
      -9657,
      -6915
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 2551.9
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:jvari",
@@ -3949,7 +4141,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -3989,7 +4183,13 @@
      -9705,
      -6849
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 2542.8
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:mamison",
@@ -4010,7 +4210,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4050,7 +4252,13 @@
      -9885,
      -6903
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 2465.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:derbent",
@@ -4071,7 +4279,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4111,7 +4321,13 @@
      -8667,
      -6729
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 2960.9
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:filefjell",
@@ -4132,7 +4348,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4172,7 +4390,13 @@
      -19491,
      -11859
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 808.5
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:hjerkinn",
@@ -4193,7 +4417,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4233,7 +4459,13 @@
      -19131,
      -12177
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 910.0
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:cisa",
@@ -4254,7 +4486,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4294,7 +4528,13 @@
      -19029,
      -7383
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 340.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:futa",
@@ -4315,7 +4555,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4355,7 +4597,13 @@
      -18663,
      -7281
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 394.0
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:shipka",
@@ -4376,7 +4624,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4416,7 +4666,13 @@
      -14871,
      -6921
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 830.4
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:petrohan",
@@ -4437,7 +4693,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4477,7 +4735,13 @@
      -15465,
      -7017
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 741.7
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:beklemeto",
@@ -4498,7 +4762,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4538,7 +4804,13 @@
      -15063,
      -6927
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 804.3
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:kotel",
@@ -4559,7 +4831,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4599,7 +4873,13 @@
      -14565,
      -6963
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 866.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:iskar",
@@ -4620,7 +4900,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4660,7 +4942,13 @@
      -15405,
      -6993
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 753.3
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:postojna",
@@ -4681,7 +4969,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4721,7 +5011,13 @@
      -17871,
      -7737
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 217.5
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:babinov",
@@ -4742,7 +5038,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4782,7 +5080,13 @@
      -6387,
      -11475
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 3778.3
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:tizi_n_tichka",
@@ -4803,7 +5107,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4843,7 +5149,13 @@
      -23703,
      -3819
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 1717.7
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:persian_gates",
@@ -4864,7 +5176,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4904,7 +5218,13 @@
      -7779,
      -3663
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 3843.7
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:khyber",
@@ -4925,7 +5245,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -4965,7 +5287,13 @@
      -2481,
      -4575
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 5658.0
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:salang",
@@ -4986,7 +5314,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5026,7 +5356,13 @@
      -3069,
      -4911
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 5382.8
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:khawak",
@@ -5047,7 +5383,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5087,7 +5425,13 @@
      -2865,
      -5001
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 5449.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:wakhjir",
@@ -5108,7 +5452,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5148,7 +5494,13 @@
      -1599,
      -5385
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 5896.4
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:bolan",
@@ -5169,7 +5521,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5209,7 +5563,13 @@
      -3483,
      -3327
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 5463.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:nathu_la",
@@ -5230,7 +5590,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5270,7 +5632,13 @@
      2277,
      -2769
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 7753.8
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "pass:zoji_la",
@@ -5291,7 +5659,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5331,7 +5701,13 @@
      -1329,
      -4629
     ]
-   }
+   },
+   "region_margin_km": {
+    "destroyed": 6096.9
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "forest:bialowieza",
@@ -5352,7 +5728,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:bialowieza": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5394,6 +5772,9 @@
      -15243,
      -9615
     ]
+   },
+   "region_margin_km": {
+    "row:bialowieza": 30.4
    }
   },
   {
@@ -5415,7 +5796,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:black_forest": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5457,6 +5840,9 @@
      -19533,
      -8403
     ]
+   },
+   "region_margin_km": {
+    "row:black_forest": 42.8
    }
   },
   {
@@ -5478,7 +5864,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:ardennes": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5520,6 +5908,9 @@
      -20175,
      -8943
     ]
+   },
+   "region_margin_km": {
+    "row:ardennes": 58.3
    }
   },
   {
@@ -5541,7 +5932,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:bohemian_forest": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5583,6 +5976,9 @@
      -18093,
      -8601
     ]
+   },
+   "region_margin_km": {
+    "row:bohemian_forest": 34.0
    }
   },
   {
@@ -5604,7 +6000,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:landes": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5646,6 +6044,9 @@
      -21867,
      -7305
     ]
+   },
+   "region_margin_km": {
+    "row:landes": 55.2
    }
   },
   {
@@ -5667,7 +6068,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:tuchola": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5709,6 +6112,9 @@
      -16845,
      -9843
     ]
+   },
+   "region_margin_km": {
+    "row:tuchola": 30.1
    }
   },
   {
@@ -5730,7 +6136,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:carpathian_montane": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5772,6 +6180,9 @@
      -15429,
      -8325
     ]
+   },
+   "region_margin_km": {
+    "row:carpathian_montane": 26.5
    }
   },
   {
@@ -5793,7 +6204,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:dinaric_mixed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5835,6 +6248,9 @@
      -17025,
      -7275
     ]
+   },
+   "region_margin_km": {
+    "row:dinaric_mixed": 59.7
    }
   },
   {
@@ -5856,7 +6272,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:scandinavian_taiga": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5898,6 +6316,9 @@
      -11901,
      -12351
     ]
+   },
+   "region_margin_km": {
+    "row:scandinavian_taiga": 146.8
    }
   },
   {
@@ -5919,7 +6340,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:hyrcanian": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -5961,6 +6384,9 @@
      -7845,
      -5445
     ]
+   },
+   "region_margin_km": {
+    "row:hyrcanian": 52.6
    }
   },
   {
@@ -5982,7 +6408,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:west_siberian_taiga": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6024,6 +6452,9 @@
      -1443,
      -11931
     ]
+   },
+   "region_margin_km": {
+    "row:west_siberian_taiga": 467.9
    }
   },
   {
@@ -6045,7 +6476,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:east_siberian_taiga": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6087,6 +6520,9 @@
      8649,
      -12033
     ]
+   },
+   "region_margin_km": {
+    "row:east_siberian_taiga": 672.4
    }
   },
   {
@@ -6108,7 +6544,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:congolian": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6150,6 +6588,9 @@
      -16479,
      4449
     ]
+   },
+   "region_margin_km": {
+    "row:congolian": 245.3
    }
   },
   {
@@ -6171,7 +6612,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:upper_guinean": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6213,6 +6656,9 @@
      -23565,
      2751
     ]
+   },
+   "region_margin_km": {
+    "row:upper_guinean": 8.5
    }
   },
   {
@@ -6423,7 +6869,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6437,7 +6885,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     32.3222,
     31.27779
@@ -6468,7 +6916,25 @@
      -12981,
      -3819
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 2315.9
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:suez:1",
@@ -6489,7 +6955,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6503,7 +6971,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     32.29998,
     31.21112
@@ -6534,7 +7002,25 @@
      -12987,
      -3801
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 2321.3
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:suez:2",
@@ -6555,7 +7041,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6569,7 +7057,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     32.34442,
     30.70001
@@ -6600,7 +7088,25 @@
      -12975,
      -3663
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 2374.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:suez:3",
@@ -6621,7 +7127,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6635,7 +7143,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     32.29998,
     30.56668
@@ -6666,7 +7174,25 @@
      -12987,
      -3627
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 2385.3
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:suez:4",
@@ -6687,7 +7213,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6701,7 +7229,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     32.36664,
     30.36668
@@ -6732,7 +7260,25 @@
      -12969,
      -3573
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 2408.5
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:suez:5",
@@ -6753,7 +7299,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6767,7 +7315,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     32.56664,
     30.21112
@@ -6798,7 +7346,25 @@
      -12915,
      -3531
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 2433.9
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:suez:6",
@@ -6819,7 +7385,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6833,7 +7401,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     32.58887,
     29.96668
@@ -6864,7 +7432,25 @@
      -12909,
      -3465
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 2459.3
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:suez:7",
@@ -6885,7 +7471,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6899,7 +7487,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     32.56664,
     29.92223
@@ -6930,7 +7518,25 @@
      -12915,
      -3453
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 2462.7
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:kiel:0",
@@ -6951,7 +7557,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -6965,7 +7573,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     9.14442,
     53.90001
@@ -6996,7 +7604,25 @@
      -19239,
      -9927
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 24.5
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:kiel:1",
@@ -7017,7 +7643,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7031,7 +7659,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     9.27776,
     53.9889
@@ -7062,7 +7690,25 @@
      -19203,
      -9951
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 24.5
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:kiel:2",
@@ -7083,7 +7729,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7097,7 +7745,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     9.34442,
     54.14446
@@ -7128,7 +7776,25 @@
      -19185,
      -9993
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 30.0
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:kiel:3",
@@ -7149,7 +7815,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7163,7 +7831,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     9.58887,
     54.21112
@@ -7194,7 +7862,25 @@
      -19119,
      -10011
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 32.3
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:kiel:4",
@@ -7215,7 +7901,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7229,7 +7917,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     9.63331,
     54.27779
@@ -7260,7 +7948,25 @@
      -19107,
      -10029
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 38.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:kiel:5",
@@ -7281,7 +7987,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7295,7 +8003,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     9.78887,
     54.36668
@@ -7326,7 +8034,25 @@
      -19065,
      -10053
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 45.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:kiel:6",
@@ -7347,7 +8073,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7361,7 +8089,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     9.94442,
     54.34446
@@ -7392,7 +8120,25 @@
      -19023,
      -10047
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 39.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:kiel:7",
@@ -7413,7 +8159,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7427,7 +8175,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     10.14442,
     54.36668
@@ -7458,7 +8206,25 @@
      -18969,
      -10053
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 37.9
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:corinth:0",
@@ -7479,7 +8245,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7493,7 +8261,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     22.96664,
     37.94446
@@ -7524,7 +8292,25 @@
      -15507,
      -5619
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 1298.8
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:corinth:1",
@@ -7545,7 +8331,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7559,7 +8347,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     22.98887,
     37.94446
@@ -7590,7 +8378,25 @@
      -15501,
      -5619
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 1300.1
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:corinth:2",
@@ -7611,7 +8417,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7625,7 +8433,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     22.98887,
     37.92223
@@ -7656,7 +8464,25 @@
      -15501,
      -5613
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 1302.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:corinth:3",
@@ -7677,7 +8503,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7691,7 +8519,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     23.01109,
     37.92223
@@ -7722,7 +8550,25 @@
      -15495,
      -5613
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 1303.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "canal:corinth:4",
@@ -7743,7 +8589,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7757,7 +8605,7 @@
     "land": "waterways",
     "water": "waterways"
    },
-   "ruling": "19: strait and canal rows carry null expectations until waterways ships them",
+   "ruling": "19: canal rows from waterways: water on the carve with canals on; no expectation with canals off, where the coast fit decides (its error at a canal's ends and on the lakes of its line is T1's; the isthmus rows hold the land the plan asks for)",
    "ref_pixel_lonlat": [
     23.01109,
     37.92223
@@ -7788,7 +8636,25 @@
      -15495,
      -5613
     ]
-   }
+   },
+   "expect_when": [
+    {
+     "when": {
+      "canals": true
+     },
+     "expect": {
+      "land": false,
+      "water": true
+     },
+     "note": "on the canal carve (waterways routes each canal through R7b's vertices)"
+    }
+   ],
+   "region_margin_km": {
+    "destroyed": 1303.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
   },
   {
    "id": "marsh:pripet",
@@ -7809,7 +8675,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:pripet": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7850,6 +8718,9 @@
      -14415,
      -9411
     ]
+   },
+   "region_margin_km": {
+    "row:pripet": 111.3
    }
   },
   {
@@ -7871,7 +8742,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:danube_delta": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7912,6 +8785,9 @@
      -13743,
      -7575
     ]
+   },
+   "region_margin_km": {
+    "row:danube_delta": 35.2
    }
   },
   {
@@ -7933,7 +8809,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:camargue": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -7974,6 +8852,9 @@
      -20493,
      -7125
     ]
+   },
+   "region_margin_km": {
+    "row:camargue": 16.0
    }
   },
   {
@@ -7995,7 +8876,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:po_delta": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8036,6 +8919,9 @@
      -18351,
      -7509
     ]
+   },
+   "region_margin_km": {
+    "row:po_delta": 6.7
    }
   },
   {
@@ -8057,7 +8943,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:wadden_sea": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8098,6 +8986,9 @@
      -19623,
      -10005
     ]
+   },
+   "region_margin_km": {
+    "row:wadden_sea": 34.2
    }
   },
   {
@@ -8119,7 +9010,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:vasyugan": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8160,6 +9053,9 @@
      -1053,
      -10827
     ]
+   },
+   "region_margin_km": {
+    "row:vasyugan": 129.9
    }
   },
   {
@@ -8181,7 +9077,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:sudd": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8222,6 +9120,9 @@
      -13335,
      2469
     ]
+   },
+   "region_margin_km": {
+    "row:sudd": 95.9
    }
   },
   {
@@ -8243,7 +9144,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:okavango": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8284,6 +9187,9 @@
      -15525,
      9867
     ]
+   },
+   "region_margin_km": {
+    "row:okavango": 67.9
    }
   },
   {
@@ -8305,7 +9211,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:mesopotamian": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8346,6 +9254,9 @@
      -9015,
      -3741
     ]
+   },
+   "region_margin_km": {
+    "row:mesopotamian": 78.0
    }
   },
   {
@@ -8367,7 +9278,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:volga_delta": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8408,6 +9321,9 @@
      -8787,
      -7989
     ]
+   },
+   "region_margin_km": {
+    "row:volga_delta": 91.7
    }
   },
   {
@@ -8553,7 +9469,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8594,6 +9512,9 @@
      -21075,
      -8565
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 256.4
    }
   },
   {
@@ -8615,7 +9536,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8656,6 +9579,9 @@
      -20535,
      -9105
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 212.0
    }
   },
   {
@@ -8677,7 +9603,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8718,6 +9646,9 @@
      -20385,
      -9513
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 119.3
    }
   },
   {
@@ -8739,7 +9670,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8780,6 +9713,9 @@
      -20499,
      -9393
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 128.6
    }
   },
   {
@@ -8801,7 +9737,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8842,6 +9780,9 @@
      -20547,
      -9435
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 102.8
    }
   },
   {
@@ -8863,7 +9804,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8904,6 +9847,9 @@
      -20325,
      -9441
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 157.9
    }
   },
   {
@@ -8925,7 +9871,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -8966,6 +9914,9 @@
      -20517,
      -9201
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 185.8
    }
   },
   {
@@ -8987,7 +9938,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9028,6 +9981,9 @@
      -20055,
      -8769
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 344.9
    }
   },
   {
@@ -9049,7 +10005,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9090,6 +10048,9 @@
      -18087,
      -9555
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 230.4
    }
   },
   {
@@ -9111,7 +10072,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9152,6 +10115,9 @@
      -19005,
      -9831
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 49.2
    }
   },
   {
@@ -9173,7 +10139,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9214,6 +10182,9 @@
      -18585,
      -8373
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 54.3
    }
   },
   {
@@ -9235,7 +10206,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9276,6 +10249,9 @@
      -19365,
      -8901
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 293.3
    }
   },
   {
@@ -9297,7 +10273,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9338,6 +10316,9 @@
      -19833,
      -9129
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 299.5
    }
   },
   {
@@ -9359,7 +10340,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9400,6 +10383,9 @@
      -19881,
      -9207
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 266.2
    }
   },
   {
@@ -9421,7 +10407,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9462,6 +10450,9 @@
      -19815,
      -9267
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 243.2
    }
   },
   {
@@ -9483,7 +10474,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9524,6 +10517,9 @@
      -19695,
      -9285
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 238.8
    }
   },
   {
@@ -9545,7 +10541,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9586,6 +10584,9 @@
      -19227,
      -8541
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 135.2
    }
   },
   {
@@ -9607,7 +10608,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9648,6 +10651,9 @@
      -17997,
      -9159
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 369.5
    }
   },
   {
@@ -9669,7 +10675,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9710,6 +10718,9 @@
      -18369,
      -9237
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 337.8
    }
   },
   {
@@ -9731,7 +10742,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9772,6 +10785,9 @@
      -19083,
      -9513
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 156.4
    }
   },
   {
@@ -9793,7 +10809,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9834,6 +10852,9 @@
      -19329,
      -9705
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 72.2
    }
   },
   {
@@ -9855,7 +10876,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9896,6 +10919,9 @@
      -18717,
      -8727
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 201.9
    }
   },
   {
@@ -9917,7 +10943,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -9958,6 +10986,9 @@
      -18567,
      -9447
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 237.8
    }
   },
   {
@@ -9979,7 +11010,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10020,6 +11053,9 @@
      -18729,
      -9141
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 349.4
    }
   },
   {
@@ -10041,7 +11077,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10082,6 +11120,9 @@
      -19143,
      -9231
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 263.3
    }
   },
   {
@@ -10103,7 +11144,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10144,6 +11187,9 @@
      -19425,
      -8733
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 237.1
    }
   },
   {
@@ -10165,7 +11211,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10206,6 +11254,9 @@
      -19437,
      -8607
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 190.5
    }
   },
   {
@@ -10227,7 +11278,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10268,6 +11321,9 @@
      -18765,
      -8433
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 81.6
    }
   },
   {
@@ -10289,7 +11345,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10330,6 +11388,9 @@
      -18447,
      -8607
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 148.7
    }
   },
   {
@@ -10351,7 +11412,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10392,6 +11455,9 @@
      -17817,
      -8895
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 258.3
    }
   },
   {
@@ -10413,7 +11479,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10454,6 +11522,9 @@
      -17223,
      -8655
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 94.3
    }
   },
   {
@@ -10475,7 +11546,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10516,6 +11589,9 @@
      -18099,
      -8805
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 225.3
    }
   },
   {
@@ -10537,7 +11613,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10578,6 +11656,9 @@
      -17049,
      -8763
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 58.0
    }
   },
   {
@@ -10599,7 +11680,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10640,6 +11723,9 @@
      -16767,
      -8829
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 29.1
    }
   },
   {
@@ -10661,7 +11747,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10702,6 +11790,9 @@
      -17289,
      -8391
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 43.4
    }
   },
   {
@@ -10723,7 +11814,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10764,6 +11857,9 @@
      -17853,
      -8415
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 61.3
    }
   },
   {
@@ -10785,7 +11881,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10826,6 +11924,9 @@
      -18183,
      -8277
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 9.2
    }
   },
   {
@@ -10847,7 +11948,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10888,6 +11991,9 @@
      -16035,
      -9477
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 242.4
    }
   },
   {
@@ -10909,7 +12015,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -10950,6 +12058,9 @@
      -16323,
      -8889
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 45.1
    }
   },
   {
@@ -10971,7 +12082,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11012,6 +12125,9 @@
      -16455,
      -9351
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 237.7
    }
   },
   {
@@ -11033,7 +12149,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11074,6 +12192,9 @@
      -17109,
      -9171
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 194.8
    }
   },
   {
@@ -11095,7 +12216,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11136,6 +12259,9 @@
      -17133,
      -9525
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 307.2
    }
   },
   {
@@ -11157,7 +12283,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11198,6 +12326,9 @@
      -16671,
      -10047
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 43.8
    }
   },
   {
@@ -11219,7 +12350,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11260,6 +12393,9 @@
      -16701,
      -10095
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 28.8
    }
   },
   {
@@ -11281,7 +12417,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11322,6 +12460,9 @@
      -17781,
      -9801
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 153.9
    }
   },
   {
@@ -11343,7 +12484,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11384,6 +12527,9 @@
      -16845,
      -9717
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 195.2
    }
   },
   {
@@ -11405,7 +12551,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11446,6 +12594,9 @@
      -16683,
      -9687
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 186.2
    }
   },
   {
@@ -11467,7 +12618,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11508,6 +12661,9 @@
      -15615,
      -9213
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 77.7
    }
   },
   {
@@ -11529,7 +12685,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11570,6 +12728,9 @@
      -15459,
      -9723
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 25.0
    }
   },
   {
@@ -11591,7 +12752,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11632,6 +12795,9 @@
      -15765,
      -8883
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 31.7
    }
   },
   {
@@ -11653,7 +12819,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11694,6 +12862,9 @@
      -16575,
      -8943
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 72.2
    }
   },
   {
@@ -11715,7 +12886,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11756,6 +12929,9 @@
      -15519,
      -9981
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 25.7
    }
   },
   {
@@ -11777,7 +12953,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11818,6 +12996,9 @@
      -15501,
      -9909
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 25.0
    }
   },
   {
@@ -11839,7 +13020,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11880,6 +13063,9 @@
      -15561,
      -8817
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 0.2
    }
   },
   {
@@ -11901,7 +13087,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -11942,6 +13130,9 @@
      -19617,
      -8493
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 173.6
    }
   },
   {
@@ -11963,7 +13154,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12004,6 +13197,9 @@
      -20883,
      -9045
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 141.9
    }
   },
   {
@@ -12025,7 +13221,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12066,6 +13264,9 @@
      -22125,
      -8121
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 147.9
    }
   },
   {
@@ -12087,7 +13288,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12128,6 +13331,9 @@
      -22161,
      -8367
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 175.6
    }
   },
   {
@@ -12149,7 +13355,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12190,6 +13398,9 @@
      -22917,
      -8439
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 37.5
    }
   },
   {
@@ -12211,7 +13422,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12252,6 +13465,9 @@
      -21417,
      -8721
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 147.9
    }
   },
   {
@@ -12273,7 +13489,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12314,6 +13532,9 @@
      -21681,
      -8739
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 102.4
    }
   },
   {
@@ -12335,7 +13556,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12376,6 +13599,9 @@
      -21807,
      -8655
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 116.3
    }
   },
   {
@@ -12397,7 +13623,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12438,6 +13666,9 @@
      -22149,
      -8775
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 20.2
    }
   },
   {
@@ -12459,7 +13690,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12500,6 +13733,9 @@
      -22257,
      -8511
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 106.1
    }
   },
   {
@@ -12521,7 +13757,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12562,6 +13800,9 @@
      -21519,
      -8169
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 171.3
    }
   },
   {
@@ -12583,7 +13824,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12624,6 +13867,9 @@
      -21195,
      -8307
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 214.0
    }
   },
   {
@@ -12645,7 +13891,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12686,6 +13934,9 @@
      -21657,
      -8337
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 246.0
    }
   },
   {
@@ -12707,7 +13958,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12748,6 +14001,9 @@
      -20355,
      -8151
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 114.2
    }
   },
   {
@@ -12769,7 +14025,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12810,6 +14068,9 @@
      -20619,
      -8673
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 329.5
    }
   },
   {
@@ -12831,7 +14092,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12872,6 +14135,9 @@
      -21087,
      -8847
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 152.4
    }
   },
   {
@@ -12893,7 +14159,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12934,6 +14202,9 @@
      -20037,
      -8637
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 291.5
    }
   },
   {
@@ -12955,7 +14226,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -12996,6 +14269,9 @@
      -20037,
      -8523
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 247.7
    }
   },
   {
@@ -13017,7 +14293,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13058,6 +14336,9 @@
      -20253,
      -8649
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 313.8
    }
   },
   {
@@ -13079,7 +14360,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13120,6 +14403,9 @@
      -19725,
      -8265
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 102.2
    }
   },
   {
@@ -13141,7 +14427,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13182,6 +14470,9 @@
      -19659,
      -8217
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 73.9
    }
   },
   {
@@ -13203,7 +14494,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13244,6 +14537,9 @@
      -19401,
      -8163
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 14.7
    }
   },
   {
@@ -13265,7 +14561,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13306,6 +14604,9 @@
      -19695,
      -8049
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 14.8
    }
   },
   {
@@ -13327,7 +14628,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13368,6 +14671,9 @@
      -22017,
      -7839
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 57.4
    }
   },
   {
@@ -13389,7 +14695,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13430,6 +14738,9 @@
      -21207,
      -9129
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 31.6
    }
   },
   {
@@ -13451,7 +14762,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13492,6 +14805,9 @@
      -18825,
      -9921
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 26.4
    }
   },
   {
@@ -13513,7 +14829,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13554,6 +14872,9 @@
      -18435,
      -9975
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 34.0
    }
   },
   {
@@ -13575,7 +14896,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13616,6 +14939,9 @@
      -20205,
      -9045
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 316.2
    }
   },
   {
@@ -13637,7 +14963,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13678,6 +15006,9 @@
      -18075,
      -8487
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 94.1
    }
   },
   {
@@ -13699,7 +15030,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13740,6 +15073,9 @@
      -15333,
      -9435
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 0.5
    }
   },
   {
@@ -13761,7 +15097,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13802,6 +15140,9 @@
      -20403,
      -7731
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 55.8
    }
   },
   {
@@ -13823,7 +15164,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13864,6 +15207,9 @@
      -21867,
      -7479
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 96.5
    }
   },
   {
@@ -13885,7 +15231,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13926,6 +15274,9 @@
      -20049,
      -7851
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 21.7
    }
   },
   {
@@ -13947,7 +15298,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -13988,6 +15341,9 @@
      -21369,
      -7749
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 7.1
    }
   },
   {
@@ -14009,7 +15365,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14050,6 +15408,9 @@
      -20877,
      -7737
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 33.1
    }
   },
   {
@@ -14071,7 +15432,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14112,6 +15475,9 @@
      -21987,
      -7689
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 5.3
    }
   },
   {
@@ -14133,7 +15499,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14174,6 +15542,9 @@
      -21357,
      -9177
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 19.0
    }
   },
   {
@@ -14195,7 +15566,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14236,6 +15609,9 @@
      -21741,
      -9279
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 114.3
    }
   },
   {
@@ -14257,7 +15633,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14298,6 +15676,9 @@
      -18315,
      -10407
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 131.8
    }
   },
   {
@@ -14319,7 +15700,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14360,6 +15743,9 @@
      -18969,
      -10041
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 33.1
    }
   },
   {
@@ -14381,7 +15767,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14422,6 +15810,9 @@
      -19161,
      -10167
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 98.6
    }
   },
   {
@@ -14443,7 +15834,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14484,6 +15877,9 @@
      -16185,
      -10143
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 30.2
    }
   },
   {
@@ -14505,7 +15901,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14546,6 +15944,9 @@
      -14883,
      -10137
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 244.0
    }
   },
   {
@@ -14567,7 +15968,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14608,6 +16011,9 @@
      -15261,
      -10197
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 105.3
    }
   },
   {
@@ -14629,7 +16035,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14670,6 +16078,9 @@
      -15273,
      -9867
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 62.8
    }
   },
   {
@@ -14691,7 +16102,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14732,6 +16145,9 @@
      -15321,
      -9453
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 5.9
    }
   },
   {
@@ -14753,7 +16169,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14794,6 +16212,9 @@
      -15219,
      -8829
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 130.1
    }
   },
   {
@@ -14815,7 +16236,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14856,6 +16279,9 @@
      -14265,
      -9927
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 473.2
    }
   },
   {
@@ -14877,7 +16303,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14918,6 +16346,9 @@
      -17091,
      -8373
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 14.1
    }
   },
   {
@@ -14939,7 +16370,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -14980,6 +16413,9 @@
      -16563,
      -8199
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 234.1
    }
   },
   {
@@ -15001,7 +16437,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15042,6 +16480,9 @@
      -17541,
      -8085
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 78.9
    }
   },
   {
@@ -15063,7 +16504,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15104,6 +16547,9 @@
      -18633,
      -8139
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 41.3
    }
   },
   {
@@ -15125,7 +16571,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15166,6 +16614,9 @@
      -19227,
      -7653
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 207.0
    }
   },
   {
@@ -15187,7 +16638,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15228,6 +16681,9 @@
      -19635,
      -7545
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 187.6
    }
   },
   {
@@ -15249,7 +16705,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15290,6 +16748,9 @@
      -17793,
      -7809
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 189.0
    }
   },
   {
@@ -15311,7 +16772,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15352,6 +16815,9 @@
      -20259,
      -7065
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 334.7
    }
   },
   {
@@ -15373,7 +16839,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15414,6 +16882,9 @@
      -21321,
      -7149
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 255.0
    }
   },
   {
@@ -15435,7 +16906,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15476,6 +16949,9 @@
      -20661,
      -7149
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 283.1
    }
   },
   {
@@ -15497,7 +16973,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15538,6 +17016,9 @@
      -20409,
      -7239
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 257.0
    }
   },
   {
@@ -15559,7 +17040,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15600,6 +17083,9 @@
      -20163,
      -7569
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 132.4
    }
   },
   {
@@ -15621,7 +17107,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15662,6 +17150,9 @@
      -20055,
      -7773
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 53.4
    }
   },
   {
@@ -15683,7 +17174,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15724,6 +17217,9 @@
      -19851,
      -7773
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 67.9
    }
   },
   {
@@ -15745,7 +17241,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15786,6 +17284,9 @@
      -18903,
      -10329
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 144.7
    }
   },
   {
@@ -15807,7 +17308,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15848,6 +17351,9 @@
      -18951,
      -10539
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 233.3
    }
   },
   {
@@ -15869,7 +17375,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15910,6 +17418,9 @@
      -19425,
      -10353
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 193.4
    }
   },
   {
@@ -15931,7 +17442,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -15972,6 +17485,9 @@
      -15369,
      -9177
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 22.4
    }
   },
   {
@@ -15993,7 +17509,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16034,6 +17552,9 @@
      -20523,
      -7641
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 87.5
    }
   },
   {
@@ -16055,7 +17576,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16096,6 +17619,9 @@
      -20385,
      -7503
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 149.9
    }
   },
   {
@@ -16117,7 +17643,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16158,6 +17686,9 @@
      -21075,
      -7041
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 309.7
    }
   },
   {
@@ -16179,7 +17710,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16220,6 +17753,9 @@
      -22131,
      -7113
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 236.0
    }
   },
   {
@@ -16241,7 +17777,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "destroyed": false
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16282,6 +17820,9 @@
      -22107,
      -7119
     ]
+   },
+   "region_margin_km": {
+    "destroyed": 233.9
    }
   },
   {
@@ -16303,7 +17844,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_kiruna_malmberget": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16348,6 +17891,9 @@
      -16191,
      -13599
     ]
+   },
+   "region_margin_km": {
+    "row:iron_kiruna_malmberget": 49.0
    }
   },
   {
@@ -16369,7 +17915,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_lorraine_minette": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16414,6 +17962,9 @@
      -20097,
      -8703
     ]
+   },
+   "region_margin_km": {
+    "row:iron_lorraine_minette": 39.0
    }
   },
   {
@@ -16435,7 +17986,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_kryvbas": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16480,6 +18033,9 @@
      -12687,
      -8331
     ]
+   },
+   "region_margin_km": {
+    "row:iron_kryvbas": 48.6
    }
   },
   {
@@ -16501,7 +18057,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_kursk_magnetic_anomaly": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16546,6 +18104,9 @@
      -11535,
      -9213
     ]
+   },
+   "region_margin_km": {
+    "row:iron_kursk_magnetic_anomaly": 99.0
    }
   },
   {
@@ -16567,7 +18128,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_kediet_ej_jill": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16612,6 +18175,9 @@
      -25101,
      -1491
     ]
+   },
+   "region_margin_km": {
+    "row:iron_kediet_ej_jill": 39.0
    }
   },
   {
@@ -16633,7 +18199,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_gara_djebilet": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16678,6 +18246,9 @@
      -23727,
      -2595
     ]
+   },
+   "region_margin_km": {
+    "row:iron_gara_djebilet": 38.5
    }
   },
   {
@@ -16699,7 +18270,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_simandou": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16744,6 +18317,9 @@
      -24111,
      2325
     ]
+   },
+   "region_margin_km": {
+    "row:iron_simandou": 53.8
    }
   },
   {
@@ -16765,7 +18341,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_sishen": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16810,6 +18388,9 @@
      -15495,
      12117
     ]
+   },
+   "region_margin_km": {
+    "row:iron_sishen": 38.6
    }
   },
   {
@@ -16831,7 +18412,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_anshan": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16876,6 +18459,9 @@
      11499,
      -6471
     ]
+   },
+   "region_margin_km": {
+    "row:iron_anshan": 38.9
    }
   },
   {
@@ -16897,7 +18483,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:iron_barbil": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -16942,6 +18530,9 @@
      1353,
      -1347
     ]
+   },
+   "region_margin_km": {
+    "row:iron_barbil": 48.7
    }
   },
   {
@@ -16963,7 +18554,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:copper_iberian_pyrite_belt": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17008,6 +18601,9 @@
      -23673,
      -5535
     ]
+   },
+   "region_margin_km": {
+    "row:copper_iberian_pyrite_belt": 89.4
    }
   },
   {
@@ -17029,7 +18625,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:copper_legnica_glogow": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17074,6 +18672,9 @@
      -17361,
      -9279
     ]
+   },
+   "region_margin_km": {
+    "row:copper_legnica_glogow": 29.2
    }
   },
   {
@@ -17161,7 +18762,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:copper_bor": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17206,6 +18809,9 @@
      -15741,
      -7275
     ]
+   },
+   "region_margin_km": {
+    "row:copper_bor": 28.8
    }
   },
   {
@@ -17359,7 +18965,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:copper_sarcheshmeh": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17404,6 +19012,9 @@
      -6627,
      -3471
     ]
+   },
+   "region_margin_km": {
+    "row:copper_sarcheshmeh": 29.5
    }
   },
   {
@@ -17425,7 +19036,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:copper_central_african_copperbelt": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17470,6 +19083,9 @@
      -14463,
      7803
     ]
+   },
+   "region_margin_km": {
+    "row:copper_central_african_copperbelt": 200.0
    }
   },
   {
@@ -17491,7 +19107,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:copper_zhezkazgan": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17536,6 +19154,9 @@
      -3429,
      -8277
     ]
+   },
+   "region_margin_km": {
+    "row:copper_zhezkazgan": 39.4
    }
   },
   {
@@ -17557,7 +19178,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:copper_norilsk": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17602,6 +19225,9 @@
      2109,
      -14091
     ]
+   },
+   "region_margin_km": {
+    "row:copper_norilsk": 38.6
    }
   },
   {
@@ -17623,7 +19249,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:copper_oyu_tolgoi": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17668,6 +19296,9 @@
      7137,
      -6987
     ]
+   },
+   "region_margin_km": {
+    "row:copper_oyu_tolgoi": 23.9
    }
   },
   {
@@ -17689,7 +19320,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_ruhr": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17734,6 +19367,9 @@
      -19749,
      -9279
     ]
+   },
+   "region_margin_km": {
+    "row:coal_ruhr": 39.4
    }
   },
   {
@@ -17755,7 +19391,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_upper_silesia": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17800,6 +19438,9 @@
      -16575,
      -8943
     ]
+   },
+   "region_margin_km": {
+    "row:coal_upper_silesia": 43.6
    }
   },
   {
@@ -17821,7 +19462,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_donbas": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17866,6 +19509,9 @@
      -11499,
      -8337
     ]
+   },
+   "region_margin_km": {
+    "row:coal_donbas": 108.9
    }
   },
   {
@@ -17887,7 +19533,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_south_wales": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -17932,6 +19580,9 @@
      -22629,
      -9309
     ]
+   },
+   "region_margin_km": {
+    "row:coal_south_wales": 39.1
    }
   },
   {
@@ -18019,7 +19670,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_nord_pas_de_calais": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18064,6 +19717,9 @@
      -20751,
      -8997
     ]
+   },
+   "region_margin_km": {
+    "row:coal_nord_pas_de_calais": 34.2
    }
   },
   {
@@ -18217,7 +19873,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_kuzbass": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18262,6 +19920,9 @@
      1533,
      -10317
     ]
+   },
+   "region_margin_km": {
+    "row:coal_kuzbass": 88.4
    }
   },
   {
@@ -18283,7 +19944,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_ekibastuz": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18328,6 +19991,9 @@
      -1359,
      -9327
     ]
+   },
+   "region_margin_km": {
+    "row:coal_ekibastuz": 28.8
    }
   },
   {
@@ -18349,7 +20015,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_ordos": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18394,6 +20062,9 @@
      7935,
      -6069
     ]
+   },
+   "region_margin_km": {
+    "row:coal_ordos": 149.1
    }
   },
   {
@@ -18415,7 +20086,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_jharia_damodar": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18460,6 +20133,9 @@
      1623,
      -1785
     ]
+   },
+   "region_margin_km": {
+    "row:coal_jharia_damodar": 38.7
    }
   },
   {
@@ -18481,7 +20157,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:coal_witbank_highveld": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18526,6 +20204,9 @@
      -13821,
      11613
     ]
+   },
+   "region_margin_km": {
+    "row:coal_witbank_highveld": 58.9
    }
   },
   {
@@ -18547,7 +20228,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:stone_carrara": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18592,6 +20275,9 @@
      -18981,
      -7275
     ]
+   },
+   "region_margin_km": {
+    "row:stone_carrara": 14.8
    }
   },
   {
@@ -18613,7 +20299,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:stone_portland": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18658,6 +20346,9 @@
      -22365,
      -9021
     ]
+   },
+   "region_margin_km": {
+    "row:stone_portland": 9.0
    }
   },
   {
@@ -18679,7 +20370,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:stone_pentelicus": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18724,6 +20417,9 @@
      -15255,
      -5655
     ]
+   },
+   "region_margin_km": {
+    "row:stone_pentelicus": 9.7
    }
   },
   {
@@ -18745,7 +20441,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:stone_marmara_island": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18790,6 +20488,9 @@
      -14247,
      -6339
     ]
+   },
+   "region_margin_km": {
+    "row:stone_marmara_island": 13.9
    }
   },
   {
@@ -18877,7 +20578,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:stone_aswan": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18922,6 +20625,9 @@
      -12825,
      -1875
     ]
+   },
+   "region_margin_km": {
+    "row:stone_aswan": 14.5
    }
   },
   {
@@ -18943,7 +20649,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:stone_makrana": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -18988,6 +20696,9 @@
      -1533,
      -2679
     ]
+   },
+   "region_margin_km": {
+    "row:stone_makrana": 14.3
    }
   },
   {
@@ -19009,7 +20720,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:uranium_chu_sarysu": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19054,6 +20767,9 @@
      -3177,
      -7557
     ]
+   },
+   "region_margin_km": {
+    "row:uranium_chu_sarysu": 109.2
    }
   },
   {
@@ -19075,7 +20791,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:uranium_erongo": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19120,6 +20838,9 @@
      -17643,
      10695
     ]
+   },
+   "region_margin_km": {
+    "row:uranium_erongo": 39.0
    }
   },
   {
@@ -19141,7 +20862,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:uranium_arlit": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19186,6 +20909,9 @@
      -19713,
      -429
     ]
+   },
+   "region_margin_km": {
+    "row:uranium_arlit": 38.6
    }
   },
   {
@@ -19207,7 +20933,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:uranium_kyzylkum": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19252,6 +20980,9 @@
      -4299,
      -6477
     ]
+   },
+   "region_margin_km": {
+    "row:uranium_kyzylkum": 138.8
    }
   },
   {
@@ -19273,7 +21004,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:uranium_ore_mountains": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19318,6 +21051,9 @@
      -18309,
      -9039
     ]
+   },
+   "region_margin_km": {
+    "row:uranium_ore_mountains": 44.5
    }
   },
   {
@@ -19471,7 +21207,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:uranium_krasnokamensk": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19516,6 +21254,9 @@
      10161,
      -8901
     ]
+   },
+   "region_margin_km": {
+    "row:uranium_krasnokamensk": 30.0
    }
   },
   {
@@ -19537,7 +21278,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_ghawar": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19582,6 +21325,9 @@
      -8391,
      -2175
     ]
+   },
+   "region_margin_km": {
+    "row:oil_ghawar": 98.6
    }
   },
   {
@@ -19603,7 +21349,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_basra_kuwait": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19648,6 +21396,9 @@
      -8835,
      -3375
     ]
+   },
+   "region_margin_km": {
+    "row:oil_basra_kuwait": 79.0
    }
   },
   {
@@ -19669,7 +21420,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_ahvaz": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19714,6 +21467,9 @@
      -8565,
      -3831
     ]
+   },
+   "region_margin_km": {
+    "row:oil_ahvaz": 79.0
    }
   },
   {
@@ -19735,7 +21491,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_kirkuk": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19780,6 +21538,9 @@
      -9735,
      -4965
     ]
+   },
+   "region_margin_km": {
+    "row:oil_kirkuk": 38.5
    }
   },
   {
@@ -19801,7 +21562,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_samotlor": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19846,6 +21609,9 @@
      -987,
      -11877
     ]
+   },
+   "region_margin_km": {
+    "row:oil_samotlor": 149.2
    }
   },
   {
@@ -19867,7 +21633,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_volga_ural": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19912,6 +21680,9 @@
      -7569,
      -10107
     ]
+   },
+   "region_margin_km": {
+    "row:oil_volga_ural": 59.2
    }
   },
   {
@@ -19933,7 +21704,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_baku_absheron": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -19978,6 +21751,9 @@
      -8277,
      -6291
     ]
+   },
+   "region_margin_km": {
+    "row:oil_baku_absheron": 39.3
    }
   },
   {
@@ -20197,7 +21973,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_hassi_messaoud": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -20242,6 +22020,9 @@
      -20295,
      -3603
     ]
+   },
+   "region_margin_km": {
+    "row:oil_hassi_messaoud": 49.2
    }
   },
   {
@@ -20263,7 +22044,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_sirte_basin": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -20308,6 +22091,9 @@
      -16545,
      -2991
     ]
+   },
+   "region_margin_km": {
+    "row:oil_sirte_basin": 148.7
    }
   },
   {
@@ -20329,7 +22115,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_niger_delta": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -20374,6 +22162,9 @@
      -19959,
      3189
     ]
+   },
+   "region_margin_km": {
+    "row:oil_niger_delta": 98.6
    }
   },
   {
@@ -20395,7 +22186,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_tengiz": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -20440,6 +22233,9 @@
      -7293,
      -7833
     ]
+   },
+   "region_margin_km": {
+    "row:oil_tengiz": 28.9
    }
   },
   {
@@ -20461,7 +22257,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:oil_daqing": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -20506,6 +22304,9 @@
      12015,
      -7953
     ]
+   },
+   "region_margin_km": {
+    "row:oil_daqing": 58.8
    }
   },
   {
@@ -20527,7 +22328,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_ekofisk": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -20572,6 +22375,9 @@
      -20841,
      -10641
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_ekofisk": 39.5
    }
   },
   {
@@ -20593,7 +22399,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_forties": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -20638,6 +22446,9 @@
      -21435,
      -10959
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_forties": 39.1
    }
   },
   {
@@ -20659,7 +22470,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_utsira_high": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -20704,6 +22517,9 @@
      -21033,
      -11361
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_utsira_high": 38.5
    }
   },
   {
@@ -20725,7 +22541,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_tampen_east_shetland": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -20770,6 +22588,9 @@
      -21213,
      -11865
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_tampen_east_shetland": 49.3
    }
   },
   {
@@ -20989,7 +22810,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_caspian_acg": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -21034,6 +22857,9 @@
      -7869,
      -6177
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_caspian_acg": 28.6
    }
   },
   {
@@ -21055,7 +22881,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_kashagan": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -21100,6 +22928,9 @@
      -7779,
      -7839
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_kashagan": 39.4
    }
   },
   {
@@ -21187,7 +23018,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_safaniya": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -21232,6 +23065,9 @@
      -8547,
      -3009
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_safaniya": 39.3
    }
   },
   {
@@ -21253,7 +23089,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_upper_zakum": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -21298,6 +23136,9 @@
      -7221,
      -2085
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_upper_zakum": 29.2
    }
   },
   {
@@ -21319,7 +23160,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_mumbai_high": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -21364,6 +23207,9 @@
      -2451,
      -615
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_mumbai_high": 38.6
    }
   },
   {
@@ -21385,7 +23231,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_nigeria_deepwater": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -21430,6 +23278,9 @@
      -20337,
      3549
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_nigeria_deepwater": 99.2
    }
   },
   {
@@ -21451,7 +23302,9 @@
     "climate_band": null,
     "tile_family_ab": null,
     "tile_family_vanilla": null,
-    "region": null,
+    "region": {
+     "row:offshore_angola_block_17": true
+    },
     "destroyed_zone": null,
     "forest": null,
     "hotspot": null,
@@ -21496,6 +23349,9 @@
      -18543,
      6693
     ]
+   },
+   "region_margin_km": {
+    "row:offshore_angola_block_17": 49.1
    }
   },
   {
@@ -23098,6 +24954,1690 @@
      -8205,
      -909
     ]
+   }
+  },
+  {
+   "id": "strait-end:gibraltar:punta_de_oliveros_spain",
+   "name": "Punta de Oliveros (Spain)",
+   "kind": "strait_end",
+   "lon": -5.553,
+   "lat": 36.0235,
+   "source": "docs/plan/research/R7b-geography.json straits gibraltar endpoints (https://en.wikipedia.org/wiki/Strait_of_Gibraltar)",
+   "ref_pixel": [
+    613,
+    2072
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "gibraltar",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    -5.54447,
+    36.03334
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -3868,
+     -851
+    ],
+    "2": [
+     -7735,
+     -1701
+    ],
+    "3": [
+     -11603,
+     -2552
+    ],
+    "4": [
+     -15470,
+     -3402
+    ],
+    "5": [
+     -19338,
+     -4253
+    ],
+    "6": [
+     -23205,
+     -5103
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 1150.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:gibraltar:point_cires_morocco",
+   "name": "Point Cires (Morocco)",
+   "kind": "strait_end",
+   "lon": -5.4816,
+   "lat": 35.9103,
+   "source": "docs/plan/research/R7b-geography.json straits gibraltar endpoints (https://en.wikipedia.org/wiki/Strait_of_Gibraltar)",
+   "ref_pixel": [
+    616,
+    2078
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "gibraltar",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    -5.4778,
+    35.90001
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -3865,
+     -845
+    ],
+    "2": [
+     -7729,
+     -1689
+    ],
+    "3": [
+     -11594,
+     -2534
+    ],
+    "4": [
+     -15458,
+     -3378
+    ],
+    "5": [
+     -19323,
+     -4223
+    ],
+    "6": [
+     -23187,
+     -5067
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 1161.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:bosporus:kandilli_asian_shore",
+   "name": "Kandilli (Asian shore)",
+   "kind": "strait_end",
+   "lon": 29.0578,
+   "lat": 41.0731,
+   "source": "docs/plan/research/R7b-geography.json straits bosporus endpoints (https://en.wikipedia.org/wiki/Bosporus)",
+   "ref_pixel": [
+    2170,
+    1845
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "bosporus",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    29.05553,
+    41.07779
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -2311,
+     -1078
+    ],
+    "2": [
+     -4621,
+     -2155
+    ],
+    "3": [
+     -6932,
+     -3233
+    ],
+    "4": [
+     -9242,
+     -4310
+    ],
+    "5": [
+     -11553,
+     -5388
+    ],
+    "6": [
+     -13863,
+     -6465
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 1194.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:bosporus:a_iyan_european_shore",
+   "name": "Aşiyan (European shore)",
+   "kind": "strait_end",
+   "lon": 29.0522,
+   "lat": 41.0825,
+   "source": "docs/plan/research/R7b-geography.json straits bosporus endpoints (https://en.wikipedia.org/wiki/Bosporus)",
+   "ref_pixel": [
+    2170,
+    1845
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "bosporus",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    29.05553,
+    41.07779
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -2311,
+     -1078
+    ],
+    "2": [
+     -4621,
+     -2155
+    ],
+    "3": [
+     -6932,
+     -3233
+    ],
+    "4": [
+     -9242,
+     -4310
+    ],
+    "5": [
+     -11553,
+     -5388
+    ],
+    "6": [
+     -13863,
+     -6465
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 1194.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:dardanelles:anakkale_asian_shore",
+   "name": "Çanakkale (Asian shore)",
+   "kind": "strait_end",
+   "lon": 26.4056,
+   "lat": 40.1519,
+   "source": "docs/plan/research/R7b-geography.json straits dardanelles endpoints (https://en.wikipedia.org/wiki/Dardanelles)",
+   "ref_pixel": [
+    2051,
+    1887
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "dardanelles",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    26.41109,
+    40.14446
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -2430,
+     -1036
+    ],
+    "2": [
+     -4859,
+     -2071
+    ],
+    "3": [
+     -7289,
+     -3107
+    ],
+    "4": [
+     -9718,
+     -4142
+    ],
+    "5": [
+     -12148,
+     -5178
+    ],
+    "6": [
+     -14577,
+     -6213
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 1145.8
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:dardanelles:kilitbahir_european_shore",
+   "name": "Kilitbahir (European shore)",
+   "kind": "strait_end",
+   "lon": 26.3792,
+   "lat": 40.1486,
+   "source": "docs/plan/research/R7b-geography.json straits dardanelles endpoints (https://en.wikipedia.org/wiki/Dardanelles)",
+   "ref_pixel": [
+    2050,
+    1887
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "dardanelles",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    26.38887,
+    40.14446
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -2431,
+     -1036
+    ],
+    "2": [
+     -4861,
+     -2071
+    ],
+    "3": [
+     -7292,
+     -3107
+    ],
+    "4": [
+     -9722,
+     -4142
+    ],
+    "5": [
+     -12153,
+     -5178
+    ],
+    "6": [
+     -14583,
+     -6213
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 1145.0
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:dover:south_foreland_england",
+   "name": "South Foreland (England)",
+   "kind": "strait_end",
+   "lon": 1.3736,
+   "lat": 51.1436,
+   "source": "docs/plan/research/R7b-geography.json straits dover endpoints (https://en.wikipedia.org/wiki/Strait_of_Dover)",
+   "ref_pixel": [
+    924,
+    1392
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "dover",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    1.36664,
+    51.14446
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -3557,
+     -1531
+    ],
+    "2": [
+     -7113,
+     -3061
+    ],
+    "3": [
+     -10670,
+     -4592
+    ],
+    "4": [
+     -14226,
+     -6122
+    ],
+    "5": [
+     -17783,
+     -7653
+    ],
+    "6": [
+     -21339,
+     -9183
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 19.2
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:dover:cap_gris_nez_france",
+   "name": "Cap Gris-Nez (France)",
+   "kind": "strait_end",
+   "lon": 1.5836,
+   "lat": 50.8708,
+   "source": "docs/plan/research/R7b-geography.json straits dover endpoints (https://en.wikipedia.org/wiki/Strait_of_Dover)",
+   "ref_pixel": [
+    934,
+    1404
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": null,
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "dover",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    1.58887,
+    50.87779
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -3547,
+     -1519
+    ],
+    "2": [
+     -7093,
+     -3037
+    ],
+    "3": [
+     -10640,
+     -4556
+    ],
+    "4": [
+     -14186,
+     -6074
+    ],
+    "5": [
+     -17733,
+     -7593
+    ],
+    "6": [
+     -21279,
+     -9111
+    ]
+   }
+  },
+  {
+   "id": "strait-end:oresund:helsing_r_denmark",
+   "name": "Helsingør (Denmark)",
+   "kind": "strait_end",
+   "lon": 12.6083,
+   "lat": 56.0361,
+   "source": "docs/plan/research/R7b-geography.json straits oresund endpoints (https://en.wikipedia.org/wiki/%C3%98resund)",
+   "ref_pixel": [
+    1430,
+    1172
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "oresund",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    12.61109,
+    56.03334
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -3051,
+     -1751
+    ],
+    "2": [
+     -6101,
+     -3501
+    ],
+    "3": [
+     -9152,
+     -5252
+    ],
+    "4": [
+     -12202,
+     -7002
+    ],
+    "5": [
+     -15253,
+     -8753
+    ],
+    "6": [
+     -18303,
+     -10503
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 169.7
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:oresund:helsingborg_sweden",
+   "name": "Helsingborg (Sweden)",
+   "kind": "strait_end",
+   "lon": 12.7167,
+   "lat": 56.05,
+   "source": "docs/plan/research/R7b-geography.json straits oresund endpoints (https://en.wikipedia.org/wiki/%C3%98resund)",
+   "ref_pixel": [
+    1435,
+    1171
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "oresund",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    12.7222,
+    56.05557
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -3046,
+     -1752
+    ],
+    "2": [
+     -6091,
+     -3503
+    ],
+    "3": [
+     -9137,
+     -5255
+    ],
+    "4": [
+     -12182,
+     -7006
+    ],
+    "5": [
+     -15228,
+     -8758
+    ],
+    "6": [
+     -18273,
+     -10509
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 169.9
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:great_belt:kors_r_halsskov_zealand",
+   "name": "Korsør / Halsskov (Zealand)",
+   "kind": "strait_end",
+   "lon": 11.1397,
+   "lat": 55.3336,
+   "source": "docs/plan/research/R7b-geography.json straits great_belt endpoints (https://en.wikipedia.org/wiki/Great_Belt)",
+   "ref_pixel": [
+    1364,
+    1203
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "great_belt",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    11.14442,
+    55.34446
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -3117,
+     -1720
+    ],
+    "2": [
+     -6233,
+     -3439
+    ],
+    "3": [
+     -9350,
+     -5159
+    ],
+    "4": [
+     -12466,
+     -6878
+    ],
+    "5": [
+     -15583,
+     -8598
+    ],
+    "6": [
+     -18699,
+     -10317
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 124.4
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:great_belt:sprog_mid_strait_island",
+   "name": "Sprogø (mid-strait island)",
+   "kind": "strait_end",
+   "lon": 10.9667,
+   "lat": 55.3333,
+   "source": "docs/plan/research/R7b-geography.json straits great_belt endpoints (https://en.wikipedia.org/wiki/Great_Belt)",
+   "ref_pixel": [
+    1356,
+    1204
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "great_belt",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    10.96664,
+    55.32223
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -3125,
+     -1719
+    ],
+    "2": [
+     -6249,
+     -3437
+    ],
+    "3": [
+     -9374,
+     -5156
+    ],
+    "4": [
+     -12498,
+     -6874
+    ],
+    "5": [
+     -15623,
+     -8593
+    ],
+    "6": [
+     -18747,
+     -10311
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 125.6
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:little_belt:little_belt_bridge_1935",
+   "name": "Little Belt Bridge (1935)",
+   "kind": "strait_end",
+   "lon": 9.7097,
+   "lat": 55.5177,
+   "source": "docs/plan/research/R7b-geography.json straits little_belt endpoints (https://en.wikipedia.org/wiki/Little_Belt)",
+   "ref_pixel": [
+    1299,
+    1195
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "little_belt",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    9.69998,
+    55.52223
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -3182,
+     -1728
+    ],
+    "2": [
+     -6363,
+     -3455
+    ],
+    "3": [
+     -9545,
+     -5183
+    ],
+    "4": [
+     -12726,
+     -6910
+    ],
+    "5": [
+     -15908,
+     -8638
+    ],
+    "6": [
+     -19089,
+     -10365
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 173.3
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "strait-end:little_belt:little_belt_bridge_1970",
+   "name": "Little Belt Bridge (1970)",
+   "kind": "strait_end",
+   "lon": 9.7492,
+   "lat": 55.5186,
+   "source": "docs/plan/research/R7b-geography.json straits little_belt endpoints (https://en.wikipedia.org/wiki/Little_Belt)",
+   "ref_pixel": [
+    1301,
+    1195
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": false
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "r7b",
+   "strait": "little_belt",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    9.74442,
+    55.52223
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -3180,
+     -1728
+    ],
+    "2": [
+     -6359,
+     -3455
+    ],
+    "3": [
+     -9539,
+     -5183
+    ],
+    "4": [
+     -12718,
+     -6910
+    ],
+    "5": [
+     -15898,
+     -8638
+    ],
+    "6": [
+     -19077,
+     -10365
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 172.4
+   },
+   "region_hard": [
+    "destroyed"
+   ]
+  },
+  {
+   "id": "region-interior:destroyed_europe",
+   "name": "destroyed_europe interior",
+   "kind": "region_interior",
+   "lon": 5.9222,
+   "lat": 50.01112222222222,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row destroyed_europe's nominal shape (394.4 km from its edge)",
+   "ref_pixel": [
+    1129,
+    1443
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "destroyed": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "destroyed_europe",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    5.9222,
+    50.01112
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -3352,
+     -1480
+    ],
+    "2": [
+     -6703,
+     -2959
+    ],
+    "3": [
+     -10055,
+     -4439
+    ],
+    "4": [
+     -13406,
+     -5918
+    ],
+    "5": [
+     -16758,
+     -7398
+    ],
+    "6": [
+     -20109,
+     -8877
+    ]
+   },
+   "region_margin_km": {
+    "destroyed": 394.4
+   }
+  },
+  {
+   "id": "region-interior:carpathian_montane",
+   "name": "carpathian_montane interior",
+   "kind": "region_interior",
+   "lon": 25.5222,
+   "lat": 47.655566666666665,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row carpathian_montane's nominal shape (92.0 km from its edge)",
+   "ref_pixel": [
+    2011,
+    1549
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:carpathian_montane": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "carpathian_montane",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    25.5222,
+    47.65557
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -2470,
+     -1374
+    ],
+    "2": [
+     -4939,
+     -2747
+    ],
+    "3": [
+     -7409,
+     -4121
+    ],
+    "4": [
+     -9878,
+     -5494
+    ],
+    "5": [
+     -12348,
+     -6868
+    ],
+    "6": [
+     -14817,
+     -8241
+    ]
+   },
+   "region_margin_km": {
+    "row:carpathian_montane": 92.0
+   }
+  },
+  {
+   "id": "region-interior:dinaric_mixed",
+   "name": "dinaric_mixed interior",
+   "kind": "region_interior",
+   "lon": 18.122199999999996,
+   "lat": 43.76667777777777,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row dinaric_mixed's nominal shape (77.5 km from its edge)",
+   "ref_pixel": [
+    1678,
+    1724
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:dinaric_mixed": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "dinaric_mixed",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    18.1222,
+    43.76668
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -2803,
+     -1199
+    ],
+    "2": [
+     -5605,
+     -2397
+    ],
+    "3": [
+     -8408,
+     -3596
+    ],
+    "4": [
+     -11210,
+     -4794
+    ],
+    "5": [
+     -14013,
+     -5993
+    ],
+    "6": [
+     -16815,
+     -7191
+    ]
+   },
+   "region_margin_km": {
+    "row:dinaric_mixed": 77.5
+   }
+  },
+  {
+   "id": "region-interior:scandinavian_taiga",
+   "name": "scandinavian_taiga interior",
+   "kind": "region_interior",
+   "lon": 28.25553333333333,
+   "lat": 64.12223333333333,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row scandinavian_taiga's nominal shape (511.8 km from its edge)",
+   "ref_pixel": [
+    2134,
+    808
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:scandinavian_taiga": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "scandinavian_taiga",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    28.25553,
+    64.12223
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -2347,
+     -2115
+    ],
+    "2": [
+     -4693,
+     -4229
+    ],
+    "3": [
+     -7040,
+     -6344
+    ],
+    "4": [
+     -9386,
+     -8458
+    ],
+    "5": [
+     -11733,
+     -10573
+    ],
+    "6": [
+     -14079,
+     -12687
+    ]
+   },
+   "region_margin_km": {
+    "row:scandinavian_taiga": 511.8
+   }
+  },
+  {
+   "id": "region-interior:hyrcanian",
+   "name": "hyrcanian interior",
+   "kind": "region_interior",
+   "lon": 53.34442222222222,
+   "lat": 36.47778888888888,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row hyrcanian's nominal shape (50.0 km from its edge)",
+   "ref_pixel": [
+    3263,
+    2052
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:hyrcanian": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "hyrcanian",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    53.34442,
+    36.47779
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -1218,
+     -871
+    ],
+    "2": [
+     -2435,
+     -1741
+    ],
+    "3": [
+     -3653,
+     -2612
+    ],
+    "4": [
+     -4870,
+     -3482
+    ],
+    "5": [
+     -6088,
+     -4353
+    ],
+    "6": [
+     -7305,
+     -5223
+    ]
+   },
+   "region_margin_km": {
+    "row:hyrcanian": 50.0
+   }
+  },
+  {
+   "id": "region-interior:west_siberian_taiga",
+   "name": "west_siberian_taiga interior",
+   "kind": "region_interior",
+   "lon": 80.12219999999999,
+   "lat": 61.23334444444444,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row west_siberian_taiga's nominal shape (520.2 km from its edge)",
+   "ref_pixel": [
+    4468,
+    938
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:west_siberian_taiga": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "west_siberian_taiga",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    80.1222,
+    61.23334
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -13,
+     -1985
+    ],
+    "2": [
+     -25,
+     -3969
+    ],
+    "3": [
+     -38,
+     -5954
+    ],
+    "4": [
+     -50,
+     -7938
+    ],
+    "5": [
+     -63,
+     -9923
+    ],
+    "6": [
+     -75,
+     -11907
+    ]
+   },
+   "region_margin_km": {
+    "row:west_siberian_taiga": 520.2
+   }
+  },
+  {
+   "id": "region-interior:east_siberian_taiga",
+   "name": "east_siberian_taiga interior",
+   "kind": "region_interior",
+   "lon": 114.25553333333333,
+   "lat": 63.055566666666664,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row east_siberian_taiga's nominal shape (849.1 km from its edge)",
+   "ref_pixel": [
+    6004,
+    856
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:east_siberian_taiga": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "east_siberian_taiga",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    114.25553,
+    63.05557
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     1523,
+     -2067
+    ],
+    "2": [
+     3047,
+     -4133
+    ],
+    "3": [
+     4570,
+     -6200
+    ],
+    "4": [
+     6094,
+     -8266
+    ],
+    "5": [
+     7617,
+     -10333
+    ],
+    "6": [
+     9141,
+     -12399
+    ]
+   },
+   "region_margin_km": {
+    "row:east_siberian_taiga": 849.1
+   }
+  },
+  {
+   "id": "region-interior:congolian",
+   "name": "congolian interior",
+   "kind": "region_interior",
+   "lon": 27.38886666666667,
+   "lat": 0.7888999999999982,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row congolian's nominal shape (236.3 km from its edge)",
+   "ref_pixel": [
+    2095,
+    3658
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:congolian": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "congolian",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    27.38887,
+    0.7889
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -2386,
+     735
+    ],
+    "2": [
+     -4771,
+     1471
+    ],
+    "3": [
+     -7157,
+     2206
+    ],
+    "4": [
+     -9542,
+     2942
+    ],
+    "5": [
+     -11928,
+     3677
+    ],
+    "6": [
+     -14313,
+     4413
+    ]
+   },
+   "region_margin_km": {
+    "row:congolian": 236.3
+   }
+  },
+  {
+   "id": "region-interior:upper_guinean",
+   "name": "upper_guinean interior",
+   "kind": "region_interior",
+   "lon": -7.966688888888891,
+   "lat": 6.166677777777778,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row upper_guinean's nominal shape (151.7 km from its edge)",
+   "ref_pixel": [
+    504,
+    3416
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:upper_guinean": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "upper_guinean",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    -7.96669,
+    6.16668
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -3977,
+     493
+    ],
+    "2": [
+     -7953,
+     987
+    ],
+    "3": [
+     -11930,
+     1480
+    ],
+    "4": [
+     -15906,
+     1974
+    ],
+    "5": [
+     -19883,
+     2467
+    ],
+    "6": [
+     -23859,
+     2961
+    ]
+   },
+   "region_margin_km": {
+    "row:upper_guinean": 151.7
+   }
+  },
+  {
+   "id": "region-interior:pripet",
+   "name": "pripet interior",
+   "kind": "region_interior",
+   "lon": 25.85553333333333,
+   "lat": 52.01112222222221,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row pripet's nominal shape (111.3 km from its edge)",
+   "ref_pixel": [
+    2026,
+    1353
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:pripet": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "pripet",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    25.85553,
+    52.01112
+   ],
+   "on_reference_land": true,
+   "tiles_by_scale": {
+    "1": [
+     -2455,
+     -1570
+    ],
+    "2": [
+     -4909,
+     -3139
+    ],
+    "3": [
+     -7364,
+     -4709
+    ],
+    "4": [
+     -9818,
+     -6278
+    ],
+    "5": [
+     -12273,
+     -7848
+    ],
+    "6": [
+     -14727,
+     -9417
+    ]
+   },
+   "region_margin_km": {
+    "row:pripet": 111.3
+   }
+  },
+  {
+   "id": "region-interior:wadden_sea",
+   "name": "wadden_sea interior",
+   "kind": "region_interior",
+   "lon": 7.655533333333331,
+   "lat": 53.76667777777777,
+   "source": "tools/build_regions.py: the reference pixel deepest inside row wadden_sea's nominal shape (10.2 km from its edge)",
+   "ref_pixel": [
+    1207,
+    1274
+   ],
+   "snap_px": 0.0,
+   "expect": {
+    "land": null,
+    "water": null,
+    "river": null,
+    "climate_band": null,
+    "tile_family_ab": null,
+    "tile_family_vanilla": null,
+    "region": {
+     "row:wadden_sea": true
+    },
+    "destroyed_zone": null,
+    "forest": null,
+    "hotspot": null,
+    "marsh": null
+   },
+   "hints": {},
+   "origin": "regions",
+   "region_row": "wadden_sea",
+   "layer": "region-layer",
+   "ref_pixel_lonlat": [
+    7.65553,
+    53.76668
+   ],
+   "on_reference_land": false,
+   "tiles_by_scale": {
+    "1": [
+     -3274,
+     -1649
+    ],
+    "2": [
+     -6547,
+     -3297
+    ],
+    "3": [
+     -9821,
+     -4946
+    ],
+    "4": [
+     -13094,
+     -6594
+    ],
+    "5": [
+     -16368,
+     -8243
+    ],
+    "6": [
+     -19641,
+     -9891
+    ]
+   },
+   "region_margin_km": {
+    "row:wadden_sea": 10.2
    }
   }
  ]

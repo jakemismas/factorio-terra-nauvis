@@ -28,8 +28,12 @@
   "families": null
  },
  "region": {
-  "expr": null,
-  "values": null
+  "source": "regions",
+  "rule": "gt",
+  "threshold": 0,
+  "list_within_km": 40.0,
+  "hard": "a key in a place's region_hard never flips: it is not listed whatever its margin",
+  "names": "config.lua regions.names: destroyed_sd for 'destroyed', row.sd .. id .. suffix for 'row:<id>'"
  },
  "destroyed_zone": {
   "expr": null,

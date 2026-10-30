@@ -1,0 +1,9 @@
+{
+  "name": "ea-ww-probe",
+  "version": "0.1.0",
+  "title": "ea-ww-probe",
+  "author": "Jake Mismas",
+  "factorio_version": "2.1",
+  "description": "Test-only waterway probe (slice waterways): dumps the tiles of the chunks the runner lists (corridors, fords, isthmuses, spawns), checks waterway placements with can_place_entity on M3 (Cargo Ships) and runs scripted path requests (T15e driver 2). The runner writes ww-spec.lua into a staged copy at run time. Never shipped.",
+  "dependencies": ["base >= 2.1.23", "? cargo-ships"]
+}

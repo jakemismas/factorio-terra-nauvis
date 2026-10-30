@@ -46,6 +46,40 @@ local EU_CY = NOISE .. "cy_europe_v1"
 local EU_GEO_FILE = "prototypes/generated/geo_europe_v1.lua"
 local EU_LAND_COARSE_FILE = "prototypes/generated/land_coarse_europe_v1.lua"
 
+-- Atlantic's and Old World's geographies (milestone olde-world-atlantic), version 1 of each, bound to
+-- their own maps as Europe's version 1 is: each entry reads only its own chain, fit, detail, box and
+-- map-qualified city offset names, which belong to this version of the chain (_v1) and are baked 0
+-- with registered constant fallbacks of 0 that no later version moves. The spawn at a city (the
+-- city fold, spawn-cities' mechanism) joins under each map's spawn record (ARCHITECTURE.md, part 3
+-- build notes, "Spawn cities").
+local AT_ENTRY = NOISE .. "elevation_atlantic_v1"
+local AT_GEO = NOISE .. "geo_atlantic_v1"
+local AT_LAND_COARSE = NOISE .. "land_coarse_atlantic_v1"
+local AT_DETAIL = NOISE .. "detail_atlantic_v1"
+local AT_FAR = NOISE .. "far_atlantic_v1"
+local AT_GX = NOISE .. "gx_atlantic_v1"
+local AT_GY = NOISE .. "gy_atlantic_v1"
+local AT_U = NOISE .. "u_atlantic_v1"
+local AT_V = NOISE .. "v_atlantic_v1"
+local AT_CX = NOISE .. "cx_atlantic_v1"
+local AT_CY = NOISE .. "cy_atlantic_v1"
+local AT_GEO_FILE = "prototypes/generated/geo_atlantic_v1.lua"
+local AT_LAND_COARSE_FILE = "prototypes/generated/land_coarse_atlantic_v1.lua"
+
+local OW_ENTRY = NOISE .. "elevation_olde_world_v1"
+local OW_GEO = NOISE .. "geo_olde_world_v1"
+local OW_LAND_COARSE = NOISE .. "land_coarse_olde_world_v1"
+local OW_DETAIL = NOISE .. "detail_olde_world_v1"
+local OW_FAR = NOISE .. "far_olde_world_v1"
+local OW_GX = NOISE .. "gx_olde_world_v1"
+local OW_GY = NOISE .. "gy_olde_world_v1"
+local OW_U = NOISE .. "u_olde_world_v1"
+local OW_V = NOISE .. "v_olde_world_v1"
+local OW_CX = NOISE .. "cx_olde_world_v1"
+local OW_CY = NOISE .. "cy_olde_world_v1"
+local OW_GEO_FILE = "prototypes/generated/geo_olde_world_v1.lua"
+local OW_LAND_COARSE_FILE = "prototypes/generated/land_coarse_olde_world_v1.lua"
+
 local START_MASK = NOISE .. "start_mask_v1"
 
 -- Europe's geography version 2 (milestone spawn-cities): the spawn at the chosen city. The city offset
@@ -83,6 +117,493 @@ local DISTANCE = NOISE .. "distance_v1"
 local EU_SPAWN_FILE = "prototypes/generated/spawn_europe_v1.lua"
 
 local START_MASK2 = NOISE .. "start_mask_v2"
+
+-- Waterways (milestone waterways). Per map and scale, four generated sets (tools/build_waterways.py):
+-- rivers, straits and turning basins (ww), canals, dams and fords, name-free data that waterways.lua
+-- binds to the chain of the geography version that composes them. The hook gate tn_on, the ford key
+-- tn_fords and the canals switch tn_canals are shared keys; tn_one and tn_zero are the switch's
+-- neutral bodies.
+local K_ON = NOISE .. "on"
+local K_FORDS = NOISE .. "fords"
+local K_CANALS = NOISE .. "canals"
+local ONE = NOISE .. "one"
+local ZERO = NOISE .. "zero"
+local EU_WW = {NOISE .. "ww_europe_s1_v1", NOISE .. "ww_europe_s2_v1", NOISE .. "ww_europe_s3_v1",
+               NOISE .. "ww_europe_s4_v1", NOISE .. "ww_europe_s5_v1", NOISE .. "ww_europe_s6_v1"}
+local EU_CANALS = {NOISE .. "canals_europe_s1_v1", NOISE .. "canals_europe_s2_v1", NOISE .. "canals_europe_s3_v1",
+                   NOISE .. "canals_europe_s4_v1", NOISE .. "canals_europe_s5_v1", NOISE .. "canals_europe_s6_v1"}
+local EU_DAMS = {NOISE .. "dams_europe_s1_v1", NOISE .. "dams_europe_s2_v1", NOISE .. "dams_europe_s3_v1",
+                 NOISE .. "dams_europe_s4_v1", NOISE .. "dams_europe_s5_v1", NOISE .. "dams_europe_s6_v1"}
+local EU_FORDS = {NOISE .. "fords_europe_s1_v1", NOISE .. "fords_europe_s2_v1", NOISE .. "fords_europe_s3_v1",
+                  NOISE .. "fords_europe_s4_v1", NOISE .. "fords_europe_s5_v1", NOISE .. "fords_europe_s6_v1"}
+local AT_WW = {NOISE .. "ww_atlantic_s1_v1", NOISE .. "ww_atlantic_s2_v1", NOISE .. "ww_atlantic_s3_v1",
+               NOISE .. "ww_atlantic_s4_v1", NOISE .. "ww_atlantic_s5_v1", NOISE .. "ww_atlantic_s6_v1"}
+local AT_CANALS = {NOISE .. "canals_atlantic_s1_v1", NOISE .. "canals_atlantic_s2_v1",
+                   NOISE .. "canals_atlantic_s3_v1", NOISE .. "canals_atlantic_s4_v1",
+                   NOISE .. "canals_atlantic_s5_v1", NOISE .. "canals_atlantic_s6_v1"}
+local AT_DAMS = {NOISE .. "dams_atlantic_s1_v1", NOISE .. "dams_atlantic_s2_v1", NOISE .. "dams_atlantic_s3_v1",
+                 NOISE .. "dams_atlantic_s4_v1", NOISE .. "dams_atlantic_s5_v1", NOISE .. "dams_atlantic_s6_v1"}
+local AT_FORDS = {NOISE .. "fords_atlantic_s1_v1", NOISE .. "fords_atlantic_s2_v1", NOISE .. "fords_atlantic_s3_v1",
+                  NOISE .. "fords_atlantic_s4_v1", NOISE .. "fords_atlantic_s5_v1", NOISE .. "fords_atlantic_s6_v1"}
+local OW_WW = {NOISE .. "ww_olde_world_s1_v1", NOISE .. "ww_olde_world_s2_v1", NOISE .. "ww_olde_world_s3_v1",
+               NOISE .. "ww_olde_world_s4_v1", NOISE .. "ww_olde_world_s5_v1", NOISE .. "ww_olde_world_s6_v1"}
+local OW_CANALS = {NOISE .. "canals_olde_world_s1_v1", NOISE .. "canals_olde_world_s2_v1",
+                   NOISE .. "canals_olde_world_s3_v1", NOISE .. "canals_olde_world_s4_v1",
+                   NOISE .. "canals_olde_world_s5_v1", NOISE .. "canals_olde_world_s6_v1"}
+local OW_DAMS = {NOISE .. "dams_olde_world_s1_v1", NOISE .. "dams_olde_world_s2_v1",
+                 NOISE .. "dams_olde_world_s3_v1", NOISE .. "dams_olde_world_s4_v1",
+                 NOISE .. "dams_olde_world_s5_v1", NOISE .. "dams_olde_world_s6_v1"}
+local OW_FORDS = {NOISE .. "fords_olde_world_s1_v1", NOISE .. "fords_olde_world_s2_v1",
+                  NOISE .. "fords_olde_world_s3_v1", NOISE .. "fords_olde_world_s4_v1",
+                  NOISE .. "fords_olde_world_s5_v1", NOISE .. "fords_olde_world_s6_v1"}
+local EU_WW_FILES = {"prototypes/generated/waterways_europe_s1_v1.lua",
+                     "prototypes/generated/waterways_europe_s2_v1.lua",
+                     "prototypes/generated/waterways_europe_s3_v1.lua",
+                     "prototypes/generated/waterways_europe_s4_v1.lua",
+                     "prototypes/generated/waterways_europe_s5_v1.lua",
+                     "prototypes/generated/waterways_europe_s6_v1.lua"}
+local AT_WW_FILES = {"prototypes/generated/waterways_atlantic_s1_v1.lua",
+                     "prototypes/generated/waterways_atlantic_s2_v1.lua",
+                     "prototypes/generated/waterways_atlantic_s3_v1.lua",
+                     "prototypes/generated/waterways_atlantic_s4_v1.lua",
+                     "prototypes/generated/waterways_atlantic_s5_v1.lua",
+                     "prototypes/generated/waterways_atlantic_s6_v1.lua"}
+local OW_WW_FILES = {"prototypes/generated/waterways_olde_world_s1_v1.lua",
+                     "prototypes/generated/waterways_olde_world_s2_v1.lua",
+                     "prototypes/generated/waterways_olde_world_s3_v1.lua",
+                     "prototypes/generated/waterways_olde_world_s4_v1.lua",
+                     "prototypes/generated/waterways_olde_world_s5_v1.lua",
+                     "prototypes/generated/waterways_olde_world_s6_v1.lua"}
+-- Each map's sets, as the version that composes them names them (one table for both places).
+local EU_SETS = {ww = EU_WW, canals = EU_CANALS, dams = EU_DAMS, fords = EU_FORDS}
+local AT_SETS = {ww = AT_WW, canals = AT_CANALS, dams = AT_DAMS, fords = AT_FORDS}
+local OW_SETS = {ww = OW_WW, canals = OW_CANALS, dams = OW_DAMS, fords = OW_FORDS}
+
+-- The geography versions that compose the waterways (decision 21: every name the version's own):
+-- Europe's version 3 (version 2's spawn at the chosen city, its city offset naming the same fold,
+-- with its own inland lakes) and Atlantic's and Old World's version 2 (the city offset still baked
+-- 0 under frozen fallbacks). Their coast, coarse, detail and box bodies bind version 1's generated
+-- files to their own chains, and their waterway sets bind to those chains too.
+local EU3_ENTRY = NOISE .. "elevation_europe_v3"
+local EU3_GEO = NOISE .. "geo_europe_v3"
+local EU3_LAND_COARSE = NOISE .. "land_coarse_europe_v3"
+local EU3_DETAIL = NOISE .. "detail_europe_v3"
+local EU3_FAR = NOISE .. "far_europe_v3"
+local EU3_GX = NOISE .. "gx_europe_v3"
+local EU3_GY = NOISE .. "gy_europe_v3"
+local EU3_U = NOISE .. "u_europe_v3"
+local EU3_V = NOISE .. "v_europe_v3"
+local EU3_CX = NOISE .. "cx_europe_v3"
+local EU3_CY = NOISE .. "cy_europe_v3"
+local EU3_LAKES = NOISE .. "inland_lakes_europe_v2"
+local AT2_ENTRY = NOISE .. "elevation_atlantic_v2"
+local AT2_GEO = NOISE .. "geo_atlantic_v2"
+local AT2_LAND_COARSE = NOISE .. "land_coarse_atlantic_v2"
+local AT2_DETAIL = NOISE .. "detail_atlantic_v2"
+local AT2_FAR = NOISE .. "far_atlantic_v2"
+local AT2_GX = NOISE .. "gx_atlantic_v2"
+local AT2_GY = NOISE .. "gy_atlantic_v2"
+local AT2_U = NOISE .. "u_atlantic_v2"
+local AT2_V = NOISE .. "v_atlantic_v2"
+local AT2_CX = NOISE .. "cx_atlantic_v2"
+local AT2_CY = NOISE .. "cy_atlantic_v2"
+local OW2_ENTRY = NOISE .. "elevation_olde_world_v2"
+local OW2_GEO = NOISE .. "geo_olde_world_v2"
+local OW2_LAND_COARSE = NOISE .. "land_coarse_olde_world_v2"
+local OW2_DETAIL = NOISE .. "detail_olde_world_v2"
+local OW2_FAR = NOISE .. "far_olde_world_v2"
+local OW2_GX = NOISE .. "gx_olde_world_v2"
+local OW2_GY = NOISE .. "gy_olde_world_v2"
+local OW2_U = NOISE .. "u_olde_world_v2"
+local OW2_V = NOISE .. "v_olde_world_v2"
+local OW2_CX = NOISE .. "cx_olde_world_v2"
+local OW2_CY = NOISE .. "cy_olde_world_v2"
+
+-- The region layer (milestone region-layer): every region body carries its version suffix. These are its
+-- fixed names; a row's own names come from the row name stems below and the row's id.
+local RG_V = "_v1"
+local RG_DESTROYED_SD = NOISE .. "destroyed_sd" .. RG_V
+local RG_DESTROYED_W = NOISE .. "destroyed_w" .. RG_V
+local RG_DESTROYED_DEPTH = NOISE .. "destroyed_depth" .. RG_V
+local RG_FOREST_W = NOISE .. "forest_w" .. RG_V
+local RG_FOREST_SUM = NOISE .. "forest_sum" .. RG_V
+local RG_TREE_MULT = NOISE .. "tree_mult" .. RG_V
+local RG_MARSH_W = NOISE .. "marsh_w" .. RG_V
+local RG_HOTSPOT_W = NOISE .. "hotspot_w" .. RG_V
+local RG_ENEMY_MULT = NOISE .. "enemy_mult" .. RG_V
+local RG_U = NOISE .. "region_u"
+local RG_V_ = NOISE .. "region_v"
+local RG_OX = NOISE .. "region_ox" .. RG_V
+local RG_OY = NOISE .. "region_oy" .. RG_V
+local RG_AX = NOISE .. "region_ax" .. RG_V
+local RG_AY = NOISE .. "region_ay" .. RG_V
+local RG_WK = NOISE .. "region_wk" .. RG_V
+local RG_WX = NOISE .. "region_wx" .. RG_V
+local RG_WY = NOISE .. "region_wy" .. RG_V
+local RG_ROUGH = NOISE .. "region_rough" .. RG_V
+
+-- The geography versions that compose the shore body (milestone climate-tiles: every name the
+-- version's own): each map's newest version's composition with the sign-offset transfer recalibrated
+-- with Alien Biomes (config.lua shore; design experiment 9): Europe's version 4 (version 3's spawn
+-- at the chosen city with inland lakes of its own) and Atlantic's and Old World's version 3. Their
+-- coast, coarse, detail and box bodies bind version 1's generated files to their own chains, and
+-- their waterway sets bind to those chains too.
+
+-- The Earth climate: latitude and longitude on the map's chain, the dry belts, the temperature core and
+-- the Alien Biomes and fallback variants the presets redirect temperature, moisture and aux to.
+
+-- The tile hooks: one key per restored vanilla land tile (prototype -inf), all pointed by the presets at
+-- one shared bonus body; the Alien Biomes exclusion key (prototype 0) and its body; the marsh keys
+-- (prototype -inf) and their bodies; the palm constant and the Earth copies of AB's palm autoplace.
+-- climate-tiles' names (one table: Lua allows 200 locals in config.lua's main function)
+local CT = {
+  EU4_ENTRY = NOISE .. "elevation_europe_v4",
+  EU4_GEO = NOISE .. "geo_europe_v4",
+  EU4_LAND_COARSE = NOISE .. "land_coarse_europe_v4",
+  EU4_DETAIL = NOISE .. "detail_europe_v4",
+  EU4_FAR = NOISE .. "far_europe_v4",
+  EU4_GX = NOISE .. "gx_europe_v4",
+  EU4_GY = NOISE .. "gy_europe_v4",
+  EU4_U = NOISE .. "u_europe_v4",
+  EU4_V = NOISE .. "v_europe_v4",
+  EU4_CX = NOISE .. "cx_europe_v4",
+  EU4_CY = NOISE .. "cy_europe_v4",
+  EU4_LAKES = NOISE .. "inland_lakes_europe_v3",
+  EU4_SHORE = NOISE .. "shore_europe_v1",
+  AT3_ENTRY = NOISE .. "elevation_atlantic_v3",
+  AT3_GEO = NOISE .. "geo_atlantic_v3",
+  AT3_LAND_COARSE = NOISE .. "land_coarse_atlantic_v3",
+  AT3_DETAIL = NOISE .. "detail_atlantic_v3",
+  AT3_FAR = NOISE .. "far_atlantic_v3",
+  AT3_GX = NOISE .. "gx_atlantic_v3",
+  AT3_GY = NOISE .. "gy_atlantic_v3",
+  AT3_U = NOISE .. "u_atlantic_v3",
+  AT3_V = NOISE .. "v_atlantic_v3",
+  AT3_CX = NOISE .. "cx_atlantic_v3",
+  AT3_CY = NOISE .. "cy_atlantic_v3",
+  AT3_SHORE = NOISE .. "shore_atlantic_v1",
+  OW3_ENTRY = NOISE .. "elevation_olde_world_v3",
+  OW3_GEO = NOISE .. "geo_olde_world_v3",
+  OW3_LAND_COARSE = NOISE .. "land_coarse_olde_world_v3",
+  OW3_DETAIL = NOISE .. "detail_olde_world_v3",
+  OW3_FAR = NOISE .. "far_olde_world_v3",
+  OW3_GX = NOISE .. "gx_olde_world_v3",
+  OW3_GY = NOISE .. "gy_olde_world_v3",
+  OW3_U = NOISE .. "u_olde_world_v3",
+  OW3_V = NOISE .. "v_olde_world_v3",
+  OW3_CX = NOISE .. "cx_olde_world_v3",
+  OW3_CY = NOISE .. "cy_olde_world_v3",
+  OW3_SHORE = NOISE .. "shore_olde_world_v1",
+  EU_WW2 = {NOISE .. "ww_europe_s1_v2", NOISE .. "ww_europe_s2_v2", NOISE .. "ww_europe_s3_v2",
+                  NOISE .. "ww_europe_s4_v2", NOISE .. "ww_europe_s5_v2", NOISE .. "ww_europe_s6_v2"},
+  EU_CANALS2 = {NOISE .. "canals_europe_s1_v2", NOISE .. "canals_europe_s2_v2", NOISE .. "canals_europe_s3_v2",
+                      NOISE .. "canals_europe_s4_v2", NOISE .. "canals_europe_s5_v2", NOISE .. "canals_europe_s6_v2"},
+  EU_DAMS2 = {NOISE .. "dams_europe_s1_v2", NOISE .. "dams_europe_s2_v2", NOISE .. "dams_europe_s3_v2",
+                    NOISE .. "dams_europe_s4_v2", NOISE .. "dams_europe_s5_v2", NOISE .. "dams_europe_s6_v2"},
+  EU_FORDS2 = {NOISE .. "fords_europe_s1_v2", NOISE .. "fords_europe_s2_v2", NOISE .. "fords_europe_s3_v2",
+                     NOISE .. "fords_europe_s4_v2", NOISE .. "fords_europe_s5_v2", NOISE .. "fords_europe_s6_v2"},
+  AT_WW2 = {NOISE .. "ww_atlantic_s1_v2", NOISE .. "ww_atlantic_s2_v2", NOISE .. "ww_atlantic_s3_v2",
+                  NOISE .. "ww_atlantic_s4_v2", NOISE .. "ww_atlantic_s5_v2", NOISE .. "ww_atlantic_s6_v2"},
+  AT_CANALS2 = {NOISE .. "canals_atlantic_s1_v2", NOISE .. "canals_atlantic_s2_v2",
+                      NOISE .. "canals_atlantic_s3_v2", NOISE .. "canals_atlantic_s4_v2",
+                      NOISE .. "canals_atlantic_s5_v2", NOISE .. "canals_atlantic_s6_v2"},
+  AT_DAMS2 = {NOISE .. "dams_atlantic_s1_v2", NOISE .. "dams_atlantic_s2_v2", NOISE .. "dams_atlantic_s3_v2",
+                    NOISE .. "dams_atlantic_s4_v2", NOISE .. "dams_atlantic_s5_v2", NOISE .. "dams_atlantic_s6_v2"},
+  AT_FORDS2 = {NOISE .. "fords_atlantic_s1_v2", NOISE .. "fords_atlantic_s2_v2", NOISE .. "fords_atlantic_s3_v2",
+                     NOISE .. "fords_atlantic_s4_v2", NOISE .. "fords_atlantic_s5_v2", NOISE .. "fords_atlantic_s6_v2"},
+  OW_WW2 = {NOISE .. "ww_olde_world_s1_v2", NOISE .. "ww_olde_world_s2_v2", NOISE .. "ww_olde_world_s3_v2",
+                  NOISE .. "ww_olde_world_s4_v2", NOISE .. "ww_olde_world_s5_v2", NOISE .. "ww_olde_world_s6_v2"},
+  OW_CANALS2 = {NOISE .. "canals_olde_world_s1_v2", NOISE .. "canals_olde_world_s2_v2",
+                      NOISE .. "canals_olde_world_s3_v2", NOISE .. "canals_olde_world_s4_v2",
+                      NOISE .. "canals_olde_world_s5_v2", NOISE .. "canals_olde_world_s6_v2"},
+  OW_DAMS2 = {NOISE .. "dams_olde_world_s1_v2", NOISE .. "dams_olde_world_s2_v2",
+                    NOISE .. "dams_olde_world_s3_v2", NOISE .. "dams_olde_world_s4_v2",
+                    NOISE .. "dams_olde_world_s5_v2", NOISE .. "dams_olde_world_s6_v2"},
+  OW_FORDS2 = {NOISE .. "fords_olde_world_s1_v2", NOISE .. "fords_olde_world_s2_v2",
+                     NOISE .. "fords_olde_world_s3_v2", NOISE .. "fords_olde_world_s4_v2",
+                     NOISE .. "fords_olde_world_s5_v2", NOISE .. "fords_olde_world_s6_v2"},
+  CL_LAT = NOISE .. "lat_v1",
+  CL_LON = NOISE .. "lon_v1",
+  CL_DRY = NOISE .. "dry_v1",
+  CL_CORE = NOISE .. "t_core_v1",
+  CL_T_AB = NOISE .. "temperature_ab_v1",
+  CL_M_AB = NOISE .. "moisture_ab_v1",
+  CL_A_AB = NOISE .. "aux_ab_v1",
+  CL_T_FB = NOISE .. "temperature_fb_v1",
+  CL_M_FB = NOISE .. "moisture_fb_v1",
+  CL_A_FB = NOISE .. "aux_fb_v1",
+  VT_GRASS_1 = NOISE .. "vtile_grass_1",
+  VT_GRASS_2 = NOISE .. "vtile_grass_2",
+  VT_GRASS_3 = NOISE .. "vtile_grass_3",
+  VT_GRASS_4 = NOISE .. "vtile_grass_4",
+  VT_DRY_DIRT = NOISE .. "vtile_dry_dirt",
+  VT_DIRT_1 = NOISE .. "vtile_dirt_1",
+  VT_DIRT_2 = NOISE .. "vtile_dirt_2",
+  VT_DIRT_3 = NOISE .. "vtile_dirt_3",
+  VT_DIRT_4 = NOISE .. "vtile_dirt_4",
+  VT_DIRT_5 = NOISE .. "vtile_dirt_5",
+  VT_DIRT_6 = NOISE .. "vtile_dirt_6",
+  VT_DIRT_7 = NOISE .. "vtile_dirt_7",
+  VT_SAND_1 = NOISE .. "vtile_sand_1",
+  VT_SAND_2 = NOISE .. "vtile_sand_2",
+  VT_SAND_3 = NOISE .. "vtile_sand_3",
+  VT_RED_0 = NOISE .. "vtile_red_desert_0",
+  VT_RED_1 = NOISE .. "vtile_red_desert_1",
+  VT_RED_2 = NOISE .. "vtile_red_desert_2",
+  VT_RED_3 = NOISE .. "vtile_red_desert_3",
+  VT_BONUS = NOISE .. "vtile_bonus_v1",
+  AB_EXCLUDE = NOISE .. "ab_exclude",
+  AB_EXCLUDE_BODY = NOISE .. "ab_exclude_v1",
+  MARSH_MUD = NOISE .. "marsh_water_mud",
+  MARSH_MUD_BODY = NOISE .. "marsh_water_mud_v1",
+  MARSH_SHALLOW = NOISE .. "marsh_water_shallow",
+  MARSH_SHALLOW_BODY = NOISE .. "marsh_water_shallow_v1",
+  MARSH_GRASS = NOISE .. "marsh_grass",
+  MARSH_GRASS_BODY = NOISE .. "marsh_grass_v1",
+  PALM_CONST = NOISE .. "palm_const_v1",
+  PALM_A_P = NOISE .. "palm_a_p_v1",
+  PALM_A_R = NOISE .. "palm_a_r_v1",
+  PALM_B_P = NOISE .. "palm_b_p_v1",
+  PALM_B_R = NOISE .. "palm_b_r_v1",
+  PALM_A_P_KEY = "entity:tree-palm-a:probability",
+  PALM_A_R_KEY = "entity:tree-palm-a:richness",
+  PALM_B_P_KEY = "entity:tree-palm-b:probability",
+  PALM_B_R_KEY = "entity:tree-palm-b:richness",
+}
+local EU_SETS2 = {ww = CT.EU_WW2, canals = CT.EU_CANALS2, dams = CT.EU_DAMS2, fords = CT.EU_FORDS2}
+local AT_SETS2 = {ww = CT.AT_WW2, canals = CT.AT_CANALS2, dams = CT.AT_DAMS2, fords = CT.AT_FORDS2}
+local OW_SETS2 = {ww = CT.OW_WW2, canals = CT.OW_CANALS2, dams = CT.OW_DAMS2, fords = CT.OW_FORDS2}
+
+-- Trees and great forests (milestone trees-forests). The great-forests gate (prototype 0; Earth presets 1 or
+-- 0 by the setting) and the multiplier key (prototype 1; Earth presets name the region layer's
+-- multiplier) of the boost hook on every living tree; the vanilla-scale temperature the restored vanilla
+-- trees read; per restored vanilla tree a probability and a richness key (prototype 0) and its Earth
+-- body, every richness key naming one shared body; per rebuilt vanilla rock or decal a key (prototype 0)
+-- and its body; per re-listed vanilla decorative a key (prototype -inf), all naming one shared body; and
+-- the palms' second probability versions, which take the boost around climate-tiles' registered copies.
+-- trees-forests' single names (one table: the 200-local limit)
+local TFN = {
+  K_FORESTS_ON = NOISE .. "forests_on",
+  K_TREE_MULT = NOISE .. "tree_mult",
+  TF_VTEMP = NOISE .. "temperature_vanilla_v1",
+  TF_VTREE_R = NOISE .. "vtree_r_v1",
+  TF_VDECO = NOISE .. "vdeco_v1",
+  PALM_A_P2 = NOISE .. "palm_a_p_v2",
+  PALM_B_P2 = NOISE .. "palm_b_p_v2",
+}
+local VT = NOISE .. "vtree_"
+local TF_TREES = {
+  ["tree-01"] = {p = VT .. "tree_01_p", r = VT .. "tree_01_r", body = VT .. "tree_01_p_v1"},
+  ["tree-02"] = {p = VT .. "tree_02_p", r = VT .. "tree_02_r", body = VT .. "tree_02_p_v1"},
+  ["tree-02-red"] = {p = VT .. "tree_02_red_p", r = VT .. "tree_02_red_r", body = VT .. "tree_02_red_p_v1"},
+  ["tree-03"] = {p = VT .. "tree_03_p", r = VT .. "tree_03_r", body = VT .. "tree_03_p_v1"},
+  ["tree-04"] = {p = VT .. "tree_04_p", r = VT .. "tree_04_r", body = VT .. "tree_04_p_v1"},
+  ["tree-05"] = {p = VT .. "tree_05_p", r = VT .. "tree_05_r", body = VT .. "tree_05_p_v1"},
+  ["tree-06"] = {p = VT .. "tree_06_p", r = VT .. "tree_06_r", body = VT .. "tree_06_p_v1"},
+  ["tree-06-brown"] = {p = VT .. "tree_06_brown_p", r = VT .. "tree_06_brown_r", body = VT .. "tree_06_brown_p_v1"},
+  ["tree-07"] = {p = VT .. "tree_07_p", r = VT .. "tree_07_r", body = VT .. "tree_07_p_v1"},
+  ["tree-08"] = {p = VT .. "tree_08_p", r = VT .. "tree_08_r", body = VT .. "tree_08_p_v1"},
+  ["tree-08-brown"] = {p = VT .. "tree_08_brown_p", r = VT .. "tree_08_brown_r", body = VT .. "tree_08_brown_p_v1"},
+  ["tree-08-red"] = {p = VT .. "tree_08_red_p", r = VT .. "tree_08_red_r", body = VT .. "tree_08_red_p_v1"},
+  ["tree-09"] = {p = VT .. "tree_09_p", r = VT .. "tree_09_r", body = VT .. "tree_09_p_v1"},
+  ["tree-09-brown"] = {p = VT .. "tree_09_brown_p", r = VT .. "tree_09_brown_r", body = VT .. "tree_09_brown_p_v1"},
+  ["tree-09-red"] = {p = VT .. "tree_09_red_p", r = VT .. "tree_09_red_r", body = VT .. "tree_09_red_p_v1"},
+}
+local VR = NOISE .. "vrock_"
+local TF_ROCKS = {
+  ["huge-rock"] = {key = VR .. "huge_rock", body = VR .. "huge_rock_v1"},
+  ["big-rock"] = {key = VR .. "big_rock", body = VR .. "big_rock_v1"},
+  ["big-sand-rock"] = {key = VR .. "big_sand_rock", body = VR .. "big_sand_rock_v1"},
+  ["medium-rock"] = {key = VR .. "medium_rock", body = VR .. "medium_rock_v1"},
+  ["small-rock"] = {key = VR .. "small_rock", body = VR .. "small_rock_v1"},
+  ["tiny-rock"] = {key = VR .. "tiny_rock", body = VR .. "tiny_rock_v1"},
+  ["medium-sand-rock"] = {key = VR .. "medium_sand_rock", body = VR .. "medium_sand_rock_v1"},
+  ["small-sand-rock"] = {key = VR .. "small_sand_rock", body = VR .. "small_sand_rock_v1"},
+  ["red-desert-decal"] = {key = VR .. "red_desert_decal", body = VR .. "red_desert_decal_v1"},
+  ["sand-decal"] = {key = VR .. "sand_decal", body = VR .. "sand_decal_v1"},
+  ["sand-dune-decal"] = {key = VR .. "sand_dune_decal", body = VR .. "sand_dune_decal_v1"},
+}
+local VD = NOISE .. "vdeco_"
+local TF_DECO = {
+  ["light-mud-decal"] = VD .. "light_mud_decal", ["green-asterisk"] = VD .. "green_asterisk",
+  ["green-asterisk-mini"] = VD .. "green_asterisk_mini", ["green-bush-mini"] = VD .. "green_bush_mini",
+  ["green-carpet-grass"] = VD .. "green_carpet_grass", ["green-croton"] = VD .. "green_croton",
+  ["green-desert-bush"] = VD .. "green_desert_bush", ["green-hairy-grass"] = VD .. "green_hairy_grass",
+  ["green-pita"] = VD .. "green_pita", ["green-pita-mini"] = VD .. "green_pita_mini",
+  ["green-small-grass"] = VD .. "green_small_grass",
+}
+
+-- Ridges (milestone ridges; ARCHITECTURE.md milestone contract 8; S5). The toggle key tn_ridges is a name
+-- switch to waterways' neutral bodies tn_one and tn_zero (the canals switch reads the same pair); the
+-- per-map keys tn_crest and tn_openings name the map's crest distance and openings bodies, so the
+-- cliff properties, the effective crest distance, the ridge-free start disc, the ore clearance and
+-- the ore wrappers are one body each on every map.
+local RD_V = "_v1"
+local ORE = NOISE .. "ore_"
+-- ridges' names (one table: the 200-local limit)
+local RDN = {
+  K_RIDGES = NOISE .. "ridges",
+  K_CREST = NOISE .. "crest",
+  K_OPENINGS = NOISE .. "openings",
+  K_BAND = NOISE .. "band",
+  RD_D2 = NOISE .. "ridge_d2" .. RD_V,
+  RD_FREE = NOISE .. "ridge_free" .. RD_V,
+  RD_CLIFF_ELEVATION = NOISE .. "cliff_elevation" .. RD_V,
+  RD_CLIFFINESS = NOISE .. "cliffiness" .. RD_V,
+  RD_CLEAR = NOISE .. "ridge_clear" .. RD_V,
+  EU_CREST = NOISE .. "crest_europe" .. RD_V,
+  AT_CREST = NOISE .. "crest_atlantic" .. RD_V,
+  OW_CREST = NOISE .. "crest_olde_world" .. RD_V,
+  EU_OPENINGS = NOISE .. "openings_europe" .. RD_V,
+  AT_OPENINGS = NOISE .. "openings_atlantic" .. RD_V,
+  OW_OPENINGS = NOISE .. "openings_olde_world" .. RD_V,
+  EU_BAND = NOISE .. "band_europe" .. RD_V,
+  AT_BAND = NOISE .. "band_atlantic" .. RD_V,
+  OW_BAND = NOISE .. "band_olde_world" .. RD_V,
+  ORE_IRON = ORE .. "iron_ore_p" .. RD_V,
+  ORE_COPPER = ORE .. "copper_ore_p" .. RD_V,
+  ORE_COAL = ORE .. "coal_p" .. RD_V,
+  ORE_STONE = ORE .. "stone_p" .. RD_V,
+  ORE_URANIUM = ORE .. "uranium_ore_p" .. RD_V,
+  ORE_OIL = ORE .. "crude_oil_p" .. RD_V,
+}
+
+-- Resources and enemies (milestone resources-enemies; ARCHITECTURE.md milestone contract 9; S6 A5 and A6E).
+-- The hotspots toggle tn_hotspots is a name switch to tn_one and tn_zero, read by the Entity bodies
+-- through a folded if(); each map's elevation entry reads its offshore stamp through the map-qualified
+-- key tn_fields_<map>, a Map type fallback, so the entry stays a Map type entry (design notes,
+-- resources-enemies). Every hotspot body reads the region layer's rows and tn_land_coarse only.
+local RE_V = "_v1"
+local HS = NOISE .. "hs_"
+-- The wrappers of the pack's live autoplace, built in data-final-fixes.lua: the ore probability
+-- wrappers' next version (ridges' _v1 stay defined), the richness wrappers, the enemy wrapper and,
+-- with the Oil Rig loaded, its offshore-oil wrappers.
+-- Each map's offshore field stamp (Tile only, a firewall body) and the map-qualified key its
+-- elevation entry reads it through; the entry's next version wraps the previous one in the stamp.
+
+-- The geography versions that compose the offshore field stamps (milestone resources-enemies:
+-- every name the version's own): each map's newest composition wrapped in the stamp, which the entry
+-- reads through the map's stamp key: Europe's version 5 and Atlantic's and Old World's version 4,
+-- each with its own chain, bodies, shore body, waterway sets and (Europe) inland lakes, binding
+-- version 1's generated files to its own chain.
+-- resources-enemies' names (one table: the 200-local limit)
+local REN = {
+  K_HOTSPOTS = NOISE .. "hotspots",
+  HS_BLOB = HS .. "blob" .. RE_V,
+  HS_IRON = HS .. "iron_ore" .. RE_V,
+  HS_IRON_P = HS .. "iron_ore_p" .. RE_V,
+  HS_IRON_R = HS .. "iron_ore_r" .. RE_V,
+  HS_COPPER = HS .. "copper_ore" .. RE_V,
+  HS_COPPER_P = HS .. "copper_ore_p" .. RE_V,
+  HS_COPPER_R = HS .. "copper_ore_r" .. RE_V,
+  HS_COAL = HS .. "coal" .. RE_V,
+  HS_COAL_P = HS .. "coal_p" .. RE_V,
+  HS_COAL_R = HS .. "coal_r" .. RE_V,
+  HS_STONE = HS .. "stone" .. RE_V,
+  HS_STONE_P = HS .. "stone_p" .. RE_V,
+  HS_STONE_R = HS .. "stone_r" .. RE_V,
+  HS_URANIUM = HS .. "uranium_ore" .. RE_V,
+  HS_URANIUM_P = HS .. "uranium_ore_p" .. RE_V,
+  HS_URANIUM_R = HS .. "uranium_ore_r" .. RE_V,
+  HS_OIL = HS .. "crude_oil" .. RE_V,
+  HS_OIL_P = HS .. "crude_oil_p" .. RE_V,
+  HS_OIL_R = HS .. "crude_oil_r" .. RE_V,
+  HS_OFFSHORE = HS .. "offshore_oil" .. RE_V,
+  HS_OFFSHORE_P = HS .. "offshore_oil_p" .. RE_V,
+  HS_OFFSHORE_R = HS .. "offshore_oil_r" .. RE_V,
+  RAMP = NOISE .. "ore_ramp" .. RE_V,
+  SEA = NOISE .. "sea" .. RE_V,
+  ENEMY_LAYER = NOISE .. "enemy_layer" .. RE_V,
+  ENEMY = NOISE .. "enemy" .. RE_V,
+  ORE_IRON_P2 = ORE .. "iron_ore_p_v2",
+  ORE_IRON_R = ORE .. "iron_ore_r" .. RE_V,
+  ORE_COPPER_P2 = ORE .. "copper_ore_p_v2",
+  ORE_COPPER_R = ORE .. "copper_ore_r" .. RE_V,
+  ORE_COAL_P2 = ORE .. "coal_p_v2",
+  ORE_COAL_R = ORE .. "coal_r" .. RE_V,
+  ORE_STONE_P2 = ORE .. "stone_p_v2",
+  ORE_STONE_R = ORE .. "stone_r" .. RE_V,
+  ORE_URANIUM_P2 = ORE .. "uranium_ore_p_v2",
+  ORE_URANIUM_R = ORE .. "uranium_ore_r" .. RE_V,
+  ORE_OIL_P2 = ORE .. "crude_oil_p_v2",
+  ORE_OIL_R = ORE .. "crude_oil_r" .. RE_V,
+  OFFSHORE_P = NOISE .. "offshore_p" .. RE_V,
+  OFFSHORE_R = NOISE .. "offshore_r" .. RE_V,
+  EU_FIELDS_KEY = NOISE .. "fields_europe",
+  EU_FIELDS = NOISE .. "fields_europe" .. RE_V,
+  AT_FIELDS_KEY = NOISE .. "fields_atlantic",
+  AT_FIELDS = NOISE .. "fields_atlantic" .. RE_V,
+  OW_FIELDS_KEY = NOISE .. "fields_olde_world",
+  OW_FIELDS = NOISE .. "fields_olde_world" .. RE_V,
+  EU5_ENTRY = NOISE .. "elevation_europe_v5",
+  EU5_GEO = NOISE .. "geo_europe_v5",
+  EU5_LAND_COARSE = NOISE .. "land_coarse_europe_v5",
+  EU5_DETAIL = NOISE .. "detail_europe_v5",
+  EU5_FAR = NOISE .. "far_europe_v5",
+  EU5_GX = NOISE .. "gx_europe_v5",
+  EU5_GY = NOISE .. "gy_europe_v5",
+  EU5_U = NOISE .. "u_europe_v5",
+  EU5_V = NOISE .. "v_europe_v5",
+  EU5_CX = NOISE .. "cx_europe_v5",
+  EU5_CY = NOISE .. "cy_europe_v5",
+  EU5_LAKES = NOISE .. "inland_lakes_europe_v4",
+  EU5_SHORE = NOISE .. "shore_europe_v2",
+  AT4_ENTRY = NOISE .. "elevation_atlantic_v4",
+  AT4_GEO = NOISE .. "geo_atlantic_v4",
+  AT4_LAND_COARSE = NOISE .. "land_coarse_atlantic_v4",
+  AT4_DETAIL = NOISE .. "detail_atlantic_v4",
+  AT4_FAR = NOISE .. "far_atlantic_v4",
+  AT4_GX = NOISE .. "gx_atlantic_v4",
+  AT4_GY = NOISE .. "gy_atlantic_v4",
+  AT4_U = NOISE .. "u_atlantic_v4",
+  AT4_V = NOISE .. "v_atlantic_v4",
+  AT4_CX = NOISE .. "cx_atlantic_v4",
+  AT4_CY = NOISE .. "cy_atlantic_v4",
+  AT4_SHORE = NOISE .. "shore_atlantic_v2",
+  OW4_ENTRY = NOISE .. "elevation_olde_world_v4",
+  OW4_GEO = NOISE .. "geo_olde_world_v4",
+  OW4_LAND_COARSE = NOISE .. "land_coarse_olde_world_v4",
+  OW4_DETAIL = NOISE .. "detail_olde_world_v4",
+  OW4_FAR = NOISE .. "far_olde_world_v4",
+  OW4_GX = NOISE .. "gx_olde_world_v4",
+  OW4_GY = NOISE .. "gy_olde_world_v4",
+  OW4_U = NOISE .. "u_olde_world_v4",
+  OW4_V = NOISE .. "v_olde_world_v4",
+  OW4_CX = NOISE .. "cx_olde_world_v4",
+  OW4_CY = NOISE .. "cy_olde_world_v4",
+  OW4_SHORE = NOISE .. "shore_olde_world_v2",
+  EU_WW3 = {NOISE .. "ww_europe_s1_v3", NOISE .. "ww_europe_s2_v3", NOISE .. "ww_europe_s3_v3",
+                  NOISE .. "ww_europe_s4_v3", NOISE .. "ww_europe_s5_v3", NOISE .. "ww_europe_s6_v3"},
+  EU_CANALS3 = {NOISE .. "canals_europe_s1_v3", NOISE .. "canals_europe_s2_v3", NOISE .. "canals_europe_s3_v3",
+                      NOISE .. "canals_europe_s4_v3", NOISE .. "canals_europe_s5_v3", NOISE .. "canals_europe_s6_v3"},
+  EU_DAMS3 = {NOISE .. "dams_europe_s1_v3", NOISE .. "dams_europe_s2_v3", NOISE .. "dams_europe_s3_v3",
+                    NOISE .. "dams_europe_s4_v3", NOISE .. "dams_europe_s5_v3", NOISE .. "dams_europe_s6_v3"},
+  EU_FORDS3 = {NOISE .. "fords_europe_s1_v3", NOISE .. "fords_europe_s2_v3", NOISE .. "fords_europe_s3_v3",
+                     NOISE .. "fords_europe_s4_v3", NOISE .. "fords_europe_s5_v3", NOISE .. "fords_europe_s6_v3"},
+  AT_WW3 = {NOISE .. "ww_atlantic_s1_v3", NOISE .. "ww_atlantic_s2_v3", NOISE .. "ww_atlantic_s3_v3",
+                  NOISE .. "ww_atlantic_s4_v3", NOISE .. "ww_atlantic_s5_v3", NOISE .. "ww_atlantic_s6_v3"},
+  AT_CANALS3 = {NOISE .. "canals_atlantic_s1_v3", NOISE .. "canals_atlantic_s2_v3",
+                      NOISE .. "canals_atlantic_s3_v3", NOISE .. "canals_atlantic_s4_v3",
+                      NOISE .. "canals_atlantic_s5_v3", NOISE .. "canals_atlantic_s6_v3"},
+  AT_DAMS3 = {NOISE .. "dams_atlantic_s1_v3", NOISE .. "dams_atlantic_s2_v3", NOISE .. "dams_atlantic_s3_v3",
+                    NOISE .. "dams_atlantic_s4_v3", NOISE .. "dams_atlantic_s5_v3", NOISE .. "dams_atlantic_s6_v3"},
+  AT_FORDS3 = {NOISE .. "fords_atlantic_s1_v3", NOISE .. "fords_atlantic_s2_v3", NOISE .. "fords_atlantic_s3_v3",
+                     NOISE .. "fords_atlantic_s4_v3", NOISE .. "fords_atlantic_s5_v3", NOISE .. "fords_atlantic_s6_v3"},
+  OW_WW3 = {NOISE .. "ww_olde_world_s1_v3", NOISE .. "ww_olde_world_s2_v3", NOISE .. "ww_olde_world_s3_v3",
+                  NOISE .. "ww_olde_world_s4_v3", NOISE .. "ww_olde_world_s5_v3", NOISE .. "ww_olde_world_s6_v3"},
+  OW_CANALS3 = {NOISE .. "canals_olde_world_s1_v3", NOISE .. "canals_olde_world_s2_v3",
+                      NOISE .. "canals_olde_world_s3_v3", NOISE .. "canals_olde_world_s4_v3",
+                      NOISE .. "canals_olde_world_s5_v3", NOISE .. "canals_olde_world_s6_v3"},
+  OW_DAMS3 = {NOISE .. "dams_olde_world_s1_v3", NOISE .. "dams_olde_world_s2_v3",
+                    NOISE .. "dams_olde_world_s3_v3", NOISE .. "dams_olde_world_s4_v3",
+                    NOISE .. "dams_olde_world_s5_v3", NOISE .. "dams_olde_world_s6_v3"},
+  OW_FORDS3 = {NOISE .. "fords_olde_world_s1_v3", NOISE .. "fords_olde_world_s2_v3",
+                     NOISE .. "fords_olde_world_s3_v3", NOISE .. "fords_olde_world_s4_v3",
+                     NOISE .. "fords_olde_world_s5_v3", NOISE .. "fords_olde_world_s6_v3"},
+}
+local EU_SETS3 = {ww = REN.EU_WW3, canals = REN.EU_CANALS3, dams = REN.EU_DAMS3, fords = REN.EU_FORDS3}
+local AT_SETS3 = {ww = REN.AT_WW3, canals = REN.AT_CANALS3, dams = REN.AT_DAMS3, fords = REN.AT_FORDS3}
+local OW_SETS3 = {ww = REN.OW_WW3, canals = REN.OW_CANALS3, dams = REN.OW_DAMS3, fords = REN.OW_FORDS3}
 
 return {
   identity = {
@@ -166,23 +687,80 @@ return {
       },
       order = "b-a",
     },
+    -- The new maps' spawn cities (milestone olde-world-atlantic; APPROVALS 1a and 12, default random), in
+    -- the same shape. No geography version reads them yet: the city fold that does arrives with each
+    -- map's spawn record, and until then the gate refuses them (design notes 2026-10-28 16:30,
+    -- olde-world-atlantic).
+    spawn_city_atlantic = {
+      name = ID .. "-spawn-city-atlantic", type = "string-setting", setting_type = "startup",
+      default_value = "random",
+      allowed_values = {
+        "random", "prague", "madrid", "london", "kovdor", "munguy", "xeta", "yakutia", "zyryanka", "kharkiv",
+        "huambo", "mongo", "dangila", "bamako", "akka", "waddan", "johannesburg", "songea", "tabuk", "chengdu",
+        "nanchang", "songling", "delhi", "hampi", "bam", "aktobe", "semey", "moron", "bangkok", "mexico-city",
+        "ellesmere-island", "fort-liard", "hearst", "mid-baffin", "okak", "saskatoon", "yellowknife", "qaanaaq",
+        "summit-camp", "uranienborg", "albany", "boise", "minneapolis", "el-paso", "hughes", "montgomery", "cordoba",
+        "palmas", "iquitos", "griffith", "newman",
+      },
+      order = "b-b",
+    },
+    spawn_city_olde_world = {
+      name = ID .. "-spawn-city-old-world", type = "string-setting", setting_type = "startup",
+      default_value = "random",
+      allowed_values = {
+        "random", "prague", "madrid", "london", "kovdor", "munguy", "xeta", "yakutia", "zyryanka", "kharkiv",
+        "huambo", "mongo", "dangila", "bamako", "akka", "waddan", "johannesburg", "songea", "tabuk", "chengdu",
+        "nanchang", "songling", "delhi", "hampi", "bam", "aktobe", "semey", "moron", "bangkok", "griffith", "newman",
+      },
+      order = "b-c",
+    },
+    -- Canals (milestone waterways; APPROVALS 1a and 6, default on): Kiel and Corinth on every map, Suez on
+    -- Old World and Atlantic, Panama on Atlantic, open at max(7, scale) tiles; off keeps every
+    -- isthmus closed, the drawn leaks under a dam. Baked per save through the toggle tn_canals.
+    canals = {
+      name = ID .. "-canals", type = "bool-setting", setting_type = "startup", default_value = true, order = "c-d",
+    },
+    -- Great forests (milestone trees-forests; APPROVALS 1a and 4, default on; D26): the 16 adopted forests of
+    -- the region layer hold about twice the trees of the land around them. Baked per save through the hook
+    -- gate tn_forests_on.
+    great_forests = {
+      name = ID .. "-great-forests", type = "bool-setting", setting_type = "startup", default_value = true,
+      order = "c-b",
+    },
+    -- Ridges (milestone ridges; APPROVALS 1a, D19, default on): cliff ridges along the 16 adopted ranges with
+    -- rail-width passes, the only cliffs on a Terra Nauvis world. Baked per save through the toggle
+    -- tn_ridges; off gives 0 cliffs (S5: a constant crest distance places none).
+    ridges = {
+      name = ID .. "-ridges", type = "bool-setting", setting_type = "startup", default_value = true, order = "c-c",
+    },
+    -- Hotspots (milestone resources-enemies; APPROVALS 1a and 2, D21 to D24, default on): historical ore
+    -- hotspots with heavier biters and the offshore fields' deepwater discs and wells. Baked per save
+    -- through the toggle tn_hotspots and each map's offshore stamp key.
+    hotspots = {
+      name = ID .. "-hotspots", type = "bool-setting", setting_type = "startup", default_value = true, order = "c-a",
+    },
   },
-  setting_order = {"scale", "spawn_city_europe"},
+  setting_order = {"scale", "spawn_city_europe", "spawn_city_atlantic", "spawn_city_olde_world", "canals",
+                   "great_forests", "ridges", "hotspots"},
 
   -- Map-gen presets, sorted right after Default ("a") and before Rich resources ("b") (S13).
   -- withheld_with lists the mods whose presence withholds a preset (presets.lua defines no such
-  -- preset while one is loaded): Alien Biomes 0.8.0's palms (tree-palm-a, tree-palm-b) read
-  -- elevation in the Entity program, so beside it this preset would carry its fine field there and
-  -- break design constraint 3. climate-tiles ships the palm switch (design note 9) and
-  -- empties the list; until then a world beside Alien Biomes gets Europe only through its Map type
-  -- entry. Withholding acts on
-  -- new worlds only: a world made from the preset that later loads beside a listed mod still names
-  -- its fine field, so control code warns once and records it (scripts/guards.lua; design notes
-  -- 2026-10-28 07:20, a preset save beside Alien Biomes).
+  -- preset while one is loaded). From europe-coast to region-layer every preset listed Alien Biomes:
+  -- its 0.8.0 palms (tree-palm-a, tree-palm-b) read elevation in the Entity program, so beside it a
+  -- preset carried its fine field there and broke design constraint 3 (design notes 2026-10-28 05:30,
+  -- the preset withheld beside Alien Biomes). climate-tiles ships the palm switch (plan
+  -- reconciliation 9: every Earth preset points each palm's keys at an Earth copy that reads the
+  -- palm constant where AB reads elevation; tiles.palm), so the lists are empty and the presets are
+  -- offered beside Alien Biomes again. Withholding acted on new worlds only: a world made from a
+  -- preset that later loads beside a listed mod still names its fine field, so control code warns
+  -- once and records it while a list names that mod (scripts/guards.lua; design notes 2026-10-28 07:20,
+  -- a preset save beside Alien Biomes).
   presets = {
-    europe = {name = ID .. "-europe", map = "europe", order = "a-tn-a", withheld_with = {"alien-biomes"}},
+    europe = {name = ID .. "-europe", map = "europe", order = "a-tn-a", withheld_with = {}},
+    atlantic = {name = ID .. "-atlantic", map = "atlantic", order = "a-tn-b", withheld_with = {}},
+    olde_world = {name = ID .. "-old-world", map = "olde_world", order = "a-tn-c", withheld_with = {}},
   },
-  preset_order = {"europe"},
+  preset_order = {"europe", "atlantic", "olde_world"},
 
   -- The per-save keys (U6): map, scale and geography release are numbers every Earth preset bakes;
   -- land_coarse names the map's coarse land field; elevation, start_mask and distance
@@ -193,6 +771,16 @@ return {
     map = K_MAP, scale = K_SCALE, geo = K_GEO, land_coarse = K_LAND_COARSE,
     elevation = "elevation", start_mask = "starting_resources_lake_mask", distance = "distance",
     spawn_lake = K_SPAWN_LAKE, spawn_bias = K_SPAWN_BIAS,
+    -- waterways: the hook gate (prototype off, Earth presets on), the ford key (prototype off, Earth
+    -- presets name the map's ford set for the save's scale) and the canals switch (a toggle)
+    on = K_ON, fords = K_FORDS, canals = K_CANALS,
+    -- ridges: the toggle, the map's crest and openings keys, and the two cliff properties the presets
+    -- redirect (S5)
+    ridges = RDN.K_RIDGES, crest = RDN.K_CREST, openings = RDN.K_OPENINGS, band = RDN.K_BAND,
+    cliff_elevation = "cliff_elevation", cliffiness = "cliffiness",
+    -- resources-enemies: the hotspots toggle, each map's offshore stamp key and the enemy property
+    hotspots = REN.K_HOTSPOTS, enemy = "enemy_base_probability",
+    fields = {europe = REN.EU_FIELDS_KEY, atlantic = REN.AT_FIELDS_KEY, olde_world = REN.OW_FIELDS_KEY},
   },
 
   -- Each map's geography (ARCHITECTURE.md, "Map type entries"): map_type_order, the order of the
@@ -277,9 +865,271 @@ return {
             start_land = START_LAND, distance = DISTANCE, bearings = EU_SPAWN_FILE,
           },
         },
+        {
+          -- Version 3 (waterways): version 2's spawn at the chosen city with the dams and carves
+          -- (ARCHITECTURE.md, "Elevation composition", steps 5 and 6). Every name is its own but the
+          -- spawn bodies that read no chain (the fold, the spawn lake and bias, the land guarantee
+          -- and distance), which serve every version that names them.
+          geo_id = 5,
+          entry = EU3_ENTRY,
+          geo = EU3_GEO, land_coarse = EU3_LAND_COARSE, detail = EU3_DETAIL, far = EU3_FAR,
+          gx = EU3_GX, gy = EU3_GY, u = EU3_U, v = EU3_V,
+          cx = EU3_CX, cy = EU3_CY, city_offset = {EU_CITY_CX, EU_CITY_CY},
+          start_mask = START_MASK2,
+          fits = {geo = EU_GEO_FILE, land_coarse = EU_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = EU3_CX, map_qualified = true, frozen = true},
+            {name = EU3_CY, map_qualified = true, frozen = true},
+            {name = EU_CITY, map_qualified = true},
+            {name = K_CANALS, map_qualified = false},
+          },
+          spawn = {
+            city_setting = "spawn_city_europe", city = EU_CITY, city_index = EU_CITY_INDEX,
+            spawn_lake = EU_SPAWN_LAKE, spawn_bias = EU_SPAWN_BIAS, inland_lakes = EU3_LAKES,
+            start_land = START_LAND, distance = DISTANCE, bearings = EU_SPAWN_FILE,
+          },
+          -- The waterway sets this version composes, bound to its chain (waterways.sets[map]).
+          waterways = EU_SETS,
+        },
+        {
+          -- Version 4 (climate-tiles): version 3's composition around the shore body, the
+          -- sign-offset transfer recalibrated with Alien Biomes (config.lua shore), every name its
+          -- own but the spawn bodies that read no chain.
+          geo_id = 8,
+          entry = CT.EU4_ENTRY,
+          geo = CT.EU4_GEO, land_coarse = CT.EU4_LAND_COARSE, detail = CT.EU4_DETAIL, far = CT.EU4_FAR,
+          gx = CT.EU4_GX, gy = CT.EU4_GY, u = CT.EU4_U, v = CT.EU4_V,
+          cx = CT.EU4_CX, cy = CT.EU4_CY, city_offset = {EU_CITY_CX, EU_CITY_CY},
+          start_mask = START_MASK2,
+          fits = {geo = EU_GEO_FILE, land_coarse = EU_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = CT.EU4_CX, map_qualified = true, frozen = true},
+            {name = CT.EU4_CY, map_qualified = true, frozen = true},
+            {name = EU_CITY, map_qualified = true},
+            {name = K_CANALS, map_qualified = false},
+          },
+          spawn = {
+            city_setting = "spawn_city_europe", city = EU_CITY, city_index = EU_CITY_INDEX,
+            spawn_lake = EU_SPAWN_LAKE, spawn_bias = EU_SPAWN_BIAS, inland_lakes = CT.EU4_LAKES,
+            start_land = START_LAND, distance = DISTANCE, bearings = EU_SPAWN_FILE,
+          },
+          waterways = EU_SETS2,
+          -- The shore body this version's entry composes in place of the transfer (coast.lua).
+          shore = CT.EU4_SHORE,
+        },
+        {
+          -- Version 5 (resources-enemies): version 4's composition wrapped in the map's offshore field
+          -- stamp, read through the stamp key: if(e < 0, min(e, stamp), e), so the coast never moves
+          -- (APPROVALS 3). Every name its own but the spawn bodies that read no chain.
+          geo_id = 11,
+          entry = REN.EU5_ENTRY,
+          geo = REN.EU5_GEO, land_coarse = REN.EU5_LAND_COARSE, detail = REN.EU5_DETAIL, far = REN.EU5_FAR,
+          gx = REN.EU5_GX, gy = REN.EU5_GY, u = REN.EU5_U, v = REN.EU5_V,
+          cx = REN.EU5_CX, cy = REN.EU5_CY, city_offset = {EU_CITY_CX, EU_CITY_CY},
+          start_mask = START_MASK2,
+          fits = {geo = EU_GEO_FILE, land_coarse = EU_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = REN.EU5_CX, map_qualified = true, frozen = true},
+            {name = REN.EU5_CY, map_qualified = true, frozen = true},
+            {name = EU_CITY, map_qualified = true},
+            {name = K_CANALS, map_qualified = false},
+            {name = REN.EU_FIELDS_KEY, map_qualified = true},
+          },
+          spawn = {
+            city_setting = "spawn_city_europe", city = EU_CITY, city_index = EU_CITY_INDEX,
+            spawn_lake = EU_SPAWN_LAKE, spawn_bias = EU_SPAWN_BIAS, inland_lakes = REN.EU5_LAKES,
+            start_land = START_LAND, distance = DISTANCE, bearings = EU_SPAWN_FILE,
+          },
+          waterways = EU_SETS3,
+          shore = REN.EU5_SHORE,
+          -- The per-save stamp key the entry composes last (a Map type fallback mirroring the
+          -- hotspots setting; the stamp body reads the layer chain, resources.lua).
+          fields = REN.EU_FIELDS_KEY,
+        },
+      },
+    },
+    -- Atlantic and Old World (milestone olde-world-atlantic): version 1 of each, the map's own fit at
+    -- the smallest checkpoint at or above T1's bar and its 256-term coarse field, in Europe's
+    -- version 1 shape: the city offset baked 0 under the version's own names, each with a frozen
+    -- fallback of 0, and start mask version 1 (version 2 reads a spawn record's lake and bias).
+    -- tn_geo ids 3 and 4, the next unused in the one id space across every map.
+    atlantic = {
+      map_type_order = "3000-tn-b",
+      versions = {
+        {
+          geo_id = 3,
+          entry = AT_ENTRY,
+          geo = AT_GEO, land_coarse = AT_LAND_COARSE, detail = AT_DETAIL, far = AT_FAR,
+          gx = AT_GX, gy = AT_GY, u = AT_U, v = AT_V,
+          cx = AT_CX, cy = AT_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = AT_GEO_FILE, land_coarse = AT_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = AT_CX, map_qualified = true, frozen = true},
+            {name = AT_CY, map_qualified = true, frozen = true},
+          },
+        },
+        {
+          -- Version 2 (waterways): version 1 with the dams and carves (ARCHITECTURE.md, "Elevation
+          -- composition", steps 5 and 6), every name its own.
+          geo_id = 6,
+          entry = AT2_ENTRY,
+          geo = AT2_GEO, land_coarse = AT2_LAND_COARSE, detail = AT2_DETAIL, far = AT2_FAR,
+          gx = AT2_GX, gy = AT2_GY, u = AT2_U, v = AT2_V,
+          cx = AT2_CX, cy = AT2_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = AT_GEO_FILE, land_coarse = AT_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = AT2_CX, map_qualified = true, frozen = true},
+            {name = AT2_CY, map_qualified = true, frozen = true},
+            {name = K_CANALS, map_qualified = false},
+          },
+          waterways = AT_SETS,
+        },
+        {
+          -- Version 3 (climate-tiles): version 2's composition around the shore body, the
+          -- sign-offset transfer recalibrated with Alien Biomes (config.lua shore), every name its
+          -- own.
+          geo_id = 9,
+          entry = CT.AT3_ENTRY,
+          geo = CT.AT3_GEO, land_coarse = CT.AT3_LAND_COARSE, detail = CT.AT3_DETAIL, far = CT.AT3_FAR,
+          gx = CT.AT3_GX, gy = CT.AT3_GY, u = CT.AT3_U, v = CT.AT3_V,
+          cx = CT.AT3_CX, cy = CT.AT3_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = AT_GEO_FILE, land_coarse = AT_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = CT.AT3_CX, map_qualified = true, frozen = true},
+            {name = CT.AT3_CY, map_qualified = true, frozen = true},
+            {name = K_CANALS, map_qualified = false},
+          },
+          waterways = AT_SETS2,
+          -- The shore body this version's entry composes in place of the transfer (coast.lua).
+          shore = CT.AT3_SHORE,
+        },
+        {
+          -- Version 4 (resources-enemies): version 3's composition wrapped in the map's offshore
+          -- field stamp, read through the stamp key: if(e < 0, min(e, stamp), e), so the coast never
+          -- moves (APPROVALS 3). Every name its own.
+          geo_id = 12,
+          entry = REN.AT4_ENTRY,
+          geo = REN.AT4_GEO, land_coarse = REN.AT4_LAND_COARSE, detail = REN.AT4_DETAIL, far = REN.AT4_FAR,
+          gx = REN.AT4_GX, gy = REN.AT4_GY, u = REN.AT4_U, v = REN.AT4_V,
+          cx = REN.AT4_CX, cy = REN.AT4_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = AT_GEO_FILE, land_coarse = AT_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = REN.AT4_CX, map_qualified = true, frozen = true},
+            {name = REN.AT4_CY, map_qualified = true, frozen = true},
+            {name = K_CANALS, map_qualified = false},
+            {name = REN.AT_FIELDS_KEY, map_qualified = true},
+          },
+          waterways = AT_SETS3,
+          shore = REN.AT4_SHORE,
+          -- The per-save stamp key the entry composes last (a Map type fallback mirroring the
+          -- hotspots setting; the stamp body reads the layer chain, resources.lua).
+          fields = REN.AT_FIELDS_KEY,
+        },
+      },
+    },
+    olde_world = {
+      map_type_order = "3000-tn-c",
+      versions = {
+        {
+          geo_id = 4,
+          entry = OW_ENTRY,
+          geo = OW_GEO, land_coarse = OW_LAND_COARSE, detail = OW_DETAIL, far = OW_FAR,
+          gx = OW_GX, gy = OW_GY, u = OW_U, v = OW_V,
+          cx = OW_CX, cy = OW_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = OW_GEO_FILE, land_coarse = OW_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = OW_CX, map_qualified = true, frozen = true},
+            {name = OW_CY, map_qualified = true, frozen = true},
+          },
+        },
+        {
+          -- Version 2 (waterways): version 1 with the dams and carves (ARCHITECTURE.md, "Elevation
+          -- composition", steps 5 and 6), every name its own.
+          geo_id = 7,
+          entry = OW2_ENTRY,
+          geo = OW2_GEO, land_coarse = OW2_LAND_COARSE, detail = OW2_DETAIL, far = OW2_FAR,
+          gx = OW2_GX, gy = OW2_GY, u = OW2_U, v = OW2_V,
+          cx = OW2_CX, cy = OW2_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = OW_GEO_FILE, land_coarse = OW_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = OW2_CX, map_qualified = true, frozen = true},
+            {name = OW2_CY, map_qualified = true, frozen = true},
+            {name = K_CANALS, map_qualified = false},
+          },
+          waterways = OW_SETS,
+        },
+        {
+          -- Version 3 (climate-tiles): version 2's composition around the shore body, the
+          -- sign-offset transfer recalibrated with Alien Biomes (config.lua shore), every name its
+          -- own.
+          geo_id = 10,
+          entry = CT.OW3_ENTRY,
+          geo = CT.OW3_GEO, land_coarse = CT.OW3_LAND_COARSE, detail = CT.OW3_DETAIL, far = CT.OW3_FAR,
+          gx = CT.OW3_GX, gy = CT.OW3_GY, u = CT.OW3_U, v = CT.OW3_V,
+          cx = CT.OW3_CX, cy = CT.OW3_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = OW_GEO_FILE, land_coarse = OW_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = CT.OW3_CX, map_qualified = true, frozen = true},
+            {name = CT.OW3_CY, map_qualified = true, frozen = true},
+            {name = K_CANALS, map_qualified = false},
+          },
+          waterways = OW_SETS2,
+          -- The shore body this version's entry composes in place of the transfer (coast.lua).
+          shore = CT.OW3_SHORE,
+        },
+        {
+          -- Version 4 (resources-enemies): version 3's composition wrapped in the map's offshore
+          -- field stamp, read through the stamp key: if(e < 0, min(e, stamp), e), so the coast never
+          -- moves (APPROVALS 3). Every name its own.
+          geo_id = 13,
+          entry = REN.OW4_ENTRY,
+          geo = REN.OW4_GEO, land_coarse = REN.OW4_LAND_COARSE, detail = REN.OW4_DETAIL, far = REN.OW4_FAR,
+          gx = REN.OW4_GX, gy = REN.OW4_GY, u = REN.OW4_U, v = REN.OW4_V,
+          cx = REN.OW4_CX, cy = REN.OW4_CY, city_offset = {0, 0},
+          start_mask = START_MASK,
+          fits = {geo = OW_GEO_FILE, land_coarse = OW_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = REN.OW4_CX, map_qualified = true, frozen = true},
+            {name = REN.OW4_CY, map_qualified = true, frozen = true},
+            {name = K_CANALS, map_qualified = false},
+            {name = REN.OW_FIELDS_KEY, map_qualified = true},
+          },
+          waterways = OW_SETS3,
+          shore = REN.OW4_SHORE,
+          -- The per-save stamp key the entry composes last (a Map type fallback mirroring the
+          -- hotspots setting; the stamp body reads the layer chain, resources.lua).
+          fields = REN.OW_FIELDS_KEY,
+        },
       },
     },
   },
+
+  -- The chain every map-wide layer reads (the region layer, the climate and the layers after them):
+  -- per map, the geography release (tn_geo) whose coordinate chain their bodies read, the version the
+  -- region layer was registered against. A later version keeps that frame (the same city offset under
+  -- names of its own), so its preset worlds read the same values there through the frozen offset
+  -- fallbacks, and a new geography version never changes a registered layer body (decision 21; design notes
+  -- 2026-10-29 12:50, climate-tiles restacked). A version that moves the frame needs layer bodies of its
+  -- own.
+  layer_chain_geo = {europe = 5, atlantic = 6, olde_world = 7},
 
   -- The water slider (D15: inert on Earth presets). Vanilla 2.1.23 reads control:water:* in exactly
   -- three named expressions (core/prototypes/noise-programs.lua): water_level (10 * log2 of the
@@ -298,10 +1148,53 @@ return {
   -- Every property_expression_names key any Earth preset sets, for every geography version (each
   -- version's own city offset names join it; tnconfig checks every key a version's preset bakes is
   -- here): the missing-name guard, T14 and the Nauvis-only surface guard read it, which strips
-  -- exactly these keys from every other surface (D33).
+  -- exactly these keys from every other surface (D33). From climate-tiles also the climate redirects,
+  -- the marsh keys, and with Alien Biomes the vanilla tile keys, the exclusion key and the palm keys
+  -- (absent keys are by design on a world without AB).
   preset_keys = {"elevation", "starting_resources_lake_mask", K_LAND_COARSE, K_MAP, K_SCALE, K_GEO, EU_CX, EU_CY,
                  "water_level", "segmentation_multiplier", "nauvis_segmentation_multiplier",
-                 "distance", EU2_CX, EU2_CY, EU_CITY, K_SPAWN_LAKE, K_SPAWN_BIAS},
+                 "distance", EU2_CX, EU2_CY, EU_CITY, K_SPAWN_LAKE, K_SPAWN_BIAS, AT_CX, AT_CY, OW_CX, OW_CY,
+                 K_ON, K_FORDS, K_CANALS, EU3_CX, EU3_CY, AT2_CX, AT2_CY, OW2_CX, OW2_CY,
+                 CT.EU4_CX, CT.EU4_CY, CT.AT3_CX, CT.AT3_CY, CT.OW3_CX, CT.OW3_CY,
+                 "temperature", "moisture", "aux", CT.MARSH_MUD, CT.MARSH_SHALLOW, CT.MARSH_GRASS,
+                 CT.VT_GRASS_1, CT.VT_GRASS_2, CT.VT_GRASS_3, CT.VT_GRASS_4, CT.VT_DRY_DIRT, CT.VT_DIRT_1,
+                 CT.VT_DIRT_2, CT.VT_DIRT_3,
+                 CT.VT_DIRT_4, CT.VT_DIRT_5, CT.VT_DIRT_6, CT.VT_DIRT_7, CT.VT_SAND_1, CT.VT_SAND_2, CT.VT_SAND_3,
+                 CT.VT_RED_0, CT.VT_RED_1,
+                 CT.VT_RED_2, CT.VT_RED_3, CT.AB_EXCLUDE, CT.PALM_A_P_KEY,
+                 CT.PALM_A_R_KEY, CT.PALM_B_P_KEY, CT.PALM_B_R_KEY,
+                 -- trees-forests: the great-forests gate and multiplier key, and with Alien Biomes the restored
+                 -- vanilla trees', rocks' and decoratives' keys
+                 TFN.K_FORESTS_ON, TFN.K_TREE_MULT,
+                 TF_TREES["tree-01"].p, TF_TREES["tree-01"].r, TF_TREES["tree-02"].p, TF_TREES["tree-02"].r,
+                 TF_TREES["tree-02-red"].p, TF_TREES["tree-02-red"].r, TF_TREES["tree-03"].p, TF_TREES["tree-03"].r,
+                 TF_TREES["tree-04"].p, TF_TREES["tree-04"].r, TF_TREES["tree-05"].p, TF_TREES["tree-05"].r,
+                 TF_TREES["tree-06"].p, TF_TREES["tree-06"].r, TF_TREES["tree-06-brown"].p,
+                 TF_TREES["tree-06-brown"].r, TF_TREES["tree-07"].p, TF_TREES["tree-07"].r, TF_TREES["tree-08"].p,
+                 TF_TREES["tree-08"].r, TF_TREES["tree-08-brown"].p, TF_TREES["tree-08-brown"].r,
+                 TF_TREES["tree-08-red"].p, TF_TREES["tree-08-red"].r, TF_TREES["tree-09"].p, TF_TREES["tree-09"].r,
+                 TF_TREES["tree-09-brown"].p, TF_TREES["tree-09-brown"].r, TF_TREES["tree-09-red"].p,
+                 TF_TREES["tree-09-red"].r,
+                 TF_ROCKS["huge-rock"].key, TF_ROCKS["big-rock"].key, TF_ROCKS["big-sand-rock"].key,
+                 TF_ROCKS["medium-rock"].key, TF_ROCKS["small-rock"].key, TF_ROCKS["tiny-rock"].key,
+                 TF_ROCKS["medium-sand-rock"].key, TF_ROCKS["small-sand-rock"].key, TF_ROCKS["red-desert-decal"].key,
+                 TF_ROCKS["sand-decal"].key, TF_ROCKS["sand-dune-decal"].key,
+                 TF_DECO["light-mud-decal"], TF_DECO["green-asterisk"], TF_DECO["green-asterisk-mini"],
+                 TF_DECO["green-bush-mini"], TF_DECO["green-carpet-grass"], TF_DECO["green-croton"],
+                 TF_DECO["green-desert-bush"], TF_DECO["green-hairy-grass"], TF_DECO["green-pita"],
+                 TF_DECO["green-pita-mini"], TF_DECO["green-small-grass"],
+                 -- ridges: the toggle, the map's ridge keys, the two cliff properties and the Earth ores'
+                 -- probability keys (data-final-fixes.lua points them at the clearance wrappers)
+                 RDN.K_RIDGES, RDN.K_CREST, RDN.K_OPENINGS, RDN.K_BAND, "cliff_elevation", "cliffiness",
+                 "entity:iron-ore:probability", "entity:copper-ore:probability", "entity:coal:probability",
+                 "entity:stone:probability", "entity:uranium-ore:probability", "entity:crude-oil:probability",
+                 REN.EU5_CX, REN.EU5_CY, REN.AT4_CX, REN.AT4_CY, REN.OW4_CX, REN.OW4_CY,
+                 -- resources-enemies: the richness keys, the enemy property, the hotspots toggle, each map's
+                 -- offshore stamp key and, with the Oil Rig loaded, the offshore-oil keys
+                 "entity:iron-ore:richness", "entity:copper-ore:richness", "entity:coal:richness",
+                 "entity:stone:richness", "entity:uranium-ore:richness", "entity:crude-oil:richness",
+                 "enemy_base_probability", REN.K_HOTSPOTS, REN.EU_FIELDS_KEY, REN.AT_FIELDS_KEY, REN.OW_FIELDS_KEY,
+                 "entity:offshore-oil:probability", "entity:offshore-oil:richness"},
 
   -- The fine field per map (design constraint 3): map key -> {every version's elevation entry and
   -- every term only it reads}. The constant-coast twin turns each into a constant; no Entity,
@@ -309,7 +1202,66 @@ return {
   -- analytic but belongs to the field by ARCHITECTURE.md's firewall rule; the spawn lake, the bias,
   -- distance and the city fold are firewall-clean (the start mask reads the lake and the bias).
   firewall = {
-    europe = {EU_ENTRY, EU_GEO, EU_DETAIL, EU_FAR, EU2_ENTRY, EU2_GEO, EU2_DETAIL, EU2_FAR, EU2_LAKES, START_LAND},
+    -- from waterways each map's field also holds its newer entry and its waterway, canal, dam and ford
+    -- sets (the ford sets reach Tile only, through the water-shallow hook); from climate-tiles its
+    -- next version's entry, fit, detail, box, shore body, sets and (Europe) inland lakes
+    europe = {EU_ENTRY, EU_GEO, EU_DETAIL, EU_FAR, EU2_ENTRY, EU2_GEO, EU2_DETAIL, EU2_FAR, EU2_LAKES, START_LAND,
+              EU3_ENTRY, EU3_GEO, EU3_DETAIL, EU3_FAR, EU3_LAKES,
+              EU_WW[1], EU_WW[2], EU_WW[3], EU_WW[4], EU_WW[5], EU_WW[6],
+              EU_CANALS[1], EU_CANALS[2], EU_CANALS[3], EU_CANALS[4], EU_CANALS[5], EU_CANALS[6],
+              EU_DAMS[1], EU_DAMS[2], EU_DAMS[3], EU_DAMS[4], EU_DAMS[5], EU_DAMS[6],
+              EU_FORDS[1], EU_FORDS[2], EU_FORDS[3], EU_FORDS[4], EU_FORDS[5], EU_FORDS[6],
+              CT.EU4_ENTRY, CT.EU4_GEO, CT.EU4_DETAIL, CT.EU4_FAR, CT.EU4_LAKES, CT.EU4_SHORE,
+              CT.EU_WW2[1], CT.EU_WW2[2], CT.EU_WW2[3], CT.EU_WW2[4], CT.EU_WW2[5], CT.EU_WW2[6],
+              CT.EU_CANALS2[1], CT.EU_CANALS2[2], CT.EU_CANALS2[3], CT.EU_CANALS2[4], CT.EU_CANALS2[5],
+              CT.EU_CANALS2[6],
+              CT.EU_DAMS2[1], CT.EU_DAMS2[2], CT.EU_DAMS2[3], CT.EU_DAMS2[4], CT.EU_DAMS2[5], CT.EU_DAMS2[6],
+              CT.EU_FORDS2[1], CT.EU_FORDS2[2], CT.EU_FORDS2[3], CT.EU_FORDS2[4], CT.EU_FORDS2[5], CT.EU_FORDS2[6],
+              REN.EU5_ENTRY, REN.EU5_GEO, REN.EU5_DETAIL, REN.EU5_FAR, REN.EU5_LAKES, REN.EU5_SHORE, REN.EU_FIELDS,
+              REN.EU_WW3[1], REN.EU_WW3[2], REN.EU_WW3[3], REN.EU_WW3[4], REN.EU_WW3[5], REN.EU_WW3[6],
+              REN.EU_CANALS3[1], REN.EU_CANALS3[2], REN.EU_CANALS3[3], REN.EU_CANALS3[4], REN.EU_CANALS3[5],
+              REN.EU_CANALS3[6],
+              REN.EU_DAMS3[1], REN.EU_DAMS3[2], REN.EU_DAMS3[3], REN.EU_DAMS3[4], REN.EU_DAMS3[5], REN.EU_DAMS3[6],
+              REN.EU_FORDS3[1], REN.EU_FORDS3[2], REN.EU_FORDS3[3], REN.EU_FORDS3[4], REN.EU_FORDS3[5],
+              REN.EU_FORDS3[6],},
+    atlantic = {AT_ENTRY, AT_GEO, AT_DETAIL, AT_FAR,
+                AT2_ENTRY, AT2_GEO, AT2_DETAIL, AT2_FAR,
+                AT_WW[1], AT_WW[2], AT_WW[3], AT_WW[4], AT_WW[5], AT_WW[6],
+                AT_CANALS[1], AT_CANALS[2], AT_CANALS[3], AT_CANALS[4], AT_CANALS[5], AT_CANALS[6],
+                AT_DAMS[1], AT_DAMS[2], AT_DAMS[3], AT_DAMS[4], AT_DAMS[5], AT_DAMS[6],
+                AT_FORDS[1], AT_FORDS[2], AT_FORDS[3], AT_FORDS[4], AT_FORDS[5], AT_FORDS[6],
+                CT.AT3_ENTRY, CT.AT3_GEO, CT.AT3_DETAIL, CT.AT3_FAR, CT.AT3_SHORE,
+                CT.AT_WW2[1], CT.AT_WW2[2], CT.AT_WW2[3], CT.AT_WW2[4], CT.AT_WW2[5], CT.AT_WW2[6],
+                CT.AT_CANALS2[1], CT.AT_CANALS2[2], CT.AT_CANALS2[3], CT.AT_CANALS2[4], CT.AT_CANALS2[5],
+                CT.AT_CANALS2[6],
+                CT.AT_DAMS2[1], CT.AT_DAMS2[2], CT.AT_DAMS2[3], CT.AT_DAMS2[4], CT.AT_DAMS2[5], CT.AT_DAMS2[6],
+                CT.AT_FORDS2[1], CT.AT_FORDS2[2], CT.AT_FORDS2[3], CT.AT_FORDS2[4], CT.AT_FORDS2[5], CT.AT_FORDS2[6],
+                REN.AT4_ENTRY, REN.AT4_GEO, REN.AT4_DETAIL, REN.AT4_FAR, REN.AT4_SHORE, REN.AT_FIELDS,
+                REN.AT_WW3[1], REN.AT_WW3[2], REN.AT_WW3[3], REN.AT_WW3[4], REN.AT_WW3[5], REN.AT_WW3[6],
+                REN.AT_CANALS3[1], REN.AT_CANALS3[2], REN.AT_CANALS3[3], REN.AT_CANALS3[4], REN.AT_CANALS3[5],
+                REN.AT_CANALS3[6],
+                REN.AT_DAMS3[1], REN.AT_DAMS3[2], REN.AT_DAMS3[3], REN.AT_DAMS3[4], REN.AT_DAMS3[5], REN.AT_DAMS3[6],
+                REN.AT_FORDS3[1], REN.AT_FORDS3[2], REN.AT_FORDS3[3], REN.AT_FORDS3[4], REN.AT_FORDS3[5],
+                REN.AT_FORDS3[6],},
+    olde_world = {OW_ENTRY, OW_GEO, OW_DETAIL, OW_FAR,
+                  OW2_ENTRY, OW2_GEO, OW2_DETAIL, OW2_FAR,
+                  OW_WW[1], OW_WW[2], OW_WW[3], OW_WW[4], OW_WW[5], OW_WW[6],
+                  OW_CANALS[1], OW_CANALS[2], OW_CANALS[3], OW_CANALS[4], OW_CANALS[5], OW_CANALS[6],
+                  OW_DAMS[1], OW_DAMS[2], OW_DAMS[3], OW_DAMS[4], OW_DAMS[5], OW_DAMS[6],
+                  OW_FORDS[1], OW_FORDS[2], OW_FORDS[3], OW_FORDS[4], OW_FORDS[5], OW_FORDS[6],
+                  CT.OW3_ENTRY, CT.OW3_GEO, CT.OW3_DETAIL, CT.OW3_FAR, CT.OW3_SHORE,
+                  CT.OW_WW2[1], CT.OW_WW2[2], CT.OW_WW2[3], CT.OW_WW2[4], CT.OW_WW2[5], CT.OW_WW2[6],
+                  CT.OW_CANALS2[1], CT.OW_CANALS2[2], CT.OW_CANALS2[3], CT.OW_CANALS2[4], CT.OW_CANALS2[5],
+                  CT.OW_CANALS2[6],
+                  CT.OW_DAMS2[1], CT.OW_DAMS2[2], CT.OW_DAMS2[3], CT.OW_DAMS2[4], CT.OW_DAMS2[5], CT.OW_DAMS2[6],
+                  CT.OW_FORDS2[1], CT.OW_FORDS2[2], CT.OW_FORDS2[3], CT.OW_FORDS2[4], CT.OW_FORDS2[5], CT.OW_FORDS2[6],
+                  REN.OW4_ENTRY, REN.OW4_GEO, REN.OW4_DETAIL, REN.OW4_FAR, REN.OW4_SHORE, REN.OW_FIELDS,
+                  REN.OW_WW3[1], REN.OW_WW3[2], REN.OW_WW3[3], REN.OW_WW3[4], REN.OW_WW3[5], REN.OW_WW3[6],
+                  REN.OW_CANALS3[1], REN.OW_CANALS3[2], REN.OW_CANALS3[3], REN.OW_CANALS3[4], REN.OW_CANALS3[5],
+                  REN.OW_CANALS3[6],
+                  REN.OW_DAMS3[1], REN.OW_DAMS3[2], REN.OW_DAMS3[3], REN.OW_DAMS3[4], REN.OW_DAMS3[5], REN.OW_DAMS3[6],
+                  REN.OW_FORDS3[1], REN.OW_FORDS3[2], REN.OW_FORDS3[3], REN.OW_FORDS3[4], REN.OW_FORDS3[5],
+                  REN.OW_FORDS3[6],},
   },
 
   -- Per geography release: {release = <version>, map = <map key>, geography = <tn_geo id>, names =
@@ -338,6 +1290,269 @@ return {
                EU2_CX, EU2_CY, EU_CITY_INDEX, EU_CITY_CX, EU_CITY_CY, EU_SPAWN_LAKE, EU_SPAWN_BIAS, EU2_LAKES,
                START_LAND, DISTANCE},
       files = {EU_GEO_FILE, EU_LAND_COARSE_FILE, EU_SPAWN_FILE},
+    },
+    -- Geographies 3 and 4 (olde-world-atlantic): Atlantic's and Old World's version 1, each with its
+    -- frozen offset fallbacks and its own generated files; the start mask is geography 1's.
+    {
+      release = "0.1.0",
+      map = "atlantic",
+      geography = 3,
+      names = {AT_GX, AT_GY, AT_U, AT_V, AT_GEO, AT_LAND_COARSE, AT_DETAIL, AT_FAR, AT_ENTRY, AT_CX, AT_CY},
+      files = {AT_GEO_FILE, AT_LAND_COARSE_FILE},
+    },
+    {
+      release = "0.1.0",
+      map = "olde_world",
+      geography = 4,
+      names = {OW_GX, OW_GY, OW_U, OW_V, OW_GEO, OW_LAND_COARSE, OW_DETAIL, OW_FAR, OW_ENTRY, OW_CX, OW_CY},
+      files = {OW_GEO_FILE, OW_LAND_COARSE_FILE},
+    },
+    -- Geographies 5 to 7 (waterways): each map's version that composes the waterways, with its own
+    -- chain, bodies, frozen offsets and waterway sets and the generated files they bind; Europe's row
+    -- also holds version 3's inland lakes and the shared hook gate, ford key and the canals switch's
+    -- neutral bodies, and its files the spawn bearings version 3 reads.
+    {
+      release = "0.1.0",
+      map = "europe",
+      geography = 5,
+      names = {
+               EU3_GX, EU3_GY, EU3_U, EU3_V, EU3_GEO, EU3_LAND_COARSE,
+               EU3_DETAIL, EU3_FAR, EU3_ENTRY, EU3_CX, EU3_CY, EU3_LAKES, K_ON, K_FORDS, ONE, ZERO,
+               EU_WW[1], EU_WW[2], EU_WW[3], EU_WW[4], EU_WW[5], EU_WW[6],
+               EU_CANALS[1], EU_CANALS[2], EU_CANALS[3], EU_CANALS[4], EU_CANALS[5], EU_CANALS[6],
+               EU_DAMS[1], EU_DAMS[2], EU_DAMS[3], EU_DAMS[4], EU_DAMS[5], EU_DAMS[6],
+               EU_FORDS[1], EU_FORDS[2], EU_FORDS[3], EU_FORDS[4], EU_FORDS[5], EU_FORDS[6]},
+      files = {EU_GEO_FILE, EU_LAND_COARSE_FILE, EU_SPAWN_FILE,
+               EU_WW_FILES[1], EU_WW_FILES[2], EU_WW_FILES[3], EU_WW_FILES[4], EU_WW_FILES[5], EU_WW_FILES[6]},
+    },
+    {
+      release = "0.1.0",
+      map = "atlantic",
+      geography = 6,
+      names = {
+               AT2_GX, AT2_GY, AT2_U, AT2_V, AT2_GEO, AT2_LAND_COARSE,
+               AT2_DETAIL, AT2_FAR, AT2_ENTRY, AT2_CX, AT2_CY,
+               AT_WW[1], AT_WW[2], AT_WW[3], AT_WW[4], AT_WW[5], AT_WW[6],
+               AT_CANALS[1], AT_CANALS[2], AT_CANALS[3], AT_CANALS[4], AT_CANALS[5], AT_CANALS[6],
+               AT_DAMS[1], AT_DAMS[2], AT_DAMS[3], AT_DAMS[4], AT_DAMS[5], AT_DAMS[6],
+               AT_FORDS[1], AT_FORDS[2], AT_FORDS[3], AT_FORDS[4], AT_FORDS[5], AT_FORDS[6]},
+      files = {AT_GEO_FILE, AT_LAND_COARSE_FILE, AT_WW_FILES[1],
+               AT_WW_FILES[2], AT_WW_FILES[3], AT_WW_FILES[4], AT_WW_FILES[5], AT_WW_FILES[6]},
+    },
+    {
+      release = "0.1.0",
+      map = "olde_world",
+      geography = 7,
+      names = {
+               OW2_GX, OW2_GY, OW2_U, OW2_V, OW2_GEO, OW2_LAND_COARSE,
+               OW2_DETAIL, OW2_FAR, OW2_ENTRY, OW2_CX, OW2_CY,
+               OW_WW[1], OW_WW[2], OW_WW[3], OW_WW[4], OW_WW[5], OW_WW[6],
+               OW_CANALS[1], OW_CANALS[2], OW_CANALS[3], OW_CANALS[4], OW_CANALS[5], OW_CANALS[6],
+               OW_DAMS[1], OW_DAMS[2], OW_DAMS[3], OW_DAMS[4], OW_DAMS[5], OW_DAMS[6],
+               OW_FORDS[1], OW_FORDS[2], OW_FORDS[3], OW_FORDS[4], OW_FORDS[5], OW_FORDS[6]},
+      files = {OW_GEO_FILE, OW_LAND_COARSE_FILE, OW_WW_FILES[1],
+               OW_WW_FILES[2], OW_WW_FILES[3], OW_WW_FILES[4], OW_WW_FILES[5], OW_WW_FILES[6]},
+    },
+    -- The region layer (milestone region-layer): its fixed names, and under files the region table, which
+    -- releases every name regions.lua composes from it (a stem of regions.names.row, a row id and the
+    -- suffix; a warped query point per share). It belongs to no geography. tools/tnconfig.py composes
+    -- those names by the same rule, so the dump facts, the T16 rows and build_zip.py --release see each.
+    {
+      release = "0.1.0",
+      names = {RG_DESTROYED_SD, RG_DESTROYED_W, RG_DESTROYED_DEPTH, RG_FOREST_W, RG_FOREST_SUM, RG_TREE_MULT,
+               RG_MARSH_W, RG_HOTSPOT_W, RG_ENEMY_MULT, RG_U .. RG_V, RG_V_ .. RG_V, RG_OX, RG_OY, RG_AX, RG_AY, RG_WK,
+               RG_WX, RG_WY, RG_ROUGH},
+      files = {"prototypes/tables/regions.lua"},
+    },
+    -- Geographies 8 to 10 (climate-tiles): each map's version that composes the shore body, with its
+    -- own chain, bodies, frozen offsets and waterway sets (Europe's also its inland lakes) and the
+    -- generated files they bind.
+    {
+      release = "0.1.0",
+      map = "europe",
+      geography = 8,
+      names = {
+               CT.EU4_GX, CT.EU4_GY, CT.EU4_U, CT.EU4_V, CT.EU4_GEO, CT.EU4_LAND_COARSE, CT.EU4_DETAIL, CT.EU4_FAR,
+               CT.EU4_ENTRY, CT.EU4_CX, CT.EU4_CY, CT.EU4_LAKES, CT.EU4_SHORE,
+               CT.EU_WW2[1], CT.EU_WW2[2], CT.EU_WW2[3], CT.EU_WW2[4], CT.EU_WW2[5], CT.EU_WW2[6],
+               CT.EU_CANALS2[1], CT.EU_CANALS2[2], CT.EU_CANALS2[3], CT.EU_CANALS2[4], CT.EU_CANALS2[5],
+               CT.EU_CANALS2[6],
+               CT.EU_DAMS2[1], CT.EU_DAMS2[2], CT.EU_DAMS2[3], CT.EU_DAMS2[4], CT.EU_DAMS2[5], CT.EU_DAMS2[6],
+               CT.EU_FORDS2[1], CT.EU_FORDS2[2], CT.EU_FORDS2[3], CT.EU_FORDS2[4], CT.EU_FORDS2[5], CT.EU_FORDS2[6]},
+      files = {EU_GEO_FILE, EU_LAND_COARSE_FILE, EU_SPAWN_FILE,
+               EU_WW_FILES[1], EU_WW_FILES[2], EU_WW_FILES[3], EU_WW_FILES[4], EU_WW_FILES[5], EU_WW_FILES[6]},
+    },
+    {
+      release = "0.1.0",
+      map = "atlantic",
+      geography = 9,
+      names = {
+               CT.AT3_GX, CT.AT3_GY, CT.AT3_U, CT.AT3_V, CT.AT3_GEO, CT.AT3_LAND_COARSE, CT.AT3_DETAIL, CT.AT3_FAR,
+               CT.AT3_ENTRY, CT.AT3_CX, CT.AT3_CY, CT.AT3_SHORE,
+               CT.AT_WW2[1], CT.AT_WW2[2], CT.AT_WW2[3], CT.AT_WW2[4], CT.AT_WW2[5], CT.AT_WW2[6],
+               CT.AT_CANALS2[1], CT.AT_CANALS2[2], CT.AT_CANALS2[3], CT.AT_CANALS2[4], CT.AT_CANALS2[5],
+               CT.AT_CANALS2[6],
+               CT.AT_DAMS2[1], CT.AT_DAMS2[2], CT.AT_DAMS2[3], CT.AT_DAMS2[4], CT.AT_DAMS2[5], CT.AT_DAMS2[6],
+               CT.AT_FORDS2[1], CT.AT_FORDS2[2], CT.AT_FORDS2[3], CT.AT_FORDS2[4], CT.AT_FORDS2[5], CT.AT_FORDS2[6]},
+      files = {AT_GEO_FILE, AT_LAND_COARSE_FILE,
+               AT_WW_FILES[1], AT_WW_FILES[2], AT_WW_FILES[3], AT_WW_FILES[4], AT_WW_FILES[5], AT_WW_FILES[6]},
+    },
+    {
+      release = "0.1.0",
+      map = "olde_world",
+      geography = 10,
+      names = {
+               CT.OW3_GX, CT.OW3_GY, CT.OW3_U, CT.OW3_V, CT.OW3_GEO, CT.OW3_LAND_COARSE, CT.OW3_DETAIL, CT.OW3_FAR,
+               CT.OW3_ENTRY, CT.OW3_CX, CT.OW3_CY, CT.OW3_SHORE,
+               CT.OW_WW2[1], CT.OW_WW2[2], CT.OW_WW2[3], CT.OW_WW2[4], CT.OW_WW2[5], CT.OW_WW2[6],
+               CT.OW_CANALS2[1], CT.OW_CANALS2[2], CT.OW_CANALS2[3], CT.OW_CANALS2[4], CT.OW_CANALS2[5],
+               CT.OW_CANALS2[6],
+               CT.OW_DAMS2[1], CT.OW_DAMS2[2], CT.OW_DAMS2[3], CT.OW_DAMS2[4], CT.OW_DAMS2[5], CT.OW_DAMS2[6],
+               CT.OW_FORDS2[1], CT.OW_FORDS2[2], CT.OW_FORDS2[3], CT.OW_FORDS2[4], CT.OW_FORDS2[5], CT.OW_FORDS2[6]},
+      files = {OW_GEO_FILE, OW_LAND_COARSE_FILE,
+               OW_WW_FILES[1], OW_WW_FILES[2], OW_WW_FILES[3], OW_WW_FILES[4], OW_WW_FILES[5], OW_WW_FILES[6]},
+    },
+    -- The climate and tile bodies (climate-tiles). They belong to no geography: every map's preset names
+    -- them. The hook keys hold their off values. The Alien Biomes variants read AB's hot and cold
+    -- controls, so they exist only with Alien Biomes and are registered from the M2 dump.
+    {
+      release = "0.1.0",
+      names = {CT.CL_LAT, CT.CL_LON, CT.CL_DRY, CT.CL_CORE, CT.CL_T_AB, CT.CL_M_AB, CT.CL_A_AB, CT.CL_T_FB,
+      CT.CL_M_FB, CT.CL_A_FB,
+               CT.VT_GRASS_1, CT.VT_GRASS_2, CT.VT_GRASS_3, CT.VT_GRASS_4, CT.VT_DRY_DIRT, CT.VT_DIRT_1, CT.VT_DIRT_2,
+               CT.VT_DIRT_3,
+               CT.VT_DIRT_4, CT.VT_DIRT_5, CT.VT_DIRT_6, CT.VT_DIRT_7, CT.VT_SAND_1, CT.VT_SAND_2, CT.VT_SAND_3,
+               CT.VT_RED_0, CT.VT_RED_1,
+               CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY, CT.MARSH_MUD,
+               CT.MARSH_MUD_BODY, CT.MARSH_SHALLOW,
+               CT.MARSH_SHALLOW_BODY, CT.MARSH_GRASS, CT.MARSH_GRASS_BODY},
+    },
+    -- The palm switch (climate-tiles): the constant and the copies of Alien Biomes 0.8.0's palm autoplace,
+    -- built on every load from the generated table, with or without Alien Biomes (tiles.palm).
+    {
+      release = "0.1.0",
+      names = {CT.PALM_CONST, CT.PALM_A_P, CT.PALM_A_R, CT.PALM_B_P, CT.PALM_B_R},
+      files = {"prototypes/generated/palms_ab_v1.lua"},
+    },
+    -- The tree bodies (trees-forests). They belong to no geography. The hook keys and the gate hold their
+    -- off values; the palms' second versions wrap climate-tiles' copies, defined on every load as the
+    -- copies are (trees.lua).
+    {
+      release = "0.1.0",
+      names = {TFN.K_FORESTS_ON, TFN.K_TREE_MULT, TFN.TF_VTEMP, TFN.TF_VTREE_R, TFN.TF_VDECO, TFN.PALM_A_P2,
+      TFN.PALM_B_P2,
+               TF_TREES["tree-01"].p, TF_TREES["tree-01"].r, TF_TREES["tree-01"].body,
+               TF_TREES["tree-02"].p, TF_TREES["tree-02"].r, TF_TREES["tree-02"].body,
+               TF_TREES["tree-02-red"].p, TF_TREES["tree-02-red"].r, TF_TREES["tree-02-red"].body,
+               TF_TREES["tree-03"].p, TF_TREES["tree-03"].r, TF_TREES["tree-03"].body,
+               TF_TREES["tree-04"].p, TF_TREES["tree-04"].r, TF_TREES["tree-04"].body,
+               TF_TREES["tree-05"].p, TF_TREES["tree-05"].r, TF_TREES["tree-05"].body,
+               TF_TREES["tree-06"].p, TF_TREES["tree-06"].r, TF_TREES["tree-06"].body,
+               TF_TREES["tree-06-brown"].p, TF_TREES["tree-06-brown"].r, TF_TREES["tree-06-brown"].body,
+               TF_TREES["tree-07"].p, TF_TREES["tree-07"].r, TF_TREES["tree-07"].body,
+               TF_TREES["tree-08"].p, TF_TREES["tree-08"].r, TF_TREES["tree-08"].body,
+               TF_TREES["tree-08-brown"].p, TF_TREES["tree-08-brown"].r, TF_TREES["tree-08-brown"].body,
+               TF_TREES["tree-08-red"].p, TF_TREES["tree-08-red"].r, TF_TREES["tree-08-red"].body,
+               TF_TREES["tree-09"].p, TF_TREES["tree-09"].r, TF_TREES["tree-09"].body,
+               TF_TREES["tree-09-brown"].p, TF_TREES["tree-09-brown"].r, TF_TREES["tree-09-brown"].body,
+               TF_TREES["tree-09-red"].p, TF_TREES["tree-09-red"].r, TF_TREES["tree-09-red"].body,
+               TF_ROCKS["huge-rock"].key, TF_ROCKS["huge-rock"].body, TF_ROCKS["big-rock"].key,
+               TF_ROCKS["big-rock"].body, TF_ROCKS["big-sand-rock"].key, TF_ROCKS["big-sand-rock"].body,
+               TF_ROCKS["medium-rock"].key, TF_ROCKS["medium-rock"].body, TF_ROCKS["small-rock"].key,
+               TF_ROCKS["small-rock"].body, TF_ROCKS["tiny-rock"].key, TF_ROCKS["tiny-rock"].body,
+               TF_ROCKS["medium-sand-rock"].key, TF_ROCKS["medium-sand-rock"].body, TF_ROCKS["small-sand-rock"].key,
+               TF_ROCKS["small-sand-rock"].body, TF_ROCKS["red-desert-decal"].key, TF_ROCKS["red-desert-decal"].body,
+               TF_ROCKS["sand-decal"].key, TF_ROCKS["sand-decal"].body, TF_ROCKS["sand-dune-decal"].key,
+               TF_ROCKS["sand-dune-decal"].body,
+               TF_DECO["light-mud-decal"], TF_DECO["green-asterisk"], TF_DECO["green-asterisk-mini"],
+               TF_DECO["green-bush-mini"], TF_DECO["green-carpet-grass"], TF_DECO["green-croton"],
+               TF_DECO["green-desert-bush"], TF_DECO["green-hairy-grass"], TF_DECO["green-pita"],
+               TF_DECO["green-pita-mini"], TF_DECO["green-small-grass"]},
+    },
+    -- The ridges (milestone ridges): no geography of their own; each map's crest and openings bodies read
+    -- prototypes/tables/ranges.lua, and the shared bodies with the toggle's neutral pair (waterways') read
+    -- them.
+    {
+      release = "0.1.0",
+      names = {RDN.EU_CREST, RDN.AT_CREST, RDN.OW_CREST, RDN.EU_OPENINGS, RDN.AT_OPENINGS, RDN.OW_OPENINGS,
+      RDN.EU_BAND, RDN.AT_BAND, RDN.OW_BAND, RDN.RD_D2,
+               RDN.RD_FREE,
+               RDN.RD_CLIFF_ELEVATION, RDN.RD_CLIFFINESS, RDN.RD_CLEAR, RDN.ORE_IRON, RDN.ORE_COPPER, RDN.ORE_COAL,
+               RDN.ORE_STONE, RDN.ORE_URANIUM,
+               RDN.ORE_OIL},
+      files = {"prototypes/tables/ranges.lua"},
+    },
+    -- Geographies 11 to 13 (resources-enemies): each map's version that wraps its composition in
+    -- the map's offshore field stamp, with its own chain, bodies, frozen offsets, shore body and
+    -- waterway sets (Europe's also its inland lakes), and the stamp body itself, built from
+    -- prototypes/tables/hotspots.lua.
+    {
+      release = "0.1.0",
+      map = "europe",
+      geography = 11,
+      names = {
+               REN.EU5_GX, REN.EU5_GY, REN.EU5_U, REN.EU5_V, REN.EU5_GEO, REN.EU5_LAND_COARSE, REN.EU5_DETAIL,
+               REN.EU5_FAR,
+               REN.EU5_ENTRY, REN.EU5_CX, REN.EU5_CY, REN.EU5_LAKES, REN.EU5_SHORE, REN.EU_FIELDS,
+               REN.EU_WW3[1], REN.EU_WW3[2], REN.EU_WW3[3], REN.EU_WW3[4], REN.EU_WW3[5], REN.EU_WW3[6],
+               REN.EU_CANALS3[1], REN.EU_CANALS3[2], REN.EU_CANALS3[3], REN.EU_CANALS3[4], REN.EU_CANALS3[5],
+               REN.EU_CANALS3[6],
+               REN.EU_DAMS3[1], REN.EU_DAMS3[2], REN.EU_DAMS3[3], REN.EU_DAMS3[4], REN.EU_DAMS3[5], REN.EU_DAMS3[6],
+               REN.EU_FORDS3[1], REN.EU_FORDS3[2], REN.EU_FORDS3[3], REN.EU_FORDS3[4], REN.EU_FORDS3[5],
+               REN.EU_FORDS3[6]},
+      files = {EU_GEO_FILE, EU_LAND_COARSE_FILE, EU_SPAWN_FILE, "prototypes/tables/hotspots.lua",
+               EU_WW_FILES[1], EU_WW_FILES[2], EU_WW_FILES[3], EU_WW_FILES[4], EU_WW_FILES[5], EU_WW_FILES[6]},
+    },
+    {
+      release = "0.1.0",
+      map = "atlantic",
+      geography = 12,
+      names = {
+               REN.AT4_GX, REN.AT4_GY, REN.AT4_U, REN.AT4_V, REN.AT4_GEO, REN.AT4_LAND_COARSE, REN.AT4_DETAIL,
+               REN.AT4_FAR,
+               REN.AT4_ENTRY, REN.AT4_CX, REN.AT4_CY, REN.AT4_SHORE, REN.AT_FIELDS,
+               REN.AT_WW3[1], REN.AT_WW3[2], REN.AT_WW3[3], REN.AT_WW3[4], REN.AT_WW3[5], REN.AT_WW3[6],
+               REN.AT_CANALS3[1], REN.AT_CANALS3[2], REN.AT_CANALS3[3], REN.AT_CANALS3[4], REN.AT_CANALS3[5],
+               REN.AT_CANALS3[6],
+               REN.AT_DAMS3[1], REN.AT_DAMS3[2], REN.AT_DAMS3[3], REN.AT_DAMS3[4], REN.AT_DAMS3[5], REN.AT_DAMS3[6],
+               REN.AT_FORDS3[1], REN.AT_FORDS3[2], REN.AT_FORDS3[3], REN.AT_FORDS3[4], REN.AT_FORDS3[5],
+               REN.AT_FORDS3[6]},
+      files = {AT_GEO_FILE, AT_LAND_COARSE_FILE, "prototypes/tables/hotspots.lua",
+               AT_WW_FILES[1], AT_WW_FILES[2], AT_WW_FILES[3], AT_WW_FILES[4], AT_WW_FILES[5], AT_WW_FILES[6]},
+    },
+    {
+      release = "0.1.0",
+      map = "olde_world",
+      geography = 13,
+      names = {
+               REN.OW4_GX, REN.OW4_GY, REN.OW4_U, REN.OW4_V, REN.OW4_GEO, REN.OW4_LAND_COARSE, REN.OW4_DETAIL,
+               REN.OW4_FAR,
+               REN.OW4_ENTRY, REN.OW4_CX, REN.OW4_CY, REN.OW4_SHORE, REN.OW_FIELDS,
+               REN.OW_WW3[1], REN.OW_WW3[2], REN.OW_WW3[3], REN.OW_WW3[4], REN.OW_WW3[5], REN.OW_WW3[6],
+               REN.OW_CANALS3[1], REN.OW_CANALS3[2], REN.OW_CANALS3[3], REN.OW_CANALS3[4], REN.OW_CANALS3[5],
+               REN.OW_CANALS3[6],
+               REN.OW_DAMS3[1], REN.OW_DAMS3[2], REN.OW_DAMS3[3], REN.OW_DAMS3[4], REN.OW_DAMS3[5], REN.OW_DAMS3[6],
+               REN.OW_FORDS3[1], REN.OW_FORDS3[2], REN.OW_FORDS3[3], REN.OW_FORDS3[4], REN.OW_FORDS3[5],
+               REN.OW_FORDS3[6]},
+      files = {OW_GEO_FILE, OW_LAND_COARSE_FILE, "prototypes/tables/hotspots.lua",
+               OW_WW_FILES[1], OW_WW_FILES[2], OW_WW_FILES[3], OW_WW_FILES[4], OW_WW_FILES[5], OW_WW_FILES[6]},
+    },
+    -- The hotspot, ramp, sea and enemy bodies and the wrappers of the pack's live autoplace (milestone
+    -- resources-enemies): no geography of their own. The Oil Rig's offshore-oil wrappers exist only
+    -- with the Oil Rig loaded, so tests/frozen.json registers them from the M3 dump with the "live"
+    -- mask (their own composition; the Oil Rig text they wrap follows the pack, versioning rule 3).
+    {
+      release = "0.1.0",
+      names = {REN.HS_BLOB, REN.HS_IRON, REN.HS_IRON_P, REN.HS_IRON_R, REN.HS_COPPER, REN.HS_COPPER_P,
+      REN.HS_COPPER_R, REN.HS_COAL, REN.HS_COAL_P,
+               REN.HS_COAL_R, REN.HS_STONE, REN.HS_STONE_P, REN.HS_STONE_R, REN.HS_URANIUM, REN.HS_URANIUM_P,
+               REN.HS_URANIUM_R, REN.HS_OIL, REN.HS_OIL_P,
+               REN.HS_OIL_R, REN.HS_OFFSHORE, REN.HS_OFFSHORE_P, REN.HS_OFFSHORE_R, REN.RAMP, REN.SEA,
+               REN.ENEMY_LAYER, REN.ENEMY, REN.ORE_IRON_P2,
+               REN.ORE_IRON_R, REN.ORE_COPPER_P2, REN.ORE_COPPER_R, REN.ORE_COAL_P2, REN.ORE_COAL_R, REN.ORE_STONE_P2,
+               REN.ORE_STONE_R,
+               REN.ORE_URANIUM_P2, REN.ORE_URANIUM_R, REN.ORE_OIL_P2, REN.ORE_OIL_R, REN.OFFSHORE_P, REN.OFFSHORE_R},
+      files = {"prototypes/tables/hotspots.lua"},
     },
   },
 
@@ -445,6 +1660,223 @@ return {
     },
   },
 
+  -- Ridges (milestone ridges; ARCHITECTURE.md milestone contract 8; S5; APPROVALS 5 and 11). Every number the
+  -- ridge bodies use; prototypes/expressions/ridges.lua builds them from prototypes/tables/ranges.lua:
+  --   flank_tiles, ramp_tiles, contour   cliff_elevation = cliff_elevation_0 + cliff_elevation_interval * f,
+  --              f = clamp(1 + (flank - d) / ramp, low, high) with d the crest distance in tiles, so the
+  --              only contour is f = 1, flank tiles out on each side, high side toward the crest; the
+  --              flank sits off the 4-tile lattice (S5: an exact lattice hit deletes the cliffs) and
+  --              no term reads cliff_richness, so frequency, continuity and richness are inert
+  --   cliffiness   the cliffiness of a ridge cell; 0 inside an opening and inside the ridge-free start
+  --   pass_tiles   an opening's cliffiness gap along the crest (APPROVALS 5: at least 12, for 8 tiles
+  --              clear; S5 measured 16 clear from a 16-tile gap, but a 16-tile slot read 7.5 at Verecke
+  --              on the milestone's T6, at the limit, so 20), reach_tiles its half-length across;
+  --              tip_tiles how far past a crest's end vertex an opening there reaches, so the ridge's
+  --              end cap (flank_tiles out, plus a cell and a cliff's box) goes with it
+  --   edge_tiles, edge_reach_tiles   a range cut by a map's edge with no pass on that map: no ridge cell
+  --              within edge_tiles of the edge and edge_reach_tiles of the crossing (APPROVALS 5)
+  --   start      the ridge-free disc round the spawn: max(radius_tiles, starting_area_radius) plus
+  --              margin_tiles, the 4-tile lattice cell and a cliff's box (decision 12; T7: 0 cliffs and
+  --              0 ridge cliffiness within 150 tiles)
+  --   ore_clear_tiles   no ore within this of a crest outside the start disc, past the
+  --              flank cliffs' boxes, so no ore entity stands on a ridge cell
+  --   band_max_angle_degrees   the ore clearance reads, in the Entity program, each map's crest band: a
+  --              superset of the tiles within ore_clear_tiles of a crest, built from crest pieces monotone
+  --              along one axis whose segments lie within this angle of it, each a piecewise-linear
+  --              function of that axis (3 operations per segment against 14 for an exact distance, which
+  --              measured Entity +3,028 on Europe), its half-height ore_clear_tiles over the cosine of the
+  --              piece's steepest angle
+  --   centre_tiles   where the band is read inside a tile: the Entity program samples a tile at its
+  --              integer corner while an ore entity stands at the tile's centre, half a tile on in x and
+  --              y (an in-game T8 found ore 23.4 to 23.97 tiles from a crest by centre, every one with
+  --              its corner outside 24), so the band reads the centre
+  --   switch_threshold   the toggle reads on above it (its bodies are 1 and 0)
+  --   reset_size   the cliff control's size the on_init reset writes when the slider was none (S5)
+  --   ores       the Earth ores whose live probability is wrapped (resource, preset key, wrapper)
+  --   water      the water frequency slider's two vanilla readers stay group 0's water_slider
+  --              (D15), baked on every Earth preset at their default-slider values
+  -- Names carry the ridges' version suffix; a changed body ships under the next one.
+  ridges = {
+    flank_tiles = 16.37,
+    ramp_tiles = 32,
+    contour = {low = 0.5, high = 1.5},
+    cliffiness = 10,
+    pass_tiles = 20,
+    reach_tiles = 32,
+    tip_tiles = 24,
+    edge_tiles = 16,
+    edge_reach_tiles = 256,
+    start = {radius_tiles = 150, margin_tiles = 8},
+    ore_clear_tiles = 24,
+    band_max_angle_degrees = 60,
+    centre_tiles = 0.5,
+    switch_threshold = 0.5,
+    reset_size = 1,
+    max_arguments = 255,
+    names = {
+      d2 = RDN.RD_D2, free = RDN.RD_FREE, cliff_elevation = RDN.RD_CLIFF_ELEVATION, cliffiness = RDN.RD_CLIFFINESS,
+      clear = RDN.RD_CLEAR,
+      crest = {europe = RDN.EU_CREST, atlantic = RDN.AT_CREST, olde_world = RDN.OW_CREST},
+      openings = {europe = RDN.EU_OPENINGS, atlantic = RDN.AT_OPENINGS, olde_world = RDN.OW_OPENINGS},
+      band = {europe = RDN.EU_BAND, atlantic = RDN.AT_BAND, olde_world = RDN.OW_BAND},
+    },
+    ores = {
+      {resource = "iron-ore", key = "entity:iron-ore:probability", name = RDN.ORE_IRON},
+      {resource = "copper-ore", key = "entity:copper-ore:probability", name = RDN.ORE_COPPER},
+      {resource = "coal", key = "entity:coal:probability", name = RDN.ORE_COAL},
+      {resource = "stone", key = "entity:stone:probability", name = RDN.ORE_STONE},
+      {resource = "uranium-ore", key = "entity:uranium-ore:probability", name = RDN.ORE_URANIUM},
+      {resource = "crude-oil", key = "entity:crude-oil:probability", name = RDN.ORE_OIL},
+    },
+  },
+
+  -- Resources (milestone resources-enemies; ARCHITECTURE.md milestone contract 9; D20, D23; S6 Q5): the
+  -- presets' frequency for the six base resources (planet entries stay neutral), the richness ramp
+  -- 1 + gain * clamp((distance - from) / span, 0, 1) on the four solid ores (S6 Q5: 1.01, 1.09, 1.23
+  -- and 1.50 at 512, 1024, 2048 and 4096 tiles, 1.000 inside 450), each Earth ore's wrapper names
+  -- (p_v1 is ridges' probability wrapper, which the next version reads), the Oil Rig's offshore-oil
+  -- wrappers and the random offshore-oil sea mask: tn_land_coarse below minus threshold_px, the
+  -- smallest whole threshold at which no reference river pixel more than 16 px from the sea lies in
+  -- the mask on any map.
+  resources = {
+    frequency = 0.75,
+    controls = {"iron-ore", "copper-ore", "coal", "stone", "uranium-ore", "crude-oil"},
+    ramp = {name = REN.RAMP, from = 450, span = 3550, gain = 0.5},
+    ramped = {"iron-ore", "copper-ore", "coal", "stone"},
+    ores = {
+      {resource = "iron-ore", probability = "entity:iron-ore:probability", richness = "entity:iron-ore:richness",
+       p_v1 = RDN.ORE_IRON, p = REN.ORE_IRON_P2, r = REN.ORE_IRON_R},
+      {resource = "copper-ore", probability = "entity:copper-ore:probability",
+       richness = "entity:copper-ore:richness", p_v1 = RDN.ORE_COPPER, p = REN.ORE_COPPER_P2, r = REN.ORE_COPPER_R},
+      {resource = "coal", probability = "entity:coal:probability", richness = "entity:coal:richness",
+       p_v1 = RDN.ORE_COAL, p = REN.ORE_COAL_P2, r = REN.ORE_COAL_R},
+      {resource = "stone", probability = "entity:stone:probability", richness = "entity:stone:richness",
+       p_v1 = RDN.ORE_STONE, p = REN.ORE_STONE_P2, r = REN.ORE_STONE_R},
+      {resource = "uranium-ore", probability = "entity:uranium-ore:probability",
+       richness = "entity:uranium-ore:richness", p_v1 = RDN.ORE_URANIUM, p = REN.ORE_URANIUM_P2, r = REN.ORE_URANIUM_R},
+      {resource = "crude-oil", probability = "entity:crude-oil:probability", richness = "entity:crude-oil:richness",
+       p_v1 = RDN.ORE_OIL, p = REN.ORE_OIL_P2, r = REN.ORE_OIL_R},
+    },
+    offshore = {resource = "offshore-oil", probability = "entity:offshore-oil:probability",
+                richness = "entity:offshore-oil:richness", p = REN.OFFSHORE_P, r = REN.OFFSHORE_R},
+    sea = {name = REN.SEA, threshold_px = 7},
+  },
+
+  -- Hotspots (milestone resources-enemies; S6 A5 with a shared blob; APPROVALS 2; decisions 8 and 16). The
+  -- rows are prototypes/tables/hotspots.lua (tools/build_hotspots.py writes it from the approval data):
+  -- each row's disc is the region layer's row of the same id, jittered per seed there. At scale s a
+  -- row's footprint radius is R = min(max(r * s, floor_tiles), cap * s) tiles (r its radius and cap
+  -- r + 50 km, both in reference pixels: APPROVALS 2's floor at small scales, capped where it would
+  -- pass the city-removal distance), read through the region layer's depth, so the footprint is the
+  -- disc's roughened distance under R:
+  --   core_share   spots start at land candidates inside a row's start disc, core_share of R (S6:
+  --              core 112 of a 160-tile disc; here 0.75, so the smallest holds about 4 candidates at
+  --              scale 1) and at most the disc holding spot.max_spots candidates, and reach at most the
+  --              rest of R, so ore stays inside R
+  --   enemy_share   extra bases start inside this share of R (S6: 40 tiles inside a 160-tile disc)
+  --   patches    S6's spots per hotspot (4 of 5 M): the blob's reference spot height only
+  --   land_px, sea_px   a candidate is land where tn_land_coarse is above land_px, and sea (offshore
+  --              rows) where it is below minus sea_px (decision 8: the one land field outside Tile); the
+  --              coarse field's zero contour runs inland of narrow coasts, so the land gate sits 4 px
+  --              seaward of it (an offline probe of every adopted core at scales 1 and 6: at 0, 22
+  --              cores pass under 0.6 of their reference land, Pentelicus none of it; at -4 none)
+  --   land_grade_px   favourability rises over this many px of tn_land_coarse past the gate, so a
+  --              region places its most inland candidates first
+  --   spot       one spot_noise per resource, each with its own seed1 (A-11), region_size tiles, its
+  --              candidates per region (candidates_fine at scales up to fine_scale, where footprints
+  --              are smallest, so even the smallest core holds several candidates), at most max_spots
+  --              per row, and a hard region target equal to the sum of its land candidates' quantities,
+  --              so every one is placed and rows of a resource sharing a region never draw on each
+  --              other's target (a shared target let Marmara's candidates take all of Pentelicus' and
+  --              Kryvbas' all of Kursk's on one Europe seed at scale 1); a region places its most
+  --              inland candidates first
+  --   target     a row's amount: strength * share * per_km2 / spots_per_km2 * base_density * mean_size *
+  --              size * f(d) * ramp(d) with f vanilla's patch quantity and richness factor at the
+  --              candidate's distance d (core/prototypes/noise-functions.lua:205-207, 264-280;
+  --              core/lualib/resource-autoplace.lua:115-120), share the disc's land share (water share
+  --              for offshore rows) from the raster (decision 16; FEAS-12); reference_strength and
+  --              reference_factor give the blob's typical spot height; density_floor raises a large
+  --              footprint's amount to that many times vanilla's mean amount per tile over its area
+  --              (base_density times frequency, S6's lowest measured ratio 15), so a disc of hundreds
+  --              of tiles at scale 6 still holds the density T8 asks (Kursk at strength 3 held 4.95
+  --              times vanilla's mean over its 243-tile footprint without it)
+  --   blob       the shared texture on every spot (S6 A5c42s): three basis noises, added as
+  --              (blob - mean) * height / divisor where a spot is positive
+  --   resources  per resource its seed1, vanilla's base_density, spots per km2, rq factor and mean
+  --              random spot size (base/prototypes/entity/resources.lua; the Oil Rig's for offshore oil,
+  --              R4 4.1), fluids their well penalty and additional richness, sea for offshore fields
+  hotspots = {
+    floor_tiles = 48,
+    core_share = 0.75,
+    enemy_share = 0.75,
+    patches = 4,
+    land_px = -4,
+    sea_px = 0,
+    land_grade_px = 8,
+    spot = {region_size = 512, candidates = 512, candidates_fine = 1024, fine_scale = 1, spacing = 16,
+            spacing_fine = 8, max_spots = 32, basement = -100000, basement_radius = 128, min_radius = 1,
+            cube_root = 1 / 3, cone_factor = 3},
+    target = {fade_from = 150, fade_span = 300, double_from = 300, double_span = 1300, rich_offset = 1000,
+              rich_span = 2600, per_km2 = 1000000, reference_strength = 2, reference_factor = 2,
+              density_floor = 15},
+    blob = {name = REN.HS_BLOB, seed1 = 7302, mean = 1 / 3, divisor = 7,
+            octaves = {{input_scale = 1 / 8, output_scale = 1}, {input_scale = 1 / 24, output_scale = 1},
+                       {input_scale = 1 / 64, output_scale = 1.5}}},
+    resources = {
+      {resource = "iron-ore", seed1 = 7301, base_density = 10, spots_per_km2 = 2.5, rq = 0.11, mean_size = 1.125,
+       names = {v = REN.HS_IRON, p = REN.HS_IRON_P, r = REN.HS_IRON_R}},
+      {resource = "copper-ore", seed1 = 7311, base_density = 8, spots_per_km2 = 2.5, rq = 0.11, mean_size = 1.125,
+       names = {v = REN.HS_COPPER, p = REN.HS_COPPER_P, r = REN.HS_COPPER_R}},
+      {resource = "coal", seed1 = 7321, base_density = 8, spots_per_km2 = 2.5, rq = 0.1, mean_size = 1.125,
+       names = {v = REN.HS_COAL, p = REN.HS_COAL_P, r = REN.HS_COAL_R}},
+      {resource = "stone", seed1 = 7331, base_density = 4, spots_per_km2 = 2.5, rq = 0.1, mean_size = 1.125,
+       names = {v = REN.HS_STONE, p = REN.HS_STONE_P, r = REN.HS_STONE_R}},
+      {resource = "uranium-ore", seed1 = 7341, base_density = 0.9, spots_per_km2 = 1.25, rq = 0.1, mean_size = 3,
+       names = {v = REN.HS_URANIUM, p = REN.HS_URANIUM_P, r = REN.HS_URANIUM_R}},
+      {resource = "crude-oil", seed1 = 7351, base_density = 8.2, spots_per_km2 = 1.8, rq = 0.1, mean_size = 1,
+       fluid = {penalty = 48, additional = 220000, seed = 7352},
+       names = {v = REN.HS_OIL, p = REN.HS_OIL_P, r = REN.HS_OIL_R}},
+      {resource = "offshore-oil", seed1 = 7361, base_density = 10, spots_per_km2 = 1.8, rq = 0.1, mean_size = 3.5,
+       fluid = {penalty = 100, additional = 350000, seed = 7362}, sea = true,
+       names = {v = REN.HS_OFFSHORE, p = REN.HS_OFFSHORE_P, r = REN.HS_OFFSHORE_R}},
+    },
+  },
+
+  -- The offshore field stamps (milestone resources-enemies; APPROVALS 3): each map's body is
+  -- stamp_elevation inside every adopted offshore row's footprint grown by cover_px (the region
+  -- layer's edge roughness plus a well's box), else 0, and the map's newer elevation entry takes
+  -- min(elevation, stamp) where the ground is already water, so every well the Entity program places
+  -- inside the footprint stands on deepwater. A row's centre is the region layer's jittered centre
+  -- moved onto the map's own chain by the map's whole-pixel frame offset (hotspots.lua). -6 is
+  -- deepwater with and without Alien Biomes (S4 2; R3 3.1).
+  fields = {
+    stamp_elevation = -6,
+    cover_px = 4,
+    names = {europe = REN.EU_FIELDS, atlantic = REN.AT_FIELDS, olde_world = REN.OW_FIELDS},
+  },
+
+  -- The enemy layer (milestone resources-enemies; S6 A6E; APPROVALS 1b): a second spot_noise built like
+  -- vanilla's enemy_base_probability (base/prototypes/noise-expressions.lua:19-50) in its own seed1,
+  -- density (mult - 1) times vanilla's at candidates inside enemy_share of a hotspot footprint, on land,
+  -- active only beyond start_factor times starting_area_radius; the wrapper takes max(live, layer), so
+  -- bobenemies' intensity cap reaches it through enemy_base_radius and enemy_base_frequency (R5).
+  enemies = {
+    layer = REN.ENEMY_LAYER,
+    wrapper = REN.ENEMY,
+    seed1 = 7123,
+    region_size = 512,
+    candidates = 100,
+    basement = -1000,
+    basement_radius = 128,
+    start_factor = 2,
+    quantity_factor = 1 / 90,
+    radius_power = 3,
+    blob = {octaves = {{input_scale = 1 / 8, output_scale = 1}, {input_scale = 1 / 24, output_scale = 1},
+                       {input_scale = 1 / 64, output_scale = 2}},
+            mean = 0.5, radius_divisor = 150, near = 0.1, far = 0.9, far_distance = 3000, offset = 0.3,
+            start_depth = 20},
+  },
+
   -- Control-stage messages: the locale section and keys (locale/en/terra-nauvis.cfg). notice_withheld
   -- is the Map type notice where the map's preset is withheld (presets.withheld_with); drift_update
   -- is the drift line for a Map type fallback that moved with the mod itself rather than with a
@@ -469,12 +1901,346 @@ return {
       start = "start-message",
       rso = "rso-warning",
       drift_city = "drift-city",
+      drift_toggle = "drift-toggle",
+      toggle_on = "toggle-on",
+      toggle_off = "toggle-off",
+      cliff_reset = "cliff-reset",
     },
   },
 
   -- Toggles, keyed like settings: key -> {setting = <settings key>, preset_key = <key>, default,
   -- mechanism = "name switch" or "hook gate", on = <name>, off = <name>, maps = {<map keys>}};
   -- toggle_order lists the keys. Each toggle arrives with its milestone.
-  toggles = {},
-  toggle_order = {},
+  toggles = {
+    -- Canals (waterways): a name switch read by every waterways version's entry through a folded if(), so
+    -- only the selected branch compiles (S4: Tile 19,620 off and 20,161 on at scale 1).
+    canals = {setting = "canals", preset_key = K_CANALS, default = true, mechanism = "name switch",
+              on = ONE, off = ZERO, maps = {"europe", "atlantic", "olde_world"}},
+    -- Great forests (trees-forests): the hook gate of the boost on every living tree, outermost in the
+    -- hook, so on every other world the hook folds to the tree's own autoplace. Its values are the
+    -- numbers 1 and 0 as strings, so a save reads them back as it stored them (S7) and the drift line
+    -- compares like with like.
+    great_forests = {setting = "great_forests", preset_key = TFN.K_FORESTS_ON, default = true, mechanism = "hook gate",
+                     on = "1", off = "0", maps = {"europe", "atlantic", "olde_world"}},
+    -- Ridges (milestone ridges): a name switch read by the ridge bodies through a folded if(), so ridges off
+    -- compiles to a constant crest distance and 0 cliffs (S5; U5).
+    ridges = {setting = "ridges", preset_key = RDN.K_RIDGES, default = true, mechanism = "name switch",
+              on = ONE, off = ZERO, maps = {"europe", "atlantic", "olde_world"}},
+    -- Hotspots (milestone resources-enemies): a name switch read by the ore, enemy and offshore-oil wrappers
+    -- through a folded if(), so hotspots off compiles each wrapper to the live expression alone; each
+    -- map's offshore stamp key follows the same setting (presets.lua).
+    hotspots = {setting = "hotspots", preset_key = REN.K_HOTSPOTS, default = true, mechanism = "name switch",
+                on = ONE, off = ZERO, maps = {"europe", "atlantic", "olde_world"}},
+  },
+  toggle_order = {"canals", "great_forests", "ridges", "hotspots"},
+
+  -- Stable hooks on shared prototypes (ARCHITECTURE.md, "Stable hooks"): if(gate > threshold, on
+  -- branch, off value), whose outermost if() folds away on worlds without the gate. The gate's
+  -- prototype holds gate_off, Earth presets gate_on; the ford key's prototype holds its off value.
+  hooks = {
+    threshold = 0.5, gate_off = 0, gate_on = 1,
+    fords = {tile = "water-shallow", key = K_FORDS, off = "-inf"},
+  },
+  -- The canals switch's neutral bodies.
+  neutral = {one = ONE, zero = ZERO},
+
+  -- Waterways (milestone waterways; ARCHITECTURE.md, "Build-time data flow" step 3 and "Elevation
+  -- composition" steps 5 and 6). tools/build_waterways.py reads every number below; the mod reads
+  -- the set names and the hook values.
+  --   sets: per map, the generated set names by scale (index = scale): ww (rivers, straits and
+  --     turning basins, min() into the entry), canals (min(), canals on), dams (max(), canals off) and
+  --     fords (the water-shallow hook's on branch, through tn_fords). The geography version that
+  --     composes a map's sets names the same table as its `waterways` field, and the sets bind to
+  --     that version's chain, so one version per map composes them.
+  --   widths: a river is max(floor, k s) tiles wide by its class, carved with
+  --     half-width max(floor / 2 + margin, k s / 2); a strait max(floor / 2 + margin, s / 2,
+  --     w s / (2 km_per_px)) with floor two_way_tiles for the two-way straits; a canal max(floor / 2
+  --     + margin, s / 2); a dam max(dam.floor_tiles, dam.per_scale s).
+  --   depth: the carve's floor, plain water in vanilla and Alien Biomes for rivers and canals,
+  --     deepwater for straits (S4); slope: elevation per tile from the carve's edge.
+  --   tolerance_tiles: Douglas-Peucker per scale (review note 8); smoothing: S4's box windows in
+  --     tiles, tried smallest first until the smoothed centreline (simplified at fine_tolerance_tiles)
+  --     obeys the bend rule, for rivers; the drawn_kinds (straits and canals, sea passages the coast
+  --     fit fills as land) keep their drawn course unsmoothed, their R7b points (a strait's waypoints
+  --     and narrowest point, a canal's route vertices) held within their half-width less one tile;
+  --     bend: R4's rule, no window_tiles
+  --     stretch turning more than limit_degrees; basin_tiles: the turning basin where it still fails
+  --     (R4 W10).
+  --   ford: every every_px reference px of a river's path, length_tiles long along it, spanning the
+  --     carve plus margin_tiles, its banks bank_tiles beyond the carve on reference land; score
+  --     beats every water tile's autoplace inside it.
+  --   start: a spawn whose clear_tiles disc a corridor crosses moves to the nearest tile
+  --     with clear_tiles of land around it; radius_tiles is the start area the bank masks cover.
+  waterways = {
+    version = 1,
+    sets = {europe = EU_SETS3, atlantic = AT_SETS3, olde_world = OW_SETS3},
+    floor_tiles = 7, two_way_tiles = 11, margin_tiles = 0.25,
+    river_k = {major = 3, minor = 2},
+    km_per_px = 2.471,
+    depth = {river = -2.2, strait = -6, canal = -2.2},
+    slope = 4,
+    dam = {floor_tiles = 1.5, per_scale = 0.5},
+    tolerance_tiles = {2, 2, 2, 3, 3, 3},
+    smoothing = {windows = {1, 5, 9, 13, 17, 25, 33, 49, 65, 97}, passes = 3, step_tiles = 1,
+                 fine_tolerance_tiles = 0.5, drawn_kinds = {"strait", "canal"}},
+    bend = {window_tiles = 17, limit_degrees = 90},
+    basin_tiles = 30,
+    ford = {every_px = 60, length_tiles = 8, margin_tiles = 2, bank_tiles = 3, score = 10000},
+    vertex_grid = 16,
+    start = {clear_tiles = 12, radius_tiles = 150},
+  },
+
+  -- The region layer (milestone region-layer; ARCHITECTURE.md, "Region layer"; S10 design (d), design notes
+  -- 07:45): the rows of prototypes/tables/regions.lua as exact signed distances in reference pixels
+  -- at a query point on the coordinate chain, displaced by one shared domain warp and roughened by
+  -- one shared edge noise, with each layer's aggregates. Every row is evaluated in the frame map's
+  -- reference pixels: each map's raster sits on that grid at px_per_degree (Europe is an exact crop of
+  -- Atlantic's raster; Old World's edges are whole pixels away), so a map's own chain moves into the
+  -- frame by a whole-pixel offset and a row sits at its geography on every map and at every scale.
+  --   warp      two multi-octave noises (seed1 per axis), wavelength_px the finest octave, amplitude_px
+  --             times the noise, the vector clamped to clamp_px in length; a row follows its share
+  --   rough     one multi-octave noise added to every signed distance, clamped to +-clamp_px
+  --   octave_shift_px  each octave's x shift per octave index (its own lattice: no shared zero); every
+  --             octave is a basis_noise anchored to the frame (multioctave_noise offsets are not
+  --             shifts in 2.1.23, measured by this milestone)
+  --   ramp      membership weight clamp(mid + sd / width_px, 0, 1)
+  --   jitter    a hotspot's centre moves by up to its jitter radius per seed: S6's linear fold of
+  --             map_seed_small and the seed's high bits, plus the row's phase (A-11: no new noise)
+  --   names     the interface and internal names; a row's names are row.<kind> .. <row id> .. suffix
+  -- Names carry the layer's version suffix; a changed body ships under the next one.
+  regions = {
+    frame = "europe",
+    frame_tolerance_px = 0.01,
+    km_per_px = 2.471,
+    warp = {amplitude_px = 12, clamp_px = 24, wavelength_px = 96, octaves = 3, persistence = 0.5, seed1_x = 7801,
+            seed1_y = 7802},
+    rough = {amplitude_px = 1.5, clamp_px = 3, wavelength_px = 6, octaves = 2, persistence = 0.5, seed1 = 7803},
+    ramp = {mid = 0.5, width_px = 6},
+    share_hundredths = 100,
+    octave_shift_px = 10000.37,
+    max_arguments = 255,
+    forest_boost = 2,
+    jitter = {mult_x = 0.6180339887, mult_y = 0.4142135624, mult_high = 0.569840291, high_bits = 65536},
+    names = {
+      suffix = RG_V,
+      row = {sd = NOISE .. "sd_", w = NOISE .. "w_", depth = NOISE .. "depth_", hu = NOISE .. "hu_",
+             hv = NOISE .. "hv_"},
+      share = "_k",
+      destroyed_sd = RG_DESTROYED_SD, destroyed_w = RG_DESTROYED_W, destroyed_depth = RG_DESTROYED_DEPTH,
+      forest_w = RG_FOREST_W, forest_sum = RG_FOREST_SUM, tree_mult = RG_TREE_MULT, marsh_w = RG_MARSH_W,
+      hotspot_w = RG_HOTSPOT_W, enemy_mult = RG_ENEMY_MULT,
+      -- the query point: u, v .. suffix unwarped; u, v .. share .. <hundredths> .. suffix for a share
+      u = RG_U, v = RG_V_, ox = RG_OX, oy = RG_OY, ax = RG_AX, ay = RG_AY, wk = RG_WK, wx = RG_WX, wy = RG_WY,
+      rough = RG_ROUGH,
+    },
+  },
+
+  -- The shore body (milestone climate-tiles; ARCHITECTURE.md, "Elevation composition" step 2, recalibrated
+  -- with Alien Biomes, design experiment 9): the sign-offset transfer of v1 with its own land and water
+  -- gains, so the tile class is still the sign of c (T1 unchanged) while
+  --   land  e = max(land.min, land.per_scale * s) * c + offset: elevation 5, where AB's shore term ends,
+  --         sits about 4 tiles inland at scale 2 and up and 2 tiles at scale 1 (beach band, R3 2.1);
+  --   water e = max(water.min, water.per_scale * s) * c - offset: AB's deepwater line, -5.5 (R3 3.1),
+  --         sits about 6 tiles offshore at scale 3 and up and 2.7 tiles at scale 1, where the fit's
+  --         saturation (about 4 px) left v1's open sea at -4.1, shallow water under AB.
+  -- c, its clamp and the far-field box are v1's (the coast group above); the carves and dams of v2 keep
+  -- their absolute depths, so rivers stay plain water and straits deep in vanilla and AB alike.
+  -- Each version that composes it names its own shore body (geography.<map>.versions[n].shore).
+  shore = {
+    land = {per_scale = 1.25, min = 2.5},
+    water = {per_scale = 0.9, min = 2},
+  },
+
+  -- The Earth climate (milestone climate-tiles; ARCHITECTURE.md, "Expression inventory" and "Alien Biomes";
+  -- S3 sections 1 to 4; D9). Temperature is in Alien Biomes units (below 0 frozen, 25 to 65 temperate,
+  -- 65 hot, above 100 volcanic) in both variants; the fallback hands vanilla consumers scale times it.
+  --   lat, lon  degrees on the map's own chain: lat_top_edge - (v + 1/2) / px_per_degree and
+  --             lon_left_edge + (u + 1/2) / px_per_degree, folded on tn_map; the latitude meanders by up
+  --             to degrees times one basis noise octave of wavelength_px (seed1, A-11)
+  --   temperature  ref_t at ref_lat, per_degree warmer toward the equator, clamped to min and cap; minus
+  --             continental.t at full continentality (longitude lon_start + lon_span and east, latitude
+  --             lat_start + lat_span and north: D9's cold Russia); plus desert_heat in the dry belts;
+  --             plus noise; Alien Biomes adds its hot and cold shift, shift_per_unit per slider unit as
+  --             its own average (R3 1.1), and scales the noise input by their mean frequency (S3 3)
+  --   moisture  the Earth mean (base, plus equatorial within the equatorial latitude ramp, minus dry in
+  --             the dry belts; the fallback caps the mean by temperature, S3 4: the dry north) plus the
+  --             spread and bias times the moisture bias; with Alien Biomes the marsh weight lifts it to
+  --             marsh times the weight (APPROVALS 8)
+  --   aux       the Earth mean (base; the fallback pulls cold land toward cold_aux and dry land down by
+  --             dry_pull, S3 4) plus the spread, capped (Alien Biomes: ab_cap, under AB's alien palette
+  --             from 0.6; the fallback's cold land: cold_cap, under vanilla red desert), then bias times
+  --             the aux bias; with Alien Biomes dry temperate land is lifted by red.lift (vanilla red
+  --             desert, where non-adopted AB tiles are excluded)
+  --   spread    every real climate zone is a patchwork of several tiles that changes with the seed
+  --             (The quality bar: a real biome never reads as one tile): each field adds a seeded multioctave
+  --             noise after its caps and pulls, so they move the mean and never flatten the noise. Its
+  --             sd is about 0.7 times amplitude (normalized multioctave_noise): moisture about 0.22,
+  --             aux 0.14 and temperature 4.2 AB units, against vanilla's about 0.39 moisture and 0.2 aux
+  --             (core noise-programs.lua: moisture_noise and aux_noise), whose coarsest octaves the
+  --             Earth layout replaces. The moisture spread shrinks by spread.dry times the dry weight, so
+  --             the dry belts stay hot desert, and on the fallback by spread.cold times the coldness
+  --             (clamp((cold.t - core) / cold.span, 0, 1)), so the far north stays dry and dead ground
+  -- Every noise call keeps x = x, y = y with its wavelength in reference pixels through input_scale: the
+  -- finest octave is wavelength_px, each further octave twice as large (multioctave_noise).
+  climate = {
+    -- the pixel centre in reference pixels (lat_top_edge - (v + centre_px) / px_per_degree)
+    centre_px = 0.5,
+    meander = {degrees = 0.6, wavelength_px = 360, seed1 = 7601},
+    temperature = {
+      ref_lat = 54, ref_t = 25, per_degree = 2.2, min = -20, cap = 78,
+      continental = {t = 6, lon_start = 15, lon_span = 45, lat_start = 35, lat_span = 10},
+      desert_heat = 12,
+      noise = {amplitude = 6, wavelength_px = 40, octaves = 3, persistence = 0.6, seed1 = 7602},
+      ab = {shift_per_unit = 20.8333333, min = -20, max = 99},
+      fallback = {scale = 0.45, min = -20, max = 50},
+    },
+    moisture = {
+      base = 0.68, equatorial = 0.12, equatorial_lat = 4, equatorial_ramp = 8, dry = 0.55, marsh = 0.9,
+      noise = {amplitude = 0.32, wavelength_px = 40, octaves = 3, persistence = 0.6, seed1 = 7603},
+      spread = {dry = 0.7, cold = 0.35},
+      ab_bias = 2.2,
+      fallback = {cap_base = 0.26, cap_per_t = 0.6, cap_t = 40, bias = 1},
+    },
+    aux = {
+      base = 0.35,
+      noise = {amplitude = 0.2, wavelength_px = 48, octaves = 3, persistence = 0.6, seed1 = 7604},
+      ab_bias = 2.2, ab_cap = 0.5,
+      red = {lift = 0.5, t_lo = 25, t_hi = 65, ramp = 5},
+      fallback = {cold_aux = 0.45, cold_cap = 0.55, dry_pull = 0.15, bias = 1},
+    },
+    -- the coldness the fallback's pulls and spread read: 0 at core cold.t and warmer, 1 at
+    -- cold.t - cold.span and colder
+    cold = {t = 10, span = 30},
+    -- The dry belts after EarthMaps' painted sand (D9; R1 section 6): the sand share of land per 10 x 10
+    -- degree cell of the Atlantic raster (classes s and S) is 61 to 99 percent from 10 to 30 N between
+    -- 20 W and 70 E, 42 to 82 percent from 30 to 40 N there, 24 to 82 percent from 40 to 50 N between
+    -- 40 E and 120 E, 30 to 61 percent in North America's south-west, 45 to 76 percent in the Namib and
+    -- Kalahari, 25 to 56 percent in Australia and 18 to 49 percent along the southern Andes, and 0 to 29
+    -- percent in East Asia, India's east and the Americas' east. Each belt is
+    -- a latitude and longitude box with soft edges: full weight ramp degrees inside each edge, 0 at it;
+    -- the dry weight is the largest belt weight. A map reads only the belts that reach its extent.
+    dry_belts = {
+      {id = "sahara_arabia", lat = {9, 38}, lon = {-20, 80}, ramp = {3, 4}},
+      {id = "horn_of_africa", lat = {-3, 13}, lon = {38, 53}, ramp = {3, 3}},
+      {id = "central_asia", lat = {35, 51}, lon = {46, 120}, ramp = {3, 5}},
+      {id = "north_america_sw", lat = {22, 44}, lon = {-122, -100}, ramp = {3, 4}},
+      {id = "southern_africa", lat = {-30, -15}, lon = {11, 27}, ramp = {3, 3}},
+      {id = "australia", lat = {-35, -17}, lon = {113, 147}, ramp = {3, 4}},
+      {id = "south_america_sw", lat = {-56, -16}, lon = {-76, -63}, ramp = {3, 3}},
+    },
+    names = {lat = CT.CL_LAT, lon = CT.CL_LON, dry = CT.CL_DRY, core = CT.CL_CORE,
+             ab = {temperature = CT.CL_T_AB, moisture = CT.CL_M_AB, aux = CT.CL_A_AB},
+             fallback = {temperature = CT.CL_T_FB, moisture = CT.CL_M_FB, aux = CT.CL_A_FB}},
+    -- The climate bands the T3 oracle and the D11 row read, in Alien Biomes units (R3 4.1).
+    bands = {frozen_below = 0, cold_below = 25, hot_from = 65, dry_below = 0.4},
+  },
+
+  -- The tile hooks (milestone climate-tiles; ARCHITECTURE.md, "Stable hooks"; S3 section 2; APPROVALS 8 and
+  -- 9). Every hook is if(tn_on > threshold, <on branch>, <off value>), so worlds without an Earth
+  -- preset compile the off value alone (A-2; S3: a gate inside the score cost default worlds Tile
+  -- +7,489).
+  --   vanilla   with Alien Biomes: the 19 vanilla land tiles AB takes off Nauvis (R3 3.2), re-listed;
+  --             on branch (vanilla score) + the tile's key, off value -inf; every key names one bonus
+  --             body: +bonus on land where the temperate lean plus patch noise passes (S3: lean
+  --             1 - |T - lean_t| / lean_span), 0 elsewhere in the exclusion's temperate band, -inf
+  --             outside it, on water and inside marshes (marsh_cut)
+  --   exclude   with Alien Biomes: every AB land tile (by prefix) outside APPROVALS 9's adopted set; on
+  --             branch (AB score) + the key, off value AB's score; the body is -inf from temperate_from
+  --             to temperate_below outside marshes, 0 elsewhere (D11: only the adopted AB tiles in
+  --             temperate bands)
+  --   marsh     water-mud (registered on Nauvis without AB) and water-shallow (the ford hook's tile):
+  --             on branch max(the key, AB's own expression where AB defines one); water-mud pools on
+  --             land inside marshes where pool noise passes a cut that falls with the marsh weight,
+  --             outside the start clearing; water-shallow along open water down to shallow_depth;
+  --             without Alien Biomes grass-1 (APPROVALS 8's grass between the pools) behind a gated hook,
+  --             (score) + the grass key, its own score off: the key's body gives +bonus on land inside
+  --             marshes (marsh_cut), 0 elsewhere (with AB the vanilla tile keys keep vanilla out of
+  --             marshes, so AB's wetland grass lies between the pools)
+  --   palm      with Alien Biomes: Earth presets point each AB palm's entity:<tree>:probability and
+  --             :richness keys at Earth copies of its expressions with every local expression, the
+  --             constant where AB reads elevation (the richness too: its locals are in its scope, so
+  --             the isolation walk reads them with it)
+  --. ARCHITECTURE.md's hook form (a key whose prototype
+  --             is elevation) added one processed expression to M2's default Entity program, which the
+  --             zero-cost row compares, so the milestone takes ARCHITECTURE.md's named fallback: AB's
+  --             prototypes stay untouched. The copies are Earth-owned data:
+  --             trees.lua builds them on every load from `table`, Alien Biomes 0.8.0's palm autoplace
+  --             frozen by tools/build_palms.py, each function they call carried as a local function
+  --             named local_prefix plus its name, so no Alien Biomes version changes a registered
+  --             copy; data-final-fixes.lua compares the live palm autoplace with the table and, on any
+  --             difference or a missing palm, points both keys at `neutral` (no palms) and logs it
+  tiles = {
+    vanilla = {
+      tiles = {"grass-1", "grass-2", "grass-3", "grass-4", "dry-dirt", "dirt-1", "dirt-2", "dirt-3", "dirt-4",
+               "dirt-5", "dirt-6", "dirt-7", "sand-1", "sand-2", "sand-3", "red-desert-0", "red-desert-1",
+               "red-desert-2", "red-desert-3"},
+      keys = {["grass-1"] = CT.VT_GRASS_1, ["grass-2"] = CT.VT_GRASS_2, ["grass-3"] = CT.VT_GRASS_3,
+      ["grass-4"] = CT.VT_GRASS_4,
+              ["dry-dirt"] = CT.VT_DRY_DIRT, ["dirt-1"] = CT.VT_DIRT_1, ["dirt-2"] = CT.VT_DIRT_2,
+              ["dirt-3"] = CT.VT_DIRT_3,
+              ["dirt-4"] = CT.VT_DIRT_4, ["dirt-5"] = CT.VT_DIRT_5, ["dirt-6"] = CT.VT_DIRT_6,
+              ["dirt-7"] = CT.VT_DIRT_7,
+              ["sand-1"] = CT.VT_SAND_1, ["sand-2"] = CT.VT_SAND_2, ["sand-3"] = CT.VT_SAND_3,
+              ["red-desert-0"] = CT.VT_RED_0,
+              ["red-desert-1"] = CT.VT_RED_1, ["red-desert-2"] = CT.VT_RED_2, ["red-desert-3"] = CT.VT_RED_3},
+      off = "-inf",
+      body = CT.VT_BONUS,
+      bonus = 10, lean_t = 45, lean_span = 30, lean_cut = 0.5,
+      patch = {amplitude = 0.36, clamp = 0.45, wavelength_px = 10, octaves = 3, persistence = 0.5, seed1 = 7605},
+      marsh_cut = 0.5,
+    },
+    -- APPROVALS 9's adopted Alien Biomes tiles: six land tiles plus water-mud (approvals-data.json has
+    -- no section 9 rows; the T16 approvals row compares this list with APPROVALS.md's checked rows).
+    ab_adopted = {"vegetation-turquoise-grass-1", "vegetation-olive-grass-2", "mineral-grey-dirt-1",
+                  "mineral-beige-dirt-1", "mineral-cream-sand-1", "mineral-grey-sand-1", "water-mud"},
+    exclude = {
+      prefixes = {"vegetation-", "mineral-"},
+      key = CT.AB_EXCLUDE, off = "0", body = CT.AB_EXCLUDE_BODY,
+      temperate_from = 25, temperate_below = 65, marsh_cut = 0.5,
+    },
+    marsh = {
+      water_mud = {tile = "water-mud", key = CT.MARSH_MUD, off = "-inf", body = CT.MARSH_MUD_BODY},
+      water_shallow = {key = CT.MARSH_SHALLOW, off = "-inf", body = CT.MARSH_SHALLOW_BODY},
+      grass = {tile = "grass-1", key = CT.MARSH_GRASS, off = "0", body = CT.MARSH_GRASS_BODY, bonus = 10},
+      score = 50, shallow_score = 300, shallow_depth = 1.5, start_clear_tiles = 64,
+      pool = {cut = 0.3, cut_per_weight = 1, wavelength_px = 3, octaves = 2, persistence = 0.5, seed1 = 7606},
+    },
+    palm = {body = CT.PALM_CONST, value = 1, reads = "elevation",
+            table = "prototypes.generated.palms_ab_v1", local_prefix = "palm_", neutral = ZERO, tolerance = 1e-9,
+            copies = {{tree = "tree-palm-a", field = "probability", key = CT.PALM_A_P_KEY, body = CT.PALM_A_P},
+                      {tree = "tree-palm-a", field = "richness", key = CT.PALM_A_R_KEY, body = CT.PALM_A_R},
+                      {tree = "tree-palm-b", field = "probability", key = CT.PALM_B_P_KEY, body = CT.PALM_B_P},
+                      {tree = "tree-palm-b", field = "richness", key = CT.PALM_B_R_KEY, body = CT.PALM_B_R}}},
+  },
+
+  -- Trees and great forests (milestone trees-forests; ARCHITECTURE.md, "Stable hooks" and "Region layer"; S3
+  -- section 5, S10 section 4, R3 3.4 items 3 to 6; design note 10).
+  --   boost     every living tree's probability becomes if(gate > hooks.threshold, min(cap, (own) * key),
+  --             own): the gate's prototype holds gate_off and Earth presets bake the great-forests toggle;
+  --             the key's prototype holds key_off (a neutral multiplier) and Earth presets name the region
+  --             layer's multiplier (regions.names.tree_mult: 1 + forest boost 2 times the forest sum, S10).
+  --             The base game's dead and dry trees are left alone (prototypes/tables/vanilla.lua, S10)
+  --   palm      on Earth presets with Alien Biomes the palms read their Earth copies (tiles.palm), which the
+  --             hook on AB's own prototypes never reaches: each palm's probability key names its second
+  --             version, the boost's formula around the registered first
+  --   restore   with Alien Biomes, the base game's living trees, rocks and decals AB takes off Nauvis,
+  --             rebuilt from prototypes/tables/vanilla.lua: each behind the gate keys.on with its key, whose
+  --             prototype holds the off value and which Earth presets point at its body, restricted to the
+  --             vanilla land tiles (tiles.vanilla.tiles), so AB's land keeps AB's own (S3). The restored trees
+  --             read the Earth temperature on the vanilla scale (temperature, from the fallback climate's
+  --             scale and clamp), and every richness key names one shared body. The decoratives AB keeps but
+  --             takes off Nauvis are re-listed as (own score) + key, the key's prototype -inf and its body
+  --             deco_on; the vanilla decoratives and dead trees AB restricts to its tiles get the vanilla land
+  --             tiles appended
+  trees = {
+    boost = {gate = TFN.K_FORESTS_ON, gate_off = "0", key = TFN.K_TREE_MULT, key_off = "1", cap = 1},
+    palm = {{key = CT.PALM_A_P_KEY, body = TFN.PALM_A_P2, base = CT.PALM_A_P},
+            {key = CT.PALM_B_P_KEY, body = TFN.PALM_B_P2, base = CT.PALM_B_P}},
+    temperature = TFN.TF_VTEMP,
+    restore = {
+      trees = TF_TREES, tree_off = "0", richness = TFN.TF_VTREE_R,
+      rocks = TF_ROCKS, rock_off = "0",
+      decoratives = TF_DECO, deco_off = "-inf", deco_body = TFN.TF_VDECO, deco_on = "0",
+    },
+  },
 }
