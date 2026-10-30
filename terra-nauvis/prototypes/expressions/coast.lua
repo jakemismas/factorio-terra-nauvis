@@ -210,6 +210,26 @@ local function version(m, g)
       locals.warp_sum = sum
       locals.warp = num(B.warp_px) .. " * clamp(2 * clamp(warp_sum, -1, 1) - warp_sum, -1, 1)"
     end
+    -- The long swell (config.lua coast.edge_band.swell): the band reaches further in by |noise| on the sides
+    -- that cut land, so the cut wanders like a coast at map scale, and no further where the box is open sea.
+    local SW = B.swell[g.geo_id]
+    if SW then
+      local parts = {}
+      for _, oc in ipairs(SW.octaves) do
+        parts[#parts + 1] = num(oc.weight) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
+          num(oc.seed1) .. ", input_scale = 1 / (" .. num(oc.wavelength_px) .. " * " .. s .. "), offset_x = " .. g.cx ..
+          ", offset_y = " .. g.cy .. "}"
+      end
+      local function ramp(a, b2, r)
+        return "clamp((" .. a .. " - " .. b2 .. ") / " .. num(r) .. ", 0, 1)"
+      end
+      local south = ramp(g.v, num(SW.south_from_v), SW.ramp_px) .. " * max(" ..
+        ramp(num(SW.south_until_u), g.u, SW.ramp_px) .. ", " .. ramp(g.u, num(SW.south_again_u), SW.ramp_px) .. ")"
+      locals.swell = num(SW.amplitude_px) .. " * abs(" .. table.concat(parts, " + ") .. ") * max(" ..
+        ramp(g.u, num(SW.east_from_u), SW.ramp_px) .. ", " .. south .. ")"
+      locals.b = "clamp(d / " .. s .. " + warp - swell - " .. num(B.width_px) .. ", " .. num(-C.transfer_clamp_px) .. ", " ..
+        num(C.transfer_clamp_px) .. ")"
+    end
     local o = num(C.transfer_offset)
     local band
     if g.shore then

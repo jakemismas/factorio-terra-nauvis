@@ -5096,10 +5096,17 @@ def edge_band_mask(mref):
             import numpy as np
             r = np.arange(mref.H)[:, None]
             c = np.arange(mref.W)[None, :]
-            R = edge_band_reach(cfg, k, mref.W, mref.H)
-            inside = ((c < R["left"][:, None]) | (mref.W - 1 - c < R["right"][:, None]) |
-                      (r < R["top"][None, :]) | (mref.H - 1 - r < R["bottom"][None, :]))
-            _EDGE_MASKS[k] = inside & mref.land.astype(bool)
+            d = np.minimum(np.minimum(r, mref.H - 1 - r), np.minimum(c, mref.W - 1 - c))
+            mask = d < int(B["mask_px"])
+            # the swell's sides reach further in: everywhere it may act, the mask follows it there
+            sw = (B.get("swell") or {}).get(g.get("geo_id"))
+            if sw:
+                basis_max = 1.77
+                reach = int(B["mask_px"]) + math.ceil(basis_max * sum(float(o["weight"]) for o in sw["octaves"]) *
+                                                      float(sw["amplitude_px"]))
+                south = (r >= mref.H - reach) & ((c < float(sw["south_until_u"])) | (c > float(sw["south_again_u"])))
+                mask = mask | south | (c >= mref.W - reach)
+            _EDGE_MASKS[k] = mask & mref.land.astype(bool)
     return _EDGE_MASKS[k]
 
 

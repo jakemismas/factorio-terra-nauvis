@@ -1198,6 +1198,15 @@ return {
       warp_px = 8,
       mask_px = 21,
       fold_geographies = {14, 17},
+      -- swell: per geography, how much further in the band reaches on the sides that cut land: amplitude_px times
+      -- |octaves' sum|, up to about 1.7 times 1.5 times amplitude_px. Within 20 px of the box the cut was still
+      -- straight at map scale, so Africa and Asia Minor read as sawn off. It applies east of east_from_u and
+      -- south of south_from_v west of south_until_u or east of south_again_u, each over ramp_px: Europe's
+      -- Cyprus, 22 px from the box, sits between those two, and no other uncut land lies within its reach.
+      swell = {[14] = {amplitude_px = 26, east_from_u = 2180, south_from_v = 1540, south_until_u = 1090,
+                       south_again_u = 2070, ramp_px = 60,
+                       octaves = {{seed1 = 7404, wavelength_px = 220, weight = 1},
+                                  {seed1 = 7405, wavelength_px = 90, weight = 0.5}}}},
       octaves = {
         {seed1 = 7401, wavelength_px = 32, weight = 1},
         {seed1 = 7402, wavelength_px = 12, weight = 0.5},
