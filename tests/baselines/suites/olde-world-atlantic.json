@@ -1,0 +1,978 @@
+{
+ "format": "tn-suite/1",
+ "slice": "olde-world-atlantic",
+ "checks": {},
+ "frozen": {
+  "format": "tn-frozen-snapshot/1",
+  "through": "olde-world-atlantic",
+  "bodies": {
+   "tn_canals_atlantic_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "56580c2d5c8d25d0d93ec230c1c1e523d1ddbf625098a0d525bf6cabc77663ff",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_atlantic_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "e5df567c53c3fb28a16eaa3cd9fd83958c1ed97508c4ae23748a331e042da770",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_atlantic_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "e42f97b55c74209e862e71a931f88785ceabbb502f5e77776bb704e0abcf7048",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_atlantic_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "6015bbf01951aa94e67e83799e6e9a6488184902d175cf16c197d4ddcb6db965",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_atlantic_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "73b50a42fdc8a140c08b5e8dcc150db1062a3551e472788ec6ca532157e71da4",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_atlantic_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "41bef96975cdc2a27c9fccbde8d1a338a3ea8b0ea01eecc1ddc59f642152ccef",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_olde_world_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "30efba137e372ede4da62518e15aea15c7ef603ae884ea0e06609e1157d5142b",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_olde_world_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "35c5616452e3908bf01421ef638b916e0738c70a3f65f482679ae9b5ebbedf14",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_olde_world_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "fb005bbf4a337f4aa759417d974678dc50cbff8bc01cf84c332aeea82698369b",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_olde_world_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "42859db01b98fb49600b92ea629e9f3673bf1761f0339d414f64b9bac295389d",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_olde_world_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "05d2fef40bc9ab15b9cb522526bf735215b1099ac133c59231bc1d9324ae07da",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_canals_olde_world_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "a8bbe5975abcc7e27e41f199da3d4ec7cd6a7f5d271415fc2d0ad61a2f8309b4",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_city_cx_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "135a4c7ca7ef0516337ab9f57484d9c651e3636a2690a52427c8cd0b247f15f7",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_city_cx_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "c3b236104a025607e6a9cd27f1eafe119d61efbea98babf5732639417a973cb7",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_city_cx_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "55289370bd3afd5216ec7ea1fbfea16e84dd1d004f6a3c1e8f2332cdd571e0cd",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_city_cy_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "d155868f57c143d134cbcb75887bb634e06910b2c319ea569f40ce691a1f0061",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_city_cy_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "15127ba68c81d15fb64b16e966547205edd42e2e98e1e25c3cc94e50f3df08b8",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_city_cy_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "ae1f2db14c29005d58417ef5ca44d8b375650625ee82dc5eb23edc5e96a8fab7",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_city_index_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "e7f0c925542bdbdb824fa6bf83a162963a1f9e9b87cb6188c613c5693a036061",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_city_index_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "5eec160f4637d895292e9383f531c87d7a5b39113a2c550a8bab58a8ee9f1128",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_city_index_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "bcf5bf252ae82d48d3b4853b52513df6b210018b83daad41cd26b22febcf721d",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_cx_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "6dc658f6c49ff4817fff88ab4e69b2f102afb4c6e82271139705f1a3db67ec46",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_cx_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "4eea67be9a42f6c0276f076d57c4aa8961d552886cffe7364e1d40752c58258d",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_cx_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "7245cf6718889e9cd46bd887ce05cf60a8a9745aa525c509f3f26e04084d4bce",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_cx_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "d3cacab377280c844468762cfb407ba4af4c4f22bd044ca6bbdf95a82522bbee",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_cx_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "1d7b568ee5b43d6439038cde51355b845b84791d09ab11d46d20a874aeab53f4",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_cx_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "ce91c1e8abe68831a427f18d2057ec8b48b68efe09557640d770ddab740509d3",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_cy_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "dfdd14c20f501b3e85e1a552e87ccffeb2662545db80d00061636b4bb46da128",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_cy_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "8893cf4ef216643bed1a9c87c668ef476256452a4f3999429353aaf1a090c084",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_cy_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "64e4b3f0df3ae69accfa6e30ed4b6049dd227fa913ba621cff6dce404e57fc6b",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_cy_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "53afab539359ab371d7583c9495deb024840f87aa08e082e2b333971a2aefc10",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_cy_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "6d206de4c30edaca48603a91ccb8b73ab2a388ff59174a0a5f861932171d3c81",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_cy_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "fa8c45350f133113cf97ba326513119a6d3b0152d436a54896390ecc4b9610a0",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_atlantic_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "36ce272a70315770967fcff17ddda8d81c09fa66b60f3b7f67cc5292669d9980",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_atlantic_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "81bfa3b42a94e52ceed85aac30775a1227c7dd9ff0ebbec8cc4af9dea7079abe",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_atlantic_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "24a30d458791c97be3b98cbb0f0acdbebc6ba7c6105cb1bd5effa6d337c0e630",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_atlantic_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "8c0b6482606157ab49120dcdd29f12cbad0800d39749db0f3cef793d4ba42643",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_atlantic_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "bbb1c7dc0d9b667e8efe0b81eb675121c3ef0f334c4f54e67fc90a3c737ef5c7",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_atlantic_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "6552c604f9c924482cfd3ebfa1f5ae43cbc8a5533b45c3d7d65ffe6b2b2c85fc",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_olde_world_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "d682cc5c41bd10039362c9622586830bec56b5ba93c81f14b0ce794e61f774be",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_olde_world_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "518e44454f7f34a583cc3d3b01d11f077bf32c719b27246352167c6c1a41173f",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_olde_world_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "32bf311dc3c779103e398a3295ff0d7931c50be309ceb1f3593fea130b992c19",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_olde_world_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "dc532ea67f482f41ace51f223d4e15e2b786c809db3621ba411576ddff0632f3",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_olde_world_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "b95da1039125a7d12000faad8c96a0d0102f273a2bea391607f2d4b10109b4aa",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_dams_olde_world_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "3101f38cfbfa28c7f563e976543daf78a9db745521dbf25aec6780da635cbe2d",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_detail_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "21dc7ac120af646f58fddf47e6a728143e23fd22871635eabc97cf537dbbdabe",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_detail_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "afe845a2efb375e08b21533090d25494936ba854137701388942dca810068ec2",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_detail_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "a909d9d816ef683bf52f36c78a4fa1bb1f3e572386c32625a2a9a286b3367167",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_detail_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "5e87d3448dcedca2b571169e5db9e816f058743384f09bafca0dbd0286781181",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_detail_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "393071334c10a6be6951b2566529c0645c5cda657508c69ec13f9d80e6d6b9e5",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_detail_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "d915ef4225b460ca071f4ffa37bc347b55976a294056e5b348e8df9a67038823",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_distance_v1": {
+    "type": "noise-expression",
+    "sha256": "16de61a5eb195adae0b666836d90c17dce2dc701cb8c76bb31e555a4dca84164",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_elevation_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "c64dbc9e45fbb3a0986b9bfaf1943f8ff351dfb9cc5225814fcad3a26db5e287",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-28"
+   },
+   "tn_elevation_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "0d2475ec810a29119d2d0f336798b0de4616e6c5926247d0ba3690fc5d32e531",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_elevation_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "517e1b8b240ac0ea23c506d5878b3a025b2f4fee070df168c4f9d34ad297e1a0",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_elevation_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "3b618dc22d835e7c18534b11976f3452b5cf512df7056bfba89718351613a694",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_elevation_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "d327f16a821dea0c692de5569efed8f57c4a15a30892126feeb84cefade6febc",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-28"
+   },
+   "tn_elevation_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "5bc8687b40c22ce334d542633af9e9239b122d99fa264411595be349531bfceb",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_far_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "e4d768264532f1231889baa996c0c18f55dea955f6c1c05b6514ac8dfe771c25",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_far_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "d8de96d2db953465d70f2211939c2b2f65ebb4fc1f378e51145e845e55078b73",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_far_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "b30d83a7445a94abb0d8cb78dcd20159f9f7b2193ead4efbd38db6dfc3448e6f",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_far_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "ad203f3d6f4384bb1ebad626eba1831125755d07ee1f9e4f040254546783cb3b",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_far_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "c387562ad8db25827c2902522866e1eb7db4820992b32c14b102ec6235ea8035",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_far_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "cd1074fdef29b7ef8e32fbe2ad0cbc236bea1ec63b0839a7453acec9283c817d",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_atlantic_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "8c9496c899615d11f93479cf71c6fc7835dc9ac879d993d0ea4adc605d93e967",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_atlantic_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "5d83e9d55bd44179d37b7e9386600b3bdef24b97ed8eb6f61130cd2aa995e244",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_atlantic_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "e9c3d0b986239b1371f4b6f0dbd7f22cfcddce66f2015f3d5f4e0b89604f881e",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_atlantic_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "d803e8a361c6234de5d9ad0b306d95122077ba0fb6b39911a01eab38cc1587b2",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_atlantic_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "311d776ca4c8cbb5bbd507909704e23435b5ae203f0f06481f6a1d5661e6aee8",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_atlantic_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "f0c23a267828052a5796b7e8577a4e882f7e30d3a7fe5ea52d98f27ceb36553a",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_olde_world_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "2c01ac7a65e6c29739362ddee23446abdf034ca81f0e62cf6dbe6434889e4ea1",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_olde_world_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "1e228699896f49ca98084f3c446f194ab848f72d5bb56b7a78bb3a1c7a750432",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_olde_world_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "f9d737c1dd764e12e4de8bb4d155f57c410030a64e84b88678f6ea33fddf0b4c",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_olde_world_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "b659b090459f96151e664d3a2be9779ff688572cfcd8d94b27d630ccd338a7d1",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_olde_world_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "46074e7dc0517d6bf532bdfcdf3d16d3c40b3db1ab75655fcb4e09e0e349cc89",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_fords_olde_world_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "5ab0160c47d097acbef17715c2a2c93ffb86eeddfbadd81ac6a9dd57593a20d5",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_geo_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "40078819dff1c5c73443096edafd3a0e51bf25e17f313518bb545155aed0221b",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-28"
+   },
+   "tn_geo_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "815a9d0827edb4812625c012b33d218002e5c6ca01fbec9ad965181df6240d6e",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_geo_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "8af1d57b69a35ad654c09bab129e2579056bdfee705d6bf6ce49cfabfcfafc07",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_geo_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "49d307e8618b7d0f983b9da4fbe2ce58cdac0b7bdc249344ae83cf3ce603ebd0",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_geo_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "11ccb05dd1bd47a72b64294d86dff3b3b590dfed36545bf60d6fc4f85114b310",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_geo_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "45807e0bc6f59d189ffcc6d6a6b2f04b1e38e99dbc14243bf4f9350c864cd910",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_gx_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "725f5fac09a5b410b973f252d33b5db54bb16215251e4e6d5223ceba61d724ff",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_gx_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "c2c9e3f2fe0c1985d1d80802a0be81e2c65e08b73345e637eb9e7e235e2efaf2",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_gx_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "1e8abbdefeb5c13c41fdf5594cff092e8e73286148a20d77fbfeac5f85742f85",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_gx_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "0a7d8195919c4bd8933eede3856741cc1d83408b04f9d8ef1e77090241f32241",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_gx_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "5a92a09c276aff616fcb950649df074890bb0884e187a9f4a5c6cfa37bb82fa4",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_gx_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "3fe04ab53c7ead2a2d4364e5d145ec89457722a0070be9e3b7f6a2a60cd26e96",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_gy_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "d7361469ed825303c42692dc4a5f8983a59cd840bcd49e4ab9e48ee031efae8f",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_gy_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "e6b58427aaa1753afdbe5ca77f36f23b02169582b560ea9b9cb2b9bd38847a1c",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_gy_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "22ceb77386cf371514d5fb1928e5c86927bf8b97928665aa2c022634f49c9e07",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_gy_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "66181232e9e260f7bcaf4fb17d5235b0d47719c8d08e7b2932eda834027377c1",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_gy_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "e3b22f2f5d46088d28287f9e8074fb96d7828b540f936cef69242d5451b75256",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-29"
+   },
+   "tn_gy_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "d4baabad00fc9db4e7bc727a6a3e834f9171aaeca74c20ab5a9797c9421ce09d",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_inland_lakes_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "41d1edf6cea4a3964dc090e3cc1dff862424e33c2c2bfdd0a1c3e6b751ca5b00",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_inland_lakes_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "e3126751070519c1ec4549bac2638596ebfb241c4b6a258ee4afd0a542523627",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_inland_lakes_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "7c6a931f1ce74ab0cf86ce340e30a032fdb91e6cb61d49caa1c9783a0fa275ef",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_land_coarse_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "bc21c2c17d2dd6e27fe2a166ccd7e69cd0858341b64d513fb39f327e984dabcf",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-28"
+   },
+   "tn_land_coarse_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "6d0f15767acb6ef0ff27c391dc273c75187e021208f5f7e21d70a77522da774c",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_land_coarse_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "c526f440507613ece7d860e808e4a8f1d4d50f1599ba9134cb2e89e2941aa820",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_land_coarse_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "7660e5d5a296d9f9e8c786628a8edb53df9a4b8e096b2d1138fa245abadcf72a",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_land_coarse_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "6ff10a792fb6755800a2b3c71156c52dfac027689075fb499249265f2c8aff79",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-28"
+   },
+   "tn_land_coarse_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "12a4ef82d98f32c8d675fd2267675a214904f36fa7cc01e49095f22926fcbc11",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_shore_atlantic_v4": {
+    "type": "noise-expression",
+    "sha256": "8feb8ff0abfbc87507f35b9d306d118393332a992af8ada7338fa5e0368142e9",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_shore_olde_world_v4": {
+    "type": "noise-expression",
+    "sha256": "e2f3fad986d4e81f6905b6f9898b44222c98926af6a16ca1bbf41858682eedeb",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_spawn_bias_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "ad6a929c4afa46564218570e31bde57c3a48338627fd8595acd667125c6aa106",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_spawn_bias_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "6804f3fdb181538ea0f411f34dfb977082772a34e1c3189a020bf149b9f9f421",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_spawn_bias_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "c0d6ad06de5be9c3819aa13267d432716dfc2161a32d478bb9a90ed50f61f3f3",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_spawn_lake_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "f7f8705ce082bace76626a387d40adeaa1e9817ba4f5803667f53db8fd93099d",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_spawn_lake_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "f64a8eaa1e0c4a06746d3eb697fb1347f9f2b958bf6e58437f76a6027db7e52d",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_spawn_lake_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "95bab0390d9972ddc82e1943bff92cb4f5f694b3b45c6a4dd34c7f1c3208d816",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_start_land_v1": {
+    "type": "noise-expression",
+    "sha256": "7b8c5da801d5c9fa1c67731ab811cf5d9a827a96401418da6e1c540a3855b06f",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_start_mask_v1": {
+    "type": "noise-expression",
+    "sha256": "61280740c824f816d617db71eb4d02083586072cfcd3e42671dabd086c082a03",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_start_mask_v2": {
+    "type": "noise-expression",
+    "sha256": "aa774719da79824cbc7e48c6a5b1b0d9bb7f29aca0073b9765660ac1cfade36f",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_u_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "457664872b63a8a29ae7580623a7bbc5637cf8d437c1f3d3e92e942921eb4b64",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-28"
+   },
+   "tn_u_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "87b227a630aa809936a201b5c2f92004277295e22be94898ef03ae95d6d2e005",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_u_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "4d8a025c11b2ee5bda93ca992b540da49ee5fdb74aa8391a75f5eaa176b7a08f",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_u_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "44e5fadfa230dd2e69d370c76041159aa891d7f818dc15e2c13ba18ac5d59d42",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_u_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "42a50b7a55bac7279ad1f2f4af45896131e3c610f2e85ca3d8c62897a234430f",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-28"
+   },
+   "tn_u_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "c64098dbc7839fb96dbad55f0e7b0f256f08b2b0edd45ee26f08f9235bcb331e",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_v_atlantic_v1": {
+    "type": "noise-expression",
+    "sha256": "a23e0497e0ae50e7af38e9f4c616938ce26848a0e09ed38bd88f63f1071f4bb0",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-28"
+   },
+   "tn_v_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "dcf1927db66e6b00baa638979685d941e99434efd270304743a0c7b50e06e450",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_v_europe_v1": {
+    "type": "noise-expression",
+    "sha256": "6ed69f2c02a37afaa65bd09c49192ff9d21752844d3c79addfdb24c4c0722935",
+    "dump": "m1",
+    "slice": "europe-coast",
+    "registered": "2026-10-28"
+   },
+   "tn_v_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "d2ccb5aabde4ae253ae44a4cc31a0b52cac05ab79a2270f9b575faf67cb2767f",
+    "dump": "m1",
+    "slice": "spawn-cities",
+    "registered": "2026-10-29"
+   },
+   "tn_v_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "29951ff47f4eb7024a500aaed6feab3faa869758fe59cd30732263cdee8c3510",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-28"
+   },
+   "tn_v_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "ffc5a40b96c6878639a82de75a1b8dcd99fbb397cc5ab962db9a08a6113c5407",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_atlantic_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "a2b51d34c77057b4fb700cba4af533e65c14c2518786fd6aa09786aeb6f52afc",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_atlantic_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "c2543eac2e5b7145d523a19d02a74c8143d14359b0b6b6bbc48bfcac0be3d9de",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_atlantic_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "61cc130f147c0c60902ad0fa22457c8d47e5d80a1e63f9945cdc874060948f87",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_atlantic_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "15ee9603bc2f58206eb5b54016a20169102c571aa3bcd440a861d58132206486",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_atlantic_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "3727bac298d2fc1503be3624b6ed0c44f6e9a4946727a121fe58872303cf0b6b",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_atlantic_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "2456d605ad96258271391fdf72ea69f0f36b1386446e85bd983bf7103f906050",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_olde_world_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "334650c026ae10450717c6f6f2524b72f20142e9435647112dd028b9ed34179d",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_olde_world_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "e80ead7e1b5bccd3f451d58474667f5216f99d6235c64000988263f179f82f7c",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_olde_world_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "7e6f27c7449f9fa6deb7f6a4e1571bc89f7aacc5f9dba09b458e237797ccc000",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_olde_world_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "ee3cd97a58759a654b890cad76ef2dfcbc25da7573b0017fe7e1ed516e7429d4",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_olde_world_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "a042dd06e042d31c70725f08853f43fb6b2c2fa08d82a463798c8d6d2b2a8182",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   },
+   "tn_ww_olde_world_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "17f1184727e31238ca0227fd0136ce2d3cdaaac25a0b16d3e3454b4cf8ee687f",
+    "dump": "m1",
+    "slice": "olde-world-atlantic",
+    "registered": "2026-10-30"
+   }
+  },
+  "sha256": "1a93343ca0746afa038af587a88bb89f2be82f5134fafeffec878e7b43841242"
+ }
+}
