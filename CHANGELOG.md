@@ -44,7 +44,6 @@ compatibility and known limits are in README.md, and the changelog players see i
   Earth or Map-type-only world, floods the land the spawn reaches on foot (water tiles block,
   within 160 tiles) and, for iron, copper, coal and stone, places one patch of half vanilla's mean
   starting amount on that land where the reached amount within 150 tiles is under half of it
-  (config.lua `start_ore`; skipped with rso-mod or an ore control at size 0). Fixes the ore-starved
   (config.lua `start_ore`; skipped for an ore control at size 0 and with RSO's "Ore in starting
   area" off; beside RSO it reads what RSO placed and adds only what that start lacks, such as
   RSO's 33-tile stone patch at seed 1002). Fixes the ore-starved
