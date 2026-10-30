@@ -33,13 +33,13 @@
     "palmas", "iquitos", "griffith", "newman"]
   },
   "spawn_city_olde_world": {
-   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-spawn-city-old-world (random plus 30 of 30, default random; EM:settings.lua:124-137); section 12 removes none on this map (data-src/approvals/approvals-data.json cities.olde_world.dropdown)",
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-spawn-city-old-world (random plus 30 of 30, default random; EM:settings.lua:124-137); section 12 removes none on this map (data-src/approvals/approvals-data.json cities.olde_world.dropdown); Jake's start-city ruling of 2026-10-30 07:35 appends frankfurt, aachen and moscow",
    "type": "string-setting",
    "setting_type": "startup",
    "default_value": "random",
    "allowed_values": ["random", "prague", "madrid", "london", "kovdor", "munguy", "xeta", "yakutia", "zyryanka",
     "kharkiv", "huambo", "mongo", "dangila", "bamako", "akka", "waddan", "johannesburg", "songea", "tabuk", "chengdu",
-    "nanchang", "songling", "delhi", "hampi", "bam", "aktobe", "semey", "moron", "bangkok", "griffith", "newman"]
+    "nanchang", "songling", "delhi", "hampi", "bam", "aktobe", "semey", "moron", "bangkok", "griffith", "newman", "frankfurt", "aachen", "moscow"]
   },
   "canals": {
    "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-canals (startup, bool, default on; D18) and section 6",

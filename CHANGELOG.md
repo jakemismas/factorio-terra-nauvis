@@ -8,6 +8,25 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- the first release fast finish: groups 1 to 3 and edge-and-lakes
+  assembled on one branch. Atlantic's and Old World's version 6 (`tn_geo` 17 and 18) carry the spawn
+  city the drafts lacked (every Old World start had landed at the map's offset 0, 0, in India): the
+  per-map city tables `prototypes/tables/cities_atlantic.lua` and `cities_olde_world.lua` merged by
+  `prototypes/city_tables.lua` (cities.lua is main's again), spawn records with the city fold, the
+  spawn lake, start mask version 2 and the inland lakes behind the switch, the soft map edge, and
+  bearings from `tools/build_spawn.py` emitter 4 (ported from an earlier prototype). Their
+  presets also point the layer chain version's offset names (geography 6 and 7) at the fold, so the
+  region layer, climate, ridges and stamps stay on the spawn's ground. Old World's table moves Prague
+  to the real city and appends Frankfurt, Aachen and Moscow (the maintainer, 07:35); at seed 1000 and scale 6
+  each of the four spawns on land with its lake and iron, copper, coal and stone in the start area
+  (`previews/earth-build/fast/pv-ow-<city>-c`). 84 new bodies registered from the M1 dump; the M2
+  dump hashes every registered body alike. The band-fix handler writes nothing inside the soft edge
+  band and serves Europe 14 and Old World 16 and 18. `tools/tnlua.py` gains Lua patterns (find,
+  match, gmatch, gsub), math.rad, deg, asin and acos, and seeds data.raw from
+  `tests/vanilla-raw.json` (the base prototypes the hooks and wrappers read), so the bodies row and
+  `build_zip.py --release` run the drafts' data-final-fixes.lua offline; the offline check holds M1
+  records only.
+
 - Milestone `europe-coast`: Europe's real coastline at map scales 1 to 6. `tools/build_geo.py`
   emits S1-fit's one-sided tent model as name-free generated Lua within 120 columns:
   `geo_europe_v1.lua` (8,192 tents plus the recorded T1-e local refit of 66 level-0 tents over the

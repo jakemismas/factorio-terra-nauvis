@@ -200,6 +200,31 @@ def loads(text, where="<lua>", name=None):
     return data
 
 
+# The spawn-city table files (pure data, one keyed table each): cities.lua holds Europe's
+# (spawn-cities) and each later map has a file of its own (cities_<map>.lua), so a landed file, and the
+# spawn bearings generated from it, never change when a map is added. prototypes/city_tables.lua
+# merges the same files in the game.
+TABLES_DIR = REPO / "terra-nauvis" / "prototypes" / "tables"
+
+
+def city_table_files(tables_dir=TABLES_DIR):
+    """{map key: path of the table file that holds it} over prototypes/tables/cities*.lua; a map held
+    by two files raises ConfigError."""
+    out = {}
+    for p in sorted(Path(tables_dir).glob("cities*.lua")):
+        for key in load(p):
+            if key in out:
+                raise ConfigError(f"the spawn-city tables {out[key].name} and {p.name} both hold the map {key}")
+            out[key] = p
+    return out
+
+
+def city_tables(tables_dir=TABLES_DIR):
+    """Every map's spawn-city table, {map key: {version, cities}}, merged from prototypes/tables/
+    (city_table_files)."""
+    return {key: load(p)[key] for key, p in city_table_files(tables_dir).items()}
+
+
 # ------------------------------------------------------------------------------------------------ schema
 #
 # The shapes of config.lua's groups (ARCHITECTURE.md, the config.lua table). Every Python reader
@@ -689,6 +714,19 @@ def start_masks(cfg):
     return out
 
 
+def layer_chain_names(cfg, map_key, version):
+    """A spawn version's layer chain offset names (presets.lua layer_chain_names): where the map's
+    layer chain version (layer_chain_geo) holds another city offset, its offset names at this
+    version's fold, so the map-wide layers read the spawn's ground."""
+    gid = (cfg.get("layer_chain_geo") or {}).get(map_key)
+    out = {}
+    for lv in (cfg["geography"][map_key]["versions"] if spawn_of(version) and gid else []):
+        if (lv["geo_id"] == gid and lv["cx"] != version["cx"] and
+                list(lv["city_offset"]) != list(version["city_offset"])):
+            out[lv["cx"]], out[lv["cy"]] = version["city_offset"][0], version["city_offset"][1]
+    return out
+
+
 def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     """The property_expression_names a geography version's preset bakes at a startup scale (and,
     for a version with a spawn record, a spawn-city setting value, default the setting's default),
@@ -712,6 +750,7 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     if sp:
         pen.update({K["distance"]: sp["distance"], sp["city"]: city_number(cfg, version, city),
                     K["spawn_lake"]: sp["spawn_lake"], K["spawn_bias"]: sp["spawn_bias"]})
+        pen.update(layer_chain_names(cfg, map_key, version))
     # waterways: the hook gate on and the ford key at the map's ford set for the scale
     ww = waterways_of(version)
     if ww:

@@ -16,5 +16,10 @@ re-emits the tables twice and compares each byte for byte with the committed fil
 
 | File | sha256 | Role |
 |---|---|---|
-| `manifest-europe.json` | `191cd87770f804eb56f3d412c956953e0be119986945c5afbff74b5d2ea8f426` | emission manifest |
-| `manifest-olde_world.json` | `0d67c55ba81b61ae62c5b2eeb5427a3ec409965d31d0c3f545fd768dc4fb8b9b` | emission manifest |
+| `manifest-europe.json` | `2a4f192d1652693d76699fafa1e68c8ceab44e0c24e0750140c3446623032119` | emission manifest |
+| `manifest-olde_world.json` | `3e86480ffc0b0495840227ecdeb2920ce9bc70f162a22dc72e2064b14efcb0d7` | emission manifest |
+
+2026-10-30: `bandfix.tables` gained Europe's geography 14 and Old World's 16 and 18 (the soft-edge
+versions; the handler skips the edge band on them). The emitter reads that list only to check the
+map's membership, so the tables are unchanged: both manifests' `bandfix_config_sha256` was re-stamped
+to the new group (the old digest recomputes exactly from the new group with the old lists).

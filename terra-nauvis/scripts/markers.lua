@@ -18,7 +18,7 @@
 -- A Map-type-only world gets none: it holds no storage.earth, and its scale and spawn follow the startup
 -- settings at every load, so a marker drawn once could later stand away from its city.
 local cfg = require("prototypes.config")
-local cities = require("prototypes.tables.cities")
+local cities = require("prototypes.city_tables")
 local guards = require("scripts.guards")
 
 local M = {}

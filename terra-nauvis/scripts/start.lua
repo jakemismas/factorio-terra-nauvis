@@ -27,7 +27,7 @@
 -- A Map-type-only world is not an Earth world here (it holds no tn_geo): it gets the Map type notice
 -- from guards.lua and no start message. Control code reads save state only (U6).
 local cfg = require("prototypes.config")
-local cities = require("prototypes.tables.cities")
+local cities = require("prototypes.city_tables")
 local guards = require("scripts.guards")
 
 local M = {}

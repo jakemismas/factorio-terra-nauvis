@@ -6610,6 +6610,11 @@ def city_fold_findings(cfg, maps):
     return out
 
 
+# Rows the maintainer's start-city decision (2026-10-30 07:35) set at real coordinates instead of EarthMaps' grid
+# points: Old World's Prague moved, Frankfurt, Aachen and Moscow appended after EarthMaps' 30 cities.
+CITY_RULINGS = {"olde_world": {"prague", "frankfurt", "aachen", "moscow"}}
+
+
 def city_table_findings(cfg, maps, tables=None):
     """T16: each new map's table in prototypes/tables/cities.lua against its dropdown and EarthMaps: a
     version number; its keys, in source order, the dropdown's cities after random; each row's name,
@@ -6618,7 +6623,7 @@ def city_table_findings(cfg, maps, tables=None):
     `tables` is the parsed file (owa_controls passes fixtures). Returns failures."""
     if tables is None:
         try:
-            tables = tnconfig.load(CITIES_LUA)
+            tables = tnconfig.city_tables()
         except (OSError, tnconfig.ConfigError) as e:
             return [f"prototypes/tables/cities.lua: {e}"]
     appr = json.loads((REPO / "data-src" / "approvals" / "approvals-data.json").read_text(encoding="utf-8"))
@@ -6632,12 +6637,15 @@ def city_table_findings(cfg, maps, tables=None):
             out.append(f"cities.lua holds no {{version, cities}} table for {mk}")
             continue
         rows, want = t["cities"], s["allowed_values"][1:]
+        ruled = CITY_RULINGS.get(mk, set())
         if list(rows) != want:
             out.append(f"cities.lua {mk}: its keys in source order {list(rows)[:4]}... differ from the dropdown's "
                        f"cities {want[:4]}...")
         ref = {c["full_name"]: c for c in json.loads((REPO / "data-src" / "earthmaps" / f"{mk}.json").read_text(
             encoding="utf-8"))["cities"]["list"]}
         for slug, full in zip(want, appr["cities"][mk]["kept"]):
+            if slug in ruled:
+                continue
             row, c = rows.get(slug), ref.get(full)
             if not isinstance(row, dict) or c is None:
                 out.append(f"cities.lua {mk}: no row {slug} for EarthMaps' {full}")
@@ -6882,7 +6890,7 @@ def city_controls(cfg, mk):
     spot["surface"][mk]["pixel"] = list(dry["pixel"])
     out["owa: a city inside an adopted hotspot's margin fails T7 (a)"] = names(
         owa_t7_reference(cfg, [mk], near, {mk: listed})[1], "inside its margin")
-    tables = tnconfig.load(CITIES_LUA)
+    tables = tnconfig.city_tables()
     f = city_table_findings(cfg, [mk], tables)
     out["owa: the committed cities table matches its dropdown and EarthMaps"] = (not f, f[:1])
     moved = copy.deepcopy(tables)
@@ -19147,7 +19155,7 @@ def de_membership(cfg):
     its edge, which a warped edge could reach."""
     import oracle
     poly = de_polygon()
-    cities = tnconfig.load(oracle.CITIES)
+    cities = tnconfig.city_tables()
     out = {}
     for mk in cfg["map_order"]:
         g = tnconfig.geography(cfg).get(mk) or {}
@@ -21179,7 +21187,7 @@ def ex_city_positions(cfg, mk, scale, offset):
     """{city name: (x, y)} of the tile centre each marker must stand at: the middle tile of the city's
     reference pixel at `scale` (geo tiles), less the spawn offset (world = geo - offset; T18 (b))."""
     import oracle
-    rows = tnconfig.load(oracle.CITIES)[mk]["cities"]
+    rows = tnconfig.city_tables()[mk]["cities"]
     m, ppd = cfg["maps"][mk], cfg["coordinates"]["px_per_degree"]
     s = int(scale)
     corner = s // int(cfg["coordinates"]["corner_offset_divisor"])
@@ -26780,7 +26788,7 @@ def v2_sheet(cfg, mk, scale, runs, out_png, cols=5, panel=192):
     import oracle
     import tnconfig as tc
     mref = eg.MapRef(mk)
-    rows_tbl = tc.load(oracle.CITIES)[mk]["cities"]
+    rows_tbl = tc.city_tables()[mk]["cities"]
     s = int(scale)
     label_h = 18
     n = len(runs)

@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Spawn bearings emitter (milestone spawn-cities; T7 (b), JI-08).
+"""Spawn bearings emitter (milestones spawn-cities and olde-world-atlantic; T7 (b), JI-08).
 
-  python tools/build_spawn.py emit --map europe     write terra-nauvis/prototypes/generated/spawn_<map>_v1.lua
-  python tools/build_spawn.py check --map europe    emit twice into memory and compare byte for byte with
-                                                    the committed file (the gate's sc_dump_facts row)
+  python tools/build_spawn.py emit --map europe     write the bearings file the map's newest geography
+                                                    version names (prototypes/generated/spawn_<map>_v<n>.lua)
+  python tools/build_spawn.py check --map europe    emit twice into memory, with the emitter the committed
+                                                    file's header names, and compare byte for byte with it
+                                                    (the gate's sc_dump_facts row)
+  python tools/build_spawn.py risk --map europe     the model's failure share per city and scale of the
+                                                    committed file (the T7 suite's risky starts)
 
 The spawn lake and the starting ore must lie on the spawn's own land (T7 (b): each reached on foot
 from the spawn tile). S7's seed-folded lake angle put the lake north of every city at seed 1000,
@@ -11,9 +15,10 @@ which at scale 1 is open water for Tallinn, Amsterdam and Stockholm, and startin
 vanilla's spot noise, which does not know the sea: at scale 1 Tallinn's copper and Helsinki's stone
 landed across the Gulf of Finland, and a bias along the lake's bearing sent Paris's copper to
 England. So per city and integer scale the tool reads the land component that holds the city's
-pixel in the reference land raster (thin water counted as land, as the fit fills it; 4-connected,
-inside a window of 1.5 start radii), and writes, in sixteenths of a turn (0 east, 4 south: world y
-and raster rows both grow southward):
+pixel (4-connected, inside a window of 1.5 start radii): emitter 3 (Europe's landed file) in the
+reference land raster with thin water counted as land, emitter 4 (every file emitted since) in the
+map's coast fit at the pixel centres, the land the game draws (land_raster). It writes, in
+sixteenths of a turn (0 east, 4 south: world y and raster rows both grow southward):
 
   - bearings: the lake's bearing, the one whose lake disc and straight path from the city's pixel
     centre lie most fully in that component, ties broken by a per-city preferred bearing so lakes do
@@ -50,9 +55,8 @@ if str(HERE) not in sys.path:
 
 import build_geo  # noqa: E402  (it imports numpy only inside its functions)
 
-EMITTER_VERSION = 3
+EMITTER_VERSION = 4
 GENERATED = REPO / "terra-nauvis" / "prototypes" / "generated"
-CITIES = REPO / "terra-nauvis" / "prototypes" / "tables" / "cities.lua"
 SCALES = (1, 2, 3, 4, 5, 6)
 PATH_STEP_PX = 0.25
 FIELDS = ("bearings", "bias", "bias_width", "coastal")
@@ -147,8 +151,10 @@ def layouts(cfg):
     return out.reshape(out.shape[0], per, ores, 2).transpose(0, 2, 1, 3)
 
 
-def bias_for(cfg, comp, coarse, col, row, s, lake_xy, cands):
-    """(bias bearing, width, on flag) of one city at one scale (module docstring)."""
+def bias_model(cfg, comp, coarse, col, row, s, lake_xy, cands):
+    """The Monte Carlo of one city at one scale (module docstring): (x, y, the start mask without a
+    bias, failure), failure(mask) the share of the layouts' ore picks it leaves off the city's own
+    land."""
     import numpy as np
     B = cfg["spawn"]["bias"]
     L = cfg["spawn"]["lake"]
@@ -182,6 +188,22 @@ def bias_for(cfg, comp, coarse, col, row, s, lake_xy, cands):
         i = np.argmax(fav, axis=-1)
         return round(1.0 - float(np.take_along_axis(good, i[..., None], -1).mean()), 4)
 
+    return x, y, base, failure
+
+
+def bias_mask(x, y, base, bias, width, steps):
+    """The start mask with the half-plane bias on bearing `bias` (sixteenths of a turn) and `width`."""
+    import numpy as np
+    th = 2 * math.pi * bias / steps
+    return base * np.clip(1 + (x * math.cos(th) + y * math.sin(th)) / width, 0, 1)
+
+
+def bias_for(cfg, comp, coarse, col, row, s, lake_xy, cands):
+    """(bias bearing, width, on flag) of one city at one scale (module docstring)."""
+    import numpy as np
+    B = cfg["spawn"]["bias"]
+    L = cfg["spawn"]["lake"]
+    x, y, base, failure = bias_model(cfg, comp, coarse, col, row, s, lake_xy, cands)
     off = failure(base)
     steps = int(L["bearings"])
     best = None
@@ -196,8 +218,8 @@ def bias_for(cfg, comp, coarse, col, row, s, lake_xy, cands):
     return 0, max(B["widths"]), 0
 
 
-def bearings_for(cfg, land, key, col, row, scale, coarse, cands):
-    """(lake bearing, bias bearing, bias width, coastal flag) of one city at one scale."""
+def city_setup(cfg, land, col, row, scale):
+    """(component, lake distance, lake radius, steps) of one city at one scale, in reference px."""
     L = cfg["spawn"]["lake"]
     B = cfg["spawn"]["bias"]
     steps = int(L["bearings"])
@@ -206,6 +228,20 @@ def bearings_for(cfg, land, key, col, row, scale, coarse, cands):
     radius = (L["offset"] * L["divisor"] + L["noise"]["amplitude"]) / s
     start = B["radius"] / s
     comp = Component(land, col, row, max(start, d + 2 * radius) * WINDOW_RADII)
+    return comp, d, radius, steps
+
+
+def lake_xy(cfg, bearing):
+    """The spawn lake's centre in tiles from the spawn on a bearing (sixteenths of a turn)."""
+    L = cfg["spawn"]["lake"]
+    th = 2 * math.pi * bearing / int(L["bearings"])
+    return L["distance"] * math.cos(th), L["distance"] * math.sin(th)
+
+
+def bearings_for(cfg, land, key, col, row, scale, coarse, cands):
+    """(lake bearing, bias bearing, bias width, coastal flag) of one city at one scale."""
+    s = int(scale)
+    comp, d, radius, steps = city_setup(cfg, land, col, row, s)
     x0, y0 = col + 0.5, row + 0.5
     scores = []
     for k in range(steps):
@@ -218,9 +254,7 @@ def bearings_for(cfg, land, key, col, row, scale, coarse, cands):
     pref = preferred(key, steps)
     lake = max(range(steps), key=lambda k: (scores[k][0], scores[k][1],
                                             -min((k - pref) % steps, (pref - k) % steps), -k))
-    th = 2 * math.pi * lake / steps
-    bias, width, on = bias_for(cfg, comp, coarse, col, row, s,
-                               (L["distance"] * math.cos(th), L["distance"] * math.sin(th)), cands)
+    bias, width, on = bias_for(cfg, comp, coarse, col, row, s, lake_xy(cfg, lake), cands)
     return lake, bias, width, on
 
 
@@ -237,26 +271,62 @@ def render(rows, header):
     return "\n".join(out) + "\n"
 
 
-def emit_text(map_key):
+def land_raster(map_key, emitter):
+    """The land the city's component is read from (H x W bool). Emitter 3 (spawn-cities; Europe's
+    spawn_europe_v1.lua) reads the reference raster, thin water counted as land. Emitter 4
+    (olde-world-atlantic) reads the map's coast fit at the reference pixel centres (the geo checkpoint
+    its fit.json ships): the class the game draws there, tile for tile at scale 1, where the coast
+    detail is 0, and a close proxy at the larger scales. A strait or river the fit keeps open is
+    water in the game whatever the thin-water layer says, so a patch beyond it is not on the city's
+    own land."""
     import earthgeo as eg
+    if emitter == 3:
+        mref = eg.MapRef(map_key)
+        return mref.land.astype(bool) | mref.thin.astype(bool)
+    if emitter == 4:
+        return build_geo.pixel_values(*build_geo.load_model(geo_checkpoint(map_key))) > 0
+    raise SystemExit(f"build_spawn.py has no emitter {emitter}")
+
+
+def table_file(map_key):
+    """The spawn-city table file of prototypes/tables/ that holds the map (tnconfig.city_table_files)."""
     import tnconfig
-    cfg = tnconfig.load()
+    tables = tnconfig.city_table_files()
+    if map_key not in tables:
+        raise SystemExit(f"no spawn-city table file under prototypes/tables/ holds {map_key}")
+    return tables[map_key]
+
+
+def city_pixels(cfg, map_key):
+    """[(setting value, col, row)] of the map's cities in the setting's order (random excluded)."""
+    import tnconfig
     g = spawn_record(cfg, map_key)
     values = cfg["settings"][g["city_setting"]]["allowed_values"]
-    table = tnconfig.load(CITIES)[map_key]["cities"]
+    table = tnconfig.load(table_file(map_key))[map_key]["cities"]
     m = cfg["maps"][map_key]
     ppd = cfg["coordinates"]["px_per_degree"]
-    mref = eg.MapRef(map_key)
-    land = mref.land.astype(bool) | mref.thin.astype(bool)
-    cfg["_start_mask"] = start_mask_of(cfg, map_key)
-    ckpt = coarse_checkpoint(map_key)
-    coarse = build_geo.pixel_values(*build_geo.load_model(ckpt)).astype("float64")
-    cands = layouts(cfg)
-    rows = []
+    out = []
     for v in values[1:]:
         c = table[v]
-        col = math.floor((c["lon"] - m["lon_left_edge"]) * ppd)
-        row = math.floor((m["lat_top_edge"] - c["lat"]) * ppd)
+        out.append((v, math.floor((c["lon"] - m["lon_left_edge"]) * ppd),
+                    math.floor((m["lat_top_edge"] - c["lat"]) * ppd)))
+    return out
+
+
+def model_inputs(map_key, emitter):
+    """(cfg, land, the coarse field at the pixel centres, the candidate layouts) of a map's model."""
+    import tnconfig
+    cfg = tnconfig.load()
+    cfg["_start_mask"] = start_mask_of(cfg, map_key)
+    coarse = build_geo.pixel_values(*build_geo.load_model(coarse_checkpoint(map_key))).astype("float64")
+    return cfg, land_raster(map_key, emitter), coarse, layouts(cfg)
+
+
+def emit_text(map_key, emitter=None):
+    emitter = EMITTER_VERSION if emitter is None else int(emitter)
+    cfg, land, coarse, cands = model_inputs(map_key, emitter)
+    rows = []
+    for v, col, row in city_pixels(cfg, map_key):
         rec = {f: [] for f in FIELDS}
         for s in SCALES:
             for f, x in zip(FIELDS, bearings_for(cfg, land, v, col, row, s, coarse, cands)):
@@ -264,19 +334,74 @@ def emit_text(map_key):
         rows.append((v, rec))
     png = REPO / "data-src" / "earthmaps" / f"{map_key}-land.png"
     thin = REPO / "data-src" / "earthmaps" / f"{map_key}-thinwater.png"
-    header = [
-        f"-- Generated by tools/build_spawn.py (emitter {EMITTER_VERSION}) from data-src/earthmaps/{map_key}-land.png",
-        f"-- (sha256 {sha256_file(png)}),",
-        f"-- data-src/earthmaps/{map_key}-thinwater.png (sha256 {sha256_file(thin)})",
-        f"-- prototypes/tables/cities.lua (sha256 {sha256_file(CITIES)})",
-        f"-- and the coarse checkpoint data-src/fits/{map_key}/{ckpt.name}",
-        f"-- (sha256 {sha256_file(ckpt)}).",
+    tf = table_file(map_key)
+    ckpt = coarse_checkpoint(map_key)
+    if emitter == 3:
+        header = [
+            f"-- Generated by tools/build_spawn.py (emitter {emitter}) from data-src/earthmaps/{map_key}-land.png",
+            f"-- (sha256 {sha256_file(png)}),",
+            f"-- data-src/earthmaps/{map_key}-thinwater.png (sha256 {sha256_file(thin)})",
+            f"-- prototypes/tables/{tf.name} (sha256 {sha256_file(tf)})",
+            f"-- and the coarse checkpoint data-src/fits/{map_key}/{ckpt.name}",
+            f"-- (sha256 {sha256_file(ckpt)}).",
+        ]
+    else:
+        geo = geo_checkpoint(map_key)
+        header = [
+            f"-- Generated by tools/build_spawn.py (emitter {emitter}) from the land of the coast fit at the pixel",
+            f"-- centres, data-src/fits/{map_key}/{geo.name}",
+            f"-- (sha256 {sha256_file(geo)}),",
+            f"-- prototypes/tables/{tf.name} (sha256 {sha256_file(tf)})",
+            f"-- and the coarse checkpoint data-src/fits/{map_key}/{ckpt.name}",
+            f"-- (sha256 {sha256_file(ckpt)}).",
+        ]
+    header += [
         "-- Per city (the spawn-city setting's values) and scale 1 to 6: the spawn lake's bearing, inside",
         "-- the land component holding the city, and the starting-ore bias bearing, both in sixteenths of",
         "-- a turn (0 east, 4 south); the bias width in tiles; and 1 where the start mask's bias is on.",
         "-- Name-free data; never edit by hand: rerun the tool (plan hard rule 9).",
     ]
     return render(rows, header)
+
+
+def geo_checkpoint(map_key):
+    """The map's coast fit checkpoint (data-src/fits/<map>/fit.json's geo body)."""
+    return build_geo.FITS / map_key / build_geo.fit_spec(map_key)["bodies"]["geo"]["checkpoint"]
+
+
+def file_emitter(path):
+    """The emitter version a generated bearings file names in its first line, or None."""
+    import re
+    p = Path(path)
+    if not p.exists():
+        return None
+    m = re.search(r"\(emitter (\d+)\)", p.read_text(encoding="utf-8").split("\n", 1)[0])
+    return int(m.group(1)) if m else None
+
+
+def model_risk(map_key, emitter=None, table=None):
+    """{setting value: [the model's failure share per scale 1 to 6]} of a bearings table (default: the
+    committed file of the map's newest version) under an emitter's model (default: the newest
+    emitter): the share of the Monte Carlo layouts' starting-ore picks the table's lake and bias leave
+    off the city's own land. The T7 suite re-runs at seeds 1000 to 1004 every start whose share
+    reaches its risk bar (earth_test.py T7_RISK_SHARE)."""
+    import tnconfig
+    emitter = EMITTER_VERSION if emitter is None else int(emitter)
+    if table is None:
+        table = tnconfig.load(out_path(map_key))
+    cfg, land, coarse, cands = model_inputs(map_key, emitter)
+    out = {}
+    for v, col, row in city_pixels(cfg, map_key):
+        shares = []
+        for si, s in enumerate(SCALES):
+            comp, _, _, steps = city_setup(cfg, land, col, row, s)
+            x, y, base, failure = bias_model(cfg, comp, coarse, col, row, s,
+                                             lake_xy(cfg, table["bearings"][v][si]), cands)
+            mask = (bias_mask(x, y, base, table["bias"][v][si], table["bias_width"][v][si], steps)
+                    if table["coastal"][v][si] else base)
+            shares.append(failure(mask))
+        out[v] = shares
+    return out
 
 
 def coarse_checkpoint(map_key):
@@ -311,15 +436,22 @@ def out_path(map_key):
 
 
 def emit(map_key):
-    text = emit_text(map_key)
+    text = emit_text(map_key, EMITTER_VERSION)
     out_path(map_key).write_text(text, encoding="utf-8", newline="\n")
     print(f"RESULT ok wrote {out_path(map_key).relative_to(REPO).as_posix()} sha256 {sha256_file(out_path(map_key))}")
     return 0
 
 
 def check(map_key):
-    """Failures: two emissions differ, or one differs from the committed file."""
-    a, b = emit_text(map_key), emit_text(map_key)
+    """Failures: two emissions differ, or one differs from the committed file. The committed file is
+    re-emitted with the emitter its own header names (a landed file keeps its emitter for good; a new
+    file is emitted by the newest)."""
+    emitter = file_emitter(out_path(map_key)) or EMITTER_VERSION
+    # the two emissions are independent processes' work (the gate's sc_dump_facts runs this check)
+    import concurrent.futures as cf
+    import multiprocessing as mp
+    with cf.ProcessPoolExecutor(max_workers=2, mp_context=mp.get_context("spawn")) as ex:
+        a, b = ex.map(emit_text, [map_key, map_key], [emitter, emitter])
     fails = []
     if a != b:
         fails.append("two emissions differ")
@@ -333,12 +465,18 @@ def check(map_key):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("emit", "check"):
+    for name in ("emit", "check", "risk"):
         p = sub.add_parser(name)
         p.add_argument("--map", default="europe")
+        if name == "risk":
+            p.add_argument("--emitter", type=int, default=None)
     a = ap.parse_args(argv)
     if a.cmd == "emit":
         return emit(a.map)
+    if a.cmd == "risk":
+        import json
+        print(json.dumps(model_risk(a.map, a.emitter)))
+        return 0
     fails = check(a.map)
     print(f"RESULT {'ok' if not fails else 'fail'} check {a.map}: {fails or 'two emissions equal the committed file'}")
     return 0 if not fails else 1

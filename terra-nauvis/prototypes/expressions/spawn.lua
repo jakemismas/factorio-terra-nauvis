@@ -27,7 +27,7 @@
 -- comes from config.lua, the city tables and the generated bearings (S-5). A body that several
 -- versions name is defined once, and two versions that would build it differently fail at load.
 local cfg = require("prototypes.config")
-local cities = require("prototypes.tables.cities")
+local cities = require("prototypes.city_tables")
 -- destroyed-europe: the cities its zone covers, which a random pick on a world with the zone on skips
 local destroyed = require("prototypes.tables.destroyed")
 
@@ -35,6 +35,8 @@ local destroyed = require("prototypes.tables.destroyed")
 -- module names), keyed by its path as config.lua's release_registry files and spawn records name it.
 local FILES = {
   ["prototypes/generated/spawn_europe_v1.lua"] = require("prototypes.generated.spawn_europe_v1"),
+  ["prototypes/generated/spawn_atlantic_v1.lua"] = require("prototypes.generated.spawn_atlantic_v1"),
+  ["prototypes/generated/spawn_olde_world_v1.lua"] = require("prototypes.generated.spawn_olde_world_v1"),
 }
 
 local K = cfg.keys

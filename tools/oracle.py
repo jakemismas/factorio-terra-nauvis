@@ -1311,11 +1311,17 @@ S7_RANDOM = {"n": 30, "picks": {1000: 11, 1002: 25, 1004: 9, 4000000001: 3, 4294
 _CITY_TABLES = {}
 
 
-def city_table(path=CITIES):
+def city_table(path=None):
     """The city table as Python data, parsed once per file content and handed out as a copy: the
     runner folds the cities for every spawn it places (city_fold), and parsing the table for each
-    one was most of the gate's re-derivation of the T7 sweep."""
+    one was most of the gate's re-derivation of the T7 sweep. With no
+    path, every map's table merged from prototypes/tables/cities*.lua (tnconfig.city_tables)."""
     import tnconfig
+    if path is None:
+        out = {}
+        for p in tnconfig.city_table_files().values():
+            out.update({k: v for k, v in city_table(p).items() if k not in out})
+        return out
     p = Path(path)
     text = p.read_text(encoding="utf-8")
     key = (str(p.resolve()), hashlib.sha256(text.encode("utf-8")).hexdigest())

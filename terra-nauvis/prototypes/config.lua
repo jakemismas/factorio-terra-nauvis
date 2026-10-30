@@ -683,6 +683,76 @@ local ELN = {
 local EU_SETS4 = {ww = ELN.EU_WW4, canals = ELN.EU_CANALS4, dams = ELN.EU_DAMS4, fords = ELN.EU_FORDS4}
 local AT_SETS4 = {ww = ELN.AT_WW4, canals = ELN.AT_CANALS4, dams = ELN.AT_DAMS4, fords = ELN.AT_FORDS4}
 local OW_SETS4 = {ww = ELN.OW_WW4, canals = ELN.OW_CANALS4, dams = ELN.OW_DAMS4, fords = ELN.OW_FORDS4}
+-- The Old World and Atlantic spawn city (first release, 2026-10-30): each map's next geography
+-- version, the first with a spawn record, ported from an earlier prototype:
+-- the map's spawn-city setting moves the spawn through the city fold, with the spawn lake, start mask
+-- version 2 and the inland lakes behind the inland lakes switch, as Europe's version 6 does, and the
+-- soft map edge. Every name its own but the spawn bodies that read no chain: Atlantic's and
+-- Old World's version 6. One table: the 200-local limit.
+local OAS = {
+  AT6_ENTRY = NOISE .. "elevation_atlantic_v6",
+  AT6_GEO = NOISE .. "geo_atlantic_v6",
+  AT6_LAND_COARSE = NOISE .. "land_coarse_atlantic_v6",
+  AT6_DETAIL = NOISE .. "detail_atlantic_v6",
+  AT6_FAR = NOISE .. "far_atlantic_v6",
+  AT6_GX = NOISE .. "gx_atlantic_v6",
+  AT6_GY = NOISE .. "gy_atlantic_v6",
+  AT6_U = NOISE .. "u_atlantic_v6",
+  AT6_V = NOISE .. "v_atlantic_v6",
+  AT6_CX = NOISE .. "cx_atlantic_v6",
+  AT6_CY = NOISE .. "cy_atlantic_v6",
+  AT6_LAKES = NOISE .. "inland_lakes_atlantic_v1",
+  AT6_SHORE = NOISE .. "shore_atlantic_v4",
+  AT_CITY = NOISE .. "city_atlantic",
+  AT_CITY_INDEX = NOISE .. "city_index_atlantic_v1",
+  AT_CITY_CX = NOISE .. "city_cx_atlantic_v1",
+  AT_CITY_CY = NOISE .. "city_cy_atlantic_v1",
+  AT_SPAWN_LAKE = NOISE .. "spawn_lake_atlantic_v1",
+  AT_SPAWN_BIAS = NOISE .. "spawn_bias_atlantic_v1",
+  AT_SPAWN_FILE = "prototypes/generated/spawn_atlantic_v1.lua",
+  AT_WW5 = {NOISE .. "ww_atlantic_s1_v5", NOISE .. "ww_atlantic_s2_v5", NOISE .. "ww_atlantic_s3_v5",
+            NOISE .. "ww_atlantic_s4_v5", NOISE .. "ww_atlantic_s5_v5", NOISE .. "ww_atlantic_s6_v5"},
+  AT_CANALS5 = {NOISE .. "canals_atlantic_s1_v5", NOISE .. "canals_atlantic_s2_v5", NOISE .. "canals_atlantic_s3_v5",
+                NOISE .. "canals_atlantic_s4_v5", NOISE .. "canals_atlantic_s5_v5", NOISE .. "canals_atlantic_s6_v5"},
+  AT_DAMS5 = {NOISE .. "dams_atlantic_s1_v5", NOISE .. "dams_atlantic_s2_v5", NOISE .. "dams_atlantic_s3_v5",
+              NOISE .. "dams_atlantic_s4_v5", NOISE .. "dams_atlantic_s5_v5", NOISE .. "dams_atlantic_s6_v5"},
+  AT_FORDS5 = {NOISE .. "fords_atlantic_s1_v5", NOISE .. "fords_atlantic_s2_v5", NOISE .. "fords_atlantic_s3_v5",
+               NOISE .. "fords_atlantic_s4_v5", NOISE .. "fords_atlantic_s5_v5", NOISE .. "fords_atlantic_s6_v5"},
+  OW6_ENTRY = NOISE .. "elevation_olde_world_v6",
+  OW6_GEO = NOISE .. "geo_olde_world_v6",
+  OW6_LAND_COARSE = NOISE .. "land_coarse_olde_world_v6",
+  OW6_DETAIL = NOISE .. "detail_olde_world_v6",
+  OW6_FAR = NOISE .. "far_olde_world_v6",
+  OW6_GX = NOISE .. "gx_olde_world_v6",
+  OW6_GY = NOISE .. "gy_olde_world_v6",
+  OW6_U = NOISE .. "u_olde_world_v6",
+  OW6_V = NOISE .. "v_olde_world_v6",
+  OW6_CX = NOISE .. "cx_olde_world_v6",
+  OW6_CY = NOISE .. "cy_olde_world_v6",
+  OW6_LAKES = NOISE .. "inland_lakes_olde_world_v1",
+  OW6_SHORE = NOISE .. "shore_olde_world_v4",
+  OW_CITY = NOISE .. "city_olde_world",
+  OW_CITY_INDEX = NOISE .. "city_index_olde_world_v1",
+  OW_CITY_CX = NOISE .. "city_cx_olde_world_v1",
+  OW_CITY_CY = NOISE .. "city_cy_olde_world_v1",
+  OW_SPAWN_LAKE = NOISE .. "spawn_lake_olde_world_v1",
+  OW_SPAWN_BIAS = NOISE .. "spawn_bias_olde_world_v1",
+  OW_SPAWN_FILE = "prototypes/generated/spawn_olde_world_v1.lua",
+  OW_WW5 = {NOISE .. "ww_olde_world_s1_v5", NOISE .. "ww_olde_world_s2_v5", NOISE .. "ww_olde_world_s3_v5",
+            NOISE .. "ww_olde_world_s4_v5", NOISE .. "ww_olde_world_s5_v5", NOISE .. "ww_olde_world_s6_v5"},
+  OW_CANALS5 = {NOISE .. "canals_olde_world_s1_v5", NOISE .. "canals_olde_world_s2_v5",
+                NOISE .. "canals_olde_world_s3_v5", NOISE .. "canals_olde_world_s4_v5",
+                NOISE .. "canals_olde_world_s5_v5", NOISE .. "canals_olde_world_s6_v5"},
+  OW_DAMS5 = {NOISE .. "dams_olde_world_s1_v5", NOISE .. "dams_olde_world_s2_v5", NOISE .. "dams_olde_world_s3_v5",
+              NOISE .. "dams_olde_world_s4_v5", NOISE .. "dams_olde_world_s5_v5", NOISE .. "dams_olde_world_s6_v5"},
+  OW_FORDS5 = {NOISE .. "fords_olde_world_s1_v5", NOISE .. "fords_olde_world_s2_v5",
+               NOISE .. "fords_olde_world_s3_v5", NOISE .. "fords_olde_world_s4_v5",
+               NOISE .. "fords_olde_world_s5_v5", NOISE .. "fords_olde_world_s6_v5"},
+}
+local OAS_SETS = {
+  atlantic = {ww = OAS.AT_WW5, canals = OAS.AT_CANALS5, dams = OAS.AT_DAMS5, fords = OAS.AT_FORDS5},
+  olde_world = {ww = OAS.OW_WW5, canals = OAS.OW_CANALS5, dams = OAS.OW_DAMS5, fords = OAS.OW_FORDS5},
+}
 -- Destroyed Europe (milestone destroyed-europe; APPROVALS 10; D12; S3 section 6). The toggle key tn_destroyed
 -- is a name switch to tn_one and tn_zero, baked on only when its setting is on and Alien Biomes is loaded
 -- (FEAS-17: without AB the switch drops at the data stage). The key (K) and the bodies, one table so this
@@ -811,6 +881,7 @@ return {
         "random", "prague", "madrid", "london", "kovdor", "munguy", "xeta", "yakutia", "zyryanka", "kharkiv",
         "huambo", "mongo", "dangila", "bamako", "akka", "waddan", "johannesburg", "songea", "tabuk", "chengdu",
         "nanchang", "songling", "delhi", "hampi", "bam", "aktobe", "semey", "moron", "bangkok", "griffith", "newman",
+        "frankfurt", "aachen", "moscow",
       },
       order = "b-c",
     },
@@ -1229,6 +1300,41 @@ return {
           fields = REN.AT_FIELDS_KEY,
           edge = true,
         },
+        {
+          -- Version 6 (spawn city, ported from an earlier prototype): version 5's composition with the spawn
+          -- at the chosen city (Atlantic): the city fold moves every geography read, the spawn lake and
+          -- starting-ore bias sit on the city's generated bearing (start mask version 2), and the inland
+          -- lakes compose through the inland lakes switch, as Europe's version 6. Every name its own but
+          -- the spawn bodies that read no chain. Its preset also points the layer chain version's offset
+          -- names at the fold, so the region layer, the climate and the layers after them stay on the
+          -- spawn's ground (presets.lua layer_chain_names).
+          geo_id = 17,
+          entry = OAS.AT6_ENTRY,
+          geo = OAS.AT6_GEO, land_coarse = OAS.AT6_LAND_COARSE, detail = OAS.AT6_DETAIL, far = OAS.AT6_FAR,
+          gx = OAS.AT6_GX, gy = OAS.AT6_GY, u = OAS.AT6_U, v = OAS.AT6_V,
+          cx = OAS.AT6_CX, cy = OAS.AT6_CY, city_offset = {OAS.AT_CITY_CX, OAS.AT_CITY_CY},
+          start_mask = START_MASK2,
+          fits = {geo = AT_GEO_FILE, land_coarse = AT_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = OAS.AT6_CX, map_qualified = true, frozen = true},
+            {name = OAS.AT6_CY, map_qualified = true, frozen = true},
+            {name = OAS.AT_CITY, map_qualified = true},
+            {name = K_CANALS, map_qualified = false},
+            {name = REN.AT_FIELDS_KEY, map_qualified = true},
+            {name = ELN.K_INLAND_LAKES, map_qualified = false},
+          },
+          spawn = {
+            city_setting = "spawn_city_atlantic", city = OAS.AT_CITY, city_index = OAS.AT_CITY_INDEX,
+            spawn_lake = OAS.AT_SPAWN_LAKE, spawn_bias = OAS.AT_SPAWN_BIAS, inland_lakes = OAS.AT6_LAKES,
+            start_land = START_LAND, distance = DISTANCE, bearings = OAS.AT_SPAWN_FILE,
+          },
+          waterways = OAS_SETS.atlantic,
+          shore = OAS.AT6_SHORE,
+          fields = REN.AT_FIELDS_KEY,
+          edge = true,
+          lakes = ELN.K_INLAND_LAKES,
+        },
       },
     },
     olde_world = {
@@ -1333,6 +1439,41 @@ return {
           fields = REN.OW_FIELDS_KEY,
           edge = true,
         },
+        {
+          -- Version 6 (spawn city, ported from an earlier prototype): version 5's composition with the spawn
+          -- at the chosen city (Old World): the city fold moves every geography read, the spawn lake and
+          -- starting-ore bias sit on the city's generated bearing (start mask version 2), and the inland
+          -- lakes compose through the inland lakes switch, as Europe's version 6. Every name its own but
+          -- the spawn bodies that read no chain. Its preset also points the layer chain version's offset
+          -- names at the fold, so the region layer, the climate and the layers after them stay on the
+          -- spawn's ground (presets.lua layer_chain_names).
+          geo_id = 18,
+          entry = OAS.OW6_ENTRY,
+          geo = OAS.OW6_GEO, land_coarse = OAS.OW6_LAND_COARSE, detail = OAS.OW6_DETAIL, far = OAS.OW6_FAR,
+          gx = OAS.OW6_GX, gy = OAS.OW6_GY, u = OAS.OW6_U, v = OAS.OW6_V,
+          cx = OAS.OW6_CX, cy = OAS.OW6_CY, city_offset = {OAS.OW_CITY_CX, OAS.OW_CITY_CY},
+          start_mask = START_MASK2,
+          fits = {geo = OW_GEO_FILE, land_coarse = OW_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = OAS.OW6_CX, map_qualified = true, frozen = true},
+            {name = OAS.OW6_CY, map_qualified = true, frozen = true},
+            {name = OAS.OW_CITY, map_qualified = true},
+            {name = K_CANALS, map_qualified = false},
+            {name = REN.OW_FIELDS_KEY, map_qualified = true},
+            {name = ELN.K_INLAND_LAKES, map_qualified = false},
+          },
+          spawn = {
+            city_setting = "spawn_city_olde_world", city = OAS.OW_CITY, city_index = OAS.OW_CITY_INDEX,
+            spawn_lake = OAS.OW_SPAWN_LAKE, spawn_bias = OAS.OW_SPAWN_BIAS, inland_lakes = OAS.OW6_LAKES,
+            start_land = START_LAND, distance = DISTANCE, bearings = OAS.OW_SPAWN_FILE,
+          },
+          waterways = OAS_SETS.olde_world,
+          shore = OAS.OW6_SHORE,
+          fields = REN.OW_FIELDS_KEY,
+          edge = true,
+          lakes = ELN.K_INLAND_LAKES,
+        },
       },
     },
   },
@@ -1412,6 +1553,8 @@ return {
                  "entity:offshore-oil:probability", "entity:offshore-oil:richness",
                  -- edge-and-lakes: the inland lakes switch and the new versions' city offset names
                  ELN.K_INLAND_LAKES, ELN.EU6_CX, ELN.EU6_CY, ELN.AT5_CX, ELN.AT5_CY, ELN.OW5_CX, ELN.OW5_CY,
+                 -- the Old World and Atlantic spawn city: the maps' city numbers and the new versions' offset names
+                 OAS.AT_CITY, OAS.OW_CITY, OAS.AT6_CX, OAS.AT6_CY, OAS.OW6_CX, OAS.OW6_CY,
                  -- destroyed-europe: the zone toggle (temperature and the city numbers are listed above)
                  DE.K,
                  -- coast-band-fix: the band-fix key, on presets whose map the setting acts on
@@ -1477,7 +1620,14 @@ return {
                 ELN.AT_CANALS4[6],
                 ELN.AT_DAMS4[1], ELN.AT_DAMS4[2], ELN.AT_DAMS4[3], ELN.AT_DAMS4[4], ELN.AT_DAMS4[5], ELN.AT_DAMS4[6],
                 ELN.AT_FORDS4[1], ELN.AT_FORDS4[2], ELN.AT_FORDS4[3], ELN.AT_FORDS4[4], ELN.AT_FORDS4[5],
-                ELN.AT_FORDS4[6],},
+                ELN.AT_FORDS4[6],
+                OAS.AT6_ENTRY, OAS.AT6_GEO, OAS.AT6_DETAIL, OAS.AT6_FAR, OAS.AT6_LAKES, OAS.AT6_SHORE, START_LAND,
+                OAS.AT_WW5[1], OAS.AT_WW5[2], OAS.AT_WW5[3], OAS.AT_WW5[4], OAS.AT_WW5[5], OAS.AT_WW5[6],
+                OAS.AT_CANALS5[1], OAS.AT_CANALS5[2], OAS.AT_CANALS5[3], OAS.AT_CANALS5[4], OAS.AT_CANALS5[5],
+                                OAS.AT_CANALS5[6],
+                OAS.AT_DAMS5[1], OAS.AT_DAMS5[2], OAS.AT_DAMS5[3], OAS.AT_DAMS5[4], OAS.AT_DAMS5[5], OAS.AT_DAMS5[6],
+                OAS.AT_FORDS5[1], OAS.AT_FORDS5[2], OAS.AT_FORDS5[3], OAS.AT_FORDS5[4], OAS.AT_FORDS5[5],
+                                OAS.AT_FORDS5[6],},
     olde_world = {OW_ENTRY, OW_GEO, OW_DETAIL, OW_FAR,
                   OW2_ENTRY, OW2_GEO, OW2_DETAIL, OW2_FAR,
                   OW_WW[1], OW_WW[2], OW_WW[3], OW_WW[4], OW_WW[5], OW_WW[6],
@@ -1504,7 +1654,15 @@ return {
                   ELN.OW_DAMS4[1], ELN.OW_DAMS4[2], ELN.OW_DAMS4[3], ELN.OW_DAMS4[4], ELN.OW_DAMS4[5],
                   ELN.OW_DAMS4[6],
                   ELN.OW_FORDS4[1], ELN.OW_FORDS4[2], ELN.OW_FORDS4[3], ELN.OW_FORDS4[4], ELN.OW_FORDS4[5],
-                  ELN.OW_FORDS4[6],},
+                  ELN.OW_FORDS4[6],
+                  OAS.OW6_ENTRY, OAS.OW6_GEO, OAS.OW6_DETAIL, OAS.OW6_FAR, OAS.OW6_LAKES, OAS.OW6_SHORE, START_LAND,
+                  OAS.OW_WW5[1], OAS.OW_WW5[2], OAS.OW_WW5[3], OAS.OW_WW5[4], OAS.OW_WW5[5], OAS.OW_WW5[6],
+                  OAS.OW_CANALS5[1], OAS.OW_CANALS5[2], OAS.OW_CANALS5[3], OAS.OW_CANALS5[4], OAS.OW_CANALS5[5],
+                                    OAS.OW_CANALS5[6],
+                  OAS.OW_DAMS5[1], OAS.OW_DAMS5[2], OAS.OW_DAMS5[3], OAS.OW_DAMS5[4], OAS.OW_DAMS5[5],
+                                    OAS.OW_DAMS5[6],
+                  OAS.OW_FORDS5[1], OAS.OW_FORDS5[2], OAS.OW_FORDS5[3], OAS.OW_FORDS5[4], OAS.OW_FORDS5[5],
+                                    OAS.OW_FORDS5[6],},
   },
 
   -- Per geography release: {release = <version>, map = <map key>, geography = <tn_geo id>, names =
@@ -1850,6 +2008,47 @@ return {
                ELN.OW_FORDS4[6]},
       files = {OW_GEO_FILE, OW_LAND_COARSE_FILE,
                OW_WW_FILES[1], OW_WW_FILES[2], OW_WW_FILES[3], OW_WW_FILES[4], OW_WW_FILES[5], OW_WW_FILES[6]},
+    },
+    -- The Old World and Atlantic spawn city: each map's version 6.
+    {
+      release = "0.1.0",
+      map = "atlantic",
+      geography = 17,
+      names = {
+               OAS.AT6_GX, OAS.AT6_GY, OAS.AT6_U, OAS.AT6_V, OAS.AT6_GEO, OAS.AT6_LAND_COARSE, OAS.AT6_DETAIL,
+               OAS.AT6_FAR,
+               OAS.AT6_ENTRY, OAS.AT6_CX, OAS.AT6_CY, OAS.AT6_LAKES, OAS.AT6_SHORE,
+               OAS.AT_CITY_INDEX, OAS.AT_CITY_CX, OAS.AT_CITY_CY, OAS.AT_SPAWN_LAKE,
+               OAS.AT_SPAWN_BIAS,
+               OAS.AT_WW5[1], OAS.AT_WW5[2], OAS.AT_WW5[3], OAS.AT_WW5[4], OAS.AT_WW5[5], OAS.AT_WW5[6],
+               OAS.AT_CANALS5[1], OAS.AT_CANALS5[2], OAS.AT_CANALS5[3], OAS.AT_CANALS5[4], OAS.AT_CANALS5[5],
+               OAS.AT_CANALS5[6],
+               OAS.AT_DAMS5[1], OAS.AT_DAMS5[2], OAS.AT_DAMS5[3], OAS.AT_DAMS5[4], OAS.AT_DAMS5[5], OAS.AT_DAMS5[6],
+               OAS.AT_FORDS5[1], OAS.AT_FORDS5[2], OAS.AT_FORDS5[3], OAS.AT_FORDS5[4], OAS.AT_FORDS5[5],
+               OAS.AT_FORDS5[6]},
+      files = {AT_GEO_FILE, AT_LAND_COARSE_FILE, OAS.AT_SPAWN_FILE,
+               AT_WW_FILES[1], AT_WW_FILES[2], AT_WW_FILES[3], AT_WW_FILES[4], AT_WW_FILES[5],
+               AT_WW_FILES[6]},
+    },
+    {
+      release = "0.1.0",
+      map = "olde_world",
+      geography = 18,
+      names = {
+               OAS.OW6_GX, OAS.OW6_GY, OAS.OW6_U, OAS.OW6_V, OAS.OW6_GEO, OAS.OW6_LAND_COARSE, OAS.OW6_DETAIL,
+               OAS.OW6_FAR,
+               OAS.OW6_ENTRY, OAS.OW6_CX, OAS.OW6_CY, OAS.OW6_LAKES, OAS.OW6_SHORE,
+               OAS.OW_CITY_INDEX, OAS.OW_CITY_CX, OAS.OW_CITY_CY, OAS.OW_SPAWN_LAKE,
+               OAS.OW_SPAWN_BIAS,
+               OAS.OW_WW5[1], OAS.OW_WW5[2], OAS.OW_WW5[3], OAS.OW_WW5[4], OAS.OW_WW5[5], OAS.OW_WW5[6],
+               OAS.OW_CANALS5[1], OAS.OW_CANALS5[2], OAS.OW_CANALS5[3], OAS.OW_CANALS5[4], OAS.OW_CANALS5[5],
+               OAS.OW_CANALS5[6],
+               OAS.OW_DAMS5[1], OAS.OW_DAMS5[2], OAS.OW_DAMS5[3], OAS.OW_DAMS5[4], OAS.OW_DAMS5[5], OAS.OW_DAMS5[6],
+               OAS.OW_FORDS5[1], OAS.OW_FORDS5[2], OAS.OW_FORDS5[3], OAS.OW_FORDS5[4], OAS.OW_FORDS5[5],
+               OAS.OW_FORDS5[6]},
+      files = {OW_GEO_FILE, OW_LAND_COARSE_FILE, OAS.OW_SPAWN_FILE,
+               OW_WW_FILES[1], OW_WW_FILES[2], OW_WW_FILES[3], OW_WW_FILES[4], OW_WW_FILES[5],
+               OW_WW_FILES[6]},
     },
     -- The Destroyed Europe bodies (destroyed-europe). They belong to no geography: the zone and its heat
     -- read the region layer's zone depth and the spawn distance; the temperature's next version reads
@@ -2343,7 +2542,7 @@ return {
   --     with clear_tiles of land around it; radius_tiles is the start area the bank masks cover.
   waterways = {
     version = 1,
-    sets = {europe = EU_SETS4, atlantic = AT_SETS4, olde_world = OW_SETS4},
+    sets = {europe = EU_SETS4, atlantic = OAS_SETS.atlantic, olde_world = OAS_SETS.olde_world},
     floor_tiles = 7, two_way_tiles = 11, margin_tiles = 0.25,
     river_k = {major = 3, minor = 2},
     km_per_px = 2.471,
@@ -2659,7 +2858,7 @@ return {
     setting = "exact_coast", key = BFN.K, on = ONE,
     maps = {},
     checks = {europe = {scale = 1}, olde_world = {scale = 6}},
-    tables = {europe = {geographies = {5, 8, 11, 14}}, olde_world = {geographies = {7, 10, 13, 16}}},
+    tables = {europe = {geographies = {5, 8, 11, 14}}, olde_world = {geographies = {7, 10, 13, 16, 18}}},
     version = 1,
     float_margin_px = 0.01,
     correction_tiles = 2,
