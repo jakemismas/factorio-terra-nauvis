@@ -1752,12 +1752,14 @@ return {
     ramp = {mid = 0.5, width_px = 6},
     -- A marsh's own edge (an exact disc or box of pools reads as computer-made at any
     -- zoom). One more noise, wavelength_px the finest octave, joins every marsh row's signed distance at
-    -- share of the row's radius, at most cap_px, and the row's ramp widens to ramp_share of its radius,
-    -- at most ramp_cap_px and never under ramp.width_px, so the pools thin out into dry ground across
-    -- the band instead of stopping at a line. Hard limits nothing downstream reads: a marsh's reach is
-    -- the row's radius plus 1.7 times its amplitude, the most basis noise reaches.
-    marsh = {wavelength_px = 12, octaves = 3, persistence = 0.5, seed1 = 7804, share = 0.6, cap_px = 24,
-             ramp_share = 0.6, ramp_cap_px = 24},
+    -- share of the row's radius, at most cap_px, over rough_gain times the shared roughness, and the
+    -- row's ramp widens to ramp_share of its radius, at most ramp_cap_px and never under ramp.width_px,
+    -- so the pools thin out into dry ground across the band instead of stopping at a line. Marsh rows
+    -- are the Tile program's only readers of the region noise, so these two octaves cost that program
+    -- little. A marsh's reach is the row's radius plus 1.7 times its amplitude, the most basis noise
+    -- reaches.
+    marsh = {wavelength_px = 24, octaves = 2, persistence = 0.5, seed1 = 7804, share = 0.6, cap_px = 24,
+             rough_gain = 2, ramp_share = 0.6, ramp_cap_px = 24},
     share_hundredths = 100,
     octave_shift_px = 10000.37,
     max_arguments = 255,
