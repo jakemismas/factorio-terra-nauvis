@@ -1751,8 +1751,8 @@ return {
     --     short enough that the two banks of a river differ. noise_peak: basis noise's peak, for the warp's reach.
     --   width: W = 1 + amplitude * clamp(noise, -1, 1), a river's half-width factor; floor_half_tiles holds a
     --     river's half-width wherever W and the warp squeeze it, so T5's 7-tile square still passes.
-    --   bank: B = amplitude {a, b} * (0.5 + 0.5 * clamp(noise, -1, 1)) tiles of wavelength {a, b} tiles at scale
-    --     s (a + b s), the fine irregularity every river and passage bank adds to its half-width.
+    --   bank: B = amplitude {a, b} * (half + half * clamp(noise, -1, 1)) tiles of wavelength {a, b} tiles at
+    --     scale s (a + b s), the fine irregularity every river and passage bank adds to its half-width.
     --   profile: a river's half-width factor from source at its inland end to mouth where it meets the coast
     --     fit, tip at the very source over taper_tiles {a, b} = a + b s, on a step_tiles grid.
     --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide.
@@ -1768,7 +1768,7 @@ return {
       },
       noise_peak = 1.7,
       width = {seed1 = 7507, wavelength = {60, 60}, amplitude = 0.3, floor_half_tiles = 5.5},
-      bank = {seed1 = 7508, wavelength = {8, 1}, amplitude = {0.6, 0.15}},
+      bank = {seed1 = 7508, wavelength = {8, 1}, amplitude = {0.6, 0.15}, half = 0.5},
       profile = {source = 0.7, mouth = 1.35, tip = 0.55, taper_tiles = {10, 30}, step_tiles = 0.75},
       basin = {half_length_tiles = 8, radius_tiles = 12},
       deloop = {gap_px = 8, arc_px = 30, reach_px = 400},

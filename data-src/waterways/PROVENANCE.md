@@ -22,7 +22,7 @@ the design notes entry citing the timed run (design section 6.3).
 |---|---|---|
 | `atlantic.json` | `bfb20f2f98282401f8fa72e7080877579d687c20dbc4fa53f60eec68d6b5f938` | tool input |
 | `europe.json` | `fbc9c088c3f92b48d6164cd005dd96a448906c2734153ac72cb224f894440059` | tool input |
-| `manifest-atlantic.json` | `af778b89c94c1dc5dec7d98965bd7a842ef5a39a942c52127f1f5cef7a337e4a` | emission manifest |
-| `manifest-europe.json` | `6bb064ea8c917ccbfdfa8ce5582d16bcc162d5bd988cb4e7ab84ce48be005355` | emission manifest |
-| `manifest-olde_world.json` | `ce3630a40420d1f86ea8f44de2529542bd329f8a1596cc55600fc4ff5daea2c3` | emission manifest |
+| `manifest-atlantic.json` | `2b5995828438b4335777cd1e0b1c1e964d09fcf05d81267d8901ac266bb88e81` | emission manifest |
+| `manifest-europe.json` | `4166c34fa2dcd98a610598c7f6e461b872be1c001cf7aebdd368babd9902af56` | emission manifest |
+| `manifest-olde_world.json` | `c6baf59038af4efde2dd1f9b98e75d98040e9bc3e92127c94b249e85e0f136da` | emission manifest |
 | `olde_world.json` | `3ebeeb17b20c28ff38f195591783e53910332b4f41fa57fcb60a5e421f8fe66a` | tool input |

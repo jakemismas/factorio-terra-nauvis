@@ -96,8 +96,9 @@ local function natural_locals(g)
   locals.X, locals.Y = warped(g.gx, rx), warped(g.gy, ry)
   locals.XP, locals.YP = warped(g.gx, px), warped(g.gy, py)
   locals.W = "1 + " .. num(N.width.amplitude) .. " * clamp(" .. noise(N.width.seed1, N.width.wavelength) .. ", -1, 1)"
-  locals.B = "(" .. num(N.bank.amplitude[1]) .. " + " .. num(N.bank.amplitude[2]) .. " * " .. s ..
-    ") * (0.5 + 0.5 * clamp(" .. noise(N.bank.seed1, N.bank.wavelength) .. ", -1, 1))"
+  local half = num(N.bank.half)
+  locals.B = "(" .. num(N.bank.amplitude[1]) .. " + " .. num(N.bank.amplitude[2]) .. " * " .. s .. ") * (" .. half ..
+    " + " .. half .. " * clamp(" .. noise(N.bank.seed1, N.bank.wavelength) .. ", -1, 1))"
   return locals
 end
 

@@ -804,7 +804,8 @@ compatibility and known limits are in README.md, and the changelog players see i
   Straits, canals and dams read a lighter warp. The coast fit's own discs on a river's course are
   filled (20 ponds on Old World, 7 on Europe, 5 on Atlantic). The start lake and the inland lakes get
   a warp of their own, and inland lakes vary in size. Old World at scale 6 ships 881 river segments
-  against 1,339, Tile 142,264 to 127,988.
+  against 1,339, Tile 142,285 to 128,153, and 203,685 to 189,554 beside Alien Biomes (design notes
+  2026-10-30 13:10).
 - One geography version per map: Europe v6
   (tn_geo 14), Atlantic v6 (17) and Old World v6 (18) stay, every superseded version goes, and the
   map-wide layers read those versions' chains. 442 bodies dropped, 18 re-registered, config.lua down by
