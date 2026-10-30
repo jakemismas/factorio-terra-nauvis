@@ -966,13 +966,14 @@ return {
     {
       release = "0.1.0",
       names = {CT.CL_LAT, CT.CL_LON, CT.CL_MEANDER, CT.CL_DRY, CT.CL_CORE, CT.CL_SHIFT, CT.CL_T_AB, CT.CL_M_AB,
-               CT.CL_A_AB, CT.CL_T_FB,
+               CT.CL_A_AB, CT.CL_GRAIN, CT.CL_T_AB_G, CT.CL_M_AB_G, CT.CL_A_AB_G, CT.CL_T_FB,
       CT.CL_M_FB, CT.CL_A_FB,
                CT.VT_GRASS_1, CT.VT_GRASS_2, CT.VT_GRASS_3, CT.VT_GRASS_4, CT.VT_DRY_DIRT, CT.VT_DIRT_1, CT.VT_DIRT_2,
                CT.VT_DIRT_3,
                CT.VT_DIRT_4, CT.VT_DIRT_5, CT.VT_DIRT_6, CT.VT_DIRT_7, CT.VT_SAND_1, CT.VT_SAND_2, CT.VT_SAND_3,
                CT.VT_RED_0, CT.VT_RED_1,
-               CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY, CT.MARSH_MUD,
+               CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.VT_BONUS_G, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY,
+               CT.AB_EXCLUDE_BODY_G, CT.K_TILE_T, CT.K_TILE_M, CT.K_TILE_A, CT.MARSH_MUD,
                CT.MARSH_POOL, CT.MARSH_MUD_BODY, CT.MARSH_SHALLOW,
                CT.MARSH_SHALLOW_BODY, CT.MARSH_GRASS, CT.MARSH_GRASS_BODY},
     },
@@ -1995,7 +1996,7 @@ return {
                   "mineral-beige-dirt-1", "mineral-cream-sand-1", "mineral-grey-sand-1", "water-mud"},
     exclude = {
       prefixes = {"vegetation-", "mineral-"},
-      key = CT.AB_EXCLUDE, off = "0", body = CT.AB_EXCLUDE_BODY,
+      key = CT.AB_EXCLUDE, off = "0", body = CT.AB_EXCLUDE_BODY, body_grain = CT.AB_EXCLUDE_BODY_G,
       temperate_from = 25, temperate_below = 65, marsh_cut = 0.68,
     },
     marsh = {
