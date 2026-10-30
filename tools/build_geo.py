@@ -953,63 +953,71 @@ def curve(map_key, work, min_sample, only=None):
     return doc
 
 
-def adopt(map_key, work, version=1, checkpoint=None, keep_coarse=False):
+def adopt(map_key, work, version=1, budget=None):
     """Copy the shipped checkpoints (the smallest at or above FIT_BAR, and the 256-term one) and the
     curve into data-src/fits/<map>/ and write its fit.json; the emitter reads only that folder.
 
-    checkpoint: ship this evaluated checkpoint of the work folder instead of the bar rule's (a
-    region-weighted fit is chosen on its region's coasts, not on the global bar). keep_coarse: keep
-    the folder's coarse land field (fit.json's land_coarse body and its checkpoint, byte for byte)
-    and move the curve that records it to curve-base.json, for a fit grown from that earlier fit's
-    checkpoint (fit --start-from), whose own curve starts above 256 terms."""
+    budget: for a region-weighted fit grown from the folder's shipped fit (fit --region and
+    --start-from), ship the largest evaluated step within this many terms instead of the bar rule's
+    (every step is above the bar once the start is), and record the budget in fit.json. The coarse
+    land field stays the folder's own (fit.json's land_coarse body and its checkpoint, byte for
+    byte), and curve.json becomes the whole lineage: the folder's curve through the start
+    checkpoint, each point marked stage "base", then the region steps, marked stage "region"."""
     import shutil
     work = Path(work)
     doc = json.loads((work / "curve.json").read_text(encoding="utf-8"))
     pts = [p for p in doc["points"] if "t1" in p]
-    if checkpoint:
-        ship = next((p for p in pts if p["checkpoint"] == checkpoint), None)
-        if ship is None:
-            raise SystemExit(f"RESULT fail {checkpoint} is not an evaluated checkpoint of {work}")
-    else:
-        ship = next((p for p in sorted(pts, key=lambda p: p["terms"]) if p["t1"]["agreement"] >= FIT_BAR), None)
-        if ship is None:
-            raise SystemExit(f"RESULT fail no evaluated checkpoint of {map_key} reaches {FIT_BAR}")
     dst = FITS / map_key
     dst.mkdir(parents=True, exist_ok=True)
     import tnconfig
     label = tnconfig.load()["maps"][map_key]["display"]
-    if keep_coarse:
-        old = fit_spec(map_key)["bodies"]["land_coarse"]
-        if not (dst / old["checkpoint"]).exists():
-            raise SystemExit(f"RESULT fail keep-coarse: {dst / old['checkpoint']} is missing")
+    if budget is not None:
+        params = doc["params"]
+        start = params.get("start_from")
+        if not params.get("region_weights") or not start:
+            raise SystemExit(f"RESULT fail --budget adopts a region-weighted fit grown with --start-from; {work} is not")
+        if not 0 < budget <= 8192:
+            raise SystemExit("RESULT fail the budget is at most 8,192 terms (the Europe map's budget)")
+        old = fit_spec(map_key)["bodies"]
+        if sha256_file(dst / start["checkpoint"]) != start["sha256"]:
+            raise SystemExit(f"RESULT fail the fit started from {start['checkpoint']} {start['sha256'][:12]}, which "
+                             f"is not {dst / start['checkpoint']}")
         base = json.loads((dst / "curve.json").read_text(encoding="utf-8"))
-        coarse = next((p for p in base["points"] if p["checkpoint"] == old["checkpoint"] and "t1" in p), None)
-        if coarse is None:
-            raise SystemExit(f"RESULT fail keep-coarse: the folder's curve does not record {old['checkpoint']}")
-        _write_json(dst / "curve-base.json", base)
-        coarse_body = old
+        bpts = [dict(p, stage="base") for p in base["points"] if p["terms"] <= start["terms"]]
+        if not any(p["checkpoint"] == old["land_coarse"]["checkpoint"] and "t1" in p for p in bpts):
+            raise SystemExit(f"RESULT fail the folder's curve does not record {old['land_coarse']['checkpoint']}")
+        within = [p for p in pts if p["terms"] <= budget]
+        if not within:
+            raise SystemExit(f"RESULT fail no evaluated step of {work} lies within {budget} terms")
+        ship = max(within, key=lambda p: p["terms"])
+        shutil.copyfile(work / ship["checkpoint"], dst / ship["checkpoint"])
+        doc = dict(doc, base_params=base["params"], base_inputs_sha256=base["inputs_sha256"],
+                   points=bpts + [dict(p, stage="region") for p in doc["points"]])
+        doc["note"] = (doc["note"] + "; stage base: the folder's earlier fit through the start checkpoint "
+                       "(base_params), stage region: the region-weighted growth from it (params)")
+        coarse = next(p for p in bpts if p["checkpoint"] == old["land_coarse"]["checkpoint"])
+        geo = {"checkpoint": ship["checkpoint"], "file": f"geo_{map_key}_v{version}.lua",
+               "note": f"{label}'s coast fit, region weighted", "budget_terms": int(budget)}
+        coarse_body = old["land_coarse"]
     else:
+        ship = next((p for p in sorted(pts, key=lambda p: p["terms"]) if p["t1"]["agreement"] >= FIT_BAR), None)
+        if ship is None:
+            raise SystemExit(f"RESULT fail no evaluated checkpoint of {map_key} reaches {FIT_BAR}")
         coarse = next((p for p in pts if p["terms_target"] == COARSE_TERMS), None)
         if coarse is None:
             raise SystemExit(f"RESULT fail the {COARSE_TERMS}-term checkpoint of {map_key} is not evaluated")
-        shutil.copyfile(work / coarse["checkpoint"], dst / coarse["checkpoint"])
+        for p in (ship, coarse):
+            shutil.copyfile(work / p["checkpoint"], dst / p["checkpoint"])
+        geo = {"checkpoint": ship["checkpoint"], "file": f"geo_{map_key}_v{version}.lua",
+               "note": f"{label}'s coast fit, the smallest checkpoint at or above {FIT_BAR}"}
         coarse_body = {"checkpoint": coarse["checkpoint"], "file": f"land_coarse_{map_key}_v{version}.lua",
                        "note": f"{label}'s coarse land field, the {COARSE_TERMS}-tent checkpoint of the same fit"}
-    shutil.copyfile(work / ship["checkpoint"], dst / ship["checkpoint"])
     _write_json(dst / "curve.json", doc)
-    if checkpoint and doc["params"].get("region_weights"):
-        geo_note = f"{label}'s coast fit, region weighted"
-    elif checkpoint:
-        geo_note = f"{label}'s coast fit, the chosen checkpoint"
-    else:
-        geo_note = f"{label}'s coast fit, the smallest checkpoint at or above {FIT_BAR}"
     spec = {"format": "tn-fit/1", "map": map_key,
             "note": f"Which checkpoint each generated body of {label} is emitted from (tools/build_geo.py). "
                     "See PROVENANCE.md.",
             # each note heads its generated file, so it stays short (the file's 120-column rule)
-            "bodies": {"geo": {"checkpoint": ship["checkpoint"], "file": f"geo_{map_key}_v{version}.lua",
-                               "note": geo_note},
-                       "land_coarse": coarse_body}}
+            "bodies": {"geo": geo, "land_coarse": coarse_body}}
     _write_json(dst / "fit.json", spec)
     return {"geo": ship, "land_coarse": coarse}
 
@@ -1844,10 +1852,8 @@ def main(argv=None):
     p = sub.add_parser("adopt")
     p.add_argument("--map", required=True)
     p.add_argument("--work")
-    p.add_argument("--checkpoint", help="ship this evaluated checkpoint of the work folder instead of the "
-                                        "smallest at or above the bar")
-    p.add_argument("--keep-coarse", action="store_true",
-                   help="keep the folder's coarse land field (for a fit grown with fit --start-from)")
+    p.add_argument("--budget", type=int, help="a region-weighted fit grown with --start-from: ship its largest "
+                                              "evaluated step within this many terms (at most 8,192)")
     a = ap.parse_args(argv)
     if a.cmd == "fit":
         st = fit(a.map, a.work or default_work(a.map), a.nmax, a.stop_agreement, a.extra_steps, a.max_steps,
@@ -1863,7 +1869,7 @@ def main(argv=None):
         print(f"RESULT ok curve {a.map} evaluated={n} of {len(doc['points'])}")
         return 0
     if a.cmd == "adopt":
-        rep = adopt(a.map, a.work or default_work(a.map), checkpoint=a.checkpoint, keep_coarse=a.keep_coarse)
+        rep = adopt(a.map, a.work or default_work(a.map), budget=a.budget)
         print(json.dumps({k: {"checkpoint": v["checkpoint"], "terms": v["terms"], "t1": v["t1"]["agreement"]}
                           for k, v in rep.items()}, indent=1))
         print(f"RESULT ok adopted {rep['geo']['checkpoint']} and {rep['land_coarse']['checkpoint']}")

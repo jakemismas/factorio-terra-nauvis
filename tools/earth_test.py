@@ -7126,12 +7126,16 @@ def fit_controls(mk):
     must pass under the recorded flips (t1_bars), and on fixtures that must each fail with its own
     rule's message: the largest smaller growth step reaching FIT_BAR_T1 (the smallest ships), then
     every smaller step in turn (growth steps and power-of-two checkpoints alike, Atlantic's 6,939
-    and 8,192 among them), a fit at growth 2.0, and a coarse field that is not the 256-term step."""
+    and 8,192 among them), a fit at growth 2.0, and a coarse field that is not the 256-term step. A
+    region-weighted fit's records take region_fit_controls' fixtures in place of the smaller steps."""
     import copy
     curve, spec, man = fit_records(mk)
 
     def names(fails, needle):
         return (any(needle in x for x in fails), fails[:1])
+
+    if (curve.get("params") or {}).get("region_weights"):
+        return region_fit_controls(mk, curve, spec, man, names)
 
     def raised(step):
         """The curve with only `step` reaching FIT_BAR_T1, through the score the rule reads for it."""
@@ -7164,6 +7168,53 @@ def fit_controls(mk):
     coarse = copy.deepcopy(spec)
     coarse["bodies"]["land_coarse"]["checkpoint"] = smaller["checkpoint"]
     out[f"owa: {mk}'s coarse field at the {smaller['terms']}-term step fails"] = names(
+        fit_findings(mk, curve, coarse, man, {})[1], "is not the fit's 256-term step")
+    return out
+
+
+def region_fit_controls(mk, curve, spec, man, names):
+    """fit_controls for a region-weighted fit: its committed records pass; fixtures that ship the region
+    step below the shipped one, ship a base step, name no budget or one above FIT_TERMS_REF, score the
+    shipped step under the bar, run at growth 2.0 or move the coarse field off the 256-term step each
+    fail with their own rule's message."""
+    import copy
+    out = {}
+    _, f = fit_findings(mk, curve, spec, man, t1_bars())
+    out[f"owa: {mk}'s committed region-weighted fit records pass the fit check"] = (not f, f[:1])
+    shipped = spec["bodies"]["geo"]["checkpoint"]
+    ship = next(p for p in curve["points"] if p["checkpoint"] == shipped)
+    region = sorted((p for p in curve["points"] if p.get("stage") == "region" and "t1" in p), key=lambda p: p["terms"])
+    base = max((p for p in curve["points"] if p.get("stage") == "base" and "t1" in p), key=lambda p: p["terms"])
+    below = [p for p in region if p["terms"] < ship["terms"]]
+
+    def spec_with(**geo):
+        s = copy.deepcopy(spec)
+        s["bodies"]["geo"].update(geo)
+        for k, v in geo.items():
+            if v is None:
+                del s["bodies"]["geo"][k]
+        return s
+    if below:
+        out[f"owa: {mk} shipping its {below[-1]['terms']}-term region step under its budget fails"] = names(
+            fit_findings(mk, curve, spec_with(checkpoint=below[-1]["checkpoint"]), man, {})[1], "(the budget ships)")
+    out[f"owa: {mk} shipping its {base['terms']}-term base step fails"] = names(
+        fit_findings(mk, curve, spec_with(checkpoint=base["checkpoint"]), man, {})[1],
+        "not a step of the region-weighted fit")
+    out[f"owa: {mk}'s region fit with no term budget fails"] = names(
+        fit_findings(mk, curve, spec_with(budget_terms=None), man, {})[1], "names its term budget")
+    out[f"owa: {mk}'s region fit with a budget above {FIT_TERMS_REF} fails"] = names(
+        fit_findings(mk, curve, spec_with(budget_terms=FIT_TERMS_REF + 1), man, {})[1], "names its term budget")
+    low = copy.deepcopy(curve)
+    next(p for p in low["points"] if p["checkpoint"] == shipped)["t1"]["agreement"] = FIT_BAR_T1 - 0.0002
+    out[f"owa: {mk}'s region fit shipping a step under {FIT_BAR_T1} fails"] = names(
+        fit_findings(mk, low, spec, man, {})[1], "under")
+    fast = copy.deepcopy(curve)
+    fast["params"]["growth"] = 2.0
+    out[f"owa: {mk}'s fit at growth 2.0 fails"] = names(fit_findings(mk, fast, spec, man, {})[1],
+                                                        "the fit ran at growth")
+    coarse = copy.deepcopy(spec)
+    coarse["bodies"]["land_coarse"]["checkpoint"] = base["checkpoint"]
+    out[f"owa: {mk}'s coarse field at the {base['terms']}-term step fails"] = names(
         fit_findings(mk, curve, coarse, man, {})[1], "is not the fit's 256-term step")
     return out
 
@@ -23961,8 +24012,10 @@ def fit_records(map_key):
 def fit_findings(map_key, curve, spec, man, bars):
     """fit_record's rules over the parsed records (pure, so owa_controls feeds it fixtures): growth
     1.25 at step 1; the shipped checkpoint the smallest at or above FIT_BAR_T1, or, for a map the flip
-    rule fired for (`bars`, t1_bars), exactly the best fit t1-bars.json records; the
-    coarse field the 256-term step; the manifest emitted from fit.json's checkpoints."""
+    rule fired for (`bars`, t1_bars), exactly the best fit t1-bars.json records, or, for
+    a region-weighted fit, at or above FIT_BAR_T1 and the largest step within its recorded budget
+    (region_fit_findings); the coarse field the 256-term step; the manifest emitted from fit.json's
+    checkpoints."""
     fails = []
     pts = sorted(curve.get("points") or [], key=lambda p: p["terms"])
     params = curve.get("params") or {}
@@ -23982,11 +24035,14 @@ def fit_findings(map_key, curve, spec, man, bars):
     else:
         if ship["t1"]["agreement"] < FIT_BAR_T1:
             fails.append(f"{map_key}: the shipped checkpoint scores {ship['t1']['agreement']}, under {FIT_BAR_T1}")
-        smaller = [p for p in pts if p["terms"] < ship["terms"] and
-                   max(p.get("sample_agreement", 0), (p.get("t1") or {}).get("agreement") or 0) >= FIT_BAR_T1]
-        if smaller:
-            fails.append(f"{map_key}: a smaller checkpoint reaches {FIT_BAR_T1}: {[p['terms'] for p in smaller][:3]} "
-                         f"(the smallest ships)")
+        if params.get("region_weights"):
+            fails += region_fit_findings(map_key, pts, ship, geo)
+        else:
+            smaller = [p for p in pts if p["terms"] < ship["terms"] and
+                       max(p.get("sample_agreement", 0), (p.get("t1") or {}).get("agreement") or 0) >= FIT_BAR_T1]
+            if smaller:
+                fails.append(f"{map_key}: a smaller checkpoint reaches {FIT_BAR_T1}: "
+                             f"{[p['terms'] for p in smaller][:3]} (the smallest ships)")
     cpt = next((p for p in pts if p["checkpoint"] == coarse.get("checkpoint")), None)
     if cpt is None or cpt.get("terms_target") != 256:
         fails.append(f"{map_key}: the coarse field's checkpoint {coarse.get('checkpoint')} is not the fit's 256-term step")
@@ -24018,6 +24074,28 @@ def fit_findings(map_key, curve, spec, man, bars):
 
 
 FIT_BAR_T1 = T1_BAR                     # the fits' selection bar is T1-a's (design section 9)
+
+
+def region_fit_findings(map_key, pts, ship, geo):
+    """A region-weighted fit (build_geo.py fit --region, grown with --start-from from the map's earlier
+    fit, whose steps through the start stay in curve.json as stage "base"; design notes, the Old World
+    coast refit): every step is above the bar once the start is, so the smallest-ships rule would
+    ship the start. The term budget is the choice instead: fit.json's geo body names it
+    (budget_terms, at most FIT_TERMS_REF, the Europe map's budget) and ships the largest evaluated
+    region step within it."""
+    budget = geo.get("budget_terms")
+    if not isinstance(budget, int) or isinstance(budget, bool) or not 0 < budget <= FIT_TERMS_REF:
+        return [f"{map_key}: a region-weighted fit names its term budget in fit.json's geo body (budget_terms, "
+                f"at most {FIT_TERMS_REF}), not {budget!r}"]
+    fails = []
+    if ship.get("stage") != "region":
+        fails.append(f"{map_key}: fit.json ships {ship['checkpoint']}, which is not a step of the region-weighted fit")
+    best = max((p for p in pts if p.get("stage") == "region" and "t1" in p and p["terms"] <= budget),
+               key=lambda p: p["terms"], default=None)
+    if best is None or best["checkpoint"] != ship["checkpoint"]:
+        fails.append(f"{map_key}: the budget of {budget} terms ships {(best or {}).get('checkpoint')}, but fit.json "
+                     f"names {ship['checkpoint']} (the budget ships)")
+    return fails
 
 
 def coast_windows(mref, n=OWA_WINDOW, count=OWA_WINDOWS):
