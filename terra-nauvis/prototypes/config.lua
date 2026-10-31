@@ -1667,7 +1667,7 @@ return {
     names = {zone = DE.zone, heat = DE.heat, temperature = DE.temperature, fine = DE.chaos_fine},
     pools = {europe = DE.pool_europe, atlantic = DE.pool_atlantic, olde_world = DE.pool_olde_world},
     start = {radius_tiles = 150, distance = DISTANCE},
-    heat = {rim = 108, per_tile = 0.49, ramp = 30, cap = 149.5, lift_px = 30, lift_fray_px = 12,
+    heat = {rim = 112, per_tile = 0.49, ramp = 30, cap = 149.5, lift_px = 30, lift_fray_px = 12,
             noise = {amplitude = 20, wavelength_tiles = 24, octaves = 3, persistence = 0.6, seed1 = 7901}},
     -- The red palette: a class per tile from a macro noise over the depth, so
     -- the patches mix and follow no contour. e = min(depth, sat_px) + mac_px * macro, in reference
@@ -1676,7 +1676,7 @@ return {
     -- pools (50), shallows and fords; water stays water by the elevation gate.
     chaos = {
       names = {macro = DE.chaos_macro, kind = DE.chaos_kind, class = DE.chaos_class},
-      score = 20, sat_px = 100, mac_px = 50, rim_px = 30, mid_px = 80,
+      score = 20, sat_px = 100, mac_px = 50, rim_px = 30, mid_px = 70,
       grass = {per_px = 1 / 30, fine = 0.8, cut = 0.45},
       black_below = -0.25,
       macro = {wavelength_px = 10, octaves = 4, persistence = 0.6, seed1 = 7902},
