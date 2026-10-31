@@ -344,11 +344,16 @@ local function extend_restriction(autoplace)
 end
 
 -- The living trees: each rebuilt behind the gate with its probability and richness keys.
+-- 1 where AB's trees are off (config.lua tiles.scan), 0 where they grow.
+local function tree_band()
+  return "(1 - " .. TL.scan.body .. ")"
+end
+
 -- The restored trees stand on the adopted tiles too and stop where tiles.scan.body opens to AB's trees, so a
 -- forest crosses APPROVALS 9's tiles inside the band: AB's trees are off there and vanilla's were not listed.
 local function restore_trees(R)
   local n = 0
-  local band = "(1 - " .. TL.scan.body .. ")"
+  local band = tree_band()
   local tiles = land_tiles()
   for _, t in ipairs(TL.ab_adopted) do
     if t ~= TL.marsh.water_mud.tile then
@@ -503,7 +508,8 @@ local function boost_hooks()
   end
   for _, name in ipairs(names) do
     local autoplace = data.raw.tree[name].autoplace
-    autoplace.probability_expression = TREES.boost(tostring(autoplace.probability_expression), base_tree[name])
+    autoplace.probability_expression = TREES.boost(tostring(autoplace.probability_expression), base_tree[name],
+      AB and tree_band())
   end
   log(cfg.identity.title .. ": the great-forests hook on " .. #names .. " living trees")
 end

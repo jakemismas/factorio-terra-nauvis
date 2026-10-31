@@ -60,11 +60,12 @@ local M = {}
 -- The great-forests hook around a tree's own probability (also each palm copy's second version, without
 -- the lift). `lift` adds the boreal lift key, for the base game's living trees only: Alien Biomes' trees
 -- already fill its taiga, and lifted they covered over half the land (draft run q-ab-after, 558 trees per
--- chunk in the preview against 129 without).
-function M.boost(own, lift)
+-- chunk in the preview against 129 without). `band` scales the lift beside Alien Biomes, where these trees
+-- stand on adopted tiles that reach past the band: unscaled, it set a forest on every such tile of the taiga.
+function M.boost(own, lift, band)
   local inner = "(" .. own .. ")"
   if lift then
-    inner = "((" .. own .. ") + " .. B.lift .. ")"
+    inner = "((" .. own .. ") + " .. B.lift .. (band and (" * " .. band) or "") .. ")"
   end
   return "if(" .. B.gate .. " > " .. num(cfg.hooks.threshold) .. ", min(" .. num(B.cap) .. ", " .. inner .. " * " ..
     B.key .. "), " .. own .. ")"
