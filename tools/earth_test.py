@@ -16977,6 +16977,14 @@ def tf_tree_tiles(cfg):
     return tf_land(cfg) + [t for t in cfg["tiles"]["ab_adopted"] if t != cfg["tiles"]["marsh"]["water_mud"]["tile"]]
 
 
+def tf_dead_text(cfg, n, prob):
+    """A dead tree's score (data-final-fixes.lua dead_hooks): AB's own, or the base game's where the keep body is 0."""
+    own = f"({tf_lua_text(prob)})"
+    keys = ", ".join(cfg["trees"]["restore"]["trees"][t]["p"] for t in tf_vanilla()["dead_scores"][n])
+    return tf_restore_text(cfg, f"if({cfg['tiles']['scan']['body']} > {ww_num(cfg['hooks']['threshold'])}, {own}, "
+                                f"0.2 * max({keys}) * clamp(1 - tree_small_noise, 0, 2))", own)
+
+
 def tf_decor_want(cfg, row, ba):
     """A decorative with vanilla.lua's band score (data-final-fixes.lua decor_hooks): the base game's score where
     the keep body is 0, its own, thinned by trees.decor, elsewhere."""
@@ -17071,7 +17079,8 @@ def tf_hook_change(cfg, t, n, earth, base):
             return False
         if n in dead:
             return ba.get("tile_restriction") is not None and \
-                ea == dict(ba, tile_restriction=tf_extended(cfg, ba.get("tile_restriction")))
+                ea == dict(ba, probability_expression=tf_dead_text(cfg, n, ba["probability_expression"]),
+                           tile_restriction=tf_extended(cfg, ba.get("tile_restriction")))
         own = ba.get("probability_expression")
         if own in (None, ""):
             return False
@@ -17178,7 +17187,8 @@ def tf_controls():
                                                                           "probability_expression": "1"}), tree0), "")
     dead0 = {"type": "tree", "name": "dry-tree", "autoplace": {"probability_expression": "x", "tile_restriction": ["a"]}}
     dead1 = {"type": "tree", "name": "dry-tree",
-             "autoplace": {"probability_expression": "x", "tile_restriction": tf_extended(cfg, ["a"])}}
+             "autoplace": {"probability_expression": tf_dead_text(cfg, "dry-tree", "x"),
+                           "tile_restriction": tf_extended(cfg, ["a"])}}
     out["trees: a dead tree's restriction gaining vanilla land passes"] = (
         tf_hook_change(cfg, "tree", "dry-tree", dead1, dead0), "")
     out["trees: a boosted dead tree fails"] = (
