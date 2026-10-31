@@ -145,8 +145,8 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s1_v1.lua",
-   "sha256": "efedeb5de222b7576a955c7358137fcf6ac54fa685b3de2160bf9e10812ca48d",
-   "bytes": 27432,
+   "sha256": "983de0738da315940cc157f77541b190b22911ddddd239986218f9fdad8f0270",
+   "bytes": 27442,
    "stats": {
     "segments": {
      "river": 195,
@@ -2725,8 +2725,8 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s2_v1.lua",
-   "sha256": "eb071604bbac6d6c5eefe9a9380bcdd2370910c2029bd1e000b025b36ddf1ced",
-   "bytes": 38206,
+   "sha256": "4b353bc78cdce8ed7230c669cf1c0394160b729dd974d42db6bb2a30fb6d5ef9",
+   "bytes": 38216,
    "stats": {
     "segments": {
      "river": 304,
@@ -5053,8 +5053,8 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s3_v1.lua",
-   "sha256": "8bce64d15a8fafaad9cb551477b57c223c829f124a22cf969ce5a067469a115a",
-   "bytes": 40068,
+   "sha256": "746af7f8976d7b9d7d1073a74693349de2d2abf47c7ab0a2c0d04ba4e66de7d4",
+   "bytes": 40078,
    "stats": {
     "segments": {
      "river": 326,
@@ -7274,8 +7274,8 @@
   },
   "4": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s4_v1.lua",
-   "sha256": "53ef8631a865f84af039bdd084165f61020da0282fd42b0c9d47f7c475fb3852",
-   "bytes": 47414,
+   "sha256": "2cf9dc4681f7e020bde75633ba4c292c05c8ff28b5824d8f477f5a0f23fc176f",
+   "bytes": 47424,
    "stats": {
     "segments": {
      "river": 410,
@@ -9460,8 +9460,8 @@
   },
   "5": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s5_v1.lua",
-   "sha256": "8e564d76368cdace7171c0c13a15603b525dbe8c92c418f419b3dc9482f5f5ba",
-   "bytes": 46872,
+   "sha256": "5c26acb658a46c741f4c426c062e1a4cf184c1cfe031abe6e8aabbae4bc98df4",
+   "bytes": 46907,
    "stats": {
     "segments": {
      "river": 392,
@@ -11625,8 +11625,8 @@
   },
   "6": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s6_v1.lua",
-   "sha256": "71ea4fee88911b46f0213b4310a5e7e979278fdcd1c5c94ecab7e1992e46ab2b",
-   "bytes": 42407,
+   "sha256": "4e629f24a87d0f8770d24ed15f3dc4742aca8aa00a8e7bd211800f3556babdf7",
+   "bytes": 42462,
    "stats": {
     "segments": {
      "river": 329,

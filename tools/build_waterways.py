@@ -1415,14 +1415,14 @@ def seg_calls(P, frame):
 def class_terms(groups, slope, floor=0.0, tip=0.0, squeeze=1.0):
     """One term per (half-width, depth, frame) class: max(depth, slope * (sqrt(min of squared distances) -
     hw - B)), B the fine bank noise, a river's hw modulated by W and held at the floor, a tip class's
-    scaled by the source taper T instead (the floor stops at a source)."""
+    then scaled by the source taper T, so past the taper's reach a tip segment holds the floor too."""
     terms = []
     for (hw, depth, frame), calls in sorted(groups.items()):
         width = g9(hw)
         if frame == "river":
             width = f"{g9(hw)} * W" if hw < floor else f"max({g9(floor)}, {g9(hw)} * W)"
         elif frame == "tip":
-            width = f"{g9(hw)} * W * T"
+            width = f"max({g9(floor)}, {g9(hw)} * W) * T"
         terms.append(f"max({g9(depth)}, {g9(slope)} * (sqrt({min_tree(calls)}) - {width} - B))")
     return terms
 
