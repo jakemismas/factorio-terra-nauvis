@@ -87,6 +87,11 @@ versions follow [Semantic Versioning](https://semver.org/).
 - Old World's and Atlantic's vanilla land tiles each add a noise of their own beside Alien Biomes, so dry land
   is a patchwork instead of concentric bands with an even dark rim. Europe keeps its look.
 - A river thins to a stream at its source instead of ending in a round finger, on all three maps.
+- Beside Alien Biomes an Earth preset's land tiles read two of twelve shared noise fields instead of a
+  six-octave noise each, which takes Old World's Tile complexity at scale 6 under the generation cost
+  knee. Land and water do not move. The patches of Alien Biomes ground keep their size and look and fall in
+  new places. A world without an Earth preset is unchanged (`tiles.noise_share`; design notes 2026-10-30
+  17:20, a development branch).
 
 ## [0.1.0] - 2026-10-30
 

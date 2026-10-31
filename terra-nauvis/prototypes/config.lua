@@ -2480,7 +2480,7 @@ return {
       fields = {CT.TM_1, CT.TM_2, CT.TM_3, CT.TM_4, CT.TM_5, CT.TM_6, CT.TM_7, CT.TM_8, CT.TM_9, CT.TM_10, CT.TM_11,
                 CT.TM_12},
       first_seed1 = 7741, octaves = 6, persistence = 0.75, wavelength_tiles = 24, output_scale = 0.666,
-      offset_x = 1000, weight = 0.7071, steps = {5, 3, 2, 4, 1},
+      offset_x = 1000, weight = 0.7071, steps = {5, 3, 2, 4, 1}, sign_patterns = 4,
       pattern = "multioctave_noise{x = x,y = y,offset_x = 1000,persistence = 0%.75,seed0 = map_seed," ..
         "seed1 = (%d+),octaves = 6,input_scale = 1/6/4,output_scale = 0%.666}",
     },

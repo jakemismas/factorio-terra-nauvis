@@ -98,7 +98,7 @@ local function mixed_noise(seed1)
   local j = math.floor(seed / n)
   local a = seed % n
   local b = (a + NS.steps[j % steps + 1]) % n
-  local signs = math.floor(j / steps) % 4
+  local signs = math.floor(j / steps) % NS.sign_patterns
   local w = num(NS.weight)
   return "(" .. (signs >= 2 and "-" or "") .. w .. " * " .. NS.fields[a + 1] .. (signs % 2 == 1 and " - " or " + ") ..
     w .. " * " .. NS.fields[b + 1] .. ")"
