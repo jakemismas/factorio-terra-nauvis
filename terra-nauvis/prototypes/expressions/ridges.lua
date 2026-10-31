@@ -467,7 +467,8 @@ local function map_bodies(key)
   end
   def(N.depth[key], joined("max", C.terms, "-inf"), C.L)
   def(N.near[key], joined("min", C.near, "inf"), C.L)
-  def(N.crest[key], "(" .. minus(N.depth[key], RD.bias_tiles) .. ") / " .. num(RD.ramp_tiles) .. " + " .. waves(RD.fray))
+  def(N.crest[key], "(" .. minus(N.depth[key], RD.bias_tiles) .. ") / " .. num(RD.ramp_tiles) .. " + " ..
+    waves(RD.fray))
   O.terms[#O.terms + 1] = "(" .. waves(RD.gaps.noise) .. " < " .. num(RD.gaps.threshold) .. " + " ..
     num(RD.gaps.thin_gain) .. " * clamp(1 - (" .. N.depth[key] .. " + " .. N.near[key] .. ") / " ..
     num(RD.gaps.thin_tiles) .. ", 0, 1) - " .. num(RD.gaps.collar_gain) .. " * " .. N.keep[key] .. ")"
