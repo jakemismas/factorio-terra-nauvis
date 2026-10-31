@@ -3985,7 +3985,33 @@ def unreleased_moves_fixtures(cfg, fz, ref, name, dropped, rehashed):
                 rep["changed"] == [kept_n] and rep["dropped"] == [gone_n] and rep["added"] == [new_n] and
                 rep["unchecked"] == [f"{pre}fx_m2_v1"] and nm["records"] == {gone_n: ["5" * 64], kept_n: ["6" * 64]} and
                 nf["bodies"][kept_n]["slice"] == "extras" and gone_n not in nf["bodies"], str(rep)[:120]))
+    with tempfile.TemporaryDirectory(prefix="tn-seal-") as td:
+        fx_registry = [{"id": "fx-a", "dumps": ["m1"]}, {"id": "fx-b", "dumps": ["m1"]}]
+        kept = tnfrozen.record("noise-expression", "6" * 64, "m1", "fx-a", "2026-10-30")
+        stale = {gone_n: tnfrozen.record("noise-expression", "5" * 64, "m1", "fx-a", "2026-10-30")}
+        snap = {"format": tnfrozen.SNAPSHOT_FORMAT, "bodies": stale, "sha256": tnfrozen.key_of(stale)}
+        (Path(td) / "fx-a.json").write_text(json.dumps({"slice": "fx-a", "frozen": snap}), encoding="utf-8")
+        (Path(td) / "fx-b.json").write_text(json.dumps({"slice": "fx-b"}), encoding="utf-8")
+        sealed_fz = {"bodies": {kept_n: kept}}
+        out.append(("seal: the stale snapshot fails with no waiver",
+                    bool(tnfrozen.snapshot_problems(sealed_fz, {"fx": snap})), ""))
+        ns, mans = refreeze.seal(dict(moves, geographies=[1]), sealed_fz, fx_registry, td)
+        found = tnfrozen.snapshot_problems(sealed_fz, {str(p): m["frozen"] for p, m in mans.items()})
+        out.append(("seal: the waiver empties, the snapshot follows the registry and a manifest without one stays",
+                    ns["records"] == {} and ns["geographies"] == [] and not found and
+                    [Path(p).name for p in mans] == ["fx-a.json"], found[:1]))
+        moves_ok, _ = moves_findings_on(td, ns)
+        out.append(("seal: a sealed waiver passes with a release tag", moves_ok, ""))
     return out
+
+
+def moves_findings_on(td, moves):
+    """(no finding, the findings) of `moves` as a checkout's waiver with a release tag present."""
+    p = Path(td) / "tests" / "unreleased-moves.json"
+    p.parent.mkdir(exist_ok=True)
+    p.write_text(json.dumps(moves), encoding="utf-8")
+    f, _ = moves_findings(td, ["refs/tags/v0.1.0"])
+    return not f, f
 
 
 def release_input_fixtures(cfg):

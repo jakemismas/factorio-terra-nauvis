@@ -2,6 +2,7 @@
 """Re-register changed Earth bodies from fresh dumps, before the first release.
 
   python tools/refreeze.py --m1 <dump dir> [--m2 <dump dir>] [--m3 <dump dir>] [--write]
+  python tools/refreeze.py --seal [--write]    the last commit before the first release tag
 
 Reads each dump's data-raw-dump.json (fh.py dump-data; M1 base and the mod, M2 beside Alien Biomes, M3
 beside the Oil Rig) and brings tests/frozen.json to them:
@@ -17,6 +18,12 @@ landing read (tools/tnfrozen.py), so the move is named in the diff and every oth
 A record of a dump not given is left alone and counted: a change that
 reaches an Alien Biomes or Oil Rig body needs that dump too. It refuses once a release tag exists: a
 release's records never move. Without --write it only reports.
+
+--seal lands the base of the first release. A tag voids the waiver, and the suite manifests' frozen
+snapshots still hold every record the waiver let move or leave, so a tag on an unsealed tree fails the
+T16 append-only row and build_zip.py --release alike. Seal empties the waiver and rebuilds each snapshot
+from the registry. It moves no record and no mod file, so the zip's bytes stay the same. Run it last:
+any refreeze after it fills the waiver again.
 """
 import argparse
 import json
@@ -100,19 +107,48 @@ def refreeze(fz, moves, dumps, cfg, today, newest, landed=()):
     return fz, moves, report
 
 
+def seal(moves, fz, registry, suites=tnfrozen.SUITES):
+    """(the emptied waiver, {manifest path: the manifest with its frozen snapshot rebuilt from `fz`}). A
+    manifest without a snapshot stays as it is."""
+    out = {}
+    for s in registry:
+        p = Path(suites) / f"{s['id']}.json"
+        if not p.exists():
+            continue
+        man = json.loads(p.read_text(encoding="utf-8"))
+        if isinstance(man, dict) and man.get("frozen") is not None:
+            out[p] = dict(man, frozen=tnfrozen.snapshot(fz, registry, s["id"]))
+    return dict(moves, geographies=[], records={}), out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     for label in ("m1", "m2", "m3"):
         ap.add_argument(f"--{label}", help="an fh.py dump-data folder (or its data-raw-dump.json)")
     ap.add_argument("--write", action="store_true", help="write tests/frozen.json and tests/unreleased-moves.json")
+    ap.add_argument("--seal", action="store_true", help="empty the waiver and rebuild every frozen snapshot")
     a = ap.parse_args(argv)
-    if not a.m1:
+    if not a.m1 and not a.seal:
         print("RESULT fail refreeze needs --m1: nearly every record is an M1 body")
         return 1
     tags = tn_static.release_tag_refs(REPO)
     if tags:
         print(f"RESULT fail {tags[0]} exists: a release's records never move, so ship a change under the next _v<n>")
         return 1
+    if a.seal:
+        fz = json.loads(FROZEN.read_text(encoding="utf-8"))
+        moves = tnfrozen.read_moves(MOVES)
+        if moves is None:
+            print("RESULT fail tests/unreleased-moves.json is missing")
+            return 1
+        sealed, manifests = seal(moves, fz, earth_test.REGISTRY)
+        if a.write:
+            for path, man in manifests.items():
+                write_json(path, man)
+            write_json(MOVES, sealed)
+        print(f"RESULT ok seal snapshots={len(manifests)} records_waived={len(moves['records'])} "
+              f"geographies_retired={len(moves['geographies'])} written={'yes' if a.write else 'no'}")
+        return 0
     cfg = tnconfig.load()
     schema = tnconfig.schema_problems(cfg)
     if schema:

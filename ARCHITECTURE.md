@@ -844,7 +844,10 @@ Until the first release (no `v<x.y.z>` tag) the rules below bend in one named wa
 2026-10-30 10:26, retired every superseded geography version, so each map holds one version (Europe's
 tn_geo 14, Atlantic's 17, Old World's 18) and a landed record may change or leave only if
 `tests/unreleased-moves.json` lists its old hash (`tools/refreeze.py` writes it; design notes 2026-10-30
-10:55). A release tag voids that file, and from then on the rules hold as written.
+10:55). A release tag voids that file, and from then on the rules hold as written. So the last commit
+before the first tag runs `python tools/refreeze.py --seal --write`: it empties the file and rebuilds
+each suite manifest's frozen snapshot from the registry, without which the T16 append-only row and
+`build_zip.py --release` both fail on the tagged commit.
 
 1. A body is registered when the milestone that adds it lands, from `europe-coast` on, and
    released when it ships in a release zip. From registration on its text is immutable:
