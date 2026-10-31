@@ -2181,7 +2181,14 @@ return {
   --             scale and clamp), and every richness key names one shared body. The decoratives AB keeps but
   --             takes off Nauvis are re-listed as (own score) + key, the key's prototype -inf and its body
   --             deco_on; the vanilla decoratives and dead trees AB restricts to its tiles get the vanilla land
-  --             tiles appended
+  --             tiles appended. The re-listed scores read that vanilla-scale temperature too: their boxes are
+  --             vanilla's 10 to 20, and Earth's temperature runs at 28 to 44 at Frankfurt beside AB
+  --   decor     beside Alien Biomes the extended decoratives and the two garballos take the base game's score
+  --             (prototypes/tables/vanilla.lua decor, under the local `box`, on that same temperature) wherever
+  --             tiles.scan.body is 0, the band where vanilla land lies, and keep their own score elsewhere, so
+  --             temperate ground keeps M1's plants (AB's score lays brown asterisks on every tile of it) and
+  --             AB's land keeps AB's. `thin` scales a score that saturates outside the band: at 1 every tile
+  --             holds one, a carpet
   trees = {
     boost = {gate = TFN.K_FORESTS_ON, gate_off = "0", key = TFN.K_TREE_MULT, key_off = "1", cap = 1,
              lift = TFN.K_TREE_LIFT, lift_off = "0", lift_body = TFN.TF_LIFT, lift_per_sum = 0.25,
@@ -2189,6 +2196,7 @@ return {
     palm = {{key = CT.PALM_A_P_KEY, body = TFN.PALM_A_P2, base = CT.PALM_A_P},
             {key = CT.PALM_B_P_KEY, body = TFN.PALM_B_P2, base = CT.PALM_B_P}},
     temperature = TFN.TF_VTEMP,
+    decor = {box = "tn_vbox", thin = {["brown-asterisk"] = 0.5, ["brown-asterisk-mini"] = 0.25}},
     restore = {
       trees = TF_TREES, tree_off = "0", richness = TFN.TF_VTREE_R,
       rocks = TF_ROCKS, rock_off = "0",

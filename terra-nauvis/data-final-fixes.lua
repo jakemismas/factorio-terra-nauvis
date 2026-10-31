@@ -376,15 +376,26 @@ local function restore_rocks(R)
   return n
 end
 
--- The decoratives AB keeps but takes off Nauvis: (own score) + key behind the gate, re-listed.
+-- A base game text on the vanilla-scale temperature, which is what its boxes mean.
+local function vanilla_scale(text)
+  return (string.gsub(text, "%f[%w_]temperature%f[^%w_]", TR.temperature))
+end
+
+-- The decoratives AB keeps but takes off Nauvis: (own score) + key behind the gate, re-listed. The off value
+-- reads none of these locals, so the vanilla-scale text changes no other world.
 local function relist_decoratives(R)
   local n = 0
   for _, name in ipairs(VAN.relist) do
     local proto, key = data.raw["optimized-decorative"][name], R.decoratives[name]
     local autoplace = proto and proto.autoplace
     if autoplace and autoplace.probability_expression ~= nil and key then
-      autoplace.probability_expression = hook("(" .. tostring(autoplace.probability_expression) .. ") + " .. key,
-        R.deco_off)
+      autoplace.probability_expression = hook("(" .. vanilla_scale(tostring(autoplace.probability_expression)) ..
+        ") + " .. key, R.deco_off)
+      for k, v in pairs(autoplace.local_expressions or {}) do
+        if type(v) == "string" then
+          autoplace.local_expressions[k] = vanilla_scale(v)
+        end
+      end
       autoplace.tile_restriction = land_tiles()
       list_on_nauvis("decorative", name)
       n = n + 1
@@ -410,10 +421,37 @@ local function extend_restrictions()
   return n
 end
 
+-- The base game's score where vanilla land lies, AB's elsewhere (config.lua trees.decor). A row's own text
+-- reads its box under the local D.box, since six of these still hold vanilla's region_box on the other branch.
+local function decor_hooks()
+  local D = TR.decor
+  local n = 0
+  for _, row in ipairs(VAN.decor) do
+    local proto = data.raw["optimized-decorative"][row.name]
+    local autoplace = proto and proto.autoplace
+    if autoplace and autoplace.probability_expression ~= nil then
+      local own = "(" .. tostring(autoplace.probability_expression) .. ")"
+      local text = string.gsub(row.text, "%f[%w_]region_box%f[^%w_]", D.box)
+      if row.box then
+        autoplace.local_expressions = autoplace.local_expressions or {}
+        autoplace.local_expressions[D.box] = vanilla_scale(row.box)
+      end
+      local thin = D.thin[row.name]
+      autoplace.probability_expression = hook("if(" .. TL.scan.body .. " > " .. num(H.threshold) .. ", " ..
+        (thin and (num(thin) .. " * " .. own) or own) .. ", " .. vanilla_scale(text) .. ")", own)
+      n = n + 1
+    else
+      log(cfg.identity.title .. ": vanilla decorative " .. row.name .. " is missing or has no autoplace; no band score")
+    end
+  end
+  return n
+end
+
 local function restore_vanilla()
   local R = TR.restore
   local trees, rocks, relisted, extended = restore_trees(R), restore_rocks(R), relist_decoratives(R),
     extend_restrictions()
+  decor_hooks()
   log(cfg.identity.title .. ": restored " .. trees .. " vanilla trees and " .. rocks .. " rocks and decals, " ..
     "re-listed " .. relisted .. " decoratives, extended " .. extended .. " restrictions beside Alien Biomes")
 end
