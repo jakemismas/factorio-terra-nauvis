@@ -522,7 +522,8 @@ def(N.high_tile, high(N.rise_tile))
 local GD = RD.ground
 def(N.lapse, "if(" .. on .. ", " .. num(GD.lapse_per_px2) .. " * over * over * " .. N.gate .. " * clamp(" ..
   cfg.climate.names.core .. " / " .. num(GD.cold_t) .. ", " .. num(GD.cold_min) .. ", 1), 0)",
-  {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(GD.lapse_from_px) .. ")"})
+  {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(GD.lapse_from_px) .. ") * clamp(1 + " ..
+     num(GD.massif.gain) .. " * " .. RG.wy .. ", " .. num(GD.massif.low) .. ", " .. num(GD.massif.high) .. ")"})
 def(N.ground, num(RD.ground.lean) .. " * " .. N.high_tile)
 def(K.ground, num(0))
 -- The grain's bodies read the tile reach, and a save from before the highlands names those bodies but not this
