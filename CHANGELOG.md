@@ -79,6 +79,9 @@ versions follow [Semantic Versioning](https://semver.org/).
   dark rim of one width and its edge wanders with the pools; aux folds back at its cap, so dry land keeps
   its tile mix; natural moisture stops at 0.92, so forests fill in instead of ringing a moisture peak.
 - Destroyed Europe's start disc has an irregular edge and only widens past its 150 tiles.
+- Old World's and Atlantic's vanilla land tiles each add a noise of their own beside Alien Biomes, so dry land
+  is a patchwork instead of concentric bands with an even dark rim. Europe keeps its look.
+- A river thins to a stream at its source instead of ending in a round finger, on all three maps.
 
 ## [0.1.0] - 2026-10-30
 
