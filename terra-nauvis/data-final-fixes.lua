@@ -629,12 +629,14 @@ local function rock_lift_hooks()
   local names = {}
   for name, proto in pairs(data.raw["simple-entity"] or {}) do
     local locals = proto.autoplace and proto.autoplace.local_expressions
-    if locals and locals.peaks_expr and not string.find(name, RK.ab_skip, 1, true) then
-      for _, p in ipairs(RK.ab_prefixes) do
-        if string.sub(name, 1, #p) == p then
-          names[#names + 1] = name
-          break
-        end
+    local skip = not (locals and locals.peaks_expr)
+    for _, s in ipairs(RK.ab_skip) do
+      skip = skip or string.find(name, s, 1, true) ~= nil
+    end
+    for _, p in ipairs(RK.ab_prefixes) do
+      if not skip and string.sub(name, 1, #p) == p then
+        names[#names + 1] = name
+        break
       end
     end
   end

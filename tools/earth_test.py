@@ -17128,7 +17128,7 @@ def tf_hook_change(cfg, t, n, earth, base):
     # the highland lift on Alien Biomes' big rocks (data-final-fixes.lua rock_lift_hooks)
     peaks = (ba.get("local_expressions") or {}).get("peaks_expr")
     RK = (cfg.get("ridges") or {}).get("rocks")
-    if t == "simple-entity" and RK and isinstance(peaks, str) and RK["ab_skip"] not in n and \
+    if t == "simple-entity" and RK and isinstance(peaks, str) and not any(s in n for s in RK["ab_skip"]) and \
             any(n.startswith(p) for p in RK["ab_prefixes"]):
         on = f"{peaks} + {cfg['keys']['rock_lift']}"
         return ea == dict(ba, local_expressions=dict(ba["local_expressions"], peaks_expr=tf_restore_text(cfg, on, peaks)))

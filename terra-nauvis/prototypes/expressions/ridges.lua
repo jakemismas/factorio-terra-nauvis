@@ -224,7 +224,7 @@ local function band_term(pts, run, piece, k, B, H, heights)
   B[f] = S .. " * " .. num(c) .. " + " .. table.concat(terms, " + ")
   -- the piece's mean cosine, and its one reach for the Entity program: halfway between its mean vertex and its
   -- highest
-  H[#H + 1] = {p = p, q = q, f = f, mid = mid, span = span, cos = 2 * span / arc,
+  H[#H + 1] = {p = p, q = q, f = f, mid = mid, span = span, cos = 2 * span / arc, arc = arc,
                reach = reach_px((sum / #list + top) / 2),
                reach_text = S .. " * " .. num(c2) .. " + " .. table.concat(W, " + ")}
   return "(abs(" .. q .. " - " .. f .. ") < " .. num(half) .. ") * (abs(" .. p .. " - " .. S .. " * " .. num(mid) ..
@@ -354,11 +354,13 @@ local function highland(key, Bd, O)
     L[k] = v
   end
   local terms = {}
-  for k, h in ipairs(Bd.pieces) do
-    local reach = S .. " * " .. num(h.reach) .. " + " .. num(HG.tiles)
-    local wq = h.q == "bu" and "wu" or "wv"
-    terms[k] = "min(" .. reach .. " - " .. num(h.cos) .. " * abs(" .. wq .. " - " .. h.f .. "), " .. reach ..
-      " + " .. S .. " * " .. num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
+  for _, h in ipairs(Bd.pieces) do
+    if h.arc >= RD.rocks.short_px then
+      local reach = S .. " * " .. num(h.reach) .. " + " .. num(HG.tiles)
+      local wq = h.q == "bu" and "wu" or "wv"
+      terms[#terms + 1] = "min(" .. reach .. " - abs(" .. wq .. " - " .. h.f .. "), " .. reach .. " + " .. S .. " * " ..
+        num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
+    end
   end
   def(N.high_map[key], joined("max", terms, "-inf"), L)
   -- The tiles pay for their own crest functions, so they read them at the wandering point itself, their reach
@@ -501,15 +503,13 @@ def(N.cliffiness, "if(" .. on .. ", " .. num(RD.cliffiness) .. " * (1 - " .. K.o
 -- little more where the crest bends or climbs) outside the start disc, else 1.
 def(N.clear, "if(" .. on .. ", max(1 - " .. K.band .. ", " .. N.free .. "), 1)")
 
--- The highland: the map's reach frayed by the region layer's warp and roughness, no new noise, over the
--- falloff, faded in outside the ridge-free start disc; 0 with ridges off.
+-- The highland: the map's reach frayed by noise the region layer already computes, the warp for rocks and the
+-- warp, roughness and marsh outline for tiles, over the falloff, faded in outside the ridge-free start disc; 0
+-- with ridges off.
 local HG, RG = RD.high, cfg.regions.names
-local function rise(key, extra)
-  return "max(0, " .. key .. " + " .. S .. " * (" .. num(HG.fray_warp) .. " * " .. RG.wx .. " + " ..
-    num(HG.fray_rough) .. " * " .. RG.rough .. extra .. "))"
-end
-def(N.rise, rise(K.high, ""))
-def(N.rise_tile, rise(K.high_tile, " + " .. num(HG.fray_massif) .. " * " .. RG.marsh_rough))
+def(N.rise, "max(0, " .. K.high .. " + " .. S .. " * " .. num(HG.fray_warp) .. " * " .. RG.wx .. ")")
+def(N.rise_tile, "max(0, " .. K.high_tile .. " + " .. S .. " * (" .. num(HG.fray_warp) .. " * " .. RG.wx .. " + " ..
+  num(HG.fray_rough) .. " * " .. RG.rough .. " + " .. num(HG.fray_massif) .. " * " .. RG.marsh_rough .. "))")
 def(N.gate, "clamp((distance - max(" .. num(RD.start.radius_tiles) .. ", starting_area_radius) - " ..
   num(RD.start.margin_tiles) .. ") / " .. num(HG.start.ramp_tiles) .. ", 0, 1)")
 local function high(r)

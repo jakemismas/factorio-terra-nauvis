@@ -1515,7 +1515,9 @@ return {
   --              wet grasses onto mineral ground
   --   rocks      the lift on rock_density (vanilla's rocks and rock decoratives) at full highland, and on
   --              Alien Biomes' big rocks, whose noise threshold is far sharper; clear_tiles the radius round a
-  --              named pass that keeps no lift, fade_tiles how far it fades back in
+  --              named pass that keeps no lift, fade_tiles how far it fades back in. To hold Entity under its
+  --              limit at scale 1 too, the Entity band reads no cosine and no roughness, skips a piece shorter than
+  --              short_px (its neighbours' reach covers it), and ab_skip leaves out the palette Earth never lays
   --   ores       the Earth ores whose live probability is wrapped (resource, preset key, wrapper)
   --   water      the water frequency slider's two vanilla readers stay group 0's water_slider
   --              (D15), baked on every Earth preset at their default-slider values
@@ -1563,8 +1565,9 @@ return {
             fray_warp = 0.7, fray_rough = 2, fray_massif = 14, start = {ramp_tiles = 96}},
     ground = {lean = 6, lapse_per_px2 = 0.03, lapse_from_px = 7, cold_t = 30, cold_min = 0.15, floor = -12,
               moisture = 0.2, fray = 2, massif = {gain = 0.04, low = 0.72, high = 1.15}},
-    rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24,
-             ab_prefixes = {"huge-rock-", "big-rock-", "sand-big-rock-"}, ab_skip = "volcanic"},
+    rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24, short_px = 24,
+             ab_prefixes = {"huge-rock-", "big-rock-", "sand-big-rock-"},
+             ab_skip = {"volcanic", "purple", "violet", "aubergine", "dustyrose", "red"}},
     names = {
       high = RDN.RD_HIGH, rock_lift = RDN.RD_ROCK_LIFT, rock_lift_ab = RDN.RD_ROCK_LIFT_AB,
       rise = RDN.RD_RISE, gate = RDN.RD_GATE, lapse = RDN.RD_LAPSE, ground = RDN.RD_GROUND,
