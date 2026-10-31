@@ -22,6 +22,9 @@ versions follow [Semantic Versioning](https://semver.org/).
   Atlantic gains K+ tables. The handler queries only wrong tiles, evicts its row cache one row at a
   time, and writes along a blurred, wobbling reference instead of the raster's stairs; written land
   takes the ground around it and false islands sink into deep water.
+- Land Exact coastlines writes takes the trees, rocks and decoratives of the land beside it, so a written
+  coast no longer runs as a bare strip: `scripts/coastcover.lua` reads a rate and a sample from the chunk and
+  draws per tile with a generator seeded per chunk.
 - `tools/build_geo.py emit --map <map> --bandfix --masks-only` rewrites the mask tables from the
   committed K+ table in about a minute, for a change that moves waterways only.
 
