@@ -16,8 +16,8 @@
 --            slow noise, so a ridge wanders round its range's axis and never runs straight
 --   run      the width's multiplier, slow noise: a ridge swells, thins and at 0 is gone, so it breaks
 --            into runs that taper out instead of closing round their ends
---   h        (depth - bias) / ramp + fray: the fray moves the edge by up to about ramp tiles times its
---            amplitude along the strike, so a line never holds to one lattice row
+--   h        (depth - bias) / ramp + fray: the fray moves the edge along the strike, so a line does not
+--            hold to one lattice row
 --   opening  a slot across the crest at a pass or an unnamed gap (pass_tiles along the crest, past the
 --            ridge's half-width to each side), moving with the wandering axis; where a range cut by the
 --            map's edge has no pass on that map, a band along the edge near the crossing, so the ridge
