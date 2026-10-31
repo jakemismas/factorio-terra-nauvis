@@ -2082,7 +2082,7 @@ return {
              -- Two of Alien Biomes' four green grasses read brown (their textures average 67, 55, 28 and 67,
              -- 49, 25, the first two 66, 59, 20 and 74, 61, 24), which a rainforest should not: the same
              -- handicap keeps them to the noise's highs.
-             brown = {["vegetation-green-grass-3"] = 0.25, ["vegetation-green-grass-4"] = 0.45}},
+             brown = {["vegetation-green-grass-3"] = 0.12, ["vegetation-green-grass-4"] = 0.25}},
     -- The tile belts: Alien Biomes colours its
     -- tiles by one temperature and moisture ladder, so latitude alone paints the Congo as yellow and
     -- orange grass, Tibet like the Sahel and the steppes like Germany. A belt is a latitude and longitude
