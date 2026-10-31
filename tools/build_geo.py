@@ -1106,9 +1106,14 @@ def sea_channels(map_key, mref, cls, steps):
 
 def bandfix_classes(map_key, mref, B):
     """ref_classes as the K+ tables read it: thin water that belongs to the sea counts as water, so the handler
-    opens it."""
+    opens it, and the islets the raster lost (tools/build_islets.py) count as land."""
+    import numpy as np
     cls = ref_classes(mref)
     cls[sea_channels(map_key, mref, cls, B["channel_px"])] = 0
+    p = BANDFIX_DATA / f"islets-{map_key}.json"
+    if p.exists():
+        px = np.asarray(json.loads(p.read_text(encoding="utf-8"))["pixels"], np.int64).reshape(-1, 2)
+        cls[px[:, 1], px[:, 0]] = 1
     return cls
 
 
