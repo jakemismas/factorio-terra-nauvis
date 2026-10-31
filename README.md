@@ -101,9 +101,9 @@ All of these are startup settings except City markers, which is on the Map tab.
   tundra and a white Greenland. Temperate Europe keeps its ground, and the base game's trees, rocks
   and plants grow beside Alien Biomes' own. Without it, the base game's tiles follow the climate.
   Destroyed Europe needs it.
-- **Grey cliffs beside Alien Biomes:** with Terra Nauvis and Alien Biomes both on, every Nauvis
-  world's cliffs use Alien Biomes' grey stone art, not only Terra Nauvis worlds and saves made
-  without this mod too. It changes the look only: no cliff moves.
+- **Grey cliffs beside Alien Biomes:** with Terra Nauvis and Alien Biomes both on, the cliffs of every
+  Nauvis world use Alien Biomes' grey stone art: Terra Nauvis worlds, default worlds and older saves
+  alike. It changes the look only, and no cliff moves.
 - **Space Age:** works, and is not required. Terra Nauvis changes Nauvis only, so the other planets
   generate as they do without it.
 - **RSO:** not supported. RSO replaces the map's ore with its own, so you do not get the designed
@@ -155,7 +155,7 @@ All of these are startup settings except City markers, which is on the Map tab.
   chunks took 1.085 times as long as the base game, and beside Alien Biomes 1.122 times as long as
   Alien Biomes alone. Moving fast into new land can bring brief stalls. Nothing runs per tick once
   chunks exist. Terra Nauvis also adds a few seconds to the game's startup.
-- **A world keeps its terrain.** A world keeps the terrain it was started on. Later releases add
+- **Saves keep their terrain.** A world keeps the terrain it was started on. Later releases add
   terrain for new worlds and never change an existing save's terrain. A world made from a Map type
   entry alone still follows the scale and spawn city settings.
 - **An existing save stays as it is.** Adding the mod to a world made without it changes nothing on
