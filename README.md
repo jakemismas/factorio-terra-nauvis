@@ -87,7 +87,6 @@ All of these are startup settings except City markers, which is on the Map tab.
 | Ore hotspot amount | 100 percent | How much ore and oil every hotspot holds: 50, 100, 200 or 400 percent. It changes richness only, never a hotspot's place or size. |
 | Inland lakes | Off | Scatters small random lakes across the land. Off leaves the lake at the spawn city, the rivers and the real lakes of the map. |
 | Destroyed Europe | Off | Needs Alien Biomes. Turns the heart of Europe, from France to Warsaw and down to Ljubljana and about Rome, into a red wasteland of lava, black ash, red rock and scorched grass, with an outline that differs on every map seed. The start area stays normal. |
-| Exact coastlines | On | On Atlantic and Old World it snaps a new world's coast to the reference map as chunks generate, so fjords, bays and islets come back. The new-game preview shows the coast before that, and land made from sea takes the trees and ground cover of the land beside it. Europe's map does not need it. |
 | Exact coastlines | On | On Atlantic and Old World it holds a new world's coast to the reference map as chunks generate, on every continent alike, so fjords, sounds, channels and islets come back. The new-game preview shows the coast before that, and land made from sea takes the trees and ground cover of the land beside it. Europe's map keeps its noise coast. |
 | City markers | Off | Names every city on the map view. It changes nothing in the world, so you can switch it at any time in a running game. Worlds made from a Map type entry alone get no markers. |
 
