@@ -37,7 +37,6 @@ local DEPTH = cfg.regions.names.row.depth
 local PD = cfg.regions.names.row.pd
 local HU = cfg.regions.names.row.hu
 local HV = cfg.regions.names.row.hv
-local ROUGH = cfg.regions.rough.clamp_px
 local RT = require("prototypes.tables.regions")
 
 local function num(v)
@@ -198,13 +197,13 @@ local function blob_reach(h)
   return B.cap * blob_height(h) / (SP.cone_factor / (math.pi * h.rq * h.rq * h.rq))
 end
 
--- The tiles left for a cone at the candidate inside row r: its disc less the roughness clamp and the blob's
--- reach, and clear of the same around each rival.
+-- The tiles left for a cone at the candidate inside row r: its disc less the blob's reach, and clear of the
+-- same around each rival.
 local function room_of(h, r, rivals)
-  local edge = num(ROUGH) .. " * " .. S .. " + " .. num(blob_reach(h))
-  local parts = {footprint(r) .. " - " .. PD .. r.id .. SUFFIX .. " * " .. S .. " - (" .. edge .. ")"}
+  local edge = num(blob_reach(h))
+  local parts = {footprint(r) .. " - " .. PD .. r.id .. SUFFIX .. " * " .. S .. " - " .. edge}
   for _, o in ipairs(rivals) do
-    parts[#parts + 1] = PD .. o.id .. SUFFIX .. " * " .. S .. " - " .. footprint(o) .. " - (" .. edge .. ")"
+    parts[#parts + 1] = PD .. o.id .. SUFFIX .. " * " .. S .. " - " .. footprint(o) .. " - " .. edge
   end
   return #parts == 1 and parts[1] or ("min(" .. table.concat(parts, ", ") .. ")")
 end
@@ -395,7 +394,7 @@ L.field = "spot_noise{x = warp_x, y = warp_y," ..
   " suggested_minimum_candidate_point_spacing = 45.254833995939045, skip_span = regular_patch_set_count," ..
   " skip_offset = regular_patch_set_index, hard_region_target_quantity = 0, basement_value = basement_value," ..
   " maximum_spot_basement_radius = 128} + outline * regular_blob_amplitude_at(distance)"
-L.regular_patches = num(NP.level) .. " * (1 + " .. num(NP.pockets) .. " * clamp(blobs0, -2, 2)) * field / (1 + " .. num(NP.plateau) ..
+L.regular_patches = "if(random_spot_size_minimum >= 2, " .. num(NP.level_few) .. ", " .. num(NP.level) .. ") * (1 + " .. num(NP.pockets) .. " * clamp(blobs0, -2, 2)) * field / (1 + " .. num(NP.plateau) ..
   " * max(0, field) / height)"
 L.starting_patches = (string.gsub(L.starting_patches, "%(blobs0 %- 0%.25%)", "(blobs0 + " .. num(O.start_w64) ..
   " * b64 + " .. num(O.start_coarse) .. " * coarse - 0.25)"))

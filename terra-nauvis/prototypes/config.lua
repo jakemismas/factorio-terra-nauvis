@@ -1568,7 +1568,10 @@ return {
     --             `warp` moves the spots' coordinates by the 64 and coarse octaves. The starting patches read
     --             the same octaves at start_w64 and start_coarse. `basement` deepens vanilla's basement
     --   richness  v / (1 + plateau * v / height), v the field, height the typical spot's: a plateau instead of
-    --             a cone, times 1 + pockets * blobs0, and `level` holds the budget
+    --             a cone, times 1 + pockets * blobs0 with blobs0 clamped so the factor stays positive (below
+    --             zero it turns the far field's basement into ore), and `level` holds the budget; level_few
+    --             is the same for an ore of a mean spot size over 2 (uranium), whose few spots per region
+    --             overshoot the target less once they are smaller
     -- Regular ore stays out of hotspot footprints: a candidate keeps its quantity only where `gap` (tiles from
     -- the nearest footprint on the map) exceeds reach times its radius plus the warp's most.
     natural = {
@@ -1583,7 +1586,8 @@ return {
       warp = {amplitude = 8},
       plateau = 2,
       pockets = 0.35,
-      level = 1.7,
+      level = 1.45,
+      level_few = 1.8,
       reach = 1.75,
       warp_reach = 18,
       bodies = {
@@ -1663,9 +1667,9 @@ return {
     -- never past the footprint: blob.cap bounds
     -- the blob's rise, and a cone's slope is at least cone_factor / (pi * rq ^ 3) once its quantity holds a
     -- spot of min_radius, so a tile with ore lies within the cone's radius plus cap * height / divisor over
-    -- that slope. A candidate's radius is held to its room: the row's disc less the shared roughness's clamp
-    -- and that reach, and less any rival row a different ore's spots must keep out of (tn_pd_ reads the plain
-    -- distance to a row's jittered centre), so ore stays in its plain disc and its roughened footprint alike.
+    -- that slope. A candidate's radius is held to its room: the row's disc less that reach, and less any rival
+    -- row a different ore's spots must keep out of (tn_pd_ reads the plain distance to a row's jittered
+    -- centre). A hotspot row's disc takes no edge roughness, so its footprint is exact.
     size = {keep = 0.5, power = 2, gain = 6},
     blob = {name = REN.HS_BLOB, seed1 = 7302, mean = 1 / 3, divisor = 3.5, cap = 2,
             octaves = {{input_scale = 1 / 8, output_scale = 1}, {input_scale = 1 / 24, output_scale = 1},

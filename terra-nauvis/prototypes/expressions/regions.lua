@@ -4,7 +4,7 @@
 -- the region frame (config.lua regions.frame):
 --   row.sd .. id .. suffix      the signed distance to the row's shape, positive inside, at the query
 --                               point moved by the row's share of the shared warp, plus the shared
---                               edge roughness
+--                               edge roughness (a hotspot row takes none: its disc is exact)
 --   row.w .. id .. suffix       the membership weight clamp(mid + sd / width, 0, 1), the soft edge
 --   row.depth .. id .. suffix   the same signed distance in tiles
 -- and a hotspot row also row.pd .. id .. suffix, the plain distance to its jittered centre in reference pixels.
@@ -375,7 +375,9 @@ for _, r in ipairs(T.rows) do
       N.marsh_rough .. " + " .. num(MH.bias) .. ")", L)
     def(nm.w, weight(nm.sd, width))
   else
-    def(nm.sd, "(" .. text .. ") + " .. N.rough, L)
+    -- a hotspot's disc stays exact: its footprint is a hard limit on its ore (config.lua hotspots.size), so
+    -- its signed distance takes no roughness, and the ore inside shapes the outline
+    def(nm.sd, r.layer == "hotspot" and text or ("(" .. text .. ") + " .. N.rough), L)
     def(nm.w, weight(nm.sd))
   end
   def(nm.depth, nm.sd .. " * " .. K.scale)
