@@ -1426,12 +1426,18 @@ return {
       v = {{seed1 = 7503, wavelength = 250, amplitude = 16}, {seed1 = 7504, wavelength = 50, amplitude = 6}},
     },
     run_base = 1.15,
-    run = {{seed1 = 7505, wavelength = 420, amplitude = 0.55}, {seed1 = 7506, wavelength = 110, amplitude = 0.3}},
-    stretch = {{seed1 = 7507, wavelength = 80, amplitude = 0.6}},
+    run = {{seed1 = 7505, wavelength = 420, amplitude = 0.55}, {seed1 = 7506, wavelength = 180, amplitude = 0.2}},
+    stretch = {{seed1 = 7507, wavelength = 140, amplitude = 0.5}},
     stretch_floor = 0.4,
-    fray = {{seed1 = 7508, wavelength = 34, amplitude = 0.25}},
-    gaps = {noise = {{seed1 = 7509, wavelength = 128, amplitude = 1}, {seed1 = 7510, wavelength = 40, amplitude = 0.6}},
-            threshold = -0.5, thin_tiles = 22, thin_gain = 1.8, collar_gain = 3},
+    fray = {{seed1 = 7508, wavelength = 72, amplitude = 0.15}},
+    gaps = {noise = {{seed1 = 7509, wavelength = 160, amplitude = 1}, {seed1 = 7510, wavelength = 72, amplitude = 0.25}},
+            threshold = -0.55, thin_tiles = 22, thin_gain = 1.4, collar_gain = 3},
+    -- The cliff's art beside Alien Biomes. It ships whole grey stone cliff sheets its code leaves unused
+    -- (they lack vanilla's -lower split, data.lua's TODO), and its ground is grey and white where
+    -- vanilla's art is orange brown, so vanilla's cliff draws those sheets on one layer. A planet's
+    -- cliff_settings beat a preset's (measured: name and cliff_smoothing both ignored), so the art goes
+    -- on the prototype: every Nauvis world beside Alien Biomes, map colour and collision unchanged.
+    cliff_art = {cliff = "cliff", mod = "alien-biomes-graphics", from = "__base__/", to = "__alien-biomes-graphics__/"},
     cliffiness = 10,
     pass_tiles = 28,
     reach_tiles = 32,

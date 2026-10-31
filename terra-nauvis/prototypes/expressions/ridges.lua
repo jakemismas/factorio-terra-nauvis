@@ -424,3 +424,18 @@ if not NE[SW.off] then
 end
 
 data:extend(E)
+
+-- The cliff's art beside Alien Biomes (config.lua ridges.cliff_art): the sheets swap one for one, the
+-- shadows stay vanilla's (Alien Biomes' shadow sheets have another frame width).
+if mods[RD.cliff_art.mod] then
+  for _, o in pairs(data.raw.cliff[RD.cliff_art.cliff].orientations) do
+    o.pictures_lower = nil
+    for _, picture in ipairs(o.pictures) do
+      for _, layer in ipairs(picture.layers) do
+        if not layer.draw_as_shadow then
+          layer.filename = RD.cliff_art.to .. layer.filename:sub(#RD.cliff_art.from + 1)
+        end
+      end
+    end
+  end
+end
