@@ -2100,7 +2100,7 @@ return {
       {id = "amazon", lat = {-16, 6}, lon = {-80, -44}, ramp = {2, 3}, tv = -40, m = 0.2},
       {id = "central_america", lat = {7, 20}, lon = {-94, -76}, ramp = {2, 3}, tv = -38, m = 0.15},
       {id = "us_south", lat = {28, 37}, lon = {-97, -75}, ramp = {2, 3}, tv = -32, m = 0.1},
-      {id = "iran", lat = {25, 38}, lon = {44, 70}, ramp = {2, 3}, t = -33, a = 0.2, wild = true},
+      {id = "iran", lat = {25, 38}, lon = {44, 70}, ramp = {2, 3}, t = -33, a = 0.08, wild = true},
       {id = "dry_heart", lat = {34, 53}, lon = {44, 122}, ramp = {2, 4}, a = -0.5, wild = true},
       {id = "central_asia_pale", lat = {36, 49}, lon = {46, 86}, ramp = {3, 4}, a = -0.12},
       {id = "steppe", lat = {45, 56}, lon = {46, 118}, ramp = {3, 4}, t = 14, tv = 26, m = 0.4, wild = true},
