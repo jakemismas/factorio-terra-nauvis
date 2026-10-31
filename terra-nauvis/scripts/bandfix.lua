@@ -112,9 +112,11 @@ local SM = B.smooth
 local WP = SM.period_tiles
 local WP_X, WP_Y = SM.shift_tiles[1], SM.shift_tiles[2]
 -- A geography version with the soft map edge (edge = true) sinks land into deep water within
--- coast.edge_band.mask_px reference px of the box, where the K+ table's classes no longer hold: the
--- handler writes nothing there (EDGE is that width, or 0 for a version without the edge).
+-- coast.edge_band.mask_px reference px of the box plus the side's margin table there, where the K+ table's
+-- classes no longer hold: the handler writes nothing there (EDGE is mask_px, or 0 for a version without
+-- the edge; EDGE_SIDE holds each side with a table as its reach per reference px along it).
 local EDGE = 0
+local EDGE_SIDE = {}
 local WATER, KEEP, NONLAND, NONLAND_SET, FALLBACK = {}, {}, {}, {}, nil
 local GROUND, GROUND_STAMP = nil, nil
 
@@ -420,9 +422,30 @@ local function pixel_mask(c, r, land)
   return PM_MASK[k]
 end
 
+-- Each px along a side, its reach: mask_px plus the table's knots read piecewise linearly, rounded up, as
+-- earth_test.py's edge_band_reach. Module state rebuilt from config.lua on every load, so no save holds it.
+local function side_reach(knots, n)
+  local out, k = {}, 2
+  for a = 0, n - 1 do
+    while k < #knots and a >= knots[k][1] do
+      k = k + 1
+    end
+    local a0, v0, a1, v1 = knots[k - 1][1], knots[k - 1][2], knots[k][1], knots[k][2]
+    local t = (a - a0) / (a1 - a0)
+    t = t < 0 and 0 or t > 1 and 1 or t
+    out[a] = EDGE + math.ceil(v0 + t * (v1 - v0))
+  end
+  return out
+end
+
 -- Whether reference pixel (c, r) lies in the soft edge band of the save's geography version.
 local function in_edge(c, r)
-  return EDGE > 0 and (c < EDGE or r < EDGE or c >= MAP.width_px - EDGE or r >= MAP.height_px - EDGE)
+  if EDGE == 0 then
+    return false
+  end
+  local S = EDGE_SIDE
+  return c < (S.left and S.left[r] or EDGE) or r < (S.top and S.top[c] or EDGE)
+    or c >= MAP.width_px - (S.right and S.right[r] or EDGE) or r >= MAP.height_px - (S.bottom and S.bottom[c] or EDGE)
 end
 
 -- Whether pixel (c, r) is open sea: water with no land among its 8 neighbours. A pixel outside the K+ table reads
@@ -812,6 +835,15 @@ local function prepare(st)
   STATE, SHARED, MASKS, MAP = st, tabs.shared, masks, m
   local gv = guards.geography_of(st.geo)
   EDGE = (gv and gv.version and gv.version.edge) and cfg.coast.edge_band.mask_px or 0
+  EDGE_SIDE = {}
+  if EDGE > 0 then
+    local margins = cfg.coast.edge_band.outline.margins[st.map]
+    for side, n in pairs({left = m.height_px, right = m.height_px, top = m.width_px, bottom = m.width_px}) do
+      if margins[side] then
+        EDGE_SIDE[side] = side_reach(margins[side], n)
+      end
+    end
+  end
   LUT = reach_lut(st.scale)
   THIN = thin_lut(st.scale, LUT)
   SMOOTH, THIN_CENTRE, WOBBLE = {}, {}, wobble_table()

@@ -1197,6 +1197,37 @@ return {
         {seed1 = 7402, wavelength_px = 12, weight = 0.5},
         {seed1 = 7403, wavelength_px = 4, weight = 0.25},
       },
+      -- The margin's outline (the maintainer's ask of 2026-10-30 16:20: at a far map view the box still read as a
+      -- straight rectangle): a side's water edge moves further in by margin px * share, where margin is
+      -- the map's table for that side, {along px, margin px} knots read piecewise linearly and 0 for a
+      -- side with no table, and share = floor + (1 - floor) * (0.5 + 0.5 * clamp(gain * n, -1, 1)), n the
+      -- octaves' weighted sum, each a basis noise in geo tiles. So the outline stays somewhere between
+      -- floor and all of the margin, moves with the map seed and never passes the table, whatever the
+      -- seed: the table is the protection. Where a table reads 0 (Cyprus and Ireland lie behind one, and
+      -- the east end of the Black Sea) the band is the plain 4 to 20 px strip above.
+      outline = {
+        floor = 0.2,
+        gain = 0.8,
+        octaves = {
+          {seed1 = 7421, wavelength_px = 311, weight = 1},
+          {seed1 = 7422, wavelength_px = 137, weight = 0.6},
+          {seed1 = 7423, wavelength_px = 59, weight = 0.35},
+        },
+        margins = {
+          europe = {
+            right = {{255, 0}, {300, 60}, {345, 100}, {640, 170}, {700, 100}, {820, 100}, {880, 150}, {1040, 170},
+                     {1300, 6}, {1330, 0}, {1365, 0}, {1400, 20}, {1440, 120}, {1704, 300}},
+            bottom = {{190, 0}, {260, 26}, {300, 18}, {360, 22}, {420, 18}, {500, 40}, {780, 80}, {900, 80},
+                      {965, 0}, {2100, 0}, {2140, 6}, {2300, 170}, {2400, 300}},
+          },
+          atlantic = {
+            right = {{735, 0}, {790, 100}, {830, 170}, {900, 120}, {970, 170}, {1010, 120}, {1060, 40}, {1125, 0}},
+          },
+          olde_world = {
+            right = {{506, 0}, {561, 100}, {601, 170}, {671, 120}, {741, 170}, {781, 120}, {831, 40}, {896, 0}},
+          },
+        },
+      },
     },
   },
 

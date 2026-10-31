@@ -5063,12 +5063,28 @@ def corridor_mask(map_key, scale):
 _EDGE_MASKS = {}
 
 
+def edge_band_reach(cfg, key, W, H):
+    """Each box side's reach in reference px per px along it (left and right per row, top and bottom per
+    column): coast.edge_band mask_px plus the side's outline margin there, rounded up, the handler's
+    side_reach in terra-nauvis/scripts/bandfix.lua. The band's water edge never lies deeper: the share
+    is at most 1 at every seed."""
+    import numpy as np
+    B = cfg["coast"]["edge_band"]
+    margins = B["outline"]["margins"].get(key) or {}
+
+    def side(name, n):
+        knots = margins.get(name)
+        t = np.zeros(n) if not knots else np.interp(np.arange(n), [k[0] for k in knots], [k[1] for k in knots])
+        return int(B["mask_px"]) + np.ceil(t).astype(int)
+    return {"left": side("left", H), "right": side("right", H), "top": side("top", W), "bottom": side("bottom", W)}
+
+
 def edge_band_mask(mref):
     """T1's edge band mask (U13; edge-and-lakes) of a map whose newest geography version carries the soft
-    map edge, or None: the reference land pixels less than coast.edge_band mask_px from the box, where
-    the band may sink land into water (its water edge lies at most width_px + warp_px reference px in,
-    and a pixel's centre tile sits at most half a pixel past its index). Water pixels stay water under
-    the band's min(), so only land is masked."""
+    map edge, or None: the reference land pixels inside edge_band_reach of the box, where the band may
+    sink land into water (its water edge lies at most width_px + warp_px reference px plus the side's
+    margin in, and a pixel's centre tile sits at most half a pixel past its index). Water pixels stay
+    water under the band's min(), so only land is masked."""
     k = mref.key
     if k not in _EDGE_MASKS:
         cfg = tnconfig.load()
@@ -5080,8 +5096,10 @@ def edge_band_mask(mref):
             import numpy as np
             r = np.arange(mref.H)[:, None]
             c = np.arange(mref.W)[None, :]
-            d = np.minimum(np.minimum(r, mref.H - 1 - r), np.minimum(c, mref.W - 1 - c))
-            _EDGE_MASKS[k] = (d < int(B["mask_px"])) & mref.land.astype(bool)
+            R = edge_band_reach(cfg, k, mref.W, mref.H)
+            inside = ((c < R["left"][:, None]) | (mref.W - 1 - c < R["right"][:, None]) |
+                      (r < R["top"][None, :]) | (mref.H - 1 - r < R["bottom"][None, :]))
+            _EDGE_MASKS[k] = inside & mref.land.astype(bool)
     return _EDGE_MASKS[k]
 
 
@@ -26959,7 +26977,8 @@ EL_EDGE_RUNS = 2                 # edge windows per map: the longest box-touchin
 EL_MIN_RUN_PX = 32               # a side's run shorter than this gets no window (an islet the box cuts)
 EL_MIN_WATER_PX = 4              # the band's water edge never closer to the box than this (px)
 EL_MAX_REACH_PX = 20             # nor deeper than this: the nearest land the box does not cut lies at 22 px
-EL_MASK_SHARE = 0.02             # T1: the edge band mask stays at most 2 percent of a map
+EL_MASK_SHARE = 0.07             # T1: the edge band mask stays at most 7 percent of a map (Europe 6.3)
+EL_CITY_ROOM_PX = 60             # every spawn city keeps this much ground between it and the band's reach
 # One inland window per map with inland lakes, its centre in reference px: away from every coast and
 # box and beside the runner's default spawn (Europe: the Pannonian basin, north of Tirana at seed 1000).
 EL_LAKE_PX = {"europe": (1406, 1043)}
@@ -26999,8 +27018,10 @@ def el_offline_checks(cfg):
     """{check: (ok, detail)}: the band's numbers keep its water edge between EL_MIN_WATER_PX and
     EL_MAX_REACH_PX of the box and inside the T1 mask; per edge map the reference land the band can reach
     (components the box does not cut within width + warp px; on Europe, where T1-e gates islands, none of
-    ISLAND_MIN_PX or more) and the edge band mask's share of the map; and a T1 control on Europe: a land
-    decision with every masked pixel sunk scores 1.0 masked and less with the mask left out (G6)."""
+    ISLAND_MIN_PX or more, and with the outline's margins none of them inside the mask: Cyprus and Ireland
+    stay whole), the ground every spawn city keeps and the edge band mask's share of the map; and a T1
+    control on Europe: a land decision with every masked pixel sunk scores 1.0 masked and less with the
+    mask left out (G6)."""
     import numpy as np
     import earthgeo as eg
     import t1_metrics as t1
@@ -27020,6 +27041,27 @@ def el_offline_checks(cfg):
             f"{len(near)} components (depth, px) {near[:8]}; of {ISLAND_MIN_PX} px or more: {big[:4]}")
         mask = edge_band_mask(mref)
         share = float(mask.sum()) / (mref.W * mref.H) if mask is not None else None
+        if mask is not None:
+            R = t1.flat_runs(mref.land.astype(bool), 8)
+            cut_ids = set(np.unique(R["comp"][(R["rows"] == 0) | (R["rows"] == mref.H - 1) | (R["s"] == 0) |
+                                              (R["e"] == mref.W - 1)]).tolist())
+            size = np.bincount(R["comp"], weights=R["e"] - R["s"] + 1, minlength=R["n"])
+            reached = {}
+            for row, a, b, comp in zip(R["rows"].tolist(), R["s"].tolist(), R["e"].tolist(), R["comp"].tolist()):
+                if comp not in cut_ids and size[comp] >= ISLAND_MIN_PX and mask[row, a:b + 1].any():
+                    reached[comp] = int(size[comp])
+            out[f"{mk}: uncut islands inside the mask"] = (not (mk == "europe" and reached),
+                                                           f"{sorted(reached.values(), reverse=True)[:8]}")
+        reach = edge_band_reach(cfg, mk, mref.W, mref.H)
+        tight = None
+        for name, c in tnconfig.city_tables()[mk]["cities"].items():
+            u = int((c["lon"] - mref.lon_left) * mref.ppd)
+            v = int((mref.lat_top - c["lat"]) * mref.ppd)
+            room = min(u - reach["left"][v], mref.W - 1 - u - reach["right"][v], v - reach["top"][u],
+                       mref.H - 1 - v - reach["bottom"][u])
+            if tight is None or room < tight[0]:
+                tight = (int(room), name)
+        out[f"{mk}: tightest spawn city's room"] = (tight[0] >= EL_CITY_ROOM_PX, f"{tight[1]} {tight[0]} px")
         out[f"{mk}: edge band mask share"] = (mask is not None and share <= EL_MASK_SHARE,
                                              f"{None if share is None else round(share, 5)} (at most {EL_MASK_SHARE})")
     mref = eg.MapRef("europe") if "europe" in el_maps(cfg) else None
@@ -27185,9 +27227,9 @@ def el_window_tiles(ox, oy, size):
 
 def el_edge_eval(cfg, mk, s, off, ox, oy, new_water, prev_water, label):
     """One edge window: (meas, fails). Every tile beyond the box is water (G5); every tile the previous
-    version holds as water stays water; outside the band's mask the two versions agree tile for tile;
-    and in every box-touching land column whose reference stays land through the mask, the band's
-    water reaches EL_MIN_WATER_PX of the box and its water edge lies within width + warp + 1 px."""
+    version holds as water stays water; outside the band's reach (edge_band_reach) the two versions agree
+    tile for tile; and in every box-touching land column whose reference stays land through the mask, the
+    band's water reaches EL_MIN_WATER_PX of the box."""
     import numpy as np
     import earthgeo as eg
     B = el_band(cfg)
@@ -27201,7 +27243,14 @@ def el_edge_eval(cfg, mk, s, off, ox, oy, new_water, prev_water, label):
     lost = prev_water & ~new_water
     if lost.any():
         fails.append(f"{label}: {int(lost.sum())} tiles the previous version holds as water are land")
-    outside = d >= (int(B["mask_px"]) + 1) * s
+    m_ = cfg["maps"][mk]
+    reach = edge_band_reach(cfg, mk, m_["width_px"], m_["height_px"])
+    px_c = np.clip(np.floor_divide(xs + off[0], s) + m_["wr"], 0, m_["width_px"] - 1)
+    px_r = np.clip(np.floor_divide(ys + off[1], s) + m_["hr"], 0, m_["height_px"] - 1)
+    outside = ((xs + off[0] + s * m_["wr"] >= (reach["left"][px_r] + 1) * s) &
+               (s * (m_["width_px"] - m_["wr"]) - 1 - xs - off[0] >= (reach["right"][px_r] + 1) * s) &
+               (ys + off[1] + s * m_["hr"] >= (reach["top"][px_c] + 1) * s) &
+               (s * (m_["height_px"] - m_["hr"]) - 1 - ys - off[1] >= (reach["bottom"][px_c] + 1) * s))
     moved = (new_water != prev_water) & outside
     if moved.any():
         fails.append(f"{label}: {int(moved.sum())} tiles beyond the band's mask differ from the previous version")
