@@ -194,7 +194,7 @@ local function band_term(pts, run, piece, k, B, H, heights)
   end
   local terms, c, steep = {}, list[1][2], 0
   -- the reach along the piece, the same clamps at the reach's own slopes
-  local W, c2, sum, top = {}, reach_px(list[1][3]), list[1][3], list[1][3]
+  local W, c2, sum, top, arc = {}, reach_px(list[1][3]), list[1][3], list[1][3], 0
   for n = 2, #list do
     local a, b = list[n - 1], list[n]
     local slope = (b[2] - a[2]) / (b[1] - a[1])
@@ -206,13 +206,15 @@ local function band_term(pts, run, piece, k, B, H, heights)
     c2 = c2 - rise * a[1]
     W[#W + 1] = num(rise) .. " * " .. bounds
     sum, top = sum + b[3], math.max(top, b[3])
+    arc = arc + (b[1] - a[1]) * math.sqrt(1 + slope * slope)
   end
   local half = RD.ore_clear_tiles * math.sqrt(1 + steep * steep)
   local mid, span = (list[1][1] + list[#list][1]) / 2, (list[#list][1] - list[1][1]) / 2
   local f = "f" .. k
   B[f] = S .. " * " .. num(c) .. " + " .. table.concat(terms, " + ")
-  -- the piece's one reach for the Entity program: halfway between its mean vertex and its highest
-  H[#H + 1] = {p = p, q = q, f = f, mid = mid, span = span, cos = 1 / math.sqrt(1 + steep * steep),
+  -- the piece's mean cosine, and its one reach for the Entity program: halfway between its mean vertex and its
+  -- highest
+  H[#H + 1] = {p = p, q = q, f = f, mid = mid, span = span, cos = 2 * span / arc,
                reach = reach_px((sum / #list + top) / 2),
                reach_text = S .. " * " .. num(c2) .. " + " .. table.concat(W, " + ")}
   return "(abs(" .. q .. " - " .. f .. ") < " .. num(half) .. ") * (abs(" .. p .. " - " .. S .. " * " .. num(mid) ..
@@ -341,23 +343,19 @@ local function highland(key, Bd, O)
   for k, v in pairs(Bd.L) do
     L[k] = v
   end
-  local function band(reach_of)
-    local terms = {}
-    for k, h in ipairs(Bd.pieces) do
-      local reach = reach_of(k, h)
-      local wq = h.q == "bu" and "wu" or "wv"
-      terms[#terms + 1] = "min(" .. reach .. " - " .. num(h.cos) .. " * abs(" .. wq .. " - " .. h.f .. "), " .. reach ..
-        " + " .. S .. " * " .. num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
-    end
-    return joined("max", terms, "-inf")
+  local terms = {}
+  for k, h in ipairs(Bd.pieces) do
+    local reach = S .. " * " .. num(h.reach) .. " + " .. num(HG.tiles)
+    local wq = h.q == "bu" and "wu" or "wv"
+    terms[k] = "min(" .. reach .. " - " .. num(h.cos) .. " * abs(" .. wq .. " - " .. h.f .. "), " .. reach .. " + " .. S ..
+      " * " .. num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
   end
-  def(N.high_map[key], band(function(_, h)
-    return S .. " * " .. num(h.reach) .. " + " .. num(HG.tiles)
-  end), L)
+  def(N.high_map[key], joined("max", terms, "-inf"), L)
   -- The tiles pay for their own crest functions, so they read them at the wandering point itself, their reach
   -- follows the vertex heights, one local per piece, and a piece ends round: its box's corners drew flat-topped
   -- tabs of grey ground.
-  local T2, terms = {}, {}
+  local T2 = {}
+  terms = {}
   for k, v in pairs(Bd.L) do
     T2[k] = v
   end
@@ -495,12 +493,12 @@ def(N.clear, "if(" .. on .. ", max(1 - " .. K.band .. ", " .. N.free .. "), 1)")
 -- The highland: the map's reach frayed by the region layer's warp and roughness, no new noise, over the
 -- falloff, faded in outside the ridge-free start disc; 0 with ridges off.
 local HG, RG = RD.high, cfg.regions.names
-local function rise(key)
+local function rise(key, extra)
   return "max(0, " .. key .. " + " .. S .. " * (" .. num(HG.fray_warp) .. " * " .. RG.wx .. " + " ..
-    num(HG.fray_rough) .. " * " .. RG.rough .. "))"
+    num(HG.fray_rough) .. " * " .. RG.rough .. extra .. "))"
 end
-def(N.rise, rise(K.high))
-def(N.rise_tile, rise(K.high_tile))
+def(N.rise, rise(K.high, ""))
+def(N.rise_tile, rise(K.high_tile, " + " .. num(HG.fray_massif) .. " * " .. RG.marsh_rough))
 def(N.gate, "clamp((distance - max(" .. num(RD.start.radius_tiles) .. ", starting_area_radius) - " ..
   num(RD.start.margin_tiles) .. ") / " .. num(HG.start.ramp_tiles) .. ", 0, 1)")
 local function high(r)

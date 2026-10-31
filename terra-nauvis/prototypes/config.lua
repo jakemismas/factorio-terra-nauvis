@@ -1493,7 +1493,9 @@ return {
   --              reads the crest band's own pieces, so the Entity program pays only per piece. The field is
   --              (largest reach less distance, plus the region layer's warp and roughness at fray_warp and
   --              fray_rough) over S * fall_px + fall_tiles, clamped to 0 to 1, so a tall range is wider and
-  --              stronger than a low one, and it fades in start.ramp_tiles outside the ridge-free start disc
+  --              stronger than a low one, and it fades in start.ramp_tiles outside the ridge-free start disc.
+  --              fray_massif: the tiles' rise also takes the marsh outline noise, a few hundred tiles at scale 6 and
+  --              already in the Tile program, so the grey and the snow break into massifs instead of one band
   --   ground     tile scores alone read these, and they read a reach that follows the vertex heights along each
   --              piece (the Entity program, near its limit, keeps one reach per piece), so trees and decoratives
   --              keep the plain fields and the forests on the slopes stay. lean: the stony vanilla tiles' score at
@@ -1553,7 +1555,7 @@ return {
     reset_size = 1,
     max_arguments = 255,
     high = {ref_m = 4800, min_px = 8, gain_px = 42, power = 0.9, tiles = 30, fall_px = 44, fall_tiles = 36,
-            fray_warp = 0.7, fray_rough = 2, start = {ramp_tiles = 96}},
+            fray_warp = 0.7, fray_rough = 2, fray_massif = 8, start = {ramp_tiles = 96}},
     ground = {lean = 6, lapse_per_px2 = 0.05, lapse_from_px = 20, floor = -12, moisture = 0.2, fray = 2},
     rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24,
              ab_prefixes = {"huge-rock-", "big-rock-", "sand-big-rock-"}, ab_skip = "volcanic"},
