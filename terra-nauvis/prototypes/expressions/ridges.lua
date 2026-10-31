@@ -524,6 +524,9 @@ def(N.lapse, "if(" .. on .. ", " .. num(GD.lapse_per_px2) .. " * over * over * "
   {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(GD.lapse_from_px) .. ")"})
 def(N.ground, num(RD.ground.lean) .. " * " .. N.high_tile)
 def(K.ground, num(0))
+-- The grain's bodies read the tile reach, and a save from before the highlands names those bodies but not this
+-- key: its prototype leaves such a save no rise, so its ground stays.
+def(K.high_tile, "-inf")
 -- The rock lift: the highland outside the named passes. vanilla's rock_density with it added reaches every
 -- vanilla rock and rock decorative through one redirect, with or without Alien Biomes; Alien Biomes' big
 -- rocks read their own noise, so data-final-fixes.lua hooks the key on them.
