@@ -1089,8 +1089,8 @@ return {
                REN.ORE_IRON_R, REN.ORE_COPPER_P2, REN.ORE_COPPER_R, REN.ORE_COAL_P2, REN.ORE_COAL_R, REN.ORE_STONE_P2,
                REN.ORE_STONE_R,
                REN.ORE_URANIUM_P2, REN.ORE_URANIUM_R, REN.ORE_OIL_P2, REN.ORE_OIL_R, REN.OFFSHORE_P, REN.OFFSHORE_R,
-               REN.ORE_FN, REN.ORE_GAP, REN.ORE_PATCH_IRON, REN.ORE_PATCH_COPPER, REN.ORE_PATCH_COAL, REN.ORE_PATCH_STONE,
-               REN.ORE_PATCH_URANIUM, REN.ORE_PATCH_OIL, REN.ORE_PATCH_OFFSHORE},
+               REN.ORE_FN, REN.ORE_GAP, REN.ORE_PATCH_IRON, REN.ORE_PATCH_COPPER, REN.ORE_PATCH_COAL,
+               REN.ORE_PATCH_STONE, REN.ORE_PATCH_URANIUM, REN.ORE_PATCH_OIL, REN.ORE_PATCH_OFFSHORE},
       files = {"prototypes/tables/hotspots.lua"},
     },
     -- The soft map edge and the inland lakes switch (milestone edge-and-lakes): each map's next geography
