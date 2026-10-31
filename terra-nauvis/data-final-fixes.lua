@@ -424,8 +424,10 @@ local function restore_trees(R)
   local n = 0
   local band = tree_band()
   local tiles = land_tiles()
+  -- Alien Biomes' include settings can drop an adopted tile, and a tile_restriction naming a missing tile stops the
+  -- game loading on every world.
   for _, t in ipairs(TL.ab_adopted) do
-    if t ~= TL.marsh.water_mud.tile then
+    if t ~= TL.marsh.water_mud.tile and data.raw.tile[t] then
       tiles[#tiles + 1] = t
     end
   end
