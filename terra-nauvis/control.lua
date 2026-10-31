@@ -13,7 +13,8 @@
 -- handler from that record only (a save without the key registers nothing, the one conditional
 -- registration); its drift line joins on_configuration_changed. Milestone extras adds the D28 city
 -- markers: drawn in on_init when their runtime-global setting is on, and drawn or removed when it
--- changes.
+-- changes. bandfix.on_init runs before start.on_init because the start ore guarantee reads the tiles the
+-- band fix writes.
 local guards = require("scripts.guards")
 local start = require("scripts.start")
 local bandfix = require("scripts.bandfix")
@@ -21,8 +22,8 @@ local markers = require("scripts.markers")
 
 script.on_init(function()
   guards.on_init()
-  start.on_init()
   bandfix.on_init()
+  start.on_init()
   markers.on_init()
   guards.sweep_surfaces()
 end)

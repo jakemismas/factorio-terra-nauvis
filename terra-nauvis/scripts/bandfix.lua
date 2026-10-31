@@ -988,6 +988,21 @@ function M.state(surface, earth)
           cx = floor(cx + 1 / 2), cy = floor(cy + 1 / 2)}
 end
 
+-- The start chunks now instead of at tick 0, where their events arrive (worldgen-runtime rule 2). The start ore
+-- guarantee runs next and counts the ore on the land the spawn walks to, so a river written through that land
+-- afterwards cut ore off that it had counted (Atlantic, Hughes, scale 6: no coal on foot and no patch). The chunks'
+-- events still arrive, and a repeated delivery writes nothing.
+local function settle_start(surface)
+  local reach = floor(cfg.start_ore.grid / CT) + 1
+  for chy = -reach, reach - 1 do
+    for chx = -reach, reach - 1 do
+      if surface.is_chunk_generated({chx, chy}) then
+        fix_chunk(surface, chx, chy)
+      end
+    end
+  end
+end
+
 -- on_init, after guards.on_init has detected an Earth world and filled storage.earth.
 function M.on_init()
   local earth = storage.earth
@@ -1001,6 +1016,9 @@ function M.on_init()
         earth.bandfix.scale .. ")")
   end
   register()
+  if STATE then
+    settle_start(surface)
+  end
 end
 
 -- on_load: register again from the saved state; storage is read, never written (mod-dev rule 9).

@@ -1,7 +1,8 @@
 -- The start ore guarantee (config.lua start_ore; design notes 2026-10-30): once, from start.on_init on an
 -- Earth or Map-type-only world, every starting ore gets a patch on the land the spawn reaches on foot
 -- when that land holds too little of it. The starting area is generated before on_init
--- (worldgen-runtime rule 2), so the tiles and ore read here are final. Beside RSO they are final too:
+-- (worldgen-runtime rule 2) and bandfix.on_init has settled its coast, so the tiles and ore read here are
+-- final. Beside RSO they are final too:
 -- the `? rso-mod` dependency runs RSO's on_init, which places its starting ore, before this one, so a
 -- start RSO served well gets nothing. RSO's own "Ore in starting area" off stands the pass down. Runs
 -- once per world, so its cost (one tile query and one flood over the start square) never recurs.
