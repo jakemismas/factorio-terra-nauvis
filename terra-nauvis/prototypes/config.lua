@@ -1972,10 +1972,9 @@ return {
     --   ford_edge: J = amplitude {a, b} * noise tiles of wavelength {a, b} tiles at scale s, added to a ford's
     --     rectangle on every side, so its two edges across the river are irregular and not parallel.
     --   profile: a river's half-width factor from source at its inland end to mouth where it meets the coast
-    --     fit, tip at the very source over taper_tiles {a, b} = a + b s, on a step_tiles grid, twice as coarse
-    --     for the taper below taper_full_scale.
-    --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide; a
-    --     river takes one only from least_river_scale up, where a ship fits it.
+    --     fit, on a step_tiles grid. A source thins to tip over taper_tiles {a, b} = a + b s by the distance
+    --     to the nearest source (a set's T), not by segment: one width per segment left a round finger.
+    --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide.
     --   deloop: a river's hooks cut, tools/build_waterways.py deloop.
     --   runs: a river's segments over max_px reference px take a vertex every step_px, off their line by
     --     amplitude step_px times least to 1, on alternating sides (tools/build_waterways.py break_runs).
@@ -1992,10 +1991,9 @@ return {
       width = {seed1 = 7507, wavelength = {60, 60}, amplitude = 0.3, tip_half_tiles = 1,
                floor_half_tiles = {1.5, 1.5, 2.25, 3.75, 4.5, 5.5}},
       bank = {seed1 = 7508, wavelength = {8, 1}, amplitude = {0.6, 0.15}, half = 0.5},
-      ford_edge = {seed1 = 7509, wavelength = {5, 0.5}, amplitude = {0.6, 0.2}},
-      profile = {source = 0.7, mouth = 1.35, tip = 0.55, taper_tiles = {10, 30}, step_tiles = 0.75,
-                 taper_full_scale = 6},
-      basin = {half_length_tiles = 8, radius_tiles = 12, least_river_scale = 4},
+      ford_edge = {seed1 = 7509, wavelength = {5, 0.5}, amplitude = {1.2, 0.1}},
+      profile = {source = 0.7, mouth = 1.35, tip = 0.12, taper_tiles = {10, 45}, step_tiles = 0.75},
+      basin = {half_length_tiles = 8, radius_tiles = 12},
       deloop = {gap_px = 8, arc_px = 30, reach_px = 400},
       runs = {max_px = 60, step_px = 36, amplitude = 0.2, least = 0.4},
       spawn_fade = {inner_tiles = 40, outer_tiles = 200},

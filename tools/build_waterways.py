@@ -712,10 +712,11 @@ def warp_reach(w, s, passage=False):
 
 def river_widths(w, f, s, geo):
     """A half-width per shipped segment of a river: the class half-width times the profile, source at the
-    inland end to mouth where the course meets the coast fit, and tip at the very source, which tapers over
-    taper_tiles, each on a step_tiles grid so segments share classes. The floor holds everywhere but the
-    taper, which the warp and W then leave a natural end instead of a round cap. Returns (widths, the
-    half-width at arc length a)."""
+    inland end to mouth where the course meets the coast fit, on a step_tiles grid, held at the floor. The
+    source's taper is no segment's width: the segments it reaches join the tip classes, whose width the
+    set's T scales by the distance to the nearest source (render_sets), so the river thins continuously to
+    a stream for no new segment. Returns (widths, the half-width at arc length a with the taper, which
+    sizes the fords, the number of tip segments)."""
     np = _np()
     Pf = w["natural"]["profile"]
     P = np.asarray(f["P"], float)
@@ -727,20 +728,26 @@ def river_widths(w, f, s, geo):
     coast = max(coast, 1.0)
     floor = river_floor(w, s)
     step = Pf["step_tiles"]
-    # below taper_full_scale a source's taper takes a grid twice as coarse: its classes are what a thin river
-    # can spare, and on a thin river they barely show
-    tip_step = step if s >= Pf["taper_full_scale"] else 2 * step
-    taper = Pf["taper_tiles"][0] + Pf["taper_tiles"][1] * s
+    taper = taper_tiles(w, s)
+
+    def base(a):
+        t = min(a / coast, 1.0)
+        return max(floor, round(f["hw"] * (Pf["source"] + (Pf["mouth"] - Pf["source"]) * t) / step) * step)
 
     def at(a):
-        t = min(a / coast, 1.0)
-        hw = max(floor, round(f["hw"] * (Pf["source"] + (Pf["mouth"] - Pf["source"]) * t) / step) * step)
+        hw = base(a)
         if a < taper:
             hw = max(round(hw * (Pf["tip"] + (1 - Pf["tip"]) * a / taper) / tip_step) * tip_step,
                      min(hw, 2 * tip_step) if tip_step > step else tip_step)
         return hw
 
-    return [at(float(c + l / 2)) for c, l in zip(cum[:-1], L)], at
+    return [base(float(c + l / 2)) for c, l in zip(cum[:-1], L)], at, int((cum[:-1] < taper).sum())
+
+
+def taper_tiles(w, s):
+    """How far a source's taper reaches at scale s, in tiles."""
+    a, b = w["natural"]["profile"]["taper_tiles"]
+    return a + b * s
 
 
 def class_width(w, river_class, s):
@@ -1331,7 +1338,7 @@ def build_scale(cfg, data, geo, s):
               "radius": round((r + Pd["margin_px"]) * s, 4)} for cx, cy, r in geo.ponds(w, data)]
     for f in feats:
         if f["kind"] == "river":
-            f["widths"], hw_at[f["id"]] = river_widths(w, f, s, geo)
+            f["widths"], hw_at[f["id"]], f["tip_segments"] = river_widths(w, f, s, geo)
             f["reach"] = (max(f["widths"]) * (1 + w["natural"]["width"]["amplitude"]) + bank_reach(w, s) +
                           warp_reach(w, s))
         else:
@@ -1407,15 +1414,15 @@ def seg_calls(P, frame):
 
 def class_terms(groups, slope, floor=0.0, tip=0.0, squeeze=1.0):
     """One term per (half-width, depth, frame) class: max(depth, slope * (sqrt(min of squared distances) -
-    hw - B)), B the fine bank noise, a river's hw modulated by W and held at the floor. A class under the
-    floor is a source's taper, held only at tip, and only where W at its least (squeeze) reaches it."""
+    hw - B)), B the fine bank noise, a river's hw modulated by W and held at the floor, a tip class's
+    scaled by the source taper T instead (the floor stops at a source)."""
     terms = []
     for (hw, depth, frame), calls in sorted(groups.items()):
         width = g9(hw)
         if frame == "river":
-            width = f"max({g9(floor)}, {g9(hw)} * W)"
-            if hw < floor:
-                width = f"{g9(hw)} * W" if hw * squeeze >= tip else f"max({g9(tip)}, {g9(hw)} * W)"
+            width = f"{g9(hw)} * W" if hw < floor else f"max({g9(floor)}, {g9(hw)} * W)"
+        elif frame == "tip":
+            width = f"{g9(hw)} * W * T"
         terms.append(f"max({g9(depth)}, {g9(slope)} * (sqrt({min_tree(calls)}) - {width} - B))")
     return terms
 
@@ -1440,10 +1447,11 @@ def render_sets(cfg, built):
             dam_calls.extend(calls)
             continue
         if f["kind"] == "river":
-            for a, b, hw in zip(f["P"][:-1], f["P"][1:], f["widths"]):
+            for i, (a, b, hw) in enumerate(zip(f["P"][:-1], f["P"][1:], f["widths"])):
                 call = seg_call(a, b, frame)
                 if call:
-                    ww_groups.setdefault((round(hw, 4), f["depth"], frame), []).append(call)
+                    group = "tip" if i < f["tip_segments"] else frame
+                    ww_groups.setdefault((round(hw, 4), f["depth"], group), []).append(call)
             continue
         key = (round(f["hw"], 4), f["depth"], frame)
         (canal_groups if f["kind"] == "canal" else ww_groups).setdefault(key, []).extend(calls)
@@ -1486,7 +1494,14 @@ def render_sets(cfg, built):
     terms = [f"((X - {off(p['centre'][0])}) * (X - {off(p['centre'][0])}) + (Y - {off(p['centre'][1])}) * "
              f"(Y - {off(p['centre'][1])})) / {g9(p['radius'] * p['radius'])}" for p in built["ponds"]]
     ponds = f"{g9(w['natural']['ponds']['height'])} * (1 - sqrt({min_tree(terms)}))" if terms else "-inf"
-    return {"ww": ww, "canals": canals, "dams": dams, "fords": fords, "ponds": ponds}, stats
+    # T, the source taper: tip at a source, 1 from the taper's reach on, one sqrt over every source, so it
+    # costs a few operations per river where splitting the taper into steps of width cost dozens per segment
+    sources = [f["P"][0] for f in feats if f["kind"] == "river"]
+    near = [f"(X - {off(float(x))}) * (X - {off(float(x))}) + (Y - {off(float(y))}) * (Y - {off(float(y))})"
+            for x, y in sources]
+    taper = (f"clamp(sqrt({min_tree(near)}) / {g9(taper_tiles(w, built['scale']))}, "
+             f"{g9(w['natural']['profile']['tip'])}, 1)") if near else "1"
+    return {"ww": ww, "canals": canals, "dams": dams, "fords": fords, "ponds": ponds, "taper": taper}, stats
 
 
 def lua_string_lines(text, first_prefix, last_suffix, indent="  "):
@@ -1510,14 +1525,14 @@ def render_lua(cfg, map_key, s, exprs, stats, data_rel, data_sha):
               f"{m['display']} at scale {s}: {seg['river']} river, {seg['strait']} strait, {seg['canal']} canal and "
               f"{seg['dam']} dam segments,",
               f"{stats['fords']} fords, {stats['basins']} turning basins.",
-              "Name-free data: waterways.lua binds the locals X, Y, XP, YP, W, B and J to the map's warped tiles.",
+              "Name-free data: waterways.lua binds the locals X, Y, XP, YP, W, B, J and T to the map's warped tiles.",
               "Never edit by hand: rerun the tool (plan hard rule 9)."]
     out = [f"-- {line}" for line in header]
     out.append("local F = {}")
     out += ("F.seg = " + SEG_FN).split("\n")
     out += ("F.box = " + BOX_FN).split("\n")
     out.append("local S = {functions = F}")
-    for key in ("ww", "canals", "dams", "fords", "ponds"):
+    for key in ("ww", "canals", "dams", "fords", "ponds", "taper"):
         out += lua_string_lines(exprs[key], f"S.{key} = ", "")
     out.append(f"S.stats = {{rivers = {seg['river']}, straits = {seg['strait']}, canals = {seg['canal']}, "
                f"dams = {seg['dam']}, fords = {stats['fords']}, basins = {stats['basins']}, ponds = {stats['ponds']}}}")

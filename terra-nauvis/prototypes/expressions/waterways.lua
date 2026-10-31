@@ -68,7 +68,8 @@ end
 -- oracle tests. The warp fades out around the spawn, so a river stays where the river-safe starts measured
 -- it. W is the rivers' low-frequency width modulation, B the fine bank noise of rivers and passages, which
 -- only ever widens, so no floor moves, J the rough edge of a ford, which would read as a bar across its
--- river without it. Every local reads constants and x, y alone.
+-- river without it. T, the rivers' source taper (a generated set of the sources), reads X and Y. Every local
+-- reads constants and x, y alone.
 local function natural_locals(g)
   local N = cfg.waterways.natural
   local s = cfg.keys.scale
@@ -121,6 +122,9 @@ for _, key in ipairs(cfg.map_order) do
       local function set(kind, expression, functions)
         local name = sets[kind][s]
         local locals = natural_locals(g)
+        if kind == "ww" then
+          locals.T = gen.taper
+        end
         local lf = {}
         for _, f in ipairs(functions) do
           lf[f] = fn(gen.functions[f])
