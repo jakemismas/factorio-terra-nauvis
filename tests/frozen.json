@@ -5019,10 +5019,10 @@
   },
   "tn_far_europe_v6": {
    "type": "noise-expression",
-   "sha256": "f957e694fe228b87e6c01d9ec6a18afc5b97283363f56be9592e3dc87ecfd5de",
+   "sha256": "2f4ebb30e07a96034fb8c8a35288820fa5dc7869c9cd923dd256ab5fb848e1b6",
    "dump": "m1",
    "slice": "edge-and-lakes",
-   "registered": "2026-10-29"
+   "registered": "2026-10-30"
   },
   "tn_fords_europe_s1_v4": {
    "type": "noise-expression",
@@ -5460,14 +5460,14 @@
   },
   "tn_far_atlantic_v6": {
    "type": "noise-expression",
-   "sha256": "d8de96d2db953465d70f2211939c2b2f65ebb4fc1f378e51145e845e55078b73",
+   "sha256": "628cd70cf0a530419ce0858c14bc8c0dd818655f6d478b0ca9df5820e6bc434c",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"
   },
   "tn_far_olde_world_v6": {
    "type": "noise-expression",
-   "sha256": "cd1074fdef29b7ef8e32fbe2ad0cbc236bea1ec63b0839a7453acec9283c817d",
+   "sha256": "e359746eb9a7fc3703b5903d919b09eb9bfa285c693e21915d644b7b3f1f40db",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"

@@ -915,6 +915,9 @@
   "tn_far_atlantic_v5": [
    "9fdb5546974c7b27caa93a852cf4105972f7bbd24ea48791621baece75b0f493"
   ],
+  "tn_far_atlantic_v6": [
+   "d8de96d2db953465d70f2211939c2b2f65ebb4fc1f378e51145e845e55078b73"
+  ],
   "tn_far_europe_v1": [
    "b30d83a7445a94abb0d8cb78dcd20159f9f7b2193ead4efbd38db6dfc3448e6f"
   ],
@@ -930,6 +933,9 @@
   "tn_far_europe_v5": [
    "f0ec3227f0fb1a82fb2c04bc2d58b2e68f099289b12bd3e1f36413b78fcd1e59"
   ],
+  "tn_far_europe_v6": [
+   "f957e694fe228b87e6c01d9ec6a18afc5b97283363f56be9592e3dc87ecfd5de"
+  ],
   "tn_far_olde_world_v1": [
    "c387562ad8db25827c2902522866e1eb7db4820992b32c14b102ec6235ea8035"
   ],
@@ -944,6 +950,9 @@
   ],
   "tn_far_olde_world_v5": [
    "a00e9e44dca2ac9811761cc807ee7bc1ccd1555a818b293125cd404ae623ede1"
+  ],
+  "tn_far_olde_world_v6": [
+   "cd1074fdef29b7ef8e32fbe2ad0cbc236bea1ec63b0839a7453acec9283c817d"
   ],
   "tn_fields_atlantic_v1": [
    "c40730551520c10bd51e192267885b2857258d6671f8438cc6a367e9e9f8f630"

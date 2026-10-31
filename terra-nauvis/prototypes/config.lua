@@ -1187,7 +1187,8 @@ return {
     -- 4 px, so every land column the box cuts ends in water before it, and never deeper than 20 px,
     -- short of the nearest land the box does not cut (Cyprus 22 px, Alaska 24 px, Ireland and Stewart
     -- Island 25 px; design notes, edge-and-lakes). T1 masks reference land within width_px + warp_px + 1
-    -- px of the box (mask_px).
+    -- px of the box (mask_px), plus the side's margin where outline below gives it one; the band-fix
+    -- handler writes nothing in that same reach (scripts/bandfix.lua, edge_band_reach in earth_test.py).
     edge_band = {
       width_px = 12,
       warp_px = 8,

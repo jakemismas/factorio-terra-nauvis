@@ -8,6 +8,12 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- The map's outline reads as a natural ocean margin at a far map view: where the box cuts land (Europe's
+  North Africa, Russia and Anatolia, and Chukotka on Atlantic and Old World) land ends in bays and
+  headlands up to a few hundred tiles deep at scale 6, instead of a thin wavy strip following a straight
+  box. Each side has a margin table, so Cyprus, Ireland, the east end of the Black Sea, the lower Don and
+  every spawn city keep their ground at every seed (`coast.edge_band.outline`; design notes 2026-10-30 17:35,
+  a development branch).
 - Old World's and Atlantic's coasts are crisp lines: their geography versions read the coast fit at
   warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
   of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is

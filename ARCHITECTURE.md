@@ -1900,6 +1900,14 @@ takes over the Map type fields.
   before the box; beyond the mask the previous version holds); T3's oracle row reads the band at the
   box; spawn-cities' T3 inland-lake rows run with the switch on.
 
+- **As built.** The band's water edge moves in by a per-side margin table
+  (config.lua `coast.edge_band.outline.margins`: {along px, margin px} knots, read piecewise linearly, 0
+  on a side with no table) times a share of floor 0.2 plus two soft-limited noise bands (311 px, and
+  137 with 59 px), so `b` reads `min(dl / s - share * ml, dr / s - share * mr, ...) + warp - width`. The
+  share is below 1 at every seed, so the table bounds the reach and the protection needs no raster at
+  run time. `edge_band_reach` (earth_test.py) and `side_reach` (scripts/bandfix.lua) read the same tables:
+  T1's mask and the handler's skip are `mask_px` plus the margin, rounded up, per px along the side.
+
 ### 10. `destroyed-europe` (part 7, order 0)
 
 - **Introduces.** The zone from the region layer's `tn_destroyed_depth` (S10), routed through
