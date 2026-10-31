@@ -1581,13 +1581,19 @@ return {
       no_gap = 1000000,
       size = {floor = 0.25, gain = 1.35, power = 3, radius_cap = 40},
       province = {seed1 = 7405, wavelength = 320, offset = 4096, base = 2},
-      outline = {coarse = {seed1 = 7406, wavelength = 128}, w24 = 2, w64 = 4, w128 = 3.5, vary = 0.3, cap = 8,
-                 start_w64 = 2.5, start_coarse = 2, basement = 4},
+      outline = {coarse = {seed1 = 7406, wavelength = 128}, fine = 8, mid = 24, broad = 64, w24 = 2, w64 = 4,
+                 w128 = 3.5, mean = 1 / 3, vary = 0.3, cap = 8, start_w64 = 2.5, start_coarse = 2, start_mean = 0.25,
+                 basement = 4},
+      -- vanilla's own regular spot_noise numbers (core/prototypes/noise-functions.lua), and how far blobs0 may
+      -- move the pockets
+      spot = {region_size = 1024, spacing = 45.254833995939045, basement_radius = 128, cube_root = 1 / 3},
+      pocket_clamp = 2,
       warp = {amplitude = 12},
       plateau = 2,
       pockets = 0.35,
       level = 1.45,
       level_few = 1.8,
+      few_size = 2,
       reach = 2,
       warp_reach = 22,
       bodies = {

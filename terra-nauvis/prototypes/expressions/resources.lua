@@ -247,7 +247,7 @@ local function map_spot(h, rows, i, L, M)
   local q = "q" .. i
   local raw = "raw" .. i
   L[raw] = "hs_each * " .. sum(qty, "0") .. " * hs_land * hs_size"
-  L[q] = raw .. " * (" .. raw .. " > " .. num((SP.min_radius / h.rq) ^ 3) .. ")"
+  L[q] = raw .. " * (" .. raw .. " > " .. num((SP.min_radius / h.rq) ^ (1 / SP.cube_root)) .. ")"
   local radius_cap = #cap == 1 and cap[1] or ("max(" .. table.concat(cap, ", ") .. ")")
   local spacing = "if(" .. S .. " > " .. num(SP.fine_scale) .. ", " .. num(SP.spacing) .. ", " ..
     num(SP.spacing_fine) .. ")"
@@ -342,7 +342,7 @@ end
 -- Natural regular patches (config.lua resources.natural): the gap to the nearest hotspot footprint, read
 -- per candidate, and the Earth copy of vanilla's patch function.
 local NP = RS.natural
-local Z, O = NP.size, NP.outline
+local Z, O, V = NP.size, NP.outline, NP.spot
 
 def(NP.gap, "if(" .. K.hotspots .. " > " .. num(cfg.ridges.switch_threshold) .. ", " .. by_map(function(M)
   local parts = {}
@@ -371,17 +371,19 @@ local fn = deep(data.raw["noise-function"][NP.vanilla_fn])
 fn.name = NP.fn
 local L = fn.local_expressions
 L.basement_value = num(O.basement) .. " * (" .. L.basement_value .. ")"
-L.b64 = basis(64, "seed1")
+L.b64 = basis(O.broad, "seed1")
 L.coarse = basis(O.coarse.wavelength, num(O.coarse.seed1))
 L.warp_x = "x + " .. num(NP.warp.amplitude) .. " * b64"
 L.warp_y = "y + " .. num(NP.warp.amplitude) .. " * coarse"
 L.spot_size = "(" .. num(Z.floor) .. " + " .. num(Z.gain) .. " * random_penalty_between(0, 1, 1) ^ " .. num(Z.power) .. ")"
 L.typical_quantity = "(random_spot_size_minimum + random_spot_size_maximum) / 2 * regular_spot_quantity_base_at(distance)"
-L.spot_radius = "min(" .. num(Z.radius_cap) .. ", regular_rq_factor * typical_quantity ^ (1/3) * sqrt(spot_size))"
+L.spot_radius = "min(" .. num(Z.radius_cap) .. ", regular_rq_factor * typical_quantity ^ " .. num(V.cube_root) ..
+  " * sqrt(spot_size))"
 L.clear = "(" .. NP.gap .. " > " .. num(NP.reach) .. " * spot_radius + " .. num(NP.warp_reach) .. ")"
 L.regular_spot_quantity_expression = "clear * spot_size * typical_quantity"
-L.outline = "min(" .. num(O.cap) .. ", (" .. basis(8, "seed1") .. " + " .. num(O.w24) .. " * " .. basis(24, "seed1") ..
-  " + " .. num(O.w64) .. " * b64 + " .. num(O.w128) .. " * coarse - 1/3) * (1 + " .. num(O.vary) .. " * coarse))"
+L.outline = "min(" .. num(O.cap) .. ", (" .. basis(O.fine, "seed1") .. " + " .. num(O.w24) .. " * " ..
+  basis(O.mid, "seed1") .. " + " .. num(O.w64) .. " * b64 + " .. num(O.w128) .. " * coarse - " .. num(O.mean) ..
+  ") * (1 + " .. num(O.vary) .. " * coarse))"
 L.height = "max(1, regular_spot_height_typical_at(distance))"
 L.field = "spot_noise{x = warp_x, y = warp_y," ..
   " density_expression = regular_density_at(distance)," ..
@@ -390,14 +392,15 @@ L.field = "spot_noise{x = warp_x, y = warp_y," ..
   " spot_favorability_expression = clear * (" .. num(NP.province.base) .. " + basis_noise{x = x, y = y, seed0 = map_seed," ..
   " seed1 = " .. num(NP.province.seed1) .. ", input_scale = 1 / " .. num(NP.province.wavelength) ..
   ", offset_x = " .. num(NP.province.offset) .. " * regular_patch_set_index})," ..
-  " seed0 = map_seed, seed1 = seed1, region_size = 1024, candidate_spot_count = candidate_spot_count," ..
-  " suggested_minimum_candidate_point_spacing = 45.254833995939045, skip_span = regular_patch_set_count," ..
+  " seed0 = map_seed, seed1 = seed1, region_size = " .. num(V.region_size) .. ", candidate_spot_count = candidate_spot_count," ..
+  " suggested_minimum_candidate_point_spacing = " .. num(V.spacing) .. ", skip_span = regular_patch_set_count," ..
   " skip_offset = regular_patch_set_index, hard_region_target_quantity = 0, basement_value = basement_value," ..
-  " maximum_spot_basement_radius = 128} + outline * regular_blob_amplitude_at(distance)"
-L.regular_patches = "if(random_spot_size_minimum >= 2, " .. num(NP.level_few) .. ", " .. num(NP.level) .. ") * (1 + " .. num(NP.pockets) .. " * clamp(blobs0, -2, 2)) * field / (1 + " .. num(NP.plateau) ..
-  " * max(0, field) / height)"
-L.starting_patches = (string.gsub(L.starting_patches, "%(blobs0 %- 0%.25%)", "(blobs0 + " .. num(O.start_w64) ..
-  " * b64 + " .. num(O.start_coarse) .. " * coarse - 0.25)"))
+  " maximum_spot_basement_radius = " .. num(V.basement_radius) .. "} + outline * regular_blob_amplitude_at(distance)"
+L.regular_patches = "if(random_spot_size_minimum >= " .. num(NP.few_size) .. ", " .. num(NP.level_few) .. ", " ..
+  num(NP.level) .. ") * (1 + " .. num(NP.pockets) .. " * clamp(blobs0, " .. num(-NP.pocket_clamp) .. ", " ..
+  num(NP.pocket_clamp) .. ")) * field / (1 + " .. num(NP.plateau) .. " * max(0, field) / height)"
+L.starting_patches = (string.gsub(L.starting_patches, "%(blobs0 %- " .. num(O.start_mean):gsub("%.", "%%.") .. "%)",
+  "(blobs0 + " .. num(O.start_w64) .. " * b64 + " .. num(O.start_coarse) .. " * coarse - " .. num(O.start_mean) .. ")"))
 E[#E + 1] = fn
 
 data:extend(E)
