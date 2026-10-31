@@ -23,7 +23,9 @@
 --                                          water in the game); a version with an edge band
 --                                          (edge-and-lakes) reads a second coast inside the extent
 --                                          instead, a noise-warped band 4 to 20 reference px in
---                                          from the box where land sinks into deep water
+--                                          from the box plus the side's margin table at the local
+--                                          share of a low-frequency outline, where land sinks into
+--                                          deep water
 --   e = max(e, land)                       the start land guarantee (a version with a spawn record)
 --   e = min(e, lake, inland)               the spawn lake and the version's inland lakes (the same);
 --                                          a version with a lakes field (edge-and-lakes) reads the
@@ -212,8 +214,8 @@ local function version(m, g)
       local dist, along = sides[side][1], sides[side][2]
       local term = dist .. " / " .. s
       if M[side] then
-        locals.share = num(O.floor) .. " + " .. num(1 - O.floor) .. " * (0.5 + 0.5 * clamp(" .. num(O.gain) ..
-          " * (" .. noise_terms(O.octaves) .. "), -1, 1))"
+        locals.ol = num(O.gain) .. " * (" .. noise_terms(O.octaves) .. ")"
+        locals.share = num(O.floor) .. " + " .. num(1 - O.floor) .. " * (0.5 + 0.5 * ol / (1 + abs(ol)))"
         term = term .. " - share * (" .. margin(M[side], along) .. ")"
       end
       inside[#inside + 1] = term

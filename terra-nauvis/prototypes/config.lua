@@ -1200,23 +1200,24 @@ return {
       -- The margin's outline (the maintainer's ask of 2026-10-30 16:20: at a far map view the box still read as a
       -- straight rectangle): a side's water edge moves further in by margin px * share, where margin is
       -- the map's table for that side, {along px, margin px} knots read piecewise linearly and 0 for a
-      -- side with no table, and share = floor + (1 - floor) * (0.5 + 0.5 * clamp(gain * n, -1, 1)), n the
-      -- octaves' weighted sum, each a basis noise in geo tiles. So the outline stays somewhere between
-      -- floor and all of the margin, moves with the map seed and never passes the table, whatever the
-      -- seed: the table is the protection. Where a table reads 0 (Cyprus and Ireland lie behind one, and
-      -- the east end of the Black Sea) the band is the plain 4 to 20 px strip above.
+      -- side with no table, and share = floor + (1 - floor) * (0.5 + 0.5 * n / (1 + |n|)), n the gain times
+      -- the octaves' weighted sum, each a basis noise in geo tiles. A clamp would leave flat runs, so the
+      -- soft limit is what keeps a stretch of outline from settling on one depth. The outline stays
+      -- between floor and all of the margin, moves with the map seed and never passes the table, whatever
+      -- the seed: the table is the protection. Where a table reads 0 (the sea below Cyprus, the Atlantic
+      -- beside Ireland, the east end of the Black Sea) the band is the plain 4 to 20 px strip above.
       outline = {
         floor = 0.2,
-        gain = 0.8,
+        gain = 1.6,
         octaves = {
           {seed1 = 7421, wavelength_px = 311, weight = 1},
-          {seed1 = 7422, wavelength_px = 137, weight = 0.6},
-          {seed1 = 7423, wavelength_px = 59, weight = 0.35},
+          {seed1 = 7422, wavelength_px = 137, weight = 0.7},
+          {seed1 = 7423, wavelength_px = 59, weight = 0.4},
         },
         margins = {
           europe = {
             right = {{255, 0}, {300, 60}, {345, 100}, {640, 170}, {700, 100}, {820, 100}, {880, 150}, {1040, 170},
-                     {1300, 6}, {1330, 0}, {1365, 0}, {1400, 20}, {1440, 120}, {1704, 300}},
+                     {1085, 60}, {1125, 60}, {1300, 6}, {1330, 0}, {1365, 0}, {1400, 20}, {1440, 120}, {1704, 300}},
             bottom = {{190, 0}, {260, 26}, {300, 18}, {360, 22}, {420, 18}, {500, 40}, {780, 80}, {900, 80},
                       {965, 0}, {2100, 0}, {2140, 6}, {2300, 170}, {2400, 300}},
           },
