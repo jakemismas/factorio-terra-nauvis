@@ -84,7 +84,7 @@ if str(HERE) not in sys.path:
 
 import tnconfig  # noqa: E402
 
-EMITTER_VERSION = 3
+EMITTER_VERSION = 4
 MAX_COLUMNS = 120
 DATA = REPO / "data-src" / "waterways"
 APPROVALS = REPO / "data-src" / "approvals" / "approvals-data.json"
@@ -666,11 +666,12 @@ def point_at(P, a):
 # ------------------------------------------------------------------------------------------------ widths
 
 def half_width(w, kind, s, width_class=None, real_km=0.0, river_class=None):
-    """Half-width in tiles: rivers max(floor / 2 + margin, k s / 2) by class,
-    straits max(F / 2 + margin, s / 2, w s / (2 km_per_px)), canals max(floor / 2 + margin, s / 2)."""
+    """Half-width in tiles: rivers max(river floor / 2, k s / 2) by class (a river
+    scales with the map even where a boat no longer fits), straits max(F / 2 + margin, s / 2,
+    w s / (2 km_per_px)), canals max(floor / 2 + margin, s / 2)."""
     floor = w["floor_tiles"] / 2 + w["margin_tiles"]
     if kind == "river":
-        return max(floor, w["river_k"][river_class] * s / 2)
+        return max(w["river_floor_tiles"] / 2, w["river_k"][river_class] * s / 2)
     if kind == "strait":
         F = w["two_way_tiles"] if width_class == "two_way" else w["floor_tiles"]
         return max(F / 2 + w["margin_tiles"], 0.5 * s, 0.5 * real_km * s / w["km_per_px"])
@@ -679,6 +680,20 @@ def half_width(w, kind, s, width_class=None, real_km=0.0, river_class=None):
     if kind == "dam":
         return max(w["dam"]["floor_tiles"], w["dam"]["per_scale"] * s)
     raise ValueError(kind)
+
+
+def river_floor(w, s):
+    """The half-width W and the profile never take a river under at scale s: proportional to the scale from
+    its value at full_scale, down to least_half_tiles, which still draws an unbroken river at every warp."""
+    N = w["natural"]["width"]
+    return round(max(N["least_half_tiles"], N["floor_half_tiles"] * s / N["full_scale"]), 4)
+
+
+def ford_length(w, s):
+    """A ford's length along its river at scale s, before its rough edge: proportional to the scale from
+    length_tiles at full_scale, down to least_length_tiles, so a thin river's ford stays a short shoal."""
+    F = w["ford"]
+    return round(max(F["least_length_tiles"], F["length_tiles"] * s / w["natural"]["width"]["full_scale"]), 4)
 
 
 def bank_reach(w, s):
@@ -710,7 +725,7 @@ def river_widths(w, f, s, geo):
     idx = np.nonzero(land)[0]
     coast = float(cum[idx[-1]]) if len(idx) else float(cum[-1])
     coast = max(coast, 1.0)
-    floor = w["natural"]["width"]["floor_half_tiles"]
+    floor = river_floor(w, s)
     step = Pf["step_tiles"]
     taper = Pf["taper_tiles"][0] + Pf["taper_tiles"][1] * s
 
@@ -725,8 +740,8 @@ def river_widths(w, f, s, geo):
 
 
 def class_width(w, river_class, s):
-    """A river's design width in tiles, max(floor, k s) (APPROVALS 7's table; T5's width check)."""
-    return max(w["floor_tiles"], w["river_k"][river_class] * s)
+    """A river's design width in tiles, max(river floor, k s) (APPROVALS 7's table; T5's width check)."""
+    return max(w["river_floor_tiles"], w["river_k"][river_class] * s)
 
 
 # ------------------------------------------------------------------------------------------------ per scale
@@ -1178,7 +1193,7 @@ def place_fords(w, geo, s, P, hw_at, others, fid, basins):
     np = _np()
     F = w["ford"]
     D = F["every_px"] * s
-    hl = F["length_tiles"] / 2
+    hl = ford_length(w, s) / 2
     # a ford reads the river's warped tiles, so it spans the river's carve at its widest there; its banks
     # are safe when the warp's whole reach still leaves them on land
     wide = 1 + w["natural"]["width"]["amplitude"]
@@ -1317,9 +1332,13 @@ def build_scale(cfg, data, geo, s):
                           warp_reach(w, s))
         else:
             f["reach"] = f["hw"] + bank_reach(w, s) + warp_reach(w, s, True)
+    Bs = w["natural"]["basin"]
     for f in feats:
         f["basins"] = []
         if f["kind"] == "dam":
+            continue
+        # a turning basin is for ships; a river too thin for one takes no pool
+        if f["kind"] == "river" and s < Bs["least_river_scale"]:
             continue
         if f["bend"]["runs"] or f["bend"].get("smoothed_fails"):
             f["basins"] = basins_for(f["P"], f["bend"]["runs"], half, f["bend"].get("smoothed_fails", ()))
@@ -1382,15 +1401,17 @@ def seg_calls(P, frame):
     return [c for c in calls if c]
 
 
-def class_terms(groups, slope, floor=0.0):
+def class_terms(groups, slope, floor=0.0, tip=0.0, squeeze=1.0):
     """One term per (half-width, depth, frame) class: max(depth, slope * (sqrt(min of squared distances) -
-    hw - B)), B the fine bank noise, a river's hw modulated by W and held at the floor (a class under the
-    floor is a source's taper)."""
+    hw - B)), B the fine bank noise, a river's hw modulated by W and held at the floor. A class under the
+    floor is a source's taper, held only at tip, and only where W at its least (squeeze) reaches it."""
     terms = []
     for (hw, depth, frame), calls in sorted(groups.items()):
         width = g9(hw)
         if frame == "river":
-            width = f"{g9(hw)} * W" if hw < floor else f"max({g9(floor)}, {g9(hw)} * W)"
+            width = f"max({g9(floor)}, {g9(hw)} * W)"
+            if hw < floor:
+                width = f"{g9(hw)} * W" if hw * squeeze >= tip else f"max({g9(tip)}, {g9(hw)} * W)"
         terms.append(f"max({g9(depth)}, {g9(slope)} * (sqrt({min_tree(calls)}) - {width} - B))")
     return terms
 
@@ -1404,7 +1425,8 @@ def render_sets(cfg, built):
     ww_groups, canal_groups, dam_calls = {}, {}, []
     counts = {"river": 0, "strait": 0, "canal": 0, "dam": 0}
     Bs = w["natural"]["basin"]
-    floor = w["natural"]["width"]["floor_half_tiles"]
+    N = w["natural"]["width"]
+    floor, tip, squeeze = river_floor(w, built["scale"]), N["tip_half_tiles"], 1 - N["amplitude"]
     for f in feats:
         frame = "river" if f["kind"] == "river" else "passage"
         calls = seg_calls(f["P"], frame)
@@ -1431,8 +1453,8 @@ def render_sets(cfg, built):
         call = seg_call((cx - tx * reach, cy - ty * reach), (cx + tx * reach, cy + ty * reach), frame)
         key = (float(Bs["radius_tiles"]), b["depth"], frame)
         (canal_groups if b["kind"] == "canal" else ww_groups).setdefault(key, []).append(call)
-    ww_terms = class_terms(ww_groups, slope, floor)
-    canal_terms = class_terms(canal_groups, slope, floor)
+    ww_terms = class_terms(ww_groups, slope, floor, tip, squeeze)
+    canal_terms = class_terms(canal_groups, slope, floor, tip, squeeze)
     ww = min_tree(ww_terms) if ww_terms else "inf"
     canals = min_tree(canal_terms) if canal_terms else "inf"
     if dam_calls:
@@ -1867,6 +1889,8 @@ def offline(cfg, maps, scales):
                 if f["kind"] == "dam":
                     continue
                 k = w["two_way_tiles"] if f.get("width_class") == "two_way" else w["floor_tiles"]
+                if f["kind"] == "river":
+                    k = w["river_floor_tiles"]
                 x0, y0, ww_, hh = tile_window([f["P"]], f["hw"] + 40)
                 if ww_ * hh > 60_000_000:
                     rows.append({"id": f["id"], "skipped": f"window {ww_} x {hh} too large offline"})

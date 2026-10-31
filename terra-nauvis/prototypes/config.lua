@@ -1747,8 +1747,8 @@ return {
   --     fords (the water-shallow hook's on branch, through tn_fords). The geography version that
   --     composes a map's sets names the same table as its `waterways` field, and the sets bind to
   --     that version's chain, so one version per map composes them.
-  --   widths: a river is max(floor, k s) tiles wide by its class, carved with
-  --     half-width max(floor / 2 + margin, k s / 2); a strait max(floor / 2 + margin, s / 2,
+  --   widths: a river is max(river_floor_tiles, k s) tiles wide
+  --     by its class, so it scales with the map; a strait max(floor / 2 + margin, s / 2,
   --     w s / (2 km_per_px)) with floor two_way_tiles for the two-way straits; a canal max(floor / 2
   --     + margin, s / 2); a dam max(dam.floor_tiles, dam.per_scale s).
   --   depth: the carve's floor, plain water in vanilla and Alien Biomes for rivers and canals,
@@ -1765,8 +1765,8 @@ return {
   --     bend: R4's rule, no window_tiles
   --     stretch turning more than limit_degrees; basin_tiles: the turning basin where it still fails
   --     (R4 W10).
-  --   ford: every every_px reference px of a river's path, length_tiles long along it before its rough
-  --     edge (natural.ford_edge, so at least about 6 tiles walk across), spanning the
+  --   ford: every every_px reference px of a river's path, max(least_length_tiles, length_tiles s /
+  --     natural.width.full_scale) long along it before its rough edge (natural.ford_edge), spanning the
   --     carve plus margin_tiles, its banks bank_tiles beyond the carve on reference land; score
   --     beats every water tile's autoplace inside it.
   --   start: a spawn whose clear_tiles disc a corridor crosses moves to the nearest tile
@@ -1774,7 +1774,7 @@ return {
   waterways = {
     version = 1,
     sets = {europe = EU_SETS4, atlantic = OAS_SETS.atlantic, olde_world = OAS_SETS.olde_world},
-    floor_tiles = 7, two_way_tiles = 11, margin_tiles = 0.25,
+    floor_tiles = 7, river_floor_tiles = 3, two_way_tiles = 11, margin_tiles = 0.25,
     river_k = {major = 3, minor = 2},
     km_per_px = 2.471,
     depth = {river = -2.2, strait = -6, canal = -2.2},
@@ -1786,7 +1786,8 @@ return {
                  least_tiles = {2.5, 2, 1, 1, 1, 1}},
     bend = {window_tiles = 17, limit_degrees = 90},
     basin_tiles = 30,
-    ford = {every_px = 60, length_tiles = 10, margin_tiles = 3, bank_tiles = 3, score = 10000, jitter = 0.3},
+    ford = {every_px = 60, length_tiles = 10, least_length_tiles = 5, margin_tiles = 3, bank_tiles = 3, score = 10000,
+            jitter = 0.3},
     vertex_grid = 16,
     start = {clear_tiles = 12, radius_tiles = 150},
     -- The natural course (the decision of 2026-10-30, "not perfect lines, with perfect edges"; waterways.lua
@@ -1795,15 +1796,19 @@ return {
     --     and amplitude {a, b} = a + b s tiles at scale s, added to the geo tiles every set reads; passage is
     --     the share a strait, canal or dam reads. The first two rows are the meanders, the last the banks,
     --     short enough that the two banks of a river differ. noise_peak: basis noise's peak, for the warp's reach.
-    --   width: W = 1 + amplitude * clamp(noise, -1, 1), a river's half-width factor; floor_half_tiles holds a
-    --     river's half-width wherever W and the warp squeeze it, so T5's 7-tile square still passes.
+    --   width: W = 1 + amplitude * clamp(noise, -1, 1), a river's half-width factor. A river's half-width is
+    --     held at max(least_half_tiles, floor_half_tiles s / full_scale) wherever W and the warp squeeze it:
+    --     a river scales down with the map even where a boat no longer fits, so only
+    --     full_scale keeps T5's 7-tile disc, and least_half_tiles is what still draws an unbroken river.
+    --     tip_half_tiles holds a tapered source where W could take it under that.
     --   bank: B = amplitude {a, b} * (half + half * clamp(noise, -1, 1)) tiles of wavelength {a, b} tiles at
     --     scale s (a + b s), the fine irregularity every river and passage bank adds to its half-width.
     --   ford_edge: J = amplitude {a, b} * noise tiles of wavelength {a, b} tiles at scale s, added to a ford's
     --     rectangle on every side, so its two edges across the river are irregular and not parallel.
     --   profile: a river's half-width factor from source at its inland end to mouth where it meets the coast
     --     fit, tip at the very source over taper_tiles {a, b} = a + b s, on a step_tiles grid.
-    --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide.
+    --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide; a
+    --     river takes one only from least_river_scale up, where a ship fits it.
     --   deloop: a river's hooks cut, tools/build_waterways.py deloop.
     --   runs: a river's segments over max_px reference px take a vertex every step_px, off their line by
     --     amplitude step_px times least to 1, on alternating sides (tools/build_waterways.py break_runs).
@@ -1817,11 +1822,12 @@ return {
         {seed1x = 7505, seed1y = 7506, wavelength = {14, 1.5}, amplitude = {0.6, 0.2}, passage = 1},
       },
       noise_peak = 1.7,
-      width = {seed1 = 7507, wavelength = {60, 60}, amplitude = 0.3, floor_half_tiles = 5.5},
+      width = {seed1 = 7507, wavelength = {60, 60}, amplitude = 0.3, floor_half_tiles = 5.5, full_scale = 6,
+               least_half_tiles = 1.5, tip_half_tiles = 1},
       bank = {seed1 = 7508, wavelength = {8, 1}, amplitude = {0.6, 0.15}, half = 0.5},
-      ford_edge = {seed1 = 7509, wavelength = {5, 0.5}, amplitude = {1.2, 0.1}},
+      ford_edge = {seed1 = 7509, wavelength = {5, 0.5}, amplitude = {0.6, 0.2}},
       profile = {source = 0.7, mouth = 1.35, tip = 0.55, taper_tiles = {10, 30}, step_tiles = 0.75},
-      basin = {half_length_tiles = 8, radius_tiles = 12},
+      basin = {half_length_tiles = 8, radius_tiles = 12, least_river_scale = 4},
       deloop = {gap_px = 8, arc_px = 30, reach_px = 400},
       runs = {max_px = 60, step_px = 36, amplitude = 0.2, least = 0.4},
       spawn_fade = {inner_tiles = 40, outer_tiles = 200},
