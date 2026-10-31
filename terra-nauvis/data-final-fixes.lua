@@ -97,6 +97,52 @@ local function grain_scores(text)
   return text
 end
 
+-- The grain's copies reach every Alien Biomes land tile: snow, volcanic and the adopted tiles too, and ice
+-- gives up score on its on branch (config.lua climate.grain.ice).
+local function grain_hooks(excluded, n)
+  local G = cfg.climate.grain
+  local others = {}
+  for name in pairs(tile_settings or {}) do
+    local t = data.raw.tile[name]
+    if not excluded[name] and t and t.autoplace and t.autoplace.probability_expression then
+      for _, p in ipairs(G.prefixes) do
+        if string.sub(name, 1, #p) == p then
+          others[#others + 1] = name
+          break
+        end
+      end
+    end
+  end
+  table.sort(others)
+  for _, name in ipairs(others) do
+    local autoplace = data.raw.tile[name].autoplace
+    local original = "(" .. tostring(autoplace.probability_expression) .. ")"
+    local on = grain_scores(original)
+    if G.ice[name] then
+      on = on .. " - " .. num(G.ice[name])
+    end
+    autoplace.probability_expression = hook(on, original)
+  end
+  log(cfg.identity.title .. ": climate grain copies on " .. (n + #others) .. " Alien Biomes tiles")
+end
+
+-- Vegetation tiles read a temperature of their own, excluded or adopted alike (config.lua climate.grain),
+-- and the brown green grasses give up score on their on branch, which alone holds the exclusion key.
+local function vegetation_hooks()
+  local G, key = cfg.climate.grain, TL.exclude.key
+  for name in pairs(tile_settings or {}) do
+    local autoplace = data.raw.tile[name] and data.raw.tile[name].autoplace
+    local text = autoplace and autoplace.probability_expression
+    if text and string.sub(name, 1, #G.veg_prefix) == G.veg_prefix then
+      text = string.gsub(text, "%f[%w_:]" .. G.keys.temperature .. "%f[^%w_:]", G.veg_key)
+      if G.brown[name] then
+        text = string.gsub(text, "%f[%w_]" .. key .. "%f[^%w_]", key .. " - " .. num(G.brown[name]))
+      end
+      autoplace.probability_expression = text
+    end
+  end
+end
+
 -- Only the adopted Alien Biomes tiles mix into temperate bands (D11; APPROVALS 9): every other AB land
 -- tile on Nauvis adds the exclusion key, and its own score stays the off value.
 -- The red palette's tiles take the max with their score (config.lua destroyed.chaos): the exclusion is
@@ -137,42 +183,8 @@ local function exclusion_hooks()
     autoplace.probability_expression = hook(with_chaos(name, grain_scores(original) .. " + " .. X.key), original)
   end
   log(cfg.identity.title .. ": temperate exclusion on " .. #names .. " Alien Biomes tiles")
-  -- The grain's copies reach every Alien Biomes land tile: snow, volcanic and the adopted tiles too.
-  local others = {}
-  for name in pairs(tile_settings or {}) do
-    local t = data.raw.tile[name]
-    if not excluded[name] and t and t.autoplace and t.autoplace.probability_expression then
-      for _, p in ipairs(cfg.climate.grain.prefixes) do
-        if string.sub(name, 1, #p) == p then
-          others[#others + 1] = name
-          break
-        end
-      end
-    end
-  end
-  table.sort(others)
-  for _, name in ipairs(others) do
-    local autoplace = data.raw.tile[name].autoplace
-    local original = "(" .. tostring(autoplace.probability_expression) .. ")"
-    local G = cfg.climate.grain
-    autoplace.probability_expression = hook(grain_scores(original) .. (G.ice[name] and (" - " .. num(G.ice[name])) or ""),
-      original)
-  end
-  log(cfg.identity.title .. ": climate grain copies on " .. (#names + #others) .. " Alien Biomes tiles")
-  -- Vegetation tiles read a temperature of their own, excluded or adopted alike (config.lua climate.grain),
-  -- and the brown green grasses give up score on their on branch, which alone holds the exclusion key.
-  local G = cfg.climate.grain
-  for name in pairs(tile_settings or {}) do
-    local t = data.raw.tile[name]
-    if string.sub(name, 1, #G.veg_prefix) == G.veg_prefix and t and t.autoplace and t.autoplace.probability_expression then
-      local text = string.gsub(t.autoplace.probability_expression, "%f[%w_:]" .. G.keys.temperature .. "%f[^%w_:]",
-        G.veg_key)
-      if G.brown[name] then
-        text = string.gsub(text, "%f[%w_]" .. X.key .. "%f[^%w_]", X.key .. " - " .. num(G.brown[name]))
-      end
-      t.autoplace.probability_expression = text
-    end
-  end
+  grain_hooks(excluded, #names)
+  vegetation_hooks()
 end
 
 -- The palm switch: Earth presets name the Earth copies of the palms,

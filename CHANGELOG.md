@@ -14,6 +14,13 @@ versions follow [Semantic Versioning](https://semver.org/).
   contour. The heat rises to a mean of 142 and starts 30 px in, so the rim keeps the climate's trees.
   Setting off: previews of all three maps hash the same as main. Heat-4 covers 16 to 28 percent of the
   land sampled; it walks at 0.7 and blocks nothing.
+- Beside Alien Biomes the ground follows Earth's biomes instead of latitude alone: tile belts
+  (`climate.tile_belts`) move only the fields tile scores read, so the Congo, the Amazon and South-East
+  Asia are deep green, the Sahara golden with some red rock, Central Asia and the Gobi pale sand and
+  gravel instead of one sheet of vanilla red desert, the Pontic and Kazakh steppes and the Great Plains
+  dry yellow grass, Tibet cold grey, the Arctic pale tundra with snow in the far north and Greenland
+  white. Orange grass is gone, ice keeps to the noise's lows, and temperate Europe keeps its tiles
+.
 - The map's outline reads as a natural ocean margin at a far map view: where the box cuts land (Europe's
   North Africa, Russia and Anatolia, and Chukotka on Atlantic and Old World) land ends in bays and
   headlands up to a few hundred tiles deep at scale 6, instead of a thin wavy strip following a straight
@@ -29,13 +36,6 @@ versions follow [Semantic Versioning](https://semver.org/).
   chunk's corners, so it draws no rectangles of one tile along chunk borders (`bandfix.smooth.corners`).
 - Small marshes on Europe and Atlantic read the shared roughness harder, so the Danube delta's outline is no
   disc edge. No noise call is added and Old World keeps its bodies' values (`regions.marsh.edge_gain`).
-- Beside Alien Biomes the ground follows Earth's biomes instead of latitude alone: tile belts
-  (`climate.tile_belts`) move only the fields tile scores read, so the Congo, the Amazon and South-East
-  Asia are deep green, the Sahara golden with some red rock, Central Asia and the Gobi pale sand and
-  gravel instead of one sheet of vanilla red desert, the Pontic and Kazakh steppes and the Great Plains
-  dry yellow grass, Tibet cold grey, the Arctic pale tundra with snow in the far north and Greenland
-  white. Orange grass is gone, ice keeps to the noise's lows, and temperate Europe keeps its tiles
-.
 - Old World's and Atlantic's coasts are crisp lines: their geography versions read the coast fit at
   warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
   of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is

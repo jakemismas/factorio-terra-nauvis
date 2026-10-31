@@ -150,7 +150,8 @@ local BW = C.tile_belts_wander
 local BELT_AT = {belt_lat = N.lat .. " + " .. num(BW.lat) .. " * " .. MD.name,
                  belt_lon = N.lon .. " + " .. num(BW.lon) .. " * " .. MD.name}
 local function belt_weight(b)
-  return ramp_in("belt_lat", b.lat[1], b.lat[2], b.ramp[1]) .. " * " .. ramp_in("belt_lon", b.lon[1], b.lon[2], b.ramp[2])
+  return ramp_in("belt_lat", b.lat[1], b.lat[2], b.ramp[1]) .. " * " ..
+    ramp_in("belt_lon", b.lon[1], b.lon[2], b.ramp[2])
 end
 local function belt_list(X, field)
   local out = {}
@@ -256,7 +257,8 @@ if AB then
   local R = A.red
   local function ab_aux(extra, over)
     return "clamp(min(" .. num(A.base) .. " + " .. noise(A.noise, AFREQ) .. extra .. ", " .. num(A.ab_cap) .. ") + " ..
-      (over or "") .. num(R.lift) .. " * " .. N.dry .. " * clamp((" .. N.ab.temperature .. " - " .. num(R.t_lo) .. ") / " ..
+      (over or "") .. num(R.lift) .. " * " .. N.dry .. " * clamp((" .. N.ab.temperature .. " - " .. num(R.t_lo) ..
+      ") / " ..
       num(R.ramp) .. ", 0, 1) * clamp((" .. num(R.t_hi) .. " - " .. N.ab.temperature .. ") / " .. num(R.ramp) ..
       ", 0, 1) + " .. num(A.ab_bias) .. " * var('control:aux:bias'), 0, 1)"
   end
