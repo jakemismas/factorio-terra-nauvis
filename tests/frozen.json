@@ -4506,42 +4506,42 @@
   },
   "tn_crest_atlantic_v1": {
    "type": "noise-expression",
-   "sha256": "6f0c31f112a0656a2030b09970989268bbf0961a3181e0701fb6f00861cb1db7",
+   "sha256": "da19838fd44ca066c73bba0eadff170c0f8ca50eb2d42071cffcfb0e3cdfcd41",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_crest_europe_v1": {
    "type": "noise-expression",
-   "sha256": "e41674884bc405e0795ddb6802fa5c989bb56b1bb7ca61320b6b1981dc437d9f",
+   "sha256": "7fb02d3c524e0dca631ec68b1b831e764c738cda41595fc8592cb954c9bdc93e",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_crest_olde_world_v1": {
    "type": "noise-expression",
-   "sha256": "88a8d711edb42c052e3ef1426c6279dff5e7eecf3a1b1248d224da776456bb1e",
+   "sha256": "ba4a6bd16823d183b9f4fa8d710d23b30d91926b11a0b7377aff646e35d3a844",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_openings_atlantic_v1": {
    "type": "noise-expression",
-   "sha256": "68a94d9a3f5027dffc1b4b998fc475614a4cd56fd87177eb1b489a894e09d9bc",
+   "sha256": "4d5fe82417f17fd15b4b5fda0eff22696d1e93e780fb8a41a5aa5618b688d317",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_openings_europe_v1": {
    "type": "noise-expression",
-   "sha256": "a345b9393e56bc80239447df055a477e0e8b70ffb4d353566a7cee93e1c924af",
+   "sha256": "02a698e677b83067f5d87b687c5c7c33ae21e3792b9472356f70c5f062679423",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_openings_olde_world_v1": {
    "type": "noise-expression",
-   "sha256": "631ce83639e532d02e7af6f5ee8a82c7f53549e4e63520af84f9fea1874018b9",
+   "sha256": "65f21168b7eba39b5130fbcd4efb003a4044bada240b14c42ee6d8ab81b0a276",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
@@ -6048,21 +6048,21 @@
   },
   "tn_ridge_run_atlantic_v1": {
    "type": "noise-expression",
-   "sha256": "aef995db2492ff31a43d8acf83826c190110924630558d8940fef40caad33dc9",
+   "sha256": "b3a541bb5a25260dfd2406ef3def74fb0d51747c89e34c8f941a613dcca6c9cf",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
   "tn_ridge_run_europe_v1": {
    "type": "noise-expression",
-   "sha256": "ba19580e8520f8636f5b448a2dee6aac5178d7ad68fef0802fc7b376b5dc5066",
+   "sha256": "1bcec7298926423abaa57593fe294c954d182ee1e7b9d4a02410824af67faf43",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
   "tn_ridge_run_olde_world_v1": {
    "type": "noise-expression",
-   "sha256": "3184071fa1a18fa6ed8f6c3d51097bd1a9d089d34a1bffbda0657b3a5e646872",
+   "sha256": "557a7bedc5c8b3f80d03ea90855a34c1e6c3eabe339ae4123110ec79cb18bfd7",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
