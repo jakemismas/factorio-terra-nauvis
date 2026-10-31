@@ -5173,7 +5173,7 @@
   },
   "tn_destroyed_heat_v1": {
    "type": "noise-expression",
-   "sha256": "e5f25ba61118128a3ec26b8c740beb789e46203b178b794c98ad604305a80d30",
+   "sha256": "e7fdc4df897694f8af2513032481e0a037bbfd3cb1da72b40eb93941859d685a",
    "dump": "m1",
    "slice": "destroyed-europe",
    "registered": "2026-10-30"
@@ -6113,6 +6113,69 @@
    "type": "noise-expression",
    "sha256": "f87d5681cf83c5a606b5953d82051e11376163f61c1904c4310cc043600179a5",
    "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_destroyed_fine_v1": {
+   "type": "noise-expression",
+   "sha256": "664ca61c4c4df712effc6f7b4bbfecab42cc647b113c3d23ee4f100878717863",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_chaos_black_dirt_v1": {
+   "type": "noise-expression",
+   "sha256": "7fe58b73b32c89accf4687c2755445b45c514e273727b639e6ad45ba33b3fab8",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_chaos_black_sand_v1": {
+   "type": "noise-expression",
+   "sha256": "47f660cc761e0164f89e883cd0ca3ad1f0ef3176ebf4a1cf9bb3ac0ac36bbc88",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_chaos_red_dirt_v1": {
+   "type": "noise-expression",
+   "sha256": "f09b0cf3589478f43d5bc907e9e18db84143506113dd0087ae06b378f7e9e188",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_chaos_red_grass_v1": {
+   "type": "noise-expression",
+   "sha256": "e669b72e666c2e689cd3ad037708bfc82d86d4d6c9273ce03f795832698adfc2",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_chaos_red_sand_v1": {
+   "type": "noise-expression",
+   "sha256": "ffa968e83eb1449e7a839e031298a330c7d63c0e64715308fc675e27d4b3d8da",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_destroyed_class_v1": {
+   "type": "noise-expression",
+   "sha256": "7380314b6a747cd3e0eb17fe44200acc94d28ee6af872e80e9ca1b9cea7ff6d1",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_destroyed_kind_v1": {
+   "type": "noise-expression",
+   "sha256": "0e646254a015be4c26d0e80601b43b6f6f3ff0ded6e27ff893642455952aea68",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_destroyed_macro_v1": {
+   "type": "noise-expression",
+   "sha256": "03abbb522f5d25fd4f62e762b4f99a6203914666f8cb4999e6c7b27288344a32",
+   "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
   }
