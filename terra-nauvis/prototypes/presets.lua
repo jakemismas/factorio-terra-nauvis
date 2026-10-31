@@ -166,7 +166,9 @@ end
 -- The ridges (milestone ridges; S5): the two cliff properties point at the shared ridge bodies, which read
 -- the map's crest distance and openings through the keys tn_crest and tn_openings (and the ore
 -- clearance its crest band through tn_band), so ridges are the only cliffs on every Terra Nauvis
--- preset, ridges on or off (off: 0 cliffs).
+-- preset, ridges on or off (off: 0 cliffs). The highland keys name the map's band for rocks and for tile scores,
+-- its passes and the rock_density copy with the lift; the rock key reaches Alien Biomes' rocks, and without Alien
+-- Biomes the ground key the stony tiles' hook (with it their tile keys name the lean, grain_values below).
 local function ridge_values(map_key)
   local RN = cfg.ridges.names
   local crest, openings, band = RN.crest[map_key], RN.openings[map_key], RN.band[map_key]

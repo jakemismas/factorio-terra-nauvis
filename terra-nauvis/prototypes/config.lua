@@ -1502,8 +1502,9 @@ return {
   --              full highland. lapse_per_px2, lapse_from_px: beside Alien Biomes the tile temperature falls by
   --              lapse_per_px2 times the square of the rise over lapse_from_px in reference pixels, so the crest
   --              alone of a tall range leaves the temperate band for Alien Biomes' grey ground and, at the top, its
-  --              snow, and a low range keeps its ground (a lapse from 0 drew a white stripe down the Urals, whose
-  --              crest is a few degrees above frozen). fray: the grain's noise grows by this at full highland, or
+  --              snow, and a low range keeps its ground. cold_t, cold_min: the fall scales by the climate core
+  --              over cold_t, at least cold_min, because ground already near frozen needs no lapse: at full fall
+  --              the Urals drew a white stripe down their axis. fray: the grain's noise grows by this at full highland, or
   --              the grey ground's edge is a smooth line where the lapse is steep. floor: the lapse stops
   --              here, because under about -50 every frozen tile scores below Alien Biomes' water-mud, which
   --              flooded the Himalaya at scale 6. moisture: the tile moisture's fall at full highland, off the
@@ -1556,7 +1557,8 @@ return {
     max_arguments = 255,
     high = {ref_m = 4800, min_px = 8, gain_px = 42, power = 0.9, tiles = 30, fall_px = 44, fall_tiles = 36,
             fray_warp = 0.7, fray_rough = 2, fray_massif = 8, start = {ramp_tiles = 96}},
-    ground = {lean = 6, lapse_per_px2 = 0.05, lapse_from_px = 20, floor = -12, moisture = 0.2, fray = 2},
+    ground = {lean = 6, lapse_per_px2 = 0.03, lapse_from_px = 7, cold_t = 30, cold_min = 0.15, floor = -12,
+              moisture = 0.2, fray = 2},
     rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24,
              ab_prefixes = {"huge-rock-", "big-rock-", "sand-big-rock-"}, ab_skip = "volcanic"},
     names = {

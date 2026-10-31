@@ -41,6 +41,16 @@
 -- frame's geo tiles, so a seed's ridges are one shape for every spawn city; only the Cliff program pays
 -- for the noise, on the 4-tile lattice (S5). Every name and number comes from config.lua (S-5); the
 -- toggle never multiplies (U5).
+--
+-- The highlands (a cliff squiggle on plain grass does not read as a mountain range; design notes
+-- 18:00): a band round each range, wider and stronger the taller the range, faded in outside the ridge-free
+-- start disc, frayed by noise the region layer already computes. It costs only what it reads again:
+--   rocks    in the Entity program, on the crest band's own pieces and one reach per piece: lifts vanilla's
+--            rock_density by one redirect and Alien Biomes' big rocks by a hook, outside the named passes
+--   tiles    in the Tile program, at the wandering point with a reach that follows the vertex heights: lifts the
+--            stony vanilla tiles' score and, beside Alien Biomes, lowers the tile temperature and moisture, so
+--            the top of a tall range turns to Alien Biomes' grey ground and snow. Trees and decoratives keep the
+--            plain fields
 local cfg = require("prototypes.config")
 local T = require("prototypes.tables.ranges")
 
@@ -508,8 +518,10 @@ end
 def(N.high, high(N.rise))
 def(N.high_tile, high(N.rise_tile))
 -- The tile temperature's fall, with ridges off 0, and the stony tiles' lean without Alien Biomes.
-def(N.lapse, "if(" .. on .. ", " .. num(RD.ground.lapse_per_px2) .. " * over * over * " .. N.gate .. ", 0)",
-  {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(RD.ground.lapse_from_px) .. ")"})
+local GD = RD.ground
+def(N.lapse, "if(" .. on .. ", " .. num(GD.lapse_per_px2) .. " * over * over * " .. N.gate .. " * clamp(" ..
+  cfg.climate.names.core .. " / " .. num(GD.cold_t) .. ", " .. num(GD.cold_min) .. ", 1), 0)",
+  {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(GD.lapse_from_px) .. ")"})
 def(N.ground, num(RD.ground.lean) .. " * " .. N.high_tile)
 def(K.ground, num(0))
 -- The rock lift: the highland outside the named passes. vanilla's rock_density with it added reaches every

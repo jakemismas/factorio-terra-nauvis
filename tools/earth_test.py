@@ -13214,6 +13214,8 @@ def ct_hook_text(cfg, name, original=None, ab=True):
     if not ab:
         if G and name == G["tile"]:
             return f"if({gate}, ({original}) + {G['key']}, ({original}))"
+        if name in TL["vanilla"].get("stony", ()):
+            return f"if({gate}, ({original}) + {cfg['keys']['ground']}, ({original}))"
         return None
     V = TL["vanilla"]
     if name in V["keys"]:
@@ -17123,6 +17125,13 @@ def tf_hook_change(cfg, t, n, earth, base):
         return ea == want
     if not isinstance(ba, dict):
         return False
+    # the highland lift on Alien Biomes' big rocks (data-final-fixes.lua rock_lift_hooks)
+    peaks = (ba.get("local_expressions") or {}).get("peaks_expr")
+    RK = (cfg.get("ridges") or {}).get("rocks")
+    if t == "simple-entity" and RK and isinstance(peaks, str) and RK["ab_skip"] not in n and \
+            any(n.startswith(p) for p in RK["ab_prefixes"]):
+        on = f"{peaks} + {cfg['keys']['rock_lift']}"
+        return ea == dict(ba, local_expressions=dict(ba["local_expressions"], peaks_expr=tf_restore_text(cfg, on, peaks)))
     if t == "optimized-decorative" and n in R["decoratives"]:
         own = ba.get("probability_expression")
         on = f"({tf_vanilla_scale(cfg, tf_lua_text(own))}) + {R['decoratives'][n]}"
