@@ -13219,13 +13219,25 @@ def ct_hook_text(cfg, name, original=None, ab=True):
         return None
     V = TL["vanilla"]
     if name in V["keys"]:
-        mix = V["mix"]["noise"].replace("%d", str(V["mix"]["first_seed1"] + V["tiles"].index(name)))
+        mix = ct_mixed_noise(TL, V["mix"]["first_seed1"] + V["tiles"].index(name))
         return (f"if({gate}, ({original}) + {V['keys'][name]} + {V['mix']['key']} * {mix} * ({V['keys'][name]} > "
                 f"{ww_num(V['bonus'] / 2)}), {V['off']})")
     X = TL["exclude"]
     if name not in TL["ab_adopted"] and any(name.startswith(pf) for pf in X["prefixes"]):
         return f"if({gate}, ({original}) + {X['key']}, ({original}))"
     return None
+
+
+def ct_mixed_noise(TL, seed):
+    """A tile's own noise as two of the shared fields (data-final-fixes.lua mixed_noise)."""
+    NS = TL["noise_share"]
+    n, steps = len(NS["fields"]), len(NS["steps"])
+    j, first = seed // n, seed % n
+    second = (first + NS["steps"][j % steps]) % n
+    signs = (j // steps) % NS["sign_patterns"]
+    w = ww_num(NS["weight"])
+    return (f"({'-' if signs >= 2 else ''}{w} * {NS['fields'][first]}{' - ' if signs % 2 == 1 else ' + '}"
+            f"{w} * {NS['fields'][second]})")
 
 
 def ct_listed_tiles(cfg):

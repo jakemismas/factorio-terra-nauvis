@@ -73,23 +73,6 @@ end
 water_hook(H.fords.tile, {H.fords.key, TL.marsh.water_shallow.key}, H.fords.off, "ford and marsh hook")
 water_hook(TL.marsh.water_mud.tile, {TL.marsh.water_mud.key}, TL.marsh.water_mud.off, "marsh hook")
 
--- The vanilla land tiles beside Alien Biomes (S3 section 2): AB keeps their autoplace on the
--- prototypes and takes them off Nauvis (R3 3.2); re-listed here behind the gate, each adds its key.
-local function vanilla_hooks()
-  local V = TL.vanilla
-  for i, name in ipairs(V.tiles) do
-    local tile = data.raw.tile[name]
-    if tile and tile.autoplace and tile.autoplace.probability_expression then
-      tile.autoplace.probability_expression = hook("(" .. tostring(tile.autoplace.probability_expression) .. ") + " ..
-        V.keys[name] .. " + " .. V.mix.key .. " * " .. string.format(V.mix.noise, V.mix.first_seed1 + i - 1) ..
-        " * (" .. V.keys[name] .. " > " .. num(V.bonus / 2) .. ")", V.off)
-      register(name)
-    else
-      log(cfg.identity.title .. ": vanilla tile " .. name .. " is missing or has no autoplace")
-    end
-  end
-end
-
 -- A tile's own six-octave noise as two of the shared fields (config.lua tiles.noise_share).
 local function mixed_noise(seed1)
   local NS = TL.noise_share
@@ -102,6 +85,23 @@ local function mixed_noise(seed1)
   local w = num(NS.weight)
   return "(" .. (signs >= 2 and "-" or "") .. w .. " * " .. NS.fields[a + 1] .. (signs % 2 == 1 and " - " or " + ") ..
     w .. " * " .. NS.fields[b + 1] .. ")"
+end
+
+-- The vanilla land tiles beside Alien Biomes (S3 section 2): AB keeps their autoplace on the
+-- prototypes and takes them off Nauvis (R3 3.2); re-listed here behind the gate, each adds its key.
+local function vanilla_hooks()
+  local V = TL.vanilla
+  for i, name in ipairs(V.tiles) do
+    local tile = data.raw.tile[name]
+    if tile and tile.autoplace and tile.autoplace.probability_expression then
+      tile.autoplace.probability_expression = hook("(" .. tostring(tile.autoplace.probability_expression) .. ") + " ..
+        V.keys[name] .. " + " .. V.mix.key .. " * " .. mixed_noise(V.mix.first_seed1 + i - 1) ..
+        " * (" .. V.keys[name] .. " > " .. num(V.bonus / 2) .. ")", V.off)
+      register(name)
+    else
+      log(cfg.identity.title .. ": vanilla tile " .. name .. " is missing or has no autoplace")
+    end
+  end
 end
 
 -- A tile score with the three climate fields read through the grain's copies (config.lua climate.grain)

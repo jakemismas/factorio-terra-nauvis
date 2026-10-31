@@ -2453,16 +2453,14 @@ return {
       -- at scale 6 each dry lobe stood in concentric bands, a contour map with an even dark rim. A
       -- noise shared by the tiles only wiggles the contours; each tile needs its own, so each adds
       -- amount times a noise of its own, the `first_seed1`-th and on of Alien Biomes' tile noises,
-      -- 24 to 768 tiles, which the Tile program already holds (the text must stay equal to Alien
-      -- Biomes': Tile +76 shared, about +7,000 not). A tile's score falls 20 per unit of moisture past
+      -- 24 to 768 tiles, read through noise_share's fields as those tiles read theirs, which the Tile
+      -- program already holds (about 6,800 in noises of its own). A tile's score falls 20 per unit of moisture past
       -- its box, so a tile reaches about amount / 20 past it: the mix redraws boundaries and never puts
       -- sand in a wet meadow. It acts only where the tile holds its bonus: where the lean fails vanilla
       -- competes with Alien Biomes at its bare score, and a low mix there sinks every vanilla tile under
       -- water-mud, in pale blue patches. Beside Alien Biomes only. Europe stays out (the maintainer likes its
       -- biomes): it keeps the key's prototype, 0.
-      mix = {key = CT.VT_MIX, off = "0", amount = 2.5, maps = {atlantic = true, olde_world = true}, first_seed1 = 1001,
-             noise = "multioctave_noise{x = x,y = y,offset_x = 1000,persistence = 0.75,seed0 = map_seed,seed1 = %d," ..
-               "octaves = 6,input_scale = 1/6/4,output_scale = 0.666}"},
+      mix = {key = CT.VT_MIX, off = "0", amount = 2.5, maps = {atlantic = true, olde_world = true}, first_seed1 = 1001},
     },
     -- APPROVALS 9's adopted Alien Biomes tiles: six land tiles plus water-mud (approvals-data.json has
     -- no section 9 rows; the T16 approvals row compares this list with APPROVALS.md's checked rows).
