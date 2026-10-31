@@ -1532,6 +1532,12 @@ def file_name(map_key, s, version):
     return f"waterways_{map_key}_s{s}_v{version}.lua"
 
 
+def map_version(w, map_key):
+    """The version of a map's generated files: waterways.versions.<map> once a release moved that map
+    alone (a released file is never re-emitted in place), else waterways.version."""
+    return (w.get("versions") or {}).get(map_key, w["version"])
+
+
 def load_data(map_key):
     p = DATA / f"{map_key}.json"
     if not p.exists():
@@ -1578,7 +1584,7 @@ def emit_map(cfg, map_key, out_dir=GENERATED, manifest=True, scales=None):
     data_sha = sha256_file(dp)
     data_rel = dp.relative_to(REPO).as_posix()
     geo = MapGeo(cfg, map_key)
-    version = w["version"]
+    version = map_version(w, map_key)
     rec = {"format": "tn-waterways-manifest/1", "tool": "tools/build_waterways.py", "emitter_version": EMITTER_VERSION,
            "map": map_key, "input": {"file": data_rel, "sha256": data_sha}, "coast_fit": geo.fit_land()[1],
            "config": {k: w[k] for k in sorted(w) if k != "sets"}, "scales": {}}
@@ -1622,7 +1628,7 @@ def check(cfg, maps):
                 d = Path(td) / f"run{n}"
                 emit_map(cfg, map_key, d, manifest=False)
                 runs.append(d)
-            for name in [file_name(map_key, s, w["version"]) for s in cfg["scales"]["values"]]:
+            for name in [file_name(map_key, s, map_version(w, map_key)) for s in cfg["scales"]["values"]]:
                 a, b = (runs[0] / name).read_bytes(), (runs[1] / name).read_bytes()
                 committed = GENERATED / name
                 if a != b:
