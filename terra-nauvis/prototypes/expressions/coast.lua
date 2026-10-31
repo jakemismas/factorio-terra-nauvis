@@ -227,8 +227,8 @@ local function version(m, g)
         ramp(num(SW.south_until_u), g.u, SW.ramp_px) .. ", " .. ramp(g.u, num(SW.south_again_u), SW.ramp_px) .. ")"
       locals.swell = num(SW.amplitude_px) .. " * abs(" .. table.concat(parts, " + ") .. ") * max(" ..
         ramp(g.u, num(SW.east_from_u), SW.ramp_px) .. ", " .. south .. ")"
-      locals.b = "clamp(d / " .. s .. " + warp - swell - " .. num(B.width_px) .. ", " .. num(-C.transfer_clamp_px) .. ", " ..
-        num(C.transfer_clamp_px) .. ")"
+      locals.b = "clamp(d / " .. s .. " + warp - swell - " .. num(B.width_px) .. ", " ..
+        num(-C.transfer_clamp_px) .. ", " .. num(C.transfer_clamp_px) .. ")"
     end
     local o = num(C.transfer_offset)
     local band

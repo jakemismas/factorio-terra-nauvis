@@ -639,17 +639,20 @@ end
 
 -- The land near written land on a world lattice reaching past the chunk (config.lua bandfix.smooth.corners), each
 -- node grown over reach steps: a node's value depends only on nodes within reach of it, all of them read by every
--- chunk that holds the node, so chunks agree along their borders.
+-- chunk that holds the node, so chunks agree along their borders. Only every other node is read, by world parity,
+-- so every chunk reads the same nodes for half the calls; the first step fills the rest.
 local function shared_lattice(surface)
   local step, reach = SM.lattice_tiles, CORNERS.reach
   local margin = reach + 1
   local n = floor(CT / step) + 1 + 2 * margin
+  local x0, y0 = X0 - margin * step, Y0 - margin * step
+  local odd = floor(x0 / step) + floor(y0 / step)
   local cells = {}
   for j = 0, n - 1 do
-    for i = 0, n - 1 do
-      local t = surface.get_tile(X0 + (i - margin) * step, Y0 + (j - margin) * step)
-      if t.valid and not NONLAND_SET[t.name] and t.name ~= "out-of-map" then
-        cells[j * n + i] = t.name
+    for i = (odd + j) % 2, n - 1, 2 do
+      local name = surface.get_tile(x0 + i * step, y0 + j * step).name
+      if not NONLAND_SET[name] and name ~= "out-of-map" then
+        cells[j * n + i] = name
       end
     end
   end
@@ -747,13 +750,16 @@ end
 local function corner_ground(surface, lx, ly)
   if CORNER_STAMP ~= stamp then
     CORNER_STAMP = stamp
-    for k = 0, 3 do
-      CORNER[k] = corner_sample(surface, X0 + (k % 2) * CT, Y0 + floor(k / 2) * CT)
+    for j = 0, 1 do
+      for i = 0, 1 do
+        CORNER[j * 2 + i] = corner_sample(surface, X0 + i * CT, Y0 + j * CT)
+      end
     end
   end
   local x, y = X0 + lx, Y0 + ly
-  local i = (lx + 0.5) / CT + CORNERS.wander * WOBBLE[y % WP * WP + x % WP] >= 0.5 and 1 or 0
-  local j = (ly + 0.5) / CT + CORNERS.wander * WOBBLE[(y + WP_Y) % WP * WP + (x + WP_X) % WP] >= 0.5 and 1 or 0
+  local half = 1 / 2
+  local i = (lx + half) / CT + CORNERS.wander * WOBBLE[y % WP * WP + x % WP] >= half and 1 or 0
+  local j = (ly + half) / CT + CORNERS.wander * WOBBLE[(y + WP_Y) % WP * WP + (x + WP_X) % WP] >= half and 1 or 0
   return CORNER[j * 2 + i] or CORNER[j * 2 + 1 - i] or CORNER[(1 - j) * 2 + i] or CORNER[(1 - j) * 2 + 1 - i]
 end
 
