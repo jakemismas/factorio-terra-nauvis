@@ -2243,12 +2243,13 @@ return {
   -- its own: the bandfix group is hashed into the K+ tables' manifests.
   --   reach_tiles  the box the cover is read from: the written land's bounding box grown by this, inside the chunk
   --   min_land_tiles  a box with less land widens to the whole chunk
-  --   types, entity_limit, decorative_limit  what is read and how much of it: the rate still counts every entity,
-  --       and for decoratives comes from the rows the limit left
+  --   types, entity_limit  the entities read and how many: the rate still counts every one of them
+  --   decorative_land, decorative_limit  decoratives are read from the middle rows of the box, about this much land,
+  --       and at most this many, a bound on a very dense patch
   --   tries  draws per tile until the sample holds something the tile's ground allows
   --   offset  a tree's position inside its tile, from each side, in tiles
   --   edge_gap  an entity's collision box keeps this clear of the chunk's edge, the reach of a neighbour's tree
-  --   inset  entities are read this far inside the chunk's edge, so a neighbour's entity is not read
+  --   inset_tiles  every read keeps this many tiles inside the chunk's edge, past the reach of a neighbour's rock
   --   check_collision  create_decoratives' own check
   --   hash  the per-chunk seed (factorio-worldgen-runtime, hashed per-chunk seeds): a multiplicative step
   --       modulo 2^32 per coordinate, floor keeping it out of the seeds that are all one generator
@@ -2257,11 +2258,12 @@ return {
     min_land_tiles = 32,
     types = {"tree", "simple-entity"},
     entity_limit = 32,
-    decorative_limit = 48,
+    decorative_land = 96,
+    decorative_limit = 160,
     tries = 3,
     offset = 0.1,
     edge_gap = 0.6,
-    inset = 0.5,
+    inset_tiles = 2,
     check_collision = false,
     hash = {modulus = 4294967296, mul = 1103515245, add = 12345, coord = 65536, x = 2654435761, y = 2246822519, floor = 342},
   },
