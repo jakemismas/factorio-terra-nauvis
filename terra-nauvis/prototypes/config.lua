@@ -1585,7 +1585,7 @@ return {
       vanilla_fn = "resource_autoplace_all_patches",
       gap = REN.ORE_GAP,
       no_gap = 1000000,
-      size = {floor = 0.25, gain = 1.35, power = 3, radius_cap = 40, fixed_radius = 0.87},
+      size = {floor = 0.25, gain = 1.35, power = 3, radius_cap = 40, fixed_radius = 0.94},
       province = {seed1 = 7405, wavelength = 320, offset = 4096, base = 2},
       outline = {coarse = {seed1 = 7406, wavelength = 128}, fine = 8, mid = 24, broad = 64, w24 = 2, w64 = 4,
                  w128 = 3.5, mean = 1 / 3, vary = 0.3, cap = 8, start_w64 = 3.5, start_coarse = 3, start_mean = 0.25,
