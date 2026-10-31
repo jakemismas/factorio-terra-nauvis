@@ -4,14 +4,14 @@
 --   read, before the tiles are written: the box around the written land, inside the chunk and clear of its edge
 --     band, holds the generated land the cover is copied from. Its land tiles, its trees and rocks and its
 --     decoratives give a rate per tile and a sample to draw from. A read stops at a limit, so a dense forest costs
---     what a sparse one does; a chunk with no land of its own has nothing to copy and keeps its bare ground.
+--     what a sparse one does. A chunk with no land of its own reads a generated neighbour instead.
 --   place, after they are written: a generator seeded from the map seed and the chunk draws per written land
 --     tile whether it takes an entity and how many decoratives, each from the sample, kept only when the
 --     prototype's tile_restriction allows the ground the tile took.
--- Everything read lies in the chunk, and an entity keeps coastcover.edge_gap clear of the chunk's edge, so the
--- cover is a pure function of the chunk's own generated state: neighbours and their generation state are never
--- read. That state can follow generation order, as the game's own trees and decoratives do (design notes 2026-10-30
--- coastcover). No storage write: the generator is re-seeded per chunk and the prototype facts are a cache.
+-- In a chunk with land of its own everything read lies in the chunk, and an entity keeps coastcover.edge_gap clear
+-- of the chunk's edge, so the cover is a pure function of the chunk's own generated state. That state can follow
+-- generation order, as the game's own trees and decoratives do. No storage
+-- write: the generator is re-seeded per chunk and the prototype facts are a cache.
 -- regenerate_entity and regenerate_decorative are not an option: on Old World they cost 7 to 90 ms a chunk and
 -- place over the whole chunk.
 local cfg = require("prototypes.config")
@@ -116,6 +116,27 @@ local function read_decoratives(surface, bx0, by0, bx1, by1, land)
   RATE_D = ND / land
 end
 
+-- A chunk with no land of its own reads the generated neighbour with the most land, the same way the band fix
+-- takes such a chunk's ground from around it. Its cover can follow generation order; its land and water cannot.
+local function neighbour_box(surface, x0, y0)
+  local best, bx, by, g = 0, nil, nil, CV.inset_tiles
+  for _, nb in ipairs(cfg.bandfix.neighbours) do
+    local nx, ny = x0 + nb[1] * CT, y0 + nb[2] * CT
+    if surface.is_chunk_generated({nx / CT, ny / CT}) then
+      local n = land_in(surface, nx + g, ny + g, nx + CT - 1 - g, ny + CT - 1 - g)
+      if n > best then
+        best, bx, by = n, nx, ny
+      end
+    end
+  end
+  if best == 0 then
+    return 0
+  end
+  local x1, y1 = bx + CT - 1 - g, by + CT - 1 - g
+  land_in(surface, bx + g, by + g, x1, y1)
+  return best, bx + g, by + g, x1, y1
+end
+
 -- Before set_tiles: the generated cover around the written land of the chunk at world tile (x0, y0). recs are
 -- the records set_tiles will take, n of them; nonland_set and nonland the tiles that are not land. Returns
 -- whether place has anything to do.
@@ -146,7 +167,10 @@ function M.read(surface, x0, y0, recs, n, nonland_set, nonland)
   end
   NE, ND = 0, 0
   if land == 0 then
-    return false
+    land, bx0, by0, bx1, by1 = neighbour_box(surface, x0, y0)
+    if land == 0 then
+      return false
+    end
   end
   local ents = surface.find_entities_filtered(F_ENTS)
   NE = #ents
