@@ -1609,6 +1609,11 @@ return {
     start = {radius_tiles = 150, distance = DISTANCE},
     heat = {rim = 100.5, per_tile = 0.49, ramp = 30, cap = 149.5,
             noise = {amplitude = 20, wavelength_tiles = 24, octaves = 3, persistence = 0.6, seed1 = 7901}},
+    -- Alien Biomes' heat bands differ by a few RGB steps, so heat 1 and heat 2 read as one dark grey on the map
+    -- view. With the zone on they take this ramp, cool to hot, in 0 to 255 values.
+    map_colors = {families = {"orange", "green", "blue", "purple"},
+                  bands = {{r = 44, g = 38, b = 46}, {r = 96, g = 30, b = 26}, {r = 186, g = 72, b = 24},
+                           {r = 240, g = 170, b = 40}}},
     switch_threshold = 0.5,
   },
 
