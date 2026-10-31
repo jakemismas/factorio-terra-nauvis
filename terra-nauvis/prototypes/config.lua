@@ -1431,7 +1431,7 @@ return {
     stretch_floor = 0.4,
     fray = {{seed1 = 7508, wavelength = 72, amplitude = 0.15}},
     gaps = {noise = {{seed1 = 7509, wavelength = 160, amplitude = 1}, {seed1 = 7510, wavelength = 72, amplitude = 0.25}},
-            threshold = -0.55, thin_tiles = 22, thin_gain = 1.4, collar_gain = 3},
+            threshold = -0.55, thin_tiles = 26, thin_gain = 2.2, collar_gain = 3},
     -- The cliff's art beside Alien Biomes. It ships whole grey stone cliff sheets its code leaves unused
     -- (they lack vanilla's -lower split, data.lua's TODO), and its ground is grey and white where
     -- vanilla's art is orange brown, so vanilla's cliff draws those sheets on one layer. A planet's
