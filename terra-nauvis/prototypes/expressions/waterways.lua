@@ -111,7 +111,8 @@ for _, key in ipairs(cfg.map_order) do
   local versions = (cfg.geography[key] or {}).versions or {}
   local files = FILES[key]
   for _, g in ipairs(versions) do
-    local sets = g.waterways
+    -- a thin version reads the older version's sets by name
+    local sets = not g.over and g.waterways
     for _, s in ipairs(sets and cfg.scales.values or {}) do
       local gen = files[s]
       if not gen then

@@ -365,7 +365,7 @@ VERSION_FIELDS = set(GEOGRAPHY_NAMES) | {"geo_id", "city_offset", "start_mask", 
 # (edge-and-lakes) `edge`, true when the version's far-field box carries the soft map edge
 # (coast.edge_band), and `lakes`, the per-save inland lakes switch its entry reads its inland lakes
 # through (a toggle's preset key; only with a spawn record).
-OPTIONAL_VERSION_FIELDS = {"spawn", "waterways", "shore", "fields", "edge", "lakes"}
+OPTIONAL_VERSION_FIELDS = {"spawn", "waterways", "shore", "fields", "edge", "lakes", "over", "basin"}
 # A waterways record: per kind, the set names by scale. The sets read the version's chain, so they are
 # its own: a later version that composes the waterways names sets of its own, and config.lua's
 # waterways.sets[map] is the record of the map's newest version that has one.
@@ -419,13 +419,15 @@ def fine_names(version):
     inland lakes and the start land guarantee; its waterway sets and its shore body."""
     sp = spawn_of(version)
     return ([version[n] for n in FINE_ROLES] + ([sp[n] for n in SPAWN_FINE] if sp else []) + waterway_names(version) +
-            shore_names(version))
+            shore_names(version) + ([version["basin"]["name"]] if version.get("basin") else []))
 
 
 def own_names(version):
     """The noise names a version takes as its own, which no other version may name: its
     GEOGRAPHY_NAMES and, with a spawn record, the spawn names that read its chain; its waterway sets
     and its shore body."""
+    if version.get("over"):
+        return [version["entry"], version["basin"]["name"]]
     sp = spawn_of(version)
     return ([version[n] for n in GEOGRAPHY_NAMES] + ([sp[n] for n in SPAWN_OWN] if sp else []) + waterway_names(version) +
             shore_names(version))
@@ -516,6 +518,9 @@ def geography_versions(cfg):
             if "edge" in v and (v["edge"] is not True or not isinstance(((cfg.get("coast") or {}).get("edge_band")),
                                                                        dict)):
                 raise ConfigError(f"config.lua {where}.edge must be true, with coast.edge_band defined")
+            if "over" in v and (v["over"] not in [o["entry"] for o in versions[: i - 1]] or
+                                not isinstance(v.get("basin"), dict) or not v["basin"].get("name")):
+                raise ConfigError(f"config.lua {where}.over must name an older version's entry, with a basin record")
             if "lakes" in v:
                 keys = {t.get("preset_key") for t in (cfg.get("toggles") or {}).values() if isinstance(t, dict)}
                 if not isinstance(v["lakes"], str) or v["lakes"] not in keys or "spawn" not in v:

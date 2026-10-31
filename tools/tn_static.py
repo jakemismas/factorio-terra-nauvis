@@ -3149,6 +3149,7 @@ def fixture_controls():
         results += storage_contract_fixtures(td)
         results += append_only_fixtures(cfg, load_json(REPO / "tests" / "frozen.json"))
         results += release_input_fixtures(cfg)
+        results += thin_version_fixtures(cfg)
         fz = load_json(REPO / "tests" / "frozen.json")
         results += bodies_fixtures(td, cfg, fz)
         results += landing_fixtures(td, cfg, fz)
@@ -4014,6 +4015,37 @@ def moves_findings_on(td, moves):
     p.write_text(json.dumps(moves), encoding="utf-8")
     f, _ = moves_findings(td, ["refs/tags/v0.1.0"])
     return not f, f
+
+
+def thin_version_fixtures(cfg):
+    """A thin geography version (config.lua `over`): it may name an older version's chain, fit and sets
+    and takes only its entry and basin as its own; the same names without `over`, or an `over` that names
+    no older entry, fail."""
+    out = []
+    key = sorted(_as_dict(cfg.get("geography")))[0]
+
+    def with_version(**fields):
+        c = copy.deepcopy(cfg)
+        vs = c["geography"][key]["versions"]
+        v = dict(copy.deepcopy(vs[-1]), entry="tn_fixture_entry_v99", geo_id=9999, **fields)
+        vs.append(v)
+        return c
+
+    def refused(c):
+        try:
+            tnconfig.geography_versions(c)
+        except tnconfig.ConfigError as e:
+            return str(e)
+        return ""
+    older = cfg["geography"][key]["versions"][-1]["entry"]
+    basin = {"name": "tn_fixture_basin_v1", "u": 1, "v": 1, "radius_px": 1}
+    f = refused(with_version(over=older, basin=basin))
+    out.append(("thin version: names an older version's chain and sets", not f, f[:120]))
+    out.append(("thin version: the same names without over fail", bool(refused(with_version(basin=basin))), ""))
+    out.append(("thin version: over naming no older entry fails",
+                bool(refused(with_version(over="tn_fixture_none_v1", basin=basin))), ""))
+    out.append(("thin version: over without a basin fails", bool(refused(with_version(over=older))), ""))
+    return out
 
 
 def release_input_fixtures(cfg):

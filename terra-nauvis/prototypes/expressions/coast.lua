@@ -107,6 +107,16 @@ end
 -- the entry's prototype.
 local function version(m, g)
   local s = K.scale
+  -- A thin version (over): one lake on the older entry it names, whose chain, fit and sets it reads by
+  -- name, so a save of that entry keeps its bodies and this one adds a few hundred bytes. The lake is
+  -- water inside radius_px reference px of its centre and inf outside it, so it moves no other tile.
+  if g.over then
+    local B = g.basin
+    local bu, bv = "(" .. g.u .. " - " .. num(B.u) .. ")", "(" .. g.v .. " - " .. num(B.v) .. ")"
+    def(B.name, "if(bd < 0, " .. s .. " * bd - " .. num(C.transfer_offset) .. ", inf)",
+      {bd = "sqrt(" .. bu .. " * " .. bu .. " + " .. bv .. " * " .. bv .. ") - " .. num(B.radius_px)})
+    return def(g.entry, "min(" .. g.over .. ", " .. B.name .. ")")
+  end
   -- the integer-corner offset in tiles, floor(s / corner_offset_divisor) (U2; config.lua)
   local corner = "floor(" .. s .. " / " .. num(cfg.coordinates.corner_offset_divisor) .. ")"
 
