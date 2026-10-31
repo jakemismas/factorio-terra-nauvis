@@ -132,12 +132,18 @@ local CT = {
   CL_T_AB_G = NOISE .. "temperature_ab_v3",
   CL_M_AB_G = NOISE .. "moisture_ab_v2",
   CL_A_AB_G = NOISE .. "aux_ab_v2",
-  CL_T_AB_GV = NOISE .. "temperature_veg_v1",
-  CL_BELT_T = NOISE .. "tile_belt_t_v1",
-  CL_BELT_TV = NOISE .. "tile_belt_tv_v1",
-  CL_BELT_M = NOISE .. "tile_belt_m_v1",
-  CL_BELT_A = NOISE .. "tile_belt_a_v1",
-  CL_BELT_WILD = NOISE .. "tile_belt_wild_v1",
+  TM_1 = NOISE .. "tile_mix_1_v1",
+  TM_2 = NOISE .. "tile_mix_2_v1",
+  TM_3 = NOISE .. "tile_mix_3_v1",
+  TM_4 = NOISE .. "tile_mix_4_v1",
+  TM_5 = NOISE .. "tile_mix_5_v1",
+  TM_6 = NOISE .. "tile_mix_6_v1",
+  TM_7 = NOISE .. "tile_mix_7_v1",
+  TM_8 = NOISE .. "tile_mix_8_v1",
+  TM_9 = NOISE .. "tile_mix_9_v1",
+  TM_10 = NOISE .. "tile_mix_10_v1",
+  TM_11 = NOISE .. "tile_mix_11_v1",
+  TM_12 = NOISE .. "tile_mix_12_v1",
   K_TILE_T = NOISE .. "tile_temperature",
   K_TILE_TV = NOISE .. "tile_temperature_veg",
   K_TILE_M = NOISE .. "tile_moisture",
@@ -1039,6 +1045,8 @@ return {
       names = {CT.CL_LAT, CT.CL_LON, CT.CL_MEANDER, CT.CL_DRY, CT.CL_CORE, CT.CL_SHIFT, CT.CL_T_AB, CT.CL_M_AB,
                CT.CL_A_AB, CT.CL_GRAIN, CT.CL_T_AB_G, CT.CL_M_AB_G, CT.CL_A_AB_G, CT.CL_T_FB,
       CT.CL_M_FB, CT.CL_A_FB,
+               CT.TM_1, CT.TM_2, CT.TM_3, CT.TM_4, CT.TM_5, CT.TM_6, CT.TM_7, CT.TM_8, CT.TM_9, CT.TM_10, CT.TM_11,
+               CT.TM_12,
                CT.VT_GRASS_1, CT.VT_GRASS_2, CT.VT_GRASS_3, CT.VT_GRASS_4, CT.VT_DRY_DIRT, CT.VT_DIRT_1, CT.VT_DIRT_2,
                CT.VT_DIRT_3,
                CT.VT_DIRT_4, CT.VT_DIRT_5, CT.VT_DIRT_6, CT.VT_DIRT_7, CT.VT_SAND_1, CT.VT_SAND_2, CT.VT_SAND_3,
@@ -2458,6 +2466,23 @@ return {
       prefixes = {"vegetation-", "mineral-"},
       key = CT.AB_EXCLUDE, off = "0", body = CT.AB_EXCLUDE_BODY, body_grain = CT.AB_EXCLUDE_BODY_G,
       temperate_from = 25, temperate_below = 65, marsh_cut = 0.68,
+    },
+    -- The noise share: Alien Biomes gives each of its 156 land tiles a
+    -- six-octave noise of its own, 56,916 of Old World's 191,543 Tile complexity beside it and the whole
+    -- of what lifts that program over the knee. On an Earth preset's on branch
+    -- a tile reads two of twelve shared fields of the same noise at equal weight instead: `weight` keeps
+    -- the variance, a field pair of its own keeps two tiles' scores uncorrelated, or at +-0.5 where their
+    -- pairs share one field, and tiles of one family, whose seeds run in order, never share a pair. `steps`
+    -- is the distance from a tile's first field to its second, so seed s reads fields s % 12 and that
+    -- plus steps[j % 5 + 1], j = floor(s / 12), signed by floor(j / 5) % 4: two tiles with one pair differ
+    -- in sign. `pattern` is AB's text of that call: a tile that does not match keeps its own noise.
+    noise_share = {
+      fields = {CT.TM_1, CT.TM_2, CT.TM_3, CT.TM_4, CT.TM_5, CT.TM_6, CT.TM_7, CT.TM_8, CT.TM_9, CT.TM_10, CT.TM_11,
+                CT.TM_12},
+      first_seed1 = 7741, octaves = 6, persistence = 0.75, wavelength_tiles = 24, output_scale = 0.666,
+      offset_x = 1000, weight = 0.7071, steps = {5, 3, 2, 4, 1},
+      pattern = "multioctave_noise{x = x,y = y,offset_x = 1000,persistence = 0%.75,seed0 = map_seed," ..
+        "seed1 = (%d+),octaves = 6,input_scale = 1/6/4,output_scale = 0%.666}",
     },
     -- The list hook (Alien Biomes' long tile restrictions, design notes 2026-10-30 12:55): the game walks a
     -- restriction entry by entry for every tile of a chunk, so a vanilla land tile, on no AB list, costs a

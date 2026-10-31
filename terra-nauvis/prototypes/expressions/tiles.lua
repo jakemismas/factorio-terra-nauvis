@@ -9,6 +9,8 @@
 --                        marshes, 0 elsewhere (D11: only APPROVALS 9's tiles mix into temperate zones)
 --   tn_ab_keep_v1        0 where a vanilla land tile may lie, 1 elsewhere: AB's long-listed decoratives and
 --                        trees multiply by it (the list hook; config.lua tiles.scan), and it reads no fine field
+--   tn_tile_mix_<n>_v1   beside Alien Biomes: the twelve shared noise fields AB's land tile scores read on
+--                        their on branch, in place of a six-octave noise per tile (config.lua tiles.noise_share)
 --   tn_marsh_water_mud   water-mud pools on land inside marshes, outside the start clearing
 --   tn_marsh_water_shallow  water-shallow along open water inside marshes, above shallow_depth, so a
 --                        river's floor (-2.2) stays player-blocking water (T5)
@@ -113,11 +115,16 @@ if mods["alien-biomes"] then
   for field, key in pairs(GK) do
     def(key, field)
   end
-  def(cfg.climate.grain.veg_key, "temperature")
-  def(V.body_grain, vanilla_bonus("band_t", MS.edge), {patch = PATCH.patch, band_t = band_t(GK.temperature, WILD_TILE)})
-  -- The stony tiles on a range: the bonus with the highland's lean.
-  def(V.body_high, V.body_grain .. " + " .. cfg.ridges.names.ground)
-  def(X.body_grain, exclusion("band_t", MS.edge), {band_t = band_t(GK.temperature, WILD_TILE)})
+  def(V.body_grain, vanilla_bonus(GK.temperature), PATCH)
+  def(X.body_grain, exclusion(GK.temperature))
+  -- The shared fields of the tile scores' noise (config.lua tiles.noise_share), read on the on branch alone.
+  local NS = cfg.tiles.noise_share
+  for i, name in ipairs(NS.fields) do
+    def(name, "multioctave_noise{x = x, y = y, offset_x = " .. num(NS.offset_x) .. ", persistence = " ..
+      num(NS.persistence) .. ", seed0 = map_seed, seed1 = " .. num(NS.first_seed1 + i - 1) .. ", octaves = " ..
+      num(NS.octaves) .. ", input_scale = 1 / " .. num(NS.wavelength_tiles) .. ", output_scale = " ..
+      num(NS.output_scale) .. "}")
+  end
 end
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut

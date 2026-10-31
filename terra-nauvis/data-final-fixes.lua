@@ -90,12 +90,27 @@ local function vanilla_hooks()
   end
 end
 
--- A tile score with the three climate fields read through the grain's copies (config.lua climate.grain).
+-- A tile's own six-octave noise as two of the shared fields (config.lua tiles.noise_share).
+local function mixed_noise(seed1)
+  local NS = TL.noise_share
+  local n, steps = #NS.fields, #NS.steps
+  local seed = tonumber(seed1)
+  local j = math.floor(seed / n)
+  local a = seed % n
+  local b = (a + NS.steps[j % steps + 1]) % n
+  local signs = math.floor(j / steps) % 4
+  local w = num(NS.weight)
+  return "(" .. (signs >= 2 and "-" or "") .. w .. " * " .. NS.fields[a + 1] .. (signs % 2 == 1 and " - " or " + ") ..
+    w .. " * " .. NS.fields[b + 1] .. ")"
+end
+
+-- A tile score with the three climate fields read through the grain's copies (config.lua climate.grain)
+-- and its own noise through the shared fields.
 local function grain_scores(text)
   for field, key in pairs(cfg.climate.grain.keys) do
     text = string.gsub(text, "%f[%w_:]" .. field .. "%f[^%w_:]", key)
   end
-  return text
+  return (string.gsub(text, TL.noise_share.pattern, mixed_noise))
 end
 
 -- The grain's copies reach every Alien Biomes land tile: snow, volcanic and the adopted tiles too, and ice
