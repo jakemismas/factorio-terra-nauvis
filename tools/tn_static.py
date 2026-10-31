@@ -1363,6 +1363,7 @@ def _expected_steps(kind, manifest):
         ]
     return common + [
         {"label": "the tag check", "run": ['python tools/build_zip.py --check-tag "$env:TAG"'], "env": {"TAG": TAG_ENV}},
+        {"label": "the static checks", "run": ["python tools/earth_test.py static"]},
         {"label": "the release build", "run": ["python tools/build_zip.py --release"]},
         {"label": "the publish step", "run": "publish", "env": {"TAG": TAG_ENV, "GH_TOKEN": TOKEN_ENV}},
     ]
@@ -1620,6 +1621,8 @@ def check_release(text, manifest):
             if env.get("TAG") != "${{ github.ref_name }}":
                 fails.append("release.yml: the tag check must read TAG from github.ref_name")
             order.append("tag")
+        if r.strip() == "python tools/earth_test.py static":
+            order.append("static")
         if r.strip() == "python tools/build_zip.py --release":
             order.append("build")
         if "gh release create" in r:
@@ -1628,9 +1631,9 @@ def check_release(text, manifest):
             if "*.zip" not in r or "*.zip.sha256" not in r:
                 fails.append("release.yml: the release must attach the zip and its .sha256")
             order.append("publish")
-    if order != ["tag", "build", "publish"]:
-        fails.append(f"release.yml: steps must be the tag check, build_zip.py --release, then gh release create "
-                     f"(found {order})")
+    if order != ["tag", "static", "build", "publish"]:
+        fails.append(f"release.yml: steps must be the tag check, the static rows, build_zip.py --release, then gh "
+                     f"release create (found {order})")
     return fails
 
 
@@ -2640,7 +2643,6 @@ def bodies_findings(mod, fz, cfg):
     except Exception as e:  # tnlua.LuaError and anything else: fail closed
         return [f"the offline data stage did not run: {type(e).__name__}: {e} (fail closed)"], None
     return tnfrozen.body_problems(bodies, fz, cfg) + beside_ab, bodies
-        beside_ab = tnfrozen.offline_ab_problems(mod, fz, cfg)
 
 
 def row_bodies(repo=REPO):
