@@ -479,7 +479,7 @@ local function dead_hooks(R)
       end
       local own = "(" .. tostring(autoplace.probability_expression) .. ")"
       autoplace.probability_expression = hook("if(" .. TL.scan.body .. " > " .. num(H.threshold) .. ", " .. own ..
-        ", 0.2 * max(" .. table.concat(keys, ", ") .. ") * clamp(1 - tree_small_noise, 0, 2))", own)
+        ", " .. string.format(VAN.dead_score, table.concat(keys, ", ")) .. ")", own)
     end
   end
 end

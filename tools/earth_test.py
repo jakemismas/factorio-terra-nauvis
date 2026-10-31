@@ -16980,9 +16980,10 @@ def tf_tree_tiles(cfg):
 def tf_dead_text(cfg, n, prob):
     """A dead tree's score (data-final-fixes.lua dead_hooks): AB's own, or the base game's where the keep body is 0."""
     own = f"({tf_lua_text(prob)})"
-    keys = ", ".join(cfg["trees"]["restore"]["trees"][t]["p"] for t in tf_vanilla()["dead_scores"][n])
+    V = tf_vanilla()
+    keys = ", ".join(cfg["trees"]["restore"]["trees"][t]["p"] for t in V["dead_scores"][n])
     return tf_restore_text(cfg, f"if({cfg['tiles']['scan']['body']} > {ww_num(cfg['hooks']['threshold'])}, {own}, "
-                                f"0.2 * max({keys}) * clamp(1 - tree_small_noise, 0, 2))", own)
+                                f"{V['dead_score'] % keys})", own)
 
 
 def tf_decor_want(cfg, row, ba):
