@@ -142,6 +142,10 @@ local function place(surface, name, cx, cy, r, amount)
 end
 
 function M.ensure(surface)
+  -- on_init also runs when the mod joins a save again, and a played start area is not this pass's to add ore to.
+  if game.tick > 0 then
+    return
+  end
   local rso_start = settings.global[C.rso_start]
   if rso_start and not rso_start.value then
     return

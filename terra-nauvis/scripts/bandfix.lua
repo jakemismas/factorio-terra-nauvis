@@ -31,7 +31,7 @@
 --      reference class;
 --   6. one set_tiles call inside the chunk, without tile correction;
 --   7. the written land takes the trees, rocks and decoratives of the land beside it (scripts/coastcover.lua).
--- It writes only tiles the rule changes, so a repeated delivery writes nothing and places no cover twice, and
+-- It writes only tiles the rule changes, so a repeated delivery writes no land and places no cover twice, and
 -- it decides land and water from its own chunk only, so generation order does not change them: what it reads
 -- outside its own chunk can only pick the name of a land tile. No player state, no storage write. Decoded
 -- table rows are a cache of shipped data, so a joining peer that starts with an empty cache computes the same
@@ -991,7 +991,7 @@ end
 -- The start chunks now instead of at tick 0, where their events arrive (worldgen-runtime rule 2). The start ore
 -- guarantee runs next and counts the ore on the land the spawn walks to, so a river written through that land
 -- afterwards cut ore off that it had counted (Atlantic, Hughes, scale 6: no coal on foot and no patch). The chunks'
--- events still arrive, and a repeated delivery writes nothing.
+-- events still arrive, and a repeated delivery writes no land.
 local function settle_start(surface)
   local reach = floor(cfg.start_ore.grid / CT) + 1
   for chy = -reach, reach - 1 do
@@ -1016,7 +1016,9 @@ function M.on_init()
         earth.bandfix.scale .. ")")
   end
   register()
-  if STATE then
+  -- on_init also runs when the mod joins a save again: a played start square, with landfill and buildings on it, is
+  -- not this handler's to rewrite.
+  if STATE and game.tick == 0 then
     settle_start(surface)
   end
 end
