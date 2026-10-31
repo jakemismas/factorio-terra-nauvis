@@ -71,6 +71,17 @@ local PATCH = {patch = "clamp(" .. num(V.patch.amplitude) .. " * " .. noise(V.pa
   ", " .. num(V.patch.clamp) .. ")"}
 def(V.body, vanilla_bonus("temperature"), PATCH)
 
+-- A wild belt (config.lua climate.tile_belts) lies out of the temperate band whatever its temperature:
+-- the band tests read the temperature lifted past the band's top there, so neither the vanilla bonus nor
+-- the exclusion applies, and the pool noise frays the belt's edge. The list hook above stays on the plain
+-- field, so Alien Biomes' plants and trees stay off that land, a treeless steppe.
+local W = cfg.climate.tile_belts_wild
+local function band_t(t, weight)
+  return t .. " + " .. num(W.lift) .. " * (" .. weight .. " > " .. num(W.cut) .. ")"
+end
+local WILD = cfg.climate.names.belts.wild
+local WILD_TILE = WILD .. " + " .. num(W.fine) .. " * " .. MS.pool.name
+
 -- The list hook's factor: vanilla_bonus's every condition but elevation, on plain temperature, as 0 where
 -- that body may not be -inf and 1 where it surely is, so a change to one belongs in the other. The bonus
 -- reads the grain's frayed copy on a preset, and this runs in the Entity program, which keeps the plain
@@ -100,8 +111,9 @@ if mods["alien-biomes"] then
   for field, key in pairs(GK) do
     def(key, field)
   end
-  def(V.body_grain, vanilla_bonus(GK.temperature), PATCH)
-  def(X.body_grain, exclusion(GK.temperature))
+  def(cfg.climate.grain.veg_key, "temperature")
+  def(V.body_grain, vanilla_bonus("band_t"), {patch = PATCH.patch, band_t = band_t(GK.temperature, WILD_TILE)})
+  def(X.body_grain, exclusion("band_t"), {band_t = band_t(GK.temperature, WILD_TILE)})
 end
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut

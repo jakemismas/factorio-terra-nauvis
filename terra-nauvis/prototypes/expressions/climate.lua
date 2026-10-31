@@ -142,6 +142,44 @@ def(N.dry, by_map(function(X)
 end), {dry_lat = N.lat .. " + " .. num(MD.dry_lat) .. " * " .. MD.name,
        dry_lon = N.lon .. " + " .. num(MD.dry_lon) .. " * " .. MD.name})
 
+-- The tile belts (config.lua climate.tile_belts): each field's sum over the belts that reach the map,
+-- on the meandering latitude and longitude the dry belts read, so a belt's edge wanders too. They read
+-- nothing but x, y and per-save numbers: the wild weight may run in the Entity program.
+local BELT = N.belts
+local BELT_AT = {belt_lat = N.lat .. " + " .. num(MD.dry_lat) .. " * " .. MD.name,
+                 belt_lon = N.lon .. " + " .. num(MD.dry_lon) .. " * " .. MD.name}
+local function belt_weight(b)
+  return ramp_in("belt_lat", b.lat[1], b.lat[2], b.ramp[1]) .. " * " .. ramp_in("belt_lon", b.lon[1], b.lon[2], b.ramp[2])
+end
+local function belt_list(X, field)
+  local out = {}
+  for _, b in ipairs(C.tile_belts) do
+    if b[field] and overlaps(b.lat, X.lat) and overlaps(b.lon, X.lon) then
+      out[#out + 1] = b
+    end
+  end
+  return out
+end
+for _, field in ipairs({"t", "tv", "m", "a"}) do
+  def(BELT[field], by_map(function(X)
+    local parts = {}
+    for _, b in ipairs(belt_list(X, field)) do
+      parts[#parts + 1] = num(b[field]) .. " * " .. belt_weight(b)
+    end
+    return #parts == 0 and "0" or table.concat(parts, " + ")
+  end), BELT_AT)
+end
+def(BELT.wild, by_map(function(X)
+  local parts = {}
+  for _, b in ipairs(belt_list(X, "wild")) do
+    parts[#parts + 1] = belt_weight(b)
+  end
+  if #parts == 0 then
+    return "0"
+  end
+  return #parts == 1 and parts[1] or ("max(" .. table.concat(parts, ", ") .. ")")
+end), BELT_AT)
+
 -- The temperature core in Alien Biomes units, before noise and sliders.
 local CT = T.continental
 def(N.core, "clamp(" .. num(T.ref_t) .. " + " .. num(T.per_degree) .. " * (" .. num(T.ref_lat) .. " - abs(" ..
@@ -215,9 +253,9 @@ if AB then
   -- lifts toward vanilla red desert, a lift that is 0 wherever the AB temperature lies outside the
   -- exclusion band, so no alien AB colour can follow it.
   local R = A.red
-  local function ab_aux(extra)
+  local function ab_aux(extra, over)
     return "clamp(min(" .. num(A.base) .. " + " .. noise(A.noise, AFREQ) .. extra .. ", " .. num(A.ab_cap) .. ") + " ..
-      num(R.lift) .. " * " .. N.dry .. " * clamp((" .. N.ab.temperature .. " - " .. num(R.t_lo) .. ") / " ..
+      (over or "") .. num(R.lift) .. " * " .. N.dry .. " * clamp((" .. N.ab.temperature .. " - " .. num(R.t_lo) .. ") / " ..
       num(R.ramp) .. ", 0, 1) * clamp((" .. num(R.t_hi) .. " - " .. N.ab.temperature .. ") / " .. num(R.ramp) ..
       ", 0, 1) + " .. num(A.ab_bias) .. " * var('control:aux:bias'), 0, 1)"
   end
@@ -232,10 +270,12 @@ if AB then
   def(GN.field, "max(clamp((" .. num(G.cold_t) .. " - " .. N.core .. ") / " .. num(G.cold_span) .. ", 0, 1), clamp((" ..
     N.core .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1)) * noise_layer_noise(" ..
     num(G.layer) .. ")")
-  def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. ", max(" .. T2 .. ", " ..
-    num(T.ab.max) .. "))")
-  def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field))
-  def(GN.aux, ab_aux(" + " .. num(G.aux) .. " * " .. GN.field))
+  def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. " + " .. BELT.t .. ", max(" ..
+    T2 .. ", " .. num(T.ab.max) .. "))")
+  def(GN.veg, "if(" .. T2 .. " > " .. num(G.veg_zone_t) .. ", " .. GN.temperature .. ", min(" .. GN.temperature ..
+    " + " .. BELT.tv .. ", " .. num(G.veg_cap) .. "))")
+  def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field .. " + " .. BELT.m))
+  def(GN.aux, ab_aux(" + " .. num(G.aux) .. " * " .. GN.field, BELT.a .. " + "))
 end
 
 data:extend(E)

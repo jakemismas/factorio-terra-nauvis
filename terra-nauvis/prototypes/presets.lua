@@ -214,6 +214,7 @@ local function grain_values(map_key)
     for field, key in pairs(C.grain.keys) do
       out[key] = C.names.grain[field]
     end
+    out[C.grain.veg_key] = C.names.grain.veg
     out[TL.exclude.key] = TL.exclude.body_grain
     for _, t in ipairs(TL.vanilla.tiles) do
       out[TL.vanilla.keys[t]] = TL.vanilla.body_grain

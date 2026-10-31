@@ -132,7 +132,14 @@ local CT = {
   CL_T_AB_G = NOISE .. "temperature_ab_v3",
   CL_M_AB_G = NOISE .. "moisture_ab_v2",
   CL_A_AB_G = NOISE .. "aux_ab_v2",
+  CL_T_AB_GV = NOISE .. "temperature_veg_v1",
+  CL_BELT_T = NOISE .. "tile_belt_t_v1",
+  CL_BELT_TV = NOISE .. "tile_belt_tv_v1",
+  CL_BELT_M = NOISE .. "tile_belt_m_v1",
+  CL_BELT_A = NOISE .. "tile_belt_a_v1",
+  CL_BELT_WILD = NOISE .. "tile_belt_wild_v1",
   K_TILE_T = NOISE .. "tile_temperature",
+  K_TILE_TV = NOISE .. "tile_temperature_veg",
   K_TILE_M = NOISE .. "tile_moisture",
   K_TILE_A = NOISE .. "tile_aux",
   VT_BONUS_G = NOISE .. "vtile_bonus_v2",
@@ -983,7 +990,8 @@ return {
                CT.VT_DIRT_4, CT.VT_DIRT_5, CT.VT_DIRT_6, CT.VT_DIRT_7, CT.VT_SAND_1, CT.VT_SAND_2, CT.VT_SAND_3,
                CT.VT_RED_0, CT.VT_RED_1,
                CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.VT_BONUS_G, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY,
-               CT.AB_EXCLUDE_BODY_G, CT.K_TILE_T, CT.K_TILE_M, CT.K_TILE_A, CT.MARSH_MUD,
+               CT.AB_EXCLUDE_BODY_G, CT.K_TILE_T, CT.K_TILE_M, CT.K_TILE_A, CT.K_TILE_TV, CT.CL_T_AB_GV, CT.CL_BELT_T,
+               CT.CL_BELT_TV, CT.CL_BELT_M, CT.CL_BELT_A, CT.CL_BELT_WILD, CT.MARSH_MUD,
                CT.MARSH_POOL, CT.MARSH_MUD_BODY, CT.MARSH_SHALLOW,
                CT.MARSH_SHALLOW_BODY, CT.MARSH_GRASS, CT.MARSH_GRASS_BODY},
     },
@@ -2060,7 +2068,53 @@ return {
              temperature = 3, moisture = 0.09, aux = 0.09,
              cold_t = 32, cold_span = 10, hot_t = 58, hot_span = 7,
              prefixes = {"vegetation-", "mineral-", "frozen-", "volcanic-"},
-             keys = {temperature = CT.K_TILE_T, moisture = CT.K_TILE_M, aux = CT.K_TILE_A}},
+             keys = {temperature = CT.K_TILE_T, moisture = CT.K_TILE_M, aux = CT.K_TILE_A},
+             -- Vegetation tiles read a temperature of their own, so a belt can repaint grass without
+             -- moving bare ground, and veg_cap holds it under Alien Biomes' orange grass (T 80 and up, a
+             -- rust colour no real grassland has); veg_zone_t is the natural ceiling, over which only
+             -- Destroyed Europe's heat lies, and which keeps the zone's tiles as they were.
+             veg_prefix = "vegetation-", veg_key = CT.K_TILE_TV, veg_cap = 79.5, veg_zone_t = 99},
+    -- The tile belts: Alien Biomes colours its
+    -- tiles by one temperature and moisture ladder, so latitude alone paints the Congo as yellow and
+    -- orange grass, Tibet like the Sahel and the steppes like Germany. A belt is a latitude and longitude
+    -- box with soft edges, as a dry belt is, that moves only the fields tile scores read (the grain's
+    -- bodies, so trees and decoratives keep their climate): t the tile temperature, tv the vegetation
+    -- tiles' temperature on top of it, m the moisture, a the aux (outside its cap). wild takes the
+    -- belt out of the temperate band, so a dry steppe at Germany's latitude is not vanilla land.
+    -- Every number was read from whole-map tile counts (previews/earth-build/feedback-1030/abmap).
+    tile_belts = {
+      {id = "hot", lat = {-36, 36}, lon = {-180, 180}, ramp = {4, 1}, a = -0.12},
+      {id = "sahara_arabia", lat = {15, 35.5}, lon = {-20, 62}, ramp = {3, 4}, a = -0.08},
+      {id = "sahel", lat = {9, 18}, lon = {-18, 42}, ramp = {3, 4}, m = 0.5},
+      {id = "congo", lat = {-8, 6}, lon = {8, 33}, ramp = {3, 4}, tv = -40, m = 0.2},
+      {id = "guinea", lat = {3, 10}, lon = {-15, 10}, ramp = {2, 3}, tv = -40, m = 0.2},
+      {id = "se_asia", lat = {-11, 23}, lon = {92, 156}, ramp = {3, 4}, tv = -40, m = 0.2},
+      {id = "south_china", lat = {20, 34.5}, lon = {100, 123}, ramp = {3, 4}, tv = -36, m = 0.12},
+      {id = "japan", lat = {30, 37}, lon = {126, 142}, ramp = {2, 3}, tv = -33, m = 0.12},
+      {id = "india", lat = {7, 31}, lon = {73, 92}, ramp = {3, 3}, tv = -25, m = 0.5},
+      {id = "amazon", lat = {-15, 6}, lon = {-80, -44}, ramp = {3, 4}, tv = -40, m = 0.2},
+      {id = "central_america", lat = {7, 20}, lon = {-94, -76}, ramp = {2, 3}, tv = -38, m = 0.15},
+      {id = "us_south", lat = {28, 37}, lon = {-97, -75}, ramp = {2, 3}, tv = -32, m = 0.1},
+      {id = "iran", lat = {25, 38}, lon = {44, 70}, ramp = {2, 3}, t = -33, wild = true},
+      {id = "central_asia", lat = {36, 52}, lon = {46, 92}, ramp = {2, 4}, a = -0.6, wild = true},
+      {id = "gobi", lat = {36, 49}, lon = {92, 122}, ramp = {2, 4}, a = -0.5, wild = true},
+      {id = "steppe", lat = {46, 54}, lon = {46, 124}, ramp = {3, 4}, tv = 28, m = 0.4, wild = true},
+      {id = "pontic", lat = {44, 51.5}, lon = {28, 50}, ramp = {2, 4}, tv = 30, m = -0.05, wild = true},
+      {id = "tibet", lat = {28, 39}, lon = {74, 104}, ramp = {1.5, 3}, t = -50, tv = -12, m = -0.35, wild = true},
+      {id = "tundra_warm_old", lat = {62, 90}, lon = {0, 180}, ramp = {6, 1}, t = 18},
+      {id = "tundra_warm_new", lat = {60, 90}, lon = {-170, -64}, ramp = {6, 1}, t = 16},
+      {id = "tundra_pale_old", lat = {63, 90}, lon = {0, 180}, ramp = {4, 1}, m = -0.22, a = -0.16},
+      {id = "tundra_pale_new", lat = {61, 90}, lon = {-170, -64}, ramp = {4, 1}, m = -0.22, a = -0.16},
+      {id = "cool_edge", lat = {52, 62}, lon = {-180, 180}, ramp = {2, 1}, a = 0.12},
+      {id = "greenland", lat = {58, 90}, lon = {-62, -12}, ramp = {2, 2}, t = -18},
+      {id = "taiga", lat = {54, 65}, lon = {45, 140}, ramp = {3, 4}, m = 0.1},
+      {id = "canada", lat = {49, 62}, lon = {-125, -60}, ramp = {3, 4}, m = 0.1},
+      {id = "plains", lat = {33, 53}, lon = {-106, -95}, ramp = {3, 3}, tv = 25, m = 0.3, wild = true},
+      {id = "sw_desert", lat = {24, 44}, lon = {-122, -103}, ramp = {3, 3}, a = -0.5, wild = true},
+      {id = "patagonia", lat = {-56, -36}, lon = {-76, -62}, ramp = {3, 3}, a = -0.5, wild = true},
+      {id = "australia", lat = {-31, -18}, lon = {118, 142}, ramp = {3, 4}, a = 0.22},
+    },
+    tile_belts_wild = {lift = 1000, cut = 0.5, fine = 0.25},
     -- the coldness the fallback's pulls and spread read: 0 at core cold.t and warmer, 1 at
     -- cold.t - cold.span and colder
     cold = {t = 10, span = 30},
@@ -2083,7 +2137,10 @@ return {
     },
     names = {lat = CT.CL_LAT, lon = CT.CL_LON, dry = CT.CL_DRY, core = CT.CL_CORE, shift = CT.CL_SHIFT,
              ab = {temperature = CT.CL_T_AB, moisture = CT.CL_M_AB, aux = CT.CL_A_AB},
-             grain = {field = CT.CL_GRAIN, temperature = CT.CL_T_AB_G, moisture = CT.CL_M_AB_G, aux = CT.CL_A_AB_G},
+             grain = {field = CT.CL_GRAIN, temperature = CT.CL_T_AB_G, moisture = CT.CL_M_AB_G, aux = CT.CL_A_AB_G,
+                      veg = CT.CL_T_AB_GV},
+             belts = {t = CT.CL_BELT_T, tv = CT.CL_BELT_TV, m = CT.CL_BELT_M, a = CT.CL_BELT_A,
+                      wild = CT.CL_BELT_WILD},
              fallback = {temperature = CT.CL_T_FB, moisture = CT.CL_M_FB, aux = CT.CL_A_FB}},
     -- The climate bands the T3 oracle and the D11 row read, in Alien Biomes units (R3 4.1).
     bands = {frozen_below = 0, cold_below = 25, hot_from = 65, dry_below = 0.4},

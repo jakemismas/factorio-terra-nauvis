@@ -89,10 +89,13 @@ local function vanilla_hooks()
   end
 end
 
--- A tile score with the three climate fields read through the grain's copies (config.lua climate.grain).
-local function grain_scores(text)
-  for field, key in pairs(cfg.climate.grain.keys) do
-    text = string.gsub(text, "%f[%w_:]" .. field .. "%f[^%w_:]", key)
+-- A tile score with the three climate fields read through the grain's copies (config.lua climate.grain);
+-- a vegetation tile reads the temperature of its own.
+local function grain_scores(text, name)
+  local G = cfg.climate.grain
+  local veg = string.sub(name, 1, #G.veg_prefix) == G.veg_prefix
+  for field, key in pairs(G.keys) do
+    text = string.gsub(text, "%f[%w_:]" .. field .. "%f[^%w_:]", (veg and field == "temperature") and G.veg_key or key)
   end
   return text
 end
@@ -134,7 +137,7 @@ local function exclusion_hooks()
     excluded[name] = true
     local autoplace = data.raw.tile[name].autoplace
     local original = "(" .. tostring(autoplace.probability_expression) .. ")"
-    autoplace.probability_expression = hook(with_chaos(name, grain_scores(original) .. " + " .. X.key), original)
+    autoplace.probability_expression = hook(grain_scores(original, name) .. " + " .. X.key, original)
   end
   log(cfg.identity.title .. ": temperate exclusion on " .. #names .. " Alien Biomes tiles")
   -- The grain's copies reach every Alien Biomes land tile: snow, volcanic and the adopted tiles too.
@@ -154,7 +157,7 @@ local function exclusion_hooks()
   for _, name in ipairs(others) do
     local autoplace = data.raw.tile[name].autoplace
     local original = "(" .. tostring(autoplace.probability_expression) .. ")"
-    autoplace.probability_expression = hook(grain_scores(original), original)
+    autoplace.probability_expression = hook(grain_scores(original, name), original)
   end
   log(cfg.identity.title .. ": climate grain copies on " .. (#names + #others) .. " Alien Biomes tiles")
 end
