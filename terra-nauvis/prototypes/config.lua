@@ -1504,8 +1504,8 @@ return {
   --              alone of a tall range leaves the temperate band for Alien Biomes' grey ground and, at the top, its
   --              snow, and a low range keeps its ground. cold_t, cold_min: the fall scales by the climate core
   --              over cold_t, at least cold_min, because ground already near frozen needs no lapse: at full fall
-  --              the Urals drew a white stripe down their axis. fray: the grain's noise grows by this at full highland, or
-  --              the grey ground's edge is a smooth line where the lapse is steep. floor: the lapse stops
+  --              the Urals drew a white stripe down their axis. fray: the grain's noise grows by this at full
+  --              highland, or the grey ground's edge is a smooth line where the lapse is steep. floor: the lapse stops
   --              here, because under about -50 every frozen tile scores below Alien Biomes' water-mud, which
   --              flooded the Himalaya at scale 6. moisture: the tile moisture's fall at full highland, off the
   --              wet grasses onto mineral ground

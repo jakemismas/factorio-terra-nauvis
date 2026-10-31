@@ -357,8 +357,8 @@ local function highland(key, Bd, O)
   for k, h in ipairs(Bd.pieces) do
     local reach = S .. " * " .. num(h.reach) .. " + " .. num(HG.tiles)
     local wq = h.q == "bu" and "wu" or "wv"
-    terms[k] = "min(" .. reach .. " - " .. num(h.cos) .. " * abs(" .. wq .. " - " .. h.f .. "), " .. reach .. " + " .. S ..
-      " * " .. num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
+    terms[k] = "min(" .. reach .. " - " .. num(h.cos) .. " * abs(" .. wq .. " - " .. h.f .. "), " .. reach ..
+      " + " .. S .. " * " .. num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
   end
   def(N.high_map[key], joined("max", terms, "-inf"), L)
   -- The tiles pay for their own crest functions, so they read them at the wandering point itself, their reach
@@ -373,7 +373,8 @@ local function highland(key, Bd, O)
   for k, h in ipairs(Bd.pieces) do
     local s = tostring(k)
     T2["a" .. s] = num(h.cos) .. " * abs(" .. h.q .. " - " .. h.f .. ")"
-    T2["e" .. s] = "max(0, abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. ") - " .. S .. " * " .. num(h.span) .. ")"
+    T2["e" .. s] = "max(0, abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. ") - " .. S .. " * " .. num(h.span) ..
+      ")"
     terms[k] = h.reach_text .. " - sqrt(a" .. s .. " * a" .. s .. " + e" .. s .. " * e" .. s .. ")"
   end
   def(N.high_tile_map[key], joined("max", terms, "-inf"), T2)
