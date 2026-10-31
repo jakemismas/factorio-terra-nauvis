@@ -2256,13 +2256,13 @@ return {
               period_tiles = 64, lattice_tiles = 4, shift_tiles = {21, 32},
               octaves = {{cells = 4, weight = 1}, {cells = 12, weight = 0.6}},
               hash = {x = 73, y = 179, seed = 283, modulus = 1021, mix = 31, half = 510},
-              -- corners: on these maps written land takes the nearest land within reach lattice steps on a lattice
+              -- corners: on these maps written land takes the nearest land within reach steps of step tiles on a lattice
               -- that reaches past the chunk, read a little off the tile, and farther out the ground of the chunk's
               -- nearest corner, each the first land on rings of samples round that corner, the borders between
               -- corners wandering by wander of a chunk. Picked per chunk, the ground drew rectangles of one tile with
               -- straight sides along chunk borders wherever a coast was written far from its land (Danube delta,
               -- Amazon mouth, Gulf coast; the maintainer's straight blocky edge).
-              corners = {maps = {atlantic = true}, reach = 3, rings = {8, 24, 48, 64}, wander = 0.4}},
+              corners = {maps = {atlantic = true}, step = 8, reach = 2, rings = {16, 48}, wander = 0.4}},
     neighbours = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1}},
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
     varint_base = 32,

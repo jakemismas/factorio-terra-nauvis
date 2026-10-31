@@ -121,7 +121,7 @@ local EDGE_SIDE = {}
 local WATER, KEEP, NONLAND, NONLAND_SET, FALLBACK = {}, {}, {}, {}, nil
 local GROUND, GROUND_STAMP = nil, nil
 -- The corner ground (config.lua bandfix.smooth.corners), on the maps it lists: CORNERS is that table.
-local CORNERS, CORNER, CORNER_STAMP = nil, {}, nil
+local CORNERS, CORNER, CORNER_READ = nil, {}, {}
 
 ------------------------------------------------------------------------------------------------ the tables
 
@@ -642,7 +642,7 @@ end
 -- chunk that holds the node, so chunks agree along their borders. Only every other node is read, by world parity,
 -- so every chunk reads the same nodes for half the calls; the first step fills the rest.
 local function shared_lattice(surface)
-  local step, reach = SM.lattice_tiles, CORNERS.reach
+  local step, reach = CORNERS.step, CORNERS.reach
   local margin = reach + 1
   local n = floor(CT / step) + 1 + 2 * margin
   local x0, y0 = X0 - margin * step, Y0 - margin * step
@@ -651,8 +651,9 @@ local function shared_lattice(surface)
   for j = 0, n - 1 do
     for i = (odd + j) % 2, n - 1, 2 do
       local t = surface.get_tile(x0 + i * step, y0 + j * step)
-      if t.valid and not NONLAND_SET[t.name] and t.name ~= "out-of-map" then
-        cells[j * n + i] = t.name
+      local name = t.valid and t.name
+      if name and not NONLAND_SET[name] and name ~= "out-of-map" then
+        cells[j * n + i] = name
       end
     end
   end
@@ -735,8 +736,9 @@ local function corner_sample(surface, cx, cy)
     for dy = -1, 1 do
       for dx = -1, 1 do
         local t = surface.get_tile(cx + dx * r, cy + dy * r)
-        if t.valid and not NONLAND_SET[t.name] and t.name ~= "out-of-map" then
-          return t.name
+        local name = t.valid and t.name
+        if name and not NONLAND_SET[name] and name ~= "out-of-map" then
+          return name
         end
       end
     end
@@ -747,20 +749,22 @@ end
 -- The ground of written land out of reach of the chunk's own lattice: the nearest of the chunk's four corners, the
 -- borders between them wandering with the wobble, so a chunk's edge always takes its own corners and no chunk
 -- is a rectangle of one tile (config.lua bandfix.smooth.corners).
-local function corner_ground(surface, lx, ly)
-  if CORNER_STAMP ~= stamp then
-    CORNER_STAMP = stamp
-    for j = 0, 1 do
-      for i = 0, 1 do
-        CORNER[j * 2 + i] = corner_sample(surface, X0 + i * CT, Y0 + j * CT)
-      end
-    end
+local function corner_at(surface, i, j)
+  local k = j * 2 + i
+  if CORNER_READ[k] ~= stamp then
+    CORNER_READ[k] = stamp
+    CORNER[k] = corner_sample(surface, X0 + i * CT, Y0 + j * CT)
   end
+  return CORNER[k]
+end
+
+local function corner_ground(surface, lx, ly)
   local x, y = X0 + lx, Y0 + ly
   local half = 1 / 2
   local i = (lx + half) / CT + CORNERS.wander * WOBBLE[y % WP * WP + x % WP] >= half and 1 or 0
   local j = (ly + half) / CT + CORNERS.wander * WOBBLE[(y + WP_Y) % WP * WP + (x + WP_X) % WP] >= half and 1 or 0
-  return CORNER[j * 2 + i] or CORNER[j * 2 + 1 - i] or CORNER[(1 - j) * 2 + i] or CORNER[(1 - j) * 2 + 1 - i]
+  return corner_at(surface, i, j) or corner_at(surface, 1 - i, j) or corner_at(surface, i, 1 - j) or
+    corner_at(surface, 1 - i, 1 - j)
 end
 
 local RECS = {}

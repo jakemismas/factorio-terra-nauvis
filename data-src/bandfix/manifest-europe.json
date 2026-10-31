@@ -8,7 +8,7 @@
   "checkpoint_sha256": "6147b5cda6b11c730905afcac68b21cd10b1801f56ad5e7f7d4611b5be134dd8",
   "land_sha256": "29b127d5c7bd5c8b03c5fa5fa9205f8484742720a71d45df991aa613492f9a2b",
   "thinwater_sha256": "c33747c0725b914f6853516d79ee5b7ee6fc7df755990b77603b25d15a7c2519",
-  "bandfix_config_sha256": "e9d135de0f648c21cc340c35e3661b5bad814e6f20dcf96ab0cf0251e40f3980",
+  "bandfix_config_sha256": "5313243ab944bb4b91dbab6b89ba55a726052027ec96bb218c5500b7373b73de",
   "coast_detail": [
    0.45,
    1
