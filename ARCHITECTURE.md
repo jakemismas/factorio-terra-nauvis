@@ -1866,14 +1866,24 @@ takes over the Map type fields.
     cap in reference pixels, land share per map (water share for a field) and each map's frame offset;
     the static `hotspots` row re-emits it and checks it against the region table's hotspot rows.
   - *Hotspots.* One spot noise per resource, each with its own `seed1` (7301 to 7361) and no
-    `skip_span`; footprint `min(max(r s, 48), cap s)` tiles round the region layer's jittered centre,
-    read through `tn_depth_<id>`; spots start at land candidates (`tn_land_coarse` above -4) inside
-    the start disc, min(0.75 R, the disc of 32 candidates), and reach at most the rest of R; 512
-    candidates per 512-tile region (1,024 at scale 1); amount = max(strength x vanilla's patch amount,
-    15 x vanilla's mean per tile x the footprint's area) x vanilla's distance factor x the ramp, spread
-    over the start disc's expected candidates, with the region target the sum of its candidates'
-    quantities, so rows sharing a region never draw on each other's target and the land share applies
-    in game; fluids keep a well penalty.
+    `skip_span`; footprint `min(max(r s, 48), cap s)` tiles round the region layer's jittered centre, an
+    exact disc (a hotspot row takes no edge roughness); spots start at land candidates (`tn_land_coarse`
+    above -4) inside the start disc, min(0.75 R, the disc of 32 candidates), and each cone's radius is
+    held to its room: R less the plain distance to the centre (`tn_pd_<id>`) less the capped blob's reach,
+    and less the same around any smaller row of another ore that can touch it, so ore never leaves its
+    disc or enters a rival's; 512 candidates per 512-tile region (1,024 at scale 1); amount =
+    max(strength x vanilla's patch amount, 15 x vanilla's mean per tile x the footprint's area) x
+    vanilla's distance factor x the ramp, spread over the start disc's expected candidates, with the
+    region target the sum of its candidates' quantities, so rows sharing a region never draw on each
+    other's target and the land share applies in game; fluids keep a well penalty. No map slider reaches a
+    hotspot; `tn_hotspot_amount`, baked from the amount setting, multiplies richness and nothing else.
+  - *Regular patches*. Each preset redirects vanilla's named patch expressions
+    (`default-<resource>-patches`) to Earth bodies that call `tn_ore_all_patches_v1`, a copy of vanilla's
+    function, so the wrappers keep their live text and no default world changes: sizes on a heavy tail,
+    radius by the square root of size, province noise on favorability, a capped outline with a warp, a
+    fraying rim, a richness plateau with pockets. A candidate keeps its quantity only where
+    `tn_ore_gap_v1`, the tiles to the nearest footprint, exceeds its reach, so regular ore stays out of
+    hotspots with no per-tile mask (config.lua resources.natural).
   - *Elevation.* Each map's entry v2 wraps v1 in the offshore stamp through the map-qualified fallback
     key `tn_fields_<map>`; v2 carries the Map type fields; geography id 2.
   - *Registration.* The Oil Rig's offshore-oil wrappers exist only beside the Oil Rig: they are in the
