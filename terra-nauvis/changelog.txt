@@ -90,6 +90,8 @@ Date: 2026-10-30
   Changes:
     - Rivers wander: they meander off their polylines, their banks stop being parallel, they widen
       toward the mouth and taper at the source, and the square turning basins became natural pools.
+    - Rivers scale down with the map: at small map scales they are a few tiles wide, too thin for
+      boats, and only the largest scale carries boats along every river.
     - The start lake and the Inland lakes setting's lakes have irregular shores, and inland lakes vary
       in size.
     - With Alien Biomes enabled the Terra Nauvis presets are not offered yet (its palms would read

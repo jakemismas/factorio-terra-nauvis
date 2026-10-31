@@ -809,6 +809,11 @@ compatibility and known limits are in README.md, and the changelog players see i
 
 ### Changed
 
+- Rivers scale down with the map below the boat floor. A river is `max(3, k s)`
+  tiles wide, k 3 for a major river and 2 for the rest, so scales 1 to 3 draw rivers of about 3 to 9
+  tiles where they drew 11; only scale 6 still carries boats everywhere, and its waterway sets do not
+  change. Fords shorten with the scale and a river under scale 4 takes no turning basin (design notes
+  2026-10-30 16:45).
 - Rivers, lakes and turning basins read as natural water on all three maps (on the
   Europe map: "way too perfect", "rectangles of water at places"). The rectangles were the turning
   basins, 30 x 30 Chebyshev squares; the Rhine's pair sat on an out-and-back hook in S4's route. The

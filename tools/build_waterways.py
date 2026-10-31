@@ -683,17 +683,17 @@ def half_width(w, kind, s, width_class=None, real_km=0.0, river_class=None):
 
 
 def river_floor(w, s):
-    """The half-width W and the profile never take a river under at scale s: proportional to the scale from
-    its value at full_scale, down to least_half_tiles, which still draws an unbroken river at every warp."""
-    N = w["natural"]["width"]
-    return round(max(N["least_half_tiles"], N["floor_half_tiles"] * s / N["full_scale"]), 4)
+    """The half-width W and the profile never take a river under at scale s: config.lua's table, about
+    proportional to the scale, on the width grid so it shares a class, down to what still draws an unbroken
+    river at every warp."""
+    return w["natural"]["width"]["floor_half_tiles"][s - 1]
 
 
 def ford_length(w, s):
     """A ford's length along its river at scale s, before its rough edge: proportional to the scale from
     length_tiles at full_scale, down to least_length_tiles, so a thin river's ford stays a short shoal."""
     F = w["ford"]
-    return round(max(F["least_length_tiles"], F["length_tiles"] * s / w["natural"]["width"]["full_scale"]), 4)
+    return round(max(F["least_length_tiles"], F["length_tiles"] * s / F["full_scale"]), 4)
 
 
 def bank_reach(w, s):
@@ -727,13 +727,16 @@ def river_widths(w, f, s, geo):
     coast = max(coast, 1.0)
     floor = river_floor(w, s)
     step = Pf["step_tiles"]
+    # below taper_full_scale a source's taper takes a grid twice as coarse: its classes are what a thin river
+    # can spare, and on a thin river they barely show
+    tip_step = step if s >= Pf["taper_full_scale"] else 2 * step
     taper = Pf["taper_tiles"][0] + Pf["taper_tiles"][1] * s
 
     def at(a):
         t = min(a / coast, 1.0)
         hw = max(floor, round(f["hw"] * (Pf["source"] + (Pf["mouth"] - Pf["source"]) * t) / step) * step)
         if a < taper:
-            hw = max(round(hw * (Pf["tip"] + (1 - Pf["tip"]) * a / taper) / step) * step, step)
+            hw = max(round(hw * (Pf["tip"] + (1 - Pf["tip"]) * a / taper) / tip_step) * tip_step, tip_step)
         return hw
 
     return [at(float(c + l / 2)) for c, l in zip(cum[:-1], L)], at

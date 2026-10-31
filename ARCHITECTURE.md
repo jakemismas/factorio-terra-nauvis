@@ -195,9 +195,9 @@ shape problem (`tnconfig.schema_problems`). Keyed groups pair with an order list
    Rhine, Garonne and Little Belt at 6; on the re-routed straits only the rivers' remain, design notes
    waterways). In the mod every set reads one shared domain warp and a river's half-width one
    low-frequency noise, so a river wanders off its polyline. Rivers are
-   `max(7, k s)` tiles wide, k = 3 for a major river and 2 for the rest (the class column of APPROVALS
-   7 in `approvals-data.json`; the maintainer, design notes 12:35), carved with half-width `max(3.75, k s / 2)` so
-   S4's quarter-tile margin stays on the floor; straits keep S4's half-width
+   `max(3, k s)` tiles wide, k = 3 for a major river and 2 for the rest (the class column of APPROVALS
+   7 in `approvals-data.json`; the maintainer, design notes 12:35 and 2026-10-30 16:45), so a river scales with the
+   map even where a boat no longer fits; straits keep S4's half-width
    `hw(s) = max(F / 2 + 0.25, 0.5 s, 0.5 w s / 2.471)` tiles, `F` 7 for one track and 11 for the
    two-way straits; canals `max(7, s)` wide (APPROVALS 6); dams `max(1.5, 0.5 s)` (S4). Fords: on
    each river, one ford every 60 reference px of path length, 8 tiles long and spanning the carve

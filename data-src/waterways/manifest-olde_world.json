@@ -30,6 +30,7 @@
   "ford": {
    "every_px": 60,
    "length_tiles": 10,
+   "full_scale": 6,
    "least_length_tiles": 5,
    "margin_tiles": 3,
    "bank_tiles": 3,
@@ -67,10 +68,8 @@
     "seed1": 7507,
     "wavelength": [60, 60],
     "amplitude": 0.3,
-    "floor_half_tiles": 5.5,
-    "full_scale": 6,
-    "least_half_tiles": 1.5,
-    "tip_half_tiles": 1
+    "tip_half_tiles": 1,
+    "floor_half_tiles": [1.5, 1.5, 2.25, 3.75, 4.5, 5.5]
    },
    "bank": {
     "seed1": 7508,
@@ -88,7 +87,8 @@
     "mouth": 1.35,
     "tip": 0.55,
     "taper_tiles": [10, 30],
-    "step_tiles": 0.75
+    "step_tiles": 0.75,
+    "taper_full_scale": 6
    },
    "basin": {
     "half_length_tiles": 8,
@@ -146,8 +146,8 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s1_v1.lua",
-   "sha256": "e83ef9b38d2b279f612fb71fbe90dac69f8659dafbb73f25bd523e30a2e508ff",
-   "bytes": 70199,
+   "sha256": "b1fc2186052e4c0e4358ab5bcf36dbe04d3b200dbd8aa1650ee5e3654e3dab21",
+   "bytes": 70142,
    "stats": {
     "segments": {
      "river": 546,
@@ -159,7 +159,7 @@
     "basins": 3,
     "ponds": 20,
     "classes": {
-     "ww": 7,
+     "ww": 6,
      "canals": 2
     }
    },
@@ -487,7 +487,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -495,7 +495,7 @@
        "centre": [-3241.924, -1370.692],
        "tangent": [-0.998274, 0.058722],
        "half_length": 2.5,
-       "half_width": 4.725
+       "half_width": 5.7
       },
       {
        "interval": 1,
@@ -633,7 +633,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -703,7 +703,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -772,7 +772,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -841,7 +841,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -902,7 +902,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -962,7 +962,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1014,7 +1014,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1066,7 +1066,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1118,7 +1118,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1206,7 +1206,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1250,7 +1250,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1294,7 +1294,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1338,7 +1338,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1382,7 +1382,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1452,7 +1452,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1471,7 +1471,7 @@
      "id": "neva",
      "name": "Neva",
      "hw_tiles": 1.5,
-     "reach_tiles": 18.975,
+     "reach_tiles": 18.0,
      "segments": 2,
      "window_tiles": 13,
      "polyline_geo": [
@@ -1487,7 +1487,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 1.5],
      "fords": [
       {
        "interval": 0,
@@ -1534,7 +1534,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1960,7 +1960,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -2146,7 +2146,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -2307,7 +2307,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -2451,7 +2451,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -2588,7 +2588,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -2723,7 +2723,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -2834,7 +2834,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -3154,7 +3154,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -3162,7 +3162,7 @@
        "centre": [129.5249, -374.9618],
        "tangent": [0.988299, -0.152528],
        "half_length": 2.5,
-       "half_width": 4.725
+       "half_width": 5.7
       },
       {
        "interval": 1,
@@ -3232,7 +3232,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -3240,7 +3240,7 @@
        "centre": [2468.4941, -1418.3199],
        "tangent": [0.791949, -0.610587],
        "half_length": 2.5,
-       "half_width": 4.725
+       "half_width": 5.7
       },
       {
        "interval": 1,
@@ -3312,7 +3312,7 @@
      },
      "class": "major",
      "width_tiles": 3,
-     "half_widths": [0.75, 2.25],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -3838,11 +3838,11 @@
     }
    ],
    "t1_mask": {
-    "pixels": 727820,
-    "share": 0.013888,
+    "pixels": 727588,
+    "share": 0.013884,
     "thin_water_px": 255512,
     "thin_water_left_as_land_px": 221865,
-    "reference_land_carved_px": 636076
+    "reference_land_carved_px": 635893
    },
    "starts": {
     "akka": {
@@ -4197,8 +4197,8 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s2_v1.lua",
-   "sha256": "20234db880a85382494cad10246d6a6be4513c218a7ff80744f920f0fb9ced94",
-   "bytes": 96248,
+   "sha256": "d6015322e0db86f3210c68e8137f0554ee3f6ecd3a4d50689e576f16f50bd938",
+   "bytes": 96120,
    "stats": {
     "segments": {
      "river": 826,
@@ -4210,7 +4210,7 @@
     "basins": 5,
     "ponds": 20,
     "classes": {
-     "ww": 11,
+     "ww": 9,
      "canals": 1
     }
    },
@@ -4261,7 +4261,7 @@
        "centre": [-6288.8843, -2829.1051],
        "tangent": [0.944084, -0.329706],
        "half_length": 2.5,
-       "half_width": 6.825
+       "half_width": 5.85
       },
       {
        "interval": 1,
@@ -4434,7 +4434,7 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -4641,11 +4641,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 59.576,
-       "centre": [-5382.931, -2974.3173],
+       "arc_tiles": 62.576,
+       "centre": [-5380.0069, -2974.9879],
        "tangent": [0.974696, -0.223532],
        "half_length": 2.5,
-       "half_width": 6.825
+       "half_width": 5.85
       },
       {
        "interval": 1,
@@ -4716,7 +4716,7 @@
      },
      "class": "minor",
      "width_tiles": 4,
-     "half_widths": [0.75, 3.0],
+     "half_widths": [1.5, 3.0],
      "fords": [
       {
        "interval": 0,
@@ -4732,7 +4732,7 @@
        "centre": [-6121.6989, -3124.8119],
        "tangent": [-0.993981, -0.109552],
        "half_length": 2.5,
-       "half_width": 6.2833
+       "half_width": 5.85
       },
       {
        "interval": 2,
@@ -4795,7 +4795,7 @@
        "centre": [-6962.6513, -2690.62],
        "tangent": [-0.195679, -0.980668],
        "half_length": 2.5,
-       "half_width": 6.2833
+       "half_width": 5.85
       },
       {
        "interval": 1,
@@ -4803,7 +4803,7 @@
        "centre": [-7005.7598, -2748.5391],
        "tangent": [-0.941143, -0.338009],
        "half_length": 2.5,
-       "half_width": 6.2833
+       "half_width": 5.85
       },
       {
        "interval": 2,
@@ -4873,7 +4873,7 @@
        "centre": [-4701.014, -3461.0915],
        "tangent": [-0.881031, -0.473058],
        "half_length": 2.5,
-       "half_width": 6.2833
+       "half_width": 5.85
       },
       {
        "interval": 2,
@@ -5051,7 +5051,7 @@
      },
      "class": "minor",
      "width_tiles": 4,
-     "half_widths": [0.75, 3.0],
+     "half_widths": [1.5, 3.0],
      "fords": [
       {
        "interval": 0,
@@ -5059,7 +5059,7 @@
        "centre": [-6469.5332, -2515.7666],
        "tangent": [0.97864, 0.205581],
        "half_length": 2.5,
-       "half_width": 6.2833
+       "half_width": 5.85
       },
       {
        "interval": 1,
@@ -5166,7 +5166,7 @@
        "centre": [-6744.5693, -2576.4539],
        "tangent": [-0.901734, -0.432292],
        "half_length": 2.5,
-       "half_width": 6.2833
+       "half_width": 5.85
       },
       {
        "interval": 1,
@@ -5223,11 +5223,11 @@
       },
       {
        "interval": 1,
-       "arc_tiles": 168.412,
-       "centre": [-7306.9683, -2207.8472],
-       "tangent": [0.803382, 0.595464],
+       "arc_tiles": 128.412,
+       "centre": [-7339.3641, -2231.2463],
+       "tangent": [0.890001, 0.455958],
        "half_length": 2.5,
-       "half_width": 6.825
+       "half_width": 5.85
       },
       {
        "interval": 2,
@@ -5315,7 +5315,7 @@
        "centre": [-7164.2908, -2424.4252],
        "tangent": [-0.935557, -0.353175],
        "half_length": 2.5,
-       "half_width": 6.2833
+       "half_width": 5.85
       },
       {
        "interval": 1,
@@ -5563,7 +5563,7 @@
        "centre": [-3596.5057, -2722.033],
        "tangent": [-0.881808, 0.471608],
        "half_length": 2.5,
-       "half_width": 6.825
+       "half_width": 5.85
       }
      ],
      "fords_skipped": [],
@@ -5591,7 +5591,7 @@
      },
      "class": "minor",
      "width_tiles": 4,
-     "half_widths": [0.75, 3.0],
+     "half_widths": [1.5, 3.0],
      "fords": [
       {
        "interval": 0,
@@ -5599,7 +5599,7 @@
        "centre": [-4483.8866, -3842.965],
        "tangent": [-0.980795, -0.195039],
        "half_length": 2.5,
-       "half_width": 6.825
+       "half_width": 7.8
       }
      ],
      "fords_skipped": [],
@@ -5881,9 +5881,9 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 20.259,
-       "centre": [-3985.0069, -3571.7295],
-       "tangent": [0.986883, 0.161435],
+       "arc_tiles": 63.259,
+       "centre": [-3942.5757, -3565.3648],
+       "tangent": [0.984091, -0.177667],
        "half_length": 2.5,
        "half_width": 5.85
       },
@@ -7128,7 +7128,7 @@
        "centre": [-4858.1484, 3160.5596],
        "tangent": [0.983638, 0.180154],
        "half_length": 2.5,
-       "half_width": 6.825
+       "half_width": 5.85
       },
       {
        "interval": 1,
@@ -7234,7 +7234,7 @@
        "centre": [-3672.4964, -1676.406],
        "tangent": [0.963472, 0.267809],
        "half_length": 2.5,
-       "half_width": 6.825
+       "half_width": 5.85
       },
       {
        "interval": 1,
@@ -7579,7 +7579,7 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -8336,8 +8336,8 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s3_v1.lua",
-   "sha256": "921e3178acd32afa3dba7c09491c8f63b3dda028fbdeac698f3ff68a52fcf49a",
-   "bytes": 101974,
+   "sha256": "ce7c56422be1c7c108ab22ebe3c8a849150ebc44173f851c9ec41e6348eaa0dd",
+   "bytes": 101889,
    "stats": {
     "segments": {
      "river": 882,
@@ -8349,7 +8349,7 @@
     "basins": 4,
     "ponds": 20,
     "classes": {
-     "ww": 13,
+     "ww": 12,
      "canals": 2
     }
    },
@@ -8393,7 +8393,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -8574,7 +8574,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -8705,7 +8705,7 @@
        "centre": [-9718.3324, -4111.5486],
        "tangent": [-0.998833, 0.048297],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 6.0
       },
       {
        "interval": 1,
@@ -8777,7 +8777,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [1.5, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -8785,7 +8785,7 @@
        "centre": [-8073.4017, -4458.9736],
        "tangent": [0.950195, -0.311655],
        "half_length": 2.5,
-       "half_width": 8.925
+       "half_width": 7.95
       },
       {
        "interval": 1,
@@ -8865,7 +8865,7 @@
        "centre": [-8981.6966, -4569.8342],
        "tangent": [-0.902416, -0.430865],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 6.0
       },
       {
        "interval": 1,
@@ -8931,11 +8931,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 137.682,
-       "centre": [-10449.6643, -4038.9965],
+       "arc_tiles": 116.682,
+       "centre": [-10442.1414, -4019.3903],
        "tangent": [-0.358233, -0.933632],
        "half_length": 2.5,
-       "half_width": 7.625
+       "half_width": 6.975
       },
       {
        "interval": 1,
@@ -8997,7 +8997,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -9005,7 +9005,7 @@
        "centre": [-6844.1018, -5128.6862],
        "tangent": [-0.989921, 0.141624],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 6.0
       },
       {
        "interval": 1,
@@ -9068,15 +9068,15 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 64.6,
-       "centre": [-8495.8557, -4557.738],
+       "arc_tiles": 50.6,
+       "centre": [-8483.3173, -4551.51],
        "tangent": [-0.8956, -0.444861],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 6.0
       },
       {
        "interval": 1,
@@ -9129,7 +9129,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -9137,7 +9137,7 @@
        "centre": [-11409.1141, -3071.5149],
        "tangent": [-0.976566, 0.215219],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 6.0
       },
       {
        "interval": 1,
@@ -9198,7 +9198,7 @@
        "centre": [-9704.0849, -3775.0342],
        "tangent": [0.981815, 0.189839],
        "half_length": 2.5,
-       "half_width": 7.625
+       "half_width": 6.975
       },
       {
        "interval": 1,
@@ -9251,7 +9251,7 @@
        "centre": [-10397.7451, -4227.2299],
        "tangent": [-0.987533, 0.157413],
        "half_length": 2.5,
-       "half_width": 7.625
+       "half_width": 6.975
       },
       {
        "interval": 1,
@@ -9306,7 +9306,7 @@
        "centre": [-10118.3316, -3864.6621],
        "tangent": [-0.966738, -0.255767],
        "half_length": 2.5,
-       "half_width": 7.625
+       "half_width": 6.975
       },
       {
        "interval": 1,
@@ -9352,15 +9352,15 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 65.647,
-       "centre": [-11123.1381, -3403.0814],
+       "arc_tiles": 66.647,
+       "centre": [-11122.1805, -3402.7933],
        "tangent": [0.957574, 0.288186],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 6.0
       },
       {
        "interval": 1,
@@ -9404,15 +9404,15 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 59.718,
-       "centre": [-7052.6227, -4199.222],
+       "arc_tiles": 61.718,
+       "centre": [-7050.8351, -4198.3251],
        "tangent": [0.893828, 0.448411],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 6.0
       },
       {
        "interval": 1,
@@ -9448,7 +9448,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -9456,7 +9456,7 @@
        "centre": [-10746.4535, -3637.1862],
        "tangent": [-0.937883, -0.346952],
        "half_length": 2.5,
-       "half_width": 7.625
+       "half_width": 6.975
       },
       {
        "interval": 1,
@@ -9547,7 +9547,7 @@
        "centre": [-11707.9774, -3277.6372],
        "tangent": [-0.847016, 0.531567],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 6.0
       },
       {
        "interval": 1,
@@ -9583,7 +9583,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -9699,7 +9699,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [2.25, 3.75],
+     "half_widths": [1.5, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -10018,7 +10018,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -10026,7 +10026,7 @@
        "centre": [-5950.9027, -5350.7898],
        "tangent": [0.97789, 0.209121],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 7.95
       },
       {
        "interval": 1,
@@ -10431,7 +10431,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -10597,7 +10597,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -10758,7 +10758,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [1.5, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -11036,7 +11036,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [1.5, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -11168,7 +11168,7 @@
        "centre": [3041.8136, -115.3754],
        "tangent": [0.892025, -0.451986],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 7.95
       },
       {
        "interval": 1,
@@ -11377,7 +11377,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -11480,7 +11480,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [1.5, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -11488,7 +11488,7 @@
        "centre": [392.6229, -1123.0993],
        "tangent": [0.982431, -0.186627],
        "half_length": 2.5,
-       "half_width": 6.975
+       "half_width": 7.95
       },
       {
        "interval": 1,
@@ -11566,8 +11566,8 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 72.965,
-       "centre": [7438.1559, -4265.7977],
+       "arc_tiles": 69.965,
+       "centre": [7435.216, -4265.2005],
        "tangent": [0.979985, -0.199073],
        "half_length": 2.5,
        "half_width": 7.95
@@ -11729,7 +11729,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [2.25, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -12471,8 +12471,8 @@
   },
   "4": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s4_v1.lua",
-   "sha256": "56979e68ef7c9671471118c3bfbb179bbfa1f834faffdc99e95f039cbe0c2980",
-   "bytes": 124506,
+   "sha256": "e49607fac5788255b243ed62c3e7eb0a7ff6996675aaddc996f673516e38fc0d",
+   "bytes": 124432,
    "stats": {
     "segments": {
      "river": 1127,
@@ -12484,7 +12484,7 @@
     "basins": 4,
     "ponds": 20,
     "classes": {
-     "ww": 15,
+     "ww": 14,
      "canals": 2
     }
    },
@@ -12532,7 +12532,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [3.75, 8.25],
+     "half_widths": [3.0, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -12540,7 +12540,7 @@
        "centre": [-12578.0215, -5658.9257],
        "tangent": [0.941495, -0.337028],
        "half_length": 3.33335,
-       "half_width": 9.075
+       "half_width": 10.05
       },
       {
        "interval": 1,
@@ -12838,7 +12838,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [2.25, 8.25],
+     "half_widths": [3.0, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -13001,7 +13001,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [1.5, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13072,7 +13072,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13080,7 +13080,7 @@
        "centre": [-13926.3006, -5385.9904],
        "tangent": [-0.195691, -0.980666],
        "half_length": 3.33335,
-       "half_width": 8.9667
+       "half_width": 9.075
       },
       {
        "interval": 1,
@@ -13339,15 +13339,15 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 150.471,
-       "centre": [-12941.0848, -5031.6085],
+       "arc_tiles": 149.471,
+       "centre": [-12942.0642, -5031.8103],
        "tangent": [0.979422, 0.201823],
        "half_length": 3.33335,
-       "half_width": 8.9667
+       "half_width": 9.075
       },
       {
        "interval": 1,
@@ -13392,7 +13392,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13400,7 +13400,7 @@
        "centre": [-13861.3196, -5636.4654],
        "tangent": [-0.984052, 0.177881],
        "half_length": 3.33335,
-       "half_width": 8.9667
+       "half_width": 9.075
       },
       {
        "interval": 1,
@@ -13448,7 +13448,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13502,7 +13502,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13554,7 +13554,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [3.75, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13598,7 +13598,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13645,7 +13645,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13653,7 +13653,7 @@
        "centre": [-12779.2773, -6274.1324],
        "tangent": [-0.414811, -0.909908],
        "half_length": 3.33335,
-       "half_width": 9.075
+       "half_width": 8.1
       },
       {
        "interval": 1,
@@ -13690,7 +13690,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13734,7 +13734,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13778,7 +13778,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13814,15 +13814,15 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [3.75, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 119.024,
-       "centre": [-15448.2614, -3696.6692],
+       "arc_tiles": 113.024,
+       "centre": [-15442.5014, -3698.3494],
        "tangent": [-0.95999, 0.280035],
        "half_length": 3.33335,
-       "half_width": 9.075
+       "half_width": 8.1
       }
      ],
      "fords_skipped": [],
@@ -13850,7 +13850,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [1.5, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13858,7 +13858,7 @@
        "centre": [-7195.8259, -5440.311],
        "tangent": [-0.846919, 0.531722],
        "half_length": 3.33335,
-       "half_width": 9.075
+       "half_width": 8.1
       }
      ],
      "fords_skipped": [],
@@ -13886,7 +13886,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [2.25, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
@@ -13942,7 +13942,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [2.25, 8.25],
+     "half_widths": [3.0, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -14193,7 +14193,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [3.75, 8.25],
+     "half_widths": [3.0, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -14628,7 +14628,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [3.75, 8.25],
+     "half_widths": [3.0, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -15368,7 +15368,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [2.25, 8.25],
+     "half_widths": [3.0, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -15483,7 +15483,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [2.25, 8.25],
+     "half_widths": [3.0, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -15491,7 +15491,7 @@
        "centre": [-9722.0233, 6319.1741],
        "tangent": [0.971657, 0.236396],
        "half_length": 3.33335,
-       "half_width": 9.075
+       "half_width": 10.05
       },
       {
        "interval": 1,
@@ -15589,7 +15589,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [3.75, 8.25],
+     "half_widths": [3.0, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -15704,7 +15704,7 @@
        "centre": [520.5905, -1497.3761],
        "tangent": [0.99998, -0.006339],
        "half_length": 3.33335,
-       "half_width": 9.075
+       "half_width": 8.1
       },
       {
        "interval": 1,
@@ -15780,7 +15780,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [2.25, 8.25],
+     "half_widths": [3.0, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -15951,7 +15951,7 @@
      },
      "class": "major",
      "width_tiles": 12,
-     "half_widths": [3.75, 8.25],
+     "half_widths": [4.5, 8.25],
      "fords": [
       {
        "interval": 0,
@@ -16668,8 +16668,8 @@
   },
   "5": {
    "file": "terra-nauvis/prototypes/generated/waterways_olde_world_s5_v1.lua",
-   "sha256": "bac596e20668b8e0144947e04675d1a1726bab1f553c19c86f8583e5feb303c5",
-   "bytes": 121894,
+   "sha256": "a5cb94c725b0009eee0ac06d78c5e76dc92f3e3f9df08900aeb1ae8a787b5740",
+   "bytes": 121724,
    "stats": {
     "segments": {
      "river": 1072,
@@ -16681,7 +16681,7 @@
     "basins": 5,
     "ponds": 20,
     "classes": {
-     "ww": 20,
+     "ww": 18,
      "canals": 2
     }
    },
@@ -17043,7 +17043,7 @@
        "centre": [-16202.461, -6851.6807],
        "tangent": [-0.998813, 0.048705],
        "half_length": 4.16665,
-       "half_width": 9.225
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17202,8 +17202,8 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 125.0,
-       "centre": [-14962.58, -7615.5539],
+       "arc_tiles": 123.0,
+       "centre": [-14960.741, -7614.7676],
        "tangent": [-0.919474, -0.393151],
        "half_length": 4.16665,
        "half_width": 10.2
@@ -17214,7 +17214,7 @@
        "centre": [-15318.5309, -7813.354],
        "tangent": [-0.996169, -0.087452],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -17277,7 +17277,7 @@
        "centre": [-17408.5712, -6733.1504],
        "tangent": [-0.205005, -0.978761],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17285,7 +17285,7 @@
        "centre": [-17502.2263, -6869.381],
        "tangent": [-0.805584, -0.592482],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -17339,7 +17339,7 @@
      },
      "class": "minor",
      "width_tiles": 10,
-     "half_widths": [3.75, 6.75],
+     "half_widths": [3.0, 6.75],
      "fords": [
       {
        "interval": 0,
@@ -17347,7 +17347,7 @@
        "centre": [-11418.4909, -8544.249],
        "tangent": [-0.988106, 0.153771],
        "half_length": 4.16665,
-       "half_width": 9.225
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17355,7 +17355,7 @@
        "centre": [-11750.4501, -8651.8998],
        "tangent": [-0.883942, -0.467597],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -17420,7 +17420,7 @@
        "centre": [-14135.6675, -7583.7832],
        "tangent": [-0.897129, -0.441768],
        "half_length": 4.16665,
-       "half_width": 9.225
+       "half_width": 8.25
       },
       {
        "interval": 1,
@@ -17428,7 +17428,7 @@
        "centre": [-14500.3288, -7778.6543],
        "tangent": [-0.96462, -0.263644],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -17474,7 +17474,7 @@
      },
      "class": "minor",
      "width_tiles": 10,
-     "half_widths": [3.75, 6.75],
+     "half_widths": [3.0, 6.75],
      "fords": [
       {
        "interval": 0,
@@ -17482,7 +17482,7 @@
        "centre": [-19014.993, -5119.4864],
        "tangent": [-0.978096, 0.208155],
        "half_length": 4.16665,
-       "half_width": 9.225
+       "half_width": 8.25
       },
       {
        "interval": 1,
@@ -17490,7 +17490,7 @@
        "centre": [-19383.4113, -5099.9151],
        "tangent": [-0.999998, -0.002163],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -17543,7 +17543,7 @@
        "centre": [-16177.1009, -6290.3217],
        "tangent": [0.980251, 0.197757],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17551,7 +17551,7 @@
        "centre": [-15991.9177, -6291.1081],
        "tangent": [0.999389, 0.034963],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -17596,7 +17596,7 @@
        "centre": [-17328.5275, -7045.7608],
        "tangent": [-0.984948, 0.172851],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17652,7 +17652,7 @@
        "centre": [-16864.2199, -6442.5943],
        "tangent": [-0.911338, -0.411659],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17706,7 +17706,7 @@
        "centre": [-18537.4846, -5674.9377],
        "tangent": [0.890725, 0.454542],
        "half_length": 4.16665,
-       "half_width": 9.225
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17714,7 +17714,7 @@
        "centre": [-18314.4401, -5554.0773],
        "tangent": [0.805538, 0.592544],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 2,
@@ -17758,7 +17758,7 @@
        "centre": [-11752.331, -6997.3125],
        "tangent": [0.893032, 0.449993],
        "half_length": 4.16665,
-       "half_width": 9.225
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17803,7 +17803,7 @@
        "centre": [-17909.6705, -6061.8243],
        "tangent": [-0.94025, -0.340484],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17850,7 +17850,7 @@
        "centre": [-16000.5315, -7864.8992],
        "tangent": [-0.801055, -0.598591],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -17939,7 +17939,7 @@
        "centre": [-12870.9177, -8529.6574],
        "tangent": [-0.999998, 0.002162],
        "half_length": 4.16665,
-       "half_width": 10.3083
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -18011,7 +18011,7 @@
      },
      "class": "minor",
      "width_tiles": 10,
-     "half_widths": [3.75, 6.75],
+     "half_widths": [4.5, 6.75],
      "fords": [
       {
        "interval": 0,
@@ -18386,7 +18386,7 @@
      },
      "class": "major",
      "width_tiles": 15,
-     "half_widths": [3.75, 10.5],
+     "half_widths": [4.5, 10.5],
      "fords": [
       {
        "interval": 0,
@@ -18394,7 +18394,7 @@
        "centre": [-9947.5436, -8917.3149],
        "tangent": [0.953521, 0.301326],
        "half_length": 4.16665,
-       "half_width": 9.225
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -18812,7 +18812,7 @@
      },
      "class": "major",
      "width_tiles": 15,
-     "half_widths": [3.75, 10.5],
+     "half_widths": [4.5, 10.5],
      "fords": [
       {
        "interval": 0,
@@ -18980,7 +18980,7 @@
      },
      "class": "major",
      "width_tiles": 15,
-     "half_widths": [3.75, 10.5],
+     "half_widths": [3.0, 10.5],
      "fords": [
       {
        "interval": 0,
@@ -19148,7 +19148,7 @@
      },
      "class": "major",
      "width_tiles": 15,
-     "half_widths": [3.75, 10.5],
+     "half_widths": [3.0, 10.5],
      "fords": [
       {
        "interval": 0,
@@ -19428,7 +19428,7 @@
      },
      "class": "major",
      "width_tiles": 15,
-     "half_widths": [3.75, 10.5],
+     "half_widths": [3.0, 10.5],
      "fords": [
       {
        "interval": 0,
@@ -19559,11 +19559,11 @@
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 54.294,
-       "centre": [5042.4972, -176.0811],
+       "arc_tiles": 50.294,
+       "centre": [5039.0025, -174.1351],
        "tangent": [0.873679, -0.486503],
        "half_length": 4.16665,
-       "half_width": 9.225
+       "half_width": 8.25
       },
       {
        "interval": 1,
@@ -19677,7 +19677,7 @@
        "centre": [-12140.9343, 7901.52],
        "tangent": [0.974026, 0.226437],
        "half_length": 4.16665,
-       "half_width": 11.175
+       "half_width": 10.2
       },
       {
        "interval": 1,
@@ -19775,7 +19775,7 @@
      },
      "class": "major",
      "width_tiles": 15,
-     "half_widths": [3.75, 10.5],
+     "half_widths": [4.5, 10.5],
      "fords": [
       {
        "interval": 0,
@@ -19888,7 +19888,7 @@
        "centre": [652.4894, -1871.969],
        "tangent": [0.999443, -0.033358],
        "half_length": 4.16665,
-       "half_width": 9.225
+       "half_width": 10.2
       },
       {
        "interval": 1,
