@@ -27,6 +27,10 @@ versions follow [Semantic Versioning](https://semver.org/).
   warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
   of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is
   unchanged (`coast.warp`; design notes 2026-10-30 13:30, a development branch).
+- Beside Alien Biomes, temperate ground keeps the base game's plants: every vanilla decorative and dead tree
+  reads the vanilla-scale temperature and the base game's own score where vanilla land lies, and the restored
+  trees also stand on the adopted Alien Biomes tiles. Brown asterisks no longer carpet the ground outside it
+  (`trees.decor`; design notes 2026-10-30 18:40, a development branch).
 - Exact coastlines acts on Old World and Atlantic and is on by default, visible in the settings menu.
   Atlantic gains K+ tables. The handler queries only wrong tiles, evicts its row cache one row at a
   time, and writes along a blurred, wobbling reference instead of the raster's stairs; written land
