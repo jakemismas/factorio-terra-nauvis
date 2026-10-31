@@ -372,6 +372,19 @@ def offline_bodies(source, cfg):
 # record registered from the Alien Biomes (M2) or Oil Rig (M3) dump names a body that exists only beside
 # that mod; the gate's frozen row holds those to the game's own dumps.
 OFFLINE_DUMPS = ("m1",)
+# M2 reproduces offline too: its bodies read only mods["alien-biomes"], so a second stage with that flag
+# builds them. Without it a config value read only under `if AB` could move a released body with every
+# automated check green. M3 needs the Oil Rig's prototypes and stays with the gate.
+OFFLINE_AB_DUMPS = ("m2",)
+OFFLINE_AB_MODS = {"alien-biomes": "0.8.0"}
+
+
+def offline_ab_problems(source, fz, cfg):
+    """body_problems for the M2 records against the bodies the data stage builds with Alien Biomes' flag.
+    Raises tnlua.LuaError (fail closed)."""
+    import tnlua
+    dump = tnlua.data_stage(tnlua.reader_for(source), mods={**tnlua.DEFAULT_MODS, **OFFLINE_AB_MODS})
+    return body_problems(earth_bodies(dump, cfg), fz, cfg, "the offline Alien Biomes data stage", OFFLINE_AB_DUMPS)
 
 
 def body_problems(bodies, fz, cfg, where="the offline data stage", dumps=OFFLINE_DUMPS):

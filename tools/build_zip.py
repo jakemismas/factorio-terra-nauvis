@@ -207,9 +207,10 @@ def offline_body_problems(mod_dir, cfg, frozen, registry, suites=tnfrozen.SUITES
     parse, fails closed."""
     try:
         bodies = tnfrozen.offline_bodies(mod_dir, cfg)
+        beside_ab = tnfrozen.offline_ab_problems(mod_dir, frozen, cfg)
     except Exception as e:  # tnlua.LuaError and anything else the stage raises
         return [f"the offline data stage did not run: {type(e).__name__}: {e} (fail closed)"], None
-    problems = tnfrozen.body_problems(bodies, frozen, cfg, where)
+    problems = tnfrozen.body_problems(bodies, frozen, cfg, where) + beside_ab
     try:
         snaps, _ = tnfrozen.suite_snapshots(registry, suites=suites)
         moves = active_moves()

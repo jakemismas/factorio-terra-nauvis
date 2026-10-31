@@ -2638,7 +2638,8 @@ def bodies_findings(mod, fz, cfg):
         bodies = tnfrozen.offline_bodies(mod, cfg)
     except Exception as e:  # tnlua.LuaError and anything else: fail closed
         return [f"the offline data stage did not run: {type(e).__name__}: {e} (fail closed)"], None
-    return tnfrozen.body_problems(bodies, fz, cfg), bodies
+    return tnfrozen.body_problems(bodies, fz, cfg) + beside_ab, bodies
+        beside_ab = tnfrozen.offline_ab_problems(mod, fz, cfg)
 
 
 def row_bodies(repo=REPO):
