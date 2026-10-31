@@ -894,6 +894,15 @@ each suite manifest's frozen snapshot from the registry, without which the T16 a
     fallbacks that mirror startup settings are never registered, and T16 checks them against the
     presets instead; a frozen fallback is registered, so no later version can move the worlds that
     read it (section "Map type entries", binding).
+11. A terrain release takes the lightest version that can hold it. A thin version (`over` in
+    `geography.<map>.versions`) is a new entry over the older entry plus one term, with the next
+    tn_geo; it names every other body of the older version, so it adds a few hundred bytes of noise
+    text and old saves keep their entry. A full version takes names of its own for the chain, fit, lakes,
+    shore and 24 waterway sets, 1.13 MB of text on Old World parsed at every start, and is for what
+    a term on top cannot do: a new fit, or a river moved or removed. Either lists its id in
+    `bandfix.tables.<map>.geographies`; a full version on a warped map also lists it in
+    `coast.warp.geographies`. A new generated file takes a new name, through `fit.json`'s `file` for a
+    fit and `waterways.versions.<map>` for one map's waterways.
 
 ## Control stage
 
