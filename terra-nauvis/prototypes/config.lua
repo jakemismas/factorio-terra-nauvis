@@ -1464,21 +1464,22 @@ return {
   -- Ridges (milestone ridges; ARCHITECTURE.md milestone contract 8; S5; APPROVALS 5 and 11). Every number the
   -- ridge bodies use; prototypes/expressions/ridges.lua builds them from prototypes/tables/ranges.lua:
   --   ramp_tiles, bias_tiles, contour   cliff_elevation = cliff_elevation_0 + cliff_elevation_interval * f,
-  --              f = clamp(1 + h, low, high), h = (depth - bias) / ramp * stretch + fray (ridges.lua), so
-  --              the contours are the ridge's edge and, ramp_tiles further in, one ring; the noise keeps
-  --              them off the 4-tile lattice (S5: an exact lattice hit deletes the cliffs) and no term
-  --              reads cliff_richness, so frequency, continuity and richness are inert
+  --              f = clamp(1 + h, low, high), h = (depth - bias) / ramp + fray (ridges.lua), so the one
+  --              contour is the ridge's edge: a second one ran parallel to it as ranks (read on real
+  --              sprites at Old World scale 6). The noise keeps it off the 4-tile lattice (S5: an exact
+  --              lattice hit deletes the cliffs) and no term reads cliff_richness, so frequency,
+  --              continuity and richness are inert. ramp_tiles sets how far the fray moves the edge
   --   width      a vertex's half-width in tiles: min_tiles + gain_tiles * (height / ref_m) ^ power, tip_tiles
   --              at a crest's end vertices (below zero, so the ridge ends in a taper, never a cap)
   --   wander     the wandering axis: per axis of the chain, noise rows in reference pixels, so one shape
   --              on the map at every scale (at scale 6, about 100 and 36 tiles over 1,500 and 300)
   --   run_base, run   the width's multiplier: base plus noise rows in tiles, floored at 0
-  --   stretch, stretch_floor, fray   the height's noise rows: the depth's multiplier (floored, or a ring
-  --              would open wherever it crosses 0) and the term added to it, in contours
+  --   fray       the height's noise row, in contours: at 64 tiles and 0.3 it breaks every east-west line
+  --              within a few cliffs. A depth multiplier here floated closed loops off the ridge
   --   gaps       noise gaps: an opening where the noise rows read under threshold, plus thin_gain as the
   --              ridge's width at the tile falls from thin_tiles to 0, less collar_gain inside a collar
   --              Read in real sprites, wavelengths under about 70 tiles made zigzags at cliff spacing, stubs
-  --              and tiny loops, since a cliff cell is 4 tiles: keep every row of run, stretch, fray and gaps
+  --              and tiny loops, since a cliff cell is 4 tiles: keep every row of run and gaps
   --              above that, and a line flat to one lattice row stays broken by fray, about 4 tiles
   --   collar_tiles   the radius round an opening's slot where the ridge stands whole (ridges.lua keep)
   --   flank_tiles   the near edge of the ridge from S5's measurements: earth_test.py's T6 metrics read it
@@ -1555,9 +1556,9 @@ return {
   -- Names carry the ridges' version suffix; a changed body ships under the next one.
   ridges = {
     flank_tiles = 16.37,
-    ramp_tiles = 24,
+    ramp_tiles = 48,
     bias_tiles = 3,
-    contour = {low = 0.5, high = 2.5},
+    contour = {low = 0.5, high = 1.5},
     width = {ref_m = 4800, min_tiles = 10, gain_tiles = 38, power = 0.8, tip_tiles = -20},
     wander = {
       u = {{seed1 = 7501, wavelength = 250, amplitude = 16}, {seed1 = 7502, wavelength = 50, amplitude = 6}},
@@ -1565,9 +1566,7 @@ return {
     },
     run_base = 1.15,
     run = {{seed1 = 7505, wavelength = 420, amplitude = 0.55}, {seed1 = 7506, wavelength = 120, amplitude = 0.32}},
-    stretch = {{seed1 = 7507, wavelength = 100, amplitude = 0.6}},
-    stretch_floor = 0.4,
-    fray = {{seed1 = 7508, wavelength = 90, amplitude = 0.3}},
+    fray = {{seed1 = 7508, wavelength = 64, amplitude = 0.3}},
     gaps = {noise = {{seed1 = 7509, wavelength = 96, amplitude = 1}, {seed1 = 7510, wavelength = 72, amplitude = 0.25}},
             threshold = -0.35, thin_tiles = 26, thin_gain = 2.2, collar_gain = 3},
     -- The cliff's art beside Alien Biomes. It ships whole grey stone cliff sheets its code leaves unused

@@ -7,8 +7,8 @@
 --   cliff_elevation = cliff_elevation_0 + cliff_elevation_interval * clamp(1 + h, low, high)
 --   cliffiness = cliffiness_on * (1 - opening) outside the ridge-free start disc, 0 inside it
 -- never read cliff_richness, so continuity and richness have nothing to act on, and contours stand at
--- whole h whatever the frequency slider makes the interval: the ridge's edge at h = 0, its high side
--- inward, and one ring inside it where the ridge is wide enough. On each map:
+-- whole h whatever the frequency slider makes the interval. The clamp leaves one contour, the ridge's
+-- edge at h = 0 with its high side inward, because more ran parallel to it as ranks. On each map:
 --   depth    tiles inside the ridge: per crest segment the half-width at the tile's nearest crest point
 --            (from the vertex heights, so wider where the mountain is taller, and below zero at a
 --            crest's ends) times the run multiplier, minus the distance to that point; the largest
@@ -16,8 +16,8 @@
 --            slow noise, so a ridge wanders round its range's axis and never runs straight
 --   run      the width's multiplier, slow noise: a ridge swells, thins and at 0 is gone, so it breaks
 --            into runs that taper out instead of closing round their ends
---   h        (depth - bias) / ramp * stretch + fray: the stretch moves a contour by its depth, so the
---            ring does not run parallel to the edge; the fray roughens every line
+--   h        (depth - bias) / ramp + fray: the fray moves the edge by up to about ramp tiles times its
+--            amplitude along the strike, so a line never holds to one lattice row
 --   opening  a slot across the crest at a pass or an unnamed gap (pass_tiles along the crest, past the
 --            ridge's half-width to each side), moving with the wandering axis; where a range cut by the
 --            map's edge has no pass on that map, a band along the edge near the crossing, so the ridge
@@ -467,8 +467,7 @@ local function map_bodies(key)
   end
   def(N.depth[key], joined("max", C.terms, "-inf"), C.L)
   def(N.near[key], joined("min", C.near, "inf"), C.L)
-  def(N.crest[key], "(" .. minus(N.depth[key], RD.bias_tiles) .. ") / " .. num(RD.ramp_tiles) .. " * max(" ..
-    num(RD.stretch_floor) .. ", 1 + " .. waves(RD.stretch) .. ") + " .. waves(RD.fray))
+  def(N.crest[key], "(" .. minus(N.depth[key], RD.bias_tiles) .. ") / " .. num(RD.ramp_tiles) .. " + " .. waves(RD.fray))
   O.terms[#O.terms + 1] = "(" .. waves(RD.gaps.noise) .. " < " .. num(RD.gaps.threshold) .. " + " ..
     num(RD.gaps.thin_gain) .. " * clamp(1 - (" .. N.depth[key] .. " + " .. N.near[key] .. ") / " ..
     num(RD.gaps.thin_tiles) .. ", 0, 1) - " .. num(RD.gaps.collar_gain) .. " * " .. N.keep[key] .. ")"
