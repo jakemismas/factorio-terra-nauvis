@@ -1560,7 +1560,9 @@ return {
     --             uniform: mean 1 / 1.7, so about 1.7 times vanilla's spots, a few large among many small
     --   radius    the typical spot's radius times sqrt(size), capped at radius_cap, so every spot has one
     --             height, ore area follows ore amount, and noise moves an outline by a share of that spot's
-    --             own radius (vanilla's cones share a slope: the same noise swamps a small spot)
+    --             own radius (vanilla's cones share a slope: the same noise swamps a small spot); an ore
+    --             whose vanilla spot size is fixed (crude oil) takes fixed_radius of it, since its amount
+    --             counts wells and the outline noise grows a field's area
     --   province  candidates are taken best first on a low-frequency noise of `wavelength` tiles, shifted
     --             per ore by `offset`, so ore gathers in provinces instead of an even spacing
     --   outline   weights of the octaves added to the spot, in vanilla's blob amplitude, capped at `cap` so a
@@ -1582,7 +1584,7 @@ return {
       vanilla_fn = "resource_autoplace_all_patches",
       gap = REN.ORE_GAP,
       no_gap = 1000000,
-      size = {floor = 0.25, gain = 1.35, power = 3, radius_cap = 40},
+      size = {floor = 0.25, gain = 1.35, power = 3, radius_cap = 40, fixed_radius = 0.87},
       province = {seed1 = 7405, wavelength = 320, offset = 4096, base = 2},
       outline = {coarse = {seed1 = 7406, wavelength = 128}, fine = 8, mid = 24, broad = 64, w24 = 2, w64 = 4,
                  w128 = 3.5, mean = 1 / 3, vary = 0.3, cap = 8, start_w64 = 2.5, start_coarse = 2, start_mean = 0.25,

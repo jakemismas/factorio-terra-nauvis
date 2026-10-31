@@ -377,7 +377,7 @@ L.warp_y = "y + " .. num(NP.warp.amplitude) .. " * coarse"
 L.spot_size = "(" .. num(Z.floor) .. " + " .. num(Z.gain) .. " * random_penalty_between(0, 1, 1) ^ " .. num(Z.power) .. ")"
 L.typical_quantity = "(random_spot_size_minimum + random_spot_size_maximum) / 2 * regular_spot_quantity_base_at(distance)"
 L.spot_radius = "min(" .. num(Z.radius_cap) .. ", regular_rq_factor * typical_quantity ^ " .. num(V.cube_root) ..
-  " * sqrt(spot_size))"
+  " * sqrt(spot_size)) * if(random_spot_size_minimum == random_spot_size_maximum, " .. num(Z.fixed_radius) .. ", 1)"
 L.clear = "(" .. NP.gap .. " > " .. num(NP.reach) .. " * spot_radius + " .. num(NP.warp_reach) .. ")"
 L.regular_spot_quantity_expression = "clear * spot_size * typical_quantity"
 L.outline = "min(" .. num(O.cap) .. ", (" .. basis(O.fine, "seed1") .. " + " .. num(O.w24) .. " * " ..
