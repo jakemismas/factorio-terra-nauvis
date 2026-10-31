@@ -2131,7 +2131,7 @@ return {
       {id = "australia", lat = {-31, -18}, lon = {118, 142}, ramp = {3, 4}, a = 0.2},
     },
     tile_belts_wander = {lat = 1.5, lon = 2},
-    tile_belts_wild = {lift = 1000, cut = 0.5, fine = 0.25},
+    tile_belts_wild = {lift = 1000, cut = 0.5, fine = 0.25, keep = 0.8},
     -- the coldness the fallback's pulls and spread read: 0 at core cold.t and warmer, 1 at
     -- cold.t - cold.span and colder
     cold = {t = 10, span = 30},

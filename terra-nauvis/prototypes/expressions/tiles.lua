@@ -73,8 +73,9 @@ def(V.body, vanilla_bonus("temperature"), PATCH)
 
 -- A wild belt (config.lua climate.tile_belts) lies out of the temperate band whatever its temperature:
 -- the band tests read the temperature lifted past the band's top there, so neither the vanilla bonus nor
--- the exclusion applies, and the pool noise frays the belt's edge. The list hook above stays on the plain
--- field, so Alien Biomes' plants and trees stay off that land, a treeless steppe.
+-- the exclusion applies, and the pool noise frays the belt's edge. The list hook below opens only well inside
+-- a belt, keep, since it runs in the Entity program without that noise: shut, a steppe has no tree at all, no
+-- wood at a start in it.
 local W = cfg.climate.tile_belts_wild
 local function band_t(t, weight)
   return t .. " + " .. num(W.lift) .. " * (" .. weight .. " > " .. num(W.cut) .. ")"
@@ -87,10 +88,10 @@ local WILD_TILE = WILD .. " + " .. num(W.fine) .. " * " .. MS.pool.name
 -- reads the grain's frayed copy on a preset, and this runs in the Entity program, which keeps the plain
 -- fields, so the band's edges and the lean widen by scan.margin to cover the fray (config.lua tiles.scan).
 def(S.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
-  ", 0, 1), if(temperature >= " .. num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " ..
+  ", 0, 1), if(band_t >= " .. num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " ..
   num(V.lean_t) .. ") / " .. num(V.lean_span) .. " + patch + " .. num(V.fine) .. " * " .. MS.pool.name .. " - " ..
   num(V.lean_cut - S.margin / V.lean_span) .. " > 0, 0, if(temperature >= " .. num(X.temperate_from - S.margin) ..
-  ", 0, 1))))", PATCH)
+  ", 0, 1))))", {patch = PATCH.patch, band_t = band_t("temperature", WILD .. " - " .. num(W.keep - W.cut))})
 
 -- The exclusion of non-adopted Alien Biomes land tiles from the temperate band.
 -- Inside a marsh the tiles open up to AB's wet ground, but not to its alien palette: a dry belt's red
