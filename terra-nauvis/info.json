@@ -4,7 +4,7 @@
   "title": "Terra Nauvis",
   "author": "Jake Mismas",
   "factorio_version": "2.1",
-  "description": "Three Earth maps for Nauvis: Europe, the Atlantic world and the Old World, with real coastlines at map scales 1 to 6 in an endless deep ocean. Rivers, straits and canals that ships can sail, walkable river fords, Earth climate with or without Alien Biomes, marshes, great forests, mountain ridges, historic ore fields, an optional Destroyed Europe and optional city markers. You spawn at a chosen or random city with a lake nearby. Pick a Terra Nauvis preset on the new-game screen. Noise expressions draw almost all of the terrain, so the preview shows the map; a script handles what noise cannot, such as the start of a new world.",
+  "description": "Three Earth maps for Nauvis: Europe, the Atlantic world and the Old World, with real coastlines at map scales 1 to 6 in an endless deep ocean. Rivers that narrow with the map, straits and canals for ships, walkable river fords, Earth climate with or without Alien Biomes, marshes, great forests, mountain ridges, historic ore fields, an optional Destroyed Europe and optional city markers. You spawn at a chosen or random city with a lake nearby. Pick a Terra Nauvis preset on the new-game screen. Noise expressions draw almost all of the terrain, so the preview shows the map; a script handles what noise cannot, such as the start of a new world.",
   "dependencies": [
     "base >= 2.1.24",
     "? alien-biomes",
