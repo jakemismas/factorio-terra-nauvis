@@ -166,8 +166,9 @@ All of these are startup settings except City markers, which is on the Map tab.
   that world's surfaces, apart from the grey cliff art beside Alien Biomes.
 - **Testing.** The v0.1.0 zip ran the pack soak: far travel, long simulation, save and load, and a
   run with reloads that matched a straight run to the checksum. It also had a security review of the
-  release tools. Scale 6 Old World was the soak's map; Atlantic had one shorter pack run at scale 4,
-  and Europe none. The full timing suite has not run on it.
+  release tools. Scale 6 Old World was the soak's map. Atlantic at scale 4 had one shorter pack run,
+  and Europe at scale 6 with Destroyed Europe on had one on the first patch's code. The full timing
+  suite has not run on the v0.1.0 zip.
 - **Most cities stand where EarthMaps put them.** On Atlantic and Old World a city sits at EarthMaps'
   own map point, which can lie far from the real place it names. Prague, Frankfurt, Aachen and
   Moscow on Old World stand at their real positions.
