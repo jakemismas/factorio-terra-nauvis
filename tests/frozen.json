@@ -4492,7 +4492,7 @@
   },
   "tn_cliff_elevation_v1": {
    "type": "noise-expression",
-   "sha256": "a70991abddca99ae4ad44328aa61c230f95e4527efb7225265c322877fa39eba",
+   "sha256": "a68bfd3892c8c62806b42c2d48fe2ba28292e4e05eee7bae7822db1160138461",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
@@ -4506,21 +4506,21 @@
   },
   "tn_crest_atlantic_v1": {
    "type": "noise-expression",
-   "sha256": "da19838fd44ca066c73bba0eadff170c0f8ca50eb2d42071cffcfb0e3cdfcd41",
+   "sha256": "84e2af8079436820432a185e272ad61676e854785a327aafa1ad9dbf2574b258",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_crest_europe_v1": {
    "type": "noise-expression",
-   "sha256": "7fb02d3c524e0dca631ec68b1b831e764c738cda41595fc8592cb954c9bdc93e",
+   "sha256": "66681f19222769ded4585b8ca89259e92eb7188dfaac0b294257945f35458e5a",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
   },
   "tn_crest_olde_world_v1": {
    "type": "noise-expression",
-   "sha256": "ba4a6bd16823d183b9f4fa8d710d23b30d91926b11a0b7377aff646e35d3a844",
+   "sha256": "aa876692a73af11e1ec6835ce9f75096bb77ed46f0a351322ba3d3ea0433a1ca",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-30"
