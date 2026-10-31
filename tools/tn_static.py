@@ -4450,18 +4450,18 @@ def row_fixtures():
 # The region layer (milestone region-layer; T16, D13, A-7): one file builds every region formula. What a
 # consumer may read of config.lua's regions group is the interface (ARCHITECTURE.md, "Region layer"):
 # an aggregate's name, the version suffix, or a row name stem (sd, w, depth, and a hotspot's centre hu,
-# hv) to name one row's output.
+# hv and plain distance pd) to name one row's output.
 REGION_FILE = "prototypes/expressions/regions.lua"
 REGION_TABLE_MODULE = tnconfig.REGION_TABLE[:-len(".lua")].replace("/", ".")
 REGION_INTERFACE = {"destroyed_sd", "destroyed_w", "destroyed_depth", "forest_w", "forest_sum", "tree_mult",
                     "marsh_w", "hotspot_w", "enemy_mult", "suffix"}
-REGION_ROW_INTERFACE = {"sd", "w", "depth", "hu", "hv"}
+REGION_ROW_INTERFACE = {"sd", "w", "depth", "hu", "hv", "pd"}
 
 
 def region_formula_findings(mod=MOD):
     """No region formula outside prototypes/expressions/regions.lua: no other mod Lua file requires the
     region table, and every read of config.lua's regions group outside it is a full dotted path to an
-    interface name (regions.names.<aggregate>, regions.names.suffix, regions.names.row.<sd|w|depth|hu|hv>).
+    interface name (regions.names.<aggregate>, regions.names.suffix, regions.names.row.<sd|w|depth|hu|hv|pd>).
     The warp, roughness, ramp, jitter, frame and query-point names stay the layer's own, and an alias
     of the group (or of its names table) or a bracket index would hide what is read, so both fail."""
     from luaparser import astnodes

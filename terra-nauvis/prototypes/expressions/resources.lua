@@ -36,7 +36,6 @@ local DEPTH = cfg.regions.names.row.depth
 local PD = cfg.regions.names.row.pd
 local HU = cfg.regions.names.row.hu
 local HV = cfg.regions.names.row.hv
-local RT = require("prototypes.tables.regions")
 
 local function num(v)
   return string.format(cfg.number_format, v)
@@ -157,35 +156,6 @@ local function start_radius(r)
     PER_CANDIDATE .. " / pi))"
 end
 
--- A row's disc in the region frame, for the rival list below.
-local DISC = {}
-for _, r in ipairs(RT.rows) do
-  if r.layer == "hotspot" then
-    DISC[r.id] = r
-  end
-end
-
--- The most a row's jittered centre and footprint reach, in reference pixels.
-local function outer_px(r)
-  return r.cap_px + DISC[r.id].jitter_km * cfg.regions.jitter.hotspot_share / cfg.regions.km_per_px
-end
-
--- Whether rival o holds its ground against row r: a different ore whose disc can touch r's on some scale and
--- seed, the smaller of the two (the first by id on a tie), so a small row inside a large one keeps its ore.
-local function rival_of(r, o)
-  if o.resource == r.resource then
-    return false
-  end
-  local a, b = DISC[r.id], DISC[o.id]
-  local ppd = cfg.coordinates.px_per_degree
-  local du, dv = (a.lon - b.lon) * ppd, (a.lat - b.lat) * ppd
-  local most = outer_px(r) + outer_px(o)
-  if du * du + dv * dv > most * most then
-    return false
-  end
-  return o.cap_px < r.cap_px or (o.cap_px == r.cap_px and o.id < r.id)
-end
-
 -- How far a resource's capped blob lifts ore past a cone's rim, in tiles (config.lua hotspots.size note).
 local function blob_height(h)
   local unit = TG.per_km2 / h.spots_per_km2 * h.base_density * h.mean_size
@@ -227,9 +197,11 @@ local function map_spot(h, rows, i, L, M)
   for j, r in ipairs(rows) do
     local sr = start_radius(r)
     local rivals = {}
-    for _, o in ipairs(all) do
-      if rival_of(r, o) then
-        rivals[#rivals + 1] = o
+    for _, id in ipairs(HC.rivals[r.id] or {}) do
+      for _, o in ipairs(all) do
+        if o.id == id then
+          rivals[#rivals + 1] = o
+        end
       end
     end
     local room = "r" .. i .. "_" .. j
@@ -363,35 +335,40 @@ local function deep(v)
 end
 
 local function basis(wavelength, seed)
-  return "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. seed .. ", input_scale = 1 / " .. num(wavelength) .. "}"
+  return "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. seed .. ", input_scale = 1 / " .. num(wavelength) ..
+    "}"
 end
 
 local fn = deep(data.raw["noise-function"][NP.vanilla_fn])
 fn.name = NP.fn
 local L = fn.local_expressions
 L.basement_value = num(O.basement) .. " * (" .. L.basement_value .. ")"
-L.b64 = basis(O.broad, "seed1")
+L.broad = basis(O.broad, "seed1")
 L.coarse = basis(O.coarse.wavelength, num(O.coarse.seed1))
-L.warp_x = "x + " .. num(NP.warp.amplitude) .. " * b64"
+L.warp_x = "x + " .. num(NP.warp.amplitude) .. " * broad"
 L.warp_y = "y + " .. num(NP.warp.amplitude) .. " * coarse"
-L.spot_size = "(" .. num(Z.floor) .. " + " .. num(Z.gain) .. " * random_penalty_between(0, 1, 1) ^ " .. num(Z.power) .. ")"
-L.typical_quantity = "(random_spot_size_minimum + random_spot_size_maximum) / 2 * regular_spot_quantity_base_at(distance)"
+L.spot_size = "(" .. num(Z.floor) .. " + " .. num(Z.gain) .. " * random_penalty_between(0, 1, 1) ^ " .. num(Z.power) ..
+  ")"
+L.typical_quantity = "(random_spot_size_minimum + random_spot_size_maximum) / 2 * " ..
+  "regular_spot_quantity_base_at(distance)"
 L.spot_radius = "min(" .. num(Z.radius_cap) .. ", regular_rq_factor * typical_quantity ^ " .. num(V.cube_root) ..
   " * sqrt(spot_size)) * if(random_spot_size_minimum == random_spot_size_maximum, " .. num(Z.fixed_radius) .. ", 1)"
 L.clear = "(" .. NP.gap .. " > " .. num(NP.reach) .. " * spot_radius + " .. num(NP.warp_reach) .. ")"
 L.regular_spot_quantity_expression = "clear * spot_size * typical_quantity"
 L.outline = "min(" .. num(O.cap) .. ", (" .. basis(O.fine, "seed1") .. " + " .. num(O.w24) .. " * " ..
-  basis(O.mid, "seed1") .. " + " .. num(O.w64) .. " * b64 + " .. num(O.w128) .. " * coarse - " .. num(O.mean) ..
+  basis(O.mid, "seed1") .. " + " .. num(O.w64) .. " * broad + " .. num(O.w128) .. " * coarse - " .. num(O.mean) ..
   ") * (1 + " .. num(O.vary) .. " * coarse))"
 L.height = "max(1, regular_spot_height_typical_at(distance))"
 L.body = "spot_noise{x = warp_x, y = warp_y," ..
   " density_expression = regular_density_at(distance)," ..
   " spot_quantity_expression = regular_spot_quantity_expression," ..
   " spot_radius_expression = max(1, clear * spot_radius)," ..
-  " spot_favorability_expression = clear * (" .. num(NP.province.base) .. " + basis_noise{x = x, y = y, seed0 = map_seed," ..
+  " spot_favorability_expression = clear * (" .. num(NP.province.base) ..
+  " + basis_noise{x = x, y = y, seed0 = map_seed," ..
   " seed1 = " .. num(NP.province.seed1) .. ", input_scale = 1 / " .. num(NP.province.wavelength) ..
   ", offset_x = " .. num(NP.province.offset) .. " * regular_patch_set_index})," ..
-  " seed0 = map_seed, seed1 = seed1, region_size = " .. num(V.region_size) .. ", candidate_spot_count = candidate_spot_count," ..
+  " seed0 = map_seed, seed1 = seed1, region_size = " .. num(V.region_size) ..
+  ", candidate_spot_count = candidate_spot_count," ..
   " suggested_minimum_candidate_point_spacing = " .. num(V.spacing) .. ", skip_span = regular_patch_set_count," ..
   " skip_offset = regular_patch_set_index, hard_region_target_quantity = 0, basement_value = basement_value," ..
   " maximum_spot_basement_radius = " .. num(V.basement_radius) .. "} + outline * regular_blob_amplitude_at(distance)"
@@ -401,10 +378,11 @@ L.regular_patches = "if(random_spot_size_minimum >= " .. num(NP.few_size) .. ", 
   num(NP.level) .. ") * (1 + " .. num(NP.pockets) .. " * clamp(blobs0, " .. num(-NP.pocket_clamp) .. ", " ..
   num(NP.pocket_clamp) .. ")) * field / (1 + " .. num(NP.plateau) .. " * max(0, field) / height)"
 L.start_body = (string.gsub(L.starting_patches, "%(blobs0 %- " .. num(O.start_mean):gsub("%.", "%%.") .. "%)",
-  "(blobs0 + " .. num(O.start_w64) .. " * b64 + " .. num(O.start_coarse) .. " * coarse - " .. num(O.start_mean) .. ")"))
-L.starting_patches = "start_body + clamp(1 - abs(start_body) / (" .. num(NP.rim.width) ..
+  "(blobs0 + " .. num(O.start_w64) .. " * broad + " .. num(O.start_coarse) .. " * coarse - " .. num(O.start_mean) ..
+  ")"))
+L.starting_patches = num(O.start_level) .. " * (start_body + clamp(1 - abs(start_body) / (" .. num(NP.rim.width) ..
   " * starting_blob_amplitude / starting_blob_amplitude_multiplier), 0, 1) * " .. num(NP.rim.gain) ..
-  " * blobs0 * starting_blob_amplitude"
+  " * blobs0 * starting_blob_amplitude)"
 E[#E + 1] = fn
 
 data:extend(E)
