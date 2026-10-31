@@ -84,7 +84,8 @@ Date: 2026-10-30
     - Exact coastlines startup setting (default on): on Atlantic and Old World each new chunk's coast
       follows the reference on every shore and continent alike, so fjords, bays, the sea's narrow
       channels and islets the noise cannot hold come back as rounded natural shores. The map
-      preview still shows the noise coast, and land made from sea stays bare.
+      preview still shows the noise coast; land made from sea takes the trees and ground cover of
+      the land beside it.
     - City markers map setting (default off, changeable in a running game): the map view names every
       city of a Terra Nauvis world's map where it lies; switching it off removes them.
   Changes:
