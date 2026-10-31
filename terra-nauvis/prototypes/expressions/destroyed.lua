@@ -10,8 +10,8 @@
 -- ground with normal trees (T7). Its heat climbs from a heat-1 rim to a core that mixes Alien Biomes' four
 -- heat bands (R3 7.1), and the Alien Biomes temperature's next version lifts the zone to it, so AB's
 -- volcanic tiles, its lava decals, volcanic rocks and the volcanic tree follow. Past the rim, which keeps
--- the climate's temperature and trees, a class per tile mixes those with black ash, red rock and red grass
---; nothing else changes (APPROVALS 10: tiles only). The lift sits behind the toggle tn_destroyed, a name switch whose folded if()
+-- the climate's temperature and trees, a class per tile mixes those with black ash, red rock and red
+-- grass; nothing else changes (APPROVALS 10). The lift sits behind the toggle tn_destroyed, a name switch whose folded if()
 -- compiles climate-tiles' first temperature alone when off (U5). Without Alien Biomes nothing here is
 -- named by any preset: the toggle bakes off at the data stage and the presets keep the fallback climate
 -- (FEAS-17), so the world equals the zone off. Every body is analytic in x, y, map_seed and per-save
@@ -73,11 +73,17 @@ if AB then
   def(C.names.macro, noise(C.macro))
   def(C.names.kind, noise(C.kind))
   local G = C.grass
-  local rock = "if(" .. C.names.kind .. " < " .. num(C.black_below) .. ", if(" .. N.fine .. " > 0, 2, 3), if(" ..
-    N.fine .. " > 0, 4, 5))"
+  local L = {}
+  for _, t in ipairs(C.tiles) do
+    L[t.tile] = num(t.class)
+  end
+  local T = C.tile
+  local rock = "if(" .. C.names.kind .. " < " .. num(C.black_below) .. ", if(" .. N.fine .. " > 0, " ..
+    L[T.black_sand] .. ", " .. L[T.black_dirt] .. "), if(" .. N.fine .. " > 0, " .. L[T.red_sand] .. ", " ..
+    L[T.red_dirt] .. "))"
   def(C.names.class, "if(depth <= 0, 0, if(reach < " .. num(C.rim_px) .. ", if(depth * " .. num(G.per_px) .. " + " ..
-    num(G.fine) .. " * " .. N.fine .. " > " .. num(G.cut) .. ", 1, 0), if(reach < " .. num(C.mid_px) .. ", " .. rock ..
-    ", 0)))", {
+    num(G.fine) .. " * " .. N.fine .. " > " .. num(G.cut) .. ", " .. L[T.grass] .. ", 0), if(reach < " ..
+    num(C.mid_px) .. ", " .. rock .. ", 0)))", {
       depth = N.zone .. " / " .. K.scale,
       reach = "min(depth, " .. num(C.sat_px) .. ") + " .. num(C.mac_px) .. " * " .. C.names.macro,
     })

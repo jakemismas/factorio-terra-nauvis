@@ -99,14 +99,19 @@ end
 
 -- Only the adopted Alien Biomes tiles mix into temperate bands (D11; APPROVALS 9): every other AB land
 -- tile on Nauvis adds the exclusion key, and its own score stays the off value.
+-- The red palette's tiles take the max with their score (config.lua destroyed.chaos): the exclusion is
+-- -inf in the temperate band, and these tiles must win there inside the zone.
+local function with_chaos(name, text)
+  for _, t in ipairs(cfg.destroyed.chaos.tiles) do
+    if t.tile == name then
+      return "max(" .. text .. ", " .. t.body .. ")"
+    end
+  end
+  return text
+end
+
 local function exclusion_hooks()
   local X = TL.exclude
-  -- The red palette's tiles take the max with their score (config.lua destroyed.chaos): the exclusion is
-  -- -inf in the temperate band, and these tiles must win there inside the zone.
-  local chaos = {}
-  for _, t in ipairs(cfg.destroyed.chaos.tiles) do
-    chaos[t.tile] = t.body
-  end
   local adopted = {}
   for _, name in ipairs(TL.ab_adopted) do
     adopted[name] = true
@@ -129,11 +134,7 @@ local function exclusion_hooks()
     excluded[name] = true
     local autoplace = data.raw.tile[name].autoplace
     local original = "(" .. tostring(autoplace.probability_expression) .. ")"
-    local text = grain_scores(original) .. " + " .. X.key
-    if chaos[name] then
-      text = "max(" .. text .. ", " .. chaos[name] .. ")"
-    end
-    autoplace.probability_expression = hook(text, original)
+    autoplace.probability_expression = hook(with_chaos(name, grain_scores(original) .. " + " .. X.key), original)
   end
   log(cfg.identity.title .. ": temperate exclusion on " .. #names .. " Alien Biomes tiles")
   -- The grain's copies reach every Alien Biomes land tile: snow, volcanic and the adopted tiles too.

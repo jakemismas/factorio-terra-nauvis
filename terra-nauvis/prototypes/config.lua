@@ -1681,6 +1681,8 @@ return {
       black_below = -0.25,
       macro = {wavelength_px = 10, octaves = 4, persistence = 0.6, seed1 = 7902},
       kind = {wavelength_px = 6, octaves = 3, persistence = 0.6, seed1 = 7903},
+      tile = {grass = "vegetation-red-grass-1", black_sand = "mineral-black-sand-1",
+              black_dirt = "mineral-black-dirt-1", red_sand = "mineral-red-sand-1", red_dirt = "mineral-red-dirt-1"},
       tiles = {
         {tile = "vegetation-red-grass-1", class = 1, body = DE.chaos_grass},
         {tile = "mineral-black-sand-1", class = 2, body = DE.chaos_black_sand},
