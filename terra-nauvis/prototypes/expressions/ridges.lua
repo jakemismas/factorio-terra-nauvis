@@ -506,9 +506,11 @@ def(N.clear, "if(" .. on .. ", max(1 - " .. K.band .. ", " .. N.free .. "), 1)")
 -- The highland: the map's reach frayed by noise the region layer already computes, the warp for rocks and the
 -- warp, roughness and marsh outline for tiles, over the falloff, faded in outside the ridge-free start disc; 0
 -- with ridges off.
-local HG, RG = RD.high, cfg.regions.names
-def(N.rise, "max(0, " .. K.high .. " + " .. S .. " * " .. RG.highland_fray .. ")")
-def(N.rise_tile, "max(0, " .. K.high_tile .. " + " .. S .. " * " .. RG.highland_fray_tile .. ")")
+local HG = RD.high
+local FRAY, FRAY_TILE = cfg.regions.names.highland_fray, cfg.regions.names.highland_fray_tile
+local MASSIF = cfg.regions.names.highland_massif
+def(N.rise, "max(0, " .. K.high .. " + " .. S .. " * " .. FRAY .. ")")
+def(N.rise_tile, "max(0, " .. K.high_tile .. " + " .. S .. " * " .. FRAY_TILE .. ")")
 def(N.gate, "clamp((distance - max(" .. num(RD.start.radius_tiles) .. ", starting_area_radius) - " ..
   num(RD.start.margin_tiles) .. ") / " .. num(HG.start.ramp_tiles) .. ", 0, 1)")
 local function high(r, fall)
@@ -521,7 +523,7 @@ def(N.high_tile, high(N.rise_tile, num(HG.fall_tiles)))
 local GD = RD.ground
 def(N.lapse, "if(" .. on .. ", " .. num(GD.lapse_per_px2) .. " * over * over * " .. N.gate .. " * clamp(" ..
   cfg.climate.names.core .. " / " .. num(GD.cold_t) .. ", " .. num(GD.cold_min) .. ", 1), 0)",
-  {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(GD.lapse_from_px) .. ") * " .. RG.highland_massif})
+  {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(GD.lapse_from_px) .. ") * " .. MASSIF})
 def(N.ground, num(RD.ground.lean) .. " * " .. N.high_tile)
 def(K.ground, num(0))
 -- The grain's bodies read the tile reach, and a save from before the highlands names those bodies but not this

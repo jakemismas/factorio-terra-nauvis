@@ -446,7 +446,8 @@ local HF, GM = cfg.ridges.high, cfg.ridges.ground.massif
 def(N.highland_fray, num(HF.fray_warp) .. " * " .. N.wx)
 def(N.highland_fray_tile, num(HF.fray_warp) .. " * " .. N.wx .. " + " .. num(HF.fray_rough) .. " * " .. N.rough ..
   " + " .. num(HF.fray_massif) .. " * " .. N.marsh_rough)
-def(N.highland_massif, "clamp(1 + " .. num(GM.gain) .. " * " .. N.wy .. ", " .. num(GM.low) .. ", " .. num(GM.high) .. ")")
+def(N.highland_massif, "clamp(1 + " .. num(GM.gain) .. " * " .. N.wy .. ", " .. num(GM.low) .. ", " .. num(GM.high) ..
+  ")")
 
 -- Hotspot regions and the biter multiplier inside them.
 def(N.hotspot_w, by_map(function(M) return joined("max", each(on_map(M, "hotspot"), function(x) return x.names.w end),

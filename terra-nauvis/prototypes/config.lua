@@ -1529,9 +1529,10 @@ return {
   --              clear_kinds that keeps no lift, fade_tiles how far it fades back in. Unnamed gaps are not listed:
   --              each disc costs Entity about 14, and with them Old World read 32,067. To hold Entity under its
   --              limit at scale 1 too, the Entity band reads no cosine and no roughness, skips a piece shorter than
-  --              short_px (its neighbours' reach covers it), and ab_skip leaves out Alien Biomes' alien palette, which
-  --              no judged Old World or Europe window showed (about 2,500 pixels of it in the Rockies window keep
-  --              their own rocks unlifted)
+  --              short_px (its neighbours' reach covers it). ab_skip holds only the volcanic pair, whose peak
+  --              reads differently: every other rock takes the hook, because Alien Biomes' rocks share one compiled
+  --              text, and hooking 17 of the 29 split them in two, which grew a default world's Entity program by 15
+  --              operations and 30 complexity
   --   ores       the Earth ores whose live probability is wrapped (resource, preset key, wrapper)
   --   water      the water frequency slider's two vanilla readers stay group 0's water_slider
   --              (D15), baked on every Earth preset at their default-slider values
@@ -1583,7 +1584,7 @@ return {
     rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24, short_px = 40,
              clear_kinds = {pass = true},
              ab_prefixes = {"huge-rock-", "big-rock-", "sand-big-rock-"},
-             ab_skip = {"volcanic", "purple", "violet", "aubergine", "dustyrose", "red"}},
+             ab_skip = {"volcanic"}},
     names = {
       high = RDN.RD_HIGH, rock_lift = RDN.RD_ROCK_LIFT, rock_lift_ab = RDN.RD_ROCK_LIFT_AB,
       rise = RDN.RD_RISE, gate = RDN.RD_GATE, lapse = RDN.RD_LAPSE, ground = RDN.RD_GROUND,
