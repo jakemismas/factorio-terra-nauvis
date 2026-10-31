@@ -16,9 +16,9 @@ re-emits the tables twice and compares each byte for byte with the committed fil
 
 | File | sha256 | Role |
 |---|---|---|
-| `manifest-atlantic.json` | `2be01ac20ccfc39ab8468d8d87b6a8e0652ce1ed3b94376187bcde36bd3647cf` | emission manifest |
-| `manifest-europe.json` | `b93d204356b78ae0412b7db0f58a4a9f748c415520d3a5b1eb2d55df0323507c` | emission manifest |
-| `manifest-olde_world.json` | `65e5e7a8823008f319d1deb6c2a5e77462b3cd0c0c661f739d6673211e27ec6b` | emission manifest |
+| `manifest-atlantic.json` | `99c9471cab20eb7ea1d687e6c1caf43cad739049684947a29a12333a6eb71c64` | emission manifest |
+| `manifest-europe.json` | `a40f1effead239f1cc52174c0cabc21c177c276fcae887e0695e7e20580129b5` | emission manifest |
+| `manifest-olde_world.json` | `e7c055922c4e8e8a840a01b43f329c386547dcb62f75aed35f7414d7fe9cdd4f` | emission manifest |
 | `islets-atlantic.json` | `0e73d0d8c88335b68f62c55d536e03be8225a9ddf2a124f2e9eb62bd46e10c04` | islets the raster lacks (`tools/build_islets.py`) |
 | `islets-europe.json` | `2af133292cf312976dfaa0d1c3d3f669e0eda9ae8871a7110d6945a740fd90db` | islets the raster lacks (`tools/build_islets.py`) |
 | `islets-olde_world.json` | `5838e39dbc88ebca0425e4c2f5704c178337b280865cd99e648f99fd35c979f3` | islets the raster lacks (`tools/build_islets.py`) |

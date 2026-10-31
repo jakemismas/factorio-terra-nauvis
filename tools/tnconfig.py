@@ -770,6 +770,9 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
             for tile in tl["vanilla"]["tiles"]:
                 pen[tl["vanilla"]["keys"][tile]] = tl["vanilla"]["body"]
             pen[tl["exclude"]["key"]] = tl["exclude"]["body"]
+            mix = tl["vanilla"]["mix"]
+            if map_key in mix["maps"]:
+                pen[mix["key"]] = mix["amount"]
         else:
             pen[tl["marsh"]["grass"]["key"]] = tl["marsh"]["grass"]["body"]
     # the tree keys (trees-forests; presets.lua tree_names), after the climate keys: the multiplier key at
