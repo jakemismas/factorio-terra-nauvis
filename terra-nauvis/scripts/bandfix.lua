@@ -650,9 +650,9 @@ local function shared_lattice(surface)
   local cells = {}
   for j = 0, n - 1 do
     for i = (odd + j) % 2, n - 1, 2 do
-      local name = surface.get_tile(x0 + i * step, y0 + j * step).name
-      if not NONLAND_SET[name] and name ~= "out-of-map" then
-        cells[j * n + i] = name
+      local t = surface.get_tile(x0 + i * step, y0 + j * step)
+      if t.valid and not NONLAND_SET[t.name] and t.name ~= "out-of-map" then
+        cells[j * n + i] = t.name
       end
     end
   end
