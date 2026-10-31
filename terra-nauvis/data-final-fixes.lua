@@ -783,8 +783,25 @@ local function offshore_wrappers(W, keys)
   end
 end
 
+-- Natural regular patches (config.lua resources.natural): each live patch expression's own text, its call
+-- moved to the Earth copy of vanilla's function, with the preset's redirect of the live name. The wrappers
+-- above keep reading the live autoplace, whose text names the live patch expression, so they stay as they
+-- are, and a mod that replaced a patch expression keeps its own.
+local function natural_patches(W, keys)
+  local NP = RS.natural
+  for _, b in ipairs(NP.bodies) do
+    local live = NE[b.live]
+    local text = live and text_of(live.expression)
+    if type(text) == "string" and string.find(text, NP.vanilla_fn, 1, true) then
+      W[#W + 1] = {type = "noise-expression", name = b.name, expression = (string.gsub(text, NP.vanilla_fn, NP.fn))}
+      keys[b.live] = b.name
+    end
+  end
+end
+
 ridge_wrappers()
 local W, keys = {}, {}
+natural_patches(W, keys)
 ore_wrappers(W, keys)
 enemy_wrapper(W, keys)
 offshore_wrappers(W, keys)

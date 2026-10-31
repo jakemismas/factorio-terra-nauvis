@@ -358,6 +358,16 @@ local REN = {
   ORE_OIL_R = ORE .. "crude_oil_r" .. RE_V,
   OFFSHORE_P = NOISE .. "offshore_p" .. RE_V,
   OFFSHORE_R = NOISE .. "offshore_r" .. RE_V,
+  K_HS_AMOUNT = NOISE .. "hotspot_amount",
+  ORE_FN = ORE .. "all_patches" .. RE_V,
+  ORE_GAP = ORE .. "gap" .. RE_V,
+  ORE_PATCH_IRON = ORE .. "iron_ore_patches" .. RE_V,
+  ORE_PATCH_COPPER = ORE .. "copper_ore_patches" .. RE_V,
+  ORE_PATCH_COAL = ORE .. "coal_patches" .. RE_V,
+  ORE_PATCH_STONE = ORE .. "stone_patches" .. RE_V,
+  ORE_PATCH_URANIUM = ORE .. "uranium_ore_patches" .. RE_V,
+  ORE_PATCH_OIL = ORE .. "crude_oil_patches" .. RE_V,
+  ORE_PATCH_OFFSHORE = ORE .. "offshore_oil_patches" .. RE_V,
   EU_FIELDS_KEY = NOISE .. "fields_europe",
   EU_FIELDS = NOISE .. "fields_europe" .. RE_V,
   AT_FIELDS_KEY = NOISE .. "fields_atlantic",
@@ -633,6 +643,13 @@ return {
     hotspots = {
       name = ID .. "-hotspots", type = "bool-setting", setting_type = "startup", default_value = true, order = "c-a",
     },
+    -- Hotspot amount: the ore and oil in every hotspot, a percentage of what
+    -- the rows hold. It multiplies richness and nothing else, so no footprint moves, and it replaces the map
+    -- sliders, which no longer reach a hotspot. Baked per save through tn_hotspot_amount.
+    hotspot_amount = {
+      name = ID .. "-hotspot-amount", type = "string-setting", setting_type = "startup", default_value = "100",
+      allowed_values = {"50", "100", "200", "400"}, order = "c-aa",
+    },
     -- Inland lakes (milestone edge-and-lakes): spawn-cities'
     -- sparse random inland lakes. Off leaves the spawn lake at the chosen city, the rivers and the real
     -- lakes of the coast fit as the only fresh water. Baked per save through the toggle tn_inland_lakes.
@@ -663,7 +680,7 @@ return {
     },
   },
   setting_order = {"scale", "spawn_city_europe", "spawn_city_atlantic", "spawn_city_olde_world", "canals",
-                   "great_forests", "ridges", "hotspots", "inland_lakes",
+                   "great_forests", "ridges", "hotspots", "hotspot_amount", "inland_lakes",
                    "destroyed_europe", "exact_coast", "city_markers"},
 
   -- Map-gen presets, sorted right after Default ("a") and before Rich resources ("b") (S13).
@@ -703,7 +720,7 @@ return {
     ridges = RDN.K_RIDGES, crest = RDN.K_CREST, openings = RDN.K_OPENINGS, band = RDN.K_BAND,
     cliff_elevation = "cliff_elevation", cliffiness = "cliffiness",
     -- resources-enemies: the hotspots toggle, each map's offshore stamp key and the enemy property
-    hotspots = REN.K_HOTSPOTS, enemy = "enemy_base_probability",
+    hotspots = REN.K_HOTSPOTS, enemy = "enemy_base_probability", hotspot_amount = REN.K_HS_AMOUNT,
     fields = {europe = REN.EU_FIELDS_KEY, atlantic = REN.AT_FIELDS_KEY, olde_world = REN.OW_FIELDS_KEY},
     -- edge-and-lakes: the inland lakes switch (a toggle)
     inland_lakes = ELN.K_INLAND_LAKES,
@@ -916,6 +933,10 @@ return {
                  "entity:stone:richness", "entity:uranium-ore:richness", "entity:crude-oil:richness",
                  "enemy_base_probability", REN.K_HOTSPOTS, REN.EU_FIELDS_KEY, REN.AT_FIELDS_KEY, REN.OW_FIELDS_KEY,
                  "entity:offshore-oil:probability", "entity:offshore-oil:richness",
+                 -- a development branch: the patch redirects and the hotspot amount
+                 "default-iron-ore-patches", "default-copper-ore-patches", "default-coal-patches",
+                 "default-stone-patches", "default-uranium-ore-patches", "default-crude-oil-patches",
+                 "default-offshore-oil-patches", REN.K_HS_AMOUNT,
                  -- edge-and-lakes: the inland lakes switch and the new versions' city offset names
                  ELN.K_INLAND_LAKES, ELN.EU6_CX, ELN.EU6_CY,
                  -- the Old World and Atlantic spawn city: the maps' city numbers and the new versions' offset names
@@ -1530,6 +1551,51 @@ return {
     offshore = {resource = "offshore-oil", probability = "entity:offshore-oil:probability",
                 richness = "entity:offshore-oil:richness", p = REN.OFFSHORE_P, r = REN.OFFSHORE_R},
     sea = {name = REN.SEA, threshold_px = 7},
+    -- Natural regular patches (a development branch; with RSO off these are the ore he sees all
+    -- game, and round equal discs on an even spacing read as computer-made). Every Earth preset redirects
+    -- each live patch expression in `bodies` to an Earth copy of it that calls `fn`, a copy of `vanilla_fn`,
+    -- so no resource prototype and no default world changes, and the pack's own patch parameters and
+    -- patch set count stay live. The copy differs from vanilla in five ways:
+    --   size      a spot's size is size.floor + size.gain * u ^ size.power of the typical quantity, u
+    --             uniform: mean 1 / 1.7, so about 1.7 times vanilla's spots, a few large among many small
+    --   radius    the typical spot's radius times sqrt(size), capped at radius_cap, so every spot has one
+    --             height, ore area follows ore amount, and noise moves an outline by a share of that spot's
+    --             own radius (vanilla's cones share a slope: the same noise swamps a small spot)
+    --   province  candidates are taken best first on a low-frequency noise of `wavelength` tiles, shifted
+    --             per ore by `offset`, so ore gathers in provinces instead of an even spacing
+    --   outline   weights of the octaves added to the spot, in vanilla's blob amplitude, capped at `cap` so a
+    --             spot's reach is bounded; `vary` lets the coarse octave scale the rest patch by patch, and
+    --             `warp` moves the spots' coordinates by the 64 and coarse octaves. The starting patches read
+    --             the same octaves at start_w64 and start_coarse. `basement` deepens vanilla's basement
+    --   richness  v / (1 + plateau * v / height), v the field, height the typical spot's: a plateau instead of
+    --             a cone, times 1 + pockets * blobs0, and `level` holds the budget
+    -- Regular ore stays out of hotspot footprints: a candidate keeps its quantity only where `gap` (tiles from
+    -- the nearest footprint on the map) exceeds reach times its radius plus the warp's most.
+    natural = {
+      fn = REN.ORE_FN,
+      vanilla_fn = "resource_autoplace_all_patches",
+      gap = REN.ORE_GAP,
+      no_gap = 1000000,
+      size = {floor = 0.25, gain = 1.35, power = 3, radius_cap = 40},
+      province = {seed1 = 7405, wavelength = 320, offset = 4096, base = 2},
+      outline = {coarse = {seed1 = 7406, wavelength = 128}, w24 = 1.5, w64 = 3, w128 = 2.5, vary = 0.5, cap = 6,
+                 start_w64 = 2.5, start_coarse = 2, basement = 4},
+      warp = {amplitude = 8},
+      plateau = 2,
+      pockets = 0.35,
+      level = 1.7,
+      reach = 1.75,
+      warp_reach = 18,
+      bodies = {
+        {live = "default-iron-ore-patches", name = REN.ORE_PATCH_IRON},
+        {live = "default-copper-ore-patches", name = REN.ORE_PATCH_COPPER},
+        {live = "default-coal-patches", name = REN.ORE_PATCH_COAL},
+        {live = "default-stone-patches", name = REN.ORE_PATCH_STONE},
+        {live = "default-uranium-ore-patches", name = REN.ORE_PATCH_URANIUM},
+        {live = "default-crude-oil-patches", name = REN.ORE_PATCH_OIL},
+        {live = "default-offshore-oil-patches", name = REN.ORE_PATCH_OFFSHORE},
+      },
+    },
   },
 
   -- Hotspots (milestone resources-enemies; S6 A5 with a shared blob; APPROVALS 2; decisions 8 and 16). The
@@ -1577,6 +1643,7 @@ return {
   --              R4 4.1), fluids their well penalty and additional richness, sea for offshore fields
   hotspots = {
     floor_tiles = 48,
+    amount_percent = 100,
     core_share = 0.75,
     enemy_share = 0.75,
     patches = 4,
@@ -1585,16 +1652,22 @@ return {
     land_grade_px = 8,
     spot = {region_size = 512, candidates = 512, candidates_fine = 1024, fine_scale = 1, spacing = 16,
             spacing_fine = 8, max_spots = 32, basement = -100000, basement_radius = 128, min_radius = 1,
-            cube_root = 1 / 3, cone_factor = 3},
+            min_room = 3, cube_root = 1 / 3, cone_factor = 3},
     target = {fade_from = 150, fade_span = 300, double_from = 300, double_span = 1300, rich_offset = 1000,
               rich_span = 2600, per_km2 = 1000000, reference_strength = 2, reference_factor = 2,
               density_floor = 15},
     -- A row's bodies of ore (equal round spots on a blue-noise grid read as polka
     -- dots): half the candidates carry nothing and the rest share the amount by a squared uniform, so a
     -- few large bodies stand among small ones; mean 1 over all candidates, so a row's amount holds on
-    -- average. The blob reaches past each cone's rim, which is what lets an outline leave the circle.
+    -- average. The blob reaches past each cone's rim, which is what lets an outline leave the circle, but
+    -- never past the footprint: blob.cap bounds
+    -- the blob's rise, and a cone's slope is at least cone_factor / (pi * rq ^ 3) once its quantity holds a
+    -- spot of min_radius, so a tile with ore lies within the cone's radius plus cap * height / divisor over
+    -- that slope. A candidate's radius is held to its room: the row's disc less the shared roughness's clamp
+    -- and that reach, and less any rival row a different ore's spots must keep out of (tn_pd_ reads the plain
+    -- distance to a row's jittered centre), so ore stays in its plain disc and its roughened footprint alike.
     size = {keep = 0.5, power = 2, gain = 6},
-    blob = {name = REN.HS_BLOB, seed1 = 7302, mean = 1 / 3, divisor = 3.5,
+    blob = {name = REN.HS_BLOB, seed1 = 7302, mean = 1 / 3, divisor = 3.5, cap = 2,
             octaves = {{input_scale = 1 / 8, output_scale = 1}, {input_scale = 1 / 24, output_scale = 1},
                        {input_scale = 1 / 64, output_scale = 1.5}}},
     resources = {
@@ -1941,12 +2014,14 @@ return {
     octave_shift_px = 10000.37,
     max_arguments = 255,
     forest_boost = 2,
+    -- hotspot_share: a hotspot stays on its real place: a table's jitter radius is half
+    -- the row's radius, up to 100 km, so a disc could stand half a radius off the site; a quarter stays on it.
     jitter = {mult_x = 0.6180339887, mult_y = 0.4142135624, mult_high = 0.569840291, high_bits = 65536,
-              vertex_step = 0.7548776662, flat_px = 0.001},
+              vertex_step = 0.7548776662, flat_px = 0.001, hotspot_share = 0.5},
     names = {
       suffix = RG_V,
       row = {sd = NOISE .. "sd_", w = NOISE .. "w_", depth = NOISE .. "depth_", hu = NOISE .. "hu_",
-             hv = NOISE .. "hv_"},
+             hv = NOISE .. "hv_", pd = NOISE .. "pd_"},
       share = "_k",
       destroyed_sd = RG_DESTROYED_SD, destroyed_w = RG_DESTROYED_W, destroyed_depth = RG_DESTROYED_DEPTH,
       forest_w = RG_FOREST_W, forest_sum = RG_FOREST_SUM, tree_mult = RG_TREE_MULT, marsh_w = RG_MARSH_W,

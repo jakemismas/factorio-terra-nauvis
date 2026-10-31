@@ -94,6 +94,8 @@ local function geography(map_key)
 end
 
 local scale = tonumber(settings.startup[cfg.settings.scale.name].value)
+-- The hotspot amount is a percentage in the setting and a multiplier in the bodies.
+local hotspot_amount = tonumber(settings.startup[cfg.settings.hotspot_amount.name].value) / cfg.hotspots.amount_percent
 
 -- The per-save city number a spawn-city setting stands for: its value's position in the setting's
 -- allowed values, less one, so random (the first) is 0 and the first city 1.
@@ -288,6 +290,7 @@ local function baked(map_key, v)
     [K.land_coarse] = v.land_coarse,
     [K.map] = cfg.maps[map_key].id,
     [K.scale] = scale,
+    [K.hotspot_amount] = hotspot_amount,
     [K.geo] = v.geo_id,
     [v.cx] = v.city_offset[1],
     [v.cy] = v.city_offset[2],

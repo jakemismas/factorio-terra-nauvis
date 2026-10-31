@@ -7,6 +7,7 @@
 --                               edge roughness
 --   row.w .. id .. suffix       the membership weight clamp(mid + sd / width, 0, 1), the soft edge
 --   row.depth .. id .. suffix   the same signed distance in tiles
+-- and a hotspot row also row.pd .. id .. suffix, the plain distance to its jittered centre in reference pixels.
 -- A marsh row's signed distance also reads the marsh outline noise and its weight a wider ramp (config.lua
 -- regions.marsh), so no marsh shows its exact disc or path.
 -- A hotspot row's disc sits at its adopted centre moved per seed by up to its jitter radius (S6's
@@ -311,7 +312,7 @@ end
 local function row_names(r)
   local rn = N.row
   return {sd = rn.sd .. r.id .. SUF, w = rn.w .. r.id .. SUF, depth = rn.depth .. r.id .. SUF,
-          hu = rn.hu .. r.id .. SUF, hv = rn.hv .. r.id .. SUF}
+          hu = rn.hu .. r.id .. SUF, hv = rn.hv .. r.id .. SUF, pd = rn.pd .. r.id .. SUF}
 end
 
 local function weight(sd_name, width_px)
@@ -345,10 +346,12 @@ for _, r in ipairs(T.rows) do
   if r.shape == "disc" then
     local cu, cv = to_px(r.lat, r.lon)
     if r.layer == "hotspot" then
-      local reach = r.jitter_km / R.km_per_px / math.sqrt(2)
+      local reach = r.jitter_km * JT.hotspot_share / R.km_per_px / math.sqrt(2)
       def(nm.hu, jittered(cu, JT.mult_x, r.phase, reach))
       def(nm.hv, jittered(cv, JT.mult_y, r.phase, reach))
       text, L = disc(nm.hu, nm.hv, r.radius_km / R.km_per_px, qu, qv)
+      -- the plain distance to the jittered centre, in reference pixels, for the hard footprint (resources.lua)
+      def(nm.pd, "sqrt(du * du + dv * dv)", {du = L.du, dv = L.dv})
     else
       text, L = disc(cu, cv, r.radius_km / R.km_per_px, qu, qv)
     end
