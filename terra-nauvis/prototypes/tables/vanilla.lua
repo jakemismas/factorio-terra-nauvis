@@ -16,6 +16,8 @@
 --             (AB/prototypes/disables.lua:21-51, AB/prototypes/decorative/vegetation.lua:43-54)
 --   extend    vanilla decoratives Alien Biomes restricts to its own tiles (AB vegetation.lua:15-35,
 --             AB rocks.lua:56-107), and vanilla's dead and dry trees, which AB restricts the same way
+--   dead_scores  the living trees each dead tree's base game score reads (trees.lua:4215-4263, 0.2 * max(parents)
+--             * clamp(1 - tree_small_noise, 0, 2); tree_dead_desert's two local terms are left out)
 --   decor     the base game's score of the extended decoratives and of the two garballos, as M1 dumps them:
 --             Alien Biomes rewrites nine and leaves six reading a scale it has moved, so beside it the
 --             temperate band places these from these texts (config.lua trees.decor)
@@ -286,6 +288,13 @@ return {
     "red-desert-bush", "red-pita", "white-desert-bush",
   },
   dead_trees = {"dead-dry-hairy-tree", "dead-grey-trunk", "dead-tree-desert", "dry-hairy-tree", "dry-tree"},
+  dead_scores = {
+    ["dead-dry-hairy-tree"] = {"tree-05", "tree-06", "tree-06-brown", "tree-09", "tree-09-brown", "tree-09-red"},
+    ["dead-grey-trunk"] = {"tree-02", "tree-02-red", "tree-03", "tree-04"},
+    ["dead-tree-desert"] = {"tree-08", "tree-08-brown", "tree-08-red"},
+    ["dry-hairy-tree"] = {"tree-05", "tree-06", "tree-06-brown"},
+    ["dry-tree"] = {"tree-01", "tree-09", "tree-09-brown", "tree-09-red"},
+  },
   decor = {
     {
       name = "brown-asterisk",

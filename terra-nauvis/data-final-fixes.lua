@@ -462,11 +462,29 @@ local function decor_hooks()
   return n
 end
 
+-- The same for the dead trees: AB's score elsewhere, and where vanilla land lies the base game's, off the
+-- restored trees' keys, which read the vanilla-scale temperature.
+local function dead_hooks(R)
+  for _, name in ipairs(VAN.dead_trees) do
+    local autoplace = data.raw.tree[name] and data.raw.tree[name].autoplace
+    if autoplace and autoplace.probability_expression ~= nil then
+      local keys = {}
+      for i, t in ipairs(VAN.dead_scores[name]) do
+        keys[i] = R.trees[t].p
+      end
+      local own = "(" .. tostring(autoplace.probability_expression) .. ")"
+      autoplace.probability_expression = hook("if(" .. TL.scan.body .. " > " .. num(H.threshold) .. ", " .. own ..
+        ", 0.2 * max(" .. table.concat(keys, ", ") .. ") * clamp(1 - tree_small_noise, 0, 2))", own)
+    end
+  end
+end
+
 local function restore_vanilla()
   local R = TR.restore
   local trees, rocks, relisted, extended = restore_trees(R), restore_rocks(R), relist_decoratives(R),
     extend_restrictions()
   decor_hooks()
+  dead_hooks(R)
   log(cfg.identity.title .. ": restored " .. trees .. " vanilla trees and " .. rocks .. " rocks and decals, " ..
     "re-listed " .. relisted .. " decoratives, extended " .. extended .. " restrictions beside Alien Biomes")
 end
