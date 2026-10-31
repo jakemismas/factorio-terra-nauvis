@@ -45,8 +45,8 @@
 -- The highlands (a cliff squiggle on plain grass does not read as a mountain range; design notes
 -- 18:00): a band round each range, wider and stronger the taller the range, faded in outside the ridge-free
 -- start disc, frayed by noise the region layer already computes. It costs only what it reads again:
---   rocks    in the Entity program, on the crest band's own pieces and one reach per piece: lifts vanilla's
---            rock_density by one redirect and Alien Biomes' big rocks by a hook, outside the named passes
+--   rocks    in the Entity program, on the crest band's own pieces and one reach per piece: lifts rock_density
+--            as the three big vanilla rocks read it and Alien Biomes' big rocks by a hook, outside the openings
 --   tiles    in the Tile program, at the wandering point with a reach that follows the vertex heights: lifts the
 --            stony vanilla tiles' score and, beside Alien Biomes, lowers the tile temperature and moisture, so
 --            the top of a tall range turns to Alien Biomes' grey ground and snow. Trees and decoratives keep the
@@ -277,7 +277,7 @@ local function add_opening(O, m, pts, o, wide)
     end
   end
   local s = tostring(#O.terms + 1)
-  if o.kind == "pass" then
+  if RD.rocks.clear_kinds[o.kind] then
     O.named[#O.named + 1] = {cu, cv}
   end
   -- a pass moves with the wandering crest; an edge stays where the map's extent is
@@ -529,12 +529,12 @@ def(K.ground, num(0))
 -- The grain's bodies read the tile reach, and a save from before the highlands names those bodies but not this
 -- key: its prototype leaves such a save no rise, so its ground stays.
 def(K.high_tile, "-inf")
--- The rock lift: the highland outside the named passes. vanilla's rock_density with it added reaches every
--- vanilla rock and rock decorative through one redirect, with or without Alien Biomes; Alien Biomes' big
--- rocks read their own noise, so data-final-fixes.lua hooks the key on them.
+-- The rock lift: the highland outside the openings. The three big vanilla rocks read rock_density with it added
+-- (trees.lua, their high bodies); Alien Biomes' big rocks read their own noise, so data-final-fixes.lua hooks the
+-- key on them.
 local RK = RD.rocks
 def(N.rock_lift, N.high .. " * " .. K.passes)
-def(N.rock_density, require("prototypes.tables.vanilla").rock_density .. " + " .. num(RK.gain) .. " * " .. N.rock_lift)
+def(N.rock_density, "rock_density + " .. num(RK.gain) .. " * " .. N.rock_lift)
 def(N.rock_lift_ab, num(RK.gain_ab) .. " * " .. N.rock_lift)
 def(K.rock_lift, num(0))
 

@@ -169,6 +169,12 @@ for _, row in ipairs(V.rocks) do
   end
   def(n.key, R.rock_off)
   def(n.body, row.probability_expression, locals)
+  -- A big rock's highland body (ridges.lua): the same text on rock_density with the lift. Rock decoratives keep
+  -- vanilla's, so ground cover stays what it was.
+  if n.high then
+    def(n.high, (string.gsub(row.probability_expression, "%f[%w_]rock_density%f[^%w_]", cfg.ridges.names.rock_density)),
+      locals)
+  end
 end
 
 -- The re-listed decoratives: one key each at -inf, all naming one body.

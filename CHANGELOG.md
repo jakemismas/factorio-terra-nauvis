@@ -38,6 +38,11 @@ versions follow [Semantic Versioning](https://semver.org/).
   of hotspot discs and different ores' hotspots never interleave, by a test on each spot's candidate,
   so the rules add almost nothing per tile.
 - Hotspot jitter is halved, so a disc stands at most a quarter of its radius off its real site.
+- Mountain ranges read as highlands, not as a cliff line on grass: big rocks thicken round each range,
+  wider and stronger the taller it is, and clear of its passes and of every start;
+  the ground leans to dry dirt, and beside Alien Biomes the tops of tall ranges turn to grey ground and
+  snow. Tile scores alone read the lean, so the forests on the slopes stay
+  (`ridges.high`, `ridges.ground`, `ridges.rocks`; design notes 2026-10-30 18:00, a development branch).
 - The map's outline reads as a natural ocean margin at a far map view: where the box cuts land (Europe's
   North Africa, Russia and Anatolia, and Chukotka on Atlantic and Old World) land ends in bays and
   headlands up to a few hundred tiles deep at scale 6, instead of a thin wavy strip following a straight
@@ -53,11 +58,6 @@ versions follow [Semantic Versioning](https://semver.org/).
   chunk's corners, so it draws no rectangles of one tile along chunk borders (`bandfix.smooth.corners`).
 - Small marshes on Europe and Atlantic read the shared roughness harder, so the Danube delta's outline is no
   disc edge. No noise call is added and Old World keeps its bodies' values (`regions.marsh.edge_gain`).
-- Mountain ranges read as highlands, not as a cliff line on grass: big rocks and rock decoratives thicken
-  round each range, wider and stronger the taller it is, and clear of named passes and of every start;
-  the ground leans to dry dirt, and beside Alien Biomes the tops of tall ranges turn to grey ground and
-  snow. Tile scores alone read the lean, so the forests on the slopes stay
-  (`ridges.high`, `ridges.ground`, `ridges.rocks`; design notes 2026-10-30 18:00, a development branch).
 - Old World's and Atlantic's coasts are crisp lines: their geography versions read the coast fit at
   warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
   of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is

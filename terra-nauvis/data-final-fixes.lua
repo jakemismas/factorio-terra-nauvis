@@ -323,6 +323,20 @@ local function ground_hooks()
   end
 end
 
+-- Milestone destroyed-europe: with the zone on, the volcanic heat bands take the ramp of cfg.destroyed.map_colors,
+-- so the map view and the new-game preview tell them apart. Map colours only; no world changes.
+local function heat_map_colors()
+  local C = cfg.destroyed.map_colors
+  for _, family in ipairs(C.families) do
+    for band, color in ipairs(C.bands) do
+      local tile = data.raw.tile["volcanic-" .. family .. "-heat-" .. band]
+      if tile then
+        tile.map_color = color
+      end
+    end
+  end
+end
+
 if AB then
   vanilla_hooks()
   exclusion_hooks()

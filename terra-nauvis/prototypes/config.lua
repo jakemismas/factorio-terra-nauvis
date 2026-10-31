@@ -228,9 +228,9 @@ local TF_TREES = {
 }
 local VR = NOISE .. "vrock_"
 local TF_ROCKS = {
-  ["huge-rock"] = {key = VR .. "huge_rock", body = VR .. "huge_rock_v1"},
-  ["big-rock"] = {key = VR .. "big_rock", body = VR .. "big_rock_v1"},
-  ["big-sand-rock"] = {key = VR .. "big_sand_rock", body = VR .. "big_sand_rock_v1"},
+  ["huge-rock"] = {key = VR .. "huge_rock", body = VR .. "huge_rock_v1", high = VR .. "huge_rock_v2"},
+  ["big-rock"] = {key = VR .. "big_rock", body = VR .. "big_rock_v1", high = VR .. "big_rock_v2"},
+  ["big-sand-rock"] = {key = VR .. "big_sand_rock", body = VR .. "big_sand_rock_v1", high = VR .. "big_sand_rock_v2"},
   ["medium-rock"] = {key = VR .. "medium_rock", body = VR .. "medium_rock_v1"},
   ["small-rock"] = {key = VR .. "small_rock", body = VR .. "small_rock_v1"},
   ["tiny-rock"] = {key = VR .. "tiny_rock", body = VR .. "tiny_rock_v1"},
@@ -743,8 +743,8 @@ return {
     -- ridges: the toggle, the map's crest and openings keys, and the two cliff properties the presets
     -- redirect (S5)
     ridges = RDN.K_RIDGES, crest = RDN.K_CREST, openings = RDN.K_OPENINGS, band = RDN.K_BAND,
-    high = RDN.K_HIGH, passes = RDN.K_PASSES, rock_lift = RDN.K_ROCK_LIFT, rock_density = "rock_density",
-    ground = RDN.K_GROUND, high_tile = RDN.K_HIGH_TILE,
+    high = RDN.K_HIGH, passes = RDN.K_PASSES, rock_lift = RDN.K_ROCK_LIFT, ground = RDN.K_GROUND,
+    high_tile = RDN.K_HIGH_TILE,
     cliff_elevation = "cliff_elevation", cliffiness = "cliffiness",
     -- resources-enemies: the hotspots toggle, each map's offshore stamp key and the enemy property
     hotspots = REN.K_HOTSPOTS, enemy = "enemy_base_probability", hotspot_amount = REN.K_HS_AMOUNT,
@@ -952,7 +952,8 @@ return {
                  -- ridges: the toggle, the map's ridge keys, the two cliff properties and the Earth ores'
                  -- probability keys (data-final-fixes.lua points them at the clearance wrappers)
                  RDN.K_RIDGES, RDN.K_CREST, RDN.K_OPENINGS, RDN.K_BAND, "cliff_elevation", "cliffiness",
-                 RDN.K_HIGH, RDN.K_PASSES, RDN.K_ROCK_LIFT, "rock_density", RDN.K_GROUND, RDN.K_HIGH_TILE,
+                 RDN.K_HIGH, RDN.K_PASSES, RDN.K_ROCK_LIFT, RDN.K_GROUND, RDN.K_HIGH_TILE,
+                 "entity:huge-rock:probability", "entity:big-rock:probability", "entity:big-sand-rock:probability",
                  "entity:iron-ore:probability", "entity:copper-ore:probability", "entity:coal:probability",
                  "entity:stone:probability", "entity:uranium-ore:probability", "entity:crude-oil:probability",
                  -- resources-enemies: the richness keys, the enemy property, the hotspots toggle, each map's
@@ -1099,7 +1100,8 @@ return {
                RDN.K_ROCK_LIFT, RDN.K_GROUND, RDN.K_HIGH_TILE, RDN.RD_RISE, RDN.RD_GATE, RDN.RD_LAPSE, RDN.RD_GROUND,
                RDN.RD_HIGH,
                RDN.RD_RISE_TILE, RDN.RD_HIGH_TILE, RDN.EU_HIGH_TILE, RDN.AT_HIGH_TILE, RDN.OW_HIGH_TILE,
-               RDN.RD_ROCK_LIFT, RDN.RD_ROCK_LIFT_AB, RDN.RD_ROCK_DENSITY,
+               RDN.RD_ROCK_LIFT, RDN.RD_ROCK_LIFT_AB, RDN.RD_ROCK_DENSITY, TF_ROCKS["huge-rock"].high,
+               TF_ROCKS["big-rock"].high, TF_ROCKS["big-sand-rock"].high,
                RDN.EU_HIGH, RDN.AT_HIGH, RDN.OW_HIGH, RDN.EU_PASSES, RDN.AT_PASSES, RDN.OW_PASSES,
                RDN.RD_CLIFF_ELEVATION, RDN.RD_CLIFFINESS, RDN.RD_CLEAR, RDN.ORE_IRON, RDN.ORE_COPPER, RDN.ORE_COAL,
                RDN.ORE_STONE, RDN.ORE_URANIUM,
@@ -1513,11 +1515,15 @@ return {
   --              here, because under about -50 every frozen tile scores below Alien Biomes' water-mud, which
   --              flooded the Himalaya at scale 6. moisture: the tile moisture's fall at full highland, off the
   --              wet grasses onto mineral ground
-  --   rocks      the lift on rock_density (vanilla's rocks and rock decoratives) at full highland, and on
-  --              Alien Biomes' big rocks, whose noise threshold is far sharper; clear_tiles the radius round a
-  --              named pass that keeps no lift, fade_tiles how far it fades back in. To hold Entity under its
+  --   rocks      the lift at full highland on rock_density as the three big vanilla rocks read it (each one's
+  --              high body; rock decoratives keep vanilla's, they are ground cover), and on Alien Biomes' big
+  --              rocks, whose noise threshold is far sharper; clear_tiles the radius round an opening of a kind in
+  --              clear_kinds that keeps no lift, fade_tiles how far it fades back in. Unnamed gaps are not listed:
+  --              each disc costs Entity about 14, and with them Old World read 32,067. To hold Entity under its
   --              limit at scale 1 too, the Entity band reads no cosine and no roughness, skips a piece shorter than
-  --              short_px (its neighbours' reach covers it), and ab_skip leaves out the palette Earth never lays
+  --              short_px (its neighbours' reach covers it), and ab_skip leaves out Alien Biomes' alien palette, which
+  --              no judged Old World or Europe window showed (about 2,500 pixels of it in the Rockies window keep
+  --              their own rocks unlifted)
   --   ores       the Earth ores whose live probability is wrapped (resource, preset key, wrapper)
   --   water      the water frequency slider's two vanilla readers stay group 0's water_slider
   --              (D15), baked on every Earth preset at their default-slider values
@@ -1562,10 +1568,11 @@ return {
     reset_size = 1,
     max_arguments = 255,
     high = {ref_m = 4800, min_px = 8, gain_px = 42, power = 0.9, tiles = 30, fall_px = 44, fall_tiles = 36,
-            fray_warp = 0.7, fray_rough = 2, fray_massif = 14, start = {ramp_tiles = 96}},
+            fray_warp = 0.7, fray_rough = 2, fray_massif = 9, start = {ramp_tiles = 96}},
     ground = {lean = 6, lapse_per_px2 = 0.03, lapse_from_px = 7, cold_t = 30, cold_min = 0.15, floor = -12,
               moisture = 0.2, fray = 2, massif = {gain = 0.04, low = 0.72, high = 1.15}},
-    rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24, short_px = 24,
+    rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24, short_px = 40,
+             clear_kinds = {pass = true},
              ab_prefixes = {"huge-rock-", "big-rock-", "sand-big-rock-"},
              ab_skip = {"volcanic", "purple", "violet", "aubergine", "dustyrose", "red"}},
     names = {

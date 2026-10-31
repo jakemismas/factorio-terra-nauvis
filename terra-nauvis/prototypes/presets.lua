@@ -166,9 +166,10 @@ end
 -- The ridges (milestone ridges; S5): the two cliff properties point at the shared ridge bodies, which read
 -- the map's crest distance and openings through the keys tn_crest and tn_openings (and the ore
 -- clearance its crest band through tn_band), so ridges are the only cliffs on every Terra Nauvis
--- preset, ridges on or off (off: 0 cliffs). The highland keys name the map's band for rocks and for tile scores,
--- its passes and the rock_density copy with the lift; the rock key reaches Alien Biomes' rocks, and without Alien
--- Biomes the ground key the stony tiles' hook (with it their tile keys name the lean, grain_values below).
+-- preset, ridges on or off (off: 0 cliffs). The highland keys name the map's band for rocks and for tile scores
+-- and its openings. The three big vanilla rocks name their high bodies, through their restored keys beside Alien
+-- Biomes and their probability keys without it; the rock key reaches Alien Biomes' rocks, and without Alien Biomes
+-- the ground key the stony tiles' hook (with it their tile keys name the lean, grain_values below).
 local function ridge_values(map_key)
   local RN = cfg.ridges.names
   local crest, openings, band = RN.crest[map_key], RN.openings[map_key], RN.band[map_key]
@@ -177,8 +178,12 @@ local function ridge_values(map_key)
   end
   local out = {[K.cliff_elevation] = RN.cliff_elevation, [K.cliffiness] = RN.cliffiness, [K.crest] = crest,
                [K.openings] = openings, [K.band] = band, [K.high] = RN.high_map[map_key],
-               [K.passes] = RN.passes[map_key], [K.rock_density] = RN.rock_density,
-               [K.high_tile] = RN.high_tile_map[map_key]}
+               [K.passes] = RN.passes[map_key], [K.high_tile] = RN.high_tile_map[map_key]}
+  for name, n in pairs(cfg.trees.restore.rocks) do
+    if n.high then
+      out[AB and n.key or ("entity:" .. name .. ":probability")] = n.high
+    end
+  end
   if AB then
     out[K.rock_lift] = RN.rock_lift_ab
   else

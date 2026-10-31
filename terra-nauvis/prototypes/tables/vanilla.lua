@@ -12,7 +12,6 @@
 --   rocks     the autoplace of huge-rock, big-rock and big-sand-rock (simple entities) and of the rock
 --             and decal decoratives (base/prototypes/decorative/decoratives.lua:4345, 4506, 4669, 4790,
 --             4943, 5104, 5260, 5415, 5574, 6357 and 6558)
---   rock_density  the base game's noise expression of that name, the highland lift's copy (ridges.lua)
 --   relist    vanilla decoratives Alien Biomes keeps with their autoplace but takes off Nauvis
 --             (AB/prototypes/disables.lua:21-51, AB/prototypes/decorative/vegetation.lua:43-54)
 --   extend    vanilla decoratives Alien Biomes restricts to its own tiles (AB vegetation.lua:15-35,
@@ -167,7 +166,6 @@ return {
     },
   },
   tree_richness = "clamp(random_penalty_at(6, 1), 0, 1)",
-  rock_density = "rock_noise - max(0, 1.1 - distance / 32)",
   rocks = {
     {
       type = "simple-entity", name = "huge-rock",

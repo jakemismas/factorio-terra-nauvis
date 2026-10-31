@@ -16941,7 +16941,7 @@ def tf_preset_keys(cfg, ab):
             out[n["p"]] = n["body"]
             out[n["r"]] = R["richness"]
         for n in R["rocks"].values():
-            out[n["key"]] = n["body"]
+            out[n["key"]] = n.get("high") or n["body"]
         for key in R["decoratives"].values():
             out[key] = R["deco_body"]
         for p in TR["palm"]:
