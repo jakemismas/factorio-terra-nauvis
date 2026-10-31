@@ -7,7 +7,9 @@
 -- Per new chunk of the Nauvis surface, a pure function of the chunk's position, its generated tiles and
 -- the shipped K+ data of the save's map and scale (scripts/generated/, tools/build_geo.py --bandfix): the
 -- map's K+ table (its K pixels at every offered scale with the reference classes of their neighbours)
--- and the scale's mask table (the K+ pixels inside a waterway, canal, dam or basin footprint there):
+-- and the scale's mask table (the K+ pixels inside a waterway, canal, dam or basin footprint there). The tables
+-- read the reference with the sea's thin channels as water and the islets the raster lost as land
+-- (tools/build_geo.py bandfix_classes), so straits and islets under a pixel come back here:
 --   1. the chunk's reference pixels: geo tile = world tile + the city offset read once in on_init, pixel
 --      floor(geo / scale) + the map's radius, tile offset geo mod scale (the coordinate chain's frame);
 --   2. a chunk with no K pixel returns before reading a tile;
@@ -16,8 +18,9 @@
 --      and marsh water, are neither, so the right tiles of a coast cost nothing;
 --   4. such a tile takes its pixel's class when it lies outside the spawn keep disc and the reference, blurred
 --      by a quadratic B-spline over the pixel's 3 x 3, reads its pixel's class at it by more than
---      a threshold (bandfix.smooth): half a pixel from a straight coast, so the rule is S12's there, and the
---      line where a write stops is a rounded, wobbling curve instead of the raster's stairs. A pixel whose band
+--      a threshold (bandfix.smooth): about a fifth of a pixel from a straight coast, so the coast follows the
+--      reference on every shore, however far the coast fit strays, and the line where a write stops is a rounded,
+--      wobbling curve instead of the raster's stairs. A pixel whose band
 --      region holds no 2 x 2 block of tiles (an islet or a channel narrower than a pixel) is drawn as a blob
 --      around its centre, whatever the blur reads there; below smooth.min_scale the rule is
 --      S12's closed rule. Land of an open-sea pixel (no land around it) becomes deep water, and where the chunk

@@ -87,6 +87,7 @@ All of these are startup settings except City markers, which is on the Map tab.
 | Inland lakes | Off | Scatters small random lakes across the land. Off leaves the lake at the spawn city, the rivers and the real lakes of the map. |
 | Destroyed Europe | Off | Needs Alien Biomes. Turns the heart of Europe, from France to Warsaw and down to Ljubljana and about Rome, into a red wasteland of lava, black ash, red rock and scorched grass, with an outline that differs on every map seed. The start area stays normal. |
 | Exact coastlines | On | On Atlantic and Old World it snaps a new world's coast to the reference map as chunks generate, so fjords, bays and islets come back. The new-game preview shows the coast before that, and land made from sea takes the trees and ground cover of the land beside it. Europe's map does not need it. |
+| Exact coastlines | On | On Atlantic and Old World it holds a new world's coast to the reference map as chunks generate, on every continent alike, so fjords, sounds, channels and islets come back. The new-game preview shows the coast before that, and land made from sea stays bare. Europe's map keeps its noise coast. |
 | City markers | Off | Names every city on the map view. It changes nothing in the world, so you can switch it at any time in a running game. Worlds made from a Map type entry alone get no markers. |
 
 ## Compatibility
@@ -114,8 +115,13 @@ All of these are startup settings except City markers, which is on the Map tab.
   The other map generation sliders work.
 - **The new-game preview is small.** No mod can change its size, so it shows only the area around
   the spawn, never a whole map at a large scale.
-- **Coasts vary in detail.** Old World's coast puts its detail on Europe, so Asia, Africa and
-  Australia are coarser. Islets and channels narrower than a reference pixel can be missing.
+- **A coast is as fine as its reference, and the preview is coarser.** The reference holds one
+  pixel per 2.5 km or so, at every map scale and on every continent, so a world's coast follows it to
+  within a tile or two and shows nothing finer. Islets under a pixel come from a vector coastline and
+  are drawn a pixel wide. A channel narrower than a pixel is drawn as a thin channel where the
+  reference shows one, and rivers and straits near a waterway keep the waterway's own line. The
+  new-game preview shows the noise coast, which on Old World and Atlantic is coarser away from Europe
+  than the world you get. Exact coastlines off leaves that noise coast in the world too.
 - **New chunks cost more than in the base game,** and more again beside Alien Biomes. Noise adds
   nothing per tick once chunks exist. Terra Nauvis also adds a few seconds to the game's startup.
 - **An existing save stays as it is.** Adding the mod to a world made without it changes nothing on
@@ -129,7 +135,9 @@ All of these are startup settings except City markers, which is on the Map tab.
 
 Terra Nauvis is by Jake Mismas, under the GNU General Public License version 3: see
 `terra-nauvis/LICENSE`, and `terra-nauvis/SOURCE-OFFER.txt` for how to get the source. Its map data
-derives from [EarthMaps](https://github.com/HySpeed/EarthMaps) by HySpeed, also GPLv3.
+derives from [EarthMaps](https://github.com/HySpeed/EarthMaps) by HySpeed, also GPLv3. The islets the
+EarthMaps raster lacks are derived from
+[RESOLVE Ecoregions 2017](https://ecoregions.appspot.com/) by Dinerstein et al., CC BY 4.0.
 
 ## For developers
 

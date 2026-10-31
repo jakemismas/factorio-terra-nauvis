@@ -46,6 +46,10 @@ versions follow [Semantic Versioning](https://semver.org/).
   draws per tile with a generator seeded per chunk.
 - `tools/build_geo.py emit --map <map> --bandfix --masks-only` rewrites the mask tables from the
   committed K+ table in about a minute, for a change that moves waterways only.
+- Exact coastlines holds every shore to the reference alike: the write band narrows from half a pixel
+  to about a fifth, K covers every coast pixel, the sea's thin water opens as channels and inlets, and
+  islets the raster lost return from a vector coastline (`tools/build_islets.py`,
+  `data-src/bandfix/islets-<map>.json`; design notes 2026-10-30 17:40, a development branch).
 
 ## [0.1.0] - 2026-10-30
 

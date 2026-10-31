@@ -2245,11 +2245,11 @@ return {
   -- Exact coastlines (milestone coast-band-fix; ARCHITECTURE.md, "Control stage"; S12, S13-bandfix; design notes
   -- 07:05, 12:35 and 13:45). On a save whose Nauvis surface carries the key, scripts/bandfix.lua's
   -- on_chunk_generated handler rewrites, where the generated land or water is wrong, the tiles of the K
-  -- pixels of the save's map and scale: scored reference pixels (not thin water) outside every waterway,
-  -- canal, dam and ford footprint that hold a tile the coast fit may misclassify at least half a
-  -- reference pixel from the reference coast (S12's closed band rule). tools/build_geo.py emits each
-  -- map's K+ table (K and its 8 neighbours) per scale into scripts/generated/ and prices it in
-  -- data-src/bandfix/.
+  -- pixels of the save's map and scale: scored reference pixels (not thin water, except the sea's) outside
+  -- every waterway, canal, dam and ford footprint that touch the other class, or hold a tile the coast fit
+  -- may misclassify at least half a reference pixel from the reference coast (S12's closed band rule).
+  -- tools/build_geo.py emits each map's K+ table (K and its 8 neighbours) per scale into scripts/generated/
+  -- and prices it in data-src/bandfix/.
   --   setting, key, on  the startup bool, the per-save name switch and its value when on: a map's preset
   --       carries the key only when the setting is on and the map is listed in maps; absent means off
   --   maps  the maps whose four flip checks passed (decision 9; test notes 5.9), in map order; none
@@ -2277,8 +2277,10 @@ return {
   --       (a pixel with no land among its 8 neighbours); land_fallback is written land in a chunk that shows no land
   --       on its lattice nor on ground_rings rings of chunks around it
   --   smooth  the write rule at scales from min_scale up: the reference blurred by a quadratic B-spline must read
-  --       the pixel's class by at least threshold + wobble * a smooth tile noise (3/4 is half a pixel from a
-  --       straight coast); in a fill pixel it reads within thin of its value at the pixel's centre, a blob. octaves
+  --       the pixel's class by at least threshold + wobble * a smooth tile noise (0 on a straight coast, 3/4 half a
+  --       pixel from it, so 0.3 is a fifth of a pixel and the wobble moves it about a tenth of one; a wider band left
+  --       every shore outside Europe riding the band's edge); in a fill pixel it reads within thin of its value at
+  --       the pixel's centre, a blob. octaves
   --       name the noise's cells per period_tiles and weights, hash its lattice values, shift_tiles the second
   --       reading the deep-water line takes; written land takes the nearest land on a lattice of the chunk's
   --       own tiles, lattice_tiles apart; spline_centre and ease are the formulas' own constants

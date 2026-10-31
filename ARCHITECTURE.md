@@ -1973,10 +1973,13 @@ takes over the Map type fields.
   kind finds the tiles of the wrong class (kept water, the water tiles a player walks, fords and marsh
   water, is never among them), and it writes, in one `set_tiles` call without tile correction, each
   such tile whose pixel's class the reference, blurred by a quadratic B-spline, reads there by more
-  than `bandfix.smooth`'s threshold and its wobble: half a pixel from a straight coast, as S12's closed
-  rule, with a rounded, wavering line in place of the raster's stairs (S12's rule itself below
-  `smooth.min_scale`); a fill pixel (a band region holding no 2 x 2 block of tiles: an islet or channel
-  narrower than a pixel, design notes 13:45) is drawn as a blob around its centre. Tiles of an open-sea
+  than `bandfix.smooth`'s threshold and its wobble: about a fifth of a pixel from a straight coast, so every
+  shore follows the reference however far the coast fit strays, with a rounded, wavering line in place of the
+  raster's stairs (S12's rule itself below `smooth.min_scale`); a fill pixel (a band region holding no 2 x 2 block of tiles: an islet or channel
+  narrower than a pixel, design notes 13:45) is drawn as a blob around its centre. The K+ tables read the
+  reference through `build_geo.py bandfix_classes`: thin water of the ocean class within `bandfix.channel_px`
+  of open water counts as water, the islets of `data-src/bandfix/islets-<map>.json` count as land, and K holds
+  every scored pixel that touches the other class. Tiles of an open-sea
   pixel become deep water. Nothing is written inside the spawn keep disc (`bandfix.spawn_keep_tiles`:
   spawn-cities' start land guarantee); a written tile that would stand as a strip one tile wide takes
   its neighbour of the same reference class along. It decides land and water from its own chunk only,
