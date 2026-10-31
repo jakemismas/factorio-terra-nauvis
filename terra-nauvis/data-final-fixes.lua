@@ -455,8 +455,8 @@ local function decor_hooks()
       local on = vanilla_scale(text)
       -- `if` evaluates both branches, and a text AB left alone places nothing on its land at this temperature.
       if tostring(autoplace.probability_expression) ~= row.text then
-        on = "if(" .. TL.scan.body .. " > " .. num(H.threshold) .. ", " .. (thin and (num(thin) .. " * " .. own) or own) ..
-          ", " .. on .. ")"
+        on = "if(" .. TL.scan.body .. " > " .. num(H.threshold) .. ", " ..
+          (thin and (num(thin) .. " * " .. own) or own) .. ", " .. on .. ")"
       end
       autoplace.probability_expression = hook(on, own)
       n = n + 1
