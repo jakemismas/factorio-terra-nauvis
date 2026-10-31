@@ -1071,6 +1071,11 @@ def bandfix_cfg(cfg=None):
     return cfg, B
 
 
+def bandfix_digest(B):
+    import tnconfig
+    return tnconfig.bandfix_digest(B)
+
+
 def bandfix_file(map_key, s, version):
     return f"bandfix_{map_key}_s{int(s)}_v{int(version)}.lua"
 
@@ -1562,7 +1567,7 @@ def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None,
     label = cfg["maps"][map_key]["display"]
     inputs = {"checkpoint": rel_ck, "checkpoint_sha256": sha256_file(ck),
               "land_sha256": sha256_file(mref.land_path), "thinwater_sha256": sha256_file(mref.thin_path),
-              "bandfix_config_sha256": hashlib.sha256(json.dumps(B, sort_keys=True).encode()).hexdigest(),
+              "bandfix_config_sha256": bandfix_digest(B),
               "coast_detail": [C["detail_amplitude_px"], C["detail_clamp"]], "margin_px": round(margin, 6)}
     if warp_px:
         inputs["warp_reach_px"] = round(warp_px, 6)
@@ -1705,7 +1710,7 @@ def emit_bandfix_masks(map_key, out_dir=BANDFIX_GENERATED, log=print):
                      "masked_kplus_pixels": int(M.sum()), "footprint_pixels": int(mask.sum()),
                      "waterway_manifest_sha256": ww_sha})
         log(f"{map_key} s{s}: {int(M.sum())} masked K+ pixels, {f.stat().st_size} B")
-    rec["inputs"]["bandfix_config_sha256"] = hashlib.sha256(json.dumps(B, sort_keys=True).encode()).hexdigest()
+    rec["inputs"]["bandfix_config_sha256"] = bandfix_digest(B)
     _write_json(mp, rec)
     return rec
 

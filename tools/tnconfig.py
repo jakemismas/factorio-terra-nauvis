@@ -19,6 +19,7 @@ remembers its file (Config.source), so the accessors read the region table besid
 they were given, in a staged mod copy as in the repo.
 """
 import hashlib
+import json
 import math
 import re
 import sys
@@ -1167,6 +1168,14 @@ def schema_problems(cfg):
     except ConfigError as e:
         out.append(str(e))
     return out
+
+
+def bandfix_digest(group):
+    """sha256 of config.lua's bandfix group as its tables were built under it. Each map's geographies list
+    counts as its first id: a later geography version that keeps the map's coast appends its id and serves
+    the same tables, so no re-emission follows and the digests the manifests hold stay right."""
+    tables = {k: dict(v, geographies=list(v.get("geographies") or [])[:1]) for k, v in (group.get("tables") or {}).items()}
+    return hashlib.sha256(json.dumps(dict(group, tables=tables), sort_keys=True).encode()).hexdigest()
 
 
 def placeholder_names(cfg):

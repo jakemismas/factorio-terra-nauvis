@@ -1883,7 +1883,7 @@ def bandfix_data_findings(repo, cfg):
         if mk not in checked:
             out.append(f"config.lua lists {mk} for the band fix, which runs no flip check (bandfix.checks; Atlantic "
                        f"was never priced, S12)")
-    digest = hashlib.sha256(json.dumps(B, sort_keys=True).encode()).hexdigest()
+    digest = tnconfig.bandfix_digest(B)
     for mk, spec in tables.items():
         mp = bd / f"manifest-{mk}.json"
         if not mp.exists():
@@ -3149,6 +3149,7 @@ def fixture_controls():
         results += storage_contract_fixtures(td)
         results += append_only_fixtures(cfg, load_json(REPO / "tests" / "frozen.json"))
         results += release_input_fixtures(cfg)
+        results += bandfix_digest_fixtures(cfg)
         results += thin_version_fixtures(cfg)
         fz = load_json(REPO / "tests" / "frozen.json")
         results += bodies_fixtures(td, cfg, fz)
@@ -4046,6 +4047,21 @@ def thin_version_fixtures(cfg):
                 bool(refused(with_version(over="tn_fixture_none_v1", basin=basin))), ""))
     out.append(("thin version: over without a basin fails", bool(refused(with_version(over=older))), ""))
     return out
+
+
+def bandfix_digest_fixtures(cfg):
+    """A tn_geo id appended to a map's band-fix tables keeps the digest they were built under; a moved first
+    id or any other edit of the group changes it."""
+    B = cfg["bandfix"]
+    key = sorted(B["tables"])[0]
+    base = tnconfig.bandfix_digest(B)
+    appended, moved, other = copy.deepcopy(B), copy.deepcopy(B), copy.deepcopy(B)
+    appended["tables"][key]["geographies"].append(9999)
+    moved["tables"][key]["geographies"][0] = 9999
+    other["version"] = B["version"] + 1
+    return [("band fix: a tn_geo id appended keeps the tables' digest", tnconfig.bandfix_digest(appended) == base, ""),
+            ("band fix: the first tn_geo id moved changes it", tnconfig.bandfix_digest(moved) != base, ""),
+            ("band fix: another edit of the group changes it", tnconfig.bandfix_digest(other) != base, "")]
 
 
 def release_input_fixtures(cfg):
