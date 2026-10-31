@@ -1212,9 +1212,9 @@ return {
       outline = {
         floor = 0.2,
         bands = {
-          {share = 0.5, gain = 1.6, octaves = {{seed1 = 7421, wavelength_px = 311, weight = 1}}},
-          {share = 0.3, gain = 1.6, octaves = {{seed1 = 7422, wavelength_px = 137, weight = 1},
-                                               {seed1 = 7423, wavelength_px = 59, weight = 0.55}}},
+          {share = 0.45, gain = 1.6, octaves = {{seed1 = 7421, wavelength_px = 311, weight = 1}}},
+          {share = 0.35, gain = 2.2, octaves = {{seed1 = 7422, wavelength_px = 137, weight = 1},
+                                                {seed1 = 7423, wavelength_px = 59, weight = 0.7}}},
         },
         margins = {
           europe = {

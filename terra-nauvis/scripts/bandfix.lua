@@ -443,9 +443,9 @@ local function in_edge(c, r)
   if EDGE == 0 then
     return false
   end
-  local S = EDGE_SIDE
-  return c < (S.left and S.left[r] or EDGE) or r < (S.top and S.top[c] or EDGE)
-    or c >= MAP.width_px - (S.right and S.right[r] or EDGE) or r >= MAP.height_px - (S.bottom and S.bottom[c] or EDGE)
+  local L, T, R, B_ = EDGE_SIDE.left, EDGE_SIDE.top, EDGE_SIDE.right, EDGE_SIDE.bottom
+  return c < (L and L[r] or EDGE) or r < (T and T[c] or EDGE)
+    or c >= MAP.width_px - (R and R[r] or EDGE) or r >= MAP.height_px - (B_ and B_[c] or EDGE)
 end
 
 -- Whether pixel (c, r) is open sea: water with no land among its 8 neighbours. A pixel outside the K+ table reads

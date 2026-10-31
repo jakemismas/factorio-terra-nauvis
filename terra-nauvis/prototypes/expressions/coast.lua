@@ -177,9 +177,9 @@ local function version(m, g)
     -- is not needed. The outline moves each side's water edge in by its margin table at the local
     -- share, so the sides read one at a time; a side with no table reads its plain distance.
     local B = C.edge_band
-    local function noise_terms(octaves)
+    local function noise_terms(list)
       local terms = {}
-      for _, oc in ipairs(octaves) do
+      for _, oc in ipairs(list) do
         terms[#terms + 1] = num(oc.weight) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
           num(oc.seed1) .. ", input_scale = " .. num(1) .. " / (" .. num(oc.wavelength_px) .. " * " .. s ..
           "), offset_x = " .. g.cx .. ", offset_y = " .. g.cy .. "}"
@@ -218,7 +218,7 @@ local function version(m, g)
         for i, band in ipairs(O.bands) do
           local n = "ol" .. i
           locals[n] = num(band.gain) .. " * (" .. noise_terms(band.octaves) .. ")"
-          parts[#parts + 1] = num(band.share) .. " * (0.5 + 0.5 * " .. n .. " / (1 + abs(" .. n .. ")))"
+          parts[#parts + 1] = num(band.share / 2) .. " * (1 + " .. n .. " / (1 + abs(" .. n .. ")))"
         end
         locals.share = table.concat(parts, " + ")
         term = term .. " - share * (" .. margin(M[side], along) .. ")"
