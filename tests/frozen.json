@@ -6118,7 +6118,7 @@
   },
   "tn_tile_belt_a_v1": {
    "type": "noise-expression",
-   "sha256": "3b7c0e6886cbbe20e567e589abceddbacf381e4e883681fb316c48173e32e5ae",
+   "sha256": "f5d982c61691d741e911e1c47f2a9fb748a6ea26e411951f57527f54651decfd",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
@@ -6132,7 +6132,7 @@
   },
   "tn_tile_belt_t_v1": {
    "type": "noise-expression",
-   "sha256": "dc0c2cbd598cc0122fa7502a7d275a446d418e1ea33eed1aa0d5d79e40444185",
+   "sha256": "7423dd6d09903d01d0b83b5ca9e9d264412564c46b5ae5b77c5226444d6ea7bd",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
