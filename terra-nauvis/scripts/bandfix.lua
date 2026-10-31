@@ -157,16 +157,20 @@ local function decode(payload, masks)
   local first, text = vals[1], concat(parts)
   if masks then
     local mv = varints(masks)
-    local c = mv[1]
+    local c, from, out = mv[1], 1, {}
     for k = 2, #mv do
       local x = mv[k]
       local len = floor(x / 2) + 1
       if x % 2 == 1 then
         local a = c - first + 1
-        text = sub(text, 1, a - 1) .. gsub(sub(text, a, a + len - 1), ".", MASKED) .. sub(text, a + len)
+        out[#out + 1] = sub(text, from, a - 1)
+        out[#out + 1] = (gsub(sub(text, a, a + len - 1), ".", MASKED))
+        from = a + len
       end
       c = c + len
     end
+    out[#out + 1] = sub(text, from)
+    text = concat(out)
   end
   return {first = first, text = text}
 end
