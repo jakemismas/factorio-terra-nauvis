@@ -1694,10 +1694,11 @@ return {
       },
     },
     -- Alien Biomes' heat bands differ by a few RGB steps, so heat 1 and heat 2 read as one dark grey on the map
-    -- view. With the zone on they take this ramp, cool to hot, in 0 to 255 values.
+    -- view. With the zone on they take this ramp, cool to hot, in 0 to 255 values. It stays red to the top:
+    -- heat 4 is a fifth of the palette's ground, and the maintainer asked for red (a yellow top read as yellow blobs).
     map_colors = {families = {"orange", "green", "blue", "purple"},
-                  bands = {{r = 44, g = 38, b = 46}, {r = 96, g = 30, b = 26}, {r = 186, g = 72, b = 24},
-                           {r = 240, g = 170, b = 40}}},
+                  bands = {{r = 58, g = 34, b = 36}, {r = 104, g = 30, b = 26}, {r = 168, g = 40, b = 22},
+                           {r = 226, g = 62, b = 24}}},
     switch_threshold = 0.5,
   },
 
