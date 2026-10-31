@@ -1429,11 +1429,11 @@ return {
       v = {{seed1 = 7503, wavelength = 250, amplitude = 16}, {seed1 = 7504, wavelength = 50, amplitude = 6}},
     },
     run_base = 1.15,
-    run = {{seed1 = 7505, wavelength = 420, amplitude = 0.55}, {seed1 = 7506, wavelength = 180, amplitude = 0.2}},
-    stretch = {{seed1 = 7507, wavelength = 140, amplitude = 0.5}},
+    run = {{seed1 = 7505, wavelength = 420, amplitude = 0.55}, {seed1 = 7506, wavelength = 120, amplitude = 0.32}},
+    stretch = {{seed1 = 7507, wavelength = 100, amplitude = 0.6}},
     stretch_floor = 0.4,
-    fray = {{seed1 = 7508, wavelength = 72, amplitude = 0.15}},
-    gaps = {noise = {{seed1 = 7509, wavelength = 160, amplitude = 1}, {seed1 = 7510, wavelength = 72, amplitude = 0.25}},
+    fray = {{seed1 = 7508, wavelength = 90, amplitude = 0.3}},
+    gaps = {noise = {{seed1 = 7509, wavelength = 110, amplitude = 1}, {seed1 = 7510, wavelength = 72, amplitude = 0.25}},
             threshold = -0.55, thin_tiles = 26, thin_gain = 2.2, collar_gain = 3},
     -- The cliff's art beside Alien Biomes. It ships whole grey stone cliff sheets its code leaves unused
     -- (they lack vanilla's -lower split, data.lua's TODO), and its ground is grey and white where
