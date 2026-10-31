@@ -1474,8 +1474,8 @@ return {
   --   wander     the wandering axis: per axis of the chain, noise rows in reference pixels, so one shape
   --              on the map at every scale (at scale 6, about 100 and 36 tiles over 1,500 and 300)
   --   run_base, run   the width's multiplier: base plus noise rows in tiles, floored at 0
-  --   fray       the height's noise row, in contours: at 64 tiles and 0.3 it breaks every east-west line
-  --              within a few cliffs. A depth multiplier here floated closed loops off the ridge
+  --   fray       the height's noise row, in contours: at 64 tiles and 0.3 it breaks long east-west lines
+  --              (longest straight 8 cliffs in the Alps). A depth multiplier here floated closed loops off
   --   gaps       noise gaps: an opening where the noise rows read under threshold, plus thin_gain as the
   --              ridge's width at the tile falls from thin_tiles to 0, less collar_gain inside a collar
   --              Read in real sprites, rows at 34 and 40 tiles made zigzags at cliff spacing, stubs and tiny
