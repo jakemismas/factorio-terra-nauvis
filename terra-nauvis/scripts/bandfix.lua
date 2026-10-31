@@ -26,11 +26,12 @@
 --   5. the classes of the written tiles' bounding box are read once: a written tile that would stand as a
 --      strip one tile wide takes its neighbour in the box along, when that neighbour belongs to the same
 --      reference class;
---   6. one set_tiles call inside the chunk, without tile correction.
--- It writes only tiles the rule changes, so a repeated delivery writes nothing, and it reads and writes
--- its own chunk only, so generation order does not matter. No RNG, no player state, no storage
--- write. Decoded table rows are a cache of shipped data, so a joining peer that starts with an empty cache
--- computes the same tiles.
+--   6. one set_tiles call inside the chunk, without tile correction;
+--   7. the written land takes the trees, rocks and decoratives of the land beside it (scripts/coastcover.lua).
+-- It writes only tiles the rule changes, so a repeated delivery writes nothing and places no cover twice, and
+-- it decides land and water from its own chunk only, so generation order does not change them. No player state,
+-- no storage write. Decoded table rows are a cache of shipped data, so a joining peer that starts with an empty
+-- cache computes the same tiles.
 local cfg = require("prototypes.config")
 local guards = require("scripts.guards")
 local coastcover = require("scripts.coastcover")
