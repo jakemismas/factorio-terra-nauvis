@@ -801,7 +801,13 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         if all(map_key in n[k] for k in ("crest", "openings", "band")):
             pen.update({K["cliff_elevation"]: n["cliff_elevation"], K["cliffiness"]: n["cliffiness"],
                         K["crest"]: n["crest"][map_key], K["openings"]: n["openings"][map_key],
-                        K["band"]: n["band"][map_key]})
+                        K["band"]: n["band"][map_key], K["high"]: n["high_map"][map_key],
+                        K["passes"]: n["passes"][map_key], K["rock_density"]: n["rock_density"],
+                        K["high_tile"]: n["high_tile_map"][map_key]})
+            if ab:
+                pen[K["rock_lift"]] = n["rock_lift_ab"]
+            else:
+                pen[K["ground"]] = n["ground"]
         pen.update({o["key"]: o["name"] for o in rd["ores"]})
     # resources-enemies: the ore keys at the next probability wrappers and the richness keys at theirs,
     # the enemy property at its wrapper (data-final-fixes.lua adds them to every preset; the Oil Rig's

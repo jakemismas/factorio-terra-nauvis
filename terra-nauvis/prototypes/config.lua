@@ -143,7 +143,7 @@ local CT = {
   K_TILE_M = NOISE .. "tile_moisture",
   K_TILE_A = NOISE .. "tile_aux",
   VT_BONUS_G = NOISE .. "vtile_bonus_v2",
-  VT_MIX = NOISE .. "vtile_mix",
+  VT_BONUS_H = NOISE .. "vtile_bonus_v3",
   AB_EXCLUDE_BODY_G = NOISE .. "ab_exclude_v2",
   CL_T_FB = NOISE .. "temperature_fb_v1",
   CL_M_FB = NOISE .. "moisture_fb_v1",
@@ -263,6 +263,30 @@ local RDN = {
   K_CREST = NOISE .. "crest",
   K_OPENINGS = NOISE .. "openings",
   K_BAND = NOISE .. "band",
+  K_HIGH = NOISE .. "high",
+  K_PASSES = NOISE .. "passes",
+  K_ROCK_LIFT = NOISE .. "rock_lift",
+  K_GROUND = NOISE .. "ground_lean",
+  K_HIGH_TILE = NOISE .. "high_tile",
+  RD_RISE = NOISE .. "highland_rise" .. RD_V,
+  RD_RISE_TILE = NOISE .. "highland_rise_tile" .. RD_V,
+  RD_HIGH_TILE = NOISE .. "highland_tile" .. RD_V,
+  EU_HIGH_TILE = NOISE .. "highland_tile_europe" .. RD_V,
+  AT_HIGH_TILE = NOISE .. "highland_tile_atlantic" .. RD_V,
+  OW_HIGH_TILE = NOISE .. "highland_tile_olde_world" .. RD_V,
+  RD_GATE = NOISE .. "highland_gate" .. RD_V,
+  RD_LAPSE = NOISE .. "highland_lapse" .. RD_V,
+  RD_GROUND = NOISE .. "highland_ground" .. RD_V,
+  RD_HIGH = NOISE .. "highland" .. RD_V,
+  RD_ROCK_LIFT = NOISE .. "highland_rocks" .. RD_V,
+  RD_ROCK_LIFT_AB = NOISE .. "highland_rocks_ab" .. RD_V,
+  RD_ROCK_DENSITY = NOISE .. "rock_density" .. RD_V,
+  EU_HIGH = NOISE .. "highland_europe" .. RD_V,
+  AT_HIGH = NOISE .. "highland_atlantic" .. RD_V,
+  OW_HIGH = NOISE .. "highland_olde_world" .. RD_V,
+  EU_PASSES = NOISE .. "passes_europe" .. RD_V,
+  AT_PASSES = NOISE .. "passes_atlantic" .. RD_V,
+  OW_PASSES = NOISE .. "passes_olde_world" .. RD_V,
   RD_HEIGHT = NOISE .. "ridge_height" .. RD_V,
   RD_FREE = NOISE .. "ridge_free" .. RD_V,
   RD_CLIFF_ELEVATION = NOISE .. "cliff_elevation" .. RD_V,
@@ -719,6 +743,8 @@ return {
     -- ridges: the toggle, the map's crest and openings keys, and the two cliff properties the presets
     -- redirect (S5)
     ridges = RDN.K_RIDGES, crest = RDN.K_CREST, openings = RDN.K_OPENINGS, band = RDN.K_BAND,
+    high = RDN.K_HIGH, passes = RDN.K_PASSES, rock_lift = RDN.K_ROCK_LIFT, rock_density = "rock_density",
+    ground = RDN.K_GROUND, high_tile = RDN.K_HIGH_TILE,
     cliff_elevation = "cliff_elevation", cliffiness = "cliffiness",
     -- resources-enemies: the hotspots toggle, each map's offshore stamp key and the enemy property
     hotspots = REN.K_HOTSPOTS, enemy = "enemy_base_probability", hotspot_amount = REN.K_HS_AMOUNT,
@@ -926,6 +952,7 @@ return {
                  -- ridges: the toggle, the map's ridge keys, the two cliff properties and the Earth ores'
                  -- probability keys (data-final-fixes.lua points them at the clearance wrappers)
                  RDN.K_RIDGES, RDN.K_CREST, RDN.K_OPENINGS, RDN.K_BAND, "cliff_elevation", "cliffiness",
+                 RDN.K_HIGH, RDN.K_PASSES, RDN.K_ROCK_LIFT, "rock_density", RDN.K_GROUND, RDN.K_HIGH_TILE,
                  "entity:iron-ore:probability", "entity:copper-ore:probability", "entity:coal:probability",
                  "entity:stone:probability", "entity:uranium-ore:probability", "entity:crude-oil:probability",
                  -- resources-enemies: the richness keys, the enemy property, the hotspots toggle, each map's
@@ -1011,9 +1038,8 @@ return {
                CT.VT_DIRT_3,
                CT.VT_DIRT_4, CT.VT_DIRT_5, CT.VT_DIRT_6, CT.VT_DIRT_7, CT.VT_SAND_1, CT.VT_SAND_2, CT.VT_SAND_3,
                CT.VT_RED_0, CT.VT_RED_1,
-               CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.VT_BONUS_G, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY,
-               CT.AB_EXCLUDE_BODY_G, CT.K_TILE_T, CT.K_TILE_M, CT.K_TILE_A, CT.K_TILE_TV, CT.CL_T_AB_GV, CT.CL_BELT_T,
-               CT.CL_BELT_TV, CT.CL_BELT_M, CT.CL_BELT_A, CT.CL_BELT_WILD, CT.MARSH_MUD,
+               CT.VT_RED_2, CT.VT_RED_3, CT.VT_BONUS, CT.VT_BONUS_G, CT.VT_BONUS_H, CT.AB_EXCLUDE, CT.AB_EXCLUDE_BODY,
+               CT.AB_EXCLUDE_BODY_G, CT.K_TILE_T, CT.K_TILE_M, CT.K_TILE_A, CT.MARSH_MUD,
                CT.MARSH_POOL, CT.MARSH_MUD_BODY, CT.MARSH_SHALLOW,
                CT.MARSH_SHALLOW_BODY, CT.MARSH_GRASS, CT.MARSH_GRASS_BODY},
     },
@@ -1070,6 +1096,10 @@ return {
                RDN.EU_WANDER_U, RDN.AT_WANDER_U, RDN.OW_WANDER_U, RDN.EU_WANDER_V, RDN.AT_WANDER_V, RDN.OW_WANDER_V,
                RDN.EU_RUN, RDN.AT_RUN, RDN.OW_RUN, RDN.EU_DEPTH, RDN.AT_DEPTH, RDN.OW_DEPTH,
                RDN.EU_NEAR, RDN.AT_NEAR, RDN.OW_NEAR, RDN.EU_KEEP, RDN.AT_KEEP, RDN.OW_KEEP, RDN.RD_FREE,
+               RDN.K_ROCK_LIFT, RDN.K_GROUND, RDN.RD_RISE, RDN.RD_GATE, RDN.RD_LAPSE, RDN.RD_GROUND, RDN.RD_HIGH,
+               RDN.RD_RISE_TILE, RDN.RD_HIGH_TILE, RDN.EU_HIGH_TILE, RDN.AT_HIGH_TILE, RDN.OW_HIGH_TILE,
+               RDN.RD_ROCK_LIFT, RDN.RD_ROCK_LIFT_AB, RDN.RD_ROCK_DENSITY,
+               RDN.EU_HIGH, RDN.AT_HIGH, RDN.OW_HIGH, RDN.EU_PASSES, RDN.AT_PASSES, RDN.OW_PASSES,
                RDN.RD_CLIFF_ELEVATION, RDN.RD_CLIFFINESS, RDN.RD_CLEAR, RDN.ORE_IRON, RDN.ORE_COPPER, RDN.ORE_COAL,
                RDN.ORE_STONE, RDN.ORE_URANIUM,
                RDN.ORE_OIL},
@@ -1457,6 +1487,28 @@ return {
   --              its corner outside 24), so the band reads the centre
   --   switch_threshold   the toggle reads on above it (its bodies are 1 and 0)
   --   reset_size   the cliff control's size the on_init reset writes when the slider was none (S5)
+  --   high       the highland band round each range (a cliff squiggle on plain grass does not
+  --              read as a mountain). A crest piece's reach in tiles at scale S is (min_px + gain_px * (height /
+  --              ref_m) ^ power) * S + tiles, height the mean of the piece's mean and highest vertex; the band
+  --              reads the crest band's own pieces, so the Entity program pays only per piece. The field is
+  --              (largest reach less distance, plus the region layer's warp and roughness at fray_warp and
+  --              fray_rough) over S * fall_px + fall_tiles, clamped to 0 to 1, so a tall range is wider and
+  --              stronger than a low one, and it fades in start.ramp_tiles outside the ridge-free start disc
+  --   ground     tile scores alone read these, and they read a reach that follows the vertex heights along each
+  --              piece (the Entity program, near its limit, keeps one reach per piece), so trees and decoratives
+  --              keep the plain fields and the forests on the slopes stay. lean: the stony vanilla tiles' score at
+  --              full highland. lapse_per_px2, lapse_from_px: beside Alien Biomes the tile temperature falls by
+  --              lapse_per_px2 times the square of the rise over lapse_from_px in reference pixels, so the crest
+  --              alone of a tall range leaves the temperate band for Alien Biomes' grey ground and, at the top, its
+  --              snow, and a low range keeps its ground (a lapse from 0 drew a white stripe down the Urals, whose
+  --              crest is a few degrees above frozen). fray: the grain's noise grows by this at full highland, or
+  --              the grey ground's edge is a smooth line where the lapse is steep. floor: the lapse stops
+  --              here, because under about -50 every frozen tile scores below Alien Biomes' water-mud, which
+  --              flooded the Himalaya at scale 6. moisture: the tile moisture's fall at full highland, off the
+  --              wet grasses onto mineral ground
+  --   rocks      the lift on rock_density (vanilla's rocks and rock decoratives) at full highland, and on
+  --              Alien Biomes' big rocks, whose noise threshold is far sharper; clear_tiles the radius round a
+  --              named pass that keeps no lift, fade_tiles how far it fades back in
   --   ores       the Earth ores whose live probability is wrapped (resource, preset key, wrapper)
   --   water      the water frequency slider's two vanilla readers stay group 0's water_slider
   --              (D15), baked on every Earth preset at their default-slider values
@@ -1500,7 +1552,19 @@ return {
     switch_threshold = 0.5,
     reset_size = 1,
     max_arguments = 255,
+    high = {ref_m = 4800, min_px = 8, gain_px = 42, power = 0.9, tiles = 30, fall_px = 44, fall_tiles = 36,
+            fray_warp = 0.7, fray_rough = 2, start = {ramp_tiles = 96}},
+    ground = {lean = 6, lapse_per_px2 = 0.05, lapse_from_px = 20, floor = -12, moisture = 0.2, fray = 2},
+    rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24,
+             ab_prefixes = {"huge-rock-", "big-rock-", "sand-big-rock-"}, ab_skip = "volcanic"},
     names = {
+      high = RDN.RD_HIGH, rock_lift = RDN.RD_ROCK_LIFT, rock_lift_ab = RDN.RD_ROCK_LIFT_AB,
+      rise = RDN.RD_RISE, gate = RDN.RD_GATE, lapse = RDN.RD_LAPSE, ground = RDN.RD_GROUND,
+      rise_tile = RDN.RD_RISE_TILE, high_tile = RDN.RD_HIGH_TILE,
+      high_tile_map = {europe = RDN.EU_HIGH_TILE, atlantic = RDN.AT_HIGH_TILE, olde_world = RDN.OW_HIGH_TILE},
+      rock_density = RDN.RD_ROCK_DENSITY,
+      high_map = {europe = RDN.EU_HIGH, atlantic = RDN.AT_HIGH, olde_world = RDN.OW_HIGH},
+      passes = {europe = RDN.EU_PASSES, atlantic = RDN.AT_PASSES, olde_world = RDN.OW_PASSES},
       height = RDN.RD_HEIGHT, free = RDN.RD_FREE, cliff_elevation = RDN.RD_CLIFF_ELEVATION,
       cliffiness = RDN.RD_CLIFFINESS,
       clear = RDN.RD_CLEAR,
@@ -2328,7 +2392,9 @@ return {
               ["red-desert-0"] = CT.VT_RED_0,
               ["red-desert-1"] = CT.VT_RED_1, ["red-desert-2"] = CT.VT_RED_2, ["red-desert-3"] = CT.VT_RED_3},
       off = "-inf",
-      body = CT.VT_BONUS, body_grain = CT.VT_BONUS_G,
+      body = CT.VT_BONUS, body_grain = CT.VT_BONUS_G, body_high = CT.VT_BONUS_H,
+      -- the vanilla tiles that read as dry, stony ground on a range: ridges.high.ground.lean lifts their score
+      stony = {"dirt-4", "dirt-5", "dirt-6", "dry-dirt"},
       bonus = 10, lean_t = 45, lean_span = 30, lean_cut = 0.5,
       patch = {amplitude = 0.36, clamp = 0.45, wavelength_px = 10, octaves = 3, persistence = 0.5, seed1 = 7605},
       -- the patch's finest octave is 10 px (60 tiles at scale 6), so where it failed the lean the hole in

@@ -160,19 +160,27 @@ local function band_pieces(pts, run)
   return out
 end
 
+-- A vertex's highland reach in reference pixels (config.lua ridges.high).
+local function reach_px(height)
+  local HG = RD.high
+  return HG.min_px + HG.gain_px * (height / HG.ref_m) ^ HG.power
+end
+
 -- One band term (and its locals) for a piece; P and Q name the scaled axis and cross coordinates.
-local function band_term(pts, run, piece, k, B)
-  local vs = {}
+local function band_term(pts, run, piece, k, B, H, heights)
+  local vs, tops = {}, {}
   for j = piece.first, piece.last do
     if j == piece.first then
       vs[#vs + 1] = pts[run[j]]
+      tops[#tops + 1] = heights[run[j]]
     end
     vs[#vs + 1] = pts[run[j] + 1]
+    tops[#tops + 1] = heights[run[j] + 1]
   end
   local p, q = "bu", "bv"
   local list = {}
   for n, v in ipairs(vs) do
-    list[n] = piece.axis == "x" and {v[1], v[2]} or {v[2], v[1]}
+    list[n] = piece.axis == "x" and {v[1], v[2], tops[n]} or {v[2], v[1], tops[n]}
   end
   if piece.axis == "y" then
     p, q = "bv", "bu"
@@ -185,18 +193,28 @@ local function band_term(pts, run, piece, k, B)
     list = rev
   end
   local terms, c, steep = {}, list[1][2], 0
+  -- the reach along the piece, the same clamps at the reach's own slopes
+  local W, c2, sum, top = {}, reach_px(list[1][3]), list[1][3], list[1][3]
   for n = 2, #list do
     local a, b = list[n - 1], list[n]
     local slope = (b[2] - a[2]) / (b[1] - a[1])
     steep = math.max(steep, math.abs(slope))
     c = c - slope * a[1]
-    terms[#terms + 1] = num(slope) .. " * clamp(" .. p .. ", " .. S .. " * " .. num(a[1]) .. ", " .. S .. " * " ..
-      num(b[1]) .. ")"
+    local bounds = "clamp(" .. p .. ", " .. S .. " * " .. num(a[1]) .. ", " .. S .. " * " .. num(b[1]) .. ")"
+    terms[#terms + 1] = num(slope) .. " * " .. bounds
+    local rise = (reach_px(b[3]) - reach_px(a[3])) / (b[1] - a[1])
+    c2 = c2 - rise * a[1]
+    W[#W + 1] = num(rise) .. " * " .. bounds
+    sum, top = sum + b[3], math.max(top, b[3])
   end
   local half = RD.ore_clear_tiles * math.sqrt(1 + steep * steep)
   local mid, span = (list[1][1] + list[#list][1]) / 2, (list[#list][1] - list[1][1]) / 2
   local f = "f" .. k
   B[f] = S .. " * " .. num(c) .. " + " .. table.concat(terms, " + ")
+  -- the piece's one reach for the Entity program: halfway between its mean vertex and its highest
+  H[#H + 1] = {p = p, q = q, f = f, mid = mid, span = span, cos = 1 / math.sqrt(1 + steep * steep),
+               reach = reach_px((sum / #list + top) / 2),
+               reach_text = S .. " * " .. num(c2) .. " + " .. table.concat(W, " + ")}
   return "(abs(" .. q .. " - " .. f .. ") < " .. num(half) .. ") * (abs(" .. p .. " - " .. S .. " * " .. num(mid) ..
     ") < " .. S .. " * " .. num(span) .. " + " .. num(RD.ore_clear_tiles) .. ")"
 end
@@ -247,6 +265,9 @@ local function add_opening(O, m, pts, o, wide)
     end
   end
   local s = tostring(#O.terms + 1)
+  if o.kind == "pass" then
+    O.named[#O.named + 1] = {cu, cv}
+  end
   -- a pass moves with the wandering crest; an edge stays where the map's extent is
   local ou, ov = O.u, O.v
   if o.kind == "edge" then
@@ -282,12 +303,12 @@ end
 
 -- The crest band of one range on a map: its kept segments in runs of consecutive ones, each cut
 -- into monotone pieces.
-local function add_band(Bd, pts, segs)
+local function add_band(Bd, pts, segs, heights)
   local run = {}
   local function flush()
     if #run > 0 then
       for _, piece in ipairs(band_pieces(pts, run)) do
-        Bd.terms[#Bd.terms + 1] = band_term(pts, run, piece, #Bd.terms + 1, Bd.L)
+        Bd.terms[#Bd.terms + 1] = band_term(pts, run, piece, #Bd.terms + 1, Bd.L, Bd.pieces, heights)
       end
     end
     run = {}
@@ -307,6 +328,62 @@ local function in_band(m, a, b)
   local M = RD.band_margin_px
   return math.max(a[1], b[1]) >= -M and math.min(a[1], b[1]) < m.width_px + M and
     math.max(a[2], b[2]) >= -M and math.min(a[2], b[2]) < m.height_px + M
+end
+
+-- A map's highland reach and the named passes the rock lift keeps clear. The reach reads the crest band's
+-- own pieces through the same locals, so in the Entity program the crest functions and the distance along
+-- each piece cost nothing more: per piece the band is the largest reach less the wandering distance across
+-- it, cut off past the piece's ends. Only the passes' squared distances cost per pass.
+local function highland(key, Bd, O)
+  local HG = RD.high
+  local L = {wu = N.wander_u[key] .. " * " .. S .. " + " .. num(RD.centre_tiles),
+             wv = N.wander_v[key] .. " * " .. S .. " + " .. num(RD.centre_tiles)}
+  for k, v in pairs(Bd.L) do
+    L[k] = v
+  end
+  local function band(reach_of)
+    local terms = {}
+    for k, h in ipairs(Bd.pieces) do
+      local reach = reach_of(k, h)
+      local wq = h.q == "bu" and "wu" or "wv"
+      terms[#terms + 1] = "min(" .. reach .. " - " .. num(h.cos) .. " * abs(" .. wq .. " - " .. h.f .. "), " .. reach ..
+        " + " .. S .. " * " .. num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
+    end
+    return joined("max", terms, "-inf")
+  end
+  def(N.high_map[key], band(function(_, h)
+    return S .. " * " .. num(h.reach) .. " + " .. num(HG.tiles)
+  end), L)
+  -- The tiles pay for their own crest functions, so they read them at the wandering point itself, their reach
+  -- follows the vertex heights, one local per piece, and a piece ends round: its box's corners drew flat-topped
+  -- tabs of grey ground.
+  local T2, terms = {}, {}
+  for k, v in pairs(Bd.L) do
+    T2[k] = v
+  end
+  T2.bu, T2.bv = L.wu, L.wv
+  for k, h in ipairs(Bd.pieces) do
+    local s = tostring(k)
+    T2["a" .. s] = num(h.cos) .. " * abs(" .. h.q .. " - " .. h.f .. ")"
+    T2["e" .. s] = "max(0, abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. ") - " .. S .. " * " .. num(h.span) .. ")"
+    terms[k] = h.reach_text .. " - sqrt(a" .. s .. " * a" .. s .. " + e" .. s .. " * e" .. s .. ")"
+  end
+  def(N.high_tile_map[key], joined("max", terms, "-inf"), T2)
+  local P, ds = {}, {}
+  for i, c in ipairs(O.named) do
+    local s = tostring(i)
+    P["pu" .. s] = minus(O.u, c[1])
+    P["pv" .. s] = minus(O.v, c[2])
+    ds[i] = "pu" .. s .. " * pu" .. s .. " + pv" .. s .. " * pv" .. s
+  end
+  local R = RD.rocks
+  local inner, outer = R.clear_tiles ^ 2, (R.clear_tiles + R.fade_tiles) ^ 2
+  if #ds == 0 then
+    def(N.passes[key], "1")
+  else
+    def(N.passes[key], "clamp((" .. joined("min", ds, "inf") .. ") * " .. scale2 .. " / " .. num(outer - inner) ..
+      " - " .. num(inner / (outer - inner)) .. ", 0, 1)", P)
+  end
 end
 
 -- A map's ridge bodies: the wandering axis, the run, the depth, the distance to the axis, the keep, the
@@ -349,9 +426,10 @@ local function map_bodies(key)
   def(N.run[key], "max(0, (" .. num(RD.run_base) .. " + " .. waves(RD.run) .. ") * (1 - " .. N.keep[key] .. ") + " ..
     N.keep[key] .. ")")
   local C = {u = N.wander_u[key], v = N.wander_v[key], run = N.run[key], L = {}, terms = {}, near = {}}
-  local O = {u = N.wander_u[key], v = N.wander_v[key], fixed_u = g.u, fixed_v = g.v, L = {}, terms = {}, keeps = {}}
+  local O = {u = N.wander_u[key], v = N.wander_v[key], fixed_u = g.u, fixed_v = g.v, L = {}, terms = {}, keeps = {},
+             named = {}}
   local centre = " + " .. num(RD.centre_tiles)
-  local Bd = {L = {bu = g.u .. " * " .. S .. centre, bv = g.v .. " * " .. S .. centre}, terms = {}}
+  local Bd = {L = {bu = g.u .. " * " .. S .. centre, bv = g.v .. " * " .. S .. centre}, terms = {}, pieces = {}}
   for _, r in ipairs(T.ranges) do
     local segs = r.segments[key]
     if segs then
@@ -368,7 +446,7 @@ local function map_bodies(key)
           banded[#banded + 1] = i
         end
       end
-      add_band(Bd, pts, banded)
+      add_band(Bd, pts, banded, r.heights)
       for _, o in ipairs(r.openings) do
         if on_map(o.maps, key) then
           add_opening(O, m, pts, o, wide)
@@ -390,6 +468,7 @@ local function map_bodies(key)
   else
     def(N.band[key], joined("max", Bd.terms, "0"), Bd.L)
   end
+  highland(key, Bd, O)
 end
 
 for _, key in ipairs(cfg.map_order) do
@@ -412,6 +491,37 @@ def(N.cliffiness, "if(" .. on .. ", " .. num(RD.cliffiness) .. " * (1 - " .. K.o
 -- The ore clearance: 0 in the map's crest band (every tile within ore_clear_tiles of a crest, and a
 -- little more where the crest bends or climbs) outside the start disc, else 1.
 def(N.clear, "if(" .. on .. ", max(1 - " .. K.band .. ", " .. N.free .. "), 1)")
+
+-- The highland: the map's reach frayed by the region layer's warp and roughness, no new noise, over the
+-- falloff, faded in outside the ridge-free start disc; 0 with ridges off.
+local HG, RG = RD.high, cfg.regions.names
+local function rise(key)
+  return "max(0, " .. key .. " + " .. S .. " * (" .. num(HG.fray_warp) .. " * " .. RG.wx .. " + " ..
+    num(HG.fray_rough) .. " * " .. RG.rough .. "))"
+end
+def(N.rise, rise(K.high))
+def(N.rise_tile, rise(K.high_tile))
+def(N.gate, "clamp((distance - max(" .. num(RD.start.radius_tiles) .. ", starting_area_radius) - " ..
+  num(RD.start.margin_tiles) .. ") / " .. num(HG.start.ramp_tiles) .. ", 0, 1)")
+local function high(r)
+  return "if(" .. on .. ", min(1, " .. r .. " / (" .. S .. " * " .. num(HG.fall_px) .. " + " .. num(HG.fall_tiles) ..
+    ")) * " .. N.gate .. ", 0)"
+end
+def(N.high, high(N.rise))
+def(N.high_tile, high(N.rise_tile))
+-- The tile temperature's fall, with ridges off 0, and the stony tiles' lean without Alien Biomes.
+def(N.lapse, "if(" .. on .. ", " .. num(RD.ground.lapse_per_px2) .. " * over * over * " .. N.gate .. ", 0)",
+  {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(RD.ground.lapse_from_px) .. ")"})
+def(N.ground, num(RD.ground.lean) .. " * " .. N.high_tile)
+def(K.ground, num(0))
+-- The rock lift: the highland outside the named passes. vanilla's rock_density with it added reaches every
+-- vanilla rock and rock decorative through one redirect, with or without Alien Biomes; Alien Biomes' big
+-- rocks read their own noise, so data-final-fixes.lua hooks the key on them.
+local RK = RD.rocks
+def(N.rock_lift, N.high .. " * " .. K.passes)
+def(N.rock_density, require("prototypes.tables.vanilla").rock_density .. " + " .. num(RK.gain) .. " * " .. N.rock_lift)
+def(N.rock_lift_ab, num(RK.gain_ab) .. " * " .. N.rock_lift)
+def(K.rock_lift, num(0))
 
 -- The toggle's neutral bodies, shared with waterways' canals switch: defined here unless an earlier
 -- module did (one definition per name).

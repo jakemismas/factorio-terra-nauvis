@@ -279,18 +279,19 @@ if AB then
   -- the cap, so no grain reaches its alien palette.
   local G, GN = C.grain, N.grain
   local T2 = cfg.destroyed.names.temperature
-  -- The cold side reads the zone's lift and the hot side the unlifted temperature, so the zone takes no
-  -- grain: full grain there lets Alien Biomes' tan sand through as specks in the volcanic rock. A wild belt
-  -- is Alien Biomes ground at a temperate core, so it takes the grain at full weight too.
-  def(GN.field, "max(clamp((" .. num(G.cold_t) .. " - " .. T2 .. ") / " .. num(G.cold_span) .. ", 0, 1), clamp((" ..
-    N.ab.temperature .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1), clamp(" .. BELT.wild ..
-    ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ")")
-  def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. " + " .. BELT.t .. ", max(" ..
-    T2 .. ", " .. num(T.ab.max) .. "))")
-  def(GN.veg, "if(" .. T2 .. " > " .. num(G.veg_zone_t) .. ", " .. GN.temperature .. ", min(" .. GN.temperature ..
-    " + " .. BELT.tv .. ", " .. num(G.veg_cap) .. "))")
-  def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field .. " + " .. BELT.m, cfg.tiles.marsh.edge))
-  def(GN.aux, ab_aux(" + " .. num(G.aux) .. " * " .. GN.field, BELT.a .. " + "))
+  -- A range's lapse (ridges.lua) lowers the core the grain reads, so its grey and snowy crest frays like any
+  -- cold ground, and the temperature the tiles read; the moisture falls off the wet grasses.
+  local RN, GR = cfg.ridges.names, cfg.ridges.ground
+  def(GN.field, "max(clamp((" .. num(G.cold_t) .. " - core) / " .. num(G.cold_span) .. ", 0, 1), clamp((core - " ..
+    num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ") * (1 + " ..
+    num(GR.fray) .. " * " .. RN.high_tile .. ")",
+    {core = N.core .. " - " .. RN.lapse})
+  def(GN.temperature, "max(t - " .. RN.lapse .. ", min(t, " .. num(GR.floor) .. "))",
+    {t = "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. ", max(" .. T2 .. ", " ..
+       num(T.ab.max) .. "))"})
+  def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field .. " - " .. num(GR.moisture) .. " * " ..
+    RN.high_tile))
+  def(GN.aux, ab_aux(" + " .. num(G.aux) .. " * " .. GN.field))
 end
 
 data:extend(E)

@@ -113,9 +113,10 @@ if mods["alien-biomes"] then
   for field, key in pairs(GK) do
     def(key, field)
   end
-  def(cfg.climate.grain.veg_key, "temperature")
-  def(V.body_grain, vanilla_bonus("band_t", MS.edge), {patch = PATCH.patch, band_t = band_t(GK.temperature, WILD_TILE)})
-  def(X.body_grain, exclusion("band_t", MS.edge), {band_t = band_t(GK.temperature, WILD_TILE)})
+  def(V.body_grain, vanilla_bonus(GK.temperature), PATCH)
+  -- The stony tiles on a range: the bonus with the highland's lean.
+  def(V.body_high, V.body_grain .. " + " .. cfg.ridges.names.ground)
+  def(X.body_grain, exclusion(GK.temperature))
 end
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut

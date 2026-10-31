@@ -173,8 +173,16 @@ local function ridge_values(map_key)
   if not (crest and openings and band) then
     return {}
   end
-  return {[K.cliff_elevation] = RN.cliff_elevation, [K.cliffiness] = RN.cliffiness, [K.crest] = crest,
-          [K.openings] = openings, [K.band] = band}
+  local out = {[K.cliff_elevation] = RN.cliff_elevation, [K.cliffiness] = RN.cliffiness, [K.crest] = crest,
+               [K.openings] = openings, [K.band] = band, [K.high] = RN.high_map[map_key],
+               [K.passes] = RN.passes[map_key], [K.rock_density] = RN.rock_density,
+               [K.high_tile] = RN.high_tile_map[map_key]}
+  if AB then
+    out[K.rock_lift] = RN.rock_lift_ab
+  else
+    out[K.ground] = RN.ground
+  end
+  return out
 end
 
 -- The offshore field stamp (milestone resources-enemies; APPROVALS 3): a version's map-qualified stamp key
@@ -220,6 +228,9 @@ local function grain_values(map_key)
     out[TL.exclude.key] = TL.exclude.body_grain
     for _, t in ipairs(TL.vanilla.tiles) do
       out[TL.vanilla.keys[t]] = TL.vanilla.body_grain
+    end
+    for _, t in ipairs(TL.vanilla.stony) do
+      out[TL.vanilla.keys[t]] = TL.vanilla.body_high
     end
   end
   if AB and cfg.tiles.vanilla.mix.maps[map_key] then

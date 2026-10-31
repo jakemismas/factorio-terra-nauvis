@@ -310,16 +310,15 @@ local function marsh_grass_hook()
   tile.autoplace.probability_expression = hook(o .. " + " .. G.key, o)
 end
 
--- Milestone destroyed-europe: with the zone on, the volcanic heat bands take the ramp of cfg.destroyed.map_colors,
--- so the map view and the new-game preview tell them apart. Map colours only; no world changes.
-local function heat_map_colors()
-  local C = cfg.destroyed.map_colors
-  for _, family in ipairs(C.families) do
-    for band, color in ipairs(C.bands) do
-      local tile = data.raw.tile["volcanic-" .. family .. "-heat-" .. band]
-      if tile then
-        tile.map_color = color
-      end
+-- Without Alien Biomes: the highland's lean on the stony vanilla tiles, (score) + the ground key behind the gate
+-- (ridges.lua); beside it their tile keys name the lean with the bonus (presets.lua).
+local function ground_hooks()
+  for _, name in ipairs(TL.vanilla.stony) do
+    local tile = data.raw.tile[name]
+    local original = tile and tile.autoplace and tile.autoplace.probability_expression
+    if original ~= nil then
+      local o = "(" .. tostring(original) .. ")"
+      tile.autoplace.probability_expression = hook(o .. " + " .. cfg.keys.ground, o)
     end
   end
 end
@@ -333,6 +332,7 @@ if AB then
   end
 else
   marsh_grass_hook()
+  ground_hooks()
 end
 
 -- Milestone trees-forests. Beside Alien Biomes, the base game's living trees, rocks, decals and plants come
@@ -621,9 +621,35 @@ local function list_hooks()
   log(cfg.identity.title .. ": the list hook on " .. n .. " Alien Biomes autoplaces")
 end
 
+-- The highland lift on Alien Biomes' big rocks (ridges.lua): they read a noise of their own, not rock_density,
+-- and stand on Alien Biomes' tiles, which is most of a range outside the temperate band. Each adds the key to
+-- its peak, behind the gate, so on every world without an Earth preset the hook folds to Alien Biomes' text.
+local function rock_lift_hooks()
+  local RK = cfg.ridges.rocks
+  local names = {}
+  for name, proto in pairs(data.raw["simple-entity"] or {}) do
+    local locals = proto.autoplace and proto.autoplace.local_expressions
+    if locals and locals.peaks_expr and not string.find(name, RK.ab_skip, 1, true) then
+      for _, p in ipairs(RK.ab_prefixes) do
+        if string.sub(name, 1, #p) == p then
+          names[#names + 1] = name
+          break
+        end
+      end
+    end
+  end
+  table.sort(names)
+  for _, name in ipairs(names) do
+    local locals = data.raw["simple-entity"][name].autoplace.local_expressions
+    locals.peaks_expr = hook(locals.peaks_expr .. " + " .. cfg.keys.rock_lift, locals.peaks_expr)
+  end
+  log(cfg.identity.title .. ": the highland rock hook on " .. #names .. " Alien Biomes rocks")
+end
+
 if AB then
   restore_vanilla()
   list_hooks()
+  rock_lift_hooks()
 end
 boost_hooks()
 
