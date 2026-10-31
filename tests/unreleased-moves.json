@@ -374,6 +374,9 @@
   "tn_cliff_elevation_v1": [
    "b9c7f05488ab46f3821aaf157b4e9c12df97cd37443c0742a898ed13ab49128c"
   ],
+  "tn_climate_grain_v1": [
+   "31d0892f90aa4af92b5ebd1f8987e1d3cea4adfb1276b100c9d56468cd81d212"
+  ],
   "tn_crest_atlantic_v1": [
    "9babc0d305e30dbd3b369e1a22881a2b0f4e131bdd175b8eb68b058a63736113",
    "144ae226a03ce8f7b7b0e0b2202f453c08609bf9da2d5ad49c27580f1b640a4d",
@@ -1610,6 +1613,9 @@
   "tn_moisture_ab_v1": [
    "0887291abc5904b33031a531e7d4d6423bad9daf6191e18f10a0641fb3cff917"
   ],
+  "tn_moisture_ab_v2": [
+   "fd54baf4412176760ce19f3d0444746246b274a853a83e606fb7f72312de7206"
+  ],
   "tn_moisture_fb_v1": [
    "baf0102355bdbbff9f71e60b532b282c6e0cf2855b5492f6bb2ad27a6211f939",
    "30349b826f3109b4a00cbacc596cb10913ad6ade36e902fb3e65b6fe2651999e"
@@ -1769,6 +1775,9 @@
   ],
   "tn_temperature_ab_v1": [
    "6024c1456c8fc3ee6faa8e1917466a41da18123b34eee34e8b1b125a7596070f"
+  ],
+  "tn_temperature_ab_v3": [
+   "1c624e59e9a8c42beaa4f04ef62dc4f8308702634597a1ab84d1c89130690b98"
   ],
   "tn_temperature_fb_v1": [
    "eea159f8a63950c838fd33bdefa488f886a1f828f43b34259cdb33a4977c70ef",

@@ -5831,21 +5831,21 @@
   },
   "tn_climate_grain_v1": {
    "type": "noise-expression",
-   "sha256": "31d0892f90aa4af92b5ebd1f8987e1d3cea4adfb1276b100c9d56468cd81d212",
+   "sha256": "e148fc8d7a38e6193e1698bac11f518ad9726366b78b9ded3c46e135a7bcbcbf",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
   },
   "tn_moisture_ab_v2": {
    "type": "noise-expression",
-   "sha256": "fd54baf4412176760ce19f3d0444746246b274a853a83e606fb7f72312de7206",
+   "sha256": "2da883fc57aaf1de1fbf3273d6dfe236272aab08f8bbe9893dd1d207d7f60d4a",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
   },
   "tn_temperature_ab_v3": {
    "type": "noise-expression",
-   "sha256": "1c624e59e9a8c42beaa4f04ef62dc4f8308702634597a1ab84d1c89130690b98",
+   "sha256": "4f65824e73d4b81873c246ef1776182a94216f7dc63a2d3bdb906472f5277184",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
@@ -6116,65 +6116,184 @@
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_destroyed_fine_v1": {
+  "tn_ground_lean": {
    "type": "noise-expression",
-   "sha256": "664ca61c4c4df712effc6f7b4bbfecab42cc647b113c3d23ee4f100878717863",
+   "sha256": "8fef32fdff1cf94cd74f36a9e494285b437390c505fdc34125b8815a98c85dbe",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_chaos_black_dirt_v1": {
+  "tn_high_tile": {
    "type": "noise-expression",
-   "sha256": "7fe58b73b32c89accf4687c2755445b45c514e273727b639e6ad45ba33b3fab8",
-   "dump": "m2",
+   "sha256": "d3c170638b2d1cb9b173560c815dac33d91322ffe8b20e2bbbefabb3fa4811e8",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_chaos_black_sand_v1": {
+  "tn_highland_atlantic_v1": {
    "type": "noise-expression",
-   "sha256": "47f660cc761e0164f89e883cd0ca3ad1f0ef3176ebf4a1cf9bb3ac0ac36bbc88",
-   "dump": "m2",
+   "sha256": "5a035c6d7e8e3d670f4fad13b84a12a0e61c66154c4400d7e8b04240f2620c40",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_chaos_red_dirt_v1": {
+  "tn_highland_europe_v1": {
    "type": "noise-expression",
-   "sha256": "f09b0cf3589478f43d5bc907e9e18db84143506113dd0087ae06b378f7e9e188",
-   "dump": "m2",
+   "sha256": "f5610d508ca73e593c863cdf0299e57c24bf466cb6c97c66ce842a7445aedbe7",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_chaos_red_grass_v1": {
+  "tn_highland_gate_v1": {
    "type": "noise-expression",
-   "sha256": "e669b72e666c2e689cd3ad037708bfc82d86d4d6c9273ce03f795832698adfc2",
-   "dump": "m2",
+   "sha256": "2973a2c2325c46d714d4ba6772f3984fd03b96d2bee67b3f5035017605003b9a",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_chaos_red_sand_v1": {
+  "tn_highland_ground_v1": {
    "type": "noise-expression",
-   "sha256": "ffa968e83eb1449e7a839e031298a330c7d63c0e64715308fc675e27d4b3d8da",
-   "dump": "m2",
+   "sha256": "ab5dedae341b463f36710ef0bf03eda0ef961becc215af184d0b256553f35e25",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_destroyed_class_v1": {
+  "tn_highland_lapse_v1": {
    "type": "noise-expression",
-   "sha256": "7380314b6a747cd3e0eb17fe44200acc94d28ee6af872e80e9ca1b9cea7ff6d1",
-   "dump": "m2",
+   "sha256": "26fec5c88e5ad4622a3b4bbbfd7ec425fcb1e69b0b1083c54d827c3ce5485880",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_destroyed_kind_v1": {
+  "tn_highland_olde_world_v1": {
    "type": "noise-expression",
-   "sha256": "0e646254a015be4c26d0e80601b43b6f6f3ff0ded6e27ff893642455952aea68",
-   "dump": "m2",
+   "sha256": "228193556c346789a6574b05b2366e28325d2db7d488b0971e2b7d830f21fd00",
+   "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_destroyed_macro_v1": {
+  "tn_highland_rise_tile_v1": {
    "type": "noise-expression",
-   "sha256": "03abbb522f5d25fd4f62e762b4f99a6203914666f8cb4999e6c7b27288344a32",
+   "sha256": "2b994b894bf829bf885e4042e31f811aa7bbe4c511f98223c904b5ee6b9429e3",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_highland_rise_v1": {
+   "type": "noise-expression",
+   "sha256": "aeda20fb317374a27c05e93d7076f92ad89fbded7b08a66969d942bc44ffa589",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_highland_rocks_ab_v1": {
+   "type": "noise-expression",
+   "sha256": "527a2412611c29360c6b1db82f4bc05bea1c6a518f96ceac9e7fcfc432f8b50c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_highland_rocks_v1": {
+   "type": "noise-expression",
+   "sha256": "bd33098df24e76865944c686fa716e7aedca6a58940cdc8afd7b0bf579922042",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_highland_tile_atlantic_v1": {
+   "type": "noise-expression",
+   "sha256": "74a529a22eef6465ba19d54475d76a66a2a5dcb0b949831bf86a8a536d4d1a89",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_highland_tile_europe_v1": {
+   "type": "noise-expression",
+   "sha256": "eaa5f7c052154be94905bee6a6dff28ec0874ec1ef7a190797b9b5be43d94d6b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_highland_tile_olde_world_v1": {
+   "type": "noise-expression",
+   "sha256": "83825a7aeebc56fce7c3945a18e37ed9e1754db937d60236a871842c15788b61",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_highland_tile_v1": {
+   "type": "noise-expression",
+   "sha256": "d96941b6f59c344fc7a1b2794f851fe981b8d59a684d0ef0cba174c8db5db69a",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_highland_v1": {
+   "type": "noise-expression",
+   "sha256": "357af037a6972b7bb081792698f430df148e11149266b469c007527b315fef8d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_passes_atlantic_v1": {
+   "type": "noise-expression",
+   "sha256": "b8015856c742433db7e64607706a8307d9271a7aa4b840e3f8ca4026b0ec9cb8",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_passes_europe_v1": {
+   "type": "noise-expression",
+   "sha256": "caeec42e454a19d3d85386a92a53612d12f204a4c73766054efc86f9fd4312bf",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_passes_olde_world_v1": {
+   "type": "noise-expression",
+   "sha256": "6c1be6fc72ff4c9ac977779424c039e8c293c6c305158cb97d3df986007646ff",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_rock_density_v1": {
+   "type": "noise-expression",
+   "sha256": "14e4c487419c2576406b90b6d23193d0222f671b7028c0db43179aa92f06967d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_rock_lift": {
+   "type": "noise-expression",
+   "sha256": "2ded8ad613d0fa32fbb50483c0e7c3dd4e3e9d6871d2a15800a7387bf2f228b2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_vrock_big_rock_v2": {
+   "type": "noise-expression",
+   "sha256": "8819bac5940b49ceae303d4cb86ae2f93c78059d125d27f5571d6fad5d2c9166",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_vrock_big_sand_rock_v2": {
+   "type": "noise-expression",
+   "sha256": "5190c48ab9e5dd2ff6b9f8adf679732fd5ab45678bfef024ba85cf2d29cbfab7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_vrock_huge_rock_v2": {
+   "type": "noise-expression",
+   "sha256": "b0a64740fb757d7a2bad711c91c0ff2a60561e9307439cdf13583bd258e8549c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-10-30"
+  },
+  "tn_vtile_bonus_v3": {
+   "type": "noise-expression",
+   "sha256": "02bcd1071f8e3df4126686db38b2d81bd8307219af395d3a73296f56ff5851de",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-10-30"
