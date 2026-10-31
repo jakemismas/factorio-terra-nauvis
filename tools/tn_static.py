@@ -4453,7 +4453,8 @@ def row_fixtures():
 # hv and plain distance pd) to name one row's output.
 REGION_FILE = "prototypes/expressions/regions.lua"
 REGION_TABLE_MODULE = tnconfig.REGION_TABLE[:-len(".lua")].replace("/", ".")
-REGION_INTERFACE = {"destroyed_sd", "destroyed_w", "destroyed_depth", "forest_w", "forest_sum", "tree_mult",
+REGION_INTERFACE = {"highland_fray", "highland_fray_tile", "highland_massif",
+                    "destroyed_sd", "destroyed_w", "destroyed_depth", "forest_w", "forest_sum", "tree_mult",
                     "marsh_w", "hotspot_w", "enemy_mult", "suffix"}
 REGION_ROW_INTERFACE = {"sd", "w", "depth", "hu", "hv", "pd"}
 

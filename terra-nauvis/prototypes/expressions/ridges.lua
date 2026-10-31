@@ -190,7 +190,7 @@ local function band_term(pts, run, piece, k, B, H, heights)
   local p, q = "bu", "bv"
   local list = {}
   for n, v in ipairs(vs) do
-    list[n] = piece.axis == "x" and {v[1], v[2], tops[n]} or {v[2], v[1], tops[n]}
+    list[n] = piece.axis == "x" and {v[1], v[2], height = tops[n]} or {v[2], v[1], height = tops[n]}
   end
   if piece.axis == "y" then
     p, q = "bv", "bu"
@@ -204,7 +204,7 @@ local function band_term(pts, run, piece, k, B, H, heights)
   end
   local terms, c, steep = {}, list[1][2], 0
   -- the reach along the piece, the same clamps at the reach's own slopes
-  local W, c2, sum, top, arc = {}, reach_px(list[1][3]), list[1][3], list[1][3], 0
+  local W, c2, sum, top, arc = {}, reach_px(list[1].height), list[1].height, list[1].height, 0
   for n = 2, #list do
     local a, b = list[n - 1], list[n]
     local slope = (b[2] - a[2]) / (b[1] - a[1])
@@ -212,10 +212,10 @@ local function band_term(pts, run, piece, k, B, H, heights)
     c = c - slope * a[1]
     local bounds = "clamp(" .. p .. ", " .. S .. " * " .. num(a[1]) .. ", " .. S .. " * " .. num(b[1]) .. ")"
     terms[#terms + 1] = num(slope) .. " * " .. bounds
-    local rise = (reach_px(b[3]) - reach_px(a[3])) / (b[1] - a[1])
+    local rise = (reach_px(b.height) - reach_px(a.height)) / (b[1] - a[1])
     c2 = c2 - rise * a[1]
     W[#W + 1] = num(rise) .. " * " .. bounds
-    sum, top = sum + b[3], math.max(top, b[3])
+    sum, top = sum + b.height, math.max(top, b.height)
     arc = arc + (b[1] - a[1]) * math.sqrt(1 + slope * slope)
   end
   local half = RD.ore_clear_tiles * math.sqrt(1 + steep * steep)
@@ -356,7 +356,7 @@ local function highland(key, Bd, O)
   local terms = {}
   for _, h in ipairs(Bd.pieces) do
     if h.arc >= RD.rocks.short_px then
-      local reach = S .. " * " .. num(h.reach) .. " + " .. num(HG.tiles)
+      local reach = S .. " * " .. num(h.reach) .. " + " .. num(HG.rock_tiles) .. " / " .. S
       local wq = h.q == "bu" and "wu" or "wv"
       terms[#terms + 1] = "min(" .. reach .. " - abs(" .. wq .. " - " .. h.f .. "), " .. reach .. " + " .. S .. " * " ..
         num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
@@ -507,23 +507,21 @@ def(N.clear, "if(" .. on .. ", max(1 - " .. K.band .. ", " .. N.free .. "), 1)")
 -- warp, roughness and marsh outline for tiles, over the falloff, faded in outside the ridge-free start disc; 0
 -- with ridges off.
 local HG, RG = RD.high, cfg.regions.names
-def(N.rise, "max(0, " .. K.high .. " + " .. S .. " * " .. num(HG.fray_warp) .. " * " .. RG.wx .. ")")
-def(N.rise_tile, "max(0, " .. K.high_tile .. " + " .. S .. " * (" .. num(HG.fray_warp) .. " * " .. RG.wx .. " + " ..
-  num(HG.fray_rough) .. " * " .. RG.rough .. " + " .. num(HG.fray_massif) .. " * " .. RG.marsh_rough .. "))")
+def(N.rise, "max(0, " .. K.high .. " + " .. S .. " * " .. RG.highland_fray .. ")")
+def(N.rise_tile, "max(0, " .. K.high_tile .. " + " .. S .. " * " .. RG.highland_fray_tile .. ")")
 def(N.gate, "clamp((distance - max(" .. num(RD.start.radius_tiles) .. ", starting_area_radius) - " ..
   num(RD.start.margin_tiles) .. ") / " .. num(HG.start.ramp_tiles) .. ", 0, 1)")
-local function high(r)
-  return "if(" .. on .. ", min(1, " .. r .. " / (" .. S .. " * " .. num(HG.fall_px) .. " + " .. num(HG.fall_tiles) ..
-    ")) * " .. N.gate .. ", 0)"
+local function high(r, fall)
+  return "if(" .. on .. ", min(1, " .. r .. " / (" .. S .. " * " .. num(HG.fall_px) .. " + " .. fall .. ")) * " ..
+    N.gate .. ", 0)"
 end
-def(N.high, high(N.rise))
-def(N.high_tile, high(N.rise_tile))
+def(N.high, high(N.rise, num(HG.rock_fall) .. " / " .. S))
+def(N.high_tile, high(N.rise_tile, num(HG.fall_tiles)))
 -- The tile temperature's fall, with ridges off 0, and the stony tiles' lean without Alien Biomes.
 local GD = RD.ground
 def(N.lapse, "if(" .. on .. ", " .. num(GD.lapse_per_px2) .. " * over * over * " .. N.gate .. " * clamp(" ..
   cfg.climate.names.core .. " / " .. num(GD.cold_t) .. ", " .. num(GD.cold_min) .. ", 1), 0)",
-  {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(GD.lapse_from_px) .. ") * clamp(1 + " ..
-     num(GD.massif.gain) .. " * " .. RG.wy .. ", " .. num(GD.massif.low) .. ", " .. num(GD.massif.high) .. ")"})
+  {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(GD.lapse_from_px) .. ") * " .. RG.highland_massif})
 def(N.ground, num(RD.ground.lean) .. " * " .. N.high_tile)
 def(K.ground, num(0))
 -- The grain's bodies read the tile reach, and a save from before the highlands names those bodies but not this

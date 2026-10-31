@@ -270,6 +270,9 @@ local RDN = {
   K_HIGH_TILE = NOISE .. "high_tile",
   RD_RISE = NOISE .. "highland_rise" .. RD_V,
   RD_RISE_TILE = NOISE .. "highland_rise_tile" .. RD_V,
+  RD_FRAY = NOISE .. "highland_fray" .. RD_V,
+  RD_FRAY_TILE = NOISE .. "highland_fray_tile" .. RD_V,
+  RD_MASSIF = NOISE .. "highland_massif" .. RD_V,
   RD_HIGH_TILE = NOISE .. "highland_tile" .. RD_V,
   EU_HIGH_TILE = NOISE .. "highland_tile_europe" .. RD_V,
   AT_HIGH_TILE = NOISE .. "highland_tile_atlantic" .. RD_V,
@@ -1100,6 +1103,7 @@ return {
                RDN.K_ROCK_LIFT, RDN.K_GROUND, RDN.K_HIGH_TILE, RDN.RD_RISE, RDN.RD_GATE, RDN.RD_LAPSE, RDN.RD_GROUND,
                RDN.RD_HIGH,
                RDN.RD_RISE_TILE, RDN.RD_HIGH_TILE, RDN.EU_HIGH_TILE, RDN.AT_HIGH_TILE, RDN.OW_HIGH_TILE,
+               RDN.RD_FRAY, RDN.RD_FRAY_TILE, RDN.RD_MASSIF,
                RDN.RD_ROCK_LIFT, RDN.RD_ROCK_LIFT_AB, RDN.RD_ROCK_DENSITY, TF_ROCKS["huge-rock"].high,
                TF_ROCKS["big-rock"].high, TF_ROCKS["big-sand-rock"].high,
                RDN.EU_HIGH, RDN.AT_HIGH, RDN.OW_HIGH, RDN.EU_PASSES, RDN.AT_PASSES, RDN.OW_PASSES,
@@ -1491,12 +1495,16 @@ return {
   --   switch_threshold   the toggle reads on above it (its bodies are 1 and 0)
   --   reset_size   the cliff control's size the on_init reset writes when the slider was none (S5)
   --   high       the highland band round each range (a cliff squiggle on plain grass does not
-  --              read as a mountain). A crest piece's reach in tiles at scale S is (min_px + gain_px * (height /
-  --              ref_m) ^ power) * S + tiles, height the mean of the piece's mean and highest vertex; the band
-  --              reads the crest band's own pieces, so the Entity program pays only per piece. The field is
-  --              (largest reach less distance, plus the region layer's warp and roughness at fray_warp and
-  --              fray_rough) over S * fall_px + fall_tiles, clamped to 0 to 1, so a tall range is wider and
-  --              stronger than a low one, and it fades in start.ramp_tiles outside the ridge-free start disc.
+  --              read as a mountain). A crest piece's reach in reference pixels is min_px + gain_px * (height /
+  --              ref_m) ^ power, height the mean of the piece's mean and highest vertex; the band reads the crest
+  --              band's own pieces, so the Entity program pays only per piece. The field is (largest reach less
+  --              distance, plus the region layer's warp at fray_warp and for tile scores its roughness at
+  --              fray_rough) over the falloff, clamped to 0 to 1, so a tall range is wider and stronger than a low
+  --              one, and it fades in start.ramp_tiles outside the ridge-free start disc. Rocks: reach S * px +
+  --              rock_tiles / S tiles over S * fall_px + rock_fall / S, so at scale 6 the terms are 30 and 36
+  --              tiles, and at low scales, where a range is a few dozen tiles wide, the band stays flat across
+  --              the crest instead of crowding it (T6's rock ratio read 1.85 to 2.5 at scale 1 with the
+  --              terms fixed). Tile scores: reach S * px over S * fall_px + fall_tiles.
   --              fray_massif: the tiles' rise also takes the marsh outline noise, a few hundred tiles at scale 6 and
   --              already in the Tile program, so the grey and the snow break into massifs instead of one band
   --   ground     tile scores alone read these, and they read a reach that follows the vertex heights along each
@@ -1567,7 +1575,8 @@ return {
     switch_threshold = 0.5,
     reset_size = 1,
     max_arguments = 255,
-    high = {ref_m = 4800, min_px = 8, gain_px = 42, power = 0.9, tiles = 30, fall_px = 44, fall_tiles = 36,
+    high = {ref_m = 4800, min_px = 8, gain_px = 42, power = 0.9, rock_tiles = 180, rock_fall = 216, fall_px = 44,
+            fall_tiles = 36,
             fray_warp = 0.7, fray_rough = 2, fray_massif = 9, start = {ramp_tiles = 96}},
     ground = {lean = 6, lapse_per_px2 = 0.03, lapse_from_px = 7, cold_t = 30, cold_min = 0.15, floor = -12,
               moisture = 0.2, fray = 2, massif = {gain = 0.04, low = 0.72, high = 1.15}},
@@ -2144,6 +2153,7 @@ return {
       destroyed_sd = RG_DESTROYED_SD, destroyed_w = RG_DESTROYED_W, destroyed_depth = RG_DESTROYED_DEPTH,
       forest_w = RG_FOREST_W, forest_sum = RG_FOREST_SUM, tree_mult = RG_TREE_MULT, marsh_w = RG_MARSH_W,
       hotspot_w = RG_HOTSPOT_W, enemy_mult = RG_ENEMY_MULT,
+      highland_fray = RDN.RD_FRAY, highland_fray_tile = RDN.RD_FRAY_TILE, highland_massif = RDN.RD_MASSIF,
       -- the query point: u, v .. suffix unwarped; u, v .. share .. <hundredths> .. suffix for a share
       u = RG_U, v = RG_V_, ox = RG_OX, oy = RG_OY, ax = RG_AX, ay = RG_AY, wk = RG_WK, wx = RG_WX, wy = RG_WY,
       rough = RG_ROUGH, marsh_rough = RG_MARSH_ROUGH,
