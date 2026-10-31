@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.1
+Date: 2026-10-30
+  Bugfixes:
+    - The game no longer fails to load when an Alien Biomes tile group that Terra Nauvis adopts is
+      disabled.
+    - The start ore guarantee counts land after Exact coastlines has written it, so a river cannot
+      cut a start off from an ore it counted. This applies to new worlds.
+    - The Exact coastlines drift line no longer says a Map type world follows the setting.
+  Changes:
+    - Corrected the Atlantic preset, tooltips and README where they overclaimed.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 2026-10-30
   Features:

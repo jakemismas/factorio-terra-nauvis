@@ -6,6 +6,21 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-30
+
+A patch for existing and new worlds. Terrain does not change: a mid-game save made on 0.1.0 and loaded on this build shows 0 of 3,694 new chunks differing.
+
+### Fixed
+
+- The game no longer fails to load when an Alien Biomes tile group that Terra Nauvis adopts is disabled.
+- The start ore guarantee counts land after Exact coastlines has written it, so a river cannot cut a start off from an ore it counted. This applies to new worlds.
+- The Exact coastlines drift line no longer says a Map type world follows the setting.
+
+### Changed
+
+- Corrected the Atlantic preset, tooltips and README where they overclaimed.
+- `release.yml` runs the static rows, so a commit CI rejects cannot ship.
+
 ## [0.1.0] - 2026-10-30
 
 First release of Terra Nauvis, for Factorio 2.1. This summary is the whole release at a glance; the

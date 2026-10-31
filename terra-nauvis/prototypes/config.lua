@@ -553,7 +553,7 @@ return {
   identity = {
     id = ID,
     title = "Terra Nauvis",
-    version = "0.1.0",
+    version = "0.1.1",
     author = "Jake Mismas",
     factorio_version = "2.1",
     base_version = "2.1.24",
