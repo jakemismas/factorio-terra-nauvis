@@ -33,6 +33,7 @@
 -- computes the same tiles.
 local cfg = require("prototypes.config")
 local guards = require("scripts.guards")
+local coastcover = require("scripts.coastcover")
 
 -- One require per generated table (the registration scan reads literal module names): per map its K+
 -- table and its mask table for every offered scale.
@@ -716,7 +717,11 @@ local function write(surface)
   for q = #RECS, NW + 1, -1 do
     RECS[q] = nil
   end
+  local cover = coastcover.read(surface, X0, Y0, RECS, NW, NONLAND_SET, NONLAND)
   surface.set_tiles(RECS, false, true, true, false)
+  if cover then
+    coastcover.place(surface, X0 / CT, Y0 / CT)
+  end
 end
 
 -- Plans the tiles one chunk needs written (steps 1 to 5) into QX, QY and WLAND, NW of them.
@@ -848,6 +853,7 @@ local function prepare(st)
   THIN = thin_lut(st.scale, LUT)
   SMOOTH, THIN_CENTRE, WOBBLE = {}, {}, wobble_table()
   tile_lists()
+  coastcover.prepare()
   return true
 end
 
