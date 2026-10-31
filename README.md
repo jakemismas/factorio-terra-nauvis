@@ -115,10 +115,11 @@ All of these are startup settings except City markers, which is on the Map tab.
 - **Cargo Ships and its Oil Rig:** straits and canals are wide enough for ships at every scale, and
   carved rivers at scale 6; Known limits says which rivers Atlantic carves. Offshore oil fields
   appear on deep water when the Oil Rig mod is installed.
-- **Large packs:** on a build from earlier on release day, the maintainer's pack of 83 mods, with Space Age,
-  Alien Biomes, RSO, Cargo Ships, Bob's Enemies, Big Monsters and Dectorio, ran with no errors, saved
-  and reloaded clean, and gave the same world on four separate creates. Those mods change ore,
-  enemies and looks, so a world in a pack will not match the previews on this page.
+- **Large packs:** on the v0.1.0 zip, the maintainer's pack of 83 mods, with Space Age, Alien Biomes, Cargo
+  Ships, Bob's Enemies, Big Monsters and Dectorio, ran with no errors with RSO off and with it on,
+  saved and reloaded clean, and took a version upgrade in the middle of a game with no new chunk
+  changing. On an earlier build the pack gave the same world on four separate creates. Those mods
+  change ore, enemies and looks, so a world in a pack will not match the previews on this page.
 
 ## Known limits
 
@@ -163,9 +164,10 @@ All of these are startup settings except City markers, which is on the Map tab.
   entry alone still follows the scale, spawn city, Canals, Inland lakes and Ore hotspots settings.
 - **An existing save stays as it is.** Adding the mod to a world made without it changes nothing on
   that world's surfaces, apart from the grey cliff art beside Alien Biomes.
-- **Testing was light for this release.** A crash matrix, a pack run and one security pass ran on
-  builds from earlier on release day, before the last terrain changes. The final build had load and
-  chunk time checks. The full timing, determinism and save suites have not run on it.
+- **Testing.** The v0.1.0 zip ran the pack soak: far travel, long simulation, save and load, and a
+  run with reloads that matched a straight run to the checksum. It also had a security review of the
+  release tools. Scale 6 Old World was the soak's map; Atlantic had one shorter pack run at scale 4,
+  and Europe none. The full timing suite has not run on it.
 - **Most cities stand where EarthMaps put them.** On Atlantic and Old World a city sits at EarthMaps'
   own map point, which can lie far from the real place it names. Prague, Frankfurt, Aachen and
   Moscow on Old World stand at their real positions.
