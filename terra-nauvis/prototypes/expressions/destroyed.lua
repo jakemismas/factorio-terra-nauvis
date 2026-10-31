@@ -36,9 +36,11 @@ local function def(name, expression, locals)
   E[#E + 1] = {type = "noise-expression", name = name, expression = expression, local_expressions = locals}
 end
 
--- The zone in tiles: positive inside, never inside the start disc (the zone's own start mask).
+-- The zone in tiles: positive inside, never inside the start disc (the zone's own start mask), whose edge
+-- the fine noise moves outward only, so the start stays safe and its edge is no circle. The sign is the one
+-- that adds to the heat lift's fray: the other cancels it, and the lift's edge round the start comes out round.
 def(N.zone, "min(" .. DEPTH .. ", " .. D.start.distance .. " - max(" .. num(D.start.radius_tiles) ..
-  ", starting_area_radius))")
+  ", starting_area_radius) - " .. num(D.start.warp_tiles) .. " * (1 - clamp(" .. N.fine .. ", -1, 1)))")
 
 -- The fine noise, one named field: the heat mixes the core's bands with it, and the palette reads it too.
 local H = D.heat

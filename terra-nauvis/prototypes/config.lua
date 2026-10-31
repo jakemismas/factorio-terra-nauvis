@@ -1666,7 +1666,9 @@ return {
   destroyed = {
     names = {zone = DE.zone, heat = DE.heat, temperature = DE.temperature, fine = DE.chaos_fine},
     pools = {europe = DE.pool_europe, atlantic = DE.pool_atlantic, olde_world = DE.pool_olde_world},
-    start = {radius_tiles = 150, distance = DISTANCE},
+    -- warp_tiles: the start cut moves out by 0 to twice this along the fine noise, so its edge is organic
+    -- and no zone tile ever lies inside radius_tiles
+    start = {radius_tiles = 150, distance = DISTANCE, warp_tiles = 60},
     heat = {rim = 112, per_tile = 0.49, ramp = 30, cap = 149.5, lift_px = 30, lift_fray_px = 12,
             noise = {amplitude = 20, wavelength_tiles = 24, octaves = 3, persistence = 0.6, seed1 = 7901}},
     -- The red palette: a class per tile from a macro noise over the depth, so
