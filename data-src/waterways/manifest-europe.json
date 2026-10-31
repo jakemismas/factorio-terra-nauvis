@@ -146,7 +146,7 @@
  "scales": {
   "1": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s1_v1.lua",
-   "sha256": "4eb09e7ef49cdbb714c22a5b110f1ca46bec5a292686568756d68d9f6af8ca32",
+   "sha256": "f851d1f909721abd8bb95fd5060a09ccb3dca6b5cc0d8115daf7d99b9bb3b275",
    "bytes": 26001,
    "stats": {
     "segments": {
@@ -1461,7 +1461,7 @@
      "id": "neva",
      "name": "Neva",
      "hw_tiles": 1.5,
-     "reach_tiles": 18.0,
+     "reach_tiles": 18.975,
      "segments": 2,
      "window_tiles": 13,
      "polyline_geo": [
@@ -1477,7 +1477,7 @@
      },
      "class": "minor",
      "width_tiles": 3,
-     "half_widths": [1.5, 1.5],
+     "half_widths": [1.5, 2.25],
      "fords": [
       {
        "interval": 0,
@@ -1485,7 +1485,7 @@
        "centre": [676.5477, -307.1077],
        "tangent": [-0.972806, -0.231621],
        "half_length": 2.5,
-       "half_width": 7.9534,
+       "half_width": 8.9284,
        "bend_tiles": 2.253
       }
      ],
@@ -1798,11 +1798,11 @@
     }
    ],
    "t1_mask": {
-    "pixels": 270555,
-    "share": 0.066157,
+    "pixels": 270787,
+    "share": 0.066214,
     "thin_water_px": 44561,
     "thin_water_left_as_land_px": 34893,
-    "reference_land_carved_px": 229864
+    "reference_land_carved_px": 230047
    },
    "starts": {
     "amsterdam": {
@@ -2725,8 +2725,8 @@
   },
   "2": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s2_v1.lua",
-   "sha256": "012d9329b6ea84d19af5620535009a8ed8d09844d298653da00cfe31b920248e",
-   "bytes": 36960,
+   "sha256": "181fa83be54cfa8ebc84b16a2b16464b0fd12e61b6d9112c980667145bdd6c2a",
+   "bytes": 36961,
    "stats": {
     "segments": {
      "river": 304,
@@ -2779,7 +2779,7 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -2787,7 +2787,7 @@
        "centre": [-460.8843, 398.8949],
        "tangent": [0.944084, -0.329706],
        "half_length": 2.5,
-       "half_width": 5.85
+       "half_width": 6.825
       },
       {
        "interval": 1,
@@ -2959,7 +2959,7 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -3083,7 +3083,7 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -3091,7 +3091,7 @@
        "centre": [-654.2328, 488.3279],
        "tangent": [-0.998861, 0.047723],
        "half_length": 2.5,
-       "half_width": 5.85
+       "half_width": 6.825
       },
       {
        "interval": 1,
@@ -3161,15 +3161,15 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 62.576,
-       "centre": [447.9931, 253.0121],
+       "arc_tiles": 59.576,
+       "centre": [445.069, 253.6827],
        "tangent": [0.974696, -0.223532],
        "half_length": 2.5,
-       "half_width": 5.85
+       "half_width": 6.825
       },
       {
        "interval": 1,
@@ -3239,7 +3239,7 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -3247,7 +3247,7 @@
        "centre": [-158.8977, 181.8137],
        "tangent": [-0.903944, -0.427651],
        "half_length": 2.5,
-       "half_width": 5.85
+       "half_width": 6.825
       },
       {
        "interval": 1,
@@ -3309,7 +3309,7 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -3378,7 +3378,7 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -3386,7 +3386,7 @@
        "centre": [1264.2246, -190.9935],
        "tangent": [-0.991122, 0.132955],
        "half_length": 2.5,
-       "half_width": 5.85
+       "half_width": 6.825
       },
       {
        "interval": 1,
@@ -3448,7 +3448,7 @@
      },
      "class": "major",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -3456,7 +3456,7 @@
        "centre": [170.389, 192.8296],
        "tangent": [-0.895908, -0.444241],
        "half_length": 2.5,
-       "half_width": 5.85
+       "half_width": 6.825
       },
       {
        "interval": 1,
@@ -4082,7 +4082,7 @@
        "centre": [2231.4943, 505.967],
        "tangent": [-0.881808, 0.471608],
        "half_length": 2.5,
-       "half_width": 5.85
+       "half_width": 6.825
       }
      ],
      "fords_skipped": [],
@@ -5053,8 +5053,8 @@
   },
   "3": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s3_v1.lua",
-   "sha256": "175c61f83ede0fcccc3cc7967c5b8d7147f415ffbc719316dd542e679c25b1e2",
-   "bytes": 39059,
+   "sha256": "e54a593caf6c6838b171f33d16aaff9c7dc25bc32ccf066a0f9c59a03779d9cf",
+   "bytes": 39035,
    "stats": {
     "segments": {
      "river": 326,
@@ -5066,7 +5066,7 @@
     "basins": 3,
     "ponds": 7,
     "classes": {
-     "ww": 12,
+     "ww": 11,
      "canals": 1
     }
    },
@@ -5409,7 +5409,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [1.5, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -5417,7 +5417,7 @@
        "centre": [-976.3324, 730.4514],
        "tangent": [-0.998833, 0.048297],
        "half_length": 2.5,
-       "half_width": 6.0
+       "half_width": 7.95
       },
       {
        "interval": 1,
@@ -5488,7 +5488,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [1.5, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -5567,7 +5567,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [1.5, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -5637,7 +5637,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [1.5, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -5707,7 +5707,7 @@
      },
      "class": "major",
      "width_tiles": 9,
-     "half_widths": [1.5, 6.0],
+     "half_widths": [3.0, 6.0],
      "fords": [
       {
        "interval": 0,
@@ -5838,7 +5838,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -5846,7 +5846,7 @@
        "centre": [-2667.1141, 1770.4851],
        "tangent": [-0.976566, 0.215219],
        "half_length": 2.5,
-       "half_width": 6.0
+       "half_width": 6.975
       },
       {
        "interval": 1,
@@ -5899,7 +5899,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -5952,7 +5952,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -6006,7 +6006,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -6060,15 +6060,15 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 66.647,
-       "centre": [-2380.1805, 1439.2067],
+       "arc_tiles": 65.647,
+       "centre": [-2381.1381, 1438.9186],
        "tangent": [0.957574, 0.288186],
        "half_length": 2.5,
-       "half_width": 6.0
+       "half_width": 6.975
       },
       {
        "interval": 1,
@@ -6112,15 +6112,15 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
-       "arc_tiles": 61.718,
-       "centre": [1691.1649, 643.6749],
+       "arc_tiles": 59.718,
+       "centre": [1689.3773, 642.778],
        "tangent": [0.893828, 0.448411],
        "half_length": 2.5,
-       "half_width": 6.0
+       "half_width": 6.975
       },
       {
        "interval": 1,
@@ -6156,7 +6156,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -6202,7 +6202,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -6246,7 +6246,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -6254,7 +6254,7 @@
        "centre": [-2965.9774, 1564.3628],
        "tangent": [-0.847016, 0.531567],
        "half_length": 2.5,
-       "half_width": 6.0
+       "half_width": 6.975
       },
       {
        "interval": 1,
@@ -6290,7 +6290,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -6334,7 +6334,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -6405,7 +6405,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -6440,7 +6440,7 @@
      },
      "class": "minor",
      "width_tiles": 6,
-     "half_widths": [1.5, 3.75],
+     "half_widths": [2.25, 3.75],
      "fords": [
       {
        "interval": 0,
@@ -7274,8 +7274,8 @@
   },
   "4": {
    "file": "terra-nauvis/prototypes/generated/waterways_europe_s4_v1.lua",
-   "sha256": "b02e74ee06ab11d8098773adccb8208bc9873dbbc67e7b2294b5855956ec865e",
-   "bytes": 46817,
+   "sha256": "785a0d347882d7e3587f13ec0a4480f45bf04abd9f5d2169ec74b7dd7341a96e",
+   "bytes": 46780,
    "stats": {
     "segments": {
      "river": 410,
@@ -7287,7 +7287,7 @@
     "basins": 3,
     "ponds": 7,
     "classes": {
-     "ww": 14,
+     "ww": 13,
      "canals": 2
     }
    },
@@ -8648,7 +8648,7 @@
      },
      "class": "minor",
      "width_tiles": 8,
-     "half_widths": [1.5, 5.25],
+     "half_widths": [3.0, 5.25],
      "fords": [
       {
        "interval": 0,
