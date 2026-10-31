@@ -19,8 +19,8 @@ Old World leads because it is the map the maintainer plays.
    enabling it shows no error.
 2. **Startup settings.** Open Settings > Mod settings > Startup. Map scale offers 1 to 6 with every
    map's world size in each label. The spawn city lists offer Random plus 40 cities for Europe, 50 for
-   Atlantic and 33 for Old World, and Old World lists Frankfurt, Aachen and Moscow. Every setting has
-   a tooltip, and no text reads "Unknown key".
+   Atlantic and 33 for Old World, and Old World lists Frankfurt, Aachen and Moscow. Ore hotspot amount
+   offers 50, 100, 200 and 400 percent. Every setting has a tooltip, and no text reads "Unknown key".
 3. **New-game screen.** Open Single player > New game. The preset list shows Terra Nauvis: Europe,
    Atlantic and Old World right after Default, each with a description naming its world size. Picking
    one sets the Terrain tab's Map type to the entry of the same name.
@@ -45,4 +45,7 @@ Old World leads because it is the map the maintainer plays.
 ## Not in this smoke test
 
 - Multiplayer: no desync test has run, so 0.1.0 is for single player.
-- Exact coastlines: run a drive along a coast only on a map the setting's tooltip names.
+- Exact coastlines: it is on by default on Old World and Atlantic and acts as chunks generate, so
+  step 6 reaches it only if the route meets a coast. To check it, drive along a coast on either map:
+  channels and islets the preview lacks appear, and new land carries trees. Europe's map keeps its
+  noise coast.

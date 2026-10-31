@@ -7,6 +7,9 @@ Date: 2026-10-30
     - Regular ore on Terra Nauvis presets forms natural mineral fields: lobed outlines with satellite
       pockets, a few large fields among many small ones, gathered in provinces, with rich pockets
       instead of a rich centre.
+    - Ore hotspots startup setting (default on): historic ore fields at their real sites, with about
+      three times the base game's biter nests inside them, and offshore oil fields on deep water
+      where the Oil Rig mod is installed.
     - Ore hotspot amount startup setting: 50, 100, 200 or 400 percent. Hotspots ignore the map's ore
       sliders, stay inside their discs at their real sites, and ordinary ore stays out of them.
     - Map scale startup setting: 1 to 6 tiles per reference pixel, default 6; each value's label
@@ -49,7 +52,8 @@ Date: 2026-10-30
     - Rivers, straits and canals on every map at every scale: rivers grow with the map scale and
       carry a walkable shallow ford every 60 reference pixels; Gibraltar, Dover and the Great Belt
       are two-way straits; the Canals startup setting (default on) opens Kiel, Corinth, Suez and
-      Panama, and with it off every isthmus stays closed. Ships can sail every river to the sea.
+      Panama, and with it off every isthmus stays closed. At map scale 6 ships can sail the rivers
+      to the sea.
     - Earth climate on every Terra Nauvis preset: the far north frozen, Scandinavia and Russia cold,
       temperate Europe, and hot deserts where EarthMaps paints sand (the Sahara, Arabia, Central
       Asia, the American south-west, the Kalahari, Australia and the southern Andes). With Alien
@@ -76,16 +80,19 @@ Date: 2026-10-30
       area. The cliffs sliders do not change them, and a world started with cliffs at none gets
       its ridges back beyond the starting area. Beside Alien Biomes cliffs use its grey stone art,
       which sits on its ground as vanilla's orange brown does not, on every Nauvis world.
-    - Where a map's edge cuts through land (North Africa and Russia on Europe, the far east of
-      Siberia on the Atlantic and Old World maps), the land sinks into deep water a little inside
-      the edge along a wavy coast that changes with the map seed, instead of a straight cut.
+    - Mountain ranges read as highlands: big rocks thicken round each range, clear of its passes and
+      of every start, the ground leans to dry dirt, and beside Alien Biomes the tops of tall ranges
+      turn to grey ground and snow.
+    - Where a map's edge cuts through land (North Africa, Russia and Anatolia on Europe, Chukotka on
+      the Atlantic and Old World maps), the land ends in bays and headlands that change with the map
+      seed, instead of a straight cut.
     - Destroyed Europe startup setting (default off, needs Alien Biomes): from France to Warsaw and
       from the North Sea across Switzerland and Austria to Ljubljana and down Italy to about Rome,
       the heart of Europe becomes Alien Biomes' lava, black ash, red rock and scorched red grass in
-      mixed patches, its outline different on every map seed; Britain, Denmark, the Kiel Canal and the Carpathians
-      stay outside, and the start area stays normal. A random spawn city never lands inside the
-      zone. Without Alien Biomes nothing changes, and the game warns at the start and each player
-      who joins.
+      mixed patches, its outline different on every map seed and red on the map view; Britain,
+      Denmark, the Kiel Canal and the Carpathians stay outside, and the start area stays normal. A
+      random spawn city never lands inside the zone. Without Alien Biomes nothing changes, and the
+      game warns at the start and each player who joins.
     - Exact coastlines startup setting (default on): on Atlantic and Old World each new chunk's coast
       follows the reference on every shore and continent alike, so fjords, bays, the sea's narrow
       channels and islets the noise cannot hold come back as rounded natural shores. The map
@@ -100,10 +107,6 @@ Date: 2026-10-30
       boats, and only the largest scale carries boats along every river.
     - The start lake and the Inland lakes setting's lakes have irregular shores, and inland lakes vary
       in size.
-    - With Alien Biomes enabled the Terra Nauvis presets are not offered yet (its palms would read
-      the fine coast); the Map type entries are. A world made from a preset that later loads
-      beside Alien Biomes gets one loud warning, since its new chunks then generate more slowly.
-    - With Alien Biomes enabled the Terra Nauvis presets are offered again: the palms read the
   Compatibility:
     - With Alien Biomes enabled every Terra Nauvis preset is offered: the palms read the
       climate alone, never the coast. A world made from a preset without Alien Biomes does the same

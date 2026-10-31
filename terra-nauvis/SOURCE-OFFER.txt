@@ -3,7 +3,8 @@ Terra Nauvis: written offer for the corresponding source (GNU GPL version 3, sec
 Terra Nauvis is free software: you can redistribute it and modify it under the terms of the GNU
 General Public License version 3, in LICENSE beside this file. Its map data derives from EarthMaps
 (https://github.com/HySpeed/EarthMaps, GPLv3). The islets the EarthMaps raster lacks are derived from
-RESOLVE Ecoregions 2017, Dinerstein et al. (https://ecoregions.appspot.com/, CC BY 4.0).
+RESOLVE Ecoregions 2017, Dinerstein et al. (https://ecoregions.appspot.com/), under CC BY 4.0
+(https://creativecommons.org/licenses/by/4.0/).
 
 This zip holds the mod's Lua source. The complete corresponding source of this version also covers
 the build tools (tools/) and the input data (data-src/) that the mod's generated files are made from.

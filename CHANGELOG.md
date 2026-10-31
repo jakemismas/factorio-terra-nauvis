@@ -6,117 +6,36 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Added
-
-- Ore hotspot amount startup setting: 50, 100, 200 or 400 percent, default 100. It multiplies hotspot
-  richness and nothing else, so no hotspot moves or grows.
-
-### Changed
-
-- Destroyed Europe turns red: a macro noise over the depth gives a
-  class per tile, so lava, black ash (`mineral-black-sand-1`, `mineral-black-dirt-1`), red rock
-  (`mineral-red-sand-1`, `mineral-red-dirt-1`) and rim red grass (`vegetation-red-grass-1`) mix with no
-  contour. The heat rises to a mean of 142 and starts 30 px in, so the rim keeps the climate's trees.
-  Setting off: previews of all three maps hash the same as main. Heat-4 covers 16 to 28 percent of the
-  land sampled; it walks at 0.7 and blocks nothing.
-- Beside Alien Biomes the ground follows Earth's biomes instead of latitude alone: tile belts
-  (`climate.tile_belts`) move only the fields tile scores read, so the Congo, the Amazon and South-East
-  Asia are deep green, the Sahara golden with some red rock, Central Asia and the Gobi pale sand and
-  gravel instead of one sheet of vanilla red desert, the Pontic and Kazakh steppes and the Great Plains
-  dry yellow grass, Tibet cold grey, the Arctic pale tundra with snow in the far north and Greenland
-  white. Orange grass is gone, ice keeps to the noise's lows, and temperate Europe keeps its tiles
-.
-- Regular ore patches on Earth presets read as natural mineral fields: lobed outlines with satellites,
-  a few large fields among many small ones, gathered in provinces instead of an even spacing, and a
-  richness plateau with pockets instead of a cone. Each preset redirects vanilla's patch expressions
-  to an Earth copy, so default worlds, the wrappers and the pack's own patch settings are unchanged
-  (`resources.natural`; a development branch).
-- Hotspots listen only to the mod's settings: no map slider reaches them, and size none no longer
-  removes them.
-- A hotspot's ore never leaves its disc, at any scale, seed or amount; a row's disc is an exact circle
-  of radius R about its centre, and the shaping happens inside it. Regular ore of every kind stays out
-  of hotspot discs and different ores' hotspots never interleave, by a test on each spot's candidate,
-  so the rules add almost nothing per tile.
-- Hotspot jitter is halved, so a disc stands at most a quarter of its radius off its real site.
-- Mountain ranges read as highlands, not as a cliff line on grass: big rocks thicken round each range,
-  wider and stronger the taller it is, and clear of its passes and of every start;
-  the ground leans to dry dirt, and beside Alien Biomes the tops of tall ranges turn to grey ground and
-  snow. Tile scores alone read the lean, so the forests on the slopes stay
-  (`ridges.high`, `ridges.ground`, `ridges.rocks`; design notes 2026-10-30 18:00, a development branch).
-- The map's outline reads as a natural ocean margin at a far map view: where the box cuts land (Europe's
-  North Africa, Russia and Anatolia, and Chukotka on Atlantic and Old World) land ends in bays and
-  headlands up to a few hundred tiles deep at scale 6, instead of a thin wavy strip following a straight
-  box. Each side has a margin table, so Cyprus, Ireland, the east end of the Black Sea, the lower Don and
-  every spawn city keep their ground at every seed (`coast.edge_band.outline`; design notes 2026-10-30 17:35,
-  a development branch).
-- Europe's coast is one crisp line too: its geography reads the fit through the coast warp, which ends the
-  dark spray on cold coasts, with a thinner shallow rim. Its land agreement with the reference moves from
-  97.68 to 97.65 percent at scale 1 (`coast.warp`; design notes 2026-10-30 17:40, a development branch).
-- The soft map edge's strip holds no flat run on Europe and Atlantic: the warp's sum folds back at its bounds
-  instead of clamping there (`coast.edge_band.fold_geographies`).
-- On Atlantic, Exact coastlines takes written land from a lattice shared across chunk borders and from the
-  chunk's corners, so it draws no rectangles of one tile along chunk borders (`bandfix.smooth.corners`).
-- Small marshes on Europe and Atlantic read the shared roughness harder, so the Danube delta's outline is no
-  disc edge. No noise call is added and Old World keeps its bodies' values (`regions.marsh.edge_gain`).
-- Old World's and Atlantic's coasts are crisp lines: their geography versions read the coast fit at
-  warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
-  of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is
-  unchanged (`coast.warp`; design notes 2026-10-30 13:30, a development branch).
-- Beside Alien Biomes, temperate ground keeps the base game's plants: every vanilla decorative and dead tree
-  reads the vanilla-scale temperature and the base game's own score where vanilla land lies, and the restored
-  trees also stand on the adopted Alien Biomes tiles. Brown asterisks no longer carpet the ground outside it
-  (`trees.decor`; design notes 2026-10-30 18:40, a development branch).
-- Exact coastlines acts on Old World and Atlantic and is on by default, visible in the settings menu.
-  Atlantic gains K+ tables. The handler queries only wrong tiles, evicts its row cache one row at a
-  time, and writes along a blurred, wobbling reference instead of the raster's stairs; written land
-  takes the ground around it and false islands sink into deep water.
-- Land Exact coastlines writes takes the trees, rocks and decoratives of the land beside it, so a written
-  coast no longer runs as a bare strip: `scripts/coastcover.lua` reads a rate and a sample from the chunk and
-  draws per tile with a generator seeded per chunk.
-- `tools/build_geo.py emit --map <map> --bandfix --masks-only` rewrites the mask tables from the
-  committed K+ table in about a minute, for a change that moves waterways only.
-- Exact coastlines holds every shore to the reference alike: the write band narrows from half a pixel
-  to about a fifth, K covers every coast pixel, the sea's thin water opens as channels and inlets, and
-  islets the raster lost return from a vector coastline (`tools/build_islets.py`,
-  `data-src/bandfix/islets-<map>.json`; design notes 2026-10-30 17:40, a development branch).
-- Beside Alien Biomes, the combined build's razor edges are gone:
-  the climate grain's weight reads the temperature, so a cold spot in temperate land frays; a marsh has no
-  dark rim of one width and its edge wanders with the pools; aux folds back at its cap, so dry land keeps
-  its tile mix; natural moisture stops at 0.92, so forests fill in instead of ringing a moisture peak.
-- Destroyed Europe's start disc has an irregular edge and only widens past its 150 tiles.
-- Old World's and Atlantic's vanilla land tiles each add a noise of their own beside Alien Biomes, so dry land
-  is a patchwork instead of concentric bands with an even dark rim. Europe keeps its look.
-- A river thins to a stream at its source instead of ending in a round finger, on all three maps.
-- Beside Alien Biomes an Earth preset's land tiles read two of twelve shared noise fields instead of a
-  six-octave noise each, which takes Old World's Tile complexity at scale 6 under the generation cost
-  knee. Land and water do not move. The patches of Alien Biomes ground keep their size and look and fall in
-  new places. A world without an Earth preset is unchanged (`tiles.noise_share`; design notes 2026-10-30
-  17:20, a development branch).
-
 ## [0.1.0] - 2026-10-30
 
 First release of Terra Nauvis, for Factorio 2.1. This summary is the whole release at a glance; the
-`### Added` entries under it are the build record of each milestone, kept as written. Install, settings,
+`### Added` and `### Changed` entries under it are the build record, kept as written. Install, settings,
 compatibility and known limits are in README.md, and the changelog players see in game is
 `terra-nauvis/changelog.txt`.
 
 ### Summary
 
 - Three Earth maps as map-gen presets and Map type entries: Terra Nauvis: Europe, Atlantic and Old
-  World, with real coastlines at map scales 1 to 6 in an endless deep ocean.
+  World, with real coastlines at map scales 1 to 6 in an endless deep ocean. Exact coastlines, on by
+  default on Atlantic and Old World, holds every shore to the reference with islets, and written land
+  carries trees and ground cover.
 - A spawn at a chosen or random city on every map (40, 50 and 33 cities), with land around it, a lake
   nearby, the starting ore and an enemy-free start.
-- Waterways: great rivers, straits and canals that ships can sail, walkable fords across the rivers,
-  and the soft map edge where a map's frame cuts through land.
-- Earth climate with or without Alien Biomes, marshes, 16 great forests, and the base game's trees,
-  rocks and plants beside Alien Biomes.
-- Cliff ridges along 16 mountain ranges with passes, the only cliffs on a map.
-- Historic ore hotspots with heavier biters, and offshore oil fields with the Oil Rig mod.
-- Options: Canals, Great forests, Ridges, Ore hotspots, Inland lakes, Destroyed Europe with Alien
-  Biomes, and City markers on the map view.
-- Noise draws almost all of the terrain, so the new-game preview shows the map. Control scripts
-  handle what noise cannot: the start of a new world, the guards and warnings, the city markers and
-  the Exact coastlines handler.
+- Waterways: great rivers with walkable fords that narrow with the map scale and carry ships at
+  scale 6, straits and canals that ships can sail at every scale, and bays and headlands where a map's
+  frame cuts through land.
+- Earth climate with or without Alien Biomes, Alien Biomes ground by real region, marshes, 16 great
+  forests, and the base game's trees, rocks and plants beside Alien Biomes.
+- Cliff ridges along 16 mountain ranges with passes, the only cliffs on a map, and highlands of rocks,
+  stony ground, and beside Alien Biomes grey rock and snow. Beside Alien Biomes every Nauvis world's
+  cliffs use its grey stone art.
+- Regular ore in lobed fields gathered in provinces, historic ore hotspots with heavier biters that
+  ignore the map sliders, and offshore oil fields with the Oil Rig mod.
+- Options: Canals, Great forests, Ridges, Ore hotspots, Ore hotspot amount, Inland lakes, Destroyed
+  Europe with Alien Biomes, Exact coastlines, and City markers on the map view.
+- Noise draws almost all of the terrain, so the new-game preview shows the map, with the noise coast.
+  Control scripts handle what noise cannot: the start of a new world, the guards and warnings, the
+  city markers and the Exact coastlines handler.
 - Compatibility: Alien Biomes is optional, Space Age works and its other planets stay as they are,
   RSO is not supported and the game warns when it is active.
 - Tooling: the static rows, the frozen body registry, reproducible zips, CI on every push and a
@@ -127,6 +46,8 @@ compatibility and known limits are in README.md, and the changelog players see i
 
 ### Added
 
+- Ore hotspot amount startup setting: 50, 100, 200 or 400 percent, default 100. It multiplies hotspot
+  richness and nothing else, so no hotspot moves or grows.
 - Destroyed Europe grows south and differs every seed:
   the zone now runs from France through Switzerland, southern Germany, Austria and Slovenia to Ljubljana
   and down Italy to about Rome, keeping the old zone's coverage north of the Alps. The outline lives in
@@ -874,6 +795,85 @@ compatibility and known limits are in README.md, and the changelog players see i
 
 ### Changed
 
+- Destroyed Europe turns red: a macro noise over the depth gives a
+  class per tile, so lava, black ash (`mineral-black-sand-1`, `mineral-black-dirt-1`), red rock
+  (`mineral-red-sand-1`, `mineral-red-dirt-1`) and rim red grass (`vegetation-red-grass-1`) mix with no
+  contour. The heat rises to a mean of 142 and starts 30 px in, so the rim keeps the climate's trees.
+  Setting off: previews of all three maps hash the same as main. Heat-4 covers 16 to 28 percent of the
+  land sampled; it walks at 0.7 and blocks nothing.
+- Beside Alien Biomes the ground follows Earth's biomes instead of latitude alone: tile belts
+  (`climate.tile_belts`) move only the fields tile scores read, so the Congo, the Amazon and South-East
+  Asia are deep green, the Sahara golden with some red rock, Central Asia and the Gobi pale sand and
+  gravel instead of one sheet of vanilla red desert, the Pontic and Kazakh steppes and the Great Plains
+  dry yellow grass, Tibet cold grey, the Arctic pale tundra with snow in the far north and Greenland
+  white. Orange grass is gone, ice keeps to the noise's lows, and temperate Europe keeps its tiles
+.
+- Regular ore patches on Earth presets read as natural mineral fields: lobed outlines with satellites,
+  a few large fields among many small ones, gathered in provinces instead of an even spacing, and a
+  richness plateau with pockets instead of a cone. Each preset redirects vanilla's patch expressions
+  to an Earth copy, so default worlds, the wrappers and the pack's own patch settings are unchanged
+  (`resources.natural`; a development branch).
+- Hotspots listen only to the mod's settings: no map slider reaches them, and size none no longer
+  removes them.
+- A hotspot's ore never leaves its disc, at any scale, seed or amount; a row's disc is an exact circle
+  of radius R about its centre, and the shaping happens inside it. Regular ore of every kind stays out
+  of hotspot discs and different ores' hotspots never interleave, by a test on each spot's candidate,
+  so the rules add almost nothing per tile.
+- Hotspot jitter is halved, so a disc stands at most a quarter of its radius off its real site.
+- Mountain ranges read as highlands, not as a cliff line on grass: big rocks thicken round each range,
+  wider and stronger the taller it is, and clear of its passes and of every start;
+  the ground leans to dry dirt, and beside Alien Biomes the tops of tall ranges turn to grey ground and
+  snow. Tile scores alone read the lean, so the forests on the slopes stay
+  (`ridges.high`, `ridges.ground`, `ridges.rocks`; design notes 2026-10-30 18:00, a development branch).
+- The map's outline reads as a natural ocean margin at a far map view: where the box cuts land (Europe's
+  North Africa, Russia and Anatolia, and Chukotka on Atlantic and Old World) land ends in bays and
+  headlands up to a few hundred tiles deep at scale 6, instead of a thin wavy strip following a straight
+  box. Each side has a margin table, so Cyprus, Ireland, the east end of the Black Sea, the lower Don and
+  every spawn city keep their ground at every seed (`coast.edge_band.outline`; design notes 2026-10-30 17:35,
+  a development branch).
+- Europe's coast is one crisp line too: its geography reads the fit through the coast warp, which ends the
+  dark spray on cold coasts, with a thinner shallow rim. Its land agreement with the reference moves from
+  97.68 to 97.65 percent at scale 1 (`coast.warp`; design notes 2026-10-30 17:40, a development branch).
+- The soft map edge's strip holds no flat run on Europe and Atlantic: the warp's sum folds back at its bounds
+  instead of clamping there (`coast.edge_band.fold_geographies`).
+- On Atlantic, Exact coastlines takes written land from a lattice shared across chunk borders and from the
+  chunk's corners, so it draws no rectangles of one tile along chunk borders (`bandfix.smooth.corners`).
+- Small marshes on Europe and Atlantic read the shared roughness harder, so the Danube delta's outline is no
+  disc edge. No noise call is added and Old World keeps its bodies' values (`regions.marsh.edge_gain`).
+- Old World's and Atlantic's coasts are crisp lines: their geography versions read the coast fit at
+  warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
+  of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is
+  unchanged (`coast.warp`; design notes 2026-10-30 13:30, a development branch).
+- Beside Alien Biomes, temperate ground keeps the base game's plants: every vanilla decorative and dead tree
+  reads the vanilla-scale temperature and the base game's own score where vanilla land lies, and the restored
+  trees also stand on the adopted Alien Biomes tiles. Brown asterisks no longer carpet the ground outside it
+  (`trees.decor`; design notes 2026-10-30 18:40, a development branch).
+- Exact coastlines acts on Old World and Atlantic and is on by default, visible in the settings menu.
+  Atlantic gains K+ tables. The handler queries only wrong tiles, evicts its row cache one row at a
+  time, and writes along a blurred, wobbling reference instead of the raster's stairs; written land
+  takes the ground around it and false islands sink into deep water.
+- Land Exact coastlines writes takes the trees, rocks and decoratives of the land beside it, so a written
+  coast no longer runs as a bare strip: `scripts/coastcover.lua` reads a rate and a sample from the chunk and
+  draws per tile with a generator seeded per chunk.
+- `tools/build_geo.py emit --map <map> --bandfix --masks-only` rewrites the mask tables from the
+  committed K+ table in about a minute, for a change that moves waterways only.
+- Exact coastlines holds every shore to the reference alike: the write band narrows from half a pixel
+  to about a fifth, K covers every coast pixel, the sea's thin water opens as channels and inlets, and
+  islets the raster lost return from a vector coastline (`tools/build_islets.py`,
+  `data-src/bandfix/islets-<map>.json`; design notes 2026-10-30 17:40, a development branch).
+- Beside Alien Biomes, the combined build's razor edges are gone:
+  the climate grain's weight reads the temperature, so a cold spot in temperate land frays; a marsh has no
+  dark rim of one width and its edge wanders with the pools; aux folds back at its cap, so dry land keeps
+  its tile mix; natural moisture stops at 0.92, so forests fill in instead of ringing a moisture peak.
+- Destroyed Europe's start disc has an irregular edge and only widens past its 150 tiles.
+- Old World's and Atlantic's vanilla land tiles each add a noise of their own beside Alien Biomes, so dry land
+  is a patchwork instead of concentric bands with an even dark rim. Europe keeps its look.
+- A river thins to a stream at its source instead of ending in a round finger, on all three maps.
+- Beside Alien Biomes an Earth preset's land tiles read two of twelve shared noise fields instead of a
+  six-octave noise each, which takes Old World's Tile complexity at scale 6 under the generation cost
+  knee. Land and water do not move. The patches of Alien Biomes ground keep their size and look and fall in
+  new places. A world without an Earth preset is unchanged (`tiles.noise_share`; design notes 2026-10-30
+  17:20, a development branch).
 - Rivers scale down with the map below the boat floor. A river is `max(3, k s)`
   tiles wide, k 3 for a major river and 2 for the rest, so scales 1 to 3 draw rivers of about 3 to 9
   tiles where they drew 11; only scale 6 still carries boats everywhere, and its waterway sets do not
