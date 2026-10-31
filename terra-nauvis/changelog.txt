@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.2
+Date: 2026-10-31
+  Bugfixes:
+    - Removing or disabling Terra Nauvis in a played world and adding it back no longer rewrites
+      land near the spawn or destroys buildings there. Version 0.1.1 did this on Atlantic and Old
+      World worlds with Exact coastlines on. What it already destroyed does not come back.
+    - The same steps no longer add start ore to a played world.
+    - A start whose spawn tile lies in a river now gets the start ore guarantee. Before, such a
+      start placed no ore patch, as at London on Atlantic at map scale 3. This applies to new
+      worlds.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 2026-10-30
   Bugfixes:

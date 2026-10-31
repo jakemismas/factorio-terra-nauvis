@@ -6,6 +6,20 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-31
+
+A patch for a defect 0.1.1 introduced. It only reaches you if you remove or disable Terra Nauvis in a played world and later add it back. Terrain does not change.
+
+### Fixed
+
+- Removing or disabling Terra Nauvis in a played world and adding it back no longer rewrites land within about 190 tiles of the spawn or destroys buildings there. 0.1.1 did this on Atlantic and Old World worlds with Exact coastlines on, with no warning: a test world on Old World lost 78 of 400 landfill tiles and 25 of 133 chests. What it already destroyed does not come back, so load a save from before you added the mod back.
+- The same steps no longer add start ore to a played world. This affected 0.1.0 and 0.1.1 on every Terra Nauvis map.
+- A start whose spawn tile lies in a river now gets the start ore guarantee. Before, such a start placed no ore patch, as at London on Atlantic at map scale 3. This applies to new worlds.
+
+### Changed
+
+- A tag run of the static rows compares with the earlier releases alone, so main moving on cannot refuse a good tag.
+
 ## [0.1.1] - 2026-10-30
 
 A patch for existing and new worlds. Terrain does not change: a mid-game save made on 0.1.0 and loaded on this build shows 0 of 3,694 new chunks differing.
