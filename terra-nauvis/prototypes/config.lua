@@ -2188,7 +2188,8 @@ return {
   --             tiles.scan.body is 0, the band where vanilla land lies, and keep their own score elsewhere, so
   --             temperate ground keeps M1's plants (AB's score lays brown asterisks on every tile of it) and
   --             AB's land keeps AB's. `thin` scales a score that saturates outside the band: at 1 every tile
-  --             holds one, a carpet
+  --             holds one, a carpet, and the two desert bushes, at 0.4 each, fill a third of the Sahara with
+  --             220 a chunk where the base game's sand holds 45
   trees = {
     boost = {gate = TFN.K_FORESTS_ON, gate_off = "0", key = TFN.K_TREE_MULT, key_off = "1", cap = 1,
              lift = TFN.K_TREE_LIFT, lift_off = "0", lift_body = TFN.TF_LIFT, lift_per_sum = 0.25,
@@ -2196,7 +2197,8 @@ return {
     palm = {{key = CT.PALM_A_P_KEY, body = TFN.PALM_A_P2, base = CT.PALM_A_P},
             {key = CT.PALM_B_P_KEY, body = TFN.PALM_B_P2, base = CT.PALM_B_P}},
     temperature = TFN.TF_VTEMP,
-    decor = {box = "tn_vbox", thin = {["brown-asterisk"] = 0.5, ["brown-asterisk-mini"] = 0.25}},
+    decor = {box = "tn_vbox", thin = {["brown-asterisk"] = 0.5, ["brown-asterisk-mini"] = 0.25,
+                                      ["red-desert-bush"] = 0.25, ["white-desert-bush"] = 0.25}},
     restore = {
       trees = TF_TREES, tree_off = "0", richness = TFN.TF_VTREE_R,
       rocks = TF_ROCKS, rock_off = "0",
