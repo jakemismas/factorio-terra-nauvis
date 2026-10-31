@@ -2178,7 +2178,9 @@ def release_tag_refs(repo=REPO):
 
 
 def reference_refs():
-    refs = list(REFERENCE_REFS)
+    # A tag's commit can sit behind main when the release runs, and main may rightly hold more by then. --check-tag
+    # holds the tag to main's history; here a tag run compares with the earlier releases alone.
+    refs = [] if os.environ.get("GITHUB_REF_TYPE") == "tag" else list(REFERENCE_REFS)
     base = os.environ.get("GITHUB_BASE_REF") or ""
     if base and GIT_REF_RE.fullmatch(base) and ".." not in base and f"origin/{base}" not in refs:
         refs.append(f"origin/{base}")
@@ -2924,6 +2926,7 @@ def fixture_controls():
             return text.replace(line, line + extra, 1)
         for kind, text, line, what in (("ci", ci, static_run, "the static step"), ("ci", ci, build_run, "the build step"),
                                        ("rel", rel_wf, tag_run, "the tag check"),
+                                       ("rel", rel_wf, static_run, "the release static step"),
                                        ("rel", rel_wf, release_run, "the release build"),
                                        ("rel", rel_wf, publish_run, "the publish step"),
                                        ("latest", latest_wf, static_run, "the latest static step"),
