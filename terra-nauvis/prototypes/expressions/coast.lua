@@ -214,8 +214,13 @@ local function version(m, g)
       local dist, along = sides[side][1], sides[side][2]
       local term = dist .. " / " .. s
       if M[side] then
-        locals.ol = num(O.gain) .. " * (" .. noise_terms(O.octaves) .. ")"
-        locals.share = num(O.floor) .. " + " .. num(1 - O.floor) .. " * (0.5 + 0.5 * ol / (1 + abs(ol)))"
+        local parts = {num(O.floor)}
+        for i, band in ipairs(O.bands) do
+          local n = "ol" .. i
+          locals[n] = num(band.gain) .. " * (" .. noise_terms(band.octaves) .. ")"
+          parts[#parts + 1] = num(band.share) .. " * (0.5 + 0.5 * " .. n .. " / (1 + abs(" .. n .. ")))"
+        end
+        locals.share = table.concat(parts, " + ")
         term = term .. " - share * (" .. margin(M[side], along) .. ")"
       end
       inside[#inside + 1] = term

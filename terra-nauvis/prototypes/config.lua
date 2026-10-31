@@ -1200,19 +1200,20 @@ return {
       -- The margin's outline (the maintainer's ask of 2026-10-30 16:20: at a far map view the box still read as a
       -- straight rectangle): a side's water edge moves further in by margin px * share, where margin is
       -- the map's table for that side, {along px, margin px} knots read piecewise linearly and 0 for a
-      -- side with no table, and share = floor + (1 - floor) * (0.5 + 0.5 * n / (1 + |n|)), n the gain times
-      -- the octaves' weighted sum, each a basis noise in geo tiles. A clamp would leave flat runs, so the
-      -- soft limit is what keeps a stretch of outline from settling on one depth. The outline stays
-      -- between floor and all of the margin, moves with the map seed and never passes the table, whatever
-      -- the seed: the table is the protection. Where a table reads 0 (the sea below Cyprus, the Atlantic
-      -- beside Ireland, the east end of the Black Sea) the band is the plain 4 to 20 px strip above.
+      -- side with no table, and share = floor + the sum of each band's share * (0.5 + 0.5 * n / (1 + |n|)),
+      -- n the band's gain times its octaves' weighted sum, each octave a basis noise in geo tiles. Two
+      -- bands, so a stretch where the low one sits at its lowest still has bays of its own; a soft limit
+      -- for the same reason, as a clamp would leave flat runs at one depth, which read as the box. The
+      -- floor and the band shares sum to 1, so the outline stays between floor and all of the margin,
+      -- moves with the map seed and never passes the table, whatever the seed: the table is the
+      -- protection. Where a table reads 0 (the sea below Cyprus, the Atlantic beside Ireland, the east
+      -- end of the Black Sea) the band is the plain 4 to 20 px strip above.
       outline = {
         floor = 0.2,
-        gain = 1.6,
-        octaves = {
-          {seed1 = 7421, wavelength_px = 311, weight = 1},
-          {seed1 = 7422, wavelength_px = 137, weight = 0.7},
-          {seed1 = 7423, wavelength_px = 59, weight = 0.4},
+        bands = {
+          {share = 0.5, gain = 1.6, octaves = {{seed1 = 7421, wavelength_px = 311, weight = 1}}},
+          {share = 0.3, gain = 1.6, octaves = {{seed1 = 7422, wavelength_px = 137, weight = 1},
+                                               {seed1 = 7423, wavelength_px = 59, weight = 0.55}}},
         },
         margins = {
           europe = {
