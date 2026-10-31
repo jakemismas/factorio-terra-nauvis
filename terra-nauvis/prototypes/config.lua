@@ -465,6 +465,15 @@ local OAS_SETS = {
 -- disc), its heat, the next version of climate-tiles' Alien Biomes temperature, which lifts the zone above
 -- 100, and per map with a city fold the random pick over the cities outside the zone.
 local DE = {
+  chaos_fine = NOISE .. "destroyed_fine_v1",
+  chaos_macro = NOISE .. "destroyed_macro_v1",
+  chaos_kind = NOISE .. "destroyed_kind_v1",
+  chaos_class = NOISE .. "destroyed_class_v1",
+  chaos_grass = NOISE .. "chaos_red_grass_v1",
+  chaos_black_sand = NOISE .. "chaos_black_sand_v1",
+  chaos_black_dirt = NOISE .. "chaos_black_dirt_v1",
+  chaos_red_dirt = NOISE .. "chaos_red_dirt_v1",
+  chaos_red_sand = NOISE .. "chaos_red_sand_v1",
   K = NOISE .. "destroyed",
   zone = NOISE .. "destroyed_zone_v1",
   heat = NOISE .. "destroyed_heat_v1",
@@ -1122,7 +1131,9 @@ return {
     -- the M2 dump; each pool reads its map's city fold hash and prototypes/tables/destroyed.lua.
     {
       release = "0.1.0",
-      names = {DE.zone, DE.heat, DE.temperature, DE.pool_europe, DE.pool_atlantic, DE.pool_olde_world},
+      names = {DE.zone, DE.heat, DE.temperature, DE.pool_europe, DE.pool_atlantic, DE.pool_olde_world,
+               DE.chaos_fine, DE.chaos_macro, DE.chaos_kind, DE.chaos_class, DE.chaos_grass, DE.chaos_black_sand,
+               DE.chaos_black_dirt, DE.chaos_red_dirt, DE.chaos_red_sand},
       files = {"prototypes/tables/destroyed.lua"},
     },
     -- The list hook's body (tiles.scan), defined on every load like the other tile bodies.
@@ -1653,16 +1664,31 @@ return {
   --          zone cities); a preset with the toggle on and the spawn city at random bakes it as the map's
   --          city number, so the first fold reads it and resolves it as a chosen city (APPROVALS 10)
   destroyed = {
-    names = {zone = DE.zone, heat = DE.heat, temperature = DE.temperature},
+    names = {zone = DE.zone, heat = DE.heat, temperature = DE.temperature, fine = DE.chaos_fine},
     pools = {europe = DE.pool_europe, atlantic = DE.pool_atlantic, olde_world = DE.pool_olde_world},
     start = {radius_tiles = 150, distance = DISTANCE},
-    heat = {rim = 100.5, per_tile = 0.49, ramp = 30, cap = 149.5,
+    heat = {rim = 108, per_tile = 0.49, ramp = 30, cap = 149.5, lift_px = 30, lift_fray_px = 12,
             noise = {amplitude = 20, wavelength_tiles = 24, octaves = 3, persistence = 0.6, seed1 = 7901}},
-    -- Alien Biomes' heat bands differ by a few RGB steps, so heat 1 and heat 2 read as one dark grey on the map
-    -- view. With the zone on they take this ramp, cool to hot, in 0 to 255 values.
-    map_colors = {families = {"orange", "green", "blue", "purple"},
-                  bands = {{r = 44, g = 38, b = 46}, {r = 96, g = 30, b = 26}, {r = 186, g = 72, b = 24},
-                           {r = 240, g = 170, b = 40}}},
+    -- The red palette: a class per tile from a macro noise over the depth, so
+    -- the patches mix and follow no contour. e = min(depth, sat_px) + mac_px * macro, in reference
+    -- pixels: under rim_px red grass fraying into normal ground, under mid_px black ash or red rock,
+    -- above it the volcanic tiles the heat picks. score beats the vanilla bonus (10) and loses to marsh
+    -- pools (50), shallows and fords; water stays water by the elevation gate.
+    chaos = {
+      names = {macro = DE.chaos_macro, kind = DE.chaos_kind, class = DE.chaos_class},
+      score = 20, sat_px = 100, mac_px = 50, rim_px = 30, mid_px = 80,
+      grass = {per_px = 1 / 30, fine = 0.8, cut = 0.45},
+      black_below = -0.25,
+      macro = {wavelength_px = 10, octaves = 4, persistence = 0.6, seed1 = 7902},
+      kind = {wavelength_px = 6, octaves = 3, persistence = 0.6, seed1 = 7903},
+      tiles = {
+        {tile = "vegetation-red-grass-1", class = 1, body = DE.chaos_grass},
+        {tile = "mineral-black-sand-1", class = 2, body = DE.chaos_black_sand},
+        {tile = "mineral-black-dirt-1", class = 3, body = DE.chaos_black_dirt},
+        {tile = "mineral-red-sand-1", class = 4, body = DE.chaos_red_sand},
+        {tile = "mineral-red-dirt-1", class = 5, body = DE.chaos_red_dirt},
+      },
+    },
     switch_threshold = 0.5,
   },
 
