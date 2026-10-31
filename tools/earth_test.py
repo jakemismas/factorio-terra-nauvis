@@ -16952,10 +16952,48 @@ def tf_bodies(cfg):
     return list(dict.fromkeys(out))
 
 
-def tf_boost_text(cfg, own):
-    """The great-forests hook around a tree's own probability (trees.lua M.boost)."""
+def tf_boost_text(cfg, own, lift=False, band=None):
+    """The great-forests hook around a tree's own probability (trees.lua M.boost): the base game's living trees
+    take the boreal lift, scaled by `band` beside Alien Biomes."""
     B = cfg["trees"]["boost"]
-    return f"if({tf_gate(cfg, B['gate'])}, min({ww_num(B['cap'])}, ({own}) * {B['key']}), {own})"
+    inner = f"({own})"
+    if lift:
+        inner = f"(({own}) + {B['lift']}" + (f" * {band}" if band else "") + ")"
+    return f"if({tf_gate(cfg, B['gate'])}, min({ww_num(B['cap'])}, {inner} * {B['key']}), {own})"
+
+
+def tf_vanilla_scale(cfg, text):
+    """A base game text on the vanilla-scale temperature (data-final-fixes.lua vanilla_scale)."""
+    return re.sub(r"(?<!\w)temperature(?!\w)", cfg["trees"]["temperature"], text)
+
+
+def tf_tree_band(cfg):
+    """1 where AB's trees are off (data-final-fixes.lua tree_band)."""
+    return f"(1 - {cfg['tiles']['scan']['body']})"
+
+
+def tf_tree_tiles(cfg):
+    """A restored tree's list: the vanilla land tiles, then APPROVALS 9's adopted land tiles."""
+    return tf_land(cfg) + [t for t in cfg["tiles"]["ab_adopted"] if t != cfg["tiles"]["marsh"]["water_mud"]["tile"]]
+
+
+def tf_decor_want(cfg, row, ba):
+    """A decorative with vanilla.lua's band score (data-final-fixes.lua decor_hooks): the base game's score where
+    the keep body is 0, its own, thinned by trees.decor, elsewhere."""
+    D = cfg["trees"]["decor"]
+    own = f"({tf_lua_text(ba.get('probability_expression'))})"
+    text = re.sub(r"(?<!\w)region_box(?!\w)", D["box"], row["text"])
+    thin = D["thin"].get(row["name"])
+    outside = f"{ww_num(thin)} * {own}" if thin else own
+    on = (f"if({cfg['tiles']['scan']['body']} > {ww_num(cfg['hooks']['threshold'])}, {outside}, "
+          f"{tf_vanilla_scale(cfg, text)})")
+    want = dict(ba, probability_expression=tf_restore_text(cfg, on, own))
+    if row.get("box"):
+        want["local_expressions"] = dict(ba.get("local_expressions") or {},
+                                         **{D["box"]: tf_vanilla_scale(cfg, row["box"])})
+    if ba.get("tile_restriction") is not None:
+        want["tile_restriction"] = tf_extended(cfg, ba["tile_restriction"])
+    return want
 
 
 def tf_restore_text(cfg, on_branch, off):
@@ -17022,10 +17060,12 @@ def tf_hook_change(cfg, t, n, earth, base):
             names = R["trees"][n]
             if row is None:
                 return False
+            band = tf_tree_band(cfg)
+            own = tf_restore_text(cfg, f"{names['p']} * {band}", R["tree_off"])
             want = {"control": row["control"], "order": row["order"],
-                    "probability_expression": tf_boost_text(cfg, tf_restore_text(cfg, names["p"], R["tree_off"])),
+                    "probability_expression": tf_boost_text(cfg, own, lift=True, band=band),
                     "richness_expression": tf_restore_text(cfg, names["r"], R["tree_off"]),
-                    "tile_restriction": tf_land(cfg)}
+                    "tile_restriction": tf_tree_tiles(cfg)}
             return ea == want
         if not isinstance(ba, dict):
             return False
@@ -17038,7 +17078,7 @@ def tf_hook_change(cfg, t, n, earth, base):
         if tf_list_hooked(cfg, ba):
             return ea == dict(ba, probability_expression=tf_boost_text(cfg, tf_list_hook_text(cfg, tf_lua_text(own))),
                               tile_restriction=tf_extended(cfg, ba["tile_restriction"]))
-        return ea == dict(ba, probability_expression=tf_boost_text(cfg, tf_lua_text(own)))
+        return ea == dict(ba, probability_expression=tf_boost_text(cfg, tf_lua_text(own), lift=n in R["trees"]))
     if n in R["rocks"] and not ba:
         row = next((r for r in V["rocks"] if r["name"] == n and r["type"] == t), None)
         if row is None:
@@ -17051,9 +17091,15 @@ def tf_hook_change(cfg, t, n, earth, base):
         return False
     if t == "optimized-decorative" and n in R["decoratives"]:
         own = ba.get("probability_expression")
-        on = f"({tf_lua_text(own)}) + {R['decoratives'][n]}"
-        return ea == dict(ba, probability_expression=tf_restore_text(cfg, on, R["deco_off"]),
-                          tile_restriction=tf_land(cfg))
+        on = f"({tf_vanilla_scale(cfg, tf_lua_text(own))}) + {R['decoratives'][n]}"
+        want = dict(ba, probability_expression=tf_restore_text(cfg, on, R["deco_off"]), tile_restriction=tf_land(cfg))
+        if ba.get("local_expressions"):
+            want["local_expressions"] = {k: tf_vanilla_scale(cfg, v) if isinstance(v, str) else v
+                                         for k, v in ba["local_expressions"].items()}
+        return ea == want
+    row = next((r for r in V["decor"] if r["name"] == n), None)
+    if t == "optimized-decorative" and row is not None:
+        return ea == tf_decor_want(cfg, row, ba)
     if t == "optimized-decorative" and n in V["extend"] and ba.get("tile_restriction") is not None:
         return ea == dict(ba, tile_restriction=tf_extended(cfg, ba.get("tile_restriction")))
     if t == "optimized-decorative" and tf_list_hooked(cfg, ba):
@@ -17098,8 +17144,8 @@ def tf_controls():
     cfg = tnconfig.load()
     out = {}
     tree0 = {"type": "tree", "name": "tree-01", "autoplace": {"control": "trees", "probability_expression": "tree_01"}}
-    tree1 = {"type": "tree", "name": "tree-01", "autoplace": {"control": "trees",
-                                                             "probability_expression": tf_boost_text(cfg, "tree_01")}}
+    tree1 = {"type": "tree", "name": "tree-01",
+             "autoplace": {"control": "trees", "probability_expression": tf_boost_text(cfg, "tree_01", lift=True)}}
     out["trees: the boost alone on a living tree passes"] = (tf_hook_change(cfg, "tree", "tree-01", tree1, tree0), "")
     out["trees: the boost plus another change fails"] = (
         not tf_hook_change(cfg, "tree", "tree-01", dict(tree1, max_health=1), tree0), "")
