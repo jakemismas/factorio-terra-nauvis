@@ -76,8 +76,8 @@ Date: 2026-10-30
       the edge along a wavy coast that changes with the map seed, instead of a straight cut.
     - Destroyed Europe startup setting (default off, needs Alien Biomes): from France to Warsaw and
       from the North Sea across Switzerland and Austria to Ljubljana and down Italy to about Rome,
-      the heart of Europe becomes Alien Biomes' volcanic ground, hotter toward the middle, its
-      outline different on every map seed; Britain, Denmark, the Kiel Canal and the Carpathians
+      the heart of Europe becomes Alien Biomes' lava, black ash, red rock and scorched red grass in
+      mixed patches, its outline different on every map seed; Britain, Denmark, the Kiel Canal and the Carpathians
       stay outside, and the start area stays normal. A random spawn city never lands inside the
       zone. Without Alien Biomes nothing changes, and the game warns at the start and each player
       who joins.

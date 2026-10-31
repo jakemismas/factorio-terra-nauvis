@@ -9,8 +9,9 @@
 -- spawn shift keeps at the origin on every map, so every spawn city, the zone's included, starts on normal
 -- ground with normal trees (T7). Its heat climbs from a heat-1 rim to a core that mixes Alien Biomes' four
 -- heat bands (R3 7.1), and the Alien Biomes temperature's next version lifts the zone to it, so AB's
--- volcanic tiles, its lava decals, volcanic rocks and the volcanic tree follow; nothing else changes
--- (APPROVALS 10: tiles only). The lift sits behind the toggle tn_destroyed, a name switch whose folded if()
+-- volcanic tiles, its lava decals, volcanic rocks and the volcanic tree follow. Past the rim, which keeps
+-- the climate's temperature and trees, a class per tile mixes those with black ash, red rock and red grass
+--; nothing else changes (APPROVALS 10: tiles only). The lift sits behind the toggle tn_destroyed, a name switch whose folded if()
 -- compiles climate-tiles' first temperature alone when off (U5). Without Alien Biomes nothing here is
 -- named by any preset: the toggle bakes off at the data stage and the presets keep the fallback climate
 -- (FEAS-17), so the world equals the zone off. Every body is analytic in x, y, map_seed and per-save
