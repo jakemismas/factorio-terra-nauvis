@@ -452,8 +452,13 @@ local function decor_hooks()
         autoplace.local_expressions[D.box] = vanilla_scale(row.box)
       end
       local thin = D.thin[row.name]
-      autoplace.probability_expression = hook("if(" .. TL.scan.body .. " > " .. num(H.threshold) .. ", " ..
-        (thin and (num(thin) .. " * " .. own) or own) .. ", " .. vanilla_scale(text) .. ")", own)
+      local on = vanilla_scale(text)
+      -- `if` evaluates both branches, and a text AB left alone places nothing on its land at this temperature.
+      if tostring(autoplace.probability_expression) ~= row.text then
+        on = "if(" .. TL.scan.body .. " > " .. num(H.threshold) .. ", " .. (thin and (num(thin) .. " * " .. own) or own) ..
+          ", " .. on .. ")"
+      end
+      autoplace.probability_expression = hook(on, own)
       n = n + 1
     else
       log(cfg.identity.title .. ": vanilla decorative " .. row.name .. " is missing or has no autoplace; no band score")

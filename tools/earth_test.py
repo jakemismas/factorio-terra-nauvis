@@ -16993,8 +16993,9 @@ def tf_decor_want(cfg, row, ba):
     text = re.sub(r"(?<!\w)region_box(?!\w)", D["box"], row["text"])
     thin = D["thin"].get(row["name"])
     outside = f"{ww_num(thin)} * {own}" if thin else own
-    on = (f"if({cfg['tiles']['scan']['body']} > {ww_num(cfg['hooks']['threshold'])}, {outside}, "
-          f"{tf_vanilla_scale(cfg, text)})")
+    on = tf_vanilla_scale(cfg, text)
+    if tf_lua_text(ba.get("probability_expression")) != row["text"]:
+        on = f"if({cfg['tiles']['scan']['body']} > {ww_num(cfg['hooks']['threshold'])}, {outside}, {on})"
     want = dict(ba, probability_expression=tf_restore_text(cfg, on, own))
     if row.get("box"):
         want["local_expressions"] = dict(ba.get("local_expressions") or {},
