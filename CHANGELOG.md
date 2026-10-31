@@ -14,6 +14,14 @@ versions follow [Semantic Versioning](https://semver.org/).
   box. Each side has a margin table, so Cyprus, Ireland, the east end of the Black Sea, the lower Don and
   every spawn city keep their ground at every seed (`coast.edge_band.outline`; design notes 2026-10-30 17:35,
   a development branch).
+- Europe's coast is one crisp line too: its geography reads the fit through the coast warp, which ends the
+  dark spray on cold coasts, with a thinner shallow rim. Its land agreement with the reference moves from
+  97.68 to 97.65 percent at scale 1 (`coast.warp`; design notes 2026-10-30 17:40, a development branch).
+- The soft map edge draws no straight coast on Europe and Atlantic: the warp's sum folds back at its bounds
+  instead of clamping there, and on Europe the sides that cut land swell by a long noise, so North Africa and
+  Asia Minor end in bays and capes (`coast.edge_band`).
+- On Atlantic, Exact coastlines takes written land from a lattice shared across chunk borders and from the
+  chunk's corners, so it draws no rectangles of one tile along chunk borders (`bandfix.smooth.corners`).
 - Old World's and Atlantic's coasts are crisp lines: their geography versions read the coast fit at
   warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
   of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is
