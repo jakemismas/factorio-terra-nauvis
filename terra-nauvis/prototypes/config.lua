@@ -1381,6 +1381,9 @@ return {
   --              would open wherever it crosses 0) and the term added to it, in contours
   --   gaps       noise gaps: an opening where the noise rows read under threshold, plus thin_gain as the
   --              ridge's width at the tile falls from thin_tiles to 0, less collar_gain inside a collar
+  --              Read in real sprites, wavelengths under about 70 tiles made zigzags at cliff spacing, stubs
+  --              and tiny loops, since a cliff cell is 4 tiles: keep every row of run, stretch, fray and gaps
+  --              above that, and a line flat to one lattice row stays broken by fray, about 4 tiles
   --   collar_tiles   the radius round an opening's slot where the ridge stands whole (ridges.lua keep)
   --   flank_tiles   the near edge of the ridge from S5's measurements: earth_test.py's T6 metrics read it
   --   cliffiness   the cliffiness of a ridge cell; 0 inside an opening and inside the ridge-free start

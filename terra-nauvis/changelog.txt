@@ -69,7 +69,8 @@ Date: 2026-10-30
       mountain is taller, breaks into runs of many lengths and frays out at its ends, with passes
       at the historic crossings, a gap at least every 400 km and no cliffs across the starting
       area. The cliffs sliders do not change them, and a world started with cliffs at none gets
-      its ridges back beyond the starting area.
+      its ridges back beyond the starting area. Beside Alien Biomes cliffs use its grey stone art,
+      which sits on its ground as vanilla's orange brown does not, on every Nauvis world.
     - Where a map's edge cuts through land (North Africa and Russia on Europe, the far east of
       Siberia on the Atlantic and Old World maps), the land sinks into deep water a little inside
       the edge along a wavy coast that changes with the map seed, instead of a straight cut.
