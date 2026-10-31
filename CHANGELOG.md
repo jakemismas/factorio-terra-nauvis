@@ -6,6 +6,11 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Ore hotspot amount startup setting: 50, 100, 200 or 400 percent, default 100. It multiplies hotspot
+  richness and nothing else, so no hotspot moves or grows.
+
 ### Changed
 
 - Destroyed Europe turns red: a macro noise over the depth gives a
@@ -36,6 +41,19 @@ versions follow [Semantic Versioning](https://semver.org/).
   chunk's corners, so it draws no rectangles of one tile along chunk borders (`bandfix.smooth.corners`).
 - Small marshes on Europe and Atlantic read the shared roughness harder, so the Danube delta's outline is no
   disc edge. No noise call is added and Old World keeps its bodies' values (`regions.marsh.edge_gain`).
+- Regular ore patches on Earth presets read as natural mineral fields: lobed outlines with satellites,
+  a few large fields among many small ones, gathered in provinces instead of an even spacing, and a
+  richness plateau with pockets instead of a cone. Each preset redirects vanilla's patch expressions
+  to an Earth copy, so default worlds, the wrappers and the pack's own patch settings are unchanged
+  (`resources.natural`; a development branch).
+- Hotspots listen only to the mod's settings: no map slider reaches them, and size none no longer
+  removes them.
+- A hotspot's ore never leaves its disc, at any scale, seed or amount; a row's disc is an exact circle
+  of radius R about its centre, and the shaping happens inside it. Regular ore of every kind stays out
+  of hotspot discs and different ores' hotspots never interleave, by a test on each spot's candidate,
+  so the rules add almost nothing per tile.
+- Hotspot jitter is halved, so a disc stands at most a quarter of its radius off its real site.
+
 - Old World's and Atlantic's coasts are crisp lines: their geography versions read the coast fit at
   warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
   of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is

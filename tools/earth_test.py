@@ -10726,7 +10726,7 @@ def re_centre_px(cfg, reg_row, seed):
     R = cfg["regions"]
     J = R["jitter"]
     cu, cv = br.to_px(reg_row["lat"], reg_row["lon"], br.frame(cfg))
-    reach = reg_row["jitter_km"] / R["km_per_px"] / math.sqrt(2)
+    reach = reg_row["jitter_km"] * J["hotspot_share"] / R["km_per_px"] / math.sqrt(2)
     small = int(seed) & 0xFFFF
     high = math.floor(int(seed) / 2 ** 32 * J["high_bits"])
 
@@ -11421,8 +11421,9 @@ def row_re_dump_facts(ctx, mods, sec6, row, cache):
 def row_re_t4_fg(ctx, mods, sec6, row, cache):
     """T4 (FG; size none): Europe at scale 6, seed 1000, London's spawn, a window over Upper Silesia's
     coal and Legnica's copper: with every hotspot resource at size none and enemy bases at none, the
-    preview with hotspots on equals the one with hotspots off (the offshore stamp held on in both, so
-    only the hotspot ore and the enemy layer differ); with sizes at the preset's, they differ (G6)."""
+    preview with hotspots on still differs from the one with hotspots off, since no map slider reaches a
+    hotspot; with
+    sizes at the preset's, they differ too (G6)."""
     cfg = mods.cfg
     mk, s = "europe", int(cfg["settings"]["scale"]["default_value"])
     rows, offsets, reg = re_rows()
@@ -11456,8 +11457,9 @@ def row_re_t4_fg(ctx, mods, sec6, row, cache):
         for dd in dirs:
             fails += g1(dd) + g3(dd)
         im = [derive_preview(dd)["images"] for dd in dirs]
-        if im[0] != im[1]:
-            fails.append("size none: the preview with hotspots on differs from the one with hotspots off (T4)")
+        if im[0] == im[1]:
+            fails.append("size none: the preview with hotspots on equals the one with hotspots off: the size "
+                         "slider removed the hotspots (T4)")
         if im[2] == im[3]:
             fails.append("at the preset's sizes hotspots on and off render alike, so size none proves nothing (G6)")
         # the slider reached the map: with hotspots off, size none removes the base ore the preset's sizes
@@ -12073,12 +12075,12 @@ def re_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
             if r_own is None or abs(r_earth - r_own) > RE_T4_OIL_TOL * r_own:
                 fails.append(f"{mk}: masked random wells at {label} move by {r_earth:.3g}, the Oil Rig's own by {r_own} "
                              f"(want within {RE_T4_OIL_TOL:.0%}: the vanilla way)")
-        # field wells: size none removes them, size scales their amount
-        if got["size-none"]["field"]:
-            fails.append(f"{mk}: {len(got['size-none']['field'])} field wells at offshore-oil size none")
-        if not got["size-low"]["field_amount"] < base["field_amount"] < got["size-high"]["field_amount"]:
+        # field wells: no map slider reaches a hotspot
+        if not got["size-none"]["field"]:
+            fails.append(f"{mk}: no field wells at offshore-oil size none")
+        if not got["size-low"]["field_amount"] == base["field_amount"] == got["size-high"]["field_amount"]:
             fails.append(f"{mk}: field amounts {got['size-low']['field_amount']:.3g}, {base['field_amount']:.3g}, "
-                         f"{got['size-high']['field_amount']:.3g} at size 1/6, 1, 6 (want rising)")
+                         f"{got['size-high']['field_amount']:.3g} at size 1/6, 1, 6 (want equal)")
         # frequency inert: the field bodies' values at every lattice point equal at 1/6, 1 and 6 (the random
         # wells' rise above is the positive control that the slider reached the map)
         vals = []

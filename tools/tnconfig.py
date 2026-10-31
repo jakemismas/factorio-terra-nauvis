@@ -810,6 +810,13 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
             pen[o["probability"]] = o["p"]
             pen[o["richness"]] = o["r"]
         pen[K["enemy"]] = cfg["enemies"]["wrapper"]
+        # a development branch: the hotspot amount and each live patch expression at its Earth body (the Oil Rig's
+        # exists only beside it)
+        amount = cfg["settings"]["hotspot_amount"]["default_value"]
+        pen[K["hotspot_amount"]] = int(amount) / cfg["hotspots"]["amount_percent"]
+        for b in rs["natural"]["bodies"]:
+            if rs["offshore"]["resource"] not in b["live"]:
+                pen[b["live"]] = b["name"]
     if version.get("fields"):
         tg = cfg["toggles"]["hotspots"]
         on = cfg["settings"][tg["setting"]]["default_value"]
