@@ -1046,7 +1046,9 @@ function M.on_configuration_changed(data)
     local function state(on)
       return {MSG.section .. "." .. MSG.keys[on and "toggle_on" or "toggle_off"]}
     end
-    local msg = {MSG.section .. "." .. MSG.keys.drift_toggle, {"mod-setting-name." .. setting}, state(was), state(now)}
+    -- Exact coastlines reads the preset's key, so a Map-type-only world never follows this setting.
+    local msg = {MSG.section .. "." .. MSG.keys.drift_toggle_new, {"mod-setting-name." .. setting}, state(was),
+                 state(now)}
     log(msg)
     game.print(msg)
   end
