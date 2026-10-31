@@ -329,6 +329,13 @@ local function marsh_edge(r)
   return math.min(MH.cap_px, MH.share * radius), math.max(R.ramp.width_px, ramp)
 end
 
+-- A marsh row's gain on the shared roughness (config.lua regions.marsh.edge_gain), folded on the map.
+local function marsh_gain(r)
+  local G = MH.edge_gain
+  local gain = math.min(G.top, math.max(MH.rough_gain, G.share * r.radius_km / R.km_per_px))
+  return by_map(function(M) return num(G.maps[M.key] and gain or MH.rough_gain) end)
+end
+
 -- Every row: its signed distance, weight and depth (and a hotspot's jittered centre).
 local ROWS = {}
 for _, r in ipairs(T.rows) do
@@ -361,7 +368,7 @@ for _, r in ipairs(T.rows) do
   end
   if r.layer == "marsh" then
     local amplitude, width = marsh_edge(r)
-    def(nm.sd, "(" .. text .. ") + " .. num(MH.rough_gain) .. " * " .. N.rough .. " + " .. num(amplitude) .. " * (" ..
+    def(nm.sd, "(" .. text .. ") + (" .. marsh_gain(r) .. ") * " .. N.rough .. " + " .. num(amplitude) .. " * (" ..
       N.marsh_rough .. " + " .. num(MH.bias) .. ")", L)
     def(nm.w, weight(nm.sd, width))
   else

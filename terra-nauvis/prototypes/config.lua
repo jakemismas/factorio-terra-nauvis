@@ -1885,9 +1885,13 @@ return {
     -- are the Tile program's only readers of the region noise, so these two octaves cost that program
     -- little. bias leans the noise outward, so a small delta's seed rarely sinks it below the marsh cut
     -- (the Danube delta vanished at seed 1002 without it). A marsh's reach is the row's radius plus about
-    -- 2 times its amplitude, the most basis noise and the bias reach.
+    -- 2 times its amplitude, the most basis noise and the bias reach. edge_gain: on these maps the shared
+    -- roughness joins at share of the row's radius, between rough_gain and top: the outline noise is far longer
+    -- than a small delta, so it only grew or shrank the disc, and the Danube delta stayed a round plate on the
+    -- coast at every seed. The roughness is compiled already, so this costs no noise call.
     marsh = {wavelength_px = 24, octaves = 2, persistence = 0.5, seed1 = 7804, share = 0.6, cap_px = 24,
-             bias = 0.35, rough_gain = 2, ramp_share = 0.6, ramp_cap_px = 24},
+             bias = 0.35, rough_gain = 2, ramp_share = 0.6, ramp_cap_px = 24,
+             edge_gain = {maps = {europe = true, atlantic = true}, share = 0.35, top = 5}},
     share_hundredths = 100,
     octave_shift_px = 10000.37,
     max_arguments = 255,
