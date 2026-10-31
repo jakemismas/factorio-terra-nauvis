@@ -5019,7 +5019,7 @@
   },
   "tn_far_europe_v6": {
    "type": "noise-expression",
-   "sha256": "2eeec8998aacf5e5dd5317a163216e01e9a3802ba706a06abe6199b193523b6b",
+   "sha256": "ee28d30daf7eec4f8cf29fd136c265e6f5de01c35ae3075e7cd510c2a3db8b6c",
    "dump": "m1",
    "slice": "edge-and-lakes",
    "registered": "2026-10-30"
@@ -5460,7 +5460,7 @@
   },
   "tn_far_atlantic_v6": {
    "type": "noise-expression",
-   "sha256": "bdd396d9947d56850c7eda5ca9aaa13edb061c3f6006e010aee53218b6cb500d",
+   "sha256": "00de905bd5434e6e86f1093932f7e548ab80d7b537ff7db855dfc2cfc0aee47f",
    "dump": "m1",
    "slice": "olde-world-atlantic",
    "registered": "2026-10-30"

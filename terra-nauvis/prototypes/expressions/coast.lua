@@ -199,37 +199,52 @@ local function version(m, g)
       end
       return table.concat(terms, " + ")
     end
-    local sum = table.concat(band_octaves, " + ")
+    -- A margin table as an expression of along, reference px along its side: one clamped ramp per
+    -- segment that changes, their constants folded into one number, so a table's cost is those ramps.
+    local function margin(knots, along)
+      local terms, c = {}, knots[1][2]
+      for i = 2, #knots do
+        local a0, v0, a1, v1 = knots[i - 1][1], knots[i - 1][2], knots[i][1], knots[i][2]
+        if v1 ~= v0 then
+          local slope = (v1 - v0) / (a1 - a0)
+          c = c - slope * a0
+          terms[#terms + 1] = num(slope) .. " * clamp(" .. along .. ", " .. num(a0) .. ", " .. num(a1) .. ")"
+        end
+      end
+      return num(c) .. " + " .. table.concat(terms, " + ")
+    end
+    local O = B.outline
+    local M = O.margins[m.key]
+    local sum = noise_terms(B.octaves)
     local locals = {
-      d = d,
+      dl = dl, dr = dr, dt = dt, db = db,
+      d = "min(dl, dr, dt, db)",
+      au = "dl / " .. s, av = "dt / " .. s,
       warp = num(B.warp_px) .. " * clamp(" .. sum .. ", -1, 1)",
-      b = "clamp(d / " .. s .. " + warp - " .. num(B.width_px) .. ", " .. num(-C.transfer_clamp_px) .. ", " ..
-        num(C.transfer_clamp_px) .. ")",
     }
     if listed(B.fold_geographies, g) then
       locals.warp_sum = sum
       locals.warp = num(B.warp_px) .. " * clamp(2 * clamp(warp_sum, -1, 1) - warp_sum, -1, 1)"
     end
-    -- The long swell (config.lua coast.edge_band.swell): the band reaches further in by |noise| on the sides
-    -- that cut land, so the cut wanders like a coast at map scale, and no further where the box is open sea.
-    local SW = B.swell[g.geo_id]
-    if SW then
-      local parts = {}
-      for _, oc in ipairs(SW.octaves) do
-        parts[#parts + 1] = num(oc.weight) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
-          num(oc.seed1) .. ", input_scale = 1 / (" .. num(oc.wavelength_px) .. " * " .. s .. "), offset_x = " .. g.cx ..
-          ", offset_y = " .. g.cy .. "}"
+    local inside = {}
+    local sides = {left = {"dl", "av"}, top = {"dt", "au"}, right = {"dr", "av"}, bottom = {"db", "au"}}
+    for _, side in ipairs({"left", "top", "right", "bottom"}) do
+      local dist, along = sides[side][1], sides[side][2]
+      local term = dist .. " / " .. s
+      if M[side] then
+        local parts = {num(O.floor)}
+        for i, band in ipairs(O.bands) do
+          local n = "ol" .. i
+          locals[n] = num(band.gain) .. " * (" .. noise_terms(band.octaves) .. ")"
+          parts[#parts + 1] = num(band.share / 2) .. " * (1 + " .. n .. " / (1 + abs(" .. n .. ")))"
+        end
+        locals.share = table.concat(parts, " + ")
+        term = term .. " - share * (" .. margin(M[side], along) .. ")"
       end
-      local function ramp(a, b2, r)
-        return "clamp((" .. a .. " - " .. b2 .. ") / " .. num(r) .. ", 0, 1)"
-      end
-      local south = ramp(g.v, num(SW.south_from_v), SW.ramp_px) .. " * max(" ..
-        ramp(num(SW.south_until_u), g.u, SW.ramp_px) .. ", " .. ramp(g.u, num(SW.south_again_u), SW.ramp_px) .. ")"
-      locals.swell = num(SW.amplitude_px) .. " * abs(" .. table.concat(parts, " + ") .. ") * max(" ..
-        ramp(g.u, num(SW.east_from_u), SW.ramp_px) .. ", " .. south .. ")"
-      locals.b = "clamp(d / " .. s .. " + warp - swell - " .. num(B.width_px) .. ", " ..
-        num(-C.transfer_clamp_px) .. ", " .. num(C.transfer_clamp_px) .. ")"
+      inside[#inside + 1] = term
     end
+    locals.b = "clamp(min(" .. table.concat(inside, ", ") .. ") + warp - " .. num(B.width_px) .. ", " ..
+      num(-C.transfer_clamp_px) .. ", " .. num(C.transfer_clamp_px) .. ")"
     local o = num(C.transfer_offset)
     local band
     if g.shore then

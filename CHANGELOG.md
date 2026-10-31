@@ -17,9 +17,8 @@ versions follow [Semantic Versioning](https://semver.org/).
 - Europe's coast is one crisp line too: its geography reads the fit through the coast warp, which ends the
   dark spray on cold coasts, with a thinner shallow rim. Its land agreement with the reference moves from
   97.68 to 97.65 percent at scale 1 (`coast.warp`; design notes 2026-10-30 17:40, a development branch).
-- The soft map edge draws no straight coast on Europe and Atlantic: the warp's sum folds back at its bounds
-  instead of clamping there, and on Europe the sides that cut land swell by a long noise, so North Africa and
-  Asia Minor end in bays and capes (`coast.edge_band`).
+- The soft map edge's strip holds no flat run on Europe and Atlantic: the warp's sum folds back at its bounds
+  instead of clamping there (`coast.edge_band.fold_geographies`).
 - On Atlantic, Exact coastlines takes written land from a lattice shared across chunk borders and from the
   chunk's corners, so it draws no rectangles of one tile along chunk borders (`bandfix.smooth.corners`).
 - Small marshes on Europe and Atlantic read the shared roughness harder, so the Danube delta's outline is no

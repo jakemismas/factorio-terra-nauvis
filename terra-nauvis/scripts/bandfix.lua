@@ -925,6 +925,15 @@ local function prepare(st)
   STATE, SHARED, MASKS, MAP = st, tabs.shared, masks, m
   local gv = guards.geography_of(st.geo)
   EDGE = (gv and gv.version and gv.version.edge) and cfg.coast.edge_band.mask_px or 0
+  EDGE_SIDE = {}
+  if EDGE > 0 then
+    local margins = cfg.coast.edge_band.outline.margins[st.map]
+    for side, n in pairs({left = m.height_px, right = m.height_px, top = m.width_px, bottom = m.width_px}) do
+      if margins[side] then
+        EDGE_SIDE[side] = side_reach(margins[side], n)
+      end
+    end
+  end
   CORNERS = SM.corners.maps[st.map] and SM.corners or nil
   LUT = reach_lut(st.scale)
   THIN = thin_lut(st.scale, LUT)

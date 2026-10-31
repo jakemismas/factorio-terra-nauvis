@@ -5096,17 +5096,10 @@ def edge_band_mask(mref):
             import numpy as np
             r = np.arange(mref.H)[:, None]
             c = np.arange(mref.W)[None, :]
-            d = np.minimum(np.minimum(r, mref.H - 1 - r), np.minimum(c, mref.W - 1 - c))
-            mask = d < int(B["mask_px"])
-            # the swell's sides reach further in: everywhere it may act, the mask follows it there
-            sw = (B.get("swell") or {}).get(g.get("geo_id"))
-            if sw:
-                basis_max = 1.77
-                reach = int(B["mask_px"]) + math.ceil(basis_max * sum(float(o["weight"]) for o in sw["octaves"]) *
-                                                      float(sw["amplitude_px"]))
-                south = (r >= mref.H - reach) & ((c < float(sw["south_until_u"])) | (c > float(sw["south_again_u"])))
-                mask = mask | south | (c >= mref.W - reach)
-            _EDGE_MASKS[k] = mask & mref.land.astype(bool)
+            R = edge_band_reach(cfg, k, mref.W, mref.H)
+            inside = ((c < R["left"][:, None]) | (mref.W - 1 - c < R["right"][:, None]) |
+                      (r < R["top"][None, :]) | (mref.H - 1 - r < R["bottom"][None, :]))
+            _EDGE_MASKS[k] = inside & mref.land.astype(bool)
     return _EDGE_MASKS[k]
 
 
@@ -26984,7 +26977,8 @@ EL_EDGE_RUNS = 2                 # edge windows per map: the longest box-touchin
 EL_MIN_RUN_PX = 32               # a side's run shorter than this gets no window (an islet the box cuts)
 EL_MIN_WATER_PX = 4              # the band's water edge never closer to the box than this (px)
 EL_MAX_REACH_PX = 20             # nor deeper than this: the nearest land the box does not cut lies at 22 px
-EL_MASK_SHARE = 0.055            # T1: the edge band mask stays at most this share of a map (Europe's swell reads most)
+EL_MASK_SHARE = 0.07             # T1: the edge band mask stays at most 7 percent of a map (Europe 6.3)
+EL_CITY_ROOM_PX = 60             # every spawn city keeps this much ground between it and the band's reach
 # One inland window per map with inland lakes, its centre in reference px: away from every coast and
 # box and beside the runner's default spawn (Europe: the Pannonian basin, north of Tirana at seed 1000).
 EL_LAKE_PX = {"europe": (1406, 1043)}
