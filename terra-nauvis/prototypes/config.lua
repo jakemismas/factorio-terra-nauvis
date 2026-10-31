@@ -2073,7 +2073,12 @@ return {
              -- moving bare ground, and veg_cap holds it under Alien Biomes' orange grass (T 80 and up, a
              -- rust colour no real grassland has); veg_zone_t is the natural ceiling, over which only
              -- Destroyed Europe's heat lies, and which keeps the zone's tiles as they were.
-             veg_prefix = "vegetation-", veg_key = CT.K_TILE_TV, veg_cap = 79.5, veg_zone_t = 99},
+             veg_prefix = "vegetation-", veg_key = CT.K_TILE_TV, veg_cap = 79.5, veg_zone_t = 99,
+             -- Alien Biomes deals its ice tiles half of all frozen ground by one noise's sign, and their grey
+             -- blue covered more of the Arctic than snow did: each gives up this much score, so ice
+             -- keeps to the noise's lows.
+             ice = {["frozen-snow-5"] = 0.35, ["frozen-snow-6"] = 0.35, ["frozen-snow-7"] = 0.35,
+                    ["frozen-snow-8"] = 0.35, ["frozen-snow-9"] = 0.35}},
     -- The tile belts: Alien Biomes colours its
     -- tiles by one temperature and moisture ladder, so latitude alone paints the Congo as yellow and
     -- orange grass, Tibet like the Sahel and the steppes like Germany. A belt is a latitude and longitude
@@ -2083,37 +2088,40 @@ return {
     -- belt out of the temperate band, so a dry steppe at Germany's latitude is not vanilla land.
     -- Every number was read from whole-map tile counts (previews/earth-build/feedback-1030/abmap).
     tile_belts = {
-      {id = "hot", lat = {-36, 36}, lon = {-180, 180}, ramp = {4, 1}, a = -0.12},
-      {id = "sahara_arabia", lat = {15, 35.5}, lon = {-20, 62}, ramp = {3, 4}, a = -0.08},
+      {id = "hot", lat = {-36, 36}, lon = {-180, 180}, ramp = {4, 1}, a = -0.16},
+      {id = "sahara_arabia", lat = {15, 35.5}, lon = {-20, 62}, ramp = {3, 4}, a = -0.06},
       {id = "sahel", lat = {9, 18}, lon = {-18, 42}, ramp = {3, 4}, m = 0.5},
-      {id = "congo", lat = {-8, 6}, lon = {8, 33}, ramp = {3, 4}, tv = -40, m = 0.2},
+      {id = "congo", lat = {-12, 8}, lon = {6, 34}, ramp = {2, 3}, tv = -40, m = 0.2},
       {id = "guinea", lat = {3, 10}, lon = {-15, 10}, ramp = {2, 3}, tv = -40, m = 0.2},
       {id = "se_asia", lat = {-11, 23}, lon = {92, 156}, ramp = {3, 4}, tv = -40, m = 0.2},
       {id = "south_china", lat = {20, 34.5}, lon = {100, 123}, ramp = {3, 4}, tv = -36, m = 0.12},
       {id = "japan", lat = {30, 37}, lon = {126, 142}, ramp = {2, 3}, tv = -33, m = 0.12},
       {id = "india", lat = {7, 31}, lon = {73, 92}, ramp = {3, 3}, tv = -25, m = 0.5},
-      {id = "amazon", lat = {-15, 6}, lon = {-80, -44}, ramp = {3, 4}, tv = -40, m = 0.2},
+      {id = "amazon", lat = {-16, 6}, lon = {-80, -44}, ramp = {2, 3}, tv = -40, m = 0.2},
       {id = "central_america", lat = {7, 20}, lon = {-94, -76}, ramp = {2, 3}, tv = -38, m = 0.15},
       {id = "us_south", lat = {28, 37}, lon = {-97, -75}, ramp = {2, 3}, tv = -32, m = 0.1},
-      {id = "iran", lat = {25, 38}, lon = {44, 70}, ramp = {2, 3}, t = -33, wild = true},
-      {id = "central_asia", lat = {36, 52}, lon = {46, 92}, ramp = {2, 4}, a = -0.6, wild = true},
-      {id = "gobi", lat = {36, 49}, lon = {92, 122}, ramp = {2, 4}, a = -0.5, wild = true},
-      {id = "steppe", lat = {46, 54}, lon = {46, 124}, ramp = {3, 4}, tv = 28, m = 0.4, wild = true},
-      {id = "pontic", lat = {44, 51.5}, lon = {28, 50}, ramp = {2, 4}, tv = 30, m = -0.05, wild = true},
-      {id = "tibet", lat = {28, 39}, lon = {74, 104}, ramp = {1.5, 3}, t = -50, tv = -12, m = -0.35, wild = true},
-      {id = "tundra_warm_old", lat = {62, 90}, lon = {0, 180}, ramp = {6, 1}, t = 18},
-      {id = "tundra_warm_new", lat = {60, 90}, lon = {-170, -64}, ramp = {6, 1}, t = 16},
-      {id = "tundra_pale_old", lat = {63, 90}, lon = {0, 180}, ramp = {4, 1}, m = -0.22, a = -0.16},
-      {id = "tundra_pale_new", lat = {61, 90}, lon = {-170, -64}, ramp = {4, 1}, m = -0.22, a = -0.16},
+      {id = "iran", lat = {25, 38}, lon = {44, 70}, ramp = {2, 3}, t = -33, a = 0.12, wild = true},
+      {id = "dry_heart", lat = {34, 53}, lon = {44, 122}, ramp = {2, 4}, a = -0.5, wild = true},
+      {id = "central_asia_pale", lat = {36, 49}, lon = {46, 86}, ramp = {3, 4}, a = -0.12},
+      {id = "steppe", lat = {45, 56}, lon = {46, 118}, ramp = {3, 4}, tv = 40, m = 0.4, wild = true},
+      {id = "pontic", lat = {43, 53}, lon = {26, 52}, ramp = {2, 4}, tv = 30, m = -0.05, wild = true},
+      {id = "tibet", lat = {28, 39}, lon = {74, 104}, ramp = {1.5, 3}, t = -50, tv = -12, m = -0.35, a = 0.1, wild = true},
+      {id = "tundra_warm_old", lat = {60, 90}, lon = {0, 180}, ramp = {6, 1}, t = 18},
+      {id = "tundra_warm_new", lat = {58, 90}, lon = {-170, -64}, ramp = {6, 1}, t = 16},
+      {id = "tundra_pale_old", lat = {64, 90}, lon = {0, 180}, ramp = {4, 1}, tv = -12, m = -0.2, a = -0.16},
+      {id = "tundra_pale_new", lat = {62, 90}, lon = {-170, -64}, ramp = {4, 1}, tv = -12, m = -0.2, a = -0.16},
       {id = "cool_edge", lat = {52, 62}, lon = {-180, 180}, ramp = {2, 1}, a = 0.12},
-      {id = "greenland", lat = {58, 90}, lon = {-62, -12}, ramp = {2, 2}, t = -18},
+      {id = "greenland_west", lat = {58, 90}, lon = {-62, -27}, ramp = {2, 2}, t = -18},
+      {id = "greenland_north_east", lat = {69, 90}, lon = {-28, -10}, ramp = {1, 2}, t = -18},
+      {id = "iceland", lat = {63, 67}, lon = {-26, -12}, ramp = {0.5, 1}, m = -0.3, a = 0.4},
       {id = "taiga", lat = {54, 65}, lon = {45, 140}, ramp = {3, 4}, m = 0.1},
       {id = "canada", lat = {49, 62}, lon = {-125, -60}, ramp = {3, 4}, m = 0.1},
       {id = "plains", lat = {33, 53}, lon = {-106, -95}, ramp = {3, 3}, tv = 25, m = 0.3, wild = true},
       {id = "sw_desert", lat = {24, 44}, lon = {-122, -103}, ramp = {3, 3}, a = -0.5, wild = true},
       {id = "patagonia", lat = {-56, -36}, lon = {-76, -62}, ramp = {3, 3}, a = -0.5, wild = true},
-      {id = "australia", lat = {-31, -18}, lon = {118, 142}, ramp = {3, 4}, a = 0.22},
+      {id = "australia", lat = {-31, -18}, lon = {118, 142}, ramp = {3, 4}, a = 0.2},
     },
+    tile_belts_wander = {lat = 1.5, lon = 2},
     tile_belts_wild = {lift = 1000, cut = 0.5, fine = 0.25},
     -- the coldness the fallback's pulls and spread read: 0 at core cold.t and warmer, 1 at
     -- cold.t - cold.span and colder

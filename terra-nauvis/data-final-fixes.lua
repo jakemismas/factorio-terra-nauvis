@@ -89,13 +89,10 @@ local function vanilla_hooks()
   end
 end
 
--- A tile score with the three climate fields read through the grain's copies (config.lua climate.grain);
--- a vegetation tile reads the temperature of its own.
-local function grain_scores(text, name)
-  local G = cfg.climate.grain
-  local veg = string.sub(name, 1, #G.veg_prefix) == G.veg_prefix
-  for field, key in pairs(G.keys) do
-    text = string.gsub(text, "%f[%w_:]" .. field .. "%f[^%w_:]", (veg and field == "temperature") and G.veg_key or key)
+-- A tile score with the three climate fields read through the grain's copies (config.lua climate.grain).
+local function grain_scores(text)
+  for field, key in pairs(cfg.climate.grain.keys) do
+    text = string.gsub(text, "%f[%w_:]" .. field .. "%f[^%w_:]", key)
   end
   return text
 end
@@ -137,7 +134,7 @@ local function exclusion_hooks()
     excluded[name] = true
     local autoplace = data.raw.tile[name].autoplace
     local original = "(" .. tostring(autoplace.probability_expression) .. ")"
-    autoplace.probability_expression = hook(grain_scores(original, name) .. " + " .. X.key, original)
+    autoplace.probability_expression = hook(with_chaos(name, grain_scores(original) .. " + " .. X.key), original)
   end
   log(cfg.identity.title .. ": temperate exclusion on " .. #names .. " Alien Biomes tiles")
   -- The grain's copies reach every Alien Biomes land tile: snow, volcanic and the adopted tiles too.
@@ -157,9 +154,20 @@ local function exclusion_hooks()
   for _, name in ipairs(others) do
     local autoplace = data.raw.tile[name].autoplace
     local original = "(" .. tostring(autoplace.probability_expression) .. ")"
-    autoplace.probability_expression = hook(grain_scores(original, name), original)
+    local G = cfg.climate.grain
+    autoplace.probability_expression = hook(grain_scores(original) .. (G.ice[name] and (" - " .. num(G.ice[name])) or ""),
+      original)
   end
   log(cfg.identity.title .. ": climate grain copies on " .. (#names + #others) .. " Alien Biomes tiles")
+  -- Vegetation tiles read a temperature of their own, excluded or adopted alike (config.lua climate.grain).
+  local G = cfg.climate.grain
+  for name in pairs(tile_settings or {}) do
+    local t = data.raw.tile[name]
+    if string.sub(name, 1, #G.veg_prefix) == G.veg_prefix and t and t.autoplace and t.autoplace.probability_expression then
+      t.autoplace.probability_expression = (string.gsub(t.autoplace.probability_expression,
+        "%f[%w_:]" .. G.keys.temperature .. "%f[^%w_:]", G.veg_key))
+    end
+  end
 end
 
 -- The palm switch: Earth presets name the Earth copies of the palms,

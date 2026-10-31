@@ -142,12 +142,13 @@ def(N.dry, by_map(function(X)
 end), {dry_lat = N.lat .. " + " .. num(MD.dry_lat) .. " * " .. MD.name,
        dry_lon = N.lon .. " + " .. num(MD.dry_lon) .. " * " .. MD.name})
 
--- The tile belts (config.lua climate.tile_belts): each field's sum over the belts that reach the map,
--- on the meandering latitude and longitude the dry belts read, so a belt's edge wanders too. They read
--- nothing but x, y and per-save numbers: the wild weight may run in the Entity program.
+-- The tile belts (config.lua climate.tile_belts): each field's sum over the belts that reach the map, on
+-- the meandering latitude and longitude, so a belt's edge wanders as a dry belt's does, by less: at the dry
+-- belts' reach a narrow belt broke off in ovals.
 local BELT = N.belts
-local BELT_AT = {belt_lat = N.lat .. " + " .. num(MD.dry_lat) .. " * " .. MD.name,
-                 belt_lon = N.lon .. " + " .. num(MD.dry_lon) .. " * " .. MD.name}
+local BW = C.tile_belts_wander
+local BELT_AT = {belt_lat = N.lat .. " + " .. num(BW.lat) .. " * " .. MD.name,
+                 belt_lon = N.lon .. " + " .. num(BW.lon) .. " * " .. MD.name}
 local function belt_weight(b)
   return ramp_in("belt_lat", b.lat[1], b.lat[2], b.ramp[1]) .. " * " .. ramp_in("belt_lon", b.lon[1], b.lon[2], b.ramp[2])
 end
