@@ -11,7 +11,7 @@
 -- In a chunk with land of its own everything read lies in the chunk, and an entity keeps coastcover.edge_gap clear
 -- of the chunk's edge, so the cover is a pure function of the chunk's own generated state. That state can follow
 -- generation order, as the game's own trees and decoratives do. No storage
--- write: the generator is re-seeded per chunk and the prototype facts are a cache.
+-- write: each chunk makes its own generator, and the prototype facts are a cache.
 -- regenerate_entity and regenerate_decorative are not an option: on Old World they cost 7 to 90 ms a chunk and
 -- place over the whole chunk.
 local cfg = require("prototypes.config")
@@ -224,8 +224,7 @@ end
 -- After set_tiles: the cover read before it, on the written land of chunk (cx, cy).
 function M.place(surface, cx, cy)
   SEED = SEED or surface.map_gen_settings.seed
-  RNG = RNG or game.create_random_generator()
-  RNG.re_seed(chunk_seed(cx, cy))
+  RNG = game.create_random_generator(chunk_seed(cx, cy))
   local x0, y0, m = cx * CT, cy * CT, 0
   for q = 1, NLAND do
     local r = LAND[q]
