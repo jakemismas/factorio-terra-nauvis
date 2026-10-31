@@ -1568,7 +1568,8 @@ return {
     --   outline   weights of the octaves added to the spot, in vanilla's blob amplitude, capped at `cap` so a
     --             spot's reach is bounded; `vary` lets the coarse octave scale the rest patch by patch, and
     --             `warp` moves the spots' coordinates by the 64 and coarse octaves. The starting patches read
-    --             the same octaves at start_w64 and start_coarse. `basement` deepens vanilla's basement
+    --             the same octaves at start_w64 and start_coarse and the same rim, so the first ore a player
+    --             meets is as uneven as the rest. `basement` deepens vanilla's basement
     --   rim       near a patch's edge, within rim.width of the height either side, blobs0 is added at rim.gain
     --             falling to 0, so edges fray into islets and satellites and neither the interior nor the far
     --             field moves; a tile with ore lies within `reach` of a spot's radius
@@ -1587,7 +1588,7 @@ return {
       size = {floor = 0.25, gain = 1.35, power = 3, radius_cap = 40, fixed_radius = 0.87},
       province = {seed1 = 7405, wavelength = 320, offset = 4096, base = 2},
       outline = {coarse = {seed1 = 7406, wavelength = 128}, fine = 8, mid = 24, broad = 64, w24 = 2, w64 = 4,
-                 w128 = 3.5, mean = 1 / 3, vary = 0.3, cap = 8, start_w64 = 2.5, start_coarse = 2, start_mean = 0.25,
+                 w128 = 3.5, mean = 1 / 3, vary = 0.3, cap = 8, start_w64 = 3.5, start_coarse = 3, start_mean = 0.25,
                  basement = 4},
       -- vanilla's own regular spot_noise numbers (core/prototypes/noise-functions.lua), and how far blobs0 may
       -- move the pockets

@@ -400,8 +400,11 @@ L.field = "body + clamp(1 - abs(body) / (" .. num(NP.rim.width) .. " * height), 
 L.regular_patches = "if(random_spot_size_minimum >= " .. num(NP.few_size) .. ", " .. num(NP.level_few) .. ", " ..
   num(NP.level) .. ") * (1 + " .. num(NP.pockets) .. " * clamp(blobs0, " .. num(-NP.pocket_clamp) .. ", " ..
   num(NP.pocket_clamp) .. ")) * field / (1 + " .. num(NP.plateau) .. " * max(0, field) / height)"
-L.starting_patches = (string.gsub(L.starting_patches, "%(blobs0 %- " .. num(O.start_mean):gsub("%.", "%%.") .. "%)",
+L.start_body = (string.gsub(L.starting_patches, "%(blobs0 %- " .. num(O.start_mean):gsub("%.", "%%.") .. "%)",
   "(blobs0 + " .. num(O.start_w64) .. " * b64 + " .. num(O.start_coarse) .. " * coarse - " .. num(O.start_mean) .. ")"))
+L.starting_patches = "start_body + clamp(1 - abs(start_body) / (" .. num(NP.rim.width) ..
+  " * starting_blob_amplitude / starting_blob_amplitude_multiplier), 0, 1) * " .. num(NP.rim.gain) ..
+  " * blobs0 * starting_blob_amplitude"
 E[#E + 1] = fn
 
 data:extend(E)
