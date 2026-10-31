@@ -22,6 +22,8 @@ versions follow [Semantic Versioning](https://semver.org/).
   Asia Minor end in bays and capes (`coast.edge_band`).
 - On Atlantic, Exact coastlines takes written land from a lattice shared across chunk borders and from the
   chunk's corners, so it draws no rectangles of one tile along chunk borders (`bandfix.smooth.corners`).
+- Small marshes on Europe and Atlantic read the shared roughness harder, so the Danube delta's outline is no
+  disc edge. No noise call is added and Old World keeps its bodies' values (`regions.marsh.edge_gain`).
 - Old World's and Atlantic's coasts are crisp lines: their geography versions read the coast fit at
   warped coordinates instead of adding the lattice detail, which dithered a low-slope fit into a band
   of speckles up to 24 tiles wide, and their shallows narrow to a rim like Europe's. Europe's map is

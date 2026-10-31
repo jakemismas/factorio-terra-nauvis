@@ -2098,7 +2098,7 @@
   },
   "tn_sd_camargue_v1": {
    "type": "noise-expression",
-   "sha256": "8231ea13c0c232c28a0e518978a1061e1c1e2c92bd38b9297882bafb5a1bdcb3",
+   "sha256": "6ee19bd181056d0c4c113deae7dc82d1c4213f688c2bf328bf8e03913a461dbb",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
@@ -2259,7 +2259,7 @@
   },
   "tn_sd_danube_delta_v1": {
    "type": "noise-expression",
-   "sha256": "eff6b00b484e9c3e6ad8eb1b5ffed4db9fc8252d5f09b34ed0d32f2b24dcf59d",
+   "sha256": "4e60a427d9066d1dba0dbcc8978ebb6c13f79401a176f3660d6c70753d55670c",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
@@ -2287,7 +2287,7 @@
   },
   "tn_sd_everglades_v1": {
    "type": "noise-expression",
-   "sha256": "889aa7caeec494dcc33233c4527e57d6f256e6e30e6e209032c9f4fdf08e4f9f",
+   "sha256": "d8184e5be24da4b424e38fdad5f5456431a39f38b765a95ad83bd19b04d58684",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
@@ -2399,7 +2399,7 @@
   },
   "tn_sd_mesopotamian_v1": {
    "type": "noise-expression",
-   "sha256": "c593baad45d251468afdf7e2597261ecb79c65c377ce9552b14510823d6b11ce",
+   "sha256": "1c10c371320686fbb05d05eab5910d2ce47526b8484df92514cb9a39429e9181",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
@@ -2616,28 +2616,28 @@
   },
   "tn_sd_okavango_v1": {
    "type": "noise-expression",
-   "sha256": "0586b7a7a796979c02391a4af58de3b5cb3ac94f15a71697f8410bda85199883",
+   "sha256": "e2cee7958bafcb77a63140adc68b10133fac15918bafb32eb5765ce068f13009",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
   },
   "tn_sd_pantanal_v1": {
    "type": "noise-expression",
-   "sha256": "7189523170f0ef905805287207a31e69da8fb74437167f1887d7ed71a95b340b",
+   "sha256": "b82fd1e22094e14b66e3b3f958c58879afeb3efb8d4cee9681f538f18a62c3e5",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
   },
   "tn_sd_po_delta_v1": {
    "type": "noise-expression",
-   "sha256": "c71da025331a3b2a273d782212958aa5c11c285ef95430280eda9fa8c0227b96",
+   "sha256": "a9447b636ac1b71decdcdbb54be17a27c7cf0089ef831318b1c9a501470311e3",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
   },
   "tn_sd_pripet_v1": {
    "type": "noise-expression",
-   "sha256": "5fc3930a76ad65c427e65d6445f4bc458e047b4135719cd59cb03ac0c80074f0",
+   "sha256": "157b7c89d4565471d2ad001235c2d4094098538bda7002146b396d38095e0d15",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
@@ -2700,7 +2700,7 @@
   },
   "tn_sd_sudd_v1": {
    "type": "noise-expression",
-   "sha256": "636b3b3976735a21aa58cf777330a5c9296f32a83a42fd226d362d08d64efc99",
+   "sha256": "977b80d7af9b484a43350b301442a34c20db3cc1459a863e9a3c71ff02ab6037",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
@@ -2770,21 +2770,21 @@
   },
   "tn_sd_vasyugan_v1": {
    "type": "noise-expression",
-   "sha256": "32580df62ab5a2051fee860a4c37d45bc9748a7a028339514324d6cd61ccb662",
+   "sha256": "20bd450809017dd856804018dcc53b74c739d9e2e2a6c16f88fac26ba25868dd",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
   },
   "tn_sd_volga_delta_v1": {
    "type": "noise-expression",
-   "sha256": "42a34e22dc206f7345ea8a4728e1f90d100901618ba61d005ecd02bd55bc7775",
+   "sha256": "89837991b7cfefb9737bd9420d6663565a3db32e3ae60b56da342382ccb1f114",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
   },
   "tn_sd_wadden_sea_v1": {
    "type": "noise-expression",
-   "sha256": "bc2e4344e02e3d65ebd12ac675207dd5250f0f983fc7e437b96f35962f015767",
+   "sha256": "207f82402989b843b9699405932e794e776e2b365f5fdfa3c2d6f2830fc2b719",
    "dump": "m1",
    "slice": "region-layer",
    "registered": "2026-10-30"
