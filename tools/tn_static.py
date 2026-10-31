@@ -2381,7 +2381,9 @@ def _release_value_findings(ref_v, work_v, where, ref):
                 continue
             out += _release_value_findings(ref_v[k], work_v[k], f"{where}.{k}", ref)
         return out
-    if isinstance(ref_v, list) and where.endswith(".versions"):
+    # A list of versions, or of the tn_geo ids a term applies to (coast.warp.geographies), only grows: a new
+    # entry reaches only the new version, which is how the next geography version keeps its map's coast warp.
+    if isinstance(ref_v, list) and where.endswith((".versions", ".geographies")):
         if not isinstance(work_v, list) or len(work_v) < len(ref_v):
             return [f"{where} lost entries {ref} holds (versions are append-only)"]
         return [f"{where}[{i + 1}] changed in place against {ref} (a landed version never changes; add the next "
@@ -4079,6 +4081,7 @@ def release_input_fixtures(cfg):
         return next(k for k, v in sorted(_as_dict(cfg.get(section)).items()) if isinstance(v, (int, float))
                     and not isinstance(v, bool))
     coast_k, coord_k = first_number("coast"), first_number("coordinates")
+    warp_ids = list(cfg["coast"]["warp"]["geographies"])
     m0 = maps[0]
     geom_k = next(k for k, v in sorted(_as_dict(cfg["maps"][m0]).items()) if isinstance(v, (int, float))
                   and not isinstance(v, bool) and k != "id")
@@ -4105,6 +4108,9 @@ def release_input_fixtures(cfg):
         f"keys.{key0} re-pointed": lambda w: set_path(w, ("keys", key0), "tn_fixture_key"),
         f"maps.{m0}.{geom_k} moved": lambda w: set_path(w, ("maps", m0, geom_k), cfg["maps"][m0][geom_k] + 1),
         "a coast constant removed": lambda w: w["cfg"]["coast"].pop(coast_k),
+        "a tn_geo id dropped from coast.warp.geographies": lambda w: set_path(w, ("coast", "warp", "geographies"),
+                                                                              warp_ids[:-1]),
+        "coast.warp.geographies reordered": lambda w: set_path(w, ("coast", "warp", "geographies"), warp_ids[::-1]),
         "a city row edited": edit_city,
         "a city added to a released table": add_city,
         "a released map table removed": lambda w: w["tables"][tables[0]].pop(tk),
@@ -4124,6 +4130,8 @@ def release_input_fixtures(cfg):
         "a new setting added": lambda w: set_path(w, ("settings", "tn_fixture_setting"),
                                                   {"name": "x", "allowed_values": ["a"]}),
         "a geography version appended": add_version,
+        "a tn_geo id appended to coast.warp.geographies": lambda w: set_path(w, ("coast", "warp", "geographies"),
+                                                                             warp_ids + [9999]),
         "a new coast constant": lambda w: set_path(w, ("coast", "tn_fixture_new"), 1),
         "a new map table": lambda w: w["tables"][tables[0]].__setitem__("tn_fixture_map", {"version": 1}),
         f"maps.{m0}.display renamed": lambda w: set_path(w, ("maps", m0, "display"), "Fixture"),
