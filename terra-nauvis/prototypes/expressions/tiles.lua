@@ -115,8 +115,11 @@ if mods["alien-biomes"] then
   for field, key in pairs(GK) do
     def(key, field)
   end
-  def(V.body_grain, vanilla_bonus(GK.temperature), PATCH)
-  def(X.body_grain, exclusion(GK.temperature))
+  def(cfg.climate.grain.veg_key, "temperature")
+  def(V.body_grain, vanilla_bonus("band_t", MS.edge), {patch = PATCH.patch, band_t = band_t(GK.temperature, WILD_TILE)})
+  -- The stony tiles on a range: the bonus with the highland's lean.
+  def(V.body_high, V.body_grain .. " + " .. cfg.ridges.names.ground)
+  def(X.body_grain, exclusion("band_t", MS.edge), {band_t = band_t(GK.temperature, WILD_TILE)})
   -- The shared fields of the tile scores' noise (config.lua tiles.noise_share), read on the on branch alone.
   local NS = cfg.tiles.noise_share
   for i, name in ipairs(NS.fields) do
