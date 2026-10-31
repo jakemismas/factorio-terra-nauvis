@@ -15083,11 +15083,25 @@ def ct_family(name):
 
 
 # The tile families each brief band admits, with Alien Biomes and without (S3 sections 2 and 4): the far
-# north is AB snow and ice, or the fallback's dry and dead ground; hot desert is sand either way.
-CT_FAMILIES = {True: {"coldest": ("frozen",), "cold": ("grass", "dirt", "sand", "frozen"),
+# north is AB snow and ice with its pale tundra (config.lua climate.tile_belts), or the fallback's dry and
+# dead ground; hot desert is sand either way.
+CT_FAMILIES = {True: {"coldest": ("frozen", "dirt", "sand", "grass"), "cold": ("grass", "dirt", "sand", "frozen"),
                       "hot_desert": ("sand", "dirt")},
                False: {"coldest": ("dirt", "sand"), "cold": ("grass", "dirt", "sand"),
                        "hot_desert": ("sand", "dirt")}}
+
+
+def ct_alien_place(cfg, map_key, scale, pt, tile):
+    """Iceland's belt, the one place a left-out colour is Earth's own (its basalt; design notes 2026-10-30,
+    a development branch): true for a black tile at probe point `pt`, within the belt's box and its wander."""
+    if "-black-" not in tile:
+        return False
+    import earthgeo as eg
+    mref = eg.MapRef(map_key)
+    b = next(x for x in cfg["climate"]["tile_belts"] if x["id"] == "iceland")
+    W = cfg["climate"]["tile_belts_wander"]
+    lon, lat = mref.pixel_lonlat((pt[0] - scale // 2) // scale + mref.wr, (pt[1] - scale // 2) // scale + mref.hr)
+    return b["lat"][0] - W["lat"] <= lat < b["lat"][1] + W["lat"] and b["lon"][0] - W["lon"] <= lon < b["lon"][1] + W["lon"]
 
 
 def ct_controls(dump, controls, label):
@@ -15186,7 +15200,7 @@ def ct_names(cfg):
     """The climate names a probe reads: the AB-unit core, the redirected properties and the marsh
     weight (the region layer's interface name)."""
     return ",".join([cfg["climate"]["names"]["core"], "temperature", "moisture", "aux", "elevation",
-                     cfg["regions"]["names"]["marsh_w"]])
+                     cfg["regions"]["names"]["marsh_w"], cfg["climate"]["names"]["belts"]["wild"]])
 
 
 def ct_brief_places(O):
@@ -16060,8 +16074,9 @@ def ct_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
     # D11 (SS; M2; every map; seeds 1000, 1002 and 1004; scales 1 and 6, JI-06, TST-07): on a
     # probe grid over each map, from the real tiles: the vanilla share of land at least 0.8 where the AB
     # temperature is 40 to 50, 0 below 0 and in the desert band (hot and dry); outside marshes, every AB
-    # tile in the temperate band (the exclusion's) in APPROVALS 9's adopted set; no alien-palette AB tile;
-    # every vanilla land tile sampled somewhere on M2 (all maps, scales and seeds together).
+    # tile in the temperate band (the exclusion's) in APPROVALS 9's adopted set; no alien-palette AB tile
+    # but Iceland's basalt; every vanilla land tile sampled somewhere on M2 (all maps, scales and seeds
+    # together). A wild belt (config.lua climate.tile_belts) lies out of the band whatever its temperature.
     d11_plan = []
     for mk in maps:
         mref = eg.MapRef(mk)
@@ -16076,12 +16091,15 @@ def ct_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
         V, X = cfg["tiles"]["vanilla"], cfg["tiles"]["exclude"]
         vanilla, adopted = set(V["tiles"]), set(cfg["tiles"]["ab_adopted"])
         mw = cfg["regions"]["names"]["marsh_w"]
+        wild_name = cfg["climate"]["names"]["belts"]["wild"]
+        WB = cfg["climate"]["tile_belts_wild"]
+        wild_cut = WB["cut"] - WB["fine"]
         seen = set()
         for x, (label, mk, s, ab, pts, _, seed) in zip(dirs, d11_plan):
             vals = point_values(read_dump(x, "ct11"))
             bins = {"below_0": [0, 0], "40_50": [0, 0], "desert": [0, 0]}
             bad_ab, alien = {}, {}
-            for v in vals.values():
+            for pt, v in vals.items():
                 tile, t, m = v.get("tile"), v.get("temperature"), v.get("moisture")
                 if not isinstance(t, (int, float)) or ct_family(tile) in ("water", "other") or tile is None:
                     continue
@@ -16090,16 +16108,17 @@ def ct_suite_checks(ctx, mods, sec6, checks, d, limits, ctl, timing, sig):
                 isv = tile in vanilla
                 if isv:
                     seen.add(tile)
-                band = "below_0" if t < 0 else "40_50" if 40 <= t < 50 else \
+                wild = isinstance(v.get(wild_name), (int, float)) and v[wild_name] > wild_cut
+                band = "below_0" if t < 0 else ("40_50" if not wild else None) if 40 <= t < 50 else \
                     "desert" if ct_band(cfg, t, m) == "hot_desert" else None
                 if band:
                     bins[band][0] += 1
                     bins[band][1] += int(isv)
                 in_marsh = isinstance(v.get(mw), (int, float)) and v[mw] > X["marsh_cut"]
-                if not isv and not in_marsh and X["temperate_from"] <= t < X["temperate_below"] and \
+                if not isv and not in_marsh and not wild and X["temperate_from"] <= t < X["temperate_below"] and \
                         tile not in adopted and ct_family(tile) not in ("wetland",):
                     bad_ab[tile] = bad_ab.get(tile, 0) + 1
-                if not isv and any(a in tile for a in CT_ALIEN):
+                if not isv and any(a in tile for a in CT_ALIEN) and not ct_alien_place(cfg, mk, s, pt, tile):
                     alien[tile] = alien.get(tile, 0) + 1
             share = {k: (b / a if a else None) for k, (a, b) in bins.items()}
             meas[label] = {"vanilla_share": share, "counts": bins, "non_adopted_temperate": bad_ab, "alien": alien}

@@ -108,3 +108,6 @@ Date: 2026-10-30
       no longer grow where vanilla land may lie, which removes about 0.3 percent of the decoratives
       in temperate regions and thins them along the edges of the temperate band, by about 7
       percent; no tile moves.
+    - Beside Alien Biomes the ground follows Earth's biomes: deep green rainforests, golden deserts,
+      pale sand and gravel across Central Asia, dry yellow steppes, cold grey Tibet, pale tundra and
+      a white Greenland. Temperate Europe keeps its ground.

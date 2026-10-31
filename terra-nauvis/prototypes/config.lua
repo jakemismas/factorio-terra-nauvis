@@ -2078,7 +2078,11 @@ return {
              -- blue covered more of the Arctic than snow did: each gives up this much score, so ice
              -- keeps to the noise's lows.
              ice = {["frozen-snow-5"] = 0.35, ["frozen-snow-6"] = 0.35, ["frozen-snow-7"] = 0.35,
-                    ["frozen-snow-8"] = 0.35, ["frozen-snow-9"] = 0.35}},
+                    ["frozen-snow-8"] = 0.35, ["frozen-snow-9"] = 0.35},
+             -- Two of Alien Biomes' four green grasses read brown (their textures average 67, 55, 28 and 67,
+             -- 49, 25, the first two 66, 59, 20 and 74, 61, 24), which a rainforest should not: the same
+             -- handicap keeps them to the noise's highs.
+             brown = {["vegetation-green-grass-3"] = 0.25, ["vegetation-green-grass-4"] = 0.45}},
     -- The tile belts: Alien Biomes colours its
     -- tiles by one temperature and moisture ladder, so latitude alone paints the Congo as yellow and
     -- orange grass, Tibet like the Sahel and the steppes like Germany. A belt is a latitude and longitude

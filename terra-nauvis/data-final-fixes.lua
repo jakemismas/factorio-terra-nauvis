@@ -159,13 +159,18 @@ local function exclusion_hooks()
       original)
   end
   log(cfg.identity.title .. ": climate grain copies on " .. (#names + #others) .. " Alien Biomes tiles")
-  -- Vegetation tiles read a temperature of their own, excluded or adopted alike (config.lua climate.grain).
+  -- Vegetation tiles read a temperature of their own, excluded or adopted alike (config.lua climate.grain),
+  -- and the brown green grasses give up score on their on branch, which alone holds the exclusion key.
   local G = cfg.climate.grain
   for name in pairs(tile_settings or {}) do
     local t = data.raw.tile[name]
     if string.sub(name, 1, #G.veg_prefix) == G.veg_prefix and t and t.autoplace and t.autoplace.probability_expression then
-      t.autoplace.probability_expression = (string.gsub(t.autoplace.probability_expression,
-        "%f[%w_:]" .. G.keys.temperature .. "%f[^%w_:]", G.veg_key))
+      local text = string.gsub(t.autoplace.probability_expression, "%f[%w_:]" .. G.keys.temperature .. "%f[^%w_:]",
+        G.veg_key)
+      if G.brown[name] then
+        text = string.gsub(text, "%f[%w_]" .. X.key .. "%f[^%w_]", X.key .. " - " .. num(G.brown[name]))
+      end
+      t.autoplace.probability_expression = text
     end
   end
 end

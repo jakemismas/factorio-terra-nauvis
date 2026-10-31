@@ -268,9 +268,10 @@ if AB then
   -- the cap, so no grain reaches its alien palette.
   local G, GN = C.grain, N.grain
   local T2 = cfg.destroyed.names.temperature
+  -- A wild belt is Alien Biomes ground at a temperate core, so it takes the grain at full weight too.
   def(GN.field, "max(clamp((" .. num(G.cold_t) .. " - " .. N.core .. ") / " .. num(G.cold_span) .. ", 0, 1), clamp((" ..
-    N.core .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1)) * noise_layer_noise(" ..
-    num(G.layer) .. ")")
+    N.core .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1), clamp(" .. BELT.wild ..
+    ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ")")
   def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. " + " .. BELT.t .. ", max(" ..
     T2 .. ", " .. num(T.ab.max) .. "))")
   def(GN.veg, "if(" .. T2 .. " > " .. num(G.veg_zone_t) .. ", " .. GN.temperature .. ", min(" .. GN.temperature ..
