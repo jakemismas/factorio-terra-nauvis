@@ -2258,6 +2258,9 @@ return {
   --   checks  each flip-checked map's measured configuration, its scale
   --   tables  per map with K+ tables: the geography ids (tn_geo) they serve. They follow the coast fit, the
   --       reference and the waterway footprints, so a later geography that keeps all three may be listed
+  --   channel_px  thin water of the ocean class within this many pixels of open water along thin water counts as
+  --       water in the tables (tools/build_geo.py sea_channels), so straits, sounds and inlets narrower than three
+  --       pixels open up; a river drawn in that class stops being one here, and only the handler ever writes them
   --   float_margin_px  float32 slack over the lattice detail's bound (coast.detail_amplitude_px times
   --       coast.detail_clamp): a tile counts as possibly wrong unless the fit alone is right by more
   --   correction_tiles  the game's own tile stage grows water so every water tile lies in a 2 x 2 block of
@@ -2293,13 +2296,14 @@ return {
     tables = {europe = {geographies = {14}}, atlantic = {geographies = {17}}, olde_world = {geographies = {18}}},
     version = 1,
     float_margin_px = 0.01,
+    channel_px = 40,
     correction_tiles = 2,
     mask_margin_tiles = 3,
     spawn_keep_tiles = 24,
     chunk_tiles = 32,
     row_cache = 2048,
     new_water = "water", new_deep = "deepwater", land_fallback = "sand-1", ground_rings = 3,
-    smooth = {min_scale = 3, threshold = 0.72, wobble = 0.22, thin = 0.35, spline_centre = 0.75, ease = 3,
+    smooth = {min_scale = 3, threshold = 0.3, wobble = 0.18, thin = 0.35, spline_centre = 0.75, ease = 3,
               period_tiles = 64, lattice_tiles = 4, shift_tiles = {21, 32},
               octaves = {{cells = 4, weight = 1}, {cells = 12, weight = 0.6}},
               hash = {x = 73, y = 179, seed = 283, modulus = 1021, mix = 31, half = 510},

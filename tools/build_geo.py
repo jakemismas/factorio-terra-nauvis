@@ -1089,6 +1089,29 @@ def ref_classes(mref):
     return cls
 
 
+def sea_channels(map_key, mref, cls, steps):
+    """bool per pixel: the thin water of the ocean class within `steps` 8-connected pixels of open water along thin
+    water: straits, sounds and inlets narrower than three pixels, which the coast fit fills as land. A river drawn in
+    the same class stops being one here; the rest of it stays thin water."""
+    import numpy as np
+    from PIL import Image
+    from scipy import ndimage as ndi
+    Image.MAX_IMAGE_PIXELS = None
+    rgb = np.asarray(Image.open(mref.land_path.with_name(f"{map_key}-classes.png")).convert("RGB"))
+    ocean = (rgb[..., 0] == 20) & (rgb[..., 1] == 40) & (rgb[..., 2] == 110)
+    allowed = (cls == 2) & ocean
+    return ndi.binary_dilation(cls == 0, structure=np.ones((3, 3), bool), iterations=int(steps),
+                               mask=allowed | (cls == 0)) & allowed
+
+
+def bandfix_classes(map_key, mref, B):
+    """ref_classes as the K+ tables read it: thin water that belongs to the sea counts as water, so the handler
+    opens it."""
+    cls = ref_classes(mref)
+    cls[sea_channels(map_key, mref, cls, B["channel_px"])] = 0
+    return cls
+
+
 def other_masks(cls, neighbours):
     """uint8 per pixel: bit b set where neighbour b (config order) is of the other class; thin water and
     the area outside the raster count as water."""
@@ -1552,7 +1575,7 @@ def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None,
     ck = FITS / map_key / spec["bodies"]["geo"]["checkpoint"]
     meta, idx, coef = load_model(ck)
     mref = eg.MapRef(map_key)
-    cls = ref_classes(mref)
+    cls = bandfix_classes(map_key, mref, B)
     nb = [tuple(x) for x in B["neighbours"]]
     om = other_masks(cls, nb)
     Gp = np.pad(level0_grid(meta, idx, coef), ((1, 0), (1, 0)))
@@ -1583,6 +1606,7 @@ def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None,
         P1[s]["ww_sha"] = ww_sha
         K |= P1[s]["K"]
         t[s] = time.time() - t0
+    K |= scored & (om != 0)
     Kp = dilate8(K)
     order = B["symbol_order"]
     nsym = len(order)
@@ -1606,8 +1630,9 @@ def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None,
                             "is outside the band (S12)",
                     "k": "a scored pixel holding a tile outside the band whose fit lies within margin_px of the "
                          "wrong side, or within correction_tiles of a tile that may be of the other class (the game "
-                         "grows water into 2 x 2 blocks), at some offered scale; the scale's waterway footprint "
-                         "masks it there",
+                         "grows water into 2 x 2 blocks), at some offered scale, and every scored pixel with a pixel "
+                         "of the other class around it, so the coast follows the reference at the handler's write "
+                         "threshold everywhere; the scale's waterway footprint masks it there",
                     "fill": "a K pixel whose band region at the save's scale holds no 2 x 2 block of tiles is "
                             "written whole; the handler decides it from the shared table",
                     "pricing": "S12's measures: the band rule's writes with the fit alone deciding (detail 0), "
@@ -1672,7 +1697,7 @@ def emit_bandfix_masks(map_key, out_dir=BANDFIX_GENERATED, log=print):
     import earthgeo as eg
     cfg, B = bandfix_cfg()
     mref = eg.MapRef(map_key)
-    cls = ref_classes(mref)
+    cls = bandfix_classes(map_key, mref, B)
     order = B["symbol_order"]
     nsym = len(order)
     shared_name = bandfix_shared_file(map_key, B["version"])
