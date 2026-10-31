@@ -1357,7 +1357,8 @@ return {
   -- start mask can keep every ore on the spawn's land (design notes 2026-10-29 00:30: even an oracle
   -- mask loses some). Once, in on_init of an Earth or Map-type-only world, scripts/start_ore.lua
   -- floods the land reached on foot from the spawn (4-connected tiles without `water_layer` within
-  -- `grid` tiles), sums each ore's amount on those tiles within `radius` tiles, and where that is
+  -- `grid` tiles; a spawn tile in water starts from where a character lands within `seed_radius`),
+  -- sums each ore's amount on those tiles within `radius` tiles, and where that is
   -- under `trigger` times `reference` (vanilla's mean starting amount within 150 tiles at seeds
   -- 1000, 1002 and 1004, times the control's richness) places one patch of `fill` times it on
   -- reached land: the nearest centre `min_distance` (vanilla's starting-patch excluder) to radius -
@@ -1382,6 +1383,7 @@ return {
     water_layer = "water_tile",
     grid = 160,
     radius = 150,
+    seed_radius = 32,
     trigger = 0.5,
     fill = 0.5,
     min_distance = 40,

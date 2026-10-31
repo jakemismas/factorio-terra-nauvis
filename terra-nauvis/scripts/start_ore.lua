@@ -1,4 +1,4 @@
--- The start ore guarantee (config.lua start_ore; design notes 2026-10-30): once, from start.on_init on an
+-- The start ore guarantee (config.lua start_ore; DECISIONS 2026-10-30): once, from start.on_init on an
 -- Earth or Map-type-only world, every starting ore gets a patch on the land the spawn reaches on foot
 -- when that land holds too little of it. The starting area is generated before on_init
 -- (worldgen-runtime rule 2) and bandfix.on_init has settled its coast, so the tiles and ore read here are
@@ -36,12 +36,21 @@ local function reached_land(surface)
     end
   end
   local reach = {}
-  local i0 = idx(0, 0)
-  if water[i0] then
+  local sx, sy = 0, 0
+  if water[idx(0, 0)] then
+    -- A river can cross the spawn tile itself (London on Atlantic at scale 3): the flood starts where the player lands.
+    local p = surface.find_non_colliding_position("character", {0, 0}, C.seed_radius, 1)
+    if not p then
+      return reach
+    end
+    sx, sy = floor(p.x), floor(p.y)
+  end
+  local i0 = idx(sx, sy)
+  if not i0 or water[i0] then
     return reach
   end
   reach[i0] = true
-  local qx, qy, head, tail = {0}, {0}, 1, 1
+  local qx, qy, head, tail = {sx}, {sy}, 1, 1
   while head <= tail do
     local x, y = qx[head], qy[head]
     head = head + 1
