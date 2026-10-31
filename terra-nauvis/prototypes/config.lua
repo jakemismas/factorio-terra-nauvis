@@ -1088,7 +1088,9 @@ return {
                REN.ENEMY_LAYER, REN.ENEMY, REN.ORE_IRON_P2,
                REN.ORE_IRON_R, REN.ORE_COPPER_P2, REN.ORE_COPPER_R, REN.ORE_COAL_P2, REN.ORE_COAL_R, REN.ORE_STONE_P2,
                REN.ORE_STONE_R,
-               REN.ORE_URANIUM_P2, REN.ORE_URANIUM_R, REN.ORE_OIL_P2, REN.ORE_OIL_R, REN.OFFSHORE_P, REN.OFFSHORE_R},
+               REN.ORE_URANIUM_P2, REN.ORE_URANIUM_R, REN.ORE_OIL_P2, REN.ORE_OIL_R, REN.OFFSHORE_P, REN.OFFSHORE_R,
+               REN.ORE_FN, REN.ORE_GAP, REN.ORE_PATCH_IRON, REN.ORE_PATCH_COPPER, REN.ORE_PATCH_COAL, REN.ORE_PATCH_STONE,
+               REN.ORE_PATCH_URANIUM, REN.ORE_PATCH_OIL, REN.ORE_PATCH_OFFSHORE},
       files = {"prototypes/tables/hotspots.lua"},
     },
     -- The soft map edge and the inland lakes switch (milestone edge-and-lakes): each map's next geography
@@ -1590,7 +1592,8 @@ return {
       size = {floor = 0.25, gain = 1.35, power = 3, radius_cap = 40, fixed_radius = 0.94},
       province = {seed1 = 7405, wavelength = 320, offset = 4096, base = 2},
       outline = {coarse = {seed1 = 7406, wavelength = 128}, fine = 8, mid = 24, broad = 64, w24 = 2, w64 = 4,
-                 w128 = 3.5, mean = 1 / 3, vary = 0.3, cap = 8, start_w64 = 1.5, start_coarse = 0.5, start_mean = 0.25, start_level = 0.75,
+                 w128 = 3.5, mean = 1 / 3, vary = 0.3, cap = 8, start_w64 = 1.5, start_coarse = 0.5, start_mean = 0.25,
+                 start_level = 0.75,
                  basement = 4},
       -- vanilla's own regular spot_noise numbers (core/prototypes/noise-functions.lua), and how far blobs0 may
       -- move the pockets

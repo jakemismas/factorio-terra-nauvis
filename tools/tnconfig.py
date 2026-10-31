@@ -582,7 +582,7 @@ def geography(cfg):
 REGION_MAX_SHARE = 3                               # the destroyed zone's warp runs past the shared warp
 REGION_TABLE = "prototypes/tables/regions.lua"     # relative to the mod folder, as `files` spells it
 REGION_ROW_KINDS = ("sd", "w", "depth")            # every row's signed distance, weight and depth
-REGION_CENTRE_KINDS = ("hu", "hv")                 # a hotspot disc's jittered centre
+REGION_CENTRE_KINDS = ("hu", "hv", "pd")           # a hotspot disc's jittered centre and plain distance
 REGION_AGGREGATES = ("destroyed_sd", "destroyed_w", "destroyed_depth", "forest_w", "forest_sum", "tree_mult",
                      "marsh_w", "hotspot_w", "enemy_mult")
 REGION_OWN = ("ox", "oy", "ax", "ay", "wk", "wx", "wy", "rough")   # the noise anchor, the warp, the roughness
