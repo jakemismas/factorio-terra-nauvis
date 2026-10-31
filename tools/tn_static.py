@@ -2636,10 +2636,10 @@ def bodies_findings(mod, fz, cfg):
     """(findings, bodies or None): the offline bodies of the mod folder `mod` against `fz`."""
     try:
         bodies = tnfrozen.offline_bodies(mod, cfg)
+        beside_ab = tnfrozen.offline_ab_problems(mod, fz, cfg)
     except Exception as e:  # tnlua.LuaError and anything else: fail closed
         return [f"the offline data stage did not run: {type(e).__name__}: {e} (fail closed)"], None
     return tnfrozen.body_problems(bodies, fz, cfg) + beside_ab, bodies
-        beside_ab = tnfrozen.offline_ab_problems(mod, fz, cfg)
 
 
 def row_bodies(repo=REPO):
