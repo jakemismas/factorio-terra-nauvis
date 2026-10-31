@@ -1562,7 +1562,7 @@ return {
     high = {ref_m = 4800, min_px = 8, gain_px = 42, power = 0.9, tiles = 30, fall_px = 44, fall_tiles = 36,
             fray_warp = 0.7, fray_rough = 2, fray_massif = 14, start = {ramp_tiles = 96}},
     ground = {lean = 6, lapse_per_px2 = 0.03, lapse_from_px = 7, cold_t = 30, cold_min = 0.15, floor = -12,
-              moisture = 0.2, fray = 2, massif = {gain = 0.08, low = 0.5, high = 1.15}},
+              moisture = 0.2, fray = 2, massif = {gain = 0.04, low = 0.72, high = 1.15}},
     rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24,
              ab_prefixes = {"huge-rock-", "big-rock-", "sand-big-rock-"}, ab_skip = "volcanic"},
     names = {
