@@ -1,7 +1,7 @@
 # Terra Nauvis
 
 Terra Nauvis turns Nauvis into Earth. Pick one of three maps on the new-game screen and play on real
-coastlines, with great rivers, forests and deserts where you expect them, and a start at a real city.
+coastlines, with great rivers, forests and deserts where you expect them, and a start at a named city.
 
 Version 0.1.0, for Factorio 2.1.
 
@@ -14,7 +14,7 @@ Version 0.1.0, for Factorio 2.1.
 | Preset | What it covers | World size at scale 1 | World size at scale 6 | Spawn cities |
 |---|---|---|---|---|
 | Terra Nauvis: Europe | Europe from Portugal to western Russia and Turkey, with a strip of North Africa | 2,400 x 1,704 tiles | 14,400 x 10,224 tiles | 40 |
-| Terra Nauvis: Atlantic | The whole world, centred on the Atlantic | 15,689 x 6,524 tiles | 94,134 x 39,144 tiles | 50 |
+| Terra Nauvis: Atlantic | The whole world but Antarctica, centred on the Atlantic | 15,689 x 6,524 tiles | 94,134 x 39,144 tiles | 50 |
 | Terra Nauvis: Old World | Europe, Africa, Asia and Australia | 8,963 x 5,847 tiles | 53,778 x 35,082 tiles | 33 |
 
 Every map sits in an endless deep ocean and comes with:
@@ -22,12 +22,13 @@ Every map sits in an endless deep ocean and comes with:
 - Great rivers with walkable fords, and straits and canals wide enough for ships. Rivers narrow with
   the map scale, from about 3 tiles wide at scale 1 to about 12 to 18 at scale 6, the scale ships
   need.
-- Earth climate: a frozen far north, cold Scandinavia and Russia, temperate Europe and hot deserts.
+- Earth climate: a frozen far north beside Alien Biomes, dry dead ground there without it, cold
+  Scandinavia and Russia, temperate Europe and hot deserts.
 - Marshes and 16 great forests, from the Black Forest to the Congo and the Amazon on the maps that
   hold them.
-- Cliff ridges along 16 mountain ranges, with passes at their historic crossings. Big rocks and
-  stony ground gather round each range, and beside Alien Biomes tall ranges turn to grey rock and
-  snow.
+- Cliff ridges along the map's mountain ranges (9 on Europe, 13 on Old World, 16 on Atlantic), with
+  passes at their historic crossings. Big rocks and stony ground gather round each range, and
+  beside Alien Biomes tall ranges turn to grey rock and snow.
 - Regular ore in lobed fields of many sizes, gathered in provinces, and historic ore fields at their
   real sites, such as Kiruna, the Ruhr and Ghawar, with heavier biters around them.
 - A spawn at the city you choose, or a random one, with land around it, a lake nearby, starting ore
@@ -67,12 +68,13 @@ so use the tagged release to play.
 6. Press **Play**. The intro names your spawn city and the world size.
 
 Set everything before you press Play. A world made from a preset keeps its scale, spawn city and
-every startup setting below for life, and a message tells you when a setting no longer matches.
+every startup setting below for life, and a message tells you when a setting no longer matches,
+except Ore hotspot amount, which gives none.
 
 The Terrain tab's **Map type** list also names the three maps. Picking only the map type gives you
 that map's coast, rivers and spawn with the base game's climate and none of the rest, and that world
-follows later changes to the scale and spawn city settings, which moves any terrain it generates
-afterwards. Use the preset unless you want exactly that.
+follows later changes to the scale, spawn city, Canals, Inland lakes and Ore hotspots settings,
+which moves any terrain it generates afterwards. Use the preset unless you want exactly that.
 
 ## Settings
 
@@ -85,13 +87,13 @@ All of these are startup settings except City markers, which is on the Map tab.
 | Spawn city: Atlantic | Random | Where an Atlantic game starts: Random or one of 50 cities. |
 | Spawn city: Old World | Random | Where an Old World game starts: Random or one of 33 cities. |
 | Canals | On | Opens the Kiel and Corinth canals on every map, Suez on Atlantic and Old World, and Panama on Atlantic, as sea-level channels at least 7 tiles wide that Cargo Ships can use. Off keeps every isthmus closed. |
-| Great forests | On | Gives the 16 great forests about twice the trees of the land around them. Trees still follow the climate, so a forest in a cold or dry place stays thinner. |
-| Ridges | On | Places cliff ridges along 16 mountain ranges, the only cliffs on the map, with passes at their historic crossings and a gap at least every 400 km, each wide enough for a double track. No ridge crosses the starting area. Off gives a map with no cliffs. |
+| Great forests | On | Gives the map's great forests (9 on Europe, 14 on Old World, 16 on Atlantic) about twice the trees of the land around them, and the cold taiga forests more. Trees still follow the climate, so a forest in a dry place stays thinner. |
+| Ridges | On | Places cliff ridges along the map's mountain ranges (9 on Europe, 13 on Old World, 16 on Atlantic), the only cliffs on the map, with passes at their historic crossings and a gap at least every 400 km, each wide enough for a double track. No ridge crosses the starting area. Off gives a map with no cliffs. |
 | Ore hotspots | On | Adds dense ore at historic sites, in a disc that moves a little with the map seed, with about three times the base game's biter nests inside it, and offshore oil fields on deep water where the Oil Rig mod is installed. The map's ore sliders do not reach a hotspot, and ordinary ore stays out of its disc. No field lies at a spawn city. Off gives the base game's ore, in the map's lobed fields. |
 | Ore hotspot amount | 100 percent | How much ore and oil every hotspot holds: 50, 100, 200 or 400 percent. It changes richness only, never a hotspot's place or size. |
 | Inland lakes | Off | Scatters small random lakes across the land, away from coasts and the starting area. Off leaves only the lake at the spawn city, the rivers and the real lakes of the map. |
 | Destroyed Europe | Off | Needs Alien Biomes. Turns the heart of Europe, from France across Germany and Poland to Ljubljana and down Italy to about Rome, into a red wasteland of lava, black ash, red rock and scorched red grass, patches mixed, with an outline that differs on every map seed and reds on the map view. Britain, Denmark, the Kiel Canal and the Carpathians stay outside, and the start area stays normal. A random spawn city never lands inside the zone; a chosen one can. Without Alien Biomes nothing changes and the game warns. |
-| Exact coastlines | On | On Atlantic and Old World it holds a new world's coast to the EarthMaps reference as chunks generate, on every shore, so channels and islets narrower than a pixel come back, and land made from sea takes the trees and ground cover of the land beside it. The map preview still shows the noise coast. Europe's map keeps its noise coast. |
+| Exact coastlines | On | On Atlantic and Old World it holds a new world's coast to the EarthMaps reference as chunks generate, except beside rivers, straits and canals, in the map's edge band and within 24 tiles of the spawn, so channels and islets narrower than a pixel come back, and land made from sea takes the trees and ground cover of the land beside it. The map preview still shows the noise coast. Europe's map keeps its noise coast, and a world made from a Map type entry alone gets none of this. |
 | City markers | Off | Names every city on the map view. It changes nothing in the world, so you can switch it at any time in a running game. Worlds made from a Map type entry alone get no markers. |
 
 ## Compatibility
@@ -111,7 +113,8 @@ All of these are startup settings except City markers, which is on the Map tab.
   short of an ore, Terra Nauvis adds a patch, unless RSO's Ore in starting area setting is off. The
   game warns you at the start and carries on. Turn RSO off to get the designed start.
 - **Cargo Ships and its Oil Rig:** straits and canals are wide enough for ships at every scale, and
-  rivers at scale 6. Offshore oil fields appear on deep water when the Oil Rig mod is installed.
+  carved rivers at scale 6; Known limits says which rivers Atlantic carves. Offshore oil fields
+  appear on deep water when the Oil Rig mod is installed.
 - **Large packs:** on a build from earlier on release day, the maintainer's pack of 83 mods, with Space Age,
   Alien Biomes, RSO, Cargo Ships, Bob's Enemies, Big Monsters and Dectorio, ran with no errors, saved
   and reloaded clean, and gave the same world on four separate creates. Those mods change ore,
@@ -157,12 +160,15 @@ All of these are startup settings except City markers, which is on the Map tab.
   chunks exist. Terra Nauvis also adds a few seconds to the game's startup.
 - **Saves keep their terrain.** A world keeps the terrain it was started on. Later releases add
   terrain for new worlds and never change an existing save's terrain. A world made from a Map type
-  entry alone still follows the scale and spawn city settings.
+  entry alone still follows the scale, spawn city, Canals, Inland lakes and Ore hotspots settings.
 - **An existing save stays as it is.** Adding the mod to a world made without it changes nothing on
   that world's surfaces, apart from the grey cliff art beside Alien Biomes.
 - **Testing was light for this release.** A crash matrix, a pack run and one security pass ran on
   builds from earlier on release day, before the last terrain changes. The final build had load and
   chunk time checks. The full timing, determinism and save suites have not run on it.
+- **Most cities stand where EarthMaps put them.** On Atlantic and Old World a city sits at EarthMaps'
+  own map point, which can lie far from the real place it names. Prague, Frankfurt, Aachen and
+  Moscow on Old World stand at their real positions.
 - **Not on the Mod Portal.** The GitHub release is the only source.
 
 ## License and credits

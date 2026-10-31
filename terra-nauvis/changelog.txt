@@ -20,7 +20,8 @@ Date: 2026-10-30
       endless deep ocean. A world made from the preset keeps the scale it was created with.
     - Map type Terra Nauvis: Europe in the Terrain tab: Europe's coast and spawn on its own, with a
       one-time notice that the preset adds the rest and that a changed scale or spawn city setting
-      moves such a world's new chunks. A later version never moves it: its other values are frozen.
+      moves such a world's new chunks. A later version does not move it: only those settings, Canals,
+      Inland lakes and Ore hotspots do.
     - The water slider leaves a Terra Nauvis: Europe world unchanged, cliffs and land included.
     - Map-gen presets Terra Nauvis: Atlantic and Terra Nauvis: Old World, listed after Terra Nauvis:
       Europe: the Atlantic world and the Old World with their real coastlines in an endless deep
@@ -31,7 +32,7 @@ Date: 2026-10-30
       World (Random or one of 33: EarthMaps' 30 with Prague at the real city, plus Frankfurt, Aachen
       and Moscow): the map moves so the city sits at the spawn, with a lake nearby and the starting
       ore on the city's own land, as on Europe.
-    - Every start gets iron, copper, coal and stone on the land it can walk to: where the start area
+    - A start gets iron, copper, coal and stone on the land it can walk to, room allowing: where the start area
       holds less than half of a normal start's amount of an ore on that land (an island or
       peninsula start, such as Stockholm or Athens), a patch of it is placed on that land when the
       world is created. With RSO the check runs on RSO's own start, unless RSO's Ore in starting
@@ -43,17 +44,18 @@ Date: 2026-10-30
       enemy-free start of the base game; the intro names the city and the world size.
     - Inland lakes startup setting, off by default: sparse random lakes across the land, kept off
       coasts and out of the start area. Off leaves the lake at the spawn city, the rivers and the
-      real lakes of the map; a world keeps its value for life.
+      real lakes of the map; a world made from a preset keeps its value for life.
     - A warning at the start, and to each player who joins, when RSO is active.
     - A world that uses a Terra Nauvis map type alone gets the same start as a preset world: the
       intro names its spawn city and world size, and with RSO active it gets the RSO warning.
     - Other planets' surfaces never take the Terra Nauvis map, and adding the mod to a world made
-      without it leaves every surface of that world as it was.
+      without it leaves every surface of that world as it was, apart from the grey cliff art beside
+      Alien Biomes.
     - Rivers, straits and canals on every map at every scale: rivers grow with the map scale and
       carry a walkable shallow ford every 60 reference pixels; Gibraltar, Dover and the Great Belt
       are two-way straits; the Canals startup setting (default on) opens Kiel, Corinth, Suez and
-      Panama, and with it off every isthmus stays closed. At map scale 6 ships can sail the rivers
-      to the sea.
+      Panama, and with it off every isthmus stays closed. At map scale 6 ships can sail every carved
+      river to the sea; from scale 3 Atlantic carves only Europe's 22.
     - Earth climate on every Terra Nauvis preset: the far north frozen, Scandinavia and Russia cold,
       temperate Europe, and hot deserts where EarthMaps paints sand (the Sahara, Arabia, Central
       Asia, the American south-west, the Kalahari, Australia and the southern Andes). With Alien
@@ -68,12 +70,14 @@ Date: 2026-10-30
       wetland grass and trees when it is installed and vanilla's lush grass between the pools
       without it.
     - The sea deepens a few tiles offshore at every map scale, with a beach strip along the coast.
-    - Great forests startup setting (default on): the 16 great forests of Earth, from the Black Forest
+    - Great forests startup setting (default on): the great forests of Earth (9 on Europe, 14 on Old
+      World, 16 on Atlantic), from the Black Forest
       and the Scandinavian taiga to the Congo and the Amazon, hold about twice the trees of the land
       around them, while trees still follow the climate.
     - With Alien Biomes, the base game's trees, rocks, decals and plants grow again on the vanilla
       ground of Terra Nauvis worlds, beside Alien Biomes' own.
-    - Ridges startup setting, on by default: messy bands of cliffs along 16 mountain ranges, the only
+    - Ridges startup setting, on by default: messy bands of cliffs along the map's mountain ranges
+      (9 on Europe, 13 on Old World, 16 on Atlantic), the only
       cliffs on a Terra Nauvis map. A ridge wanders round its range, runs wider where the real
       mountain is taller, breaks into runs of many lengths and frays out at its ends, with passes
       at the historic crossings, a gap at least every 400 km and no cliffs across the starting
@@ -94,7 +98,8 @@ Date: 2026-10-30
       random spawn city never lands inside the zone. Without Alien Biomes nothing changes, and the
       game warns at the start and each player who joins.
     - Exact coastlines startup setting (default on): on Atlantic and Old World each new chunk's coast
-      follows the reference on every shore and continent alike, so fjords, bays, the sea's narrow
+      follows the reference on every continent alike, except beside rivers, straits and canals, in
+      the map's edge band and within 24 tiles of the spawn, so fjords, bays, the sea's narrow
       channels and islets the noise cannot hold come back as rounded natural shores. The map
       preview still shows the noise coast; land made from sea takes the trees and ground cover of
       the land beside it.
@@ -104,7 +109,7 @@ Date: 2026-10-30
     - Rivers wander: they meander off their polylines, their banks stop being parallel, they widen
       toward the mouth and taper at the source, and the square turning basins became natural pools.
     - Rivers scale down with the map: at small map scales they are a few tiles wide, too thin for
-      boats, and only the largest scale carries boats along every river.
+      boats, and only the largest scale carries boats along every carved river.
     - The start lake and the Inland lakes setting's lakes have irregular shores, and inland lakes vary
       in size.
   Compatibility:
