@@ -83,7 +83,8 @@ All of these are startup settings except City markers, which is on the Map tab.
 | Canals | On | Opens the Kiel and Corinth canals on every map, Suez on Atlantic and Old World, and Panama on Atlantic, as sea-level channels at least 7 tiles wide. Off keeps every isthmus closed. |
 | Great forests | On | Gives the 16 great forests about twice the trees of the land around them. Trees still follow the climate. |
 | Ridges | On | Places cliff ridges along 16 mountain ranges, the only cliffs on the map, with passes wide enough for a double track. Off gives a map with no cliffs. |
-| Ore hotspots | On | Adds dense ore at historic sites, with about three times the base game's biter nests inside them, and offshore oil fields where the Oil Rig mod is installed. Off gives the base game's ore. |
+| Ore hotspots | On | Adds dense ore at historic sites, with about three times the base game's biter nests inside them, and offshore oil fields where the Oil Rig mod is installed. The map's ore sliders do not reach them. Off gives the base game's ore. |
+| Ore hotspot amount | 100 percent | How much ore and oil every hotspot holds: 50, 100, 200 or 400 percent. It changes richness only, never a hotspot's place or size. |
 | Inland lakes | Off | Scatters small random lakes across the land. Off leaves the lake at the spawn city, the rivers and the real lakes of the map. |
 | Destroyed Europe | Off | Needs Alien Biomes. Turns the heart of Europe, from France to Warsaw and down to Ljubljana and about Rome, into a red wasteland of lava, black ash, red rock and scorched grass, with an outline that differs on every map seed. The start area stays normal. |
 | Exact coastlines | On | On Atlantic and Old World it snaps a new world's coast to the reference map as chunks generate, so fjords, bays and islets come back. The new-game preview shows the coast before that, and land made from sea takes the trees and ground cover of the land beside it. Europe's map does not need it. |

@@ -5,19 +5,18 @@
 -- Every row of prototypes/tables/hotspots.lua is a hotspot whose disc is the region layer's row of
 -- the same id, jittered per seed there. At scale s its footprint radius is
 --   R = min(max(r * s, floor_tiles), cap * s) tiles
--- (APPROVALS 2's floor at small scales, capped at r + 50 km), read through the row's depth in the
--- region layer, so the footprint is the disc's roughened distance under R. Per resource, one
--- spot_noise with its own seed1 places the spots (S6 A5): only land candidates inside a row's start
--- disc (core_share of R, at most the disc of max_spots candidates) carry quantity, and a spot reaches
--- at most the rest of R, so ore never leaves the footprint without a per-tile mask. Each row's amount
--- is strength times vanilla's regular patch amount at the candidate's distance (quantity and richness
--- factor) times the ramp, spread over the start disc's expected candidates, and the region's target is
--- the sum of its candidates' quantities, so the realised amount is scaled by the land share the gate
--- passes (decision 16; water share for an offshore field), with land from tn_land_coarse alone (decision
--- 8), and rows sharing a region never draw on each other's target. Frequency is never read, so the
--- hotspot bodies are bit-identical under the frequency slider; size scales the quantity and size
--- none removes the hotspot; richness scales it exactly (S6 Q2). The per-map rows fold on tn_map (a
--- preset-only number: the wrappers that read these bodies exist on preset worlds only).
+-- (APPROVALS 2's floor at small scales, capped at r + 50 km), an exact disc about the jittered centre. Per
+-- resource, one spot_noise with its own seed1 places the spots (S6 A5): only land candidates inside a
+-- row's start disc (core_share of R, at most the disc of max_spots candidates) carry quantity, and each
+-- cone is held to the room its row leaves it, so ore never leaves the disc and no per-tile mask is
+-- needed (config.lua hotspots.size). Each row's amount is strength times vanilla's regular patch amount at
+-- the candidate's distance (quantity and richness factor) times the ramp, spread over the start disc's
+-- expected candidates, and the region's target is the sum of its candidates' quantities, so the realised
+-- amount is scaled by the land share the gate passes (decision 16; water share for an offshore field), with
+-- land from tn_land_coarse alone, and rows sharing a region never draw on each other's target.
+-- No map slider reaches a hotspot: the switch and the amount setting are its only
+-- controls, and the amount multiplies richness alone. The per-map rows fold on tn_map (a preset-only
+-- number: the wrappers that read these bodies exist on preset worlds only).
 --
 -- Each map's offshore field stamp is stamp_elevation inside every offshore row's footprint grown by
 -- cover_px, else 0, on the map's own chain (Tile only, a firewall body); the map's newer elevation
@@ -385,7 +384,7 @@ L.outline = "min(" .. num(O.cap) .. ", (" .. basis(O.fine, "seed1") .. " + " .. 
   basis(O.mid, "seed1") .. " + " .. num(O.w64) .. " * b64 + " .. num(O.w128) .. " * coarse - " .. num(O.mean) ..
   ") * (1 + " .. num(O.vary) .. " * coarse))"
 L.height = "max(1, regular_spot_height_typical_at(distance))"
-L.field = "spot_noise{x = warp_x, y = warp_y," ..
+L.body = "spot_noise{x = warp_x, y = warp_y," ..
   " density_expression = regular_density_at(distance)," ..
   " spot_quantity_expression = regular_spot_quantity_expression," ..
   " spot_radius_expression = max(1, clear * spot_radius)," ..
@@ -396,6 +395,8 @@ L.field = "spot_noise{x = warp_x, y = warp_y," ..
   " suggested_minimum_candidate_point_spacing = " .. num(V.spacing) .. ", skip_span = regular_patch_set_count," ..
   " skip_offset = regular_patch_set_index, hard_region_target_quantity = 0, basement_value = basement_value," ..
   " maximum_spot_basement_radius = " .. num(V.basement_radius) .. "} + outline * regular_blob_amplitude_at(distance)"
+L.field = "body + clamp(1 - abs(body) / (" .. num(NP.rim.width) .. " * height), 0, 1) * " .. num(NP.rim.gain) ..
+  " * blobs0 * regular_blob_amplitude_at(distance)"
 L.regular_patches = "if(random_spot_size_minimum >= " .. num(NP.few_size) .. ", " .. num(NP.level_few) .. ", " ..
   num(NP.level) .. ") * (1 + " .. num(NP.pockets) .. " * clamp(blobs0, " .. num(-NP.pocket_clamp) .. ", " ..
   num(NP.pocket_clamp) .. ")) * field / (1 + " .. num(NP.plateau) .. " * max(0, field) / height)"

@@ -1567,6 +1567,9 @@ return {
     --             spot's reach is bounded; `vary` lets the coarse octave scale the rest patch by patch, and
     --             `warp` moves the spots' coordinates by the 64 and coarse octaves. The starting patches read
     --             the same octaves at start_w64 and start_coarse. `basement` deepens vanilla's basement
+    --   rim       near a patch's edge, within rim.width of the height either side, blobs0 is added at rim.gain
+    --             falling to 0, so edges fray into islets and satellites and neither the interior nor the far
+    --             field moves; a tile with ore lies within `reach` of a spot's radius
     --   richness  v / (1 + plateau * v / height), v the field, height the typical spot's: a plateau instead of
     --             a cone, times 1 + pockets * blobs0 with blobs0 clamped so the factor stays positive (below
     --             zero it turns the far field's basement into ore), and `level` holds the budget; level_few
@@ -1591,11 +1594,12 @@ return {
       warp = {amplitude = 12},
       plateau = 2,
       pockets = 0.35,
-      level = 1.45,
-      level_few = 1.8,
+      level = 1.25,
+      level_few = 1.75,
       few_size = 2,
-      reach = 2,
+      reach = 2.5,
       warp_reach = 22,
+      rim = {width = 0.5, gain = 6},
       bodies = {
         {live = "default-iron-ore-patches", name = REN.ORE_PATCH_IRON},
         {live = "default-copper-ore-patches", name = REN.ORE_PATCH_COPPER},
