@@ -344,13 +344,23 @@ local function extend_restriction(autoplace)
 end
 
 -- The living trees: each rebuilt behind the gate with its probability and richness keys.
+-- The restored trees stand on the adopted tiles too and stop where tiles.scan.body opens to AB's trees, so a
+-- forest crosses APPROVALS 9's tiles inside the band: AB's trees are off there and vanilla's were not listed.
 local function restore_trees(R)
   local n = 0
+  local band = "(1 - " .. TL.scan.body .. ")"
+  local tiles = land_tiles()
+  for _, t in ipairs(TL.ab_adopted) do
+    if t ~= TL.marsh.water_mud.tile then
+      tiles[#tiles + 1] = t
+    end
+  end
   for _, row in ipairs(VAN.trees) do
     local tree, names = data.raw.tree[row.tree], R.trees[row.tree]
     if tree and names then
-      tree.autoplace = {control = row.control, order = row.order, probability_expression = hook(names.p, R.tree_off),
-                        richness_expression = hook(names.r, R.tree_off), tile_restriction = land_tiles()}
+      tree.autoplace = {control = row.control, order = row.order,
+                        probability_expression = hook(names.p .. " * " .. band, R.tree_off),
+                        richness_expression = hook(names.r, R.tree_off), tile_restriction = tiles}
       n = n + 1
     else
       log(cfg.identity.title .. ": vanilla tree " .. row.tree .. " is missing; not restored")
