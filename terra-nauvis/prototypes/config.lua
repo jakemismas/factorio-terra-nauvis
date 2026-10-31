@@ -1761,11 +1761,11 @@ return {
 
   -- Destroyed Europe (milestone destroyed-europe; ARCHITECTURE.md milestone contract 10; APPROVALS 10; S3 section 6;
   -- R3 7.1). prototypes/expressions/destroyed.lua builds, from the region layer's interface names only:
-  --   zone   min(tn_destroyed_depth, d - max(start.radius_tiles, starting_area_radius) - wobble) in tiles, d the
+  --   zone   min(tn_destroyed_depth, d - max(start.radius_tiles, starting_area_radius) - warp) in tiles, d the
   --          distance to the spawn, so the zone is positive inside its seeded outline less its keep rows
   --          (regions.lua seeded_polygon: vertices and edges move with the seed) and never inside the start
   --          disc, where every spawn city keeps normal ground and trees (T7); the zone's own start mask, d read from
-  --          start.distance (the spawn distance body every spawn record names). The wobble is at least 0, so
+  --          start.distance (the spawn distance body every spawn record names). The warp is at least 0, so
   --          the disc only grows past its radius: at 0 it was a perfect circle of normal ground in black rock
   --   heat   where the zone is positive, clamp(rim + min(per_tile * zone, ramp) + noise, rim, cap) in Alien
   --          Biomes units: a heat-1 rim (100 to 120) that climbs within ramp / per_tile tiles to a core
@@ -1782,9 +1782,10 @@ return {
   destroyed = {
     names = {zone = DE.zone, heat = DE.heat, temperature = DE.temperature, fine = DE.chaos_fine},
     pools = {europe = DE.pool_europe, atlantic = DE.pool_atlantic, olde_world = DE.pool_olde_world},
-    start = {radius_tiles = 150, distance = DISTANCE,
-             wobble = {amplitude = 34, lean = 1, wavelength_tiles = 56, octaves = 3, persistence = 0.6, seed1 = 7902}},
-    heat = {rim = 100.5, per_tile = 0.49, ramp = 30, cap = 149.5,
+    -- warp_tiles: the start cut moves out by 0 to twice this along the fine noise, so its edge is organic
+    -- and no zone tile ever lies inside radius_tiles
+    start = {radius_tiles = 150, distance = DISTANCE, warp_tiles = 60},
+    heat = {rim = 112, per_tile = 0.49, ramp = 30, cap = 149.5, lift_px = 30, lift_fray_px = 12,
             noise = {amplitude = 20, wavelength_tiles = 24, octaves = 3, persistence = 0.6, seed1 = 7901}},
     -- The red palette: a class per tile from a macro noise over the depth, so
     -- the patches mix and follow no contour. e = min(depth, sat_px) + mac_px * macro, in reference
@@ -1973,8 +1974,10 @@ return {
     --     rectangle on every side, so its two edges across the river are irregular and not parallel.
     --   profile: a river's half-width factor from source at its inland end to mouth where it meets the coast
     --     fit, on a step_tiles grid. A source thins to tip over taper_tiles {a, b} = a + b s by the distance
-    --     to the nearest source (a set's T), not by segment: one width per segment left a round finger.
-    --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide.
+    --     to the nearest source (a set's T), not by segment: one width per segment left a round finger. A ford
+    --     in the taper sizes itself on a grid twice as coarse below taper_full_scale.
+    --   basin: a turning basin's capsule, half_length_tiles each way along the course, radius_tiles wide; a
+    --     river takes one only from least_river_scale up, where a ship fits it.
     --   deloop: a river's hooks cut, tools/build_waterways.py deloop.
     --   runs: a river's segments over max_px reference px take a vertex every step_px, off their line by
     --     amplitude step_px times least to 1, on alternating sides (tools/build_waterways.py break_runs).
@@ -1991,9 +1994,10 @@ return {
       width = {seed1 = 7507, wavelength = {60, 60}, amplitude = 0.3, tip_half_tiles = 1,
                floor_half_tiles = {1.5, 1.5, 2.25, 3.75, 4.5, 5.5}},
       bank = {seed1 = 7508, wavelength = {8, 1}, amplitude = {0.6, 0.15}, half = 0.5},
-      ford_edge = {seed1 = 7509, wavelength = {5, 0.5}, amplitude = {1.2, 0.1}},
-      profile = {source = 0.7, mouth = 1.35, tip = 0.12, taper_tiles = {10, 45}, step_tiles = 0.75},
-      basin = {half_length_tiles = 8, radius_tiles = 12},
+      ford_edge = {seed1 = 7509, wavelength = {5, 0.5}, amplitude = {0.6, 0.2}},
+      profile = {source = 0.7, mouth = 1.35, tip = 0.12, taper_tiles = {10, 45}, step_tiles = 0.75,
+                 taper_full_scale = 6},
+      basin = {half_length_tiles = 8, radius_tiles = 12, least_river_scale = 4},
       deloop = {gap_px = 8, arc_px = 30, reach_px = 400},
       runs = {max_px = 60, step_px = 36, amplitude = 0.2, least = 0.4},
       spawn_fade = {inner_tiles = 40, outer_tiles = 200},

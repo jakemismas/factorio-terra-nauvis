@@ -16,9 +16,12 @@ re-emits the tables twice and compares each byte for byte with the committed fil
 
 | File | sha256 | Role |
 |---|---|---|
-| `manifest-atlantic.json` | `2f0fe8c6b92fb072d89455758f5648d80398fee0819a95f6004d329c65e050bd` | emission manifest |
-| `manifest-europe.json` | `a638dcdbfd7b71b66c6d772dcd0d80b604d01026eff1138f81f3854d8bb5330d` | emission manifest |
-| `manifest-olde_world.json` | `b2f5dc4586144b3d74b66031b8bbcdf9e4b76ef37b1158cf654f9116dc119939` | emission manifest |
+| `manifest-atlantic.json` | `2be01ac20ccfc39ab8468d8d87b6a8e0652ce1ed3b94376187bcde36bd3647cf` | emission manifest |
+| `manifest-europe.json` | `b93d204356b78ae0412b7db0f58a4a9f748c415520d3a5b1eb2d55df0323507c` | emission manifest |
+| `manifest-olde_world.json` | `65e5e7a8823008f319d1deb6c2a5e77462b3cd0c0c661f739d6673211e27ec6b` | emission manifest |
+| `islets-atlantic.json` | `0e73d0d8c88335b68f62c55d536e03be8225a9ddf2a124f2e9eb62bd46e10c04` | islets the raster lacks (`tools/build_islets.py`) |
+| `islets-europe.json` | `2af133292cf312976dfaa0d1c3d3f669e0eda9ae8871a7110d6945a740fd90db` | islets the raster lacks (`tools/build_islets.py`) |
+| `islets-olde_world.json` | `5838e39dbc88ebca0425e4c2f5704c178337b280865cd99e648f99fd35c979f3` | islets the raster lacks (`tools/build_islets.py`) |
 
 2026-10-30: `bandfix.tables` gained Europe's geography 14 and Old World's 16 and 18 (the soft-edge
 versions; the handler skips the edge band on them). The emitter reads that list only to check the

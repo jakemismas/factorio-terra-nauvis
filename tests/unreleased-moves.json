@@ -23,19 +23,13 @@
    "b3d0a0546d9c2c7bc79c260dba54256cf2e598011e3331b427865467f3c00392"
   ],
   "tn_ab_exclude_v2": [
-   "d451cb35e00163813381d9dccb07141677d46e9f2ba673694b358dc055674617",
-   "4d490d87be5fcb899294b785a681344a54a03c83b2fe7507eca24eccf3ccbe44"
+   "d451cb35e00163813381d9dccb07141677d46e9f2ba673694b358dc055674617"
   ],
   "tn_ab_keep_v1": [
-   "c269f510a63d748ff2768c0c3ddb5defcbc56f97f5e0d901496cb2646c452edb",
-   "f87d5681cf83c5a606b5953d82051e11376163f61c1904c4310cc043600179a5"
+   "c269f510a63d748ff2768c0c3ddb5defcbc56f97f5e0d901496cb2646c452edb"
   ],
   "tn_aux_ab_v1": [
-   "37909ab0124f5224bf1e45e6bbaf1d65b2aff8fc7700eb9d27769471733f806b",
-   "59a3a9be195c11eb6f8582f16fd543757431e8cf5fdb13e0f66eee7075225c67"
-  ],
-  "tn_aux_ab_v2": [
-   "828b02187ec055f0623f87769c401420919305cb784afab17dfa95bad8623338"
+   "37909ab0124f5224bf1e45e6bbaf1d65b2aff8fc7700eb9d27769471733f806b"
   ],
   "tn_aux_fb_v1": [
    "066b04f1010400ac03d557e8ea6477af38c83f8d27129c1f971181f0f2006977",
@@ -379,9 +373,6 @@
   ],
   "tn_cliff_elevation_v1": [
    "b9c7f05488ab46f3821aaf157b4e9c12df97cd37443c0742a898ed13ab49128c"
-  ],
-  "tn_climate_grain_v1": [
-   "31d0892f90aa4af92b5ebd1f8987e1d3cea4adfb1276b100c9d56468cd81d212"
   ],
   "tn_crest_atlantic_v1": [
    "9babc0d305e30dbd3b369e1a22881a2b0f4e131bdd175b8eb68b058a63736113",
@@ -1502,537 +1493,26 @@
   "tn_gy_olde_world_v5": [
    "30309f308bbaaef3907595f2a1ba010155dd2dcea71bfcc693bbc826eda9027d"
   ],
-  "tn_hs_coal_p_v1": [
-   "8197e035921a7ce41031af902fb98da1765835f114a15e2a8370c66f3bca1682"
-  ],
-  "tn_hs_coal_r_v1": [
-   "cc22a92f85598694ad7fc74314226e7e3b232f3c82d03ecaccbd37c20641c400"
-  ],
   "tn_hs_coal_v1": [
-   "74f2fc50e4016381c97adcab97a19bb7981bcd49081e80a2d5501a05e5048075",
-   "321a7d2adb11b8d865be90bd9fef06ab27f039761aa032ead105fdbb44f0e04e"
-  ],
-  "tn_hs_copper_ore_p_v1": [
-   "4133fdbc8e605b82efed5ae4c785b9726e146725468e44fac572b402e1d5d8e5"
-  ],
-  "tn_hs_copper_ore_r_v1": [
-   "d018e2315b459f4571e1dfba52c21228c2c16e6b92e54d5c8b09252c67897123"
+   "74f2fc50e4016381c97adcab97a19bb7981bcd49081e80a2d5501a05e5048075"
   ],
   "tn_hs_copper_ore_v1": [
-   "d6a1e17885a124ca33545255291423c70e3f3fa7499edd4a97e9f8eeab3c38a2",
-   "fe8e67a2f30ca6cfa8dbe640ad29d21836edcb7fbde29a8c9668dbe2788b2ac6"
-  ],
-  "tn_hs_crude_oil_p_v1": [
-   "5b11a5909f31b182bb6dbf93d2fb3536ecce3be4c17f13623e12616054fb8831"
-  ],
-  "tn_hs_crude_oil_r_v1": [
-   "f55f5930dbcacb4196677d44be5071440e456d0d3fdde4c9a68daf61fdb92b50"
+   "d6a1e17885a124ca33545255291423c70e3f3fa7499edd4a97e9f8eeab3c38a2"
   ],
   "tn_hs_crude_oil_v1": [
-   "5c2dbbe8250dcb25c4852e7c6684358960e12142a8f4051ce97138a0a2c4cd9e",
-   "ba22a484ee61108ff2b9028a90ee16f5d82a39942cc6c2086bb3eddafb044d18"
-  ],
-  "tn_hs_iron_ore_p_v1": [
-   "a2e827f1aed18c189cd2070ba1164392141cc78cfacc668727846bda9e3fe04d"
-  ],
-  "tn_hs_iron_ore_r_v1": [
-   "c89e9162b0519c088aab9296c0d1b7a35c7eafdd98851458884474dcfcb38a72"
+   "5c2dbbe8250dcb25c4852e7c6684358960e12142a8f4051ce97138a0a2c4cd9e"
   ],
   "tn_hs_iron_ore_v1": [
-   "8e403f1947609f3744320aa8d9723cf9405922c80acb9c2c157cfa370d900bda",
-   "ca7b1758fd9f7f7c9121b07e1a6228b1231d8172d43e9ff4df63f46e06a6fdf9"
-  ],
-  "tn_hs_offshore_oil_p_v1": [
-   "f5550859e903fd48ebec764ebb78818443b75d76e8dfc376ae5e2c33e5c1bee2"
-  ],
-  "tn_hs_offshore_oil_r_v1": [
-   "353d047f066516c07f39743201123485030654acac29782a97cb96d115d805b6"
+   "8e403f1947609f3744320aa8d9723cf9405922c80acb9c2c157cfa370d900bda"
   ],
   "tn_hs_offshore_oil_v1": [
-   "22de09a38b6379f933087552c2c448c33f9f46c79f9512fc2f23dc1cec1e495a",
-   "1b7dd798426e6bdf67a3553ce22813f0632ddde4c961d4170d37eb4cd7a25003"
-  ],
-  "tn_hs_stone_p_v1": [
-   "af77d206694561f316bae483f5cde165e7df7d888fad47f6d3c6bd7b84581db3"
-  ],
-  "tn_hs_stone_r_v1": [
-   "e817fcccc1467a6d11860f1e6ddb1d530009eabc19239ddf43928553edeeb02a"
+   "22de09a38b6379f933087552c2c448c33f9f46c79f9512fc2f23dc1cec1e495a"
   ],
   "tn_hs_stone_v1": [
-   "c839a95da2a88388dfd811cbde1006ba37bd46362c187d43dda4efe7932dbc5b",
-   "ce72a64bd124f6fbaecca5ec99511377f62baea43652f2c39c7e87b9a03f0b55"
-  ],
-  "tn_hs_uranium_ore_p_v1": [
-   "00d098d32f6ecd1f3a43ce0e104d50edf08856bed13281ea8123e5bc05047bfc"
-  ],
-  "tn_hs_uranium_ore_r_v1": [
-   "7471e77998318a7432b7e333380e32efc8a563c2a884f9d4c4fe1a8cafd71e51"
+   "c839a95da2a88388dfd811cbde1006ba37bd46362c187d43dda4efe7932dbc5b"
   ],
   "tn_hs_uranium_ore_v1": [
-   "4b146fc52a5ffdc71ac604cef75999e9777f75a746aafb4a3f1ce0bafc5bf334",
-   "1753f2cff8a1f1319acf01ea805c581f3172827e6330b1f9849072894397bb3b"
-  ],
-  "tn_hu_coal_donbas_v1": [
-   "53694bdc32c36ad64c78e7475ccc70d07d7f66ec7a96b71ca7c94ffb83f67fcb"
-  ],
-  "tn_hu_coal_ekibastuz_v1": [
-   "c325a7eb6e96344a21850549da3fa411a7b8e138f655c6f25159138e8099193c"
-  ],
-  "tn_hu_coal_jharia_damodar_v1": [
-   "2c37c361fa041bf7c018a1bb08c2156549b8ae5cd61afadac29612f58b3f6720"
-  ],
-  "tn_hu_coal_kuzbass_v1": [
-   "1f2d01a10702d9e66e846c346d118e0d3175a44edc7139aff1615ac0e78010a1"
-  ],
-  "tn_hu_coal_nord_pas_de_calais_v1": [
-   "48bac20b665d8c69d49b1498964b330a8acc7c6c73e740dee6aefe68756012f4"
-  ],
-  "tn_hu_coal_ordos_v1": [
-   "7fc267f5b0e185d7274b7ed66cacd520cdcf281de4cd43db3132b6b3fc312ced"
-  ],
-  "tn_hu_coal_pocahontas_v1": [
-   "196f3c5adcca977fd2864b06d932f26c4f08ea81617a699a1ebfe7aa254cfca0"
-  ],
-  "tn_hu_coal_ruhr_v1": [
-   "8c341e56953675ae2ebe747e50e79f9851f8e19cdddff81c7209f28759b9b85d"
-  ],
-  "tn_hu_coal_south_wales_v1": [
-   "edfbcebebfedbbd1b71103c79b468511e7830dc40bae0974fb9f2190147c81bb"
-  ],
-  "tn_hu_coal_upper_silesia_v1": [
-   "d926bdea19df6cce85e769171fb4418822fb6f3b52c555f241fd08cbdac29940"
-  ],
-  "tn_hu_coal_witbank_highveld_v1": [
-   "36bc1fc29a4bd761b2538ed6e0ea967ba572a720c49a7c91642bd2a97625e063"
-  ],
-  "tn_hu_copper_atacama_v1": [
-   "9b71afc40e5b45ba7f7474539cf1089e73c34b855252925cc3ba2b50e1e71cfb"
-  ],
-  "tn_hu_copper_bor_v1": [
-   "01a481aae291f0ba3277754f2554d2ce29162d39f88a2f1336a1203c9469b3d1"
-  ],
-  "tn_hu_copper_central_african_copperbelt_v1": [
-   "93fc43b00c6a22d8bcff4e168989d1a5f7a8c4de97b435f60ab3ee481b314bc2"
-  ],
-  "tn_hu_copper_iberian_pyrite_belt_v1": [
-   "ceb9f771a6139c97fe1713c229f3d90f73b8e2a679d646dbc5bfd6a8d17a3492"
-  ],
-  "tn_hu_copper_legnica_glogow_v1": [
-   "211c7669623610f7dad00e718c3263a1e84c5e00678d3ce0bd708b16255c7df8"
-  ],
-  "tn_hu_copper_norilsk_v1": [
-   "fea8ce21de799026e4da241097f73d573affd2a3922f00be198245d72630d1c4"
-  ],
-  "tn_hu_copper_oyu_tolgoi_v1": [
-   "0aa41065cf8f9da2296a8383fd0af76e3b74eba52f6e1d9c1c6ee2db1832b998"
-  ],
-  "tn_hu_copper_sarcheshmeh_v1": [
-   "550deae8b3387cf0d17456657b762b8fb7fde511fd37646b8d94f32f603fd5db"
-  ],
-  "tn_hu_copper_zhezkazgan_v1": [
-   "994be09a93ea663316226f424abd39c9c7e3c4de65dae7313690d7fe2ab2dab7"
-  ],
-  "tn_hu_iron_anshan_v1": [
-   "4425ea2b227ebd95c93e9e0345c67f73062c05e36f8027985a4830dca613ac82"
-  ],
-  "tn_hu_iron_barbil_v1": [
-   "55e922b12a0a2a163a6b3e69e38f4610c3125da5454a91315cbea333e2e6226f"
-  ],
-  "tn_hu_iron_carajas_v1": [
-   "7d1cee175c5508a149701981f298a96292cd5279ef708d49f8afe8dfbdbeef38"
-  ],
-  "tn_hu_iron_gara_djebilet_v1": [
-   "f08f455e2f86d79a6e60ee9efb59c70104ff34d88e163fd8435573264c5575aa"
-  ],
-  "tn_hu_iron_kediet_ej_jill_v1": [
-   "ec80ab1eedec5381d09c97aa9647a4061535fd30bb127fbe08c95369bf4e19a8"
-  ],
-  "tn_hu_iron_kiruna_malmberget_v1": [
-   "071ab44d968dce09511510f3c96dda2ab64c26259ca54addfdb5fc2147bcbfed"
-  ],
-  "tn_hu_iron_kryvbas_v1": [
-   "29386b690ed86a484c5cc2fc2710569dcc4c5dd48d1e889d13cb75f6c166c4c5"
-  ],
-  "tn_hu_iron_kursk_magnetic_anomaly_v1": [
-   "a9da7e4bc7d4e75c042fa00e135fcc0b4923ce080599b80fe06a92482ce8c263"
-  ],
-  "tn_hu_iron_labrador_trough_v1": [
-   "0cc57121795ee433fff2d9ce9095d4282f5d35c435098e9aa88b84e8543e78a3"
-  ],
-  "tn_hu_iron_lorraine_minette_v1": [
-   "db845a3e896329bc5b09e20cea692510bab24e58e464bfc5b5fe2a1f08d01419"
-  ],
-  "tn_hu_iron_mesabi_range_v1": [
-   "edebd7255d54a0657349a13494c60c138526c5db6fffadf4cc57c1cb07cf0ea5"
-  ],
-  "tn_hu_iron_simandou_v1": [
-   "176245d6b16be3ca017d9d33d8d02d5eaa17e79d306a12f9da1191d7f3e0ea3d"
-  ],
-  "tn_hu_iron_sishen_v1": [
-   "7c2366abd4cc6cf01db12bb5483c460f824c4489b57f49a53cf70df82c532bf3"
-  ],
-  "tn_hu_offshore_angola_block_17_v1": [
-   "874020a6611af79be63f903197afc642f3f0290cbb7a082f22b6187cbdff85dd"
-  ],
-  "tn_hu_offshore_cantarell_v1": [
-   "f4cced4d266eb891d29f8e173543cc72eccf12902f820d0e07b42dcc3d908acf"
-  ],
-  "tn_hu_offshore_caspian_acg_v1": [
-   "727208a6a34c159280179bef9385ae43ac016651e6d6504567ea0e56fd24babc"
-  ],
-  "tn_hu_offshore_ekofisk_v1": [
-   "0a5149a190d5c56ba7d7fc45eacd5a2388cc6e9254ae4700c1ebec034b54814e"
-  ],
-  "tn_hu_offshore_forties_v1": [
-   "6105f00be0918690080f7d6f2cce63079eec3a6bb3b89f0a6de2a6d6509c569c"
-  ],
-  "tn_hu_offshore_gulf_of_mexico_deepwater_v1": [
-   "31d53d4f3ba7c69cec56be4c061b4b4d8dd9241a0d67908b38fad1401502b30a"
-  ],
-  "tn_hu_offshore_guyana_stabroek_v1": [
-   "a1507726484c318d19c752268bf4be6cba94b0ff0e6fbe9ef02a7f39430d21c9"
-  ],
-  "tn_hu_offshore_kashagan_v1": [
-   "b96cedab8fa6daf60a5ec0f28812865092a440463145ebce171a298814ed9021"
-  ],
-  "tn_hu_offshore_mumbai_high_v1": [
-   "c06d2d94fa79b071daa646d08da504a8ae6ef401704b72aadae287b61c5e0c18"
-  ],
-  "tn_hu_offshore_nigeria_deepwater_v1": [
-   "acb72ef1ab091ba5daa3768a324bd56938cafa01d92194974d8fbc0bd54abc8c"
-  ],
-  "tn_hu_offshore_safaniya_v1": [
-   "fdc05ae1ac5a9467560a790c6e60a628194da7ba12844870b1e30c4f1e8bc764"
-  ],
-  "tn_hu_offshore_tampen_east_shetland_v1": [
-   "51513af9de1c8ce461656b2bf0b13b318f8f77fef559c7b8ec85591b1cf73437"
-  ],
-  "tn_hu_offshore_tupi_presalt_v1": [
-   "a399a690c8d8e9c9885d0a382699cf9156c091c5a460095cf3ceb3904f8960aa"
-  ],
-  "tn_hu_offshore_upper_zakum_v1": [
-   "e460db391a4d6e2be3d1bf7ef1a474da945abc1ab4d194f435adf5ea0f03404e"
-  ],
-  "tn_hu_offshore_utsira_high_v1": [
-   "35b6f118ac7872397bdd8e6adc0aace792bd239823a44cfac42ec86ec49a68b1"
-  ],
-  "tn_hu_oil_ahvaz_v1": [
-   "f42c10fceecf833cdc1a2d1562acc18f28c3b9e9f5e2b53890bb6cb13eb8c7a0"
-  ],
-  "tn_hu_oil_athabasca_oil_sands_v1": [
-   "a2b969c0dd421bb50f6dd85d1cc07bb6027ca650cbf7346f4582755dfe950a61"
-  ],
-  "tn_hu_oil_baku_absheron_v1": [
-   "ccb7eca77d46546867c2da580f8ef98599dcc9397ef8606553a2f9e79d5fd859"
-  ],
-  "tn_hu_oil_basra_kuwait_v1": [
-   "4cf6e9f5e6cc09d0c9b5338fe0b2c0398c183bcae62466d9138f5d710de77989"
-  ],
-  "tn_hu_oil_daqing_v1": [
-   "42da7360dd9e386970d7fbbbfcd87af1651f0aa61885138edee08ccff6a4de63"
-  ],
-  "tn_hu_oil_ghawar_v1": [
-   "01f5a3bfc2666c384dfb2f163ea0cabd72fab904e4805fa461e49ea51ca31856"
-  ],
-  "tn_hu_oil_hassi_messaoud_v1": [
-   "398079dd53e097475f197c1bf922d4b12b3e394c4649b91e12452920e89d4d52"
-  ],
-  "tn_hu_oil_kirkuk_v1": [
-   "f32af1321ac1aa5771e2cacf8b6b061c41bcded719a250e9a7c35b558995f70a"
-  ],
-  "tn_hu_oil_niger_delta_v1": [
-   "c4930a435f149a28d9dd604accc7aa3db161ca1b7e346f49baa10762745fd8df"
-  ],
-  "tn_hu_oil_orinoco_belt_v1": [
-   "c5c02c758009687e0d8ffd4d4275da66b3950e3f6fae16a7b5bc26802ee5f41e"
-  ],
-  "tn_hu_oil_permian_basin_v1": [
-   "48c58d123889e0dc2217ecf7a26ee463407f5ccfaae2bc4c2faa0fedfa948416"
-  ],
-  "tn_hu_oil_samotlor_v1": [
-   "cce0f56f00d7a11e6c909ad80180b86fd7db5d440c472a34c7aacb9350a9b3ef"
-  ],
-  "tn_hu_oil_sirte_basin_v1": [
-   "f79c7762e9b7c63f8c6053acf8c668479d6b2f11dcb391cc01fe11f40ed34156"
-  ],
-  "tn_hu_oil_tengiz_v1": [
-   "b5a6db01c6116b5b0876526d9c0fd645a45dfd9ac124456fa12aec16cda8244c"
-  ],
-  "tn_hu_oil_volga_ural_v1": [
-   "7df844859c8b1138bc542a6a86861336d26b481872ec3315263dcb10fc2cef75"
-  ],
-  "tn_hu_stone_aswan_v1": [
-   "17f1a2a247bf75693a03367f213d658be4028f8a4a4d4f253eefe864c44d3bea"
-  ],
-  "tn_hu_stone_carrara_v1": [
-   "134f28820b942019fd191cd309156055b8b59450029c9e021298e1661e8ce180"
-  ],
-  "tn_hu_stone_indiana_limestone_v1": [
-   "8bbaa82bd838d4dea4d509dbdb29764409ee765a3680ab2b5db035b881a6d258"
-  ],
-  "tn_hu_stone_makrana_v1": [
-   "bf77cef097400fd1344849a9405fca513f1fb187aa0a70eab2f2ff22c7113075"
-  ],
-  "tn_hu_stone_marmara_island_v1": [
-   "5f31001e2887d3cac09b13c77b965cc735c5203d3d21c76912e228698d52b0af"
-  ],
-  "tn_hu_stone_pentelicus_v1": [
-   "c66a9901193453515848cf77e44e2dde25711a27ef05617256834b97b6fde43f"
-  ],
-  "tn_hu_stone_portland_v1": [
-   "5d0953d533f098a0a3a797de1e70d513c56a1e1268ceed1d80c84ad01623a1b2"
-  ],
-  "tn_hu_uranium_arlit_v1": [
-   "32a4811ef05411dff5a4db41c6ef1d4e6d50350bbd29d9af6ac2c1ef4109b6d3"
-  ],
-  "tn_hu_uranium_athabasca_basin_v1": [
-   "051f9850b3be6a3a6cc11ad576fd01721a08436540c55ed25661d0b2d44e12c4"
-  ],
-  "tn_hu_uranium_chu_sarysu_v1": [
-   "444aca5f921b7d6051184b52ac5df5587f85f34e3733bbae05fcf80ad1971ecf"
-  ],
-  "tn_hu_uranium_erongo_v1": [
-   "e7c0ae7c88f4578ef5a8fd48944820e9c4c40dc322069782b90ef6f78b693ed9"
-  ],
-  "tn_hu_uranium_krasnokamensk_v1": [
-   "12c64bc647f99f3528aeae8cee1ac181bfc2e0ed76d07383989657c318dfe3f6"
-  ],
-  "tn_hu_uranium_kyzylkum_v1": [
-   "dcaee879d5184ae9fab9123a9daf209561697e292f8fd7ba6fbd679655b91b32"
-  ],
-  "tn_hu_uranium_ore_mountains_v1": [
-   "a60c1d8956b243c870c53a0b2c96cfa7da8fdba9f6b1bbfe24fd9bae90276ac3"
-  ],
-  "tn_hv_coal_donbas_v1": [
-   "769c949f635603dae89b17cd4530818b85468b58638ace5619fd44db7ac4ee89"
-  ],
-  "tn_hv_coal_ekibastuz_v1": [
-   "773cae258b1910d874efbdb5d3a782a08edf65dd5f76aad7677c70b3b1178f44"
-  ],
-  "tn_hv_coal_jharia_damodar_v1": [
-   "de1aaeccd097977e60ab291731546e872aa953fc5edd6c9492d9a06a972157a1"
-  ],
-  "tn_hv_coal_kuzbass_v1": [
-   "a37fcae24610879d6a9848870c6fca1ed37c2670a48016b4ebf76854dd3eace5"
-  ],
-  "tn_hv_coal_nord_pas_de_calais_v1": [
-   "7abac573184328c2da168827aa032e86832487a7692c7d3b0426db509198f282"
-  ],
-  "tn_hv_coal_ordos_v1": [
-   "29d95c60f76c86bc82c5b346a2cd208f14ad0e2d306697390ba4c1900f1c3a63"
-  ],
-  "tn_hv_coal_pocahontas_v1": [
-   "32bd1012471f2dde0ee20503c307744fc709f9953c4074e2a2dc476d5549d402"
-  ],
-  "tn_hv_coal_ruhr_v1": [
-   "daf7c17d2d2b848b9b19b5ef050bed0714cd5e429c1b13629df8effe141070d6"
-  ],
-  "tn_hv_coal_south_wales_v1": [
-   "378a0ec2eeffe058fa9b2320639fb9c4769a7478387c6aef947f0a4d8dd89e2b"
-  ],
-  "tn_hv_coal_upper_silesia_v1": [
-   "d972202b8e3e97ca2667f7156975c8ad4a08009c376f645c1b8785ff92e4eb5c"
-  ],
-  "tn_hv_coal_witbank_highveld_v1": [
-   "f983df0d239277039dc4e2d405c00f9b11ac711ca64f16195a5501a8f4a7ef03"
-  ],
-  "tn_hv_copper_atacama_v1": [
-   "6b314fdd60fc04049ebb517b40d6966a395aea793ca7fdb03d191400dacfc074"
-  ],
-  "tn_hv_copper_bor_v1": [
-   "fbdfddf2f04838b0635a0a936404a8258aba74265aed54516d9f3ab9652dadd8"
-  ],
-  "tn_hv_copper_central_african_copperbelt_v1": [
-   "d93544ff48442d3dbbdbb0c15e347c040b703a812a670e181264a31601300510"
-  ],
-  "tn_hv_copper_iberian_pyrite_belt_v1": [
-   "eedad97d68f5ed5c4198cc26d388bfefdccfc8408b15863ba02f9cab83369a91"
-  ],
-  "tn_hv_copper_legnica_glogow_v1": [
-   "2b78a7f6269087740d83d412dd0ccb05f3aeccabb7b4a9b0d33c06fbab244a44"
-  ],
-  "tn_hv_copper_norilsk_v1": [
-   "1e77aebea95ab942a8ed985ce7d4426ababf98e09e30bdd68e9c07ddf7c973e9"
-  ],
-  "tn_hv_copper_oyu_tolgoi_v1": [
-   "2bc07f04a80296d4a533937e8f052ecd2cc46bd60377e4447f5c7964f8189997"
-  ],
-  "tn_hv_copper_sarcheshmeh_v1": [
-   "bffe3099cb53af6995f04b33cc810fb6b6fc2d931c95274152b8ee26e9f2dbcf"
-  ],
-  "tn_hv_copper_zhezkazgan_v1": [
-   "b054b1ef3da9b066352dc4fc4990f78f92ccaf276ceb545e3783ca9033719831"
-  ],
-  "tn_hv_iron_anshan_v1": [
-   "e0ffbbf96ad9f9518a569b79c12824d6f5d23700602d7e857cd9ef4596c60f7b"
-  ],
-  "tn_hv_iron_barbil_v1": [
-   "e0007c709502dd68641e9afd71b00619314c83a7130db1599f8604906e560ada"
-  ],
-  "tn_hv_iron_carajas_v1": [
-   "dc83dae0af30f9d5f6a1525433a3da4fa9a171218cdcb8e28e1653187f1a7aad"
-  ],
-  "tn_hv_iron_gara_djebilet_v1": [
-   "3a1c4ba1a66817363c1f2f03dce39153639e84ab1a0ed9136495a3fcb4ee9dad"
-  ],
-  "tn_hv_iron_kediet_ej_jill_v1": [
-   "bfbd99b16609d5cb48ec3b028e761c892fc02cdf604e392723474e7da317d434"
-  ],
-  "tn_hv_iron_kiruna_malmberget_v1": [
-   "3428e179f7f6663fc25dc6f1abf3dc501bfe90a30c118c83d0c57c54e9761d73"
-  ],
-  "tn_hv_iron_kryvbas_v1": [
-   "948f8c9fbdaa6d11ec7e3de1b4a9cd47a73b91cd621ac639fc468ecc6600bdc6"
-  ],
-  "tn_hv_iron_kursk_magnetic_anomaly_v1": [
-   "a697501d69d96b1c5d378ede0454ca5bd9134054ab98c5b14b81e85245a31423"
-  ],
-  "tn_hv_iron_labrador_trough_v1": [
-   "a70504f2d1d79f50eb348341b13fc79fc2cbe57eecd120bc7657c6dd1553133a"
-  ],
-  "tn_hv_iron_lorraine_minette_v1": [
-   "f22d9d661bb0662f408211ed2c8862b27204386080de88092448cae99938e1cc"
-  ],
-  "tn_hv_iron_mesabi_range_v1": [
-   "61d0fd4c1a287823f6828c26f56970f9c8379beb9f9ff8aa5d44a7c5aab58c05"
-  ],
-  "tn_hv_iron_simandou_v1": [
-   "03531aecb19e63a30210a246be6bac1ed21ef41ad4bb9f7ac5356f8f6c2d7f33"
-  ],
-  "tn_hv_iron_sishen_v1": [
-   "0af80090e6f4c7c4235de5056e0caa46d28479b580b299f8a0877d7a5053a5c7"
-  ],
-  "tn_hv_offshore_angola_block_17_v1": [
-   "0f695ba8571dbad94239d6265679a587d7f1d8abe2be875964c9224c154fc8e9"
-  ],
-  "tn_hv_offshore_cantarell_v1": [
-   "2a5357156266759a4e9e58c09903c8db4204f26a7f95b9289d14ab5c403fe0b8"
-  ],
-  "tn_hv_offshore_caspian_acg_v1": [
-   "2167dc0729943fba8f029bb805611ae7a80cb0ccc1d4ad267ec75a075ee45757"
-  ],
-  "tn_hv_offshore_ekofisk_v1": [
-   "15cd9f76222e82fb8412441d0661c9e7e12ba1b716796f738ae65b866f5dbb1f"
-  ],
-  "tn_hv_offshore_forties_v1": [
-   "323b4225ad26f0d3971ab6ff6f1cde4697ad5b0e55c681d8c4b3e0397a712c77"
-  ],
-  "tn_hv_offshore_gulf_of_mexico_deepwater_v1": [
-   "1fa609c9415fc933f1359511ed0cc034970f1f3ee830af5943b83d4134c0a025"
-  ],
-  "tn_hv_offshore_guyana_stabroek_v1": [
-   "6f24e785f19e0ea3eed658b3d704bd4e992bd562ccc414265b5934dafb312c47"
-  ],
-  "tn_hv_offshore_kashagan_v1": [
-   "f2b0b7c55394ed89277f55a2821d56e68590afe8b63ba9af8a8ee28a48f53c42"
-  ],
-  "tn_hv_offshore_mumbai_high_v1": [
-   "133e2cc17d8100201ffe061fc66172469ab05ea74cdfd596454c4f7d5665f4c2"
-  ],
-  "tn_hv_offshore_nigeria_deepwater_v1": [
-   "e5458d2143d1286b9a5806f7010801301096363fb340ea507bf9821db65b4283"
-  ],
-  "tn_hv_offshore_safaniya_v1": [
-   "30584f0f8a75e83f6ce1a2f5d3a1bcb298aea0ddf8856389a5ee33c10e17988d"
-  ],
-  "tn_hv_offshore_tampen_east_shetland_v1": [
-   "39fc95e5caab9406ab6e632328f796b042ea4a7df9ea4a582f1f4f6ad497145e"
-  ],
-  "tn_hv_offshore_tupi_presalt_v1": [
-   "12114b2877d451cb10b49d32e632e77e2a005d4071f82bc8e90cba077a389f26"
-  ],
-  "tn_hv_offshore_upper_zakum_v1": [
-   "0080f715af547d9d92a2a0ab353fdfeb9ed6fb92d0a88b09fb0862e8451adcad"
-  ],
-  "tn_hv_offshore_utsira_high_v1": [
-   "8a9b1b75f2707d61bd5a7aedecdb27422abd66fac0481c4f3d2dfa4252882ba5"
-  ],
-  "tn_hv_oil_ahvaz_v1": [
-   "004b34f5c0da26742b554bbf5a4efedbc6e98ab885fdedc68a6f90a19f3d7287"
-  ],
-  "tn_hv_oil_athabasca_oil_sands_v1": [
-   "34c46a3152a74fa1b6ea6791ac15a84957c917b17586b8430a67c2ae1e876da2"
-  ],
-  "tn_hv_oil_baku_absheron_v1": [
-   "2a468cfac6abe283953a716e0e241c3c6a90e2d3df12e004baac2e1933a10d50"
-  ],
-  "tn_hv_oil_basra_kuwait_v1": [
-   "d97625f619c6f13cbd383a23c81199feef8156e342258b2394f6f58d7070b623"
-  ],
-  "tn_hv_oil_daqing_v1": [
-   "1e8f83755d7fb88b423ecbe8dfd923ed1c9e465c5138288e8bf477a100050ad9"
-  ],
-  "tn_hv_oil_ghawar_v1": [
-   "0baf801c2e954dc6177e3009587cac46d2ff5bf11cc53f29b0b953348abecc62"
-  ],
-  "tn_hv_oil_hassi_messaoud_v1": [
-   "a00f64d921cf2755c7d824aa5f5a4d14029b0fa3e8d8a111d46b490167b5af7e"
-  ],
-  "tn_hv_oil_kirkuk_v1": [
-   "c8c7d7dd169912a8f7b44e7030cf86374614783b5ebeee982a34f04a3398e085"
-  ],
-  "tn_hv_oil_niger_delta_v1": [
-   "7319669f8e047a8a76261c464e015897d81a5ce785cd520fd3073ca92f27b536"
-  ],
-  "tn_hv_oil_orinoco_belt_v1": [
-   "75ca6dcab6dfcdec728b3d805d478bef65340dd07ce39cb62277880abf128aa3"
-  ],
-  "tn_hv_oil_permian_basin_v1": [
-   "4c8027e8847f4f8bd99566733aa5464125d5a7e6156bd23b9f947477d7e18385"
-  ],
-  "tn_hv_oil_samotlor_v1": [
-   "f61e39f83bf41c0b0e5a01b0021671eb01a76739991f2ca690abbdc8cc34ed4f"
-  ],
-  "tn_hv_oil_sirte_basin_v1": [
-   "1d7f5fed6176f9c8136a56eaab24d9c4899fbac65f757575615fd0f8a253c329"
-  ],
-  "tn_hv_oil_tengiz_v1": [
-   "d71f477e9cc719770064205bbff37d5377e49bed413fada6418a340e43555088"
-  ],
-  "tn_hv_oil_volga_ural_v1": [
-   "cf7b5a6f92fcd49603dc91efe0e8b30db00d72a0963b5d473d480756dfbe6be6"
-  ],
-  "tn_hv_stone_aswan_v1": [
-   "d1b624c9dcff4a5e8276659645740b28ee2ee87087570cd8458ba0e0700433fe"
-  ],
-  "tn_hv_stone_carrara_v1": [
-   "22cfdb704fb404c86a2f2303d1a2f4fc89461f4f223ccfcbe859121ee0e874d1"
-  ],
-  "tn_hv_stone_indiana_limestone_v1": [
-   "5c0a530ee3b072859642778a4cb6b15b1a8478d49b93f487d8ed05d04f541f56"
-  ],
-  "tn_hv_stone_makrana_v1": [
-   "4161c1ec90524eda4afa86d4f002f4c708f85770d414ce188c6924c18f94581f"
-  ],
-  "tn_hv_stone_marmara_island_v1": [
-   "277e89185d711176512516353206da39471d52d6a5b1f1fcd8ecd8498cb33f25"
-  ],
-  "tn_hv_stone_pentelicus_v1": [
-   "287fd656dba39d94092e97dc9b64ac273343fb3b1dd8e36787401f64a11f183f"
-  ],
-  "tn_hv_stone_portland_v1": [
-   "9340cffa0ebedc9087044299b6e8daa8377332c29cf1064117d3ab0f224057c9"
-  ],
-  "tn_hv_uranium_arlit_v1": [
-   "b7aa864acc08e590766e18e36877ef4ae67702c47b8967f2e259b2f0cd5e4c27"
-  ],
-  "tn_hv_uranium_athabasca_basin_v1": [
-   "3ad2f18426f08bfb97d0ddb5e826b0ad5cde4042ff9f10f8c445aba071b3043e"
-  ],
-  "tn_hv_uranium_chu_sarysu_v1": [
-   "bde86189ed91d4f377a1bb29ef16f14ad310f165a4d8514aa1d953d6d1fe2478"
-  ],
-  "tn_hv_uranium_erongo_v1": [
-   "981980efb93e6bcbef945fd1d2707aaebd3cc76e7bd4d8b6512f2894167c50a8"
-  ],
-  "tn_hv_uranium_krasnokamensk_v1": [
-   "189176543399b1839a4f9ccca523924669d02203a1e4e151f652a9e146b9a98e"
-  ],
-  "tn_hv_uranium_kyzylkum_v1": [
-   "f680544bcc97a683dfd5f9d72c256883ef3524903b86b0fcc0aa9406d9fd1f59"
-  ],
-  "tn_hv_uranium_ore_mountains_v1": [
-   "87b9bf27319d639418c9b85668d9d72e6a727f880cb6531a8013d27ed01a4882"
+   "4b146fc52a5ffdc71ac604cef75999e9777f75a746aafb4a3f1ce0bafc5bf334"
   ],
   "tn_inland_lakes_atlantic_v1": [
    "41d1edf6cea4a3964dc090e3cc1dff862424e33c2c2bfdd0a1c3e6b751ca5b00"
@@ -2128,13 +1608,7 @@
    "6b5447d0dea8605041eae909bb44542efeeee49baca5093862f02d21623b009d"
   ],
   "tn_moisture_ab_v1": [
-   "0887291abc5904b33031a531e7d4d6423bad9daf6191e18f10a0641fb3cff917",
-   "d8590e8e966c136b76a6fd2836690a1eb65770560ea19fda1ed285d3b074b5c1",
-   "1241ec649c6e7bb592e9a9c19b1b8fe7087178ebc51a5af07812ca6defec922d"
-  ],
-  "tn_moisture_ab_v2": [
-   "fd54baf4412176760ce19f3d0444746246b274a853a83e606fb7f72312de7206",
-   "714ac14fdfad36cbe0cc9187906cd75ccf22cfdc4086787151021a77489f7ee6"
+   "0887291abc5904b33031a531e7d4d6423bad9daf6191e18f10a0641fb3cff917"
   ],
   "tn_moisture_fb_v1": [
    "baf0102355bdbbff9f71e60b532b282c6e0cf2855b5492f6bb2ad27a6211f939",
@@ -2183,66 +1657,6 @@
    "05756e457422f4736f75087ca517f2e1a01611f3f8baa30f0a6df71fc1307e8b",
    "8231ea13c0c232c28a0e518978a1061e1c1e2c92bd38b9297882bafb5a1bdcb3"
   ],
-  "tn_sd_coal_donbas_v1": [
-   "a0c73c9da67cb289142d86e71172a1f61e374b31381fa76c13bb63e68a9af162"
-  ],
-  "tn_sd_coal_ekibastuz_v1": [
-   "82349d128698cd200326f65c50132cb25366e50f76c60506a05fa81f63776423"
-  ],
-  "tn_sd_coal_jharia_damodar_v1": [
-   "8ba0c0c7b57db47cd5b9fc16835f2c2b6c93864f91c802c853f45c0a531968c8"
-  ],
-  "tn_sd_coal_kuzbass_v1": [
-   "4dbf213bf9937d100ad6260cab9e89b3f767c3a2d21d3657f4ba5ad6e4de4940"
-  ],
-  "tn_sd_coal_nord_pas_de_calais_v1": [
-   "fe306d50be0f53d35340837adf0b22db72c193697b862e97e1773c93d703572c"
-  ],
-  "tn_sd_coal_ordos_v1": [
-   "70645edc3cfc42fd120d284bac06bf7288db7e5642df2138ff477c6ad0bdc4e0"
-  ],
-  "tn_sd_coal_pocahontas_v1": [
-   "6476d72c1ba17c0c41a789c3a7dfb20d8ab9a421981523d7b4ac30644026dd93"
-  ],
-  "tn_sd_coal_ruhr_v1": [
-   "d466979858e71577f304afce14b4427d7b98e5b9fa8b27b5ce75035690d96435"
-  ],
-  "tn_sd_coal_south_wales_v1": [
-   "61b1d1b1d24892c94686f24504f8ebf7be4332d3f06687840dd48c32ee2b7952"
-  ],
-  "tn_sd_coal_upper_silesia_v1": [
-   "970906d5eb97feca32ec3b69a5629b8e8530f9c937869d93ca0a0e2b9156bf53"
-  ],
-  "tn_sd_coal_witbank_highveld_v1": [
-   "9c7c4b4d342d02702400e13aed6e011a7d99d788212da5be92ab85f9a423705b"
-  ],
-  "tn_sd_copper_atacama_v1": [
-   "b02105e09cbbec05084c1afa87bde50b73614d920cb130277e375fc8a96a3f01"
-  ],
-  "tn_sd_copper_bor_v1": [
-   "c80805a23ed59a553e9b09c5fa9eaf42cc908309a3eefbedef4aa186f3159355"
-  ],
-  "tn_sd_copper_central_african_copperbelt_v1": [
-   "360917f907c00d289e94ad17bb509a3bf8ea8f1c763c4193c0dece0f33df99ad"
-  ],
-  "tn_sd_copper_iberian_pyrite_belt_v1": [
-   "c0c0061e99f3d4bd1ae77fae71d7cda919dcfd743df9624e34e7e575859090a1"
-  ],
-  "tn_sd_copper_legnica_glogow_v1": [
-   "f13ee6ad07ca784c2680e23f0b857d36786bec945974b65ad66edcf597d92c57"
-  ],
-  "tn_sd_copper_norilsk_v1": [
-   "f3baa0fd2932b7bb74f2dc2a9d3cb6d020025da42358ad0264f872f6cca41a1c"
-  ],
-  "tn_sd_copper_oyu_tolgoi_v1": [
-   "184f69bcc10904a0f357b9f52a020b8bfe6a6c2b93846ead15244b8bf46c3d15"
-  ],
-  "tn_sd_copper_sarcheshmeh_v1": [
-   "ea4a3947761e30d2556a76fac2495ad434647e5c0f9ff25ea7c5d5ff064908a2"
-  ],
-  "tn_sd_copper_zhezkazgan_v1": [
-   "413bae9a09e47ecba5fcc26961b109cce63f160cd16cdfd76a3e910b5f096576"
-  ],
   "tn_sd_danube_delta_v1": [
    "ec16c68ded41c5c357b4c13627e5cf226b2464171f54a0a3606fd6b4bab494c3",
    "eff6b00b484e9c3e6ad8eb1b5ffed4db9fc8252d5f09b34ed0d32f2b24dcf59d"
@@ -2253,45 +1667,6 @@
   "tn_sd_everglades_v1": [
    "bc8e85e4080aa6e6e2a0730cb71de58c81b0488ce59404326d2d4db3f4ed09a9",
    "889aa7caeec494dcc33233c4527e57d6f256e6e30e6e209032c9f4fdf08e4f9f"
-  ],
-  "tn_sd_iron_anshan_v1": [
-   "f1e06b44bfe3d3be48504b7c83b7209ef65c4caebc159354ac8d2746a8e15d59"
-  ],
-  "tn_sd_iron_barbil_v1": [
-   "e3126f88c1dc0f79d765a30330fac08efd29b94ee12dcf25556dcdbb8d151eb5"
-  ],
-  "tn_sd_iron_carajas_v1": [
-   "b6dc1b01d42980cf10d65772bffc97efd76349395fe96dead60a511048f5cd5a"
-  ],
-  "tn_sd_iron_gara_djebilet_v1": [
-   "c25248603d220051f50b969bacbb032c7bcedadbd07bf9419a439dc0d21b0688"
-  ],
-  "tn_sd_iron_kediet_ej_jill_v1": [
-   "14a76b982f696e72eb6563449ca822d21d302272f0f45ca12c0a8ac92368c6ef"
-  ],
-  "tn_sd_iron_kiruna_malmberget_v1": [
-   "45745f37c89272f1c2e718b92d7d9bcd3dde4edabcc3b7f2f95032286505a9f5"
-  ],
-  "tn_sd_iron_kryvbas_v1": [
-   "f7b84d097d6890a1a73bef60b5e1ee1c44de10b61c8022938714a8a132f61db4"
-  ],
-  "tn_sd_iron_kursk_magnetic_anomaly_v1": [
-   "448c711c1a96629b8be9d15943579e8be1b8a32ddfc5f58113528a18bff01f82"
-  ],
-  "tn_sd_iron_labrador_trough_v1": [
-   "e297098d0e0a70aced976693cf23b5c65fc0afb74bebbe06ff0777a28b976d90"
-  ],
-  "tn_sd_iron_lorraine_minette_v1": [
-   "174a4b9dba1fd57f983100cc480429a501115ee2a3ca58568cae40423d97a390"
-  ],
-  "tn_sd_iron_mesabi_range_v1": [
-   "0d41f7741b4cc8aeeb7f7b599a82bd55dde026c560f77f4602ab5f4bd21ae337"
-  ],
-  "tn_sd_iron_simandou_v1": [
-   "e9579a16a97f2b71da90601a8a5bc8447c52c1febe2591c5f81bc616f07ec01f"
-  ],
-  "tn_sd_iron_sishen_v1": [
-   "daaf89d8863c44ba97b5106ff9f291d3c36defec1e2af096263970636348c898"
   ],
   "tn_sd_keep_brenner_v1": [
    "1ac211d1d5c05d6e4741c4e68824c01c1c707d3243e86d8bb7064724fd243275"
@@ -2315,96 +1690,6 @@
    "111dddf2882946165082290310eb7dc23e58e2b8513ccc236b4d819cef160e12",
    "c593baad45d251468afdf7e2597261ecb79c65c377ce9552b14510823d6b11ce"
   ],
-  "tn_sd_offshore_angola_block_17_v1": [
-   "117adea981547e05cc9b3ad85f5145b31ba2f7893cf582b73bef898c7e61e07d"
-  ],
-  "tn_sd_offshore_cantarell_v1": [
-   "14d4db967ede54c322821862026b0672592c84b182866a6b6309e9e3bd1b6d95"
-  ],
-  "tn_sd_offshore_caspian_acg_v1": [
-   "c320c0ef729bcc4ac32754e4986d03ce9acf578d5ec5e910d07d796760a5d2b0"
-  ],
-  "tn_sd_offshore_ekofisk_v1": [
-   "820a7a86c787dce2b002f22c2868441713beeed49dea718604f1e87a63acf4d9"
-  ],
-  "tn_sd_offshore_forties_v1": [
-   "d920b8ca30ca2ab40c83f965b31765b630410614a320f5afea1dcf07c7826fcb"
-  ],
-  "tn_sd_offshore_gulf_of_mexico_deepwater_v1": [
-   "4b951479d276325b70a4f145e1b9010190b64c5dbe1a973f4134fec04d76bbfb"
-  ],
-  "tn_sd_offshore_guyana_stabroek_v1": [
-   "af32d31635a1afcb5e23d571caf07202abc79a0f7957d7f61171358b0942ecd5"
-  ],
-  "tn_sd_offshore_kashagan_v1": [
-   "5036c23e823daff44917de63501b6e62ed0ae5aaad6a684c04ccd1c75381b6c7"
-  ],
-  "tn_sd_offshore_mumbai_high_v1": [
-   "4f114ec1be6e06219d3c56e7c0324940ea122c8ed0181068b41247ae2e45bdc5"
-  ],
-  "tn_sd_offshore_nigeria_deepwater_v1": [
-   "d3717d8ba54098e21314a1d78459ab7ce993f74b62d2fadb6e6d04f9e9dea341"
-  ],
-  "tn_sd_offshore_safaniya_v1": [
-   "64d53c80c63492d1085bb557d4b21d971c60c306e6582a73664e3c9f5ac49ba0"
-  ],
-  "tn_sd_offshore_tampen_east_shetland_v1": [
-   "790e90ed72522eddd82f33108ea70e4f5d8dd2e4594af19f6ac22e7965bae6fe"
-  ],
-  "tn_sd_offshore_tupi_presalt_v1": [
-   "f08809bf77ae546ada5107750d8a08abcf35ca58abf8a51e95dca2c500848348"
-  ],
-  "tn_sd_offshore_upper_zakum_v1": [
-   "79d5c82aa67589ef535659755438dc1b29443ff4b54a01b06e0f256e774f0c33"
-  ],
-  "tn_sd_offshore_utsira_high_v1": [
-   "4c870fc77021402d912114a0ec2859ab54ded6d1916d793ca3404f1fde646197"
-  ],
-  "tn_sd_oil_ahvaz_v1": [
-   "543d544c68fe8fd6a437d3adc968b6459799f738d8623a61f94662c6e83bbc91"
-  ],
-  "tn_sd_oil_athabasca_oil_sands_v1": [
-   "166b4482c7b6d3927d9537136ca1936a04aad504e17ef3a73d58308758feea35"
-  ],
-  "tn_sd_oil_baku_absheron_v1": [
-   "6707adf585892bdd7e585c35d808594c23811743c97e6b19299c391434be53cb"
-  ],
-  "tn_sd_oil_basra_kuwait_v1": [
-   "c7af280f36fa3a47f391784741e805c4b6150baeea76ec5d40d34c2ea1b6a3c6"
-  ],
-  "tn_sd_oil_daqing_v1": [
-   "3eb200926e0acec8832161207f7b35c8ee1c8952198b79c91235b058fa4a3fe3"
-  ],
-  "tn_sd_oil_ghawar_v1": [
-   "9c4cdd26bf5687d9d497d7d4bf9140d57142a1394fec4f16502ae1e10218a75c"
-  ],
-  "tn_sd_oil_hassi_messaoud_v1": [
-   "5c0a900a40d5b5d2a2ae76001454a00a69207be27aebb3d9dc290f80918942be"
-  ],
-  "tn_sd_oil_kirkuk_v1": [
-   "5b9d836793312ad8533d62392471211929719870005c7ff39b3e96eebd4b7020"
-  ],
-  "tn_sd_oil_niger_delta_v1": [
-   "deb22e099555e1570c87399330bb58bc5e718e944a29085e09b9d25a5f80badc"
-  ],
-  "tn_sd_oil_orinoco_belt_v1": [
-   "8e5c1bb432d7977b86c2a04e210876a984e6a481348d57784a19564959e7eb87"
-  ],
-  "tn_sd_oil_permian_basin_v1": [
-   "f72f27cc1d28141152db9596ad6ba089009dc70f246f41ff264dbfd9e0118495"
-  ],
-  "tn_sd_oil_samotlor_v1": [
-   "67fb5a5a4e7e42708dcd488aa313b6824a9c51a99b1e23bb693c308ffd8cb0b4"
-  ],
-  "tn_sd_oil_sirte_basin_v1": [
-   "9d0048a665142cb8ce4022188bd36e7585d5579a118ab45b5a02c7ab6dff2615"
-  ],
-  "tn_sd_oil_tengiz_v1": [
-   "cc059e12b5ff73532d9be306998670f0d40d3b491a2b1e5328add8b2b39a278e"
-  ],
-  "tn_sd_oil_volga_ural_v1": [
-   "2444a8d64d3206bcff2056aef2edd801ca1d1983af057dd66766773c775f0b97"
-  ],
   "tn_sd_okavango_v1": [
    "5f05bb9db2ea00d0cb79daf7d4190626de32841c62e37852d8aec17ffdc40b1a",
    "0586b7a7a796979c02391a4af58de3b5cb3ac94f15a71697f8410bda85199883"
@@ -2421,51 +1706,9 @@
    "1d7e292ed5d3f7af07af8fa72180243b95f9201b51e42691b8efed0b27d1f0ba",
    "5fc3930a76ad65c427e65d6445f4bc458e047b4135719cd59cb03ac0c80074f0"
   ],
-  "tn_sd_stone_aswan_v1": [
-   "a1030de7399a8e801942e40f235823579955fda20347b7cf6af391587686926c"
-  ],
-  "tn_sd_stone_carrara_v1": [
-   "2a23f834658019c83c375fb542730079edf36e71803795a843a7dd0f76a18ab5"
-  ],
-  "tn_sd_stone_indiana_limestone_v1": [
-   "188b7736a97a2e2b1f1370552bab21506ae8d0e74a0aa81826cb19c4a48bf02d"
-  ],
-  "tn_sd_stone_makrana_v1": [
-   "0dd83768c1049355ed10ab1adf2aaf160c1fc7eab899345bab4fe5a287f50e96"
-  ],
-  "tn_sd_stone_marmara_island_v1": [
-   "d1e9463c2191541ce9539f9bb81ee7f4efd0d3a0a65f02d3244b20af28ce6cf9"
-  ],
-  "tn_sd_stone_pentelicus_v1": [
-   "6a280287340211901e2750994a6c9c3c1f14f18df6c829151b29a4652e916a59"
-  ],
-  "tn_sd_stone_portland_v1": [
-   "e6f10aa96eb3c92d143aedca08fa96345d7353a17af05612ce794864c1394e6d"
-  ],
   "tn_sd_sudd_v1": [
    "00256e4fa5388d660571c239da051a0b45b9a9270ba7ef2d0760b797efc898cb",
    "636b3b3976735a21aa58cf777330a5c9296f32a83a42fd226d362d08d64efc99"
-  ],
-  "tn_sd_uranium_arlit_v1": [
-   "63ec2e3d9b7a5e97b554e64868c06cc3db0c897b044c9236bff0b20178080b85"
-  ],
-  "tn_sd_uranium_athabasca_basin_v1": [
-   "917cf20967d9b6e00e3e875fe961fb35aa83d76e5295dcca7a4f7a6d33ed3492"
-  ],
-  "tn_sd_uranium_chu_sarysu_v1": [
-   "7094ef04833cec9f7478e5aac35273aef43aac4a03027607dfe940ddc590a780"
-  ],
-  "tn_sd_uranium_erongo_v1": [
-   "f184b70f5c34268ed50e1bc3e7c247c753fe7d1bd68a59f76476e4a0ea749ba7"
-  ],
-  "tn_sd_uranium_krasnokamensk_v1": [
-   "9cbce41712d883f9ddf21d82d922ac2e34cc7e245b01118e182f90d50c5fe8eb"
-  ],
-  "tn_sd_uranium_kyzylkum_v1": [
-   "45ccc18d0b02e69becdc52c54ed11ce391e63ed0f233d00d208aa793c84e2177"
-  ],
-  "tn_sd_uranium_ore_mountains_v1": [
-   "fceebeb1f3bd2c3de2a496717abf9221b303b9ffca92156807f5ec493f35944d"
   ],
   "tn_sd_vasyugan_v1": [
    "a169bcebde126d799f994f77bcd019a3119698f0a10f82e77a556c2ce69390dc",
@@ -2625,8 +1868,7 @@
    "d657792e7bb62d9908e1fdf548b9859db9afa097e9accc0897fb909cc34ad28f"
   ],
   "tn_vtile_bonus_v2": [
-   "80eb1021bcebceca191d7e8474183e78a818f45ed16c736dac166423fa72aa75",
-   "f3c65a5612ffc743af8160005f9c55ed164fe987c20631c3280f8026f72fd4e9"
+   "80eb1021bcebceca191d7e8474183e78a818f45ed16c736dac166423fa72aa75"
   ],
   "tn_w_danube_delta_v1": [
    "49afb65eedbd428c4c3ae3a9276e56484c9c9b704cc9897f858ccfff094cf18f"
@@ -2690,8 +1932,7 @@
   ],
   "tn_ww_atlantic_s1_v5": [
    "a2b51d34c77057b4fb700cba4af533e65c14c2518786fd6aa09786aeb6f52afc",
-   "ca7fc08e29e8a6a9f86192dfde7026ec8cbbc9c61adee1d640d47490363d9bee",
-   "3a2fde8d91252354394325c6362f5a01c22a559e5da27c9126436f20122a7ce6"
+   "ca7fc08e29e8a6a9f86192dfde7026ec8cbbc9c61adee1d640d47490363d9bee"
   ],
   "tn_ww_atlantic_s2_v1": [
    "4bcb7db36d1f74c109986f36ae9a8e1795fb477f880120e30f6b9115d22b6c8f",
@@ -2710,8 +1951,7 @@
   ],
   "tn_ww_atlantic_s2_v5": [
    "c2543eac2e5b7145d523a19d02a74c8143d14359b0b6b6bbc48bfcac0be3d9de",
-   "03011d1c3bc4509cd0eb6a5478002694bd0a8143393310d77a0241d605906f11",
-   "2dba71a8208f66367ed14f34aac0a6a279bee272a0faf6a16d2d7cf1d4aaa5d2"
+   "03011d1c3bc4509cd0eb6a5478002694bd0a8143393310d77a0241d605906f11"
   ],
   "tn_ww_atlantic_s3_v1": [
    "53c0fa423d5b89a4ed361685f88961ee71a129a0cf82e0f71815e7236a9222fd",
@@ -2730,8 +1970,7 @@
   ],
   "tn_ww_atlantic_s3_v5": [
    "61cc130f147c0c60902ad0fa22457c8d47e5d80a1e63f9945cdc874060948f87",
-   "00ead7b70c091e954bd934ece39563c4f188d7d20318d9b92abec6f6e80734ed",
-   "1b10ebafa009646cb9d2986663e76c7a82c6375822e3b3bce3f3594f0a2f376f"
+   "00ead7b70c091e954bd934ece39563c4f188d7d20318d9b92abec6f6e80734ed"
   ],
   "tn_ww_atlantic_s4_v1": [
    "1d2772ac476a626e4404ada10fd122e6d684a8057c2b77e368ed4ebdc7256db2",
@@ -2750,8 +1989,7 @@
   ],
   "tn_ww_atlantic_s4_v5": [
    "15ee9603bc2f58206eb5b54016a20169102c571aa3bcd440a861d58132206486",
-   "44a4d9bc2920680f692eecfeca06cc36502a4e16bbb0751b4555ff75ecac3414",
-   "e8a9993e4a9cad6462309374108dd11d51482630888465a5001bf13e55b1b965"
+   "44a4d9bc2920680f692eecfeca06cc36502a4e16bbb0751b4555ff75ecac3414"
   ],
   "tn_ww_atlantic_s5_v1": [
    "ff4d2389778137650dfd6dc451a51f0a87dd887f5300a8ac322a17666d9a1d00",
@@ -2770,8 +2008,7 @@
   ],
   "tn_ww_atlantic_s5_v5": [
    "3727bac298d2fc1503be3624b6ed0c44f6e9a4946727a121fe58872303cf0b6b",
-   "963e0c8984ae2d5afb00726baced22a05dca48815f77b63c15cfb266466baf64",
-   "a45f5eddccc66aaaecbcffe860b1ea3e99bfa8d0251cda092fcece8f47598cba"
+   "963e0c8984ae2d5afb00726baced22a05dca48815f77b63c15cfb266466baf64"
   ],
   "tn_ww_atlantic_s6_v1": [
    "028b9007a2ce26d6b81211b2990ad1a377560f3f6069bffa4d555cc8e233cf04",
@@ -2790,8 +2027,7 @@
   ],
   "tn_ww_atlantic_s6_v5": [
    "2456d605ad96258271391fdf72ea69f0f36b1386446e85bd983bf7103f906050",
-   "9f3d4e2e8d6925f208c3f630bf38d9e457cf183a8438757e8675301e3b1a3c4c",
-   "e1e0562d0d2b72a2b65d2f71fb9c12d592c27bc6ca79e4d14f6b92a4c9db6a19"
+   "9f3d4e2e8d6925f208c3f630bf38d9e457cf183a8438757e8675301e3b1a3c4c"
   ],
   "tn_ww_europe_s1_v1": [
    "a3e98dafd14bc4c424cea8358e51b42b4e333a8a1f011a79ce50c13234fc07a1",
@@ -2807,8 +2043,7 @@
   ],
   "tn_ww_europe_s1_v4": [
    "134191241d48ad6015f21c586ad7f975fb99cfd66e9eecb2e25ddcda5da13971",
-   "dfae47724f5bea6d1de23d98ed84fcc0981b2f0d9946d9a877de98c7336ebd96",
-   "5f693bca63f4a5a1ca4950c3bd7f41884d72abf6a2d1d104de99986e59687844"
+   "dfae47724f5bea6d1de23d98ed84fcc0981b2f0d9946d9a877de98c7336ebd96"
   ],
   "tn_ww_europe_s2_v1": [
    "a53ca4a305e14a9ec0aa1656763df762c08465a4a89ca133f2c4c7c5154930e1",
@@ -2824,8 +2059,7 @@
   ],
   "tn_ww_europe_s2_v4": [
    "287093aeb2eed294d841f5c92d0092a0df2f34906d877d7e5a185e63ce81a908",
-   "181ec5a0b5440fcd72f5032d04534a5484121b0fe8f42c4b0ffeb56ef4c50246",
-   "a71437557160546d3329d4cc51f865d6716225c75746f90796b590c010b65dbb"
+   "181ec5a0b5440fcd72f5032d04534a5484121b0fe8f42c4b0ffeb56ef4c50246"
   ],
   "tn_ww_europe_s3_v1": [
    "80359910e9d4661300cb260ffd3c7d4b60c54b5bec6f24bcdfd379afb4af684d",
@@ -2841,8 +2075,7 @@
   ],
   "tn_ww_europe_s3_v4": [
    "f5390c312a75179991857af80d8158e7446fd77db738054602e568ca1ed6e049",
-   "cab916a0c027e4fb74a2e28a58edb99ec0c4e902b8d5b550225cb076e46570d2",
-   "d6685514b690c7f19b699038cdbd6efcdd889724d596060331f8a323c14775ae"
+   "cab916a0c027e4fb74a2e28a58edb99ec0c4e902b8d5b550225cb076e46570d2"
   ],
   "tn_ww_europe_s4_v1": [
    "f5422717f113ff864fa0a8d4c9644d244d739e647005cb8347836d035c02e5fa",
@@ -2858,8 +2091,7 @@
   ],
   "tn_ww_europe_s4_v4": [
    "0ef5b82b24014075050b61b93999b2aee1165b60e726f9b3f5b3f9aa61561a1c",
-   "dcf7933f8071a1ee9b05158202f4c21101c74608c179cf9d9bc0a1fde1da0ca3",
-   "fa046cac300fe0fb769d753694b4f079911819c0293a501c231ee88986f04db3"
+   "dcf7933f8071a1ee9b05158202f4c21101c74608c179cf9d9bc0a1fde1da0ca3"
   ],
   "tn_ww_europe_s5_v1": [
    "81e4908db716016f47afb461f963e1adc7b783e9b3d0dc5b856856d673124ede",
@@ -2875,8 +2107,7 @@
   ],
   "tn_ww_europe_s5_v4": [
    "c5315ddd47c77e606fd3c427ce16f14964816d8f9c455fd74a032be52f3cfeb1",
-   "c1e114a1ae5ce1f540cfc79eef9193bf652c1867a835bfab401e9babebe5ef7c",
-   "e90769d8c32ed557178e95f252331537850b74424f4688064c1cb2503cda4b41"
+   "c1e114a1ae5ce1f540cfc79eef9193bf652c1867a835bfab401e9babebe5ef7c"
   ],
   "tn_ww_europe_s6_v1": [
    "5b7ebb449b629a1ec5a2d463def1678ef723ddcba34f4405272b5da854721487",
@@ -2892,8 +2123,7 @@
   ],
   "tn_ww_europe_s6_v4": [
    "a0230495b32187984ac1eaa214a0f3e39e5d108988ef163308168d81f6417890",
-   "43bdc4fdca7b046e0c89a520ed62be443f5cb2a4741bb879651326b000ae9ee3",
-   "0665614591ee1181853943ea1328057633f419732d450536901024c6bd50c4e0"
+   "43bdc4fdca7b046e0c89a520ed62be443f5cb2a4741bb879651326b000ae9ee3"
   ],
   "tn_ww_olde_world_s1_v1": [
    "44e24c58490a72cc66017e494e6849d017329ea40fd4b45e7b7c8cdb1fb9a04d",
@@ -2912,8 +2142,7 @@
   ],
   "tn_ww_olde_world_s1_v5": [
    "334650c026ae10450717c6f6f2524b72f20142e9435647112dd028b9ed34179d",
-   "a1f4b3fe25683d3f85cc7adf9b550e96566440ab1a84a89d80dfe89abc8078ed",
-   "d551c1fe63db2ab314ac8dd05d2162d3e38349d6b128650cd1032d4c1b2e6feb"
+   "a1f4b3fe25683d3f85cc7adf9b550e96566440ab1a84a89d80dfe89abc8078ed"
   ],
   "tn_ww_olde_world_s2_v1": [
    "f4af0ab3f71a22054095681f07851617421c96c7c2309830e021f44d9dd608a3",
@@ -2932,8 +2161,7 @@
   ],
   "tn_ww_olde_world_s2_v5": [
    "e80ead7e1b5bccd3f451d58474667f5216f99d6235c64000988263f179f82f7c",
-   "32f1708a5426c43fe749dbf6184598ba731f54e2c54b286f51fd83c80a453c38",
-   "f6735423626f77266f5dcc96a5af59254d9505d39955d837207bf6c8cb8c05dc"
+   "32f1708a5426c43fe749dbf6184598ba731f54e2c54b286f51fd83c80a453c38"
   ],
   "tn_ww_olde_world_s3_v1": [
    "c4c2f85ff083d47f9060b16329578ce46b875c89dfe4e746bf594f28bee8b116",
@@ -2952,8 +2180,7 @@
   ],
   "tn_ww_olde_world_s3_v5": [
    "7e6f27c7449f9fa6deb7f6a4e1571bc89f7aacc5f9dba09b458e237797ccc000",
-   "f55b5b36f3458d33b07a2a9470d96648376bf74938128f15eb95c348f27efb02",
-   "5c2460160a5924bc53bd67bc80021a537d1d2fc879c62da5b0da86caf1487322"
+   "f55b5b36f3458d33b07a2a9470d96648376bf74938128f15eb95c348f27efb02"
   ],
   "tn_ww_olde_world_s4_v1": [
    "51cdb60818f7d8294d6ae9715a409ec0fde1ab79a69ee75feb60b57aec71c1e7",
@@ -2972,8 +2199,7 @@
   ],
   "tn_ww_olde_world_s4_v5": [
    "ee3cd97a58759a654b890cad76ef2dfcbc25da7573b0017fe7e1ed516e7429d4",
-   "ccc767588d2f15851b1094fabf10b85ae09077dcdaaf720258c10fadba15b303",
-   "b5aff8060561a57ae53defdf2008e8c19f2d0893276870b475f202c2f2b22108"
+   "ccc767588d2f15851b1094fabf10b85ae09077dcdaaf720258c10fadba15b303"
   ],
   "tn_ww_olde_world_s5_v1": [
    "80f4b15e461fea303a40c33c978b04d77b33df73ec74e3973c0af081503cb421",
@@ -2992,8 +2218,7 @@
   ],
   "tn_ww_olde_world_s5_v5": [
    "a042dd06e042d31c70725f08853f43fb6b2c2fa08d82a463798c8d6d2b2a8182",
-   "7892faadc9ed9b2f311494320fea1c7058b989d98da218722985c185207f2f21",
-   "57dcfed0921354796a4edf863224d095f8004d948b7f67284bb3276503c0218e"
+   "7892faadc9ed9b2f311494320fea1c7058b989d98da218722985c185207f2f21"
   ],
   "tn_ww_olde_world_s6_v1": [
    "d98cbe105f99dbffc417411671f6d4f8bf8b290fac184e912609a1e427c4a74d",
@@ -3012,8 +2237,7 @@
   ],
   "tn_ww_olde_world_s6_v5": [
    "17f1184727e31238ca0227fd0136ce2d3cdaaac25a0b16d3e3454b4cf8ee687f",
-   "2cdba901038db8f1f59080bca2b4df3d9446ec818a3032331488eb2dceef056d",
-   "c9d45846b79a77955dcfa4f950fd0f7c2ebe5bfd30a4ed6c90f27ee507e19fe3"
+   "2cdba901038db8f1f59080bca2b4df3d9446ec818a3032331488eb2dceef056d"
   ]
  }
 }

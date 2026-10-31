@@ -264,9 +264,9 @@ if AB then
   -- lifts toward vanilla red desert, a lift that is 0 wherever the AB temperature lies outside the
   -- exclusion band, so no alien AB colour can follow it.
   local R = A.red
-  local function ab_aux(extra)
+  local function ab_aux(extra, over)
     return "clamp(" .. num(A.ab_cap) .. " - abs(" .. num(A.base) .. " + " .. noise(A.noise, AFREQ) .. extra .. " - " ..
-      num(A.ab_cap) .. ") + " ..
+      num(A.ab_cap) .. ") + " .. (over or "") ..
       num(R.lift) .. " * " .. N.dry .. " * clamp((" .. N.ab.temperature .. " - " .. num(R.t_lo) .. ") / " ..
       num(R.ramp) .. ", 0, 1) * clamp((" .. num(R.t_hi) .. " - " .. N.ab.temperature .. ") / " .. num(R.ramp) ..
       ", 0, 1) + " .. num(A.ab_bias) .. " * var('control:aux:bias'), 0, 1)"
@@ -280,14 +280,17 @@ if AB then
   local G, GN = C.grain, N.grain
   local T2 = cfg.destroyed.names.temperature
   -- The cold side reads the zone's lift and the hot side the unlifted temperature, so the zone takes no
-  -- grain: full grain there lets Alien Biomes' tan sand through as specks in the volcanic rock.
+  -- grain: full grain there lets Alien Biomes' tan sand through as specks in the volcanic rock. A wild belt
+  -- is Alien Biomes ground at a temperate core, so it takes the grain at full weight too.
   def(GN.field, "max(clamp((" .. num(G.cold_t) .. " - " .. T2 .. ") / " .. num(G.cold_span) .. ", 0, 1), clamp((" ..
-    N.ab.temperature .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1)) * noise_layer_noise(" ..
-    num(G.layer) .. ")")
-  def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. ", max(" .. T2 .. ", " ..
-    num(T.ab.max) .. "))")
-  def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field, cfg.tiles.marsh.edge))
-  def(GN.aux, ab_aux(" + " .. num(G.aux) .. " * " .. GN.field))
+    N.ab.temperature .. " - " .. num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1), clamp(" .. BELT.wild ..
+    ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ")")
+  def(GN.temperature, "min(" .. T2 .. " + " .. num(G.temperature) .. " * " .. GN.field .. " + " .. BELT.t .. ", max(" ..
+    T2 .. ", " .. num(T.ab.max) .. "))")
+  def(GN.veg, "if(" .. T2 .. " > " .. num(G.veg_zone_t) .. ", " .. GN.temperature .. ", min(" .. GN.temperature ..
+    " + " .. BELT.tv .. ", " .. num(G.veg_cap) .. "))")
+  def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field .. " + " .. BELT.m, cfg.tiles.marsh.edge))
+  def(GN.aux, ab_aux(" + " .. num(G.aux) .. " * " .. GN.field, BELT.a .. " + "))
 end
 
 data:extend(E)

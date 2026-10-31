@@ -89,7 +89,7 @@ local WILD_TILE = WILD .. " + " .. num(W.fine) .. " * " .. MS.pool.name
 -- reads the grain's frayed copy on a preset, and this runs in the Entity program, which keeps the plain
 -- fields, so the band's edges and the lean widen by scan.margin to cover the fray (config.lua tiles.scan).
 def(S.body, "if(" .. MS.edge .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
-  ", 0, 1), if(temperature >= " .. num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " ..
+  ", 0, 1), if(band_t >= " .. num(X.temperate_below + S.margin) .. ", 1, if(1 - abs(temperature - " ..
   num(V.lean_t) .. ") / " .. num(V.lean_span) .. " + patch + " .. num(V.fine) .. " * " .. MS.pool.name .. " - " ..
   num(V.lean_cut - S.margin / V.lean_span) .. " > 0, 0, if(temperature >= " .. num(X.temperate_from - S.margin) ..
   ", 0, 1))))", {patch = PATCH.patch, band_t = band_t("temperature", WILD .. " - " .. num(W.keep - W.cut))})
@@ -113,8 +113,9 @@ if mods["alien-biomes"] then
   for field, key in pairs(GK) do
     def(key, field)
   end
-  def(V.body_grain, vanilla_bonus(GK.temperature, MS.edge), PATCH)
-  def(X.body_grain, exclusion(GK.temperature, MS.edge))
+  def(cfg.climate.grain.veg_key, "temperature")
+  def(V.body_grain, vanilla_bonus("band_t", MS.edge), {patch = PATCH.patch, band_t = band_t(GK.temperature, WILD_TILE)})
+  def(X.body_grain, exclusion("band_t", MS.edge), {band_t = band_t(GK.temperature, WILD_TILE)})
 end
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut

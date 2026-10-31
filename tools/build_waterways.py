@@ -728,6 +728,9 @@ def river_widths(w, f, s, geo):
     coast = max(coast, 1.0)
     floor = river_floor(w, s)
     step = Pf["step_tiles"]
+    # below taper_full_scale a ford in a source's taper sizes itself on a grid twice as coarse: on a thin river
+    # the steps barely show
+    tip_step = step if s >= Pf["taper_full_scale"] else 2 * step
     taper = taper_tiles(w, s)
 
     def base(a):
@@ -1412,17 +1415,18 @@ def seg_calls(P, frame):
     return [c for c in calls if c]
 
 
-def class_terms(groups, slope, floor=0.0, tip=0.0, squeeze=1.0):
+def class_terms(groups, slope, floor=0.0, tip=0.0):
     """One term per (half-width, depth, frame) class: max(depth, slope * (sqrt(min of squared distances) -
-    hw - B)), B the fine bank noise, a river's hw modulated by W and held at the floor, a tip class's
-    then scaled by the source taper T, so past the taper's reach a tip segment holds the floor too."""
+    hw - B)), B the fine bank noise, a river's hw modulated by W and held at the floor, a tip class's then
+    scaled by the source taper T and held at tip, so the taper thins to a stream unbroken at every scale,
+    and past its reach a tip segment holds the floor too."""
     terms = []
     for (hw, depth, frame), calls in sorted(groups.items()):
         width = g9(hw)
         if frame == "river":
-            width = f"{g9(hw)} * W" if hw < floor else f"max({g9(floor)}, {g9(hw)} * W)"
+            width = f"max({g9(floor)}, {g9(hw)} * W)"
         elif frame == "tip":
-            width = f"max({g9(floor)}, {g9(hw)} * W) * T"
+            width = f"max({g9(tip)}, max({g9(floor)}, {g9(hw)} * W) * T)"
         terms.append(f"max({g9(depth)}, {g9(slope)} * (sqrt({min_tree(calls)}) - {width} - B))")
     return terms
 
@@ -1437,7 +1441,7 @@ def render_sets(cfg, built):
     counts = {"river": 0, "strait": 0, "canal": 0, "dam": 0}
     Bs = w["natural"]["basin"]
     N = w["natural"]["width"]
-    floor, tip, squeeze = river_floor(w, built["scale"]), N["tip_half_tiles"], 1 - N["amplitude"]
+    floor, tip = river_floor(w, built["scale"]), N["tip_half_tiles"]
     for f in feats:
         frame = "river" if f["kind"] == "river" else "passage"
         calls = seg_calls(f["P"], frame)
@@ -1465,8 +1469,8 @@ def render_sets(cfg, built):
         call = seg_call((cx - tx * reach, cy - ty * reach), (cx + tx * reach, cy + ty * reach), frame)
         key = (float(Bs["radius_tiles"]), b["depth"], frame)
         (canal_groups if b["kind"] == "canal" else ww_groups).setdefault(key, []).append(call)
-    ww_terms = class_terms(ww_groups, slope, floor, tip, squeeze)
-    canal_terms = class_terms(canal_groups, slope, floor, tip, squeeze)
+    ww_terms = class_terms(ww_groups, slope, floor, tip)
+    canal_terms = class_terms(canal_groups, slope, floor, tip)
     ww = min_tree(ww_terms) if ww_terms else "inf"
     canals = min_tree(canal_terms) if canal_terms else "inf"
     if dam_calls:
