@@ -1,0 +1,2054 @@
+{
+ "format": 1,
+ "retired": [
+  "coal-kuzbass",
+  "coal-nord-pas-de-calais",
+  "iron-anshan",
+  "oil-hassi-messaoud",
+  "uranium-arlit"
+ ],
+ "retired_why": {
+  "coal-kuzbass": "centre 129 km from the depression's centre, radius 90",
+  "coal-nord-pas-de-calais": "52 km east of the basin's centre, radius 35, the Lens and Bethune half outside",
+  "oil-hassi-messaoud": "147 km southwest of the field, radius 50 (a bad infobox coordinate)",
+  "uranium-arlit": "52 km north of the Tim Mersoi centre, radius 40",
+  "iron-anshan": "44 km west of the Anshan-Benxi district's centre, radius 40"
+ },
+ "reranked": {
+  "iron-carajas": 5,
+  "iron-kursk-magnetic-anomaly": 4,
+  "copper-atacama": 5,
+  "copper-central-african-copperbelt": 5,
+  "coal-ordos": 5,
+  "oil-ghawar": 5,
+  "oil-permian-basin": 5,
+  "oil-samotlor": 4,
+  "oil-athabasca-oil-sands": 4,
+  "oil-orinoco-belt": 4,
+  "oil-basra-kuwait": 4,
+  "uranium-athabasca-basin": 5,
+  "uranium-chu-sarysu": 5,
+  "stone-carrara": 5,
+  "iron-barbil": 4,
+  "iron-simandou": 3,
+  "coal-witbank-highveld": 3,
+  "oil-volga-ural": 3,
+  "oil-niger-delta": 3,
+  "oil-sirte-basin": 3,
+  "uranium-kyzylkum": 3
+ },
+ "rows": [
+  {
+   "id": "coal-kuzbass-2",
+   "resource": "coal",
+   "lat": 54.3,
+   "lon": 86.4,
+   "radius_km": 110,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 1,
+   "research_entry": "Kuzbass, Kuznetsk Basin",
+   "note": "replaces coal-kuzbass",
+   "land_share": {
+    "atlantic": 0.985,
+    "olde_world": 0.985
+   }
+  },
+  {
+   "id": "iron-anshan-2",
+   "resource": "iron-ore",
+   "lat": 41.21,
+   "lon": 123.38,
+   "radius_km": 50,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 2,
+   "research_entry": "Anshan-Benxi district",
+   "note": "replaces iron-anshan",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "coal-nord-pas-de-calais-2",
+   "resource": "coal",
+   "lat": 50.44,
+   "lon": 3.08,
+   "radius_km": 40,
+   "strength": 2,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 3,
+   "research_entry": "Nord-Pas-de-Calais Mining Basin",
+   "note": "replaces coal-nord-pas-de-calais",
+   "land_share": {
+    "europe": 0.981,
+    "atlantic": 0.981,
+    "olde_world": 0.981
+   }
+  },
+  {
+   "id": "oil-hassi-messaoud-2",
+   "resource": "crude-oil",
+   "lat": 31.61,
+   "lon": 5.92,
+   "radius_km": 50,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 4,
+   "research_entry": "Hassi Messaoud",
+   "note": "replaces oil-hassi-messaoud",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "uranium-arlit-2",
+   "resource": "uranium-ore",
+   "lat": 18.29,
+   "lon": 7.54,
+   "radius_km": 55,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 5,
+   "research_entry": "Tim Mersoi basin: Arlit and Akokan",
+   "note": "replaces uranium-arlit",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "iron-pilbara",
+   "resource": "iron-ore",
+   "lat": -21.9,
+   "lon": 116.9,
+   "radius_km": 135,
+   "strength": 5,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 6,
+   "research_entry": "Pilbara / Hamersley Province",
+   "note": "world's first; held northwest of Newman, a spawn city in the district",
+   "land_share": {
+    "atlantic": 0.993,
+    "olde_world": 0.993
+   }
+  },
+  {
+   "id": "coal-shanxi",
+   "resource": "coal",
+   "lat": 37.4,
+   "lon": 112.4,
+   "radius_km": 130,
+   "strength": 5,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 7,
+   "research_entry": "Shanxi province coalfields",
+   "note": "world's first by output",
+   "land_share": {
+    "atlantic": 0.987,
+    "olde_world": 0.987
+   }
+  },
+  {
+   "id": "iron-quadrilatero-ferrifero",
+   "resource": "iron-ore",
+   "lat": -19.7,
+   "lon": -43.5,
+   "radius_km": 90,
+   "strength": 4,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 8,
+   "research_entry": "Quadrilatero Ferrifero (Iron Quadrangle)",
+   "note": "takes in Minas-Rio",
+   "land_share": {
+    "atlantic": 0.99
+   }
+  },
+  {
+   "id": "coal-kalimantan",
+   "resource": "coal",
+   "lat": -1.2,
+   "lon": 116.3,
+   "radius_km": 120,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 9,
+   "research_entry": "East Kalimantan and South Kalimantan",
+   "note": "two researched districts, one row; 90 tiles at low scales, wider than a regular patch",
+   "land_share": {
+    "atlantic": 0.757,
+    "olde_world": 0.757
+   },
+   "least_tiles": 90
+  },
+  {
+   "id": "coal-xinjiang",
+   "resource": "coal",
+   "lat": 44.0,
+   "lon": 90.5,
+   "radius_km": 100,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 10,
+   "research_entry": "Xinjiang, Junggar and Turpan-Hami",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "coal-powder-river",
+   "resource": "coal",
+   "lat": 44.6,
+   "lon": -105.8,
+   "radius_km": 110,
+   "strength": 4,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 11,
+   "research_entry": "Powder River Basin",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0
+   }
+  },
+  {
+   "id": "coal-bowen",
+   "resource": "coal",
+   "lat": -23.0,
+   "lon": 148.4,
+   "radius_km": 140,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 12,
+   "research_entry": "Bowen Basin",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.991,
+    "olde_world": 0.991
+   }
+  },
+  {
+   "id": "coal-hunter-sydney",
+   "resource": "coal",
+   "lat": -32.6,
+   "lon": 151.0,
+   "radius_km": 80,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 13,
+   "research_entry": "Hunter Valley and Sydney Basin",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-central-chile",
+   "resource": "copper-ore",
+   "lat": -33.33,
+   "lon": -70.39,
+   "radius_km": 90,
+   "strength": 4,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 14,
+   "research_entry": "Central Chile porphyry belt",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.99
+   }
+  },
+  {
+   "id": "copper-arizona",
+   "resource": "copper-ore",
+   "lat": 32.99,
+   "lon": -110.41,
+   "radius_km": 100,
+   "strength": 4,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 15,
+   "research_entry": "Arizona porphyry belt",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.992
+   }
+  },
+  {
+   "id": "copper-olympic-dam",
+   "resource": "copper-ore",
+   "lat": -30.44,
+   "lon": 136.55,
+   "radius_km": 25,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 16,
+   "research_entry": "Olympic Dam",
+   "note": "beside uranium-olympic-dam on the one ore body",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-grasberg",
+   "resource": "copper-ore",
+   "lat": -3.82,
+   "lon": 137.23,
+   "radius_km": 40,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 17,
+   "research_entry": "Grasberg (Ertsberg district)",
+   "note": "90 tiles at low scales, wider than a regular patch",
+   "land_share": {
+    "atlantic": 0.985,
+    "olde_world": 0.985
+   },
+   "least_tiles": 90
+  },
+  {
+   "id": "uranium-olympic-dam",
+   "resource": "uranium-ore",
+   "lat": -30.44,
+   "lon": 137.2,
+   "radius_km": 25,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 18,
+   "research_entry": "Olympic Dam",
+   "note": "one ore body of copper and uranium: the two discs stand side by side on it, each about 30 km off its centre",
+   "land_share": {
+    "atlantic": 0.975,
+    "olde_world": 0.975
+   }
+  },
+  {
+   "id": "oil-rumaila-qurna",
+   "resource": "crude-oil",
+   "lat": 30.6,
+   "lon": 47.35,
+   "radius_km": 60,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 19,
+   "research_entry": "Rumaila, West Qurna with Majnoon",
+   "note": "the first row misses them",
+   "land_share": {
+    "atlantic": 0.833,
+    "olde_world": 0.833
+   }
+  },
+  {
+   "id": "iron-labrador-city",
+   "resource": "iron-ore",
+   "lat": 52.95,
+   "lon": -66.9,
+   "radius_km": 70,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 20,
+   "research_entry": "Labrador Trough",
+   "note": "the trough's producing south, 342 km off the first row",
+   "land_share": {
+    "atlantic": 1.0
+   }
+  },
+  {
+   "id": "iron-hebei",
+   "resource": "iron-ore",
+   "lat": 40.0,
+   "lon": 118.7,
+   "radius_km": 60,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 21,
+   "research_entry": "Eastern Hebei (Qian'an, Sijiaying)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.966,
+    "olde_world": 0.966
+   }
+  },
+  {
+   "id": "iron-bailadila",
+   "resource": "iron-ore",
+   "lat": 18.7,
+   "lon": 81.22,
+   "radius_km": 40,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 22,
+   "research_entry": "Bailadila Range",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.993,
+    "olde_world": 0.993
+   }
+  },
+  {
+   "id": "iron-gol-e-gohar",
+   "resource": "iron-ore",
+   "lat": 29.1,
+   "lon": 55.3,
+   "radius_km": 40,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 23,
+   "research_entry": "Gol-e-Gohar and Chadormalu",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "iron-sokolov-sarbai",
+   "resource": "iron-ore",
+   "lat": 52.97,
+   "lon": 63.13,
+   "radius_km": 50,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 24,
+   "research_entry": "Sokolov-Sarbai / Rudny (Kostanay)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.987,
+    "olde_world": 0.987
+   }
+  },
+  {
+   "id": "iron-kachkanar",
+   "resource": "iron-ore",
+   "lat": 58.7,
+   "lon": 59.48,
+   "radius_km": 45,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 25,
+   "research_entry": "Urals (Kachkanar, Magnitogorsk)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.979,
+    "olde_world": 0.979
+   }
+  },
+  {
+   "id": "iron-bellary-hospet",
+   "resource": "iron-ore",
+   "lat": 15.1,
+   "lon": 76.55,
+   "radius_km": 40,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 26,
+   "research_entry": "Bellary-Hospet-Sandur belt",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.948,
+    "olde_world": 0.948
+   }
+  },
+  {
+   "id": "iron-bayan-obo",
+   "resource": "iron-ore",
+   "lat": 41.78,
+   "lon": 109.97,
+   "radius_km": 25,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 27,
+   "research_entry": "Bayan Obo",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "iron-chile-belt",
+   "resource": "iron-ore",
+   "lat": -27.37,
+   "lon": -70.43,
+   "radius_km": 60,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 28,
+   "research_entry": "Chilean Iron Belt",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.953
+   }
+  },
+  {
+   "id": "iron-panzhihua",
+   "resource": "iron-ore",
+   "lat": 26.58,
+   "lon": 101.72,
+   "radius_km": 40,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 29,
+   "research_entry": "Panzhihua (Panxi)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.847,
+    "olde_world": 0.847
+   }
+  },
+  {
+   "id": "iron-cerro-bolivar",
+   "resource": "iron-ore",
+   "lat": 7.46,
+   "lon": -63.39,
+   "radius_km": 50,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 30,
+   "research_entry": "Cerro Bolivar / El Pao (Imataca)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.972
+   }
+  },
+  {
+   "id": "coal-talcher-ib",
+   "resource": "coal",
+   "lat": 21.1,
+   "lon": 84.4,
+   "radius_km": 45,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 31,
+   "research_entry": "Talcher and Ib River, Mahanadi",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.981,
+    "olde_world": 0.981
+   }
+  },
+  {
+   "id": "coal-korba-mand",
+   "resource": "coal",
+   "lat": 22.34,
+   "lon": 82.57,
+   "radius_km": 45,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 32,
+   "research_entry": "Korba and Mand-Raigarh",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "coal-south-sumatra",
+   "resource": "coal",
+   "lat": -4.23,
+   "lon": 103.61,
+   "radius_km": 60,
+   "strength": 4,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 33,
+   "research_entry": "South Sumatra",
+   "note": "130 tiles at low scales: spread over the south of the island, round the Pendopo oil row; strength 4 for 8.6 Gt, near Kalimantan",
+   "land_share": {
+    "atlantic": 0.991,
+    "olde_world": 0.991
+   },
+   "least_tiles": 130
+  },
+  {
+   "id": "coal-illinois",
+   "resource": "coal",
+   "lat": 39.75,
+   "lon": -89.5,
+   "radius_km": 110,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 34,
+   "research_entry": "Illinois Basin",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.984
+   }
+  },
+  {
+   "id": "coal-kansk-achinsk",
+   "resource": "coal",
+   "lat": 56.24,
+   "lon": 93.11,
+   "radius_km": 80,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 35,
+   "research_entry": "Kansk-Achinsk Basin",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.956,
+    "olde_world": 0.956
+   }
+  },
+  {
+   "id": "copper-southern-peru",
+   "resource": "copper-ore",
+   "lat": -15.67,
+   "lon": -71.47,
+   "radius_km": 110,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 36,
+   "research_entry": "Southern Peru belt",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.994
+   }
+  },
+  {
+   "id": "copper-collahuasi",
+   "resource": "copper-ore",
+   "lat": -20.98,
+   "lon": -68.7,
+   "radius_km": 45,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 37,
+   "research_entry": "Atacama / Antofagasta porphyry belt",
+   "note": "Collahuasi, 140 km north of the Atacama row's reach",
+   "land_share": {
+    "atlantic": 1.0
+   }
+  },
+  {
+   "id": "copper-sonora",
+   "resource": "copper-ore",
+   "lat": 30.79,
+   "lon": -110.12,
+   "radius_km": 60,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 38,
+   "research_entry": "Sonora porphyry cluster",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0
+   }
+  },
+  {
+   "id": "copper-bingham",
+   "resource": "copper-ore",
+   "lat": 40.53,
+   "lon": -112.15,
+   "radius_km": 30,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 39,
+   "research_entry": "Bingham Canyon",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.935
+   }
+  },
+  {
+   "id": "copper-udokan",
+   "resource": "copper-ore",
+   "lat": 56.58,
+   "lon": 118.5,
+   "radius_km": 30,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 40,
+   "research_entry": "Udokan",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-almalyk",
+   "resource": "copper-ore",
+   "lat": 40.81,
+   "lon": 69.65,
+   "radius_km": 30,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 41,
+   "research_entry": "Almalyk (Kalmakyr, Dalnee)",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-antamina",
+   "resource": "copper-ore",
+   "lat": -9.54,
+   "lon": -77.06,
+   "radius_km": 30,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 42,
+   "research_entry": "Antamina",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0
+   }
+  },
+  {
+   "id": "copper-mount-isa",
+   "resource": "copper-ore",
+   "lat": -20.72,
+   "lon": 139.48,
+   "radius_km": 40,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 43,
+   "research_entry": "Mount Isa",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-dexing",
+   "resource": "copper-ore",
+   "lat": 29.02,
+   "lon": 117.73,
+   "radius_km": 30,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 44,
+   "research_entry": "Dexing",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "uranium-syrdarya",
+   "resource": "uranium-ore",
+   "lat": 43.06,
+   "lon": 67.44,
+   "radius_km": 80,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 45,
+   "research_entry": "Syrdarya basin",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.974,
+    "olde_world": 0.974
+   }
+  },
+  {
+   "id": "uranium-elkon",
+   "resource": "uranium-ore",
+   "lat": 58.57,
+   "lon": 126.25,
+   "radius_km": 50,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 46,
+   "research_entry": "Elkon district, Yakutia",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.975,
+    "olde_world": 0.975
+   }
+  },
+  {
+   "id": "uranium-witwatersrand",
+   "resource": "uranium-ore",
+   "lat": -27.44,
+   "lon": 27.91,
+   "radius_km": 100,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 47,
+   "research_entry": "Witwatersrand Basin",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.969,
+    "olde_world": 0.969
+   }
+  },
+  {
+   "id": "uranium-alligator-rivers",
+   "resource": "uranium-ore",
+   "lat": -12.74,
+   "lon": 132.91,
+   "radius_km": 45,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 48,
+   "research_entry": "Alligator Rivers",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "uranium-grants",
+   "resource": "uranium-ore",
+   "lat": 35.33,
+   "lon": -108.06,
+   "radius_km": 60,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 49,
+   "research_entry": "Colorado Plateau: Grants Mineral Belt",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0
+   }
+  },
+  {
+   "id": "oil-bakken",
+   "resource": "crude-oil",
+   "lat": 48.39,
+   "lon": -102.94,
+   "radius_km": 130,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 50,
+   "research_entry": "Bakken (Williston Basin)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.956
+   }
+  },
+  {
+   "id": "oil-sarir",
+   "resource": "crude-oil",
+   "lat": 27.64,
+   "lon": 22.52,
+   "radius_km": 110,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 51,
+   "research_entry": "Sirte Basin (Sarir)",
+   "note": "the first row misses Sarir and the east",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "oil-gachsaran",
+   "resource": "crude-oil",
+   "lat": 30.29,
+   "lon": 50.74,
+   "radius_km": 60,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 52,
+   "research_entry": "Gachsaran (with Agha Jari)",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "oil-khurais",
+   "resource": "crude-oil",
+   "lat": 25.2,
+   "lon": 48.02,
+   "radius_km": 45,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 53,
+   "research_entry": "Khurais",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "oil-shaybah",
+   "resource": "crude-oil",
+   "lat": 21.72,
+   "lon": 53.66,
+   "radius_km": 40,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 54,
+   "research_entry": "Shaybah",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "oil-abu-dhabi",
+   "resource": "crude-oil",
+   "lat": 23.52,
+   "lon": 53.24,
+   "radius_km": 70,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 55,
+   "research_entry": "Abu Dhabi onshore: Bu Hasa and Bab",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.979,
+    "olde_world": 0.979
+   }
+  },
+  {
+   "id": "oil-changqing",
+   "resource": "crude-oil",
+   "lat": 35.91,
+   "lon": 107.54,
+   "radius_km": 100,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 56,
+   "research_entry": "Changqing (Ordos Basin)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.984,
+    "olde_world": 0.984
+   }
+  },
+  {
+   "id": "oil-prudhoe-bay",
+   "resource": "crude-oil",
+   "lat": 70.31,
+   "lon": -148.67,
+   "radius_km": 60,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 57,
+   "research_entry": "Prudhoe Bay (North Slope)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.534
+   }
+  },
+  {
+   "id": "oil-maracaibo",
+   "resource": "crude-oil",
+   "lat": 9.9,
+   "lon": -71.0,
+   "radius_km": 80,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 58,
+   "research_entry": "Maracaibo Basin (Bolivar Coastal)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.668
+   }
+  },
+  {
+   "id": "stone-rajsamand",
+   "resource": "stone",
+   "lat": 24.82,
+   "lon": 73.78,
+   "radius_km": 30,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 59,
+   "research_entry": "Rajsamand-Udaipur marble belt",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.998,
+    "olde_world": 0.998
+   }
+  },
+  {
+   "id": "stone-yunfu",
+   "resource": "stone",
+   "lat": 22.83,
+   "lon": 111.78,
+   "radius_km": 20,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 60,
+   "research_entry": "Yunfu stone cluster",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "stone-cachoeiro",
+   "resource": "stone",
+   "lat": -20.85,
+   "lon": -41.11,
+   "radius_km": 30,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 61,
+   "research_entry": "Espirito Santo, Cachoeiro de Itapemirim",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0
+   }
+  },
+  {
+   "id": "stone-afyon",
+   "resource": "stone",
+   "lat": 38.87,
+   "lon": 30.75,
+   "radius_km": 15,
+   "strength": 3,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 62,
+   "research_entry": "Afyon-Iscehisar",
+   "note": "",
+   "land_share": {
+    "europe": 1.0,
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "iron-magnitogorsk",
+   "resource": "iron-ore",
+   "lat": 53.4,
+   "lon": 59.05,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 63,
+   "research_entry": "Urals (Kachkanar, Magnitogorsk)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.957,
+    "olde_world": 0.957
+   }
+  },
+  {
+   "id": "iron-marcona",
+   "resource": "iron-ore",
+   "lat": -15.2,
+   "lon": -75.11,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 64,
+   "research_entry": "Marcona",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.801
+   }
+  },
+  {
+   "id": "iron-kola",
+   "resource": "iron-ore",
+   "lat": 67.86,
+   "lon": 31.82,
+   "radius_km": 60,
+   "strength": 2,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 65,
+   "research_entry": "Kola (Kovdor, Olenegorsk)",
+   "note": "",
+   "land_share": {
+    "europe": 0.891,
+    "atlantic": 0.891,
+    "olde_world": 0.891
+   }
+  },
+  {
+   "id": "iron-mbalam-belinga",
+   "resource": "iron-ore",
+   "lat": 1.68,
+   "lon": 13.47,
+   "radius_km": 40,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 66,
+   "research_entry": "Mbalam-Nabeba / Belinga",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.97,
+    "olde_world": 0.97
+   }
+  },
+  {
+   "id": "iron-mary-river",
+   "resource": "iron-ore",
+   "lat": 71.32,
+   "lon": -79.21,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 67,
+   "research_entry": "Mary River (Baffinland)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.845
+   }
+  },
+  {
+   "id": "coal-godavari",
+   "resource": "coal",
+   "lat": 18.65,
+   "lon": 79.56,
+   "radius_km": 45,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 68,
+   "research_entry": "Godavari Valley, Singareni",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.956,
+    "olde_world": 0.956
+   }
+  },
+  {
+   "id": "coal-latrobe",
+   "resource": "coal",
+   "lat": -38.18,
+   "lon": 146.28,
+   "radius_km": 35,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 69,
+   "research_entry": "Latrobe Valley",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.995,
+    "olde_world": 0.995
+   }
+  },
+  {
+   "id": "coal-cerrejon",
+   "resource": "coal",
+   "lat": 10.33,
+   "lon": -73.08,
+   "radius_km": 60,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 70,
+   "research_entry": "Northern Colombia, Cerrejon",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.972
+   }
+  },
+  {
+   "id": "coal-tavan-tolgoi",
+   "resource": "coal",
+   "lat": 43.63,
+   "lon": 105.47,
+   "radius_km": 35,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 71,
+   "research_entry": "Tavan Tolgoi",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "coal-elk-valley",
+   "resource": "coal",
+   "lat": 49.74,
+   "lon": -114.82,
+   "radius_km": 50,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 72,
+   "research_entry": "Elk Valley",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.986
+   }
+  },
+  {
+   "id": "coal-thar",
+   "resource": "coal",
+   "lat": 24.5,
+   "lon": 70.25,
+   "radius_km": 50,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 73,
+   "research_entry": "Thar coalfield",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.988,
+    "olde_world": 0.988
+   }
+  },
+  {
+   "id": "copper-butte",
+   "resource": "copper-ore",
+   "lat": 46.02,
+   "lon": -112.51,
+   "radius_km": 25,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 74,
+   "research_entry": "Butte",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.96
+   }
+  },
+  {
+   "id": "copper-uchaly",
+   "resource": "copper-ore",
+   "lat": 54.3,
+   "lon": 59.4,
+   "radius_km": 40,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 75,
+   "research_entry": "South Urals VMS belt",
+   "note": "the belt's north: its centre holds Aktobe, a spawn city",
+   "land_share": {
+    "atlantic": 0.975,
+    "olde_world": 0.975
+   }
+  },
+  {
+   "id": "copper-reko-diq",
+   "resource": "copper-ore",
+   "lat": 29.12,
+   "lon": 62.08,
+   "radius_km": 25,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 76,
+   "research_entry": "Reko Diq",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-aktogay",
+   "resource": "copper-ore",
+   "lat": 46.93,
+   "lon": 79.97,
+   "radius_km": 25,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 77,
+   "research_entry": "Aktogay",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-highland-valley",
+   "resource": "copper-ore",
+   "lat": 50.47,
+   "lon": -121.02,
+   "radius_km": 25,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 78,
+   "research_entry": "Highland Valley",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.997
+   }
+  },
+  {
+   "id": "copper-qulong",
+   "resource": "copper-ore",
+   "lat": 29.6,
+   "lon": 91.58,
+   "radius_km": 25,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 79,
+   "research_entry": "Qulong (Gangdese belt, Tibet)",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-yulong",
+   "resource": "copper-ore",
+   "lat": 31.4,
+   "lon": 97.73,
+   "radius_km": 25,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 80,
+   "research_entry": "Yulong (eastern Tibet)",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-aynak",
+   "resource": "copper-ore",
+   "lat": 34.27,
+   "lon": 69.3,
+   "radius_km": 20,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 81,
+   "research_entry": "Aynak (Mes Aynak)",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "copper-baimskaya",
+   "resource": "copper-ore",
+   "lat": 66.6,
+   "lon": 164.57,
+   "radius_km": 20,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 82,
+   "research_entry": "Baimskaya (Peschanka)",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "uranium-tummalapalle",
+   "resource": "uranium-ore",
+   "lat": 14.32,
+   "lon": 78.26,
+   "radius_km": 50,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 83,
+   "research_entry": "Tummalapalle, Cuddapah Basin",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "uranium-santa-quiteria",
+   "resource": "uranium-ore",
+   "lat": -4.34,
+   "lon": -40.15,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 84,
+   "research_entry": "Santa Quiteria (Itataia)",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0
+   }
+  },
+  {
+   "id": "uranium-zuuvch-ovoo",
+   "resource": "uranium-ore",
+   "lat": 43.72,
+   "lon": 110.14,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 85,
+   "research_entry": "Zuuvch Ovoo and Dulaan Uul",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "uranium-wyoming",
+   "resource": "uranium-ore",
+   "lat": 43.1,
+   "lon": -105.7,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 86,
+   "research_entry": "Powder River Basin, Wyoming",
+   "note": "the in-situ south of the basin, clear of the coal",
+   "land_share": {
+    "atlantic": 0.996
+   }
+  },
+  {
+   "id": "uranium-elliot-lake",
+   "resource": "uranium-ore",
+   "lat": 46.38,
+   "lon": -82.65,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 87,
+   "research_entry": "Elliot Lake (Blind River)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.896
+   }
+  },
+  {
+   "id": "uranium-kirovohrad",
+   "resource": "uranium-ore",
+   "lat": 48.5,
+   "lon": 31.95,
+   "radius_km": 40,
+   "strength": 2,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 88,
+   "research_entry": "Kirovohrad district",
+   "note": "first table's strength 1 row, adopted now",
+   "land_share": {
+    "europe": 1.0,
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "uranium-yili",
+   "resource": "uranium-ore",
+   "lat": 43.91,
+   "lon": 81.28,
+   "radius_km": 40,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 89,
+   "research_entry": "Yili basin",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.989,
+    "olde_world": 0.989
+   }
+  },
+  {
+   "id": "uranium-singhbhum",
+   "resource": "uranium-ore",
+   "lat": 22.65,
+   "lon": 86.36,
+   "radius_km": 25,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 90,
+   "research_entry": "Singhbhum shear zone: Jaduguda",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.95,
+    "olde_world": 0.95
+   }
+  },
+  {
+   "id": "uranium-khiagda",
+   "resource": "uranium-ore",
+   "lat": 54.44,
+   "lon": 113.59,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 91,
+   "research_entry": "Khiagda, Vitim district",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "uranium-mkuju",
+   "resource": "uranium-ore",
+   "lat": -10.47,
+   "lon": 36.13,
+   "radius_km": 25,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 92,
+   "research_entry": "Mkuju River (Nyota)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.975,
+    "olde_world": 0.975
+   }
+  },
+  {
+   "id": "uranium-yeelirrie",
+   "resource": "uranium-ore",
+   "lat": -27.18,
+   "lon": 119.91,
+   "radius_km": 20,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 93,
+   "research_entry": "Yeelirrie",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "oil-timan-pechora",
+   "resource": "crude-oil",
+   "lat": 66.0,
+   "lon": 57.53,
+   "radius_km": 120,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 94,
+   "research_entry": "Timan-Pechora (Usinsk)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.964,
+    "olde_world": 0.964
+   }
+  },
+  {
+   "id": "oil-shengli",
+   "resource": "crude-oil",
+   "lat": 37.49,
+   "lon": 118.52,
+   "radius_km": 50,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 95,
+   "research_entry": "Shengli (Bohai Bay onshore)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.919,
+    "olde_world": 0.919
+   }
+  },
+  {
+   "id": "oil-vaca-muerta",
+   "resource": "crude-oil",
+   "lat": -38.2,
+   "lon": -69.5,
+   "radius_km": 90,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 96,
+   "research_entry": "Vaca Muerta (Neuquen Basin)",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.98
+   }
+  },
+  {
+   "id": "oil-eagle-ford",
+   "resource": "crude-oil",
+   "lat": 28.91,
+   "lon": -97.86,
+   "radius_km": 80,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 97,
+   "research_entry": "Eagle Ford",
+   "note": "no production figure seen",
+   "land_share": {
+    "atlantic": 1.0
+   }
+  },
+  {
+   "id": "stone-shuitou",
+   "resource": "stone",
+   "lat": 24.71,
+   "lon": 118.44,
+   "radius_km": 20,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 98,
+   "research_entry": "Shuitou, Nan'an, Fujian",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.86,
+    "olde_world": 0.86
+   }
+  },
+  {
+   "id": "stone-denizli",
+   "resource": "stone",
+   "lat": 37.78,
+   "lon": 29.1,
+   "radius_km": 20,
+   "strength": 2,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 99,
+   "research_entry": "Denizli travertine basin",
+   "note": "",
+   "land_share": {
+    "europe": 1.0,
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "stone-khammam",
+   "resource": "stone",
+   "lat": 17.84,
+   "lon": 79.64,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 100,
+   "research_entry": "Khammam-Karimnagar granite",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "stone-estremoz",
+   "resource": "stone",
+   "lat": 38.8,
+   "lon": -7.45,
+   "radius_km": 15,
+   "strength": 2,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 101,
+   "research_entry": "Estremoz Anticline",
+   "note": "",
+   "land_share": {
+    "europe": 1.0,
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "stone-macael",
+   "resource": "stone",
+   "lat": 37.33,
+   "lon": -2.3,
+   "radius_km": 15,
+   "strength": 2,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 102,
+   "research_entry": "Macael, Sierra de los Filabres",
+   "note": "",
+   "land_share": {
+    "europe": 1.0,
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "stone-mahallat",
+   "resource": "stone",
+   "lat": 33.91,
+   "lon": 50.46,
+   "radius_km": 15,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 103,
+   "research_entry": "Mahallat, Markazi",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "stone-mutoko",
+   "resource": "stone",
+   "lat": -17.4,
+   "lon": 32.22,
+   "radius_km": 15,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 104,
+   "research_entry": "Mutoko black granite",
+   "note": "",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   }
+  },
+  {
+   "id": "stone-rogers-city",
+   "resource": "stone",
+   "lat": 45.42,
+   "lon": -83.82,
+   "radius_km": 15,
+   "strength": 2,
+   "maps": [
+    "atlantic"
+   ],
+   "rank": 105,
+   "research_entry": "Calcite quarry, Rogers City",
+   "note": "",
+   "land_share": {
+    "atlantic": 0.44
+   }
+  },
+  {
+   "id": "copper-sumbawa",
+   "resource": "copper-ore",
+   "lat": -8.97,
+   "lon": 116.87,
+   "radius_km": 30,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 106,
+   "research_entry": "Batu Hijau",
+   "note": "60 tiles at low scales reach Lombok across the Alas Strait: on Sumbawa alone a row at scale 1 stood at 80 tiles of ore on a seed",
+   "land_share": {
+    "atlantic": 0.509,
+    "olde_world": 0.509
+   },
+   "least_tiles": 60
+  },
+  {
+   "id": "oil-rokan",
+   "resource": "crude-oil",
+   "lat": 1.07,
+   "lon": 101.2,
+   "radius_km": 60,
+   "strength": 3,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 107,
+   "research_entry": "Rokan block: Duri and Minas",
+   "note": "the block's two great fields, between Duri and Minas",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   },
+   "least_tiles": 60
+  },
+  {
+   "id": "oil-south-sumatra",
+   "resource": "crude-oil",
+   "lat": -3.21,
+   "lon": 103.81,
+   "radius_km": 30,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "rank": 108,
+   "research_entry": "South Sumatra Basin: Pendopo",
+   "note": "Pendopo; 115 km north of coal-south-sumatra, which keeps out of it",
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   },
+   "least_tiles": 40
+  }
+ ]
+}

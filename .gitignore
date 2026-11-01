@@ -2,3 +2,7 @@ __pycache__/
 
 # Build output of tools/build_zip.py (never committed).
 dist/
+
+# The base game's prototypes, made by tools/make_vanilla_raw.py from the installed game. Not tracked
+# here: each checkout makes its own copy.
+tests/vanilla-raw.json

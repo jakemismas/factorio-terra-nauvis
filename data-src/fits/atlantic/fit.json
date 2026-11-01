@@ -4,9 +4,10 @@
  "note": "Which checkpoint each generated body of Atlantic is emitted from (tools/build_geo.py). See PROVENANCE.md.",
  "bodies": {
   "geo": {
-   "checkpoint": "model-8674.npz",
-   "file": "geo_atlantic_v1.lua",
-   "note": "Atlantic's coast fit, the smallest checkpoint at or above 0.991"
+   "checkpoint": "model-10400.npz",
+   "file": "geo_atlantic_v2.lua",
+   "note": "Atlantic's coast fit, region weighted",
+   "budget_terms": 10400
   },
   "land_coarse": {
    "checkpoint": "model-256.npz",

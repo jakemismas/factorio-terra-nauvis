@@ -3,7 +3,7 @@
 
   python tools/build_waterways.py import [--map m]       data-src/waterways/<map>.json from S4's features and
                                                           the approvals (planning commit, through git show)
-  python tools/build_waterways.py emit [--map m]          the generated Lua for scales 1 to 6, the map's river-safe
+  python tools/build_waterways.py emit [--map m]          the generated Lua for every offered scale, the map's river-safe
                                                           starts and the manifest data-src/waterways/manifest-<map>.json
   python tools/build_waterways.py check [--map m]         two emissions byte-identical to the committed files (T16)
   python tools/build_waterways.py rivers                  T16 (JI-03): each map's rivers equal APPROVALS 7's adopted
@@ -11,7 +11,7 @@
   python tools/build_waterways.py mask --map m --scale s --out p.png   the T1 corridor mask of one map and scale
   python tools/build_waterways.py offline [--map m] [--scale s]         geometric T5 pre-checks of the emitted sets
 
-Method (S4, with the chosen widths and fords, design notes 12:35). Every feature's path is S4's least-cost
+Method (S4, with the widths and fords of design notes 12:35). Every feature's path is S4's least-cost
 route through EarthMaps' drawn water, from the inland end to open sea at least 6 px from land, land
 gaps bridged (data-src/waterways/<map>.json, cells of the map's own raster). Per scale s it is
 resampled at one tile, box-smoothed (three passes) with the smallest of S4's windows for which the
@@ -23,7 +23,7 @@ in the map's geo tiles: X = s (u - 0.5 - wr) + floor(s / 2) for S4's pixel coord
 centres at col + 0.5), the coordinate chain's frame, so the tile holding a pixel centre reads the
 carve where the coast fit reads that centre (U2).
 
-A river's course is natural at three steps. Here
+A river's course is natural at three steps (design rule of 2026-10-30: no perfect lines, no boxes). Here
 its out-and-back hooks are cut (deloop), it is smoothed by at least smoothing.min_window_px reference px,
 which also loses most of the raster's octilinear stairs, it is simplified with a tolerance that follows
 its bends (bend_tolerance), so bends stay curves and straight reaches pay for few segments, its longest
@@ -127,6 +127,18 @@ def load_cfg():
     return tnconfig.load(CONFIG)
 
 
+_OFFERED = None
+
+
+def at_scale(table, s):
+    """The entry of a per-scale table of config.lua's waterways group. Those tables run in the order of the
+    offered scales, and the scales stop being consecutive at 6, so a scale is never a position."""
+    global _OFFERED
+    if _OFFERED is None:
+        _OFFERED = [int(x) for x in load_cfg()["scales"]["values"]]
+    return table[_OFFERED.index(int(s))]
+
+
 def ww_cfg(cfg):
     w = cfg.get("waterways")
     if not isinstance(w, dict):
@@ -212,8 +224,71 @@ def git_show(path, commit=PLANNING_COMMIT):
 # such, as S4's own waypoints were): its Aegean entrance, the narrows, Gelibolu and open Marmara water.
 R7B = REPO / "docs" / "plan" / "research" / "R7b-geography.json"
 STRAIT_WAYPOINTS = {"dardanelles": [(26.05, 39.95), "narrows", (26.67, 40.41), (27.35, 40.62)]}
+# Atlantic's ten rivers beyond Europe, routed again source to sea.
+# S4 ran each only between two ends, from the head of navigation at best, and its waypoints took land gaps where a
+# drawn course existed: the Nile crossed the Great Bend's desert on a 151 px straight, the Mississippi left its valley
+# at Greenville on a 74 px straight and ran to the sea down another river, and the Congo left its arc for a tributary.
+# Each row is the course from the highest reach EarthMaps draws, through the towns on the main stem (general-knowledge
+# positions, UNVERIFIED as such, as S4's own waypoints were; each snaps to drawn water), to S4's sea end.
+RIVER_WAYPOINTS = {"atlantic": {
+    "niger": [(-10.74, 10.04), (-9.88, 10.65), (-9.17, 11.42), (-8.0, 12.65), (-6.25, 13.45), (-4.2, 14.5), (-3.0, 16.75),
+              (0.04, 16.27), (2.1, 13.5), (6.75, 7.8), (6.78, 6.15)],
+    "mackenzie": [(-111.5, 59.0), (-112.0, 60.0), (-117.7, 61.34), (-121.3, 61.87), (-125.6, 64.9), (-133.75, 67.44)],
+    "mississippi": [(-95.2, 47.24), (-93.28, 44.98), (-91.2, 43.0), (-90.2, 38.6), (-89.15, 37.0), (-90.05, 35.15),
+                    (-90.9, 32.3), (-91.4, 31.55), (-91.2, 30.45), (-90.05, 29.95), (-89.77, 29.6), (-89.4, 29.3)],
+    "congo": [(25.85, -9.2), (27.0, -5.4), (25.93, -2.95), (25.2, 0.5), (22.45, 2.2), (21.5, 2.15), (18.25, 0.05),
+              (15.3, -4.3)],
+    "nile": [(33.2, 0.43), (32.05, 3.6), (31.6, 4.85), (31.65, 9.53), (32.66, 13.15), (32.52, 15.6), (33.98, 17.7),
+             (33.33, 19.53), (31.8, 18.48), (30.47, 19.17), (31.35, 21.8), (32.9, 24.1), (32.65, 25.7), (31.25, 30.05)],
+    "zambezi": [(24.0, -11.4), (22.7, -13.5), (23.1, -15.3), (25.86, -17.92), (28.8, -16.5), (30.4, -15.6),
+                (33.6, -16.1), (35.0, -17.6)],
+    "amazon": [(-73.76, -10.7), (-74.55, -8.4), (-75.0, -7.35), (-73.6, -4.5), (-73.2, -3.75), (-69.9, -4.25),
+               (-66.0, -2.5), (-64.7, -3.35), (-63.1, -4.1), (-60.0, -3.15), (-55.5, -1.9)],
+    "st_lawrence": [(-76.4, 44.2), (-73.54, 45.5), (-71.2, 46.8)],
+    "parana": [(-51.0, -20.1), (-54.25, -24.05), (-54.6, -25.4), (-55.9, -27.37), (-58.8, -27.45), (-60.55, -31.75),
+               (-60.63, -32.94)],
+    "orinoco": [(-63.4, 2.3), (-65.55, 3.17), (-67.7, 4.05), (-67.6, 5.66), (-67.0, 7.65), (-63.54, 8.12)],
+}, "olde_world": {
+    "congo": [(25.2, 0.5), (22.45, 2.2), (21.5, 2.15), (18.25, 0.05), (15.3, -4.3)],
+    "lena": [(129.72, 61.98), (127.5, 63.9), (123.37, 66.77), (127.4, 70.7)],
+}}
+# The reaches above a river's S4 head: S4 stopped at the head of navigation, and where a lake's river stopped being
+# carved there the reference's water read as a blunt head with cut stubs (Exact coastlines, sea_channels). Each row
+# runs from the highest reach EarthMaps draws to the river's S4 head, whose course then stays S4's.
+EUROPE_HEADS = {
+    "rhine": [(9.1, 46.72), (9.53, 46.85), (9.6, 47.25), (9.45, 47.55), (8.95, 47.67)],
+    "rhone": [(8.05, 46.32), (7.36, 46.23), (6.92, 46.38), (6.5, 46.45)],
+    "danube": [(8.52, 47.95), (8.97, 48.05), (9.5, 48.2)],
+    # below Pardubice's right angle: the reach above it read as a drawn hook, about 380 tiles from a Prague start
+    "elbe": [(15.72, 50.03), (14.47, 50.35)],
+    "vistula": [(18.85, 49.7), (19.2, 50.04)],
+    "dnieper": [(33.6, 55.87), (33.2, 55.2)],
+    "po": [(7.1, 44.7), (7.65, 44.7)],
+}
+RIVER_HEADS = {"atlantic": EUROPE_HEADS,
+               "olde_world": dict(EUROPE_HEADS, volga=[(32.47, 57.25), (32.7, 56.95), (33.2, 56.85), (34.3, 56.26)])}
+# Rivers whose S4 course crossed land on one line where a drawn course exists: each gap of at least GAP_REPAIR_PX takes
+# the least-cost way round it, when that way crosses less land.
+RIVER_REPAIR = {"olde_world": ("ob", "nile", "mekong")}
+GAP_REPAIR_PX = 12
 PATH_COSTS = {"water": 1.0, "land": 60.0, "corner": 3.0}
 SNAP_PX = 8
+RIVER_SNAP_PX = 12
+RIVER_PAD_PX = 120
+# A routed course is about twice S4's, so its bends take the coarser turn a shipped vertex may hold, which costs a third
+# fewer segments at scales 3 to 6 under the warp that hides the difference; bend_course falls back to config.lua's
+# kink_degrees where the coarser one would break the bend rule.
+RIVER_KINK_DEGREES = 45
+# (Reference px of smoothing in place of config.lua's min_window_px, kink degrees, share of the class width) on the rivers
+# whose meanders read from afar: 12 px took every bend under about 25 px, so the Solimoes wandered in the reference and ran
+# in long smooth curves here, and at the class width a bend of 50 tiles fused into the river's own width. The Nile keeps
+# 12: its reach through the desert hardly bends, and 6 px cost it twice the segments.
+# The profile's factor at the mouth where a river runs in one channel to the sea through a delta: the Mississippi's reach
+# below New Orleans is no wider than above it, and the class's 1.35 read as one wide band through the delta.
+RIVER_NARROW_MOUTH = {"atlantic": {"mississippi": 0.9}}
+MEANDER_BASIN_SCALE = 6
+RIVER_WINDOW_PX = {"atlantic": {"amazon": (4, 60, 0.75), "mississippi": (4, 60, 0.8), "congo": (6, 60, 0.85)},
+                   "olde_world": {r: (6, 60, 1) for r in ("rhine", "danube", "elbe", "rhone", "vistula", "dnieper", "volga")}}
 ISTHMUS_ON_ROUTE_PX = 2
 
 
@@ -303,6 +378,67 @@ def strait_route(map_key, sid, cells, meta, water, narrows):
                                      "waypoints": [[c, r] for r, c in pts]}
 
 
+def river_route(cells, meta, water, waypoints):
+    """A river's cells from its waypoints to S4's sea end, S4's least-cost method leg by leg, and the land its
+    source would otherwise start with cut, so a course begins on drawn water."""
+    pts = [snap_water(water, lonlat_cell(meta, lon, lat), RIVER_SNAP_PX) for lon, lat in waypoints]
+    pts.append((cells[-1][1], cells[-1][0]))
+    out = []
+    for a, b in zip(pts[:-1], pts[1:]):
+        leg = least_cost_path(water, a, b, RIVER_PAD_PX)
+        out += leg if not out else leg[1:]
+    while not water[out[0]]:
+        out = out[1:]
+    return [[c, r] for r, c in out], {"waypoints": [[c, r] for r, c in pts],
+                                      "land_px": sum(1 for q in out if not water[q]),
+                                      "kink_degrees": RIVER_KINK_DEGREES,
+                                      "rule": "routed source to sea at import through RIVER_WAYPOINTS with S4's "
+                                              "least-cost method, replacing S4's cells"}
+
+
+def river_head(cells, meta, water, waypoints):
+    """A river's cells with the reach above its S4 head joined on: waypoints to S4's first cell, S4's method leg by
+    leg, the land the source would start with cut. The rest of the course stays S4's."""
+    pts = [snap_water(water, lonlat_cell(meta, lon, lat), RIVER_SNAP_PX) for lon, lat in waypoints]
+    pts.append((cells[0][1], cells[0][0]))
+    out = []
+    for a, b in zip(pts[:-1], pts[1:]):
+        leg = least_cost_path(water, a, b, RIVER_PAD_PX)
+        out += leg if not out else leg[1:]
+    while not water[out[0]]:
+        out = out[1:]
+    return [[c, r] for r, c in out[:-1]] + cells, {"waypoints": [[c, r] for r, c in pts],
+                                                  "land_px": sum(1 for q in out if not water[q])}
+
+
+def repair_gaps(cells, water):
+    """A river's cells with each land gap of at least GAP_REPAIR_PX replaced by the least-cost way round it, when that
+    way crosses less land; S4's waypoints forced some gaps where a drawn course runs beside them."""
+    out, i, n, fixed = [], 0, len(cells), []
+    wet = [bool(water[r, c]) for c, r in cells]
+    while i < n:
+        if wet[i]:
+            out.append(cells[i])
+            i += 1
+            continue
+        j = i
+        while j + 1 < n and not wet[j + 1]:
+            j += 1
+        if j - i + 1 >= GAP_REPAIR_PX and i > 0 and j + 1 < n:
+            a, b = cells[i - 1], cells[j + 1]
+            leg = least_cost_path(water, (a[1], a[0]), (b[1], b[0]), RIVER_PAD_PX)
+            land = sum(1 for q in leg if not water[q])
+            if land < j - i + 1:
+                out += [[c, r] for r, c in leg[1:-1]]
+                fixed.append({"gap_px": j - i + 1, "land_px": land, "cells": len(leg)})
+                i = j + 1
+                continue
+        out += cells[i:j + 1]
+        i = j + 1
+    return out, {"repaired": fixed, "kink_degrees": RIVER_KINK_DEGREES,
+                 "rule": "S4's cells with its land gaps taken round through drawn water"}
+
+
 def line_cells(a, b):
     """The 8-connected cells of the straight line from cell a to cell b (row, col), both included."""
     (r0, c0), (r1, c1) = a, b
@@ -375,6 +511,10 @@ def import_map(map_key):
     appr_bytes = APPROVALS.read_bytes()
     A = json.loads(appr_bytes)
     rows = A["rivers"][map_key]
+    meta = json.loads((EARTHMAPS / f"{map_key}.json").read_text(encoding="utf-8"))
+    import earthgeo as eg
+    mref = eg.MapRef(map_key)
+    water = ~mref.land | mref.thin
     rivers = []
     for r in rows:
         if not r["adopted"]:
@@ -382,15 +522,28 @@ def import_map(map_key):
         f = by_name.get(r["name"])
         if f is None or f["kind"] != "river":
             raise SystemExit(f"{map_key}: adopted river {r['name']!r} has no S4 feature in {src_path}")
-        rivers.append({"rank": r["rank"], "id": slug(r["name"]), "name": r["name"], "class": r["class"],
-                       "block": r["block"], "length_px": r["length_px"], "map_km": r["map_km"],
-                       "ends_in": r["ends_in"], "real_width_km": f["real_width_km"],
-                       "cells": [[int(c), int(rr)] for c, rr in f["polyline_cells"]]})
+        rec = {"rank": r["rank"], "id": slug(r["name"]), "name": r["name"], "class": r["class"],
+               "block": r["block"], "length_px": r["length_px"], "map_km": r["map_km"],
+               "ends_in": r["ends_in"], "real_width_km": f["real_width_km"],
+               "cells": [[int(c), int(rr)] for c, rr in f["polyline_cells"]]}
+        wp = RIVER_WAYPOINTS.get(map_key, {}).get(rec["id"])
+        if wp:
+            rec["cells"], rec["route"] = river_route(rec["cells"], meta, water, wp)
+        elif rec["id"] in RIVER_REPAIR.get(map_key, ()):
+            rec["cells"], rec["route"] = repair_gaps(rec["cells"], water)
+        head = RIVER_HEADS.get(map_key, {}).get(rec["id"])
+        if head:
+            rec["cells"], rec["head"] = river_head(rec["cells"], meta, water, head)
+        shape = RIVER_WINDOW_PX.get(map_key, {}).get(rec["id"])
+        if shape:
+            rec["route"] = dict(rec.get("route") or {}, window_px=shape[0], kink_degrees=shape[1], width_share=shape[2])
+        if rec["id"] in RIVER_NARROW_MOUTH.get(map_key, {}):
+            rec["route"]["mouth"] = RIVER_NARROW_MOUTH[map_key][rec["id"]]
+        if map_key == "atlantic" and "route" not in rec:
+            # Europe is a small part of this map: the coarser kink pays for the great rivers' meanders
+            rec["route"] = {"kink_degrees": RIVER_KINK_DEGREES}
+        rivers.append(rec)
     straits = []
-    meta = json.loads((EARTHMAPS / f"{map_key}.json").read_text(encoding="utf-8"))
-    import earthgeo as eg
-    mref = eg.MapRef(map_key)
-    water = ~mref.land | mref.thin
     r7b = {s["id"]: s for s in json.loads(R7B.read_text(encoding="utf-8"))["straits"]}
     for f in feats:
         if f["kind"] == "strait":
@@ -478,6 +631,8 @@ def write_provenance(cfg):
         "APPROVALS 7's adopted rivers in priority order with their class, S4's nine straits, and the canals and",
         "dams APPROVALS 6 puts on the map. S4's own commands, run from the Factorio workspace with numpy and",
         "Pillow on the S8 reference rasters (S4 README): `python mod/spikes/S4-rivers/s4.py vectorise`.",
+        "Atlantic's ten rivers beyond Europe are routed again at import through `RIVER_WAYPOINTS`, S4's method over",
+        "the same rasters, keeping S4's sea end: each carries its waypoints in `route`.",
         "Each `manifest-<map>.json` is written by `python tools/build_waterways.py emit` beside the generated",
         "files it describes. A cut under the plan's waterway cut order is an edit to `<map>.json` (a river",
         "removed from the bottom of its list, or a tolerance raised) regenerated in the same commit, with a",
@@ -666,12 +821,12 @@ def point_at(P, a):
 # ------------------------------------------------------------------------------------------------ widths
 
 def half_width(w, kind, s, width_class=None, real_km=0.0, river_class=None):
-    """Half-width in tiles: rivers max(river floor / 2, k s / 2) by class (a river
+    """Half-width in tiles: rivers max(river floor / 2, k s / 2) by class (2026-10-30 16:20: a river
     scales with the map even where a boat no longer fits), straits max(F / 2 + margin, s / 2,
     w s / (2 km_per_px)), canals max(floor / 2 + margin, s / 2)."""
     floor = w["floor_tiles"] / 2 + w["margin_tiles"]
     if kind == "river":
-        return max(w["river_floor_tiles"] / 2, w["river_k"][river_class] * s / 2)
+        return class_width(w, river_class, s) / 2
     if kind == "strait":
         F = w["two_way_tiles"] if width_class == "two_way" else w["floor_tiles"]
         return max(F / 2 + w["margin_tiles"], 0.5 * s, 0.5 * real_km * s / w["km_per_px"])
@@ -686,7 +841,7 @@ def river_floor(w, s):
     """The half-width W and the profile never take a river under at scale s: config.lua's table, about
     proportional to the scale, on the width grid so it shares a class, down to what still draws an unbroken
     river at every warp."""
-    return w["natural"]["width"]["floor_half_tiles"][s - 1]
+    return at_scale(w["natural"]["width"]["floor_half_tiles"], s)
 
 
 def ford_length(w, s):
@@ -727,7 +882,7 @@ def river_widths(w, f, s, geo):
     coast = float(cum[idx[-1]]) if len(idx) else float(cum[-1])
     coast = max(coast, 1.0)
     floor = river_floor(w, s)
-    step = Pf["step_tiles"]
+    step = width_step(w, s)
     # below taper_full_scale a ford in a source's taper sizes itself on a grid twice as coarse: on a thin river
     # the steps barely show
     tip_step = step if s >= Pf["taper_full_scale"] else 2 * step
@@ -735,7 +890,8 @@ def river_widths(w, f, s, geo):
 
     def base(a):
         t = min(a / coast, 1.0)
-        return max(floor, round(f["hw"] * (Pf["source"] + (Pf["mouth"] - Pf["source"]) * t) / step) * step)
+        mouth = f.get("mouth", Pf["mouth"])
+        return max(floor, round(f["hw"] * (Pf["source"] + (mouth - Pf["source"]) * t) / step) * step)
 
     def at(a):
         hw = base(a)
@@ -744,7 +900,13 @@ def river_widths(w, f, s, geo):
                      min(hw, 2 * tip_step) if tip_step > step else tip_step)
         return hw
 
-    return [base(float(c + l / 2)) for c, l in zip(cum[:-1], L)], at, int((cum[:-1] < taper).sum())
+    return [base(float(c + l / 2)) for c, l in zip(cum[:-1], L)], at, int((cum[:-1] < taper).sum()), coast
+
+
+def width_step(w, s):
+    """The width grid at scale s: step_tiles, or step_per_scale tiles per scale where that is coarser."""
+    Pf = w["natural"]["profile"]
+    return max(Pf["step_tiles"], Pf["step_per_scale"] * s)
 
 
 def taper_tiles(w, s):
@@ -754,8 +916,9 @@ def taper_tiles(w, s):
 
 
 def class_width(w, river_class, s):
-    """A river's design width in tiles, max(river floor, k s) (APPROVALS 7's table; T5's width check)."""
-    return max(w["river_floor_tiles"], w["river_k"][river_class] * s)
+    """A river's design width in tiles, max(river floor, k s) (APPROVALS 7's table; T5's width check), capped
+    by class: at scale 24 a width proportional to the map reads as a sea from a player's height."""
+    return max(w["river_floor_tiles"], min(w["river_k"][river_class] * s, w["river_cap_tiles"][river_class]))
 
 
 # ------------------------------------------------------------------------------------------------ per scale
@@ -897,7 +1060,7 @@ def scale_cut(w, data, s):
     cut order (section 6.3: tolerance up, then rivers out from the bottom of the list, never one of
     Europe's 22), each with its the design notes entry."""
     cut = (data.get("cuts") or {}).get(str(s)) or {}
-    tol = cut.get("tolerance_tiles", w["tolerance_tiles"][s - 1])
+    tol = cut.get("tolerance_tiles", at_scale(w["tolerance_tiles"], s))
     n = cut.get("rivers", len(data["rivers"]))
     return float(tol), int(n)
 
@@ -946,9 +1109,10 @@ def dp_tolerances(pts, eps):
     return pts[keep]
 
 
-def bend_tolerance(Sm, tol, S, s):
-    """A Douglas-Peucker tolerance per point of a smoothed river: at most kink_degrees of turn at a shipped
-    vertex of a bend of radius R (R (1 - cos(kink / 2)) tiles), between the scale's least_tiles and tol. So a
+def bend_tolerance(Sm, tol, S, s, kink=None):
+    """A Douglas-Peucker tolerance per point of a smoothed river: at most kink degrees of turn (config.lua's
+    kink_degrees unless named) at a shipped vertex of a bend of radius R (R (1 - cos(kink / 2)) tiles), between
+    the scale's least_tiles and tol. So a
     bend stays a curve, which one fixed tolerance leaves a corner, and a gentle reach takes long segments,
     which the warp hides and each of which costs per tile. R reads the turn over bend_tiles each way, held
     over the bend so its whole length keeps the tight tolerance."""
@@ -956,7 +1120,7 @@ def bend_tolerance(Sm, tol, S, s):
     from scipy import ndimage as ni
     P = np.asarray(Sm, float)
     k = min(int(S["bend_tiles"]), (len(P) - 1) // 2)
-    least = S["least_tiles"][s - 1]
+    least = at_scale(S["least_tiles"], s)
     if k < 1:
         return np.full(len(P), float(tol))
     a, b = P[k:-k] - P[:-2 * k], P[2 * k:] - P[k:-k]
@@ -964,7 +1128,7 @@ def bend_tolerance(Sm, tol, S, s):
     kappa = np.zeros(len(P))
     kappa[k:-k] = turn / k
     kappa = ni.maximum_filter1d(kappa, size=2 * k + 1)
-    eps = (1 - math.cos(math.radians(S["kink_degrees"]) / 2)) / np.maximum(kappa, 1e-6)
+    eps = (1 - math.cos(math.radians(kink or S["kink_degrees"]) / 2)) / np.maximum(kappa, 1e-6)
     return np.clip(eps, min(least, tol), tol)
 
 
@@ -1056,6 +1220,31 @@ def deloop(cells, D):
     return C[keep]
 
 
+def local_windows(Q, windows, passes, fine, bw, lim):
+    """A river smoothed by the first window, and only the stretches that fail the bend rule by larger ones, cross-faded
+    over twice the larger window: one tight bend no longer takes the whole river's meanders. Returns what the loop over
+    whole windows does: (first window, smoothed points, its fine simplification, the fine path's failing stretches)."""
+    np = _np()
+    Sm = box_smooth(Q, int(windows[0]), passes)
+    Pf = dp_simplify(Sm, fine)
+    v, _, runs_f = turn_windows(Pf, bw, lim)
+    for win in windows[1:]:
+        if v == 0:
+            break
+        heavy = box_smooth(Q, int(win), passes)
+        blend = np.zeros(len(Q))
+        reach = 2 * int(win)
+        for a, b, _ in runs_f:
+            for c in (Pf[a], Pf[b]):
+                i = int(np.argmin(((Sm - c) ** 2).sum(1)))
+                span = np.arange(max(i - reach, 0), min(i + reach + 1, len(Q)))
+                blend[span] = np.maximum(blend[span], np.clip(1.5 - np.abs(span - i) / reach * 1.5, 0, 1))
+        Sm = Sm + (heavy - Sm) * blend[:, None]
+        Pf = dp_simplify(Sm, fine)
+        v, _, runs_f = turn_windows(Pf, bw, lim)
+    return int(windows[0]), Sm, Pf, runs_f
+
+
 def shaped(w, feature, kind, s, geo, tol=None, hw=None):
     """(window, polyline in geo tiles, bend record) of one feature at scale s (hw: a passage's
     half-width, which holds its kept R7b points within hw less one tile of the course)."""
@@ -1063,7 +1252,7 @@ def shaped(w, feature, kind, s, geo, tol=None, hw=None):
     ox, oy = geo.offset(s)
     grid = w["vertex_grid"]
     if tol is None:
-        tol = w["tolerance_tiles"][s - 1]
+        tol = at_scale(w["tolerance_tiles"], s)
     if kind == "dam":
         P = np.asarray(feature["polyline_px"], float) * s + [ox, oy]
         P = dedupe(snap(P, grid))
@@ -1089,19 +1278,32 @@ def shaped(w, feature, kind, s, geo, tol=None, hw=None):
     # S4's smoothing (s4width.smooth_for_scale): the smallest window whose smoothed centreline, at the
     # fine tolerance, obeys the bend rule; the largest window where none does
     chosen = None
-    least = w["smoothing"]["min_window_px"] * s
-    windows = [x for x in w["smoothing"]["windows"] if x >= least] or w["smoothing"]["windows"][-1:]
-    for win in windows:
-        Sm = box_smooth(Q, int(win), w["smoothing"]["passes"])
-        Pf = dp_simplify(Sm, fine)
-        v, _, runs_f = turn_windows(Pf, bw, lim)
-        chosen = (int(win), Sm, Pf, runs_f)
+    window_px = (feature.get("route") or {}).get("window_px")
+    least = (window_px or w["smoothing"]["min_window_px"]) * s
+    # windows_past_six only join above scale 6: min_window_px * s runs off the list there, and a window of 97 tiles
+    # at scale 24 is 4 px, which leaves a raster course its stairs. Scales up to 6 keep the list their files were
+    # built on.
+    table = w["smoothing"]["windows"] + (w["smoothing"]["windows_past_six"] if s > 6 else [])
+    windows = [x for x in table if x >= least] or table[-1:]
+    if window_px:
+        chosen = local_windows(Q, windows, w["smoothing"]["passes"], fine, bw, lim)
+    else:
+        for win in windows:
+            Sm = box_smooth(Q, int(win), w["smoothing"]["passes"])
+            Pf = dp_simplify(Sm, fine)
+            v, _, runs_f = turn_windows(Pf, bw, lim)
+            chosen = (int(win), Sm, Pf, runs_f)
+            if v == 0:
+                break
+    win, Sm, Pf, runs_f = chosen
+    route = feature.get("route") or {}
+    # a river kept for its meanders keeps its kink: falling back would cost it twice the segments for one bend
+    for kink in [route["kink_degrees"]] if route.get("window_px") else [route.get("kink_degrees"), None]:
+        P = dp_tolerances(Sm, bend_tolerance(Sm, tol, w["smoothing"], s, kink)) + [ox, oy]
+        P = dedupe(snap(break_runs(P, w["natural"]["runs"], s, feature["id"]), grid))
+        v, worst, runs = turn_windows(P, bw, lim)
         if v == 0:
             break
-    win, Sm, Pf, runs_f = chosen
-    P = dp_tolerances(Sm, bend_tolerance(Sm, tol, w["smoothing"], s)) + [ox, oy]
-    P = dedupe(snap(break_runs(P, w["natural"]["runs"], s, feature["id"]), grid))
-    v, worst, runs = turn_windows(P, bw, lim)
     # where the smoothed centreline itself still fails, its sharpest vertex of each failing stretch
     # (S4: the Rhine and the Garonne at scale 6)
     smoothed_fails = [stretch_centre(Pf, a, b, ox, oy) for a, b, _ in runs_f]
@@ -1137,7 +1339,8 @@ def basins_for(P, runs, half, smoothed_fails=()):
 # feature id and the scales they are required at. Where the bend rule places none on a map that carries
 # the feature, one 30 x 30 basin sits at the shipped polyline's sharpest stretch, in the feature's own
 # set.
-REQUIRED_BASINS = {"dardanelles": (1, 2, 3, 4, 5, 6), "little_belt": (6,), "rhine": (6,), "garonne": (6,)}
+REQUIRED_BASINS = {"dardanelles": (1, 2, 3, 4, 5, 6, 12, 24), "little_belt": (6, 12, 24), "rhine": (6, 12, 24),
+                   "garonne": (6, 12, 24)}
 
 
 def sharpest_centre(P, window):
@@ -1162,6 +1365,15 @@ def sharpest_centre(P, window):
         if acc > best[0] + 1e-9:
             best = (acc, j, i)
     return stretch_centre(P, best[1] + 1, best[2] + 1)
+
+
+def full_width_reach(f):
+    """The part of a river at its class width or wider, or all of a passage. A required basin goes there: a pool on a
+    thin upper reach reads as a bead on a string, and once a river runs to its head its sharpest bend can lie up there."""
+    if f["kind"] != "river":
+        return f["P"]
+    keep = [i for i, hw in enumerate(f["widths"]) if hw >= f["hw"]]
+    return f["P"][keep[0]:keep[-1] + 2] if keep else f["P"]
 
 
 def course_tangent(P, c):
@@ -1313,10 +1525,13 @@ def build_scale(cfg, data, geo, s):
     tol, keep = scale_cut(w, data, s)
     feats = []
     for r in data["rivers"][:keep]:
-        hw = half_width(w, "river", s, river_class=r["class"])
+        hw = half_width(w, "river", s, river_class=r["class"]) * (r.get("route") or {}).get("width_share", 1)
         win, P, bend = shaped(w, r, "river", s, geo, tol)
         feats.append({"kind": "river", "id": r["id"], "name": r["name"], "class": r["class"], "hw": hw,
-                      "depth": w["depth"]["river"], "window": win, "P": P, "bend": bend})
+                      "depth": w["depth"]["river"], "window": win, "P": P, "bend": bend,
+                      "meanders": bool((r.get("route") or {}).get("window_px"))})
+        if (r.get("route") or {}).get("mouth"):
+            feats[-1]["mouth"] = r["route"]["mouth"]
     for t in data["straits"]:
         hw = half_width(w, "strait", s, width_class=t["width_class"], real_km=t["real_width_km"])
         win, P, bend = shaped(w, t, "strait", s, geo, tol, hw)
@@ -1341,9 +1556,9 @@ def build_scale(cfg, data, geo, s):
               "radius": round((r + Pd["margin_px"]) * s, 4)} for cx, cy, r in geo.ponds(w, data)]
     for f in feats:
         if f["kind"] == "river":
-            f["widths"], hw_at[f["id"]], f["tip_segments"] = river_widths(w, f, s, geo)
-            f["reach"] = (max(f["widths"]) * (1 + w["natural"]["width"]["amplitude"]) + bank_reach(w, s) +
-                          warp_reach(w, s))
+            f["widths"], hw_at[f["id"]], f["tip_segments"], f["coast_arc"] = river_widths(w, f, s, geo)
+            f["reach_near"] = max(f["widths"]) * (1 + w["natural"]["width"]["amplitude"]) + bank_reach(w, s)
+            f["reach"] = f["reach_near"] + warp_reach(w, s)
         else:
             f["reach"] = f["hw"] + bank_reach(w, s) + warp_reach(w, s, True)
     Bs = w["natural"]["basin"]
@@ -1352,13 +1567,15 @@ def build_scale(cfg, data, geo, s):
         if f["kind"] == "dam":
             continue
         # a turning basin is for ships; a river too thin for one takes no pool
-        if f["kind"] == "river" and s < Bs["least_river_scale"]:
+        # (a river kept for its meanders only where ships are proven, scale 6: below that a pool reads as a blob)
+        if f["kind"] == "river" and s < (MEANDER_BASIN_SCALE if f.get("meanders") else Bs["least_river_scale"]):
             continue
         if f["bend"]["runs"] or f["bend"].get("smoothed_fails"):
             f["basins"] = basins_for(f["P"], f["bend"]["runs"], half, f["bend"].get("smoothed_fails", ()))
             f["bend"]["covered"] = basin_cover(f["P"], f["bend"]["runs"], f["basins"], half)
         if not f["basins"] and s in REQUIRED_BASINS.get(f["id"], ()):
-            f["basins"] = [sharpest_centre(f["P"], w["bend"]["window_tiles"])]
+            reach = full_width_reach(f) if map_version(w, geo.key) > 1 else f["P"]
+            f["basins"] = [sharpest_centre(reach, w["bend"]["window_tiles"])]
             f["bend"]["required"] = True
         for b in f["basins"]:
             basins.append({"feature": f["id"], "kind": f["kind"], "centre": [round(b[0], 4), round(b[1], 4)],
@@ -1371,7 +1588,8 @@ def build_scale(cfg, data, geo, s):
         others = [(o["P"], o["hw"], o["P"].min(0), o["P"].max(0)) for j, o in enumerate(feats)
                   if j != i and o["kind"] != "dam"]
         f["fords"], f["fords_skipped"] = place_fords(w, geo, s, f["P"], hw_at[f["id"]], others, f["id"], f["basins"])
-    return {"scale": s, "features": feats, "basins": basins, "half_basin": half, "carved": carved, "ponds": ponds,
+    return {"map": geo.key, "scale": s, "features": feats, "basins": basins, "half_basin": half, "carved": carved,
+            "ponds": ponds,
             "tolerance_tiles": tol, "rivers_carved": keep, "rivers_listed": len(data["rivers"])}
 
 
@@ -1434,6 +1652,7 @@ def class_terms(groups, slope, floor=0.0, tip=0.0):
 def render_sets(cfg, built):
     """The four expressions of one map and scale, and their statistics."""
     w = ww_cfg(cfg)
+    np = _np()
     slope = w["slope"]
     feats = built["features"]
     half = built["half_basin"]
@@ -1442,6 +1661,8 @@ def render_sets(cfg, built):
     Bs = w["natural"]["basin"]
     N = w["natural"]["width"]
     floor, tip = river_floor(w, built["scale"]), N["tip_half_tiles"]
+    if map_version(w, built["map"]) > 1:
+        tip = N["tip_half_tiles_v2"]
     for f in feats:
         frame = "river" if f["kind"] == "river" else "passage"
         calls = seg_calls(f["P"], frame)
@@ -1505,7 +1726,34 @@ def render_sets(cfg, built):
             for x, y in sources]
     taper = (f"clamp(sqrt({min_tree(near)}) / {g9(taper_tiles(w, built['scale']))}, "
              f"{g9(w['natural']['profile']['tip'])}, 1)") if near else "1"
-    return {"ww": ww, "canals": canals, "dams": dams, "fords": fords, "ponds": ponds, "taper": taper}, stats
+    out = {"ww": ww, "canals": canals, "dams": dams, "fords": fords, "ponds": ponds, "taper": taper}
+    if map_version(w, built["map"]) > 1:
+        # M, the warp's share near a mouth: 0 within inner_px of where a river meets the sea, 1 past outer_px, so a river
+        # keeps its polyline there and the band-fix masks can narrow to it (config.lua natural.mouth)
+        Mo, s = w["natural"]["mouth"], built["scale"]
+        groups = {}
+        for f in feats:
+            if f["kind"] == "river":
+                groups.setdefault(mouth_px(Mo, f["id"], s), []).append(
+                    point_at(np.asarray(f["P"], float), f["coast_arc"])[0])
+        parts = []
+        for (inner_px, outer_px), mouths in sorted(groups.items()):
+            terms = [f"(X0 - {off(float(x))}) * (X0 - {off(float(x))}) + (Y0 - {off(float(y))}) * (Y0 - {off(float(y))})"
+                     for x, y in mouths]
+            inner, outer = inner_px * s, outer_px * s
+            parts.append(f"clamp((sqrt({min_tree(terms)}) - {g9(inner)}) / {g9(outer - inner)}, 0, 1)")
+        out["mouth"] = parts[0] if len(parts) == 1 else f"min({', '.join(parts)})"
+    return out, stats
+
+
+def mouth_px(mouth, river_id, s):
+    """The warp fade of one river's mouth in reference px at scale s (config.lua natural.mouth), inner and outer: its
+    own row, else the default, which is in tiles."""
+    rule = (mouth.get("rivers") or {}).get(river_id)
+    if rule:
+        return rule["inner_px"], rule["outer_px"]
+    return (max(mouth["inner_tiles"], mouth["inner_per_scale"] * s) / s,
+            max(mouth["outer_tiles"], mouth["outer_per_scale"] * s) / s)
 
 
 def lua_string_lines(text, first_prefix, last_suffix, indent="  "):
@@ -1536,8 +1784,9 @@ def render_lua(cfg, map_key, s, exprs, stats, data_rel, data_sha):
     out += ("F.seg = " + SEG_FN).split("\n")
     out += ("F.box = " + BOX_FN).split("\n")
     out.append("local S = {functions = F}")
-    for key in ("ww", "canals", "dams", "fords", "ponds", "taper"):
-        out += lua_string_lines(exprs[key], f"S.{key} = ", "")
+    for key in ("ww", "canals", "dams", "fords", "ponds", "taper", "mouth"):
+        if key in exprs:
+            out += lua_string_lines(exprs[key], f"S.{key} = ", "")
     out.append(f"S.stats = {{rivers = {seg['river']}, straits = {seg['strait']}, canals = {seg['canal']}, "
                f"dams = {seg['dam']}, fords = {stats['fords']}, basins = {stats['basins']}, ponds = {stats['ponds']}}}")
     out.append("return S")
@@ -1584,6 +1833,8 @@ def feature_record(f, s, w):
         rec["class"] = f["class"]
         rec["width_tiles"] = class_width(w, f["class"], s)
         rec["half_widths"] = [round(float(min(f["widths"])), 4), round(float(max(f["widths"])), 4)]
+        rec["coast_arc_tiles"] = round(float(f["coast_arc"]), 3)
+        rec["reach_near_tiles"] = round(float(f["reach_near"]), 3)
         rec["fords"] = f["fords"]
         rec["fords_skipped"] = f["fords_skipped"]
         rec["fords_expected"] = int(polyline_length(f["P"]) // (w["ford"]["every_px"] * s))
@@ -1632,8 +1883,43 @@ def emit_map(cfg, map_key, out_dir=GENERATED, manifest=True, scales=None):
             srec["starts"] = starts[s]
         rec["scales"][str(s)] = srec
     if manifest:
-        write_json(DATA / f"manifest-{map_key}.json", rec)
+        write_manifests(cfg, map_key, rec)
     return rec
+
+
+def past_manifest(map_key):
+    """The manifest of a map's scales past the released list. The released band-fix tables' headers hold the sha256
+    of manifest-<map>.json, so that file keeps its bytes when a scale past the list arrives."""
+    return DATA / f"manifest-{map_key}-past.json"
+
+
+def released_config(cfg, w):
+    """config.lua's waterways group as the released manifests hold it: per-scale tables at the released scales and no
+    key that only scales past them read."""
+    n = len(cfg["scales"]["released"])
+    out = json.loads(json.dumps({k: w[k] for k in sorted(w) if k not in ("sets", "river_cap_tiles")}))
+    out["tolerance_tiles"] = out["tolerance_tiles"][:n]
+    out["smoothing"]["least_tiles"] = out["smoothing"]["least_tiles"][:n]
+    out["smoothing"].pop("windows_past_six", None)
+    out["natural"]["profile"].pop("step_per_scale", None)
+    out["natural"]["spawn_fade"].pop("outer_per_scale", None)
+    for key in ("inner_per_scale", "outer_per_scale"):
+        out["natural"]["mouth"].pop(key, None)
+    out["natural"]["width"]["floor_half_tiles"] = out["natural"]["width"]["floor_half_tiles"][:n]
+    return out
+
+
+def write_manifests(cfg, map_key, rec):
+    """Each scale's record to its manifest; a partial emission (emit --scales) keeps the other scales' records."""
+    low = {str(int(s)) for s in cfg["scales"]["released"]}
+    for path, keys, conf in ((DATA / f"manifest-{map_key}.json", low, released_config(cfg, ww_cfg(cfg))),
+                             (past_manifest(map_key), set(rec["scales"]) - low, rec["config"])):
+        fresh = {k: v for k, v in rec["scales"].items() if k in keys}
+        if not fresh:
+            continue
+        kept = json.loads(path.read_text(encoding="utf-8"))["scales"] if path.exists() else {}
+        merged = {k: fresh.get(k, kept.get(k)) for k in sorted(set(kept) | set(fresh), key=int)}
+        write_json(path, dict(rec, config=conf, scales=merged))
 
 
 def check(cfg, maps):
@@ -1959,7 +2245,7 @@ def propose_cuts(cfg, maps, base, target, coef):
         for s in cfg["scales"]["values"]:
             b = base[map_key][str(s)]
             lim = target[map_key]
-            t0 = w["tolerance_tiles"][s - 1]
+            t0 = at_scale(w["tolerance_tiles"], s)
             tols = [t0] + [float(x) for x in range(int(t0) + 1, s + 1)]
             chosen, tried = None, []
             ladder = [(t_, len(data["rivers"])) for t_ in tols] +                      [(tols[-1], n) for n in range(len(data["rivers"]) - 1, floor - 1, -1)]
@@ -1987,6 +2273,8 @@ def main(argv=None):
     for name in ("import", "emit", "check"):
         p = sub.add_parser(name)
         p.add_argument("--map")
+        if name == "emit":
+            p.add_argument("--scales", help="comma list of scales (default: every offered scale)")
     sub.add_parser("rivers")
     p = sub.add_parser("mask")
     p.add_argument("--map", required=True)
@@ -2011,7 +2299,8 @@ def main(argv=None):
         return 0
     if a.cmd == "emit":
         for key in map_keys(cfg, a.map):
-            rec = emit_map(cfg, key)
+            only = [int(x) for x in a.scales.split(",")] if a.scales else None
+            rec = emit_map(cfg, key, scales=only)
             print(json.dumps({"map": key, "scales": {s: r["stats"] for s, r in rec["scales"].items()}}))
         write_provenance(cfg)
         print("RESULT ok emit")

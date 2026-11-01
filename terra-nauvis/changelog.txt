@@ -1,4 +1,49 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2026-11-01
+  Features:
+    - New worlds hold about a hundred more ore hotspots, from a sourced list of the world's great
+      deposits: the Pilbara, Shanxi, Kalimantan, Grasberg, Olympic Dam and many more.
+    - A wide hotspot is now a district of many ore bodies across its footprint, not one blob in an
+      empty disc, and its size and richness follow the real deposit's rank.
+    - Map scales 12 and 24 join 1 to 6. At scale 24 Old World is 215,112 x 140,328 tiles and rivers
+      cap at 48 and 36 tiles wide.
+    - Grasberg, Kalimantan and South Sumatra stand wider than a regular patch at low scales, and
+      Batu Hijau and Sumatra's Rokan and Pendopo oil fields join them.
+    - Biter nests at a hotspot stand in irregular clusters with gaps, off its oil wells and, from
+      scale 6 up, mostly off its ore.
+    - The new setting Blue corrupted UK and Australia, off by default, needs Alien Biomes. It turns
+      the UK and Australia into mauve grass mixed with blue grass, purple grass and purple dirt, with
+      the violet, white and blue trees and plants that grow there.
+  Changes:
+    - Spawn lakes on new Old World and Atlantic worlds have softer shores, with fewer straight
+      sides and right-angle corners.
+    - New Old World and Atlantic worlds have sharper coasts, most of all outside Europe, in the
+      new-game preview and in play.
+    - Coasts that Exact coastlines writes on new worlds have shores and water sides, follow the
+      reference without pixel steps, and leave the spawn lake alone.
+    - Rivers on new Old World and Atlantic worlds follow their real courses further upstream, and
+      Atlantic's great rivers run unbroken to the sea at every scale.
+    - Ridges on new worlds are wandering lines of cliffs instead of two parallel walls: no boxes at
+      low scales, and mountain ranges show their cliff faces.
+    - Destroyed Europe on new worlds covers the whole heart of Europe, the spawn included, and runs
+      to the shore on every coast, Brittany and Calais among them. Its middle is cracked basalt with
+      lava pools, volcanic rock and dead trees, with patches of black and grey rock. A broad barrier
+      of black ash, red rock and scorched red grass stands where it meets ordinary land. Its trees
+      are dead, with no palms, and no blue plants grow there.
+    - Beside Alien Biomes, new worlds lift Moscow's grey plains, soften the flat ground at
+      Frankfurt, Prague and Aachen, scatter the ropes of forest, and fray the seams between snow
+      tiles.
+    - New worlds turn Russia and the far north of the world to snow and ice, with a band of grey
+      wasteland leading in. Snow pines grow there. Without Alien Biomes the same ground is a frozen
+      tile of Terra Nauvis's own.
+    - Snow and grey rock on new worlds' ranges form whole massifs at every scale.
+    - Palms on new worlds stay south of about 35.5 degrees north on warm, low ground: none in Europe,
+      on cold ground or on a range.
+    - Five hotspots moved onto their real ground on new worlds: the Kuzbass, Nord-Pas-de-Calais,
+      Hassi Messaoud, Arlit and Anshan.
+    - Worlds already made keep their terrain, ridges, zone and hotspots.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2026-10-31
   Bugfixes:

@@ -4,7 +4,87 @@ All notable changes to terra-nauvis are documented in this file. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.0] - 2026-11-01
+
+### Added
+
+- Map scales 12 and 24. Each geography version carries its own scale list, so released versions keep 1 to 6. Europe serves the new scales
+  through an entry of its own on its released chain, with no new tn_geo.
+
+- The startup setting Blue corrupted UK and Australia, default off, needs Alien Biomes. Tiles take a class per tile. Trees and plants follow Alien Biomes' own climate boxes through a redirect of temperature, moisture and aux inside the zone.
+
+### Changed
+
+- The spawn lake of new Old World and Atlantic worlds takes a gentler warp and a four-row shore noise, so its shore has
+  fewer straight runs and right-angle corners. A near-straight stretch of 10 to 12 tiles can remain.
+- New Old World and Atlantic worlds draw transitions on the tiles Exact coastlines writes: `set_tiles` runs with tile correction from tn_geo 19.
+- From scale 3 on those worlds a written coast follows the blurred reference through a warp, in either class of K pixel, so it leaves the raster's pixel
+  sides. Written land takes the ground beside it, a shallow tile closed in by land takes the land, and written land stays off the spawn lake. Worlds made
+  before 0.2.0 keep their coast.
+- New worlds with Destroyed Europe read a second outline (`prototypes/tables/zone_outline.lua`) with no start cut. Barrier depth counts land edges
+  only, so the zone runs to the shore on sea sides. Its heart is heat ground with lava pools, black sand and grey dirt. A data-driven exclusion
+  (`prototypes/zone_exclusion.lua`) keeps living trees, palms and coloured plants out, gated on a key saves never hold. Dead tree copies carry no
+  tile list. Rock and dead trees thin round the spawn. Worlds made before keep their zone.
+- New worlds cap the temperature north of a snow line that follows the real winter line, plain and tile fields alike, so
+  Russia and the far north read as frozen snow and ice, with snow trees, behind a band of grey wasteland. New worlds without
+  Alien Biomes draw that ground and a massif's snow as `terra-nauvis-frozen-ground`, a tile of the mod's own.
+- New worlds draw cold ground on a range from one field per crest piece, in place of a reach that follows vertex heights and
+  formed a cone on each high vertex, so a massif's width is a share of its range's reach at every scale.
+- New worlds keep palms south of about 35.5 degrees north, on warm ground off the ranges.
+- The palm copies are built at data-final-fixes from the installed palms and held to a digest, so the mod ships no Alien
+  Biomes text. `prototypes/generated/palms_ab_v1.lua` is gone, and worlds of every release keep their palm bodies.
+- New Old World and Atlantic worlds fade a river's warp over the last 36 to 120 tiles to the sea, where the first candidate faded it over 180 to 480 at
+  scale 6 and decided the lower reach of 21 of Old World's 37 rivers. The Mississippi keeps its long fade for its delta.
+- The candidate's game start falls from 6.66 s to 4.01 s on base with no tile or entity moved: a heavy term read by repeated terms takes a name instead
+  of a local, on the new versions' waterways and the second hotspot table. 0.1.2 takes 2.50 s.
+- ground's wandering coast edge is capped so thin inlets stay open, and the Elbe's carved head ends below Pardubice on both maps.
+- New Atlantic worlds carve all 32 rivers at every scale. The Niger, Mackenzie, Mississippi, Congo, Nile,
+  Zambezi, Amazon, St. Lawrence, Parana and Orinoco are routed again from the highest reach EarthMaps draws
+  to the sea, through their main stems, with a ford every 60 reference pixels; the Nile follows the Great
+  Bend, the Mississippi its own valley and the Congo its arc.
+  Worlds made before 0.2.0 keep their terrain.
+- New Atlantic and Old World worlds carry the Rhine, Rhone, Danube, Elbe, Vistula, Dnieper and Po to their upper
+  reaches, the Volga too on Old World, each thinning to a stream. Old World's Ob, Nile, Lena, Congo and Mekong follow
+  their drawn courses instead of crossing land on straight lines.
+- Exact coastlines on those new worlds leaves a lake's rivers to the land, so the Alps lose their blunt heads, cut stubs
+  and straight raster reaches, keeps a lake's shore where a river runs through it, and shapes a delta up to the river.
+- A map's generated waterway files and Exact coastlines tables take versions of their own
+  (`waterway_files` on a geography version, `bandfix.generations`), and a save picks its tables by its own
+  tn_geo. `--masks-only` and a full band-fix emission write the newest generation only, and T16 holds
+  every generation's tables to the tag.
+- New Old World and Atlantic worlds draw new coast fits, for the new-game preview, where the noise coast is all
+  that shows. Old World spends 9,360 terms in place of 8,192 for about the same Tile, Europe better in every box and the
+  rest of the map much crisper, the Chukotka notch gone. Atlantic spends 10,400 in place of 8,674 on the Gulf of
+  Guayaquil, the Bahamas, Britain, Ireland, Denmark, the Isle of Man and the Americas. Worlds made before
+  0.2.0 keep their terrain (tn_geo 19 and 20; design notes 2026-10-31, a development branch).
+- `tools/build_geo.py prune` drops the terms that matter least per Tile, and `fit` takes hold boxes, a footprint
+  weight, explicit steps, `--restore` and `--thrift`, so a refit can spend Tile where the fit is poor without moving a coast
+  already paid for. `fit` ends its schedule at `--nmax`, `round` rounds a checkpoint's coefficients, and a region
+  fit's budget may reach 10,842 terms: the Tile rows bind it.
+- Ridges for new worlds are wandering lines instead of the outline of a band: no boxes at scale 1, no ranks of parallel
+  flanks, and a range shows its cliff faces. Existing worlds keep their ridges.
+- Destroyed Europe, new worlds only: a broad barrier of black ash, red rock and scorched red grass now stands
+  between the lava and ordinary land, fraying into it with no clean edge, and the lava is separated patches and
+  flows at about a seventh of the land, down from about two fifths. A world made before keeps its zone, chunk for chunk.
+
+### Added
+
+- A second hotspot table for new worlds, built from a sourced list of the world's great deposits
+  (`data-src/hotspots/deposits-research.md`): the Pilbara, Shanxi, Kalimantan, the Bowen Basin, Grasberg, Olympic Dam,
+  the Witwatersrand, Rumaila and West Qurna and about ninety more. Old World goes from 63 fields to 136, Atlantic from
+  77 to 180 and Europe from 21 to 27.
+- A wide field is now a district: its ore stands in many bodies across its footprint, gathered in lobes, where it
+  stood in one blob at the centre of an empty disc. Size and richness follow the deposit's rank.
+- A hotspot row may set the least its ore footprint reaches at low scales. Grasberg, Kalimantan and South Sumatra stand
+  wider than a regular patch at scale 1, and Batu Hijau and Sumatra's Rokan and Pendopo oil fields are new rows.
+- Hotspot lobes grow with the map past scale 6.
+- Nests over a hotspot footprint stand in irregular clusters with gaps, in new worlds. They read `tn_enemy_v2`, which
+  replaces the live enemy expression over the footprint, and they keep off wells.
+
+### Fixed
+
+- On new worlds five fields stand on their real ground: the Kuzbass, Nord-Pas-de-Calais, Hassi Messaoud, Arlit and
+  Anshan each sat further from their deposit than their own radius.
 
 ## [0.1.2] - 2026-10-31
 

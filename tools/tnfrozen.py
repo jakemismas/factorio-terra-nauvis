@@ -35,7 +35,7 @@ record; `snapshot_problems` fails any record such a snapshot holds that the regi
 dropped.
 
 Until the first release, tests/unreleased-moves.json lists what a landed state held and the tree may
-leave behind: per
+leave behind (its issue, 2026-10-30 10:26: nothing has shipped and no saves exist): per
 record the exact sha256 values the registry moved away from, and the tn_geo ids it retired.
 `active_moves` reads it, a release tag voids it (the T16 append-only row then fails until it is empty),
 and every other record stays held. tools/refreeze.py writes it together with the registry.
@@ -387,15 +387,29 @@ def offline_ab_problems(source, fz, cfg):
     return body_problems(earth_bodies(dump, cfg), fz, cfg, "the offline Alien Biomes data stage", OFFLINE_AB_DUMPS)
 
 
+def live_ab_bodies(cfg):
+    """The bodies only the game can compute: data-final-fixes.lua builds them from Alien Biomes' installed palms, so no
+    offline stage holds their text. The gate compares them with Alien Biomes loaded (the M2 dump); every offline reading
+    reports them skipped, never passed (`skipped_note`), whatever dump label their released records carry."""
+    copies = (((cfg or {}).get("tiles") or {}).get("palm") or {}).get("copies") or []
+    return {c["body"] for c in copies}
+
+
+def skipped_note(cfg):
+    n = len(live_ab_bodies(cfg))
+    return f"{n} palm bodies skipped: they need Alien Biomes loaded, and only the gate's frozen row compares them" if n else ""
+
+
 def body_problems(bodies, fz, cfg, where="the offline data stage", dumps=OFFLINE_DUMPS):
     """Every registered record of `dumps` held to the body `bodies` builds under its name ([] when all
     hold): present with the record's type and the record's hash (a body changed in place through its
     code or its data fails like a re-hash), and every Earth body built there registered, the exempt
-    names excepted (design constraint 2)."""
+    names excepted (design constraint 2). The live_ab_bodies are left out: see skipped_note."""
     out = []
     registered = (fz or {}).get("bodies") if isinstance((fz or {}).get("bodies"), dict) else {}
+    skipped = live_ab_bodies(cfg)
     for name, rec in sorted(registered.items()):
-        if not isinstance(rec, dict) or (dumps is not None and rec.get("dump") not in dumps):
+        if not isinstance(rec, dict) or (dumps is not None and rec.get("dump") not in dumps) or name in skipped:
             continue
         got = bodies.get(name)
         if got is None:

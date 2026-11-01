@@ -1,4 +1,4 @@
--- Guards (ARCHITECTURE.md, "Guards"; milestones europe-coast and spawn-cities): world detection, the
+-- Guards (ARCHITECTURE.md, "Guards"; contracts 1 and 2): world detection, the
 -- missing-name guard, the drift line, the Map type notice, the withheld-preset warning and the D33
 -- Nauvis-only surface guard. Control code reads save state only: the Nauvis surface's
 -- property_expression_names (U6), storage, script.active_mods and prototypes.named_noise_expression;
@@ -18,7 +18,7 @@
 -- on_configuration_changed whenever the mod's content changed, the same version included (its
 -- checksum differs), so the drift line reports each move once.
 --
--- Stored records (ARCHITECTURE.md, "Guards", binding on every milestone): storage.earth.warnings is a
+-- Stored records (ARCHITECTURE.md, "Guards", binding throughout): storage.earth.warnings is a
 -- list of {key = <a key of config.lua messages.keys>, args = {<LocalisedString>, ...}}, sent to a
 -- player as {section .. "." .. messages.keys[key], table.unpack(args)}, and
 -- storage.earth.sent[player_index] is the number of those records that player has received.
@@ -47,6 +47,11 @@ for _, key in ipairs(cfg.map_order) do
   for _, v in ipairs(g and g.versions or {}) do
     ENTRY_MAP[v.entry] = key
     ENTRY_VERSION[v.entry] = v
+    local X = cfg.scale_extensions[key]
+    if X and X.geo_id == v.geo_id then
+      ENTRY_MAP[X.entry] = key
+      ENTRY_VERSION[X.entry] = v
+    end
   end
 end
 for _, key in ipairs(cfg.preset_order) do
@@ -427,7 +432,7 @@ end
 -- D33's strip rule (ARCHITECTURE.md, "D33 surface guard"): a surface other than Nauvis drops a listed
 -- key only when the save's default value names an Earth body or the key is an Earth per-save key. From
 -- ridges the listed keys include vanilla properties (cliff_elevation, cliffiness, the ore
--- probabilities, beside group 0's water slider readers), and vanilla's Lakes and Island presets set
+-- probabilities, beside the first water slider readers), and vanilla's Lakes and Island presets set
 -- cliffiness and cliff_elevation to the very values Space Age's planets set themselves, so comparing
 -- the value alone would blank those planets' own keys on a world that is no Earth map. The guard's
 -- comparison with the default value stays; this predicate gates it (the static d33_guard row requires

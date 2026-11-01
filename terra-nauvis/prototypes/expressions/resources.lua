@@ -1,6 +1,6 @@
 -- Hotspots, the richness ramp, the random offshore-oil sea mask and the offshore field stamps
--- (ARCHITECTURE.md milestone contract 9; S6 A5 with a shared blob and Q5; APPROVALS 2 and 3; decisions 8
--- and 16; milestone resources-enemies).
+-- (ARCHITECTURE.md contract 9; S6 A5 with a shared blob and Q5; APPROVALS 2 and 3; design rules 8
+-- and 16).
 --
 -- Every row of prototypes/tables/hotspots.lua is a hotspot whose disc is the region layer's row of
 -- the same id, jittered per seed there. At scale s its footprint radius is
@@ -12,9 +12,9 @@
 -- needed (config.lua hotspots.size). Each row's amount is strength times vanilla's regular patch amount at
 -- the candidate's distance (quantity and richness factor) times the ramp, spread over the start disc's
 -- expected candidates, and the region's target is the sum of its candidates' quantities, so the realised
--- amount is scaled by the land share the gate passes (decision 16; water share for an offshore field), with
--- land from tn_land_coarse alone, and rows sharing a region never draw on each other's target.
--- No map slider reaches a hotspot: the switch and the amount setting are its only
+-- amount is scaled by the land share the gate passes (design rule 16; water share for an offshore field), with
+-- land from tn_land_coarse alone (design rule 8), and rows sharing a region never draw on each other's target.
+-- No map slider reaches a hotspot (2026-10-30): the switch and the amount setting are its only
 -- controls, and the amount multiplies richness alone. The per-map rows fold on tn_map (a preset-only
 -- number: the wrappers that read these bodies exist on preset worlds only).
 --
@@ -124,7 +124,7 @@ end
 local RP = RS.ramp
 def(RP.name, "1 + " .. num(RP.gain) .. " * clamp((distance - " .. num(RP.from) .. ") / " .. num(RP.span) .. ", 0, 1)")
 
--- The random offshore-oil sea mask (FEAS-07; design notes, resources-enemies): 1 where the coarse land
+-- The random offshore-oil sea mask (FEAS-07; DECISIONS, resources-enemies): 1 where the coarse land
 -- field reads open sea past the threshold, which leaves inland rivers, canals, lakes and marshes out.
 def(RS.sea.name, K.land_coarse .. " < " .. num(-RS.sea.threshold_px))
 
@@ -185,9 +185,9 @@ end
 -- candidates, and the region's target is exactly the sum of those quantities (the density is a
 -- candidate's quantity over the tiles per candidate), so every one of them is placed and rows of a
 -- resource that share a region never draw on each other's target. A row's realised amount is then
--- its amount times the share of its start disc the land gate passes (decision 16, read in game
--- through tn_land_coarse: decision 8), at every scale and jitter; the table's share lists the discs
--- more than half sea. A candidate's cone is held to the room the row leaves it, so no ore
+-- its amount times the share of its start disc the land gate passes (design rule 16, read in game
+-- through tn_land_coarse: design rule 8), at every scale and jitter; the table's share lists the discs
+-- more than half sea (DECISIONS). A candidate's cone is held to the room the row leaves it, so no ore
 -- leaves the row's disc or enters a rival's (config.lua hotspots.size note), and a candidate with
 -- no room or too little quantity for a cone of the bounded slope carries nothing.
 local function map_spot(h, rows, i, L, M)
@@ -266,7 +266,7 @@ for _, h in ipairs(HC.resources) do
   end
   -- the blob at a typical spot's height at the reference strength and distance factor, its rise capped
   def(N.v, "hs_spot + min(" .. B.name .. " - " .. num(B.mean) .. ", " .. num(B.cap) .. ") * " .. num(blob_height(h)), L)
-  -- No map slider reaches a hotspot: the mod's settings alone set it, and the amount
+  -- No map slider reaches a hotspot (2026-10-30): the mod's settings alone set it, and the amount
   -- multiplies richness only, so it moves no outline.
   local amount = K.hotspot_amount
   if h.fluid then

@@ -1,4 +1,4 @@
--- Bodies behind the tile hooks (ARCHITECTURE.md, "Stable hooks"; milestone climate-tiles; S3 section 2;
+-- Bodies behind the tile hooks (ARCHITECTURE.md, "Stable hooks"; contract 6; S3 section 2;
 -- APPROVALS 8 and 9). data-final-fixes.lua writes the hooks on the shared tiles; this file defines the
 -- keys they read, each holding its off value, and the versioned bodies Earth presets point them at.
 --   tn_vtile_<tile>      the 19 vanilla land tiles beside Alien Biomes: every key names one bonus body,
@@ -63,11 +63,12 @@ def(MS.pool.name, noise(MS.pool))
 -- alone (with -inf there, water-mud covered the band wherever the lean failed: draft render
 -- pv-m2-s1-eu-1); at and above the band's top, below its bottom where the lean fails, on water and
 -- inside marshes -inf. The lean still reaches below the band's bottom, on its cold side.
-local function vanilla_bonus(t, marsh)
+local function vanilla_bonus(t, marsh, extra)
   return "if(" .. marsh .. " > " .. num(V.marsh_cut) .. ", if(aux > " .. num(cfg.climate.aux.ab_cap) ..
     ", if(elevation > 0, " .. num(V.bonus) .. ", -inf), -inf), if(elevation > 0, if(" .. t .. " >= " ..
     num(X.temperate_below) .. ", -inf, if(1 - abs(" .. t .. " - " .. num(V.lean_t) .. ") / " .. num(V.lean_span) ..
-    " + patch + " .. num(V.fine) .. " * " .. MS.pool.name .. " - " .. num(V.lean_cut) .. " > 0, " .. num(V.bonus) ..
+    " + patch + " .. num(V.fine) .. " * " .. MS.pool.name .. (extra or "") .. " - " .. num(V.lean_cut) .. " > 0, " ..
+    num(V.bonus) ..
     ", if(" .. t .. " >= " .. num(X.temperate_from) .. ", 0, -inf))), -inf))"
 end
 local PATCH = {patch = "clamp(" .. num(V.patch.amplitude) .. " * " .. noise(V.patch) .. ", " .. num(-V.patch.clamp) ..
@@ -119,16 +120,46 @@ if mods["alien-biomes"] then
   def(V.body_grain, vanilla_bonus("band_t", MS.edge), {patch = PATCH.patch, band_t = band_t(GK.temperature, WILD_TILE)})
   -- The stony tiles on a range: the bonus with the highland's lean.
   def(V.body_high, V.body_grain .. " + " .. cfg.ridges.names.ground)
+  -- The bodies a new world's preset names: the same bonus with the lean frayed by the grain's noise.
+  local LEAN_FRAY = " + " .. num(V.fray) .. " * clamp((band_t - " .. num(V.fray_t) .. ") / " .. num(V.fray_span) ..
+    ", 0, 1) * noise_layer_noise(" .. num(cfg.climate.grain.layer) .. ")"
+  def(V.next.grain, vanilla_bonus("band_t", MS.edge, LEAN_FRAY),
+    {patch = PATCH.patch, band_t = band_t(GK.temperature, WILD_TILE)})
+  def(V.next.high, V.next.grain .. " + " .. cfg.ridges.names.ground)
   def(X.body_grain, exclusion("band_t", MS.edge), {band_t = band_t(GK.temperature, WILD_TILE)})
   -- The shared fields of the tile scores' noise (config.lua tiles.noise_share), read on the on branch alone.
   local NS = cfg.tiles.noise_share
-  for i, name in ipairs(NS.fields) do
-    def(name, "multioctave_noise{x = x, y = y, offset_x = " .. num(NS.offset_x) .. ", persistence = " ..
+  local function shared_field(i)
+    return "multioctave_noise{x = x, y = y, offset_x = " .. num(NS.offset_x) .. ", persistence = " ..
       num(NS.persistence) .. ", seed0 = map_seed, seed1 = " .. num(NS.first_seed1 + i - 1) .. ", octaves = " ..
       num(NS.octaves) .. ", input_scale = 1 / " .. num(NS.wavelength_tiles) .. ", output_scale = " ..
-      num(NS.output_scale) .. "}")
+      num(NS.output_scale) .. "}"
+  end
+  for i, name in ipairs(NS.fields) do
+    def(name, shared_field(i))
+  end
+  -- The fray, and each field's next version: the same noise text, for a preset names it in the field's place, so it
+  -- cannot read the field by name.
+  local FR, FN = NS.fray, NS.noise
+  def(FR.body, num(FR.amount) .. " * clamp((" .. num(FR.t) .. " - " .. GK.temperature .. ") / " .. num(FR.span) ..
+    ", 0, 1) * (" .. num(FN.gain) .. " * multioctave_noise{x = x, y = y, persistence = " .. num(FN.persistence) ..
+    ", seed0 = map_seed, seed1 = " .. num(FN.seed1) .. ", octaves = " .. num(FN.octaves) .. ", input_scale = 1 / " ..
+    num(FN.wavelength_tiles) .. ", output_scale = " .. num(FN.output_scale) .. "} + " .. num(NS.fine) ..
+    " * noise_layer_noise(" .. num(cfg.climate.grain.layer) .. "))")
+  for i, name in ipairs(FR.fields) do
+    def(name, shared_field(i) .. " + " .. num(FR.weights[i]) .. " * " .. FR.body)
   end
 end
+
+-- The frozen tile (config.lua tiles.frozen): the key at its off value, and the body north of the snow line and on a
+-- massif's snow.
+local FZ = cfg.tiles.frozen
+def(FZ.key, FZ.off)
+def(FZ.body, "if(elevation > 0, if(max(" .. cfg.climate.north.names.d .. " + " .. num(FZ.fray) ..
+  " * noise_layer_noise(" .. num(cfg.climate.grain.layer) .. ") * min(1, " .. num(cfg.ridges.cold.fit_scale) .. " / " ..
+  K.scale .. "), " ..
+  num(FZ.cold) .. " * (" .. cfg.ridges.names.cold.gated .. " - " .. num(cfg.ridges.cold.snow_at) .. ")) > 0, " ..
+  num(FZ.score) .. ", " .. FZ.off .. "), " .. FZ.off .. ")")
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut
 -- on about 3 percent of tiles, draft run pv-m1-s1-eu-11), the pool noise passes a cut that falls as
@@ -146,3 +177,27 @@ def(MS.grass.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(elevat
   ", 0), 0)")
 
 data:extend(E)
+
+-- The mod's one tile: a copy of a base dirt with its own art, at half the base sheet's size.
+local function deep(t)
+  if type(t) ~= "table" then
+    return t
+  end
+  local out = {}
+  for k, v in pairs(t) do
+    out[k] = deep(v)
+  end
+  return out
+end
+
+local function frozen_tile()
+  local tile = deep(data.raw.tile[FZ.copy] or {})
+  tile.type, tile.name, tile.order, tile.map_color = "tile", FZ.tile, FZ.order, FZ.map_color
+  tile.autoplace, tile.factoriopedia_alternative = nil, nil
+  tile.collision_mask = deep(FZ.collision_mask)
+  for _, v in ipairs((tile.variants or {}).main or {}) do
+    v.picture, v.y, v.scale = FZ.picture, v.y / FZ.art_scale, FZ.art_scale / 2
+  end
+  data:extend({tile})
+end
+frozen_tile()

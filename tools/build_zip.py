@@ -21,7 +21,7 @@ body counts: its row names come from config.lua's stems and suffix and the regio
 composed by tools/tnconfig.py as regions.lua composes them. It finds the bodies statically, through
 the luaparser loader, because release.yml runs without the game; the gate's frozen row checks the
 dumped bodies themselves. --out-dir takes any folder, the live mods folder
-included: copying the built zip there is allowed, and the build
+included: copying the built zip there is allowed (decision of 2026-10-27 16:19), and the build
 record lands beside the zip (and the .sha256 with --release).
 """
 #!/usr/bin/env python3
@@ -55,7 +55,7 @@ which refuses a tag that is not the checked-out commit or whose commit is not on
 release ships only a commit main's history holds, never a branch commit that skipped CI.
 
 --out-dir takes any folder, the live mods folder included: copying the built zip there is allowed
-, and the build record lands beside the zip (and the .sha256 with
+(decision of 2026-10-27 16:19), and the build record lands beside the zip (and the .sha256 with
 --release). A zip that leaves the checkout lands: once it is in a mods folder, a save can be made
 from its bodies, so its registry counts as landed from then (design constraint 2). Such a build
 applies the release's body and snapshot checks, reads the zips of this mod already in the folder
@@ -389,6 +389,12 @@ def build(out_dir=DIST, release=False, mod_dir=MOD, frozen_path=FROZEN, landing=
     mod_id, version, cfg = mod_identity(mod_dir)
     bodies = frozen = registry = None
     if release or landing:
+        import tnlua
+        # checked first, so a checkout without the base prototypes gets this one line and not a body
+        # failure that names a vanilla tile the empty data.raw lacked
+        missing = tnlua.vanilla_raw_problem()
+        if missing:
+            raise BuildError(missing)
         try:
             frozen = json.loads(Path(frozen_path).read_text(encoding="utf-8"))
             registry = tnfrozen.runner_registry()

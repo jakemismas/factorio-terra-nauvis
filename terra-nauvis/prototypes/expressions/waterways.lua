@@ -1,4 +1,4 @@
--- Waterway expressions (ARCHITECTURE.md, "Expression inventory" and "Stable hooks"; milestone waterways).
+-- Waterway expressions (ARCHITECTURE.md, "Expression inventory" and "Stable hooks"; contract 4).
 --
 -- Per map and scale, four named sets from the generated files (tools/build_waterways.py): the rivers,
 -- straits and turning basins (ww), the canals, the dams and the fords. Each reads only its map's geo
@@ -13,35 +13,77 @@
 -- the canals switch's two neutral bodies. Every name and number comes from config.lua (S-5).
 local cfg = require("prototypes.config")
 
--- One require per generated file (the registration scan reads literal module names), by map and scale.
+-- One require per generated file (the registration scan reads literal module names), by map, version of the
+-- map's waterway files and scale. A geography version binds the files its waterway_files names, 1 when it names
+-- none, so a river release moves one map's new worlds and no released body (ARCHITECTURE.md, "Release versioning
+-- policy", rule 11). Each list runs in the order of the scale list of the record that names it.
 local FILES = {
   europe = {
-    require("prototypes.generated.waterways_europe_s1_v1"),
-    require("prototypes.generated.waterways_europe_s2_v1"),
-    require("prototypes.generated.waterways_europe_s3_v1"),
-    require("prototypes.generated.waterways_europe_s4_v1"),
-    require("prototypes.generated.waterways_europe_s5_v1"),
-    require("prototypes.generated.waterways_europe_s6_v1"),
+    [1] = {
+      require("prototypes.generated.waterways_europe_s1_v1"),
+      require("prototypes.generated.waterways_europe_s2_v1"),
+      require("prototypes.generated.waterways_europe_s3_v1"),
+      require("prototypes.generated.waterways_europe_s4_v1"),
+      require("prototypes.generated.waterways_europe_s5_v1"),
+      require("prototypes.generated.waterways_europe_s6_v1"),
+    },
+    [2] = {
+      require("prototypes.generated.waterways_europe_s12_v1"),
+      require("prototypes.generated.waterways_europe_s24_v1"),
+    },
   },
   atlantic = {
-    require("prototypes.generated.waterways_atlantic_s1_v1"),
-    require("prototypes.generated.waterways_atlantic_s2_v1"),
-    require("prototypes.generated.waterways_atlantic_s3_v1"),
-    require("prototypes.generated.waterways_atlantic_s4_v1"),
-    require("prototypes.generated.waterways_atlantic_s5_v1"),
-    require("prototypes.generated.waterways_atlantic_s6_v1"),
+    [1] = {
+      require("prototypes.generated.waterways_atlantic_s1_v1"),
+      require("prototypes.generated.waterways_atlantic_s2_v1"),
+      require("prototypes.generated.waterways_atlantic_s3_v1"),
+      require("prototypes.generated.waterways_atlantic_s4_v1"),
+      require("prototypes.generated.waterways_atlantic_s5_v1"),
+      require("prototypes.generated.waterways_atlantic_s6_v1"),
+    },
+    [2] = {
+      require("prototypes.generated.waterways_atlantic_s1_v2"),
+      require("prototypes.generated.waterways_atlantic_s2_v2"),
+      require("prototypes.generated.waterways_atlantic_s3_v2"),
+      require("prototypes.generated.waterways_atlantic_s4_v2"),
+      require("prototypes.generated.waterways_atlantic_s5_v2"),
+      require("prototypes.generated.waterways_atlantic_s6_v2"),
+      require("prototypes.generated.waterways_atlantic_s12_v2"),
+      require("prototypes.generated.waterways_atlantic_s24_v2"),
+    },
   },
   olde_world = {
-    require("prototypes.generated.waterways_olde_world_s1_v1"),
-    require("prototypes.generated.waterways_olde_world_s2_v1"),
-    require("prototypes.generated.waterways_olde_world_s3_v1"),
-    require("prototypes.generated.waterways_olde_world_s4_v1"),
-    require("prototypes.generated.waterways_olde_world_s5_v1"),
-    require("prototypes.generated.waterways_olde_world_s6_v1"),
+    [1] = {
+      require("prototypes.generated.waterways_olde_world_s1_v1"),
+      require("prototypes.generated.waterways_olde_world_s2_v1"),
+      require("prototypes.generated.waterways_olde_world_s3_v1"),
+      require("prototypes.generated.waterways_olde_world_s4_v1"),
+      require("prototypes.generated.waterways_olde_world_s5_v1"),
+      require("prototypes.generated.waterways_olde_world_s6_v1"),
+    },
+    [2] = {
+      require("prototypes.generated.waterways_olde_world_s1_v2"),
+      require("prototypes.generated.waterways_olde_world_s2_v2"),
+      require("prototypes.generated.waterways_olde_world_s3_v2"),
+      require("prototypes.generated.waterways_olde_world_s4_v2"),
+      require("prototypes.generated.waterways_olde_world_s5_v2"),
+      require("prototypes.generated.waterways_olde_world_s6_v2"),
+      require("prototypes.generated.waterways_olde_world_s12_v2"),
+      require("prototypes.generated.waterways_olde_world_s24_v2"),
+    },
   },
 }
 
 local H = cfg.hooks
+
+local function files_of(key, g)
+  return FILES[key][g.waterway_files or 1]
+end
+
+-- The scales a record serves: its own list, or the released list a landed version was built on.
+local function scales_of(rec)
+  return rec.scales or cfg.scales.released
+end
 
 local function num(v)
   return string.format(cfg.number_format, v)
@@ -60,7 +102,7 @@ local function fn(f)
   return {parameters = params, expression = f.expression, local_expressions = locals}
 end
 
--- The natural course (config.lua natural): one warp of the geo tiles every set
+-- The natural course (config.lua natural; DECISIONS 2026-10-30): one warp of the geo tiles every set
 -- of a version reads, so the fords stay on their rivers and the cost is a few noise evaluations per tile,
 -- not per segment. Each octave is one basis noise per axis in geo tiles, anchored like the coast's detail,
 -- so the same ground wanders the same way from every spawn. Rivers read X and Y, the whole warp; straits,
@@ -70,7 +112,7 @@ end
 -- only ever widens, so no floor moves, J the rough edge of a ford, which would read as a bar across its
 -- river without it. T, the rivers' source taper (a generated set of the sources), reads X and Y. Every local
 -- reads constants and x, y alone.
-local function natural_locals(g)
+local function natural_locals(g, mouth, scale)
   local N = cfg.waterways.natural
   local s = cfg.keys.scale
   local function noise(seed1, wavelength)
@@ -90,38 +132,84 @@ local function natural_locals(g)
     py[i] = num(o.passage) .. " * " .. ry[i]
   end
   local F = N.spawn_fade
-  locals.fade = "clamp((sqrt(x * x + y * y) - " .. num(F.inner_tiles) .. ") / " .. num(F.outer_tiles - F.inner_tiles) ..
+  local outer = math.max(F.outer_tiles, F.outer_per_scale * scale)
+  locals.fade = "clamp((sqrt(x * x + y * y) - " .. num(F.inner_tiles) .. ") / " .. num(outer - F.inner_tiles) ..
     ", 0, 1)"
-  local function warped(tile, parts)
-    return tile .. " + fade * (" .. table.concat(parts, " + ") .. ")"
+  local function warped(tile, parts, share)
+    return tile .. " + fade * " .. (share or "") .. "(" .. table.concat(parts, " + ") .. ")"
   end
-  locals.X, locals.Y = warped(g.gx, rx), warped(g.gy, ry)
+  -- A river keeps its polyline at the sea (generated mouth, natural.mouth), so Exact coastlines can shape a delta
+  -- right up to it instead of leaving the coast fit there.
+  locals.X, locals.Y = warped(g.gx, rx, mouth and "M * "), warped(g.gy, ry, mouth and "M * ")
+  if mouth then
+    locals.M = mouth
+  end
   locals.XP, locals.YP = warped(g.gx, px), warped(g.gy, py)
   locals.W = "1 + " .. num(N.width.amplitude) .. " * clamp(" .. noise(N.width.seed1, N.width.wavelength) .. ", -1, 1)"
   local half = num(N.bank.half)
   locals.B = "(" .. num(N.bank.amplitude[1]) .. " + " .. num(N.bank.amplitude[2]) .. " * " .. s .. ") * (" .. half ..
     " + " .. half .. " * clamp(" .. noise(N.bank.seed1, N.bank.wavelength) .. ", -1, 1))"
-  locals.J = "(" .. num(N.ford_edge.amplitude[1]) .. " + " .. num(N.ford_edge.amplitude[2]) .. " * " .. s .. ") * " ..
-    noise(N.ford_edge.seed1, N.ford_edge.wavelength)
+  local FE = N.ford_edge
+  if scale > FE.hold_above then
+    local h = FE.hold_above
+    locals.J = num(FE.amplitude[1] + FE.amplitude[2] * h) .. " * " ..
+      noise(FE.seed1, {FE.wavelength[1] + FE.wavelength[2] * h, 0})
+  else
+    locals.J = "(" .. num(FE.amplitude[1]) .. " + " .. num(FE.amplitude[2]) .. " * " .. s .. ") * " ..
+      noise(FE.seed1, FE.wavelength)
+  end
   return locals
 end
 
+-- The warp a set reads through X, Y, XP and YP, as bodies of their own on a version that lists them (`warp`, four
+-- names per scale in this order): a river's segment reads its point several times and a set holds near a thousand
+-- segments, so the warp as locals was copied tens of thousands of times, at every start, for no change in the value.
+local WARP_PARTS = {"X", "Y", "XP", "YP"}
+
 local E = {}
--- The sets of the geography version that composes them, bound to its chain, for every offered scale.
-for _, key in ipairs(cfg.map_order) do
-  local versions = (cfg.geography[key] or {}).versions or {}
-  local files = FILES[key]
-  for _, g in ipairs(versions) do
-    -- a thin version reads the older version's sets by name
-    local sets = not g.over and g.waterways
-    for _, s in ipairs(sets and cfg.scales.values or {}) do
-      local gen = files[s]
+-- The sets of one record, bound to the chain of geography version g, for every scale of the record's own list. A
+-- record is the version, or its `extension`; a name list runs in the order of that list, so a scale reads its names
+-- through its position there and is never a position itself.
+local function emit_sets(key, g, rec)
+    local sets = rec.waterways
+    local files = files_of(key, rec)
+    for pos, s in ipairs(scales_of(rec)) do
+      local gen = files[pos]
       if not gen then
         error("waterways.lua has no generated file for " .. key .. " at scale " .. s)
       end
+      -- The mouth share is a body of its own, not a local: the game copies a local into every seg() and box() call
+      -- that reads it through X or Y, near a thousand a set, which cost 6.8 seconds at every start.
+      local mouth = rec.mouths and rec.mouths[pos]
+      if mouth then
+        E[#E + 1] = {type = "noise-expression", name = mouth, expression = gen.mouth,
+                     local_expressions = {X0 = g.gx, Y0 = g.gy}}
+      end
+      local warp
+      if rec.warp then
+        warp = {}
+        local full = natural_locals(g, mouth, s)
+        local inner = {M = full.M, fade = full.fade}
+        for k, v in pairs(full) do
+          if k:match("^w[xy]%d") then
+            inner[k] = v
+          end
+        end
+        for k, part in ipairs(WARP_PARTS) do
+          warp[part] = rec.warp[(pos - 1) * #WARP_PARTS + k]
+          E[#E + 1] = {type = "noise-expression", name = warp[part], expression = full[part], local_expressions = inner}
+        end
+      end
       local function set(kind, expression, functions)
-        local name = sets[kind][s]
-        local locals = natural_locals(g)
+        local name = sets[kind][pos]
+        local locals = natural_locals(g, (kind == "ww" or kind == "fords") and mouth, s)
+        if warp then
+          local kept = {W = locals.W, B = locals.B, J = locals.J}
+          for part, body in pairs(warp) do
+            kept[part] = body
+          end
+          locals = kept
+        end
         if kind == "ww" then
           locals.T = gen.taper
         end
@@ -136,6 +224,19 @@ for _, key in ipairs(cfg.map_order) do
       set("canals", gen.canals, {"seg"})
       set("dams", gen.dams, {"seg"})
       set("fords", gen.fords, {"box"})
+    end
+end
+
+for _, key in ipairs(cfg.map_order) do
+  local versions = (cfg.geography[key] or {}).versions or {}
+  for _, g in ipairs(versions) do
+    -- a thin version reads the older version's sets by name
+    if g.waterways and not g.over then
+      emit_sets(key, g, g)
+      local X = cfg.scale_extensions[key]
+      if X and X.geo_id == g.geo_id then
+        emit_sets(key, g, X)
+      end
     end
   end
 end
@@ -159,30 +260,33 @@ data:extend(E)
 -- over the fit's own discs on a river's course, inline text per scale, so a carve still cuts them.
 local M = {}
 
-local function by_scale(names)
-  local values = cfg.scales.values
-  local text = names[values[#values]]
+-- A released version's list is frozen, so this text is too: the last value takes the else branch, which is why a
+-- scale past a released version's list reads that version's scale 6 sets.
+local function by_scale(names, values)
+  local text = names[#values]
   for i = #values - 1, 1, -1 do
-    local s = values[i]
-    text = "if(" .. cfg.keys.scale .. " == " .. num(s) .. ", " .. names[s] .. ", " .. text .. ")"
+    text = "if(" .. cfg.keys.scale .. " == " .. num(values[i]) .. ", " .. names[i] .. ", " .. text .. ")"
   end
   return text
 end
 
-function M.composition(sets, previous, key, g)
+-- rec: the version, or its extension, which supplies the sets and the scale list; g the version whose chain they read.
+function M.composition(rec, previous, key, g)
+  local sets = rec.waterways
   if not sets then
     error("a waterways composition needs the version's waterway sets")
   end
   local on = cfg.keys.canals .. " > " .. num(H.threshold)
+  local values = scales_of(rec)
   local ponds = {}
-  for _, s in ipairs(cfg.scales.values) do
-    ponds[s] = FILES[key][s].ponds
+  for pos in ipairs(values) do
+    ponds[pos] = files_of(key, rec)[pos].ponds
   end
   return "min(max(" .. previous .. ", dam, ponds), carve, canal)", {
-    dam = "if(" .. on .. ", -inf, " .. by_scale(sets.dams) .. ")",
-    ponds = by_scale(ponds),
-    carve = by_scale(sets.ww),
-    canal = "if(" .. on .. ", " .. by_scale(sets.canals) .. ", inf)",
+    dam = "if(" .. on .. ", -inf, " .. by_scale(sets.dams, values) .. ")",
+    ponds = by_scale(ponds, values),
+    carve = by_scale(sets.ww, values),
+    canal = "if(" .. on .. ", " .. by_scale(sets.canals, values) .. ", inf)",
     X = g.gx,
     Y = g.gy,
   }

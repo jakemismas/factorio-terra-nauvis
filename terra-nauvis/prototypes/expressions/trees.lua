@@ -1,24 +1,23 @@
--- Tree expressions (ARCHITECTURE.md, "Expression inventory" and "Stable hooks"). Milestone climate-tiles
+-- Tree expressions (ARCHITECTURE.md, "Expression inventory" and "Stable hooks"). Climate tiles
 -- ships the palm switch; trees-forests adds the forest boost, the restored vanilla trees, rocks and
 -- decals beside Alien Biomes, and the palms' second versions.
 --
--- The palm switch: Alien Biomes' palms read
--- elevation in the Entity program (R3 4.1), which on an Earth preset is the fine coast field (design
--- constraint S-3). Earth presets point each palm's entity:<tree>:probability and :richness keys at
+-- The palm switch (DECISIONS 08:00; council graft 10; plan reconciliation 9): Alien Biomes' palms read
+-- elevation in the Entity program (R3 4.1), which on an Earth preset is the fine coast field (constraint
+-- S-3). Earth presets point each palm's entity:<tree>:probability and :richness keys at
 -- Earth copies of its autoplace (presets.lua) that read this constant where AB reads elevation. The
 -- constant is the palm band's middle (AB's palms grow from elevation 0 to 2), so on Earth presets palms
--- follow climate and sand alone (design note 6); every other world keeps AB's own palms,
+-- follow climate and sand alone (plan Contradictions item 6); every other world keeps AB's own palms,
 -- untouched. A Map type pick sets no key, so its palms read the fine field (Contradictions item 15).
 -- Every Earth preset bakes the keys with or without Alien Biomes, so a world that gains AB later
 -- meets the switch too; a save made before the switch names no key and keeps AB's own palms on its
--- fine field for life.
+-- fine field for life (DECISIONS 2026-10-29 18:40).
 --
--- The copies are registered bodies, so they are built from Earth's own data, never from the installed
--- Alien Biomes: the generated table (config.lua tiles.palm.table, tools/build_palms.py) freezes Alien
--- Biomes 0.8.0's palm autoplace and the noise functions it calls, which each copy carries as local
--- functions under local_prefix. They are defined on every load, with or without Alien Biomes, so a
--- save that names them always finds the same bodies; data-final-fixes.lua points the keys at the
--- neutral body instead when the installed palms differ from the table.
+-- The copies are built at data-final-fixes from the installed palms (M.palm_bodies), since Alien Biomes' own
+-- data-final-fixes is the last to touch a tree, and hold no Alien Biomes text in this mod. Each carries the noise
+-- functions it calls as local functions under local_prefix. The names are registered, so
+-- data-final-fixes.lua holds the installed palms to config.lua's digest (tools/build_palms.py): on a missing or
+-- unexpected palm, and with no Alien Biomes, every copy is the neutral body, so a save always finds its names.
 --
 -- The great forests (trees-forests; S10 section 4; ARCHITECTURE.md, "Stable hooks"): every living tree's
 -- probability becomes boost(own) below, if(tn_forests_on > threshold, min(cap, ((own) + tn_tree_lift) *
@@ -30,9 +29,9 @@
 -- times the forest sum; the region formula lives in regions.lua alone, D13). A multiplier keeps the
 -- climate in charge: where a tree's own probability is 0 or below, the boost adds nothing (S10). Alien
 -- Biomes' palm prototypes carry no
--- hook (they stay AB's, so the frozen palm table and its checks read them raw): on Earth presets the
+-- hook (they stay AB's, so the palm copies and their digest read them raw): on Earth presets the
 -- palms read their copies, so each palm's probability key names a second version that is the same
--- formula around the registered first; the richness keys keep the first versions.
+-- formula around the registered first (design rule 21); the richness keys keep the first versions.
 --
 -- The restored base game beside Alien Biomes (trees-forests; S3 section 5; R3 3.4 items 3 to 6): AB nils
 -- the autoplace of the 15 living vanilla trees and of the vanilla rocks and decals. data-final-fixes.lua
@@ -40,7 +39,7 @@
 -- Earth presets with AB point at the Earth body defined here from prototypes/tables/vanilla.lua: the
 -- base game's own text, with the Earth temperature on the vanilla scale where a tree reads temperature
 -- (the fallback climate's scale and clamp, which the vanilla trees read without AB). These bodies read
--- the base game's shared tree and rock helpers by name, as the base game's own entities do (design notes,
+-- the base game's shared tree and rock helpers by name, as the base game's own entities do (DECISIONS,
 -- trees-forests). The re-listed decoratives' keys hold -inf and Earth presets name one shared body, 0.
 local cfg = require("prototypes.config")
 local V = require("prototypes.tables.vanilla")
@@ -70,61 +69,68 @@ function M.boost(own, lift, band)
   return "if(" .. B.gate .. " > " .. num(cfg.hooks.threshold) .. ", min(" .. num(B.cap) .. ", " .. inner .. " * " ..
     B.key .. "), " .. own .. ")"
 end
--- config.lua tiles.palm.table names this file for tools/build_palms.py; the registration scan reads
--- literal module names only.
-local T = require("prototypes.generated.palms_ab_v1")
 
 local function ident(name)
   return "%f[%w_]" .. (string.gsub(name, "%p", "%%%0")) .. "%f[^%w_]"
 end
 
-local fnames = {}
-for name in pairs(T.functions) do
-  fnames[#fnames + 1] = name
-end
-table.sort(fnames)
-
--- A recorded text with each carried function renamed to its local name and elevation replaced by the
--- palm constant; numbers pass through.
-local function rewrite(v)
-  if type(v) ~= "string" then
-    return v
-  end
-  local s = v
-  for _, name in ipairs(fnames) do
-    s = string.gsub(s, ident(name), P.local_prefix .. name)
-  end
-  return (string.gsub(s, ident(P.reads), P.body))
-end
-
-local function rewrite_all(t)
+-- The palm copies' prototypes from Alien Biomes' live autoplace (`source`, data-final-fixes.lua palm_source): each text
+-- with every called function renamed to its local name and elevation replaced by the palm constant, the functions
+-- carried as local functions; numbers pass through. With no source, the neutral body under every name, so a saved
+-- world's names stay defined.
+function M.palm_bodies(source)
   local out = {}
-  for k, v in pairs(t or {}) do
-    out[k] = rewrite(v)
-  end
-  return out
-end
-
-local function local_functions()
-  local out = {}
-  for _, name in ipairs(fnames) do
-    local f = T.functions[name]
-    local params = {}
-    for i, p in ipairs(f.parameters) do
-      params[i] = p
+  if not source then
+    for i, c in ipairs(P.copies) do
+      out[i] = {type = "noise-expression", name = c.body, expression = P.neutral}
     end
-    out[P.local_prefix .. name] = {parameters = params, expression = rewrite(f.expression),
-                                   local_expressions = f.local_expressions and rewrite_all(f.local_expressions) or nil}
+    return out
+  end
+  local fnames = {}
+  for name in pairs(source.functions) do
+    fnames[#fnames + 1] = name
+  end
+  table.sort(fnames)
+  local function rewrite(v)
+    if type(v) ~= "string" then
+      return v
+    end
+    local s = v
+    for _, name in ipairs(fnames) do
+      s = string.gsub(s, ident(name), P.local_prefix .. name)
+    end
+    return (string.gsub(s, ident(P.reads), P.body))
+  end
+  local function rewrite_all(t)
+    local copy = {}
+    for k, v in pairs(t or {}) do
+      copy[k] = rewrite(v)
+    end
+    return copy
+  end
+  local function local_functions()
+    local copy = {}
+    for _, name in ipairs(fnames) do
+      local f = source.functions[name]
+      local params = {}
+      for i, p in ipairs(f.parameters) do
+        params[i] = p
+      end
+      copy[P.local_prefix .. name] = {parameters = params, expression = rewrite(f.expression),
+                                      local_expressions = f.local_expressions and rewrite_all(f.local_expressions) or
+                                        nil}
+    end
+    return copy
+  end
+  for i, c in ipairs(P.copies) do
+    local t = source.trees[c.tree]
+    out[i] = {type = "noise-expression", name = c.body, expression = rewrite(t[c.field .. "_expression"]),
+              local_expressions = rewrite_all(t.local_expressions), local_functions = local_functions()}
   end
   return out
 end
 
 local E = {{type = "noise-expression", name = P.body, expression = string.format(cfg.number_format, P.value)}}
-for _, c in ipairs(P.copies) do
-  local t = T.trees[c.tree]
-  E[#E + 1] = {type = "noise-expression", name = c.body, expression = rewrite(t[c.field .. "_expression"]),
-               local_expressions = rewrite_all(t.local_expressions), local_functions = local_functions()}
-end
 
 local function def(name, expression, locals)
   E[#E + 1] = {type = "noise-expression", name = name, expression = expression, local_expressions = locals}
@@ -188,10 +194,17 @@ end
 def(R.deco_body, R.deco_on)
 
 -- The palms' second probability versions: the boost around climate-tiles' copies, defined on every
--- load as the copies are (decision 21: the copies stay registered and unchanged).
+-- load as the copies are (design rule 21: the copies stay registered and unchanged).
 for _, p in ipairs(TR.palm) do
   def(p.body, M.boost(p.base))
+  def(p.next, p.body .. " * " .. cfg.tiles.palm_allow.body)
 end
+
+-- The palm mask (config.lua tiles.palm_allow): a product of tests on fields the Entity program holds already.
+local PA = cfg.tiles.palm_allow
+def(PA.body, "(temperature + " .. cfg.climate.names.belts.t .. " > " .. num(PA.warm_t) .. ") * (" .. cfg.keys.high ..
+  " + " .. cfg.keys.scale .. " * (" .. cfg.regions.names.highland_fray .. " + " .. num(PA.margin_px) .. ") <= 0) * (" ..
+  cfg.climate.names.lat .. " < " .. num(PA.lat) .. ")")
 
 data:extend(E)
 

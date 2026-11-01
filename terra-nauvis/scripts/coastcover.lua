@@ -1,4 +1,4 @@
--- Cover for the land Exact coastlines writes (scripts/bandfix.lua step 7; config.lua coastcover; the maintainer,
+-- Cover for the land Exact coastlines writes (scripts/bandfix.lua step 7; config.lua coastcover;
 -- 2026-10-30 16:20). The game generates trees, rocks and decoratives before the handler runs, so land the
 -- handler writes over generated water stays bare. This module gives it the cover of the land beside it:
 --   read, before the tiles are written: the box around the written land, inside the chunk and clear of its edge
@@ -10,10 +10,10 @@
 --     prototype's tile_restriction allows the ground the tile took.
 -- In a chunk with land of its own everything read lies in the chunk, and an entity keeps coastcover.edge_gap clear
 -- of the chunk's edge, so the cover is a pure function of the chunk's own generated state. That state can follow
--- generation order, as the game's own trees and decoratives do. No storage
+-- generation order, as the game's own trees and decoratives do (DECISIONS 2026-10-30 coastcover). No storage
 -- write: each chunk makes its own generator, and the prototype facts are a cache.
 -- regenerate_entity and regenerate_decorative are not an option: on Old World they cost 7 to 90 ms a chunk and
--- place over the whole chunk.
+-- place over the whole chunk (DECISIONS 2026-10-30 coastcover).
 local cfg = require("prototypes.config")
 
 local M = {}

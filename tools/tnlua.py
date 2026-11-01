@@ -1426,16 +1426,57 @@ def settings_stage(reader, mods=None):
 
 
 VANILLA_RAW = tnconfig.REPO / "tests" / "vanilla-raw.json"
+VANILLA_RAW_FORMAT = "tn-vanilla-raw/1"
+# The reduction tools/make_vanilla_raw.py applies to a base-only --dump-data: these types whole, these
+# reduced to the fields the mod's hooks and wrappers read. Readers hold the file to it too.
+VANILLA_WHOLE = ("planet", "autoplace-control", "noise-expression", "noise-function")
+VANILLA_REDUCED = ("resource", "tile", "tree", "optimized-decorative", "simple-entity")
+VANILLA_FIELDS = ("name", "type", "autoplace", "collision_mask", "order", "subgroup")
+
+
+class VanillaRawMissing(LuaError):
+    """tests/vanilla-raw.json is absent or unusable: the offline data stage cannot build the bodies the game
+    builds, so every reader fails closed instead of running on an empty data.raw."""
+
+
+def _vanilla_label(path):
+    p = Path(path)
+    try:
+        return p.resolve().relative_to(tnconfig.REPO.resolve()).as_posix()
+    except ValueError:
+        return str(p)
+
+
+def vanilla_raw_problem(path=VANILLA_RAW):
+    """None when `path` can seed data.raw, else the one line that says why not and how to make it."""
+    import json
+    label = _vanilla_label(path)
+    fix = "run python tools/make_vanilla_raw.py (needs Factorio 2.1 installed)"
+    p = Path(path)
+    if not p.is_file():
+        return f"{label} is missing: {fix}"
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, ValueError) as e:
+        return f"{label} is unreadable ({type(e).__name__}): {fix}"
+    raw = data.get("raw") if isinstance(data, dict) else None
+    if not isinstance(data, dict) or data.get("format") != VANILLA_RAW_FORMAT or not isinstance(raw, dict):
+        return f"{label} is not a {VANILLA_RAW_FORMAT} file: {fix}"
+    empty = [t for t in VANILLA_WHOLE + VANILLA_REDUCED if not isinstance(raw.get(t), dict) or not raw.get(t)]
+    if empty:
+        return f"{label} holds no {', '.join(empty)} prototypes: {fix}"
+    return None
 
 
 def vanilla_raw(path=VANILLA_RAW):
     """The base game's prototypes the mod's data stage reads (tests/vanilla-raw.json, a reduced
-    base-only --dump-data), {type: {name: prototype}}, or {} when the file is absent."""
+    base-only --dump-data), {type: {name: prototype}}. Raises VanillaRawMissing when the file is
+    absent or unusable (vanilla_raw_problem)."""
     import json
-    p = Path(path)
-    if not p.exists():
-        return {}
-    return json.loads(p.read_text(encoding="utf-8")).get("raw") or {}
+    problem = vanilla_raw_problem(path)
+    if problem:
+        raise VanillaRawMissing(problem)
+    return json.loads(Path(path).read_text(encoding="utf-8"))["raw"]
 
 
 def data_stage(reader, values=None, mods=None, base=None):

@@ -1,4 +1,4 @@
--- Exact coastlines (ARCHITECTURE.md, "Control stage"; milestone coast-band-fix; S12, S13-bandfix; design notes
+-- Exact coastlines (ARCHITECTURE.md, "Control stage"; contract 11; S12, S13-bandfix; DECISIONS
 -- 07:05, 12:35 and 13:45). The mod's only per-chunk handler. on_chunk_generated is registered only on a
 -- save whose Nauvis surface carries the band-fix key (config.lua bandfix.key set to bandfix.on; absent
 -- means off): on_init records the save's state once (storage.earth.bandfix) and both on_init and on_load
@@ -17,19 +17,30 @@
 --      player-blocking water on land pixels, land on water pixels; kept tiles, the water a player walks, fords
 --      and marsh water, are neither, so the right tiles of a coast cost nothing;
 --   4. such a tile takes its pixel's class when it lies outside the spawn keep disc and the reference, blurred
+--      (a geography from bandfix_next.from_geo on reads config.lua bandfix_next's wider edge and corners' ground)
 --      by a quadratic B-spline over the pixel's 3 x 3, reads its pixel's class at it by more than
 --      a threshold (bandfix.smooth): about a fifth of a pixel from a straight coast, so the coast follows the
 --      reference on every shore, however far the coast fit strays, and the line where a write stops is a rounded,
 --      wobbling curve instead of the raster's stairs. A pixel whose band
 --      region holds no 2 x 2 block of tiles (an islet or a channel narrower than a pixel) is drawn as a blob
---      around its centre, whatever the blur reads there; below smooth.min_scale the rule is
+--      around its centre, whatever the blur reads there (DECISIONS 13:45); below smooth.min_scale the rule is
 --      S12's closed rule. Land of an open-sea pixel (no land around it) becomes deep water, and where the chunk
 --      writes anything, so do those pixels' shallow tiles; in a chunk left with no land, all shallow tiles reading
 --      open sea do; so a false island sinks without a pale patch or a ghost of its shallows;
 --   5. the classes of the written tiles' bounding box are read once: a written tile that would stand as a
 --      strip one tile wide takes its neighbour in the box along, when that neighbour belongs to the same
---      reference class;
---   6. one set_tiles call inside the chunk, without tile correction;
+--      reference class (DECISIONS 13:45);
+--      From bandfix_next.from_geo on, at scales from smooth.min_scale, steps 3 and 4 read every tile of a K pixel
+--      instead: the reference, blurred the same way, is read at the tile moved by a smooth warp, as one field from
+--      land to water, and a tile takes the class that field holds past a small margin, in either class of pixel. The
+--      old rule can never cross its own pixel's edge, so it leaves the raster's straight sides however it wobbles; a
+--      warp moves the line itself, and both shores of an inlet with it, so nothing pinches. A fill pixel reads the same
+--      field to a lower cut, so a thin strip wanders too instead of standing as a rectangle.
+--      Step 5 goes with it: a written water tile with land on both sides along an axis stays land instead, as generated
+--      water never stands one tile wide;
+--   6. one set_tiles call inside the chunk. Without tile correction the game draws no transition on a written tile
+--      (no shore, no sides, a hard square), and it renames no tile either way, so a geography from
+--      bandfix_next.from_geo on asks for correction; an older save keeps the call it was made with;
 --   7. the written land takes the trees, rocks and decoratives of the land beside it (scripts/coastcover.lua).
 -- It writes only tiles the rule changes, so a repeated delivery writes no land and places no cover twice, and
 -- it decides land and water from its own chunk only, so generation order does not change them: what it reads
@@ -40,40 +51,69 @@ local cfg = require("prototypes.config")
 local guards = require("scripts.guards")
 local coastcover = require("scripts.coastcover")
 
--- One require per generated table (the registration scan reads literal module names): per map its K+
--- table and its mask table for every offered scale.
+-- One require per generated table (the registration scan reads literal module names): per map and table
+-- version its K+ table and its mask table for every offered scale. A save reads the version of its own tn_geo
+-- (generation below), so a released table stays what the saves made with it read.
 local TABLES = {
   europe = {
-    shared = require("scripts.generated.bandfix_europe_v1"),
-    scales = {
-      require("scripts.generated.bandfix_europe_s1_v1"),
-      require("scripts.generated.bandfix_europe_s2_v1"),
-      require("scripts.generated.bandfix_europe_s3_v1"),
-      require("scripts.generated.bandfix_europe_s4_v1"),
-      require("scripts.generated.bandfix_europe_s5_v1"),
-      require("scripts.generated.bandfix_europe_s6_v1"),
+    [1] = {
+      shared = require("scripts.generated.bandfix_europe_v1"),
+      scales = {
+        require("scripts.generated.bandfix_europe_s1_v1"),
+        require("scripts.generated.bandfix_europe_s2_v1"),
+        require("scripts.generated.bandfix_europe_s3_v1"),
+        require("scripts.generated.bandfix_europe_s4_v1"),
+        require("scripts.generated.bandfix_europe_s5_v1"),
+        require("scripts.generated.bandfix_europe_s6_v1"),
+      },
     },
   },
   atlantic = {
-    shared = require("scripts.generated.bandfix_atlantic_v1"),
-    scales = {
-      require("scripts.generated.bandfix_atlantic_s1_v1"),
-      require("scripts.generated.bandfix_atlantic_s2_v1"),
-      require("scripts.generated.bandfix_atlantic_s3_v1"),
-      require("scripts.generated.bandfix_atlantic_s4_v1"),
-      require("scripts.generated.bandfix_atlantic_s5_v1"),
-      require("scripts.generated.bandfix_atlantic_s6_v1"),
+    [1] = {
+      shared = require("scripts.generated.bandfix_atlantic_v1"),
+      scales = {
+        require("scripts.generated.bandfix_atlantic_s1_v1"),
+        require("scripts.generated.bandfix_atlantic_s2_v1"),
+        require("scripts.generated.bandfix_atlantic_s3_v1"),
+        require("scripts.generated.bandfix_atlantic_s4_v1"),
+        require("scripts.generated.bandfix_atlantic_s5_v1"),
+        require("scripts.generated.bandfix_atlantic_s6_v1"),
+      },
+    },
+    [2] = {
+      shared = require("scripts.generated.bandfix_atlantic_v2"),
+      scales = {
+        require("scripts.generated.bandfix_atlantic_s1_v2"),
+        require("scripts.generated.bandfix_atlantic_s2_v2"),
+        require("scripts.generated.bandfix_atlantic_s3_v2"),
+        require("scripts.generated.bandfix_atlantic_s4_v2"),
+        require("scripts.generated.bandfix_atlantic_s5_v2"),
+        require("scripts.generated.bandfix_atlantic_s6_v2"),
+      },
     },
   },
   olde_world = {
-    shared = require("scripts.generated.bandfix_olde_world_v1"),
-    scales = {
-      require("scripts.generated.bandfix_olde_world_s1_v1"),
-      require("scripts.generated.bandfix_olde_world_s2_v1"),
-      require("scripts.generated.bandfix_olde_world_s3_v1"),
-      require("scripts.generated.bandfix_olde_world_s4_v1"),
-      require("scripts.generated.bandfix_olde_world_s5_v1"),
-      require("scripts.generated.bandfix_olde_world_s6_v1"),
+    [1] = {
+      shared = require("scripts.generated.bandfix_olde_world_v1"),
+      scales = {
+        require("scripts.generated.bandfix_olde_world_s1_v1"),
+        require("scripts.generated.bandfix_olde_world_s2_v1"),
+        require("scripts.generated.bandfix_olde_world_s3_v1"),
+        require("scripts.generated.bandfix_olde_world_s4_v1"),
+        require("scripts.generated.bandfix_olde_world_s5_v1"),
+        require("scripts.generated.bandfix_olde_world_s6_v1"),
+      },
+    },
+    [2] = {
+      shared = require("scripts.generated.bandfix_olde_world_v2"),
+      scales = {
+        require("scripts.generated.bandfix_olde_world_s1_v2"),
+        require("scripts.generated.bandfix_olde_world_s2_v2"),
+        require("scripts.generated.bandfix_olde_world_s3_v2"),
+        require("scripts.generated.bandfix_olde_world_s4_v2"),
+        require("scripts.generated.bandfix_olde_world_s5_v2"),
+        require("scripts.generated.bandfix_olde_world_s6_v2"),
+      },
     },
   },
 }
@@ -87,6 +127,16 @@ local band = bit32.band
 
 local CT = B.chunk_tiles
 local KEEP_R2 = B.spawn_keep_tiles * B.spawn_keep_tiles
+-- The write rule of the save's geography (config.lua bandfix_next), set in prepare().
+local NX = cfg.bandfix_next
+local THRESHOLD, WOBBLE_AT, THIN_WOBBLE, THRESHOLD_CAP = B.smooth.threshold, B.smooth.wobble, 0, math.huge
+local CORRECT = false
+-- The warp from arithmetic on the save's scale alone, so a scale added later needs no new row here: WARP_FINE moves
+-- tiles at the tables' own wavelengths, WARP_COARSE, above bandfix_next.warp.fine_scale, at wavelengths COARSE times
+-- longer.
+local NEXT_RULE, WARPED = false, false
+local WARP_FINE, WARP_COARSE, COARSE, WARP_LIMIT, FIELD_MARGIN, STEPS = 0, 0, 1, 0, 0, 1
+local LAKE_NAME = nil
 
 -- The table encoding (config.lua bandfix): digits, the symbol of each role, what a symbol means, and the K
 -- symbols as one pattern. A masked pixel keeps its class for the band but is never written.
@@ -114,6 +164,7 @@ local MASKED = {[S.water] = S.water_masked, [S.water_k] = S.water_masked, [S.lan
 -- the blurred reference's values per mask and tile offset, filled as tiles ask, and the wobble.
 local STATE, SHARED, MASKS, MAP, LUT, THIN
 local SMOOTH, THIN_CENTRE, WOBBLE = {}, {}, {}
+local BLUR, WARP, FIELD_MASK = {}, {}, {}
 local SM = B.smooth
 local WP = SM.period_tiles
 local WP_X, WP_Y = SM.shift_tiles[1], SM.shift_tiles[2]
@@ -287,9 +338,28 @@ local function smooth_at(m, j, i)
   return 1 - 2 * other
 end
 
--- A smooth tile noise in -1 .. 1, periodic over WP tiles: value noise of SM.octaves, a pure function of its
+-- The blur at any point of a pixel with other-class mask m, cx and cy from the pixel's centre, in pixels.
+local function blur_at(m, cx, cy)
+  local function weight(d, u)
+    if d == 0 then
+      return SM.spline_centre - u * u
+    end
+    local v = 1 / 2 + d * u
+    return v * v / 2
+  end
+  local other, bit = 0, 1
+  for _, nb in ipairs(B.neighbours) do
+    if band(m, bit) ~= 0 then
+      other = other + weight(nb[1], cx) * weight(nb[2], cy)
+    end
+    bit = bit * 2
+  end
+  return 1 - 2 * other
+end
+
+-- A smooth tile noise in -1 .. 1, periodic over a table's period: value noise of its octaves, a pure function of its
 -- lattice indices.
-local function wobble_table()
+local function noise_table(period, octaves)
   local out, H = {}, SM.hash
   local function lattice(n, i, j, seed)
     local h = ((i % n) * H.x + (j % n) * H.y + seed * H.seed) % H.modulus
@@ -298,12 +368,12 @@ local function wobble_table()
   local function ease(t)
     return t * t * (SM.ease - 2 * t)
   end
-  for y = 0, WP - 1 do
-    for x = 0, WP - 1 do
+  for y = 0, period - 1 do
+    for x = 0, period - 1 do
       local sum, norm = 0, 0
-      for k, o in ipairs(SM.octaves) do
+      for k, o in ipairs(octaves) do
         local n = o.cells
-        local cell = WP / n
+        local cell = period / n
         local fx, fy = x / cell, y / cell
         local ix, iy = floor(fx), floor(fy)
         local tx, ty = ease(fx - ix), ease(fy - iy)
@@ -312,10 +382,14 @@ local function wobble_table()
         sum = sum + o.weight * (a * (1 - ty) + b2 * ty)
         norm = norm + o.weight
       end
-      out[y * WP + x] = sum / norm
+      out[y * period + x] = sum / norm
     end
   end
   return out
+end
+
+local function wobble_table()
+  return noise_table(WP, SM.octaves)
 end
 
 -- Per other-class mask (0 to 255), whether the band region holds no 2 x 2 block of tiles at scale s: such a
@@ -350,6 +424,7 @@ local WET, KEPT, WROTE, WLAND, WDEEP, PM_STAMP, PM_MASK = {}, {}, {}, {}, {}, {}
 local SEA = {}
 local QX, QY = {}, {}
 local NWET, MARKS_WET, NW = 0, true, 0
+local KEPT_AT, NKEPT = {}, 0
 local GX0, GY0, X0, Y0, C0, R0, WW, NEAR = 0, 0, 0, 0, 0, 0, 0, false
 -- The window's runs of K pixels of one class: pixel row RR[q], columns RA[q]..RB[q], class RL[q], NRUN of them.
 -- BX0..BX1, BY0..BY1 are the chunk tiles step 5 reads, NB of them.
@@ -377,10 +452,14 @@ local function read_tiles(surface, area)
       WET[(p.y - Y0) * CT + p.x - X0] = stamp
     end
   end
+  NKEPT = 0
   if #KEEP > 0 and surface.count_tiles_filtered{area = area, name = KEEP} > 0 then
     for _, t in ipairs(surface.find_tiles_filtered{area = area, name = KEEP}) do
       local p = t.position
-      KEPT[(p.y - Y0) * CT + p.x - X0] = stamp
+      local idx = (p.y - Y0) * CT + p.x - X0
+      KEPT[idx] = stamp
+      NKEPT = NKEPT + 1
+      KEPT_AT[NKEPT] = idx
     end
   end
 end
@@ -476,8 +555,89 @@ end
 -- the line between shallow and deep water does not draw the raster's squares.
 local function sea_at(gx, gy)
   local s = STATE.scale
+  if WARPED then
+    local wx, wy = M.warp_at(gx, gy)
+    return open_sea(floor((gx + wx) / s) + MAP.wr, floor((gy + wy) / s) + MAP.hr)
+  end
   local dx, dy = WOBBLE[gy % WP * WP + gx % WP], WOBBLE[(gy + WP_Y) % WP * WP + (gx + WP_X) % WP]
   return open_sea(floor(gx / s + dx) + MAP.wr, floor(gy / s + dy) + MAP.hr)
+end
+
+-- sea_at above reads the warp through here.
+-- A periodic noise table read between its tiles, at (u, v) in table tiles.
+local function table_at(tab, period, u, v)
+  local x0, y0 = floor(u), floor(v)
+  local tx, ty = u - x0, v - y0
+  local x1, y1 = (x0 + 1) % period, (y0 + 1) % period
+  x0, y0 = x0 % period, y0 % period
+  local a = tab[y0 * period + x0] * (1 - tx) + tab[y0 * period + x1] * tx
+  local b2 = tab[y1 * period + x0] * (1 - tx) + tab[y1 * period + x1] * tx
+  return a * (1 - ty) + b2 * ty
+end
+
+-- The warp at geo tile (gx, gy), in tiles. Two tables of coprime periods, so a long straight coast shows no repeat.
+local function warp_at(gx, gy)
+  local P, SH = NX.warp.period_tiles, NX.warp.shift_tiles
+  local dx = WARP_FINE * (WARP[gy % P * P + gx % P] + WOBBLE[(gy + SH.wy) % WP * WP + (gx + SH.wx) % WP])
+  local dy = WARP_FINE * (WARP[(gy + SH.y) % P * P + (gx + SH.x) % P] +
+                          WOBBLE[(gy + SH.ywy) % WP * WP + (gx + SH.ywx) % WP])
+  if COARSE > 1 then
+    local u, v = gx / COARSE, gy / COARSE
+    dx = dx + WARP_COARSE * (table_at(WARP, P, u, v) + table_at(WOBBLE, WP, u + SH.wx, v + SH.wy))
+    dy = dy + WARP_COARSE * (table_at(WARP, P, u + SH.x, v + SH.y) + table_at(WOBBLE, WP, u + SH.ywx, v + SH.ywy))
+  end
+  dx = dx < -WARP_LIMIT and -WARP_LIMIT or dx > WARP_LIMIT and WARP_LIMIT or dx
+  dy = dy < -WARP_LIMIT and -WARP_LIMIT or dy > WARP_LIMIT and WARP_LIMIT or dy
+  return dx, dy
+end
+M.warp_at = warp_at
+
+-- What the reference wants at geo tile (gx, gy), read through the warp: true for land, false for water, nil where it
+-- leaves the generated tile (the coast's dead zone, thin water, a masked pixel). A K pixel reads its 8 neighbours from
+-- the K+ table; any other pixel holds one class all round it, and the warp's limit keeps the read inside K+.
+local function want(gx, gy)
+  local s = STATE.scale
+  local dx, dy = warp_at(gx, gy)
+  local px, py = (gx + dx) / s, (gy + dy) / s
+  local fc, fr = floor(px), floor(py)
+  local c, r = fc + MAP.wr, fr + MAP.hr
+  local code = sym_in(row_at(r), c)
+  if code == BY.land then
+    return true
+  elseif code == BY.water then
+    return false
+  elseif not IS_K[code] then
+    return nil
+  end
+  local land = LANDISH[code] or false
+  local k = r * MAP.width_px + c
+  local m = FIELD_MASK[k]
+  if not m then
+    m = other_mask(c, r, land)
+    FIELD_MASK[k] = m
+  end
+  local ix, iy = floor((px - fc) * STEPS), floor((py - fr) * STEPS)
+  local key = m * STEPS * STEPS + iy * STEPS + ix
+  local v = BLUR[key]
+  if not v then
+    v = blur_at(m, (ix + 1 / 2) / STEPS - 1 / 2, (iy + 1 / 2) / STEPS - 1 / 2)
+    BLUR[key] = v
+  end
+  local cut = FIELD_MARGIN
+  if THIN[m] then
+    local centre = THIN_CENTRE[m]
+    if not centre then
+      centre = smooth_at(m, floor(s / 2), floor(s / 2)) - SM.thin
+      THIN_CENTRE[m] = centre
+    end
+    cut = min(cut, centre)
+  end
+  if v >= cut then
+    return land
+  elseif v <= -FIELD_MARGIN then
+    return not land
+  end
+  return nil
 end
 
 -- Step 2: the runs of K pixels of the window's columns C0..c1 and rows R0..r1 outside the edge band; returns
@@ -536,9 +696,9 @@ local function outside(m, jrow, gx, gy)
       c = smooth_at(m, floor(s / 2), floor(s / 2)) - SM.thin
       THIN_CENTRE[m] = c
     end
-    return v >= c
+    return v >= c + THIN_WOBBLE * WOBBLE[gy % WP * WP + gx % WP]
   end
-  return v >= SM.threshold + SM.wobble * WOBBLE[gy % WP * WP + gx % WP]
+  return v >= min(THRESHOLD_CAP, THRESHOLD + WOBBLE_AT * WOBBLE[gy % WP * WP + gx % WP])
 end
 
 -- The world area of run q's tiles inside the chunk, into AREA.
@@ -570,6 +730,155 @@ local function scan_run(surface, q)
       end
     end
   end
+end
+
+-- Steps 3 and 4 on every tile of every run, by the warped field (the header's rule from bandfix_next.from_geo on).
+local function scan_warped()
+  for q = 1, NRUN do
+    local land = RL[q]
+    run_area(q)
+    local lx0, ly0, lx1, ly1 = AREA[1][1] - X0, AREA[1][2] - Y0, AREA[2][1] - X0 - 1, AREA[2][2] - Y0 - 1
+    for ly = ly0, ly1 do
+      for lx = lx0, lx1 do
+        local idx = ly * CT + lx
+        if KEPT[idx] ~= stamp and not kept_by_spawn(lx, ly) then
+          local gx, gy = GX0 + lx, GY0 + ly
+          local wet = generated_wet(idx)
+          if not wet and not land and sea_at(gx, gy) then
+            mark_write(idx, lx, ly, false, true)
+          else
+            local w = want(gx, gy)
+            if w ~= nil and w == wet then
+              mark_write(idx, lx, ly, w, false)
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+-- The planned writes less those of the tiles in drop.
+local function drop_writes(drop)
+  local n = 0
+  for q = 1, NW do
+    local idx = QY[q] * CT + QX[q]
+    if drop[idx] then
+      WROTE[idx] = nil
+    else
+      n = n + 1
+      QX[n], QY[n] = QX[q], QY[q]
+    end
+  end
+  NW = n
+end
+
+-- Whether chunk tile n ends up as water of any kind, shallow included.
+local function ends_wet(n)
+  return post_wet(n) or (KEPT[n] == stamp and WROTE[n] ~= stamp)
+end
+
+-- A written water tile with land on both sides along an axis is a slit one tile wide, which generated water never is.
+-- It stays land. A tile at the chunk's edge cannot see its far side, so it stays written.
+local function drop_slits()
+  for _ = 1, NX.slit_passes do
+    local drop = {}
+    for q = 1, NW do
+      local lx, ly = QX[q], QY[q]
+      local idx = ly * CT + lx
+      if not WLAND[idx] and lx > 0 and lx < CT - 1 and ly > 0 and ly < CT - 1 then
+        local across = not ends_wet(idx - 1) and not ends_wet(idx + 1)
+        local along = not ends_wet(idx - CT) and not ends_wet(idx + CT)
+        drop[idx] = (across or along) or nil
+      end
+    end
+    drop_writes(drop)
+  end
+end
+
+-- A shallow tile of a K pixel with land on all four sides is a one-tile pond the written land closed round it, not a
+-- ford or a marsh: fords sit in masked pixels. It takes the land. A tile at the chunk's edge cannot see its last side.
+local function close_kept()
+  local s = STATE.scale
+  for q = 1, NKEPT do
+    local idx = KEPT_AT[q]
+    local lx, ly = idx % CT, floor(idx / CT)
+    if lx > 0 and lx < CT - 1 and ly > 0 and ly < CT - 1 then
+      local open = false
+      for _, n in ipairs({idx - 1, idx + 1, idx - CT, idx + CT}) do
+        open = open or post_wet(n) or (KEPT[n] == stamp and WROTE[n] ~= stamp)
+      end
+      local gx, gy = GX0 + lx, GY0 + ly
+      local code = sym_in(row_at(floor(gy / s) + MAP.hr), floor(gx / s) + MAP.wr)
+      if not open and IS_K[code] and not kept_by_spawn(lx, ly) then
+        mark_write(idx, lx, ly, true, false)
+      end
+    end
+  end
+end
+
+-- The spawn lake is noise of its own that no reference knows: a river's bank on the reference, in a K pixel under it,
+-- would write a strip of land across the lake. Written land there goes back to the lake.
+local function spare_lake(surface)
+  local reach = NX.lake_reach_tiles
+  if not LAKE_NAME or X0 + CT < -reach or X0 > reach or Y0 + CT < -reach or Y0 > reach then
+    return
+  end
+  local spots, at = {}, {}
+  for q = 1, NW do
+    if WLAND[QY[q] * CT + QX[q]] then
+      spots[#spots + 1] = {X0 + QX[q], Y0 + QY[q]}
+      at[#at + 1] = q
+    end
+  end
+  if #spots == 0 then
+    return
+  end
+  local v = surface.calculate_tile_properties({LAKE_NAME}, spots)[LAKE_NAME]
+  local drop = {}
+  for k = 1, #spots do
+    if v[k] < 0 then
+      drop[QY[at[k]] * CT + QX[at[k]]] = true
+    end
+  end
+  drop_writes(drop)
+end
+
+-- Written water with no water to join: a body of a few tiles on dry land, where the reference holds a pond under one
+-- pixel, stays land. One that reaches the chunk's edge cannot see what it meets there, so it stays.
+local function drop_ponds()
+  local seen, drop = {}, {}
+  for q = 1, NW do
+    local first = QY[q] * CT + QX[q]
+    if not WLAND[first] and not seen[first] then
+      local stack, top, body, joined = {first}, 1, {}, false
+      seen[first] = true
+      while top > 0 do
+        local k = stack[top]
+        top = top - 1
+        body[#body + 1] = k
+        local lx, ly = k % CT, floor(k / CT)
+        joined = joined or lx == 0 or lx == CT - 1 or ly == 0 or ly == CT - 1
+        for _, m in ipairs({k - 1, k + 1, k - CT, k + CT}) do
+          if m >= 0 and m < CT * CT then
+            if WROTE[m] ~= stamp then
+              joined = joined or generated_wet(m) or KEPT[m] == stamp
+            elseif not WLAND[m] and not seen[m] then
+              seen[m] = true
+              top = top + 1
+              stack[top] = m
+            end
+          end
+        end
+      end
+      if not joined and #body <= NX.pond_tiles then
+        for _, k in ipairs(body) do
+          drop[k] = true
+        end
+      end
+    end
+  end
+  drop_writes(drop)
 end
 
 -- The shallow tiles in AREA that read open sea go deep.
@@ -776,6 +1085,21 @@ local function corner_ground(surface, lx, ly)
     corner_at(surface, 1 - i, 1 - j)
 end
 
+-- The ground of an unwritten land tile beside written land, so a written edge carries on the ground it meets and one
+-- written tile in a field does not stand out as a square; nil where none lies inside the box read.
+local function beside(surface, lx, ly)
+  for _, d in ipairs(B.neighbours) do
+    local nx, ny = lx + d[1], ly + d[2]
+    if d[1] * d[2] == 0 and nx >= BX0 and nx <= BX1 and ny >= BY0 and ny <= BY1 then
+      local n = ny * CT + nx
+      if WROTE[n] ~= stamp and KEPT[n] ~= stamp and not generated_wet(n) then
+        return surface.get_tile(X0 + nx, Y0 + ny).name
+      end
+    end
+  end
+  return nil
+end
+
 local RECS = {}
 
 -- Step 6: one set_tiles call; written land takes the ground around it, and written water is deep in an open-sea
@@ -796,8 +1120,19 @@ local function write(surface)
         local x, y = X0 + lx, Y0 + ly
         rx = lx + step * WOBBLE[y % WP * WP + x % WP]
         ry = ly + step * WOBBLE[(y + WP_Y) % WP * WP + (x + WP_X) % WP]
+        if NEXT_RULE then
+          local P = NX.warp.period_tiles
+          rx = rx + step * NX.ground_warp * WARP[y % P * P + x % P]
+          ry = ry + step * NX.ground_warp * WARP[(y + WP_Y) % P * P + (x + WP_X) % P]
+        end
       end
-      name = cells[(floor((ry + step / 2) / step) + margin) * n + floor((rx + step / 2) / step) + margin] or
+      local col = floor((rx + step / 2) / step) + margin
+      local row = floor((ry + step / 2) / step) + margin
+      if NEXT_RULE then
+        -- the longer read must not wrap into the next row of cells
+        col, row = max(0, min(col, n - 1)), max(0, min(row, n - 1))
+      end
+      name = (NEXT_RULE and beside(surface, lx, ly)) or cells[row * n + col] or
         (CORNERS and corner_ground(surface, lx, ly)) or chunk_ground(surface)
     end
     local rec = RECS[q]
@@ -812,7 +1147,7 @@ local function write(surface)
     RECS[q] = nil
   end
   local cover = coastcover.read(surface, X0, Y0, RECS, NW, NONLAND_SET, NONLAND)
-  surface.set_tiles(RECS, false, true, true, false)
+  surface.set_tiles(RECS, CORRECT, true, true, false)
   if cover then
     coastcover.place(surface, X0 / CT, Y0 / CT)
   end
@@ -833,10 +1168,23 @@ local function plan_chunk(surface, chx, chy)
   local dx = X0 > 0 and X0 or (X0 + CT - 1 < 0 and -(X0 + CT - 1) or 0)
   local dy = Y0 > 0 and Y0 or (Y0 + CT - 1 < 0 and -(Y0 + CT - 1) or 0)
   NEAR = dx * dx + dy * dy < KEEP_R2
+  if WARPED then
+    FIELD_MASK = {}
+    BX0, BX1, BY0, BY1, NB = 0, CT - 1, 0, CT - 1, CT * CT
+    read_tiles(surface, {{X0, Y0}, {X0 + CT, Y0 + CT}})
+    scan_warped()
+    sink_shallows(surface)
+    spare_lake(surface)
+    drop_slits()
+    drop_ponds()
+    close_kept()
+    return
+  end
   for q = 1, NRUN do
     scan_run(surface, q)
   end
   sink_shallows(surface)
+  spare_lake(surface)
   if NW == 0 then
     return
   end
@@ -884,6 +1232,16 @@ local function listed(list, v)
   return false
 end
 
+-- The version of a map's tables a tn_geo reads: its row of bandfix.generations, else bandfix.version.
+local function generation(key, geo)
+  for _, row in ipairs((B.generations or {})[key] or {}) do
+    if listed(row.geographies, geo) then
+      return row.version
+    end
+  end
+  return B.version
+end
+
 -- The tile lists, from the prototypes: player-blocking water (water_tile and player layers, placed by an
 -- autoplace, as T1 counts water) and kept water (water_tile without the player layer: fords, marsh water).
 local function tile_lists()
@@ -921,9 +1279,40 @@ local function tile_lists()
   end
 end
 
+-- The warp's numbers and the spawn lake's noise name, for a save on the next rule.
+local function pick_warp(st)
+  local fine = min(st.scale, NX.warp.fine_scale)
+  WARP_FINE = NX.warp.px * fine / 2
+  WARP_COARSE = NX.warp.px * (st.scale - fine) / 2
+  COARSE = st.scale / fine
+  WARP_LIMIT = NX.warp.limit_px * st.scale
+  FIELD_MARGIN = NX.warp.margin
+  STEPS = max(NX.warp.steps, st.scale)
+  local gv = guards.geography_of(st.geo)
+  local spawn = gv and gv.version and gv.version.spawn
+  LAKE_NAME = spawn and spawn.spawn_lake or nil
+end
+
+-- The write rule of the save's own geography: a save keeps it for life, so no world made before it changes.
+local function pick_rule(st)
+  local next_rule = (st.geo or 0) >= NX.from_geo
+  THRESHOLD = next_rule and NX.threshold or SM.threshold
+  WOBBLE_AT = next_rule and NX.wobble or SM.wobble
+  THIN_WOBBLE = next_rule and NX.thin_wobble or 0
+  THRESHOLD_CAP = next_rule and NX.cap or math.huge
+  CORNERS = (SM.corners.maps[st.map] or next_rule) and SM.corners or nil
+  CORRECT = next_rule and NX.correct_tiles or false
+  NEXT_RULE = next_rule
+  WARPED = next_rule and st.scale >= SM.min_scale
+  LAKE_NAME = nil
+  if next_rule then
+    pick_warp(st)
+  end
+end
+
 -- What the handler reads from the save's state; false when the shipped data does not serve it.
 local function prepare(st)
-  local tabs = TABLES[st.map]
+  local tabs = TABLES[st.map] and TABLES[st.map][generation(st.map, st.geo)]
   local m = cfg.maps[st.map]
   local masks = tabs and tabs.scales[st.scale]
   if not (masks and m and tabs.shared.width == m.width_px and tabs.shared.height == m.height_px
@@ -943,10 +1332,12 @@ local function prepare(st)
       end
     end
   end
-  CORNERS = SM.corners.maps[st.map] and SM.corners or nil
+  pick_rule(st)
   LUT = reach_lut(st.scale)
   THIN = thin_lut(st.scale, LUT)
   SMOOTH, THIN_CENTRE, WOBBLE = {}, {}, wobble_table()
+  BLUR = {}
+  WARP = NEXT_RULE and noise_table(NX.warp.period_tiles, NX.warp.octaves) or {}
   tile_lists()
   coastcover.prepare()
   return true
@@ -972,7 +1363,7 @@ function M.state(surface, earth)
   local geo = guards.geography_of(earth.geo)
   local g = key and geo and geo.map == key and geo.version
   local spec = key and (B.tables or {})[key]
-  local tabs = key and TABLES[key]
+  local tabs = key and TABLES[key] and TABLES[key][generation(key, earth.geo)]
   if not (g and spec and tabs and earth.scale and tabs.scales[earth.scale] and listed(spec.geographies, earth.geo)) then
     log("Terra Nauvis: the save carries the Exact coastlines key, but no shipped table serves its map, scale and "
         .. "geography; the handler stays off")

@@ -1,6 +1,6 @@
--- Spawn expressions (ARCHITECTURE.md, "Expression inventory"; milestones europe-coast and spawn-cities).
+-- Spawn expressions (ARCHITECTURE.md, "Expression inventory"; contracts 1 and 2).
 --
--- The start mask: vanilla's starting_resources_lake_mask reads elevation
+-- The start mask (design rule 8; DECISIONS 08:00): vanilla's starting_resources_lake_mask reads elevation
 -- in every starting-ore spot noise, which on an Earth preset would carry the fine coast into the
 -- Entity program. Earth presets point that key at a start mask version (config.lua's start_mask;
 -- each geography version names the one its preset bakes). Each version names its formula:
@@ -34,7 +34,9 @@ local destroyed = require("prototypes.tables.destroyed")
 local FILES = {
   ["prototypes/generated/spawn_europe_v1.lua"] = require("prototypes.generated.spawn_europe_v1"),
   ["prototypes/generated/spawn_atlantic_v1.lua"] = require("prototypes.generated.spawn_atlantic_v1"),
+  ["prototypes/generated/spawn_atlantic_v2.lua"] = require("prototypes.generated.spawn_atlantic_v2"),
   ["prototypes/generated/spawn_olde_world_v1.lua"] = require("prototypes.generated.spawn_olde_world_v1"),
+  ["prototypes/generated/spawn_olde_world_v2.lua"] = require("prototypes.generated.spawn_olde_world_v2"),
 }
 
 local K = cfg.keys
@@ -106,7 +108,7 @@ local function noise(seed1, wavelength, cx, cy)
     " / " .. num(wavelength) .. shift .. "}"
 end
 
--- One axis of a lake's domain warp: amplitude times
+-- One axis of a lake's domain warp (DECISIONS 2026-10-30, the rivers' natural course): amplitude times
 -- one basis noise per octave row of config.lua, so a lake's shore wanders off the circle its distance draws.
 local function warp(octaves, axis, cx, cy)
   local parts = {}
@@ -116,7 +118,7 @@ local function warp(octaves, axis, cx, cy)
   return table.concat(parts, " + ")
 end
 
--- Destroyed Europe's random pool (milestone destroyed-europe; APPROVALS 10): the city fold's hash modulo the
+-- Destroyed Europe's random pool (APPROVALS 10): the city fold's hash modulo the
 -- number of the map's cities outside the zone, then that city's index of 1 to n. A preset with the zone on
 -- and the spawn city at random bakes this body as the map's city number, so the fold resolves it as it
 -- resolves a chosen city; the index folds to a constant like the fold's own pick.
@@ -187,7 +189,7 @@ local function spawn(map_key, v)
   def(sp.city_index, "if(" .. sp.city .. " > 0, " .. sp.city .. ", (map_seed_small * " .. num(H.small_mult) ..
     " + floor(map_seed / " .. num(H.high_div) .. ") * " .. num(H.high_mult) .. ") % " .. num(n) .. " + 1)")
 
-  -- Destroyed Europe's random pool (milestone destroyed-europe; APPROVALS 10): pool_body above, one per map
+  -- Destroyed Europe's random pool (APPROVALS 10): pool_body above, one per map
   -- (every version with a spawn record names the same body, which def defines once).
   local pool_name = cfg.destroyed and cfg.destroyed.pools[map_key]
   if pool_name then
@@ -215,9 +217,12 @@ local function spawn(map_key, v)
       if not per_scale then
         error("the spawn bearings of " .. map_key .. " lack " .. list[k].value)
       end
+      -- per_scale runs in the order of the version's scales, and the last takes the else branch, so a scale past a
+      -- released version's list reads its scale 6 bearing: farther from any coast in tiles, so still clear of it.
       local inner = value_of(per_scale[#per_scale])
       for si = #per_scale - 1, 1, -1 do
-        inner = "if(" .. s .. " == " .. num(si) .. ", " .. value_of(per_scale[si]) .. ", " .. inner .. ")"
+        inner = "if(" .. s .. " == " .. num((v.scales or cfg.scales.released)[si]) .. ", " .. value_of(per_scale[si]) ..
+          ", " .. inner .. ")"
       end
       text = "if(" .. sp.city_index .. " == " .. num(k) .. ", " .. inner .. ", " .. text .. ")"
     end
@@ -230,16 +235,32 @@ local function spawn(map_key, v)
   end)
 
   -- The spawn lake: centre `distance` tiles out on the bearing; water where d + n is under
-  -- offset * divisor.
+  -- offset * divisor. A geography in config.lua's lake_shape takes its noise and warp rows in place of
+  -- lake's; the other versions keep lake's rows, so released bodies keep their text.
+  local LS = S.lake_shape
+  local shaped = false
+  for _, id in ipairs(LS and LS.geographies or {}) do
+    shaped = shaped or id == v.geo_id
+  end
+  local lake_n = num(L.noise.amplitude) .. " * " .. noise(L.noise.seed1, L.noise.wavelength)
+  local lake_wx, lake_wy = "x + " .. warp(L.warp, "x"), "y + " .. warp(L.warp, "y")
+  if shaped then
+    local parts = {}
+    for i, o in ipairs(LS.noise) do
+      parts[i] = num(o.amplitude) .. " * " .. noise(o.seed1, o.wavelength)
+    end
+    lake_n = table.concat(parts, " + ")
+    lake_wx, lake_wy = "x + " .. warp(LS.warp, "x"), "y + " .. warp(LS.warp, "y")
+  end
   def(sp.spawn_lake, num(L.magnitude) .. " * ((lake_d + lake_n) / " .. num(L.divisor) .. " - " .. num(L.offset) ..
     ")", {
       lake_angle = angle,
       lake_x = num(L.distance) .. " * cos(lake_angle)",
       lake_y = num(L.distance) .. " * sin(lake_angle)",
-      lake_wx = "x + " .. warp(L.warp, "x"),
-      lake_wy = "y + " .. warp(L.warp, "y"),
+      lake_wx = lake_wx,
+      lake_wy = lake_wy,
       lake_d = "sqrt((lake_wx - lake_x) * (lake_wx - lake_x) + (lake_wy - lake_y) * (lake_wy - lake_y))",
-      lake_n = num(L.noise.amplitude) .. " * " .. noise(L.noise.seed1, L.noise.wavelength),
+      lake_n = lake_n,
     })
 
   -- The starting-ore bias: on a coastal start, a tilt of the start area toward the city's own land

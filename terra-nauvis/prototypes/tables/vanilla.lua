@@ -1,5 +1,5 @@
--- Vanilla autoplace Earth restores beside Alien Biomes (ARCHITECTURE.md, "Stable hooks"; milestone
--- trees-forests; R3 3.4 items 3 to 6; S3 section 5; design note 10).
+-- Vanilla autoplace Earth restores beside Alien Biomes (ARCHITECTURE.md, "Stable hooks"; trees and
+-- forests; R3 3.4 items 3 to 6; S3 section 5; plan reconciliation 10).
 --
 -- Pure data, like config.lua: the data stage reads it through require, the Python tools through
 -- tools/tnconfig.py's loader. Alien Biomes nils the autoplace of the 15 living vanilla trees, the three
@@ -23,6 +23,9 @@
 --             temperate band places these from these texts (config.lua trees.decor)
 -- The texts are the base game's; they read the base game's shared helpers (trees_forest_path_cutout_faded,
 -- tree_small_noise, rock_density, the core range and ramp functions) by name, as its own entities do.
+-- They belong to Wube Software and are not offered under the GPL that covers the rest of Terra Nauvis:
+-- they are included under the Factorio Terms of Service, which let a mod include adaptations of Factorio
+-- assets (NOTICE.txt, "Not covered by the GPL").
 -- The T16 dump facts compare every text here with the dumped base game (a game update changes them).
 -- A released table version is never edited: a changed row ships as the next version (versioning rule 5).
 return {

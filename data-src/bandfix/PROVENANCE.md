@@ -16,9 +16,9 @@ re-emits the tables twice and compares each byte for byte with the committed fil
 
 | File | sha256 | Role |
 |---|---|---|
-| `manifest-atlantic.json` | `99c9471cab20eb7ea1d687e6c1caf43cad739049684947a29a12333a6eb71c64` | emission manifest |
+| `manifest-atlantic.json` | `5ea54ff17c3be3c221d4c20cbc46c7b1bff37502c415c607b31f8799cae9a0c8` | emission manifest |
 | `manifest-europe.json` | `a40f1effead239f1cc52174c0cabc21c177c276fcae887e0695e7e20580129b5` | emission manifest |
-| `manifest-olde_world.json` | `e7c055922c4e8e8a840a01b43f329c386547dcb62f75aed35f7414d7fe9cdd4f` | emission manifest |
+| `manifest-olde_world.json` | `850d102aff71accaf36aa7c20ad6b46d646e220f4b2f713c0e2fca46e8c242d4` | emission manifest |
 | `islets-atlantic.json` | `0e73d0d8c88335b68f62c55d536e03be8225a9ddf2a124f2e9eb62bd46e10c04` | islets the raster lacks (`tools/build_islets.py`) |
 | `islets-europe.json` | `2af133292cf312976dfaa0d1c3d3f669e0eda9ae8871a7110d6945a740fd90db` | islets the raster lacks (`tools/build_islets.py`) |
 | `islets-olde_world.json` | `5838e39dbc88ebca0425e4c2f5704c178337b280865cd99e648f99fd35c979f3` | islets the raster lacks (`tools/build_islets.py`) |
@@ -35,6 +35,10 @@ group moved (`maps`, `new_deep`, `smooth`, `ground_rings`), which feed no table.
 still counts S12's band, not the blurred write rule, so it is an estimate. After a change that moves
 waterways only, `build_geo.py emit --map <map> --bandfix --masks-only` rewrites the mask tables from the
 committed K+ table, byte-identical to a full emission.
+
+2026-10-30, a development branch: `bandfix.generations` says which tables a tn_geo reads. A manifest describes its
+map's newest generation; an older generation's files stay in the mod for the saves that read them and are no longer
+emitted, and the digest leaves the generations out, so a new row needs no re-stamp of any manifest.
 
 2026-10-30, a development branch: the tables read the reference through `build_geo.py bandfix_classes`. Thin water of the
 ocean class within `bandfix.channel_px` pixels of open water along thin water counts as water, and K holds every

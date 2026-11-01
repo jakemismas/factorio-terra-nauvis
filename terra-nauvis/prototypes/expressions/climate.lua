@@ -1,4 +1,4 @@
--- The Earth climate (ARCHITECTURE.md, "Expression inventory" and "Alien Biomes"; milestone climate-tiles;
+-- The Earth climate (ARCHITECTURE.md, "Expression inventory" and "Alien Biomes"; contract 6;
 -- S3 sections 1 to 4; D9).
 --
 -- Temperature, moisture and aux after EarthMaps' layout: latitude on each map's own chain (frozen in
@@ -84,7 +84,7 @@ end
 -- The city offset of the world's map folded into one constant added to each noise's seed1, so each
 -- spawn city gets a climate texture of its own: the world shifts to put the city at the origin, so a
 -- noise of plain x and y would repeat around every city of a seed. A seed folds at compile time; x + cx
--- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (design notes
+-- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (DECISIONS
 -- 2026-10-30 11:10).
 local SH = C.city_shift
 def(N.shift, by_map(function(X)
@@ -153,9 +153,9 @@ local function belt_weight(b)
   return ramp_in("belt_lat", b.lat[1], b.lat[2], b.ramp[1]) .. " * " ..
     ramp_in("belt_lon", b.lon[1], b.lon[2], b.ramp[2])
 end
-local function belt_list(X, field)
+local function belt_list(X, field, belts)
   local out = {}
-  for _, b in ipairs(C.tile_belts) do
+  for _, b in ipairs(belts or C.tile_belts) do
     if b[field] and overlaps(b.lat, X.lat) and overlaps(b.lon, X.lon) then
       out[#out + 1] = b
     end
@@ -239,6 +239,20 @@ def(N.fallback.aux, "clamp(min(" .. num(A.base) .. " + (" .. num(AF.cold_aux) ..
   num(1 - AF.cold_cap) .. " * cold) + " .. num(AF.bias) .. " * var('control:aux:bias'), 0, 1)",
   {cold = "clamp((" .. num(C.cold.t) .. " - " .. N.core .. ") / " .. num(AF.cold_span) .. ", 0, 1)"})
 
+-- The snow line (config.lua climate.north): d is degrees north of it. Worlds without Alien Biomes read it too, for the
+-- mod's frozen tile.
+local NF = C.north
+local front = {}
+for i = 2, #NF.front do
+  local a, b = NF.front[i - 1], NF.front[i]
+  front[#front + 1] = num((b[2] - a[2]) / (b[1] - a[1])) .. " * (clamp(north_lon, " .. num(a[1]) .. ", " .. num(b[1]) ..
+    ") - " .. num(a[1]) .. ")"
+end
+def(NF.names.d, N.lat .. " + " .. num(NF.meander) .. " * " .. MD.name .. " + " .. num(NF.wave.amplitude) ..
+  " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(NF.wave.seed1) .. ", input_scale = 1 / (" ..
+  num(NF.wave.wave_px) .. " * " .. K.scale .. "), output_scale = 1} - (" .. num(NF.front[1][2]) .. " + " ..
+  table.concat(front, " + ") .. ")", {north_lon = N.lon})
+
 if AB then
   -- Alien Biomes' hot and cold sliders: their size shifts the temperature as AB's own average does, their
   -- mean frequency scales the noise (R3 1.1 and 1.3; S3 section 3).
@@ -258,6 +272,33 @@ if AB then
       num(M.marsh) .. " * max(" .. MARSH_W .. ", " .. cut .. "), 0)), 0, 1)"
   end
   def(N.ab.moisture, ab_moisture("", MARSH_W))
+  -- The lifts (config.lua climate.lifts): a belt's sum, as the tile belts' are, on top of a released moisture:
+  -- under the natural top, and no field falls for it. The jitter reaches only what trees and decoratives read.
+  local function lift_sum(field)
+    return by_map(function(X)
+      local parts = {}
+      for _, b in ipairs(belt_list(X, field, C.lifts)) do
+        if not b.maps or b.maps[X.key] then
+          parts[#parts + 1] = num(b[field]) .. " * " .. belt_weight(b)
+        end
+      end
+      return #parts == 0 and "0" or table.concat(parts, " + ")
+    end)
+  end
+  def(N.lift.m, lift_sum("m"), BELT_AT)
+  def(N.lift.bare, lift_sum("bare"), BELT_AT)
+  def(N.lift.j, lift_sum("j"), BELT_AT)
+  local function lifted(base, rest)
+    return "max(m, min(" .. num(M.ab_top) .. ", m + " .. N.lift.m .. rest .. "))", {m = base}
+  end
+  -- Vanilla tiles score this field too, so scan's 0 keeps their whole lift, as it keeps them from the shake.
+  local SCAN = cfg.tiles.scan.body
+  local jittered, jitter_at = lifted(N.ab.moisture, " - " .. N.lift.bare .. " * " .. SCAN)
+  local J = C.jitter
+  def(N.lift.ab, "clamp(" .. jittered .. " + " .. N.lift.j .. " * " .. SCAN ..
+    " * basis_noise{x = x, y = y, seed0 = map_seed, " ..
+    "seed1 = " .. num(J.seed1) .. ", input_scale = 1 / " .. num(J.wavelength_tiles) .. ", output_scale = 1}, 0, 1)",
+    jitter_at)
   -- Natural aux stays under ab_cap, below AB's alien palette, whatever the spread: it folds back at the
   -- cap instead of stopping there, because a hard stop pins every high aux to one value, and on dry land
   -- that value is dry-dirt's box alone, a flat brown plain hundreds of tiles wide. Dry temperate land
@@ -297,6 +338,47 @@ if AB then
   def(GN.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. GN.field .. " + " .. BELT.m .. " - " ..
     num(GR.moisture) .. " * " .. RN.high_tile, cfg.tiles.marsh.edge))
   def(GN.aux, ab_aux(" + " .. num(G.aux) .. " * " .. GN.field, BELT.a .. " + "))
+  -- A range's lapse takes the moisture off the wet grasses, and the lift put it back: its rock and snow read as dark
+  -- grass with specks of ice, and the western Alps kept under a third of their grey.
+  def(N.lift.grain, lifted(GN.moisture, " * (1 - " .. RN.high_tile .. ")"))
+
+  -- The cold north (config.lua climate.north) and the highland's cold field (ridges.cold), which a new world's preset
+  -- names over the bodies above (climate.points). d is degrees north of the snow line. The fall lowers the core to the
+  -- line's cap and keeps the temperature's noise, so the edge frays as any climate edge does, and it reads no zone: the
+  -- zone's lift stays on top. The zone's lift also stands on the highland's cap, so no zone tile turns cold on a range.
+  local NN, CG, RD_COLD = NF.names, RN.cold, cfg.ridges.cold
+  local G2 = NN.grain
+  def(NN.drop, "max(0, " .. N.core .. " - (" .. num(NF.south_per_degree) .. " * max(0, -" .. NN.d .. ") - " ..
+    num(NF.near_per_degree) .. " * clamp(" .. NN.d .. ", 0, " .. num(NF.near_degrees) .. ") - " ..
+    num(NF.far_per_degree) .. " * max(0, " .. NN.d .. " - " .. num(NF.near_degrees) .. ")))")
+  def(NN.belt, "clamp((" .. NN.d .. " + " .. num(NF.belt_from) .. ") / " .. num(NF.belt_ramp) .. ", 0, 1)")
+  def(NN.lead, "clamp((" .. NN.d .. " + " .. num(NF.lead_degrees) .. ") / " .. num(NF.lead_ramp) .. ", 0, 1)")
+  def(NN.temperature, T2 .. " - " .. NN.drop)
+  local T3 = NN.temperature
+  def(G2.field, "max(clamp((" .. num(G.cold_t) .. " - cold) / " .. num(G.cold_span) .. ", 0, 1), clamp((hot - " ..
+    num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1), clamp(" .. BELT.wild ..
+    ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ") * (1 + " .. num(GR.fray) .. " * " .. CG.high ..
+    ") * min(1, " .. num(RD_COLD.fit_scale) .. " / " .. K.scale .. ")",
+    {cold = "min(" .. T3 .. ", " .. CG.cap .. ")", hot = "min(" .. N.ab.temperature .. ", " .. CG.cap .. ")"})
+  -- The cap takes a share of the grain: whole, it reaches 18 at full highland, and on a slope of a quarter degree a
+  -- tile that scatters specks 75 tiles past the massif's edge.
+  def(G2.temperature, "min(t, " .. CG.cap .. " + " .. T2 .. " - " .. N.ab.temperature .. " + " ..
+    num(G.temperature * RD_COLD.cap_grain) .. " * " .. G2.field .. ")",
+    {t = "min(" .. T3 .. " + " .. num(G.temperature) .. " * " .. G2.field .. " + " .. BELT.t .. " * (1 - " ..
+       NN.belt .. "), max(" .. T3 .. ", " .. num(T.ab.max) .. "))"})
+  def(G2.veg, "if(" .. T3 .. " > " .. num(G.veg_zone_t) .. ", " .. G2.temperature .. ", min(" .. G2.temperature ..
+    " + " .. BELT.tv .. ", " .. num(G.veg_cap) .. "))")
+  def(G2.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. G2.field .. " + " .. BELT.m .. " - " ..
+    num(GR.moisture) .. " * " .. CG.high, cfg.tiles.marsh.edge))
+  -- Alien Biomes' white ground sits under aux 0.3, so where aux dips across that line the grey ground of the wasteland
+  -- and of a massif's flanks takes small pale islands: the floor keeps those two to the one grey family.
+  local GREY = "max(" .. NN.lead .. ", clamp(" .. num(NF.aux_high) .. " * " .. CG.high .. ", 0, 1))"
+  def(G2.aux, "max(a, " .. num(NF.aux_floor) .. " * " .. GREY .. ")",
+    {a = ab_aux(" + " .. num(G.aux) .. " * " .. G2.field, BELT.a .. " + ")})
+  local kept, kept_at = lifted(G2.moisture, " * (1 - " .. CG.high .. ")")
+  kept_at.kept = kept
+  -- The same ceiling on a massif's flanks: wet moisture there drew specks of Alien Biomes' wet dirt in the dark grass.
+  def(NN.moisture, "kept - " .. GREY .. " * max(0, kept - " .. num(NF.lead_top) .. ")", kept_at)
 end
 
 data:extend(E)

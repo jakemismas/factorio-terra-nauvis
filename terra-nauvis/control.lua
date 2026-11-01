@@ -1,17 +1,17 @@
--- Control stage: event wiring only (ARCHITECTURE.md, "Control stage"). In every milestone the T16
+-- Control stage: event wiring only (ARCHITECTURE.md, "Control stage"). Throughout, the T16
 -- registration scan allows only the events of ARCHITECTURE.md's event table: never on_tick or
--- on_nth_tick, and no per-chunk event outside scripts/bandfix.lua. Milestone europe-coast wires the
+-- on_nth_tick, and no per-chunk event outside scripts/bandfix.lua. It wires the
 -- guards: world detection and the Map type notice in on_init, the missing-name guard and the drift
 -- line in on_configuration_changed, the withheld-preset warning in both, and the notice and the
--- stored warnings to each created player. Milestone spawn-cities adds the start (the resolved city, the
+-- stored warnings to each created player. It also wires the start (the resolved city, the
 -- start message and the RSO warning; from ridges also the cliff "none" reset) after world detection,
 -- and the D33 surface guard on every new surface and as a sweep in on_init and on_configuration_changed
--- (surfaces made inside an on_init raise no event, S11). Milestone destroyed-europe adds to the start the
+-- (surfaces made inside an on_init raise no event, S11). Destroyed Europe adds to the start the
 -- D12 warning (Destroyed Europe on without Alien Biomes), stored like the RSO warning for every created
--- player. Milestone coast-band-fix adds Exact coastlines: after world detection on_init records
+-- player (design rule 25). For Exact coastlines, after world detection on_init records
 -- the save's band-fix key, and on_init and on_load register scripts/bandfix.lua's on_chunk_generated
 -- handler from that record only (a save without the key registers nothing, the one conditional
--- registration); its drift line joins on_configuration_changed. Milestone extras adds the D28 city
+-- registration); its drift line joins on_configuration_changed. Then come the D28 city
 -- markers: drawn in on_init when their runtime-global setting is on, and drawn or removed when it
 -- changes. bandfix.on_init runs before start.on_init because the start ore guarantee reads the tiles the
 -- band fix writes.

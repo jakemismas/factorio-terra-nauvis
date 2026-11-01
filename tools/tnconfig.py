@@ -366,7 +366,8 @@ VERSION_FIELDS = set(GEOGRAPHY_NAMES) | {"geo_id", "city_offset", "start_mask", 
 # (edge-and-lakes) `edge`, true when the version's far-field box carries the soft map edge
 # (coast.edge_band), and `lakes`, the per-save inland lakes switch its entry reads its inland lakes
 # through (a toggle's preset key; only with a spawn record).
-OPTIONAL_VERSION_FIELDS = {"spawn", "waterways", "shore", "fields", "edge", "lakes", "over", "basin"}
+OPTIONAL_VERSION_FIELDS = {"spawn", "waterways", "waterway_files", "mouths", "warp", "shore", "fields", "edge", "lakes", "over",
+                           "basin", "scales"}
 # A waterways record: per kind, the set names by scale. The sets read the version's chain, so they are
 # its own: a later version that composes the waterways names sets of its own, and config.lua's
 # waterways.sets[map] is the record of the map's newest version that has one.
@@ -405,9 +406,41 @@ def waterways_of(version):
 
 def waterway_names(version):
     """Every waterway set name a version composes (they read its chain, so they are its own and in its
-    fine field), in kind and scale order; [] without a waterways record."""
+    fine field), in kind and scale order, and its mouth bodies; [] without a waterways record."""
     ww = waterways_of(version)
-    return [n for k in WATERWAY_KINDS for n in ww[k]] if ww else []
+    return ([n for k in WATERWAY_KINDS for n in ww[k]] + list(version.get("mouths") or [])
+            + list(version.get("warp") or [])) if ww else []
+
+
+def version_scales(cfg, version):
+    """The scales a geography version's own bodies serve, in the order of its waterway name lists: its `scales`, or
+    the released list a landed version was built on, whose row never changes (config.lua scales)."""
+    return [int(s) for s in version.get("scales") or cfg["scales"]["released"]]
+
+
+def scale_extension(cfg, map_key, version):
+    """The record of a released version's scales past its list (config.lua scale_extensions), or None."""
+    x = (cfg.get("scale_extensions") or {}).get(map_key)
+    return x if x and x["geo_id"] == version["geo_id"] else None
+
+
+def extension_names(cfg, map_key, version):
+    """The names a version's scale extension adds: its entry and sets."""
+    x = scale_extension(cfg, map_key, version)
+    return [x["entry"]] + waterway_names(x) if x else []
+
+
+def scale_record(cfg, map_key, version, scale):
+    """(record, position) of the record that serves a scale: the version, or its extension past a released
+    version's list (presets.lua baked mirrors it). A scale neither serves reads the version's last position, as
+    its frozen entry does."""
+    s, own = int(scale), version_scales(cfg, version)
+    x = scale_extension(cfg, map_key, version)
+    if s in own:
+        return version, own.index(s)
+    if x and s in version_scales(cfg, x):
+        return x, version_scales(cfg, x).index(s)
+    return version, len(own) - 1
 
 
 def shore_names(version):
@@ -455,8 +488,12 @@ def _spawn_record(sp, where, cfg):
     return sp
 
 
-def _waterways_record(ww, where, cfg, key):
-    n = len(((cfg.get("scales") or {}).get("values")) or [])
+def _waterways_record(ww, where, cfg, key, scales=None):
+    """A waterways record holds one name per scale of its own version's list (config.lua `scales`)."""
+    offered = [int(s) for s in ((cfg.get("scales") or {}).get("values")) or []]
+    if scales is None or not scales or any(int(s) not in offered for s in scales):
+        raise ConfigError(f"config.lua {where} needs its own `scales`, a list of offered scales {offered}")
+    n = len(scales)
     if not isinstance(ww, dict) or set(ww) != set(WATERWAY_KINDS) or not all(
             isinstance(ww[k], list) and len(ww[k]) == n and all(isinstance(x, str) and x for x in ww[k])
             for k in WATERWAY_KINDS):
@@ -511,7 +548,10 @@ def geography_versions(cfg):
             if "spawn" in v:
                 _spawn_record(v["spawn"], where, cfg)
             if "waterways" in v:
-                _waterways_record(v["waterways"], where, cfg, key)
+                _waterways_record(v["waterways"], where, cfg, key, version_scales(cfg, v))
+            if "waterway_files" in v and not (_positive_int(v["waterway_files"]) and "waterways" in v):
+                raise ConfigError(f"config.lua {where}.waterway_files must be a version of the map's generated waterway "
+                                  f"files, on a version with a waterways record")
             if "shore" in v and (not isinstance(v["shore"], str) or not v["shore"]):
                 raise ConfigError(f"config.lua {where}.shore must be a noise name (the version's shore body)")
             if "fields" in v and (not isinstance(v["fields"], str) or not v["fields"]):
@@ -581,6 +621,7 @@ def geography(cfg):
 
 REGION_MAX_SHARE = 3                               # the destroyed zone's warp runs past the shared warp
 REGION_TABLE = "prototypes/tables/regions.lua"     # relative to the mod folder, as `files` spells it
+HOTSPOT_TABLE2 = "prototypes/tables/hotspots_v2.lua"     # its rows take region names too, less the weight
 REGION_ROW_KINDS = ("sd", "w", "depth")            # every row's signed distance, weight and depth
 REGION_CENTRE_KINDS = ("hu", "hv", "pd")           # a hotspot disc's jittered centre and plain distance
 REGION_AGGREGATES = ("destroyed_sd", "destroyed_w", "destroyed_depth", "forest_w", "forest_sum", "tree_mult",
@@ -688,6 +729,14 @@ def region_names(cfg, rows=None):
     return {"aggregates": {k: n[k] for k in REGION_AGGREGATES}, "internal": internal, "rows": per}
 
 
+def hotspot2_row_names(cfg):
+    """Every row name regions.lua composes for the second hotspot table's rows: a hotspot row's, less the weight."""
+    table = _eval_text((region_table_path(cfg).parent / "hotspots_v2.lua").read_text(encoding="utf-8"),
+                       region_table_path(cfg).parent / "hotspots_v2.lua")
+    kinds = tuple(k for k in REGION_ROW_KINDS if k != "w") + REGION_CENTRE_KINDS
+    return sorted(region_row_name(cfg, k, r["id"]) for r in table["rows"] for k in kinds)
+
+
 def region_noise_names(cfg, rows=None):
     """region_names as one sorted list."""
     names = region_names(cfg, rows)
@@ -736,7 +785,8 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     ores' wrapper keys; from destroyed-europe, with
     ab=True, the Alien Biomes temperature's next version."""
     K, m = cfg["keys"], cfg["maps"][map_key]
-    pen = {K["elevation"]: version["entry"], K["start_mask"]: version["start_mask"],
+    rec, pos = scale_record(cfg, map_key, version, scale)
+    pen = {K["elevation"]: rec["entry"], K["start_mask"]: version["start_mask"],
            K["land_coarse"]: version["land_coarse"], K["map"]: m["id"], K["scale"]: int(scale),
            K["geo"]: version["geo_id"], version["cx"]: version["city_offset"][0],
            version["cy"]: version["city_offset"][1]}
@@ -746,10 +796,9 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         pen.update({K["distance"]: sp["distance"], sp["city"]: city_number(cfg, version, city),
                     K["spawn_lake"]: sp["spawn_lake"], K["spawn_bias"]: sp["spawn_bias"]})
     # waterways: the hook gate on and the ford key at the map's ford set for the scale
-    ww = waterways_of(version)
+    ww = waterways_of(rec)
     if ww:
-        pen.update({K["on"]: cfg["hooks"]["gate_on"],
-                    K["fords"]: ww["fords"][list(cfg["scales"]["values"]).index(int(scale))]})
+        pen.update({K["on"]: cfg["hooks"]["gate_on"], K["fords"]: ww["fords"][pos]})
     # each toggle of the map at its setting's default: its on or off body
     for tg in toggles(cfg):
         if map_key in (tg.get("maps") or []):
@@ -758,7 +807,7 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     # the climate and tile keys (climate-tiles; presets.lua climate_names), the same on every version
     cl, tl = cfg.get("climate"), cfg.get("tiles")
     if cl and tl:
-        variant = cl["names"]["ab" if ab else "fallback"]
+        variant = cl["points"]["ab" if ab else "fallback"]
         for prop in ("temperature", "moisture", "aux"):
             pen[prop] = variant[prop]
         for k in ("water_mud", "water_shallow"):
@@ -775,6 +824,7 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
                 pen[mix["key"]] = mix["amount"]
         else:
             pen[tl["marsh"]["grass"]["key"]] = tl["marsh"]["grass"]["body"]
+            pen[tl["frozen"]["key"]] = tl["frozen"]["body"]
     # the tree keys (trees-forests; presets.lua tree_names), after the climate keys: the multiplier key at
     # the region layer's multiplier, and with ab=True every restored tree's, rock's and decorative's key
     # at its body and each palm's probability key at its second version
@@ -791,16 +841,16 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
             for key in rs["decoratives"].values():
                 pen[key] = rs["deco_body"]
             for pm in tr["palm"]:
-                pen[pm["key"]] = pm["body"]
+                pen[pm["key"]] = pm["next"]
     # the ridges (ridges; presets.lua ridge_values): the two cliff properties at the ridge bodies and the
     # map's crest, openings and band keys; and every Earth ore's probability key at its clearance wrapper,
     # which data-final-fixes.lua adds to every preset (M1 holds all six resources)
     rd = cfg.get("ridges")
     if rd:
-        n = rd["names"]
-        if all(map_key in n[k] for k in ("crest", "openings", "band")):
-            pen.update({K["cliff_elevation"]: n["cliff_elevation"], K["cliffiness"]: n["cliffiness"],
-                        K["crest"]: n["crest"][map_key], K["openings"]: n["openings"][map_key],
+        n, rp = rd["names"], rd["preset"]
+        if map_key in rp["crest"] and map_key in rp["openings"] and map_key in n["band"]:
+            pen.update({K["cliff_elevation"]: rp["cliff_elevation"], K["cliffiness"]: n["cliffiness"],
+                        K["crest"]: rp["crest"][map_key], K["openings"]: rp["openings"][map_key],
                         K["band"]: n["band"][map_key], K["high"]: n["high_map"][map_key],
                         K["passes"]: n["passes"][map_key], K["high_tile"]: n["high_tile_map"][map_key]})
             for name, r in cfg["trees"]["restore"]["rocks"].items():
@@ -839,11 +889,19 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     de = cfg.get("destroyed")
     if ab and de and de.get("names"):
         pen["temperature"] = de["names"]["temperature"]
+    # the cold north (presets.lua grain_values): its plain temperature, which reads the zone's by name
+    if ab and cl and cl["points"].get("north"):
+        pen["temperature"] = cl["points"]["north"]
     # coast-band-fix (presets.lua bandfix_names, last): the band-fix key where the setting is on at its
-    # default and acts on the map
+    # default, acts on the map and serves the scale
     bf = cfg.get("bandfix")
-    if bf and cfg["settings"][bf["setting"]]["default_value"] and map_key in (bf.get("maps") or []):
+    if (bf and cfg["settings"][bf["setting"]]["default_value"] and map_key in (bf.get("maps") or [])
+            and int(scale) in [int(s) for s in cfg["scales"]["exact_coast"]]):
         pen[bf["key"]] = bf["on"]
+    # the second hotspot table: presets.lua baked names it over the first table's
+    pen.update((cfg.get("hotspots_v2") or {}).get("points") or {})
+    if rs and cfg.get("hotspots_v2"):
+        pen[K["enemy"]] = cfg["hotspots_v2"]["nests"]["wrapper"]
     return pen
 
 
@@ -884,6 +942,8 @@ def release_of(cfg):
         names = list(r.get("names") or [])
         if REGION_TABLE in (r.get("files") or []):
             names += region_noise_names(cfg)
+        if HOTSPOT_TABLE2 in (r.get("files") or []):
+            names += hotspot2_row_names(cfg)
         for n in names:
             out[n] = r["release"]
     return out
@@ -1042,6 +1102,17 @@ def water_slider(cfg):
 RETIRED_GROUPS = {"fallbacks": "geography.<map>.versions[n].fallbacks", "start_mask_versions": "start_mask.versions"}
 
 
+def bandfix_next_problems(cfg):
+    """The band fix's next rule writes other tiles, so it must reach no map's first geography of `bandfix.tables`,
+    the one its tables were built for and released with: a save of it would change under the rule."""
+    nx = cfg.get("bandfix_next")
+    tables = (cfg.get("bandfix") or {}).get("tables") or {}
+    firsts = [t["geographies"][0] for t in tables.values() if t.get("geographies")]
+    if nx and firsts and nx["from_geo"] <= max(firsts):
+        return [f"config.lua bandfix_next.from_geo {nx['from_geo']} reaches tn_geo {max(firsts)}, a released geography"]
+    return []
+
+
 def schema_problems(cfg):
     """Every shape problem of config.lua's groups, as messages (the T16 names row reports them)."""
     out = [f"config.lua {g} is retired: it lives in {home} (every version per map), and a top-level copy is read by "
@@ -1064,6 +1135,7 @@ def schema_problems(cfg):
     except ConfigError as e:
         out.append(str(e))
     out += id_space_problems(cfg)
+    out += bandfix_next_problems(cfg)
     # The region layer's names are released through the row that lists its table: a regions group
     # whose table no release row lists would leave every row name unreleased and unregistered.
     try:
@@ -1191,9 +1263,24 @@ def schema_problems(cfg):
 def bandfix_digest(group):
     """sha256 of config.lua's bandfix group as its tables were built under it. Each map's geographies list
     counts as its first id: a later geography version that keeps the map's coast appends its id and serves
-    the same tables, so no re-emission follows and the digests the manifests hold stay right."""
+    the same tables, so no re-emission follows and the digests the manifests hold stay right. The generations
+    only say which tables a tn_geo reads, so a new one leaves every map's digest right as well."""
     tables = {k: dict(v, geographies=list(v.get("geographies") or [])[:1]) for k, v in (group.get("tables") or {}).items()}
-    return hashlib.sha256(json.dumps(dict(group, tables=tables), sort_keys=True).encode()).hexdigest()
+    built = {k: v for k, v in group.items() if k != "generations"}
+    return hashlib.sha256(json.dumps(dict(built, tables=tables), sort_keys=True).encode()).hexdigest()
+
+
+def bandfix_generation(group, map_key, geo_id=None):
+    """(version, shared version) of a map's Exact coastlines tables: the ones a tn_geo reads, or the map's newest
+    with no id. Its row of bandfix.generations, else bandfix.version; `shared` is the version of the K+ table
+    when a later generation keeps an older one because the coast did not move."""
+    rows = (group.get("generations") or {}).get(map_key) or []
+    if geo_id is None:
+        rows = rows[-1:]
+    for r in rows:
+        if geo_id is None or geo_id in (r.get("geographies") or []):
+            return int(r["version"]), int(r.get("shared", r["version"]))
+    return int(group["version"]), int(group["version"])
 
 
 def placeholder_names(cfg):

@@ -8,11 +8,11 @@ constraint 1; project rules 1 and 2), and the path helpers they share.
                                directory when omitted)
   ws_root(), out_root(ws)      the workspace (FACTORIO_WS) and the runner's evidence tree in it
 
-fh.py isolation is the only live-profile protection: every
+fh.py isolation is the only live-profile protection (decision of 2026-10-27 23:47): every
 game run goes through fh.py with its own instance, modset and new --out, and its RESULT line reads
 ok, isolated=yes and errors=0 (G1). A run that may have left its instance stops every further game
 run of its command at once. No repo tool refuses an output path for lying in the live profile or a
-mods folder: copying the built zip into the live mods folder is allowed (the decision, 2026-10-27
+mods folder: copying the built zip into the live mods folder is allowed (decision of 2026-10-27
 16:19).
 
 It reads only paths and run records; it launches nothing and needs no game.

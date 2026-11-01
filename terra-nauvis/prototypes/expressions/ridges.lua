@@ -1,4 +1,4 @@
--- Ridges (ARCHITECTURE.md, milestone contract 8; S5; APPROVALS 5 and 11; milestone ridges; design notes 2026-10-30,
+-- Ridges (ARCHITECTURE.md, contract 8; S5; APPROVALS 5 and 11; DECISIONS 2026-10-30,
 -- ridges that read as mountains).
 --
 -- Every range of prototypes/tables/ranges.lua (tools/build_ranges.py writes it from the approval data,
@@ -30,19 +30,19 @@
 -- only the Cliff program reads, and the crest band (tn_band) the ore clearance reads in the Entity
 -- program, a cheap superset of the tiles whose centre lies within ore_clear_tiles of the unwandered
 -- crest (read at the centre, where an ore entity stands, not at the integer corner the program samples;
--- an exact distance there measured Entity +3,028 on Europe against the milestone's +2,000 allocation; this
--- milestone's design notes). Ore clears the axis only: where a ridge wanders off it an ore patch can take a
+-- an exact distance there measured Entity +3,028 on Europe against the ridges' +2,000 allocation; the
+-- ridges' DECISIONS). Ore clears the axis only: where a ridge wanders off it an ore patch can take a
 -- cliff out, which reads as one more gap. All read the map's own coordinate chain, so they are
 -- firewall-clean. Shared bodies: the effective height, which the ridges toggle (a name switch to tn_one
 -- or tn_zero) turns into -inf when off, so nothing of a ridge compiles and no cliff is placed (S5: a
--- constant field places none); the ridge-free start disc (D25 wins inside it); the two cliff
+-- constant field places none); the ridge-free start disc (D25 wins inside it, design rule 12); the two cliff
 -- properties; and the ore clearance that data-final-fixes.lua multiplies into every Earth ore
--- probability, without a global cliff_removal_probability edit. Every noise reads the
+-- probability, without a global cliff_removal_probability edit (DECISIONS 08:00). Every noise reads the
 -- frame's geo tiles, so a seed's ridges are one shape for every spawn city; only the Cliff program pays
 -- for the noise, on the 4-tile lattice (S5). Every name and number comes from config.lua (S-5); the
 -- toggle never multiplies (U5).
 --
--- The highlands (a cliff squiggle on plain grass does not read as a mountain range; design notes
+-- The highlands (2026-10-30: a cliff squiggle on plain grass does not read as a mountain range; DECISIONS
 -- 18:00): a band round each range, wider and stronger the taller the range, faded in outside the ridge-free
 -- start disc, frayed by noise the region layer already computes. It costs only what it reads again:
 --   rocks    in the Entity program, on the crest band's own pieces and one reach per piece: lifts rock_density
@@ -224,7 +224,12 @@ local function band_term(pts, run, piece, k, B, H, heights)
   B[f] = S .. " * " .. num(c) .. " + " .. table.concat(terms, " + ")
   -- the piece's mean cosine, and its one reach for the Entity program: halfway between its mean vertex and its
   -- highest
-  H[#H + 1] = {p = p, q = q, f = f, mid = mid, span = span, cos = 2 * span / arc, arc = arc,
+  local rows = 0
+  for _, v in ipairs(list) do
+    rows = rows + (piece.axis == "x" and v[2] or v[1])
+  end
+  H[#H + 1] = {p = p, q = q, f = f, mid = mid, span = span, cos = 2 * span / arc, arc = arc, top = top,
+               row = rows / #list,
                reach = reach_px((sum / #list + top) / 2),
                reach_text = S .. " * " .. num(c2) .. " + " .. table.concat(W, " + ")}
   return "(abs(" .. q .. " - " .. f .. ") < " .. num(half) .. ") * (abs(" .. p .. " - " .. S .. " * " .. num(mid) ..
@@ -298,7 +303,7 @@ local function add_opening(O, m, pts, o, wide)
     -- tip_tiles past it, so the end cap goes too; elsewhere pass_tiles / 2 either side
     local tx, ty = dx / len, dy / len
     local slot = "abs(" .. pu .. " * " .. num(tx) .. " + " .. pv .. " * " .. num(ty) .. ") * " .. S .. " < " ..
-      num(RD.pass_tiles / 2)
+      (O.pass_half or num(RD.pass_tiles / 2))
     if o.tip then
       tx, ty = tx * o.tip, ty * o.tip
       local lo, hi = -RD.pass_tiles / 2, RD.tip_tiles
@@ -380,6 +385,24 @@ local function highland(key, Bd, O)
     terms[k] = h.reach_text .. " - sqrt(a" .. s .. " * a" .. s .. " + e" .. s .. " * e" .. s .. ")"
   end
   def(N.high_tile_map[key], joined("max", terms, "-inf"), T2)
+  -- The cold field (config.lua ridges.cold): one field per piece, on the pieces the rocks read, so the rocks' reach
+  -- covers every cold tile and the palm mask can stand on it.
+  local CO, m = RD.cold, cfg.maps[key]
+  terms = {}
+  for k, h in ipairs(Bd.pieces) do
+    if h.arc >= RD.rocks.short_px then
+      local lat = math.abs(m.lat_top_edge - (h.row + 1 / 2) / PPD)
+      local line = math.max(CO.snow_min_m, CO.snow_m - CO.snow_per_degree * math.max(0, lat - CO.snow_lat))
+      if h.top >= line - CO.grey_m then
+        local s = tostring(k)
+        local snowy = h.top >= line
+        local term = "1 - sqrt(a" .. s .. " * a" .. s .. " + e" .. s .. " * e" .. s .. ") / (" ..
+          num(h.reach * (snowy and 1 or CO.grey_reach)) .. " * " .. N.cold.reach .. ")"
+        terms[#terms + 1] = snowy and term or ("min(" .. num(CO.grey_top) .. ", " .. term .. ")")
+      end
+    end
+  end
+  def(N.cold.map[key], joined("max", terms, "-inf"), T2)
   local P, ds = {}, {}
   for i, c in ipairs(O.named) do
     local s = tostring(i)
@@ -488,10 +511,281 @@ for _, key in ipairs(cfg.map_order) do
   end
 end
 
+-- The line field (config.lua ridges.line and ridges.preset; DECISIONS 2026-10-31, ridges as lines). The bodies above
+-- draw a ridge as the outline of a band, so it has two flanks that run side by side and close round its ends: at
+-- scale 1, where a range is about as long as its band is wide, that outline is a box. Here the field is a signed
+-- distance across the crest with its high side on one hand, so its contours follow the crest and stand open at both
+-- ends. On each map:
+--   side    the signed distance to the nearest crest piece at the wandering point, positive on the high side. A
+--           piece is band_pieces', monotone along one axis, so its distance is that axis's piecewise-linear crest
+--           function (3 operations per segment against the 14 of the exact distance above) times the piece's mean
+--           cosine, plus the distance past its ends. The sign is the piece's own hand and the magnitude the distance
+--           every piece compares, so the field does not step where one piece hands over to the next. The crest is
+--           the table's with its corners cut, or a line takes a polyline's right angle (the Western Alps turn 87
+--           degrees at Monte Rosa)
+--   width   a piece's half-width along its crest, the same clamps at the width's own slopes, times the run: a line
+--           thins out where the width falls to nothing, because a thin stretch takes the gaps below
+--   reach   base_tiles + gain * fit * width, the width capped: how far one contour stands from the next and how far
+--           the noise pushes a line, so a taller range spreads wider. It reads the width alone, not the distance:
+--           with the distance the slope steepened off the crest and noise could not bend a side line. fit is (scale
+--           / 6) ^ power: a range is shorter at a low scale, so its lines stand closer and fewer of them
+--   along   the distance along the crest in tiles, at the same piece. The line's bends are waves of this, not noise
+--           over the plane: noise with slope enough to bend a line off the lattice folds a contour back on itself
+--           into rings, and noise gentle enough not to leaves ruled flats, while a wave along the crest moves a
+--           contour only along the crest, so any bend is free
+--   h       (side * stretch + fine) / reach + bends, three contours through config.lua's contour clamp: the line at
+--           h = 0 and a side line each way. bends are the waves of along, their lengths in no simple ratio and each
+--           phase pushed about by slow noise, so they never fall into step and a seed has its own; along leans a
+--           little with side (shear), so a side line does not copy the line's bends. stretch moves only the side
+--           lines. fine is in tiles, so a low range breaks off the lattice as well as a tall one
+-- A contour's high side decides how it draws: an east-west face that looks south is the heaviest cliff there is
+-- (11,108 opaque px against 1,778 for the same line facing north). So a piece along the east-west axis lifts its
+-- north side, and a north-south piece keeps the hand round it. Where a range doubles back the hand reverses and
+-- every contour would fold along the piece boundary: that reversal is a gap, as wide as the lines reach.
+local LN = RD.line
+
+-- One run of consecutive kept segments with its corners cut: each inner vertex becomes two, a share of the way along
+-- its two segments and at most cut_px from it, so a line takes no kink from the polyline. A vertex's width carries
+-- over along the segment. Returns the run's new points and widths.
+local function cut_corners(pts, wide, run)
+  local out, ws = {pts[run[1]]}, {wide[run[1]]}
+  for n = 2, #run do
+    local i = run[n]
+    local p, v, q = pts[i - 1], pts[i], pts[i + 1]
+    local function toward(o, w)
+      local dx, dy = o[1] - v[1], o[2] - v[2]
+      local t = math.min(LN.cut_share, LN.cut_px / math.sqrt(dx * dx + dy * dy))
+      out[#out + 1] = {v[1] + t * dx, v[2] + t * dy}
+      ws[#ws + 1] = wide[i] + t * (w - wide[i])
+    end
+    toward(p, wide[i - 1])
+    toward(q, wide[i + 1])
+  end
+  local e = run[#run] + 1
+  out[#out + 1], ws[#ws + 1] = pts[e], wide[e]
+  return out, ws
+end
+
+-- Every piece of a range's kept segments in order, on the crest with its corners cut, knowing which way it runs
+-- and, when it is an east-west piece long enough to pick, the hand that lifts its north side.
+local function line_pieces(pts, wide, segs)
+  local pcs, run = {}, {}
+  local function flush()
+    if #run == 0 then
+      return
+    end
+    local cp, cw = cut_corners(pts, wide, run)
+    local cr = {}
+    for n = 1, #cp - 1 do
+      cr[n] = n
+    end
+    for _, pc in ipairs(band_pieces(cp, cr)) do
+      local a, b = cp[cr[pc.first]], cp[cr[pc.last] + 1]
+      local i = pc.axis == "x" and 1 or 2
+      pc.ascending = b[i] > a[i]
+      pc.run, pc.pts, pc.wide = cr, cp, cw
+      if pc.axis == "x" and math.abs(b[1] - a[1]) >= LN.turn_px then
+        pc.want = pc.ascending and 1 or -1
+      end
+      pcs[#pcs + 1] = pc
+    end
+    run = {}
+  end
+  for _, i in ipairs(segs) do
+    if #run > 0 and i ~= run[#run] + 1 then
+      flush()
+    end
+    run[#run + 1] = i
+  end
+  flush()
+  return pcs
+end
+
+-- Calls use(piece, hand) along a range: the hand stays until an east-west piece wants the other, and that reversal
+-- joins flips. A range with no east-west piece long enough lifts its west side.
+local function walk_hands(pcs, use, flips)
+  local hand
+  for _, pc in ipairs(pcs) do
+    hand = hand or pc.want
+  end
+  if not hand and pcs[1] then
+    local south = pcs[1].axis == "y" and pcs[1].ascending
+    hand = south and -1 or 1
+  end
+  for _, pc in ipairs(pcs) do
+    if pc.want and pc.want ~= hand then
+      hand = pc.want
+      flips[#flips + 1] = pc.pts[pc.run[pc.first]]
+    end
+    use(pc, hand)
+  end
+end
+
+local function line_bodies(key)
+  local g
+  for _, v in ipairs((cfg.geography[key] or {}).versions or {}) do
+    if v.geo_id == cfg.layer_chain_geo[key] then
+      g = v
+    end
+  end
+  local m = cfg.maps[key]
+  local function wave(row)
+    return "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(row.seed1) .. ", input_scale = " ..
+      num(1 / row.wavelength) .. ", output_scale = 1, offset_x = " .. g.cx .. ", offset_y = " .. g.cy .. "}"
+  end
+  local function waves(rows)
+    local parts = {}
+    for _, row in ipairs(rows) do
+      parts[#parts + 1] = num(row.amplitude) .. " * " .. wave(row)
+    end
+    return table.concat(parts, " + ")
+  end
+  local LNN = LN.names
+  local L = {wu = N.wander_u[key] .. " * " .. S .. " + " .. num(RD.centre_tiles),
+             wv = N.wander_v[key] .. " * " .. S .. " + " .. num(RD.centre_tiles)}
+  local fit = "(" .. S .. " / " .. num(LN.fit_scale) .. ") ^ " .. num(LN.fit_power)
+  -- a low scale packs the same passes into a shorter crest: the Alps at scale 1 are a slot every 40 tiles
+  local O = {u = N.wander_u[key], v = N.wander_v[key], fixed_u = g.u, fixed_v = g.v, L = {}, terms = {}, keeps = {},
+             named = {},
+             pass_half = "max(" .. num(LN.pass_min_tiles / 2) .. ", " .. num(LN.pass_tiles / 2) .. " * " .. fit .. ")"}
+  local k = 0
+  local deps, flips = {}, {}
+  local walked = 0
+  local function piece(pts, wide, run, pc, hand)
+    local up = {}
+    for j = pc.first, pc.last do
+      if j == pc.first then
+        up[#up + 1] = run[j]
+      end
+      up[#up + 1] = run[j] + 1
+    end
+    local list = {}
+    for n, i in ipairs(up) do
+      local v = pts[i]
+      list[n] = pc.axis == "x" and {v[1], v[2], w = wide[i]} or {v[2], v[1], w = wide[i]}
+    end
+    if not pc.ascending then
+      local rev = {}
+      for n = #list, 1, -1 do
+        rev[#rev + 1] = list[n]
+      end
+      list = rev
+    end
+    k = k + 1
+    local id = tostring(k)
+    local P, Q = "wu", "wv"
+    -- the sign that makes side positive on the left of travel
+    local left = pc.ascending and -1 or 1
+    if pc.axis == "y" then
+      P, Q, left = "wv", "wu", -left
+    end
+    local f, r, c, c2, arc = {}, {}, list[1][2], list[1].w, 0
+    for n = 2, #list do
+      local a, b = list[n - 1], list[n]
+      local slope = (b[2] - a[2]) / (b[1] - a[1])
+      local rise = (b.w - a.w) / (b[1] - a[1])
+      c, c2 = c - slope * a[1], c2 - rise * a[1]
+      local cl = "clamp(" .. P .. ", " .. S .. " * " .. num(a[1]) .. ", " .. S .. " * " .. num(b[1]) .. ")"
+      L["c" .. id .. "_" .. n] = cl
+      f[#f + 1] = num(slope) .. " * c" .. id .. "_" .. n
+      r[#r + 1] = num(rise) .. " * c" .. id .. "_" .. n .. " / " .. S
+      arc = arc + (b[1] - a[1]) * math.sqrt(1 + slope * slope)
+    end
+    local mid, span = (list[1][1] + list[#list][1]) / 2, (list[#list][1] - list[1][1]) / 2
+    L["a" .. id] = num(hand * left * 2 * span / arc) .. " * (" .. Q .. " - " .. S .. " * " .. num(c) .. " - (" ..
+      table.concat(f, " + ") .. "))"
+    L["e" .. id] = "max(0, abs(" .. P .. " - " .. S .. " * " .. num(mid) .. ") - " .. S .. " * " .. num(span) .. ")"
+    L["d" .. id] = "abs(a" .. id .. ") + e" .. id
+    -- the distance along the crest in tiles, running on from the piece before and holding past the piece's ends, so
+    -- two pieces agree where one hands over to the other
+    local per = (pc.ascending and 1 or -1) * arc / (2 * span)
+    L["w" .. id] = S .. " * " .. num(walked - per * (pc.ascending and list[1][1] or list[#list][1])) .. " + " ..
+      num(per) .. " * clamp(" .. P .. ", " .. S .. " * " .. num(list[1][1]) .. ", " .. S .. " * " ..
+      num(list[#list][1]) .. ")"
+    walked = walked + arc
+    deps[#deps + 1] = "(" .. num(c2) .. " + " .. table.concat(r, " + ") .. ") * " .. N.run[key] .. " - d" .. id
+    if k == 1 then
+      L.m1 = "d1"
+      L.s1 = "if(a1 > 0, d1, -d1)"
+      L.t1 = "w1"
+    else
+      local q = tostring(k - 1)
+      L["m" .. id] = "min(d" .. id .. ", m" .. q .. ")"
+      L["s" .. id] = "if(d" .. id .. " < m" .. q .. ", if(a" .. id .. " > 0, d" .. id .. ", -d" .. id .. "), s" .. q ..
+        ")"
+      L["t" .. id] = "if(d" .. id .. " < m" .. q .. ", w" .. id .. ", t" .. q .. ")"
+    end
+  end
+  for _, r in ipairs(T.ranges) do
+    local segs = r.segments[key]
+    if segs then
+      local pts, wide = {}, {}
+      for i, ll in ipairs(r.crest) do
+        local pu, pv = to_px(m, ll[1], ll[2])
+        pts[i] = {pu, pv}
+        wide[i] = half_width(r.heights[i], i == 1 or i == #r.crest)
+      end
+      walk_hands(line_pieces(pts, wide, segs), function(pc, hand)
+        piece(pc.pts, pc.wide, pc.run, pc, hand)
+      end, flips)
+      for _, o in ipairs(r.openings) do
+        if on_map(o.maps, key) then
+          add_opening(O, m, pts, o, wide)
+        end
+      end
+    end
+  end
+  local id = tostring(k)
+  def(LNN.depth[key], joined("max", deps, "-inf"), L)
+  def(LNN.side[key], "s" .. id, L)
+  def(LNN.near[key], "m" .. id, L)
+  def(LNN.along[key], "t" .. id, L)
+  local width = "(" .. LNN.depth[key] .. " + " .. LNN.near[key] .. ")"
+  local reach = "(" .. num(LN.base_tiles) .. " + " .. num(LN.gain) .. " * " .. fit .. " * clamp(" .. width .. ", 0, " ..
+    num(LN.width_max_tiles) .. "))"
+  def(LNN.reach[key], reach)
+  local R, KP = LNN.reach[key], N.keep[key]
+  local bends = {}
+  for _, w in ipairs(LN.waves) do
+    bends[#bends + 1] = num(w.amplitude) .. " * sin(" .. num(2 * math.pi / w.tiles) .. " * walk + " .. num(LN.phase) ..
+      " * " .. wave(RD.run[w.phase]) .. ")"
+  end
+  def(LNN.crest[key], "(" .. LNN.side[key] .. " * max(" .. num(LN.stretch.floor) .. ", 1 + " .. num(LN.stretch.gain) ..
+    " * " .. wave(LN.stretch) .. ") + " .. waves(LN.fine) .. ") / " .. R .. " + " .. table.concat(bends, " + "),
+    {walk = LNN.along[key] .. " + " .. num(LN.shear) .. " * " .. LNN.side[key]})
+  local H = LNN.crest[key]
+  for i, c in ipairs(flips) do
+    local s = "f" .. i
+    O.L["pu" .. s] = minus(O.u, c[1])
+    O.L["pv" .. s] = minus(O.v, c[2])
+    O.terms[#O.terms + 1] = "((pu" .. s .. " * pu" .. s .. " + pv" .. s .. " * pv" .. s .. ") * " .. scale2 .. " < " ..
+      num(LN.mask ^ 2) .. " * " .. R .. " * " .. R .. ")"
+  end
+  -- the noise gaps, as the bodies above draw them, and short snips off the fine row, so gaps come in two sizes
+  O.terms[#O.terms + 1] = "(" .. waves(RD.gaps.noise) .. " < " .. num(LN.gaps.threshold) .. " + " ..
+    num(LN.gaps.thin_gain) .. " * clamp(1 - " .. width .. " / " .. num(LN.gaps.thin_tiles) .. ", 0, 1) - " ..
+    num(RD.gaps.collar_gain) .. " * " .. KP .. ")"
+  O.terms[#O.terms + 1] = "(abs(" .. wave(LN.fine[1]) .. ") > " .. num(LN.snip) .. " + " .. num(RD.gaps.collar_gain) ..
+    " * " .. KP .. ")"
+  -- past the lines' reach every hand change draws a contour: nothing stands there
+  O.terms[#O.terms + 1] = "(" .. LNN.near[key] .. " > " .. num(LN.mask) .. " * " .. R .. ")"
+  -- a side line stands on one hand at a time, on a wide stretch, and never round a slot
+  O.terms[#O.terms + 1] = "(abs(" .. H .. ") > " .. num(LN.side_level) .. ") * max(" .. width .. " * " .. fit ..
+    " < " .. num(LN.side_min_tiles) .. ", " .. H .. " * " .. wave(RD.run[1]) .. " < 0, " .. KP .. " > " ..
+    num(LN.side_keep) .. ")"
+  def(LNN.openings[key], joined("max", O.terms, "0"), O.L)
+end
+
+for _, key in ipairs(cfg.map_order) do
+  if cfg.geography[key] and N.crest[key] and N.openings[key] and N.band[key] then
+    line_bodies(key)
+  end
+end
+
 -- The effective height: the map's crest with ridges on, -inf with ridges off.
 local on = K.ridges .. " > " .. num(RD.switch_threshold)
 def(N.height, "if(" .. on .. ", " .. K.crest .. ", -inf)")
--- The ridge-free start disc (D25 wins there), 1 inside.
+-- The ridge-free start disc (D25 wins there, design rule 12), 1 inside.
 def(N.free, "distance < max(" .. num(RD.start.radius_tiles) .. ", starting_area_radius) + " ..
   num(RD.start.margin_tiles))
 -- The two cliff properties (S5): the contours of the height, and the cliffiness gaps.
@@ -499,6 +793,8 @@ def(N.cliff_elevation, "cliff_elevation_0 + cliff_elevation_interval * clamp(1 +
   num(RD.contour.low) .. ", " .. num(RD.contour.high) .. ")")
 def(N.cliffiness, "if(" .. on .. ", " .. num(RD.cliffiness) .. " * (1 - " .. K.openings .. ") * (1 - " .. N.free ..
   "), 0)")
+def(LN.names.cliff_elevation, "cliff_elevation_0 + cliff_elevation_interval * clamp(1 + " .. N.height .. ", " ..
+  num(LN.contour.low) .. ", " .. num(LN.contour.high) .. ")")
 -- The ore clearance: 0 in the map's crest band (every tile within ore_clear_tiles of a crest, and a
 -- little more where the crest bends or climbs) outside the start disc, else 1.
 def(N.clear, "if(" .. on .. ", max(1 - " .. K.band .. ", " .. N.free .. "), 1)")
@@ -525,6 +821,28 @@ def(N.lapse, "if(" .. on .. ", " .. num(GD.lapse_per_px2) .. " * over * over * "
   cfg.climate.names.core .. " / " .. num(GD.cold_t) .. ", " .. num(GD.cold_min) .. ", 1), 0)",
   {over = "max(0, " .. N.rise_tile .. " / " .. S .. " - " .. num(GD.lapse_from_px) .. ") * " .. MASSIF})
 def(N.ground, num(RD.ground.lean) .. " * " .. N.high_tile)
+-- The cold field and its temperature cap (config.lua ridges.cold): the map's field folded on the per-save map number,
+-- with the region layer's outline.
+local CO = RD.cold
+local function cold_fold()
+  local text
+  for _, key in ipairs(cfg.map_order) do
+    local body = N.cold.map[key]
+    if body then
+      text = text and ("if(" .. K.map .. " == " .. num(cfg.maps[key].id) .. ", " .. body .. ", " .. text .. ")") or body
+    end
+  end
+  return text
+end
+def(N.cold.reach, S .. " * max(1, (" .. num(CO.fit_scale) .. " / " .. S .. ") ^ " .. num(CO.fit_power) .. ")")
+def(N.cold.field, cold_fold() .. " + " .. cfg.regions.names.highland_cold)
+def(N.cold.high, "if(" .. on .. ", clamp(" .. N.cold.field .. " / " .. num(CO.high_at) .. ", 0, 1) * " .. N.gate ..
+  ", 0)")
+-- The start disc takes the field down from inside, so the outline's noise acts on its edge: an offset on the cap drew a
+-- razor arc round the spawn, which at scale 1 cuts through a range.
+def(N.cold.gated, N.cold.field .. " - " .. num(CO.start_fall) .. " * (1 - " .. N.gate .. ")")
+def(N.cold.cap, "if(" .. on .. ", max(" .. num(CO.floor_t) .. ", " .. num(CO.top_t) .. " - " ..
+  num((CO.top_t - CO.snow_t) / CO.snow_at) .. " * " .. N.cold.gated .. "), " .. num(CO.off) .. ")")
 def(K.ground, num(0))
 -- The grain's bodies read the tile reach, and a save from before the highlands names those bodies but not this
 -- key: its prototype leaves such a save no rise, so its ground stays.

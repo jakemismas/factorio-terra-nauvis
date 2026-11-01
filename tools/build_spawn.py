@@ -57,7 +57,6 @@ import build_geo  # noqa: E402  (it imports numpy only inside its functions)
 
 EMITTER_VERSION = 4
 GENERATED = REPO / "terra-nauvis" / "prototypes" / "generated"
-SCALES = (1, 2, 3, 4, 5, 6)
 PATH_STEP_PX = 0.25
 FIELDS = ("bearings", "bias", "bias_width", "coastal")
 WINDOW_RADII = 1.5
@@ -65,6 +64,17 @@ WINDOW_RADII = 1.5
 
 def sha256_file(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+def scales_of(cfg, map_key):
+    """The scales the map's newest geography version serves: the bearings file it names holds these, in this
+    order. Europe's newest is released, so its file keeps 1 to 6 and spawn.lua reads the last row past that."""
+    import tnconfig
+    return tnconfig.version_scales(cfg, tnconfig.geography_versions(cfg)[map_key][-1])
+
+
+def scale_words(scales):
+    return "1 to 6" if list(scales) == [1, 2, 3, 4, 5, 6] else ", ".join(str(s) for s in scales)
 
 
 def preferred(key, steps):
@@ -328,7 +338,7 @@ def emit_text(map_key, emitter=None):
     rows = []
     for v, col, row in city_pixels(cfg, map_key):
         rec = {f: [] for f in FIELDS}
-        for s in SCALES:
+        for s in scales_of(cfg, map_key):
             for f, x in zip(FIELDS, bearings_for(cfg, land, v, col, row, s, coarse, cands)):
                 rec[f].append(x)
         rows.append((v, rec))
@@ -356,7 +366,8 @@ def emit_text(map_key, emitter=None):
             f"-- (sha256 {sha256_file(ckpt)}).",
         ]
     header += [
-        "-- Per city (the spawn-city setting's values) and scale 1 to 6: the spawn lake's bearing, inside",
+        f"-- Per city (the spawn-city setting's values) and scale {scale_words(scales_of(cfg, map_key))}: the spawn "
+        "lake's bearing, inside",
         "-- the land component holding the city, and the starting-ore bias bearing, both in sixteenths of",
         "-- a turn (0 east, 4 south); the bias width in tiles; and 1 where the start mask's bias is on.",
         "-- Name-free data; never edit by hand: rerun the tool (plan hard rule 9).",
@@ -380,7 +391,7 @@ def file_emitter(path):
 
 
 def model_risk(map_key, emitter=None, table=None):
-    """{setting value: [the model's failure share per scale 1 to 6]} of a bearings table (default: the
+    """{setting value: [the model's failure share per scale of the version's list]} of a bearings table (default: the
     committed file of the map's newest version) under an emitter's model (default: the newest
     emitter): the share of the Monte Carlo layouts' starting-ore picks the table's lake and bias leave
     off the city's own land. The T7 suite re-runs at seeds 1000 to 1004 every start whose share
@@ -393,7 +404,7 @@ def model_risk(map_key, emitter=None, table=None):
     out = {}
     for v, col, row in city_pixels(cfg, map_key):
         shares = []
-        for si, s in enumerate(SCALES):
+        for si, s in enumerate(scales_of(cfg, map_key)):
             comp, _, _, steps = city_setup(cfg, land, col, row, s)
             x, y, base, failure = bias_model(cfg, comp, coarse, col, row, s,
                                              lake_xy(cfg, table["bearings"][v][si]), cands)

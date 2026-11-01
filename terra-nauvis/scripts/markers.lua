@@ -1,9 +1,9 @@
--- City markers (ARCHITECTURE.md, "Control stage"; milestone extras; D28; APPROVALS 1a). With the runtime-global
+-- City markers (ARCHITECTURE.md, "Control stage"; contract 13; D28; APPROVALS 1a). With the runtime-global
 -- setting City markers on, the map view of an Earth world (one made from a Terra Nauvis preset, which
 -- guards.on_init records in storage.earth) shows the name of every city of the save's map where the city
 -- lies; off removes them. Each marker is a rendering object in chart mode (config.lua markers): it draws on
 -- the map view only, for every force, needs no charted chunk and no per-chunk event, and the headless T18
--- check reads it with rendering.get_all_objects.
+-- check reads it with rendering.get_all_objects (TST-29).
 --
 -- A city's marker stands in the tile holding its reference pixel centre: world = geo - the city offset, where
 -- the geo tile is the middle tile of the city's pixel at the save's scale (the conversion of spawn-cities'

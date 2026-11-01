@@ -10,7 +10,7 @@ from data-src/approvals/approvals-data.json (what each map adopts, hotspot centr
 APPROVALS 2, 4, 8 and 10) and the design notes (outlines, extents and the
 protected features beside the destroyed zone), by the rules of S10's tuned table
 (spikes/S10-regions/tables.py in an earlier prototype):
-  destroyed   the outline in data-src/approvals/destroyed-zone.json on
+  destroyed   the outline in data-src/approvals/destroyed-zone.json (outline of 2026-10-30 10:05) on
               every map whose extent holds it: a polygon whose vertices each move per seed by up to their
               own jitter, at the file's warp share (above 1: stronger than the shared warp), plus the
               file's keep rows (warp 0), buffered paths that hold Britain, Denmark and the Carpathian
@@ -298,7 +298,7 @@ def derive_rows(cfg, appr, r7b, zone):
         raise RegionError(f"config.lua regions.km_per_px {kpp} differs from approvals-data.json rules.km_per_px "
                           f"{appr['rules']['km_per_px']}")
     rows = []
-    # The destroyed zone on every map whose extent holds its every vertex.
+    # The destroyed zone (outline of 2026-10-30 10:05) on every map whose extent holds its every vertex.
     verts = zone["vertices"]
     poly = [[float(p["lat"]), float(p["lon"])] for p in verts]
     pts = [to_px(lat, lon, fr) for lat, lon in poly]
@@ -307,6 +307,7 @@ def derive_rows(cfg, appr, r7b, zone):
                  "warp": float(zone["warp_share"]), "maps": maps_d, "latlon": poly,
                  "vertex_jitter_km": [float(p["jitter_km"]) for p in verts],
                  "vertex_phase": [phase_of("destroyed_europe_" + p["id"]) for p in verts],
+                 # the released regions.lua holds this text byte for byte (append_only row), so it stays
                  "source": "destroyed-zone.json vertices (Jake's ruling of 2026-10-30 10:05)"})
     # Keep rows: what stays outside the zone at every seed.
     for k in zone["keep"]:
@@ -373,7 +374,7 @@ def marsh_row(cfg, m, g, maps):
     if "west_east_km" in ext and "north_south_km" in ext:
         # a box's extent centred on the article coordinate, its sides converted at km_per_px (APPROVALS
         # 2's rule: a size in tiles does not depend on latitude), walked as a bent path as wide as the
-        # box, so the marsh keeps the box's span and reads as no rectangle
+        # box, so the marsh keeps the box's span and reads as no rectangle (2026-10-30)
         cu, cv = to_px(float(c["lat"]), float(c["lon"]), fr)
         hu, hv = ext["west_east_km"] / kpp / 2, ext["north_south_km"] / kpp / 2
         reach = hu - hv

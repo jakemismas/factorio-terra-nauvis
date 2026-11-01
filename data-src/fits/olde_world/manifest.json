@@ -5,14 +5,14 @@
  "map": "olde_world",
  "bodies": {
   "geo": {
-   "terms": 8192,
-   "factors": 4404,
-   "row_groups": 1858,
-   "checkpoint": "data-src/fits/olde_world/model-8192.npz",
-   "checkpoint_sha256": "f28272b9d304191e074c25db1878fceb8057e37c876244535fa429a7817e594e",
-   "file": "terra-nauvis/prototypes/generated/geo_olde_world_v1.lua",
-   "sha256": "2093d55a9e1d26b1c6d4d576e65b05917d8852de581f316c9fce8b12a2270915",
-   "bytes": 478911
+   "terms": 9360,
+   "factors": 3778,
+   "row_groups": 1523,
+   "checkpoint": "data-src/fits/olde_world/model-9360.npz",
+   "checkpoint_sha256": "9ced876567416c84859469ec5fe6a470f9e9b5761b3566b5b292d301580d0496",
+   "file": "terra-nauvis/prototypes/generated/geo_olde_world_v2.lua",
+   "sha256": "1336aa876d0e14fdad48f9ce5d12fcfdc20227c93b5df94a95b2e437e6c80363",
+   "bytes": 467976
   },
   "land_coarse": {
    "terms": 256,

@@ -34,7 +34,7 @@
 --                                          rivers, straits, basins and open canals, each set picked by
 --                                          the folded scale (waterways.lua); dams come after the lakes
 --                                          so no lake reopens a dammed isthmus, and a carve still cuts
---                                          the start land guarantee
+--                                          the start land guarantee (TST-06)
 --   elevation = if(e < 0, min(e, stamp), e)  a version with an offshore stamp (resources-enemies): the
 --                                          map's stamp key, a Map type fallback, names the stamp body
 --                                          (resources.lua) with hotspots on and the neutral zero off,
@@ -53,8 +53,10 @@ local FILES = {
   ["prototypes/generated/geo_europe_v1.lua"] = require("prototypes.generated.geo_europe_v1"),
   ["prototypes/generated/land_coarse_europe_v1.lua"] = require("prototypes.generated.land_coarse_europe_v1"),
   ["prototypes/generated/geo_atlantic_v1.lua"] = require("prototypes.generated.geo_atlantic_v1"),
+  ["prototypes/generated/geo_atlantic_v2.lua"] = require("prototypes.generated.geo_atlantic_v2"),
   ["prototypes/generated/land_coarse_atlantic_v1.lua"] = require("prototypes.generated.land_coarse_atlantic_v1"),
   ["prototypes/generated/geo_olde_world_v1.lua"] = require("prototypes.generated.geo_olde_world_v1"),
+  ["prototypes/generated/geo_olde_world_v2.lua"] = require("prototypes.generated.geo_olde_world_v2"),
   ["prototypes/generated/land_coarse_olde_world_v1.lua"] = require("prototypes.generated.land_coarse_olde_world_v1"),
 }
 
@@ -78,7 +80,7 @@ end
 -- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain, or to
 -- fit_u and fit_v where the version warps its fit. The game parses every body's text at startup (about
 -- 0.5 us a byte) and expands every noise-function call there, so each map carries its fit once: one
--- geography version per map until the first release.
+-- geography version per map until the first release (DECISIONS 2026-10-30 10:55; issue #1).
 local function fit_body(name, file, g, fit_u, fit_v)
   local fit = FILES[file]
   if not fit then
@@ -131,21 +133,27 @@ local function version(m, g)
   def(g.u, "(" .. g.gx .. " - " .. corner .. ") / " .. s .. " + " .. num(m.wr))
   def(g.v, "(" .. g.gy .. " - " .. corner .. ") / " .. s .. " + " .. num(m.hr))
 
-  -- The coast fit (Tile only) and the coarse land field, the one land field outside Tile.
+  -- The coast fit (Tile only) and the coarse land field, the one land field outside Tile (design rule 8).
   -- A version with a coast warp (config.lua coast.warp) reads its fit at warped coordinates; the coarse
   -- field stays on the plain chain, so the warp reaches Tile only.
   local warp = warps(g)
   if warp then
-    local function warped(base, terms)
+    local P = C.warp.past_six
+    local function warped(base, terms, axis)
       local parts = {base}
       for _, o in ipairs(terms) do
         parts[#parts + 1] = num(o.amplitude_px) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
           num(o.seed1) .. ", input_scale = 1 / (" .. num(o.wavelength_px) .. " * " .. s .. "), offset_x = " ..
           g.cx .. ", offset_y = " .. g.cy .. "}"
       end
+      if P and listed(P.geographies, g) then
+        parts[#parts + 1] = "if(" .. s .. " > " .. num(P.above_scale) .. ", " .. num(P.amplitude_tiles) .. " / " .. s ..
+          " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(P.seed1[axis]) .. ", input_scale = " ..
+          num(1 / P.wavelength_tiles) .. ", offset_x = " .. g.cx .. ", offset_y = " .. g.cy .. "}, 0)"
+      end
       return table.concat(parts, " + ")
     end
-    fit_body(g.geo, g.fits.geo, g, warped(g.u, C.warp.u), warped(g.v, C.warp.v))
+    fit_body(g.geo, g.fits.geo, g, warped(g.u, C.warp.u, "u"), warped(g.v, C.warp.v, "v"))
   else
     fit_body(g.geo, g.fits.geo, g)
   end
@@ -285,7 +293,7 @@ local function version(m, g)
   -- A version with a spawn record (spawn-cities) adds step 4, the start land guarantee, and step 7,
   -- the spawn lake and the version's inland lakes (spawn.lua defines all three). A version with
   -- waterways (waterways) wraps the rest in steps 5 and 6, the dams and carves (waterways.lua): a
-  -- named waterway still cuts the guarantee, and no lake reopens a dammed isthmus.
+  -- named waterway still cuts the guarantee (TST-06), and no lake reopens a dammed isthmus.
   local sp = g.spawn
   if sp then
     -- A version with a lakes field (edge-and-lakes) reads its inland lakes through the per-save switch,
@@ -298,32 +306,72 @@ local function version(m, g)
     end
     text = "min(max(" .. text .. ", " .. sp.start_land .. "), " .. sp.spawn_lake .. ", " .. lakes .. ")"
   end
-  if g.waterways then
-    local ww_locals
-    text, ww_locals = waterways.composition(g.waterways, text, m.key, g)
-    for k, v in pairs(ww_locals) do
-      locals[k] = v
+  local spawned, spawned_locals = text, {}
+  for k, v in pairs(locals) do
+    spawned_locals[k] = v
+  end
+  -- The waterways and the offshore stamp, on top of what the version composed so far.
+  local function finish(rec, base, base_locals)
+    local t, l = base, {}
+    for k, v in pairs(base_locals) do
+      l[k] = v
+    end
+    if rec.waterways then
+      local ww_locals
+      t, ww_locals = waterways.composition(rec, t, m.key, g)
+      for k, v in pairs(ww_locals) do
+        l[k] = v
+      end
+    end
+    -- A version with an offshore stamp (resources-enemies) wraps the rest last, through its stamp key; the
+    -- local is ev, never e (S9).
+    if g.fields then
+      l.ev = t
+      t = "if(ev < 0, min(ev, " .. g.fields .. "), ev)"
+    end
+    return t, l
+  end
+  local entry_text, entry_locals = finish(g, spawned, spawned_locals)
+  local entry = def(g.entry, entry_text, entry_locals)
+  -- A released version's scale extension (config.lua scale_extensions): the same composition over the extension's
+  -- sets where the save's scale is past the version's list, and the frozen entry itself everywhere else, so a
+  -- Map-type-only world keeps a coast when its setting moves back.
+  local X = cfg.scale_extensions[m.key]
+  if X and X.geo_id == g.geo_id then
+    local x_text, x_locals = finish(X, spawned, spawned_locals)
+    x_locals.ext = x_text
+    local top = cfg.scales.released[#cfg.scales.released]
+    return entry, def(X.entry, "if(" .. s .. " > " .. num(top) .. ", ext, " .. g.entry .. ")", x_locals)
+  end
+  return entry
+end
+
+-- Whether the startup scale is past a version's list.
+local function settings_scale_past(v)
+  local now = tonumber(settings.startup[cfg.settings.scale.name].value)
+  for _, s in ipairs(v.scales or cfg.scales.released) do
+    if s == now then
+      return false
     end
   end
-  -- A version with an offshore stamp (resources-enemies) wraps the rest last, through its stamp key; the
-  -- local is ev, never e (S9).
-  if g.fields then
-    locals.ev = text
-    text = "if(ev < 0, min(ev, " .. g.fields .. "), ev)"
-  end
-  return def(g.entry, text, locals)
+  return true
 end
 
 for _, key in ipairs(cfg.map_order) do
   local g = cfg.geography[key]
   local versions = g and g.versions or {}
   for i, v in ipairs(versions) do
-    local entry = version(cfg.maps[key], v)
+    local entry, past = version(cfg.maps[key], v)
     -- The Map type entry (D2 amended): the newest version of a map's entry carries these GUI fields,
-    -- which tests/frozen.json never hashes.
+    -- which tests/frozen.json never hashes. Where the startup scale is past that version's list, its
+    -- extension's entry carries them.
     if i == #versions then
+      local picked = v.entry
+      if past and settings_scale_past(v) then
+        entry, picked = past, cfg.scale_extensions[key].entry
+      end
       entry.intended_property = K.elevation
-      entry.localised_name = {"noise-expression." .. v.entry}
+      entry.localised_name = {"noise-expression." .. picked}
       entry.order = g.map_type_order
     end
   end

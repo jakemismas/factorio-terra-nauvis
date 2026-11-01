@@ -4,8 +4,8 @@
  "emitter_version": 1,
  "map": "olde_world",
  "inputs": {
-  "checkpoint": "data-src/fits/olde_world/model-8192.npz",
-  "checkpoint_sha256": "f28272b9d304191e074c25db1878fceb8057e37c876244535fa429a7817e594e",
+  "checkpoint": "data-src/fits/olde_world/model-9360.npz",
+  "checkpoint_sha256": "9ced876567416c84859469ec5fe6a470f9e9b5761b3566b5b292d301580d0496",
   "land_sha256": "7a7af0b11aeb8e21f84adbdf965f94f800789435ce228572267c45dd87e20e57",
   "thinwater_sha256": "a06d773279ab91a958d268feacfb12f6fd2f2435a69a38609b33b68b5da77a70",
   "bandfix_config_sha256": "b97b01c76d3c5b324b8ae74f2f75f2cccac69f1a5d9d197ec3d14f2627877e0f",
@@ -24,284 +24,284 @@
   "shipped": "the shipped rule's writes with the fit alone deciding: K pixels outside the scale's masks, fill pixels whole"
  },
  "shared": {
-  "file": "terra-nauvis/scripts/generated/bandfix_olde_world_v1.lua",
-  "sha256": "4e1dfc76ee3c88c7b28c19566fd8b89302c8ae86c08edd5c483a0d5bf3d2657f",
-  "bytes": 1649524,
-  "payload_chars": 1521389,
+  "file": "terra-nauvis/scripts/generated/bandfix_olde_world_v2.lua",
+  "sha256": "613867974e8512c9556491a9beb570d3cbe592302c6dc537c48ac47f7332a834",
+  "bytes": 1661208,
+  "payload_chars": 1532533,
   "rows": 5824,
-  "k_pixels": 2088729,
-  "kplus_pixels": 3115920
+  "k_pixels": 2066080,
+  "kplus_pixels": 3140302
  },
  "scales": {
   "1": {
-   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s1_v1.lua",
-   "sha256": "0713abd6a1bc7533efed1ef9bfda109f1253222cd7ebfa094a7aa538bf438f49",
-   "bytes": 112790,
-   "data_bytes_with_shared": 1762314,
-   "k_pixels_this_scale": 1509354,
-   "k_pixels_writable": 1935439,
-   "fill_pixels": 1935439,
-   "masked_kplus_pixels": 207003,
-   "footprint_pixels": 838188,
-   "waterway_manifest_sha256": "c8074ee9352fd4c50151ab0d8a069fd42837e37fc61bf7c3cf4d1f33056a32c3",
-   "f32_sensitive_tiles": 2993,
+   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s1_v2.lua",
+   "sha256": "cfcd810bbd3588d53ddedba9b48a33cf7f09fa538e9160c8cea14be04136f740",
+   "bytes": 121138,
+   "data_bytes_with_shared": 1782346,
+   "k_pixels_this_scale": 1521795,
+   "k_pixels_writable": 1946912,
+   "fill_pixels": 1946912,
+   "masked_kplus_pixels": 181168,
+   "footprint_pixels": 740588,
+   "waterway_manifest_sha256": "f02a5b781146c97c3a568959e265324e615b5750504203de5a8e15e3b67523c5",
+   "f32_sensitive_tiles": 2312,
    "s12_rule": {
     "chunks": 51888,
-    "touched": 6669,
-    "share": 0.128527,
-    "tiles_written": 449111,
+    "touched": 6081,
+    "share": 0.117195,
+    "tiles_written": 311098,
     "tiles_per_touched_chunk": {
-     "mean": 67.34,
-     "p95": 195,
-     "max": 561
+     "mean": 51.16,
+     "p95": 151,
+     "max": 533
     },
-    "est_ms_per_generated_chunk": 0.0437,
-    "water_to_land_tiles": 180676,
-    "land_to_water_tiles": 268435,
-    "touched_with_water_to_land": 4677
+    "est_ms_per_generated_chunk": 0.0398,
+    "water_to_land_tiles": 135340,
+    "land_to_water_tiles": 175758,
+    "touched_with_water_to_land": 4999
    },
    "shipped_rule": {
     "chunks": 51888,
-    "touched": 6237,
-    "share": 0.120201,
-    "tiles_written": 414006,
+    "touched": 5866,
+    "share": 0.113051,
+    "tiles_written": 297073,
     "tiles_per_touched_chunk": {
-     "mean": 66.38,
-     "p95": 194,
-     "max": 561
+     "mean": 50.64,
+     "p95": 149,
+     "max": 533
     },
-    "est_ms_per_generated_chunk": 0.0409
+    "est_ms_per_generated_chunk": 0.0384
    },
    "chunks_read": {
-    "chunks": 11781,
-    "share": 0.227047
+    "chunks": 11833,
+    "share": 0.228049
    },
-   "seconds": 15.0
+   "seconds": 6.8
   },
   "2": {
-   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s2_v1.lua",
-   "sha256": "e807fab406b04a0c5b067aa6bc120c86edf2389fa6e60a7c5da27e10757723b4",
-   "bytes": 107443,
-   "data_bytes_with_shared": 1756967,
-   "k_pixels_this_scale": 1139201,
-   "k_pixels_writable": 1962230,
-   "fill_pixels": 522382,
-   "masked_kplus_pixels": 182718,
-   "footprint_pixels": 618727,
-   "waterway_manifest_sha256": "c8074ee9352fd4c50151ab0d8a069fd42837e37fc61bf7c3cf4d1f33056a32c3",
-   "f32_sensitive_tiles": 10596,
+   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s2_v2.lua",
+   "sha256": "54ba0723715bb3ec08d8579258ca4a8064d81894be9cb12c38d698d3d174b098",
+   "bytes": 116140,
+   "data_bytes_with_shared": 1777348,
+   "k_pixels_this_scale": 1107508,
+   "k_pixels_writable": 1962573,
+   "fill_pixels": 498438,
+   "masked_kplus_pixels": 165762,
+   "footprint_pixels": 579698,
+   "waterway_manifest_sha256": "f02a5b781146c97c3a568959e265324e615b5750504203de5a8e15e3b67523c5",
+   "f32_sensitive_tiles": 7908,
    "s12_rule": {
     "chunks": 205692,
-    "touched": 15187,
-    "share": 0.073834,
-    "tiles_written": 1448353,
+    "touched": 13549,
+    "share": 0.06587,
+    "tiles_written": 970855,
     "tiles_per_touched_chunk": {
-     "mean": 95.37,
-     "p95": 295,
-     "max": 856
+     "mean": 71.66,
+     "p95": 220,
+     "max": 803
     },
-    "est_ms_per_generated_chunk": 0.0251,
-    "water_to_land_tiles": 592901,
-    "land_to_water_tiles": 855452,
-    "touched_with_water_to_land": 9458
+    "est_ms_per_generated_chunk": 0.0224,
+    "water_to_land_tiles": 414325,
+    "land_to_water_tiles": 556530,
+    "touched_with_water_to_land": 10136
    },
    "shipped_rule": {
     "chunks": 205692,
-    "touched": 14336,
-    "share": 0.069696,
-    "tiles_written": 1688255,
+    "touched": 13216,
+    "share": 0.064251,
+    "tiles_written": 1209149,
     "tiles_per_touched_chunk": {
-     "mean": 117.76,
-     "p95": 336,
-     "max": 904
+     "mean": 91.49,
+     "p95": 261,
+     "max": 839
     },
-    "est_ms_per_generated_chunk": 0.0237
+    "est_ms_per_generated_chunk": 0.0218
    },
    "chunks_read": {
-    "chunks": 29240,
-    "share": 0.142154
+    "chunks": 29355,
+    "share": 0.142713
    },
-   "seconds": 96.4
+   "seconds": 22.1
   },
   "3": {
-   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s3_v1.lua",
-   "sha256": "84cb59551a2a76039e4b921c95d54b36519d51768764d6b83b3d0f5cd87e4738",
-   "bytes": 105429,
-   "data_bytes_with_shared": 1754953,
-   "k_pixels_this_scale": 1013600,
-   "k_pixels_writable": 1972056,
-   "fill_pixels": 36149,
-   "masked_kplus_pixels": 173979,
-   "footprint_pixels": 550970,
-   "waterway_manifest_sha256": "c8074ee9352fd4c50151ab0d8a069fd42837e37fc61bf7c3cf4d1f33056a32c3",
-   "f32_sensitive_tiles": 21136,
+   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s3_v2.lua",
+   "sha256": "371e82bb3ff7d45b259fcb6affb8165e055e83c90c130e64712ac7ccd865ec12",
+   "bytes": 114959,
+   "data_bytes_with_shared": 1776167,
+   "k_pixels_this_scale": 964909,
+   "k_pixels_writable": 1967832,
+   "fill_pixels": 26328,
+   "masked_kplus_pixels": 161876,
+   "footprint_pixels": 527386,
+   "waterway_manifest_sha256": "f02a5b781146c97c3a568959e265324e615b5750504203de5a8e15e3b67523c5",
+   "f32_sensitive_tiles": 16006,
    "s12_rule": {
     "chunks": 463100,
-    "touched": 24539,
-    "share": 0.052989,
-    "tiles_written": 3016620,
+    "touched": 21605,
+    "share": 0.046653,
+    "tiles_written": 1994998,
     "tiles_per_touched_chunk": {
-     "mean": 122.93,
-     "p95": 404,
-     "max": 1006
+     "mean": 92.34,
+     "p95": 298,
+     "max": 938
     },
-    "est_ms_per_generated_chunk": 0.018,
-    "water_to_land_tiles": 1244241,
-    "land_to_water_tiles": 1772379,
-    "touched_with_water_to_land": 13845
+    "est_ms_per_generated_chunk": 0.0159,
+    "water_to_land_tiles": 845753,
+    "land_to_water_tiles": 1149245,
+    "touched_with_water_to_land": 14576
    },
    "shipped_rule": {
     "chunks": 463100,
-    "touched": 23369,
-    "share": 0.050462,
-    "tiles_written": 3018365,
+    "touched": 21116,
+    "share": 0.045597,
+    "tiles_written": 2029307,
     "tiles_per_touched_chunk": {
-     "mean": 129.16,
-     "p95": 407,
-     "max": 1006
+     "mean": 96.1,
+     "p95": 299,
+     "max": 938
     },
-    "est_ms_per_generated_chunk": 0.0172
+    "est_ms_per_generated_chunk": 0.0155
    },
    "chunks_read": {
-    "chunks": 52352,
-    "share": 0.113047
+    "chunks": 52535,
+    "share": 0.113442
    },
-   "seconds": 153.9
+   "seconds": 41.6
   },
   "4": {
-   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s4_v1.lua",
-   "sha256": "3c875187d98f79b8b4ec28be691f90bc504c0b6234e57ddcd75e790b857ff7fd",
-   "bytes": 104678,
-   "data_bytes_with_shared": 1754202,
-   "k_pixels_this_scale": 954956,
-   "k_pixels_writable": 1975009,
-   "fill_pixels": 36201,
-   "masked_kplus_pixels": 170565,
-   "footprint_pixels": 524463,
-   "waterway_manifest_sha256": "c8074ee9352fd4c50151ab0d8a069fd42837e37fc61bf7c3cf4d1f33056a32c3",
-   "f32_sensitive_tiles": 37769,
+   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s4_v2.lua",
+   "sha256": "181f3511047f1409f130d140ce1bfb8f51ffff3e0f94066432cc82445927a548",
+   "bytes": 114349,
+   "data_bytes_with_shared": 1775557,
+   "k_pixels_this_scale": 895461,
+   "k_pixels_writable": 1971851,
+   "fill_pixels": 26349,
+   "masked_kplus_pixels": 158712,
+   "footprint_pixels": 505635,
+   "waterway_manifest_sha256": "f02a5b781146c97c3a568959e265324e615b5750504203de5a8e15e3b67523c5",
+   "f32_sensitive_tiles": 27779,
    "s12_rule": {
     "chunks": 821304,
-    "touched": 34542,
-    "share": 0.042058,
-    "tiles_written": 5142721,
+    "touched": 30045,
+    "share": 0.036582,
+    "tiles_written": 3379577,
     "tiles_per_touched_chunk": {
-     "mean": 148.88,
-     "p95": 503,
+     "mean": 112.48,
+     "p95": 374,
      "max": 1024
     },
-    "est_ms_per_generated_chunk": 0.0143,
-    "water_to_land_tiles": 2133970,
-    "land_to_water_tiles": 3008751,
-    "touched_with_water_to_land": 18170
+    "est_ms_per_generated_chunk": 0.0124,
+    "water_to_land_tiles": 1429094,
+    "land_to_water_tiles": 1950483,
+    "touched_with_water_to_land": 18924
    },
    "shipped_rule": {
     "chunks": 821304,
-    "touched": 32520,
-    "share": 0.039596,
-    "tiles_written": 5202187,
+    "touched": 29176,
+    "share": 0.035524,
+    "tiles_written": 3473209,
     "tiles_per_touched_chunk": {
-     "mean": 159.97,
-     "p95": 510,
+     "mean": 119.04,
+     "p95": 376,
      "max": 1024
     },
-    "est_ms_per_generated_chunk": 0.0135
+    "est_ms_per_generated_chunk": 0.0121
    },
    "chunks_read": {
-    "chunks": 75059,
-    "share": 0.09139
+    "chunks": 75457,
+    "share": 0.091875
    },
-   "seconds": 281.1
+   "seconds": 77.3
   },
   "5": {
-   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s5_v1.lua",
-   "sha256": "fc1b3f1792777babf24810a95af508940ef28da18a6cf288f3b25086faa0eaf8",
-   "bytes": 104099,
-   "data_bytes_with_shared": 1753623,
-   "k_pixels_this_scale": 919311,
-   "k_pixels_writable": 1977282,
-   "fill_pixels": 36250,
-   "masked_kplus_pixels": 167562,
-   "footprint_pixels": 504378,
-   "waterway_manifest_sha256": "c8074ee9352fd4c50151ab0d8a069fd42837e37fc61bf7c3cf4d1f33056a32c3",
-   "f32_sensitive_tiles": 56437,
+   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s5_v2.lua",
+   "sha256": "b4c662138530511319d7597392d55ef553c42945bf4875b32294d155faeb0521",
+   "bytes": 113983,
+   "data_bytes_with_shared": 1775191,
+   "k_pixels_this_scale": 853122,
+   "k_pixels_writable": 1971996,
+   "fill_pixels": 26354,
+   "masked_kplus_pixels": 158756,
+   "footprint_pixels": 491739,
+   "waterway_manifest_sha256": "f02a5b781146c97c3a568959e265324e615b5750504203de5a8e15e3b67523c5",
+   "f32_sensitive_tiles": 41493,
    "s12_rule": {
     "chunks": 1281428,
-    "touched": 45191,
-    "share": 0.035266,
-    "tiles_written": 7840892,
+    "touched": 38919,
+    "share": 0.030372,
+    "tiles_written": 5130012,
     "tiles_per_touched_chunk": {
-     "mean": 173.51,
-     "p95": 602,
+     "mean": 131.81,
+     "p95": 452,
      "max": 1024
     },
-    "est_ms_per_generated_chunk": 0.012,
-    "water_to_land_tiles": 3262863,
-    "land_to_water_tiles": 4578029,
-    "touched_with_water_to_land": 22364
+    "est_ms_per_generated_chunk": 0.0103,
+    "water_to_land_tiles": 2165173,
+    "land_to_water_tiles": 2964839,
+    "touched_with_water_to_land": 22688
    },
    "shipped_rule": {
     "chunks": 1281428,
-    "touched": 43399,
-    "share": 0.033868,
-    "tiles_written": 7986279,
+    "touched": 38298,
+    "share": 0.029887,
+    "tiles_written": 5297127,
     "tiles_per_touched_chunk": {
-     "mean": 184.02,
-     "p95": 605,
+     "mean": 138.31,
+     "p95": 453,
      "max": 1024
     },
-    "est_ms_per_generated_chunk": 0.0115
+    "est_ms_per_generated_chunk": 0.0102
    },
    "chunks_read": {
-    "chunks": 110430,
-    "share": 0.086177
+    "chunks": 111153,
+    "share": 0.086742
    },
-   "seconds": 634.9
+   "seconds": 152.1
   },
   "6": {
-   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s6_v1.lua",
-   "sha256": "870da747921741362f5c2afe7db579161e27c99d81ac50e8ddff512b2cda12f2",
-   "bytes": 103466,
-   "data_bytes_with_shared": 1752990,
-   "k_pixels_this_scale": 941756,
-   "k_pixels_writable": 1978433,
-   "fill_pixels": 36309,
-   "masked_kplus_pixels": 165752,
-   "footprint_pixels": 484691,
-   "waterway_manifest_sha256": "c8074ee9352fd4c50151ab0d8a069fd42837e37fc61bf7c3cf4d1f33056a32c3",
-   "f32_sensitive_tiles": 81278,
+   "file": "terra-nauvis/scripts/generated/bandfix_olde_world_s6_v2.lua",
+   "sha256": "995f3dec8d0f5e2502bdd6b78371ba969b9d559d0fbd58da5366d724f548b702",
+   "bytes": 113975,
+   "data_bytes_with_shared": 1775183,
+   "k_pixels_this_scale": 879978,
+   "k_pixels_writable": 1972605,
+   "fill_pixels": 26374,
+   "masked_kplus_pixels": 159404,
+   "footprint_pixels": 477202,
+   "waterway_manifest_sha256": "f02a5b781146c97c3a568959e265324e615b5750504203de5a8e15e3b67523c5",
+   "f32_sensitive_tiles": 59793,
    "s12_rule": {
     "chunks": 1846836,
-    "touched": 56689,
-    "share": 0.030695,
-    "tiles_written": 11093946,
+    "touched": 48333,
+    "share": 0.026171,
+    "tiles_written": 7240627,
     "tiles_per_touched_chunk": {
-     "mean": 195.7,
-     "p95": 683,
+     "mean": 149.81,
+     "p95": 520,
      "max": 1024
     },
-    "est_ms_per_generated_chunk": 0.0104,
-    "water_to_land_tiles": 4630361,
-    "land_to_water_tiles": 6463585,
-    "touched_with_water_to_land": 27109
+    "est_ms_per_generated_chunk": 0.0089,
+    "water_to_land_tiles": 3053579,
+    "land_to_water_tiles": 4187048,
+    "touched_with_water_to_land": 26984
    },
    "shipped_rule": {
     "chunks": 1846836,
-    "touched": 54355,
-    "share": 0.029431,
-    "tiles_written": 11352629,
+    "touched": 47515,
+    "share": 0.025728,
+    "tiles_written": 7506281,
     "tiles_per_touched_chunk": {
-     "mean": 208.86,
-     "p95": 687,
+     "mean": 157.98,
+     "p95": 520,
      "max": 1024
     },
-    "est_ms_per_generated_chunk": 0.01
+    "est_ms_per_generated_chunk": 0.0087
    },
    "chunks_read": {
-    "chunks": 143335,
-    "share": 0.077611
+    "chunks": 144281,
+    "share": 0.078123
    },
-   "seconds": 1445.1
+   "seconds": 282.3
   }
  }
 }

@@ -1,7 +1,7 @@
 # Ridge vertex heights: provenance
 
 `vertex-heights.json` gives every crest vertex of the design notes a height in
-metres, so a ridge can run wider where the real mountain is taller. The repo
+metres, so a ridge can run wider where the real mountain is taller (2026-10-30 10:21). The repo
 holds no elevation raster: the EarthMaps rasters carry land classes only, the fit rasters land and
 water, and R7b one highest point per range. So the values here are the published elevations of the
 peaks and passes R7b's vertices name, entered by hand and rounded to the metre. A vertex that names

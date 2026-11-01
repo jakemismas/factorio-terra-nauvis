@@ -17,7 +17,7 @@ Old World leads because it is the map the maintainer plays.
 
 1. **Mods menu.** Open Mods. Terra Nauvis 0.1.0 shows its title, description and thumbnail, and
    enabling it shows no error.
-2. **Startup settings.** Open Settings > Mod settings > Startup. Map scale offers 1 to 6 with every
+2. **Startup settings.** Open Settings > Mod settings > Startup. Map scale offers 1 to 6, 12 and 24 with every
    map's world size in each label. The spawn city lists offer Random plus 40 cities for Europe, 50 for
    Atlantic and 33 for Old World, and Old World lists Frankfurt, Aachen and Moscow. Ore hotspot amount
    offers 50, 100, 200 and 400 percent. Every setting has a tooltip, and no text reads "Unknown key".

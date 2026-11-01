@@ -32,6 +32,7 @@ files["terra-nauvis/data.lua"] = data_stage
 files["terra-nauvis/data-updates.lua"] = data_stage
 files["terra-nauvis/data-final-fixes.lua"] = data_stage
 files["terra-nauvis/prototypes/presets.lua"] = data_stage
+files["terra-nauvis/prototypes/zone_exclusion.lua"] = data_stage
 files["terra-nauvis/prototypes/expressions/**/*.lua"] = data_stage
 files["terra-nauvis/prototypes/generated/**/*.lua"] = data_stage
 -- Pure data: no global at all, not even Lua's standard library.

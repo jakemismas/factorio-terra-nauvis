@@ -12,6 +12,9 @@
                                                        growth step's checkpoint and the fit state go to
                                                        a work folder outside the repo (--work), and a
                                                        rerun resumes after its newest completed step
+  python tools/build_geo.py prune --map atlantic       backward elimination from a checkpoint, each cycle's
+                                                       checkpoint into a work folder
+  python tools/build_geo.py round --checkpoint p.npz   a checkpoint's coefficients on a coarser grid, in place
   python tools/build_geo.py curve --map atlantic       offline T1 (t1_metrics) of the fit's checkpoints
                                                        into the work folder's curve.json
   python tools/build_geo.py adopt --map atlantic       copy the smallest checkpoint at or above T1's
@@ -155,10 +158,13 @@ def tent_body(meta, idx, coef):
     """(locals, expression, stats): name-free factors on U and V, row sums, the sum of rows."""
     import numpy as np
     locs, groups, n = {}, defaultdict(list), 0
+    distinct = bool(meta.get("rounded_px"))
     for k, i, j, c in terms(meta, idx, coef):
         if c == 0:
             continue
         n += 1
+        if distinct:
+            c += DISTINCT_PX * (1 + (n * 2654435761 % 1000) / 500) * (1 if n % 2 else -1)
         h = 1 << k
         un, vn = f"u{k}_{i}", f"v{k}_{j}"
         if un not in locs:
@@ -385,10 +391,31 @@ FIT_PARAMS = {"family": "mr", "mode": "onesided", "step": 1, "D": 4.0, "K": 10, 
               "growth": 1.25, "newton": 4, "maxit": 150, "nmin": 64, "tol": 2e-3}
 FIT_BAR = 0.991             # T1-a (design section 6.1): the smallest checkpoint at or above it ships
 COARSE_TERMS = 256          # the coarse land field is the fit's 256-term checkpoint
+FIT_BUDGET_MAX = 10842      # a region fit's largest budget (earth_test.py holds the same number)
+DISTINCT_PX = 1e-4          # keeps a rounded checkpoint's emitted constants distinct, well under F32_SENSITIVE
 TOP_CHUNK = 1 << 22         # candidate scoring chunk (float64 scores of 4 M nodes at a time)
 # S1-fit's Tile complexity model (spikes/S1-fit/README.md, --cost): per term, per shared factor, per
 # row group, at zero terms. An estimate only; the gate's T15a rows measure the real programs.
 TILE_COST = (5.02, 0.2, 18.45, 8777.0)
+# The fit's Tile as the compiled program counts it: model-8192 reads 77,018 by these, and
+# its fit and warp measured 76,916.
+TERM_COST, FACTOR_COST, ROW_COST = 5.0, 6.5, 4.0
+
+
+def round_checkpoint(path, grid):
+    """A checkpoint's coefficients on a grid of `grid` reference px, in place. No term rounds to 0: a dropped
+    term would change the fit's term count. The game then loads each distinct constant once, which frees
+    about one Tile complexity a term, but a shared constant holds a register through the whole program and
+    forced generation took about 20 percent longer, so the emitter keeps a
+    rounded checkpoint's constants distinct (DISTINCT_PX) and only the shorter text remains of this."""
+    import numpy as np
+    meta, idx, coef = load_model(path)
+    if meta.get("rounded_px"):
+        raise SystemExit(f"RESULT fail {path} is rounded already")
+    out = np.rint(coef / grid) * grid
+    out[out == 0] = np.copysign(grid, coef[out == 0])
+    save_model(path, dict(meta, rounded_px=grid), idx, out)
+    return {"terms": int(len(out)), "distinct": int(len(np.unique(out))), "max_change": float(np.abs(out - coef).max())}
 
 
 def default_work(map_key):
@@ -571,15 +598,27 @@ class TentBasis:
         import numpy as np
         return np.concatenate([np.full(len(a), self.s1[k] ** 2) for k, a in enumerate(self.idx)])
 
-    def _level_top(self, g, k, m):
-        """Flat indices and scores of the m best inactive nodes of one level, chunk by chunk."""
+    def _level_top(self, g, k, m, thrift=False):
+        """Flat indices and scores of the m best inactive nodes of one level, chunk by chunk. thrift: a score per
+        the square root of the Tile the term would add, which grows the objective's gain per Tile: a term on a
+        column and a row the level already reads costs a factor less each."""
         import numpy as np
         flat = g.ravel()
         act = self.idx[k]
+        nh, nw = self.shape[k]
+        if thrift:
+            cols, rows = np.zeros(nw, np.int64), np.zeros(nh, np.int64)
+            rows[np.unique(act // nw)] = 2
+            cols[np.unique(act % nw)] = 1
+            lut = np.sqrt(np.array([TERM_COST + FACTOR_COST + ROW_COST + FACTOR_COST, TERM_COST + FACTOR_COST + ROW_COST,
+                                    TERM_COST + FACTOR_COST, TERM_COST]) / TERM_COST)
         ci, cs = [], []
         for a in range(0, flat.size, TOP_CHUNK):
             b = min(flat.size, a + TOP_CHUNK)
             s = np.abs(flat[a:b]) / self.s1[k]
+            if thrift:
+                j, i = np.divmod(np.arange(a, b, dtype=np.int64), nw)
+                s /= lut[rows[j] + cols[i]]
             lo, hi = np.searchsorted(act, [a, b])
             s[act[lo:hi] - a] = -1.0
             mm = min(m, s.size)
@@ -593,12 +632,12 @@ class TentBasis:
             ci, cs = ci[keep], cs[keep]
         return ci, cs
 
-    def top_candidates(self, R, n):
+    def top_candidates(self, R, n, thrift=False):
         """The n inactive terms with the largest normalized |A^T R| (S1-fit's greedy group)."""
         import numpy as np
         lv, fl, sc = [], [], []
         for k, g in self._chain(self._padded(R)):
-            top, s = self._level_top(g, k, n)
+            top, s = self._level_top(g, k, n, thrift)
             lv.append(np.full(len(top), k))
             fl.append(top)
             sc.append(s)
@@ -756,8 +795,62 @@ def parse_region(text):
     return parts
 
 
+def parse_hold(text):
+    """'lon0,lon1,lat0,lat1[,share]' (degrees in the map's frame): a box the growth adds no term for, or only at
+    that share of its weight."""
+    parts = [float(x) for x in text.split(",")]
+    if len(parts) not in (4, 5):
+        raise argparse.ArgumentTypeError("a hold box is lon0,lon1,lat0,lat1[,share]")
+    return parts
+
+
+def footprint_pixels(map_key, mref, scale):
+    """bool per pixel: the waterway footprints of the committed manifest at one scale, where the band fix stays
+    out and a player sees the raw fit."""
+    import tnconfig
+    cfg, B = bandfix_cfg(tnconfig.load())
+    return waterway_footprint(cfg, mref, map_key, scale, float(B["mask_margin_tiles"]))[0]
+
+
+def lost_islands(mref, land, older, current, box, margin=1):
+    """bool per pixel: the reference islands of 400 px or fewer inside a box (lon0, lon1, lat0, lat1) that the older
+    checkpoint draws and the current one does not, grown by margin px. Both read a tiny island poorly, so the pruned
+    fit can lose a speck whose name a player knows while its pixel counts improve."""
+    import numpy as np
+    from scipy import ndimage as ndi
+    lab, n = ndi.label(land)
+    ids = np.arange(1, n + 1)
+    size = ndi.sum(land, lab, ids)
+    r0, r1, c0, c1 = region_box_px(mref, box)
+    objs = ndi.find_objects(lab)
+    cy = np.array([(o[0].start + o[0].stop) / 2 for o in objs])
+    cx = np.array([(o[1].start + o[1].stop) / 2 for o in objs])
+    drawn = [ndi.sum(pixel_values(*load_model(p)) > 0, lab, ids) / size > 0.5 for p in (older, current)]
+    lost = drawn[0] & ~drawn[1] & (size <= 400) & (cy >= r0) & (cy < r1) & (cx >= c0) & (cx < c1)
+    keep = np.zeros(n + 1, bool)
+    keep[1:] = lost
+    return ndi.binary_dilation(keep[lab], iterations=margin), int(lost.sum())
+
+
+def growth_gate(mref, valid, holds, foot, open_share=1.0):
+    """float32 per pixel, or None without hold boxes: 1 where the growth may add a term, a hold box's share (0 by
+    default) inside it, and open_share on the footprint there, where the band fix cannot repair the fit. A held
+    coast's weight is large so the refits hold it in place; the shares keep that weight from taking every new
+    term."""
+    import numpy as np
+    if not holds:
+        return None
+    gate = np.ones(valid.shape, np.float32)
+    for h in holds:
+        r0, r1, c0, c1 = region_box_px(mref, h)
+        gate[r0:r1, c0:c1] = h[4] if len(h) > 4 else 0
+    if foot is not None:
+        gate[foot] = open_share
+    return gate
+
+
 def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, through=8192, regions=None,
-        start_from=None):
+        start_from=None, holds=None, footprint=None, step_terms=None, thrift=False, restore=None):
     """S1-fit's greedy fit at native resolution, resumable (see the section comment above).
 
     regions: optional boxes [lon0, lon1, lat0, lat1, weight] that multiply the fit's per-pixel
@@ -767,7 +860,16 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
 
     start_from: optional checkpoint of the same reference (an earlier fit's growth step) whose terms
     and coefficients the growth continues from, instead of the least-squares start at nmin terms;
-    its name, sha256 and terms join the params."""
+    its name, sha256 and terms join the params.
+
+    holds: optional boxes [lon0, lon1, lat0, lat1] the growth adds no term for, so a later stage cannot spend
+    its terms on a coast an earlier stage already paid for; the boxes still weigh in the refits, which keeps
+    that coast where it is. footprint: optional [scale, weight, open share]: the map's waterway footprints at
+    that scale, only inside the hold boxes when there are any, weigh this much in the fit and stay open to the
+    growth at that share, because the band fix leaves the raw fit showing there. step_terms: extra growth steps,
+    which keep one step from piling its terms up. restore: optional [older checkpoint, lon0, lon1, lat0, lat1,
+    weight]: the growth adds terms on the islands that checkpoint draws and start_from does not (lost_islands), and
+    nowhere else. Each joins the params."""
     import time
     import numpy as np
     import earthgeo as eg
@@ -784,6 +886,15 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
     P = dict(FIT_PARAMS)
     if regions:
         P["region_weights"] = [[float(x) for x in r] for r in regions]
+    if thrift:
+        P["thrift"] = True
+    if restore:
+        P["restore"] = {"checkpoint": Path(restore[0]).name, "sha256": sha256_file(restore[0]),
+                        "box": [float(x) for x in restore[1:5]], "weight": float(restore[5])}
+    if holds:
+        P["hold_boxes"] = [[float(x) for x in h] for h in holds]
+    if footprint:
+        P["footprint"] = [int(footprint[0])] + [float(x) for x in footprint[1:]]
     if start_from:
         start_from = Path(start_from)
         P["start_from"] = {"checkpoint": start_from.name, "sha256": sha256_file(start_from),
@@ -793,6 +904,7 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
     H, W = mref.H, mref.W
     inputs = {name: sha256_file(p) for name, p in (("land", mref.land_path), ("thin", mref.thin_path))}
     counts, pow2 = fit_schedule(P["nmin"], nmax, P["growth"])
+    counts = sorted(set(counts) | {nmax} | {n for n in (step_terms or []) if n <= nmax})
     state_path = work / "fit-state.json"
     header = {"format": FIT_FORMAT, "tool": "tools/build_geo.py fit", "map": map_key, "params": P,
               "reference": [H, W], "inputs_sha256": inputs,
@@ -811,6 +923,20 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
     valid = ~thin
     n_valid = int(valid.sum())
     wgt = region_weights(mref, valid, regions) if regions else None
+    foot = None
+    if footprint:
+        foot = footprint_pixels(map_key, mref, int(footprint[0])) & valid
+        if holds:
+            foot &= growth_gate(mref, valid, holds, None) < 1
+        if wgt is None:
+            wgt = valid.astype(np.float32)
+        wgt[foot] = np.maximum(wgt[foot], np.float32(footprint[1]))
+    gate = growth_gate(mref, valid, holds, foot, footprint[2] if footprint and len(footprint) > 2 else 1.0)
+    if restore:
+        isles, count = lost_islands(mref, land, restore[0], start_from, [float(x) for x in restore[1:5]])
+        log(f"restoring {count} islands")
+        wgt[isles & valid] = np.maximum(wgt[isles & valid], np.float32(restore[5]))
+        gate = isles.astype(np.float32)
     wv = valid if wgt is None else wgt
     y = np.where(filled, np.int8(1), np.int8(-1))
     t = saturated_sdf(filled, P["D"])
@@ -872,7 +998,9 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
             act_px = ((y * f) < marg) & valid
             R = (act_px if wgt is None else act_px * wgt) * (y * marg - f)
             del act_px
-        lv, fl = B.top_candidates(R, N - B.n())
+            if gate is not None:
+                R *= gate
+        lv, fl = B.top_candidates(R, N - B.n(), bool(thrift))
         del R
         c = B.add(lv, fl, c)
         cg_ls = 0
@@ -905,6 +1033,80 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
     log(f"run done in {time.time() - t0:.0f} s; {len(state['points'])} steps recorded")
     logf.close()
     return state
+
+
+def term_importance(B, c, f, y, valid, marg):
+    """Per term, what the hinge objective loses per Tile freed with the term gone and no neighbour taking its work
+    up: c^2 A_i^T A_i over the active pixels, per the Tile of the term and of any column or row factor it alone
+    reads."""
+    import numpy as np
+    act = ((y * f) < marg) & valid
+    sums = np.cumsum(np.cumsum(np.pad(act.astype(np.float64), ((1, 0), (1, 0))), axis=0), axis=1)
+    H, W = act.shape
+    out = np.zeros(len(c))
+    offs = B.offsets()
+    for k, a in enumerate(B.idx):
+        h = 1 << k
+        nw = B.shape[k][1]
+        rows, cols = np.divmod(a, nw)
+        cu, nu = np.unique(cols, return_counts=True)
+        cv, nv = np.unique(rows, return_counts=True)
+        alone_u, alone_v = set(cu[nu == 1].tolist()), set(cv[nv == 1].tolist())
+        for n, (j, i) in enumerate(zip(rows.tolist(), cols.tolist())):
+            u, v = i * h, j * h
+            ua, ub, va, vb = max(u - h + 1, 0), min(u + h, W), max(v - h + 1, 0), min(v + h, H)
+            if ub <= ua or vb <= va:
+                continue
+            if h <= 16:
+                tu = (1 - np.abs(np.arange(ua, ub) - u) / h) ** 2
+                tv = (1 - np.abs(np.arange(va, vb) - v) / h) ** 2
+                e = float(tv @ act[va:vb, ua:ub] @ tu)
+            else:
+                # a coarse tent: the active pixels under it times the mean of its square, 4/9
+                e = float(sums[vb, ub] - sums[va, ub] - sums[vb, ua] + sums[va, ua]) * 4 / 9
+            cost = TERM_COST + (FACTOR_COST if i in alone_u else 0) + (FACTOR_COST + ROW_COST if j in alone_v else 0)
+            out[offs[k] + n] = c[offs[k] + n] ** 2 * e / cost
+    return out
+
+
+def prune(map_key, source, work, drop, cycles, regions=None):
+    """Backward elimination: drop the `drop` terms that matter least (term_importance), refit, and repeat, writing
+    each cycle's checkpoint to the work folder. Greedy growth never takes a term back, and a term its later
+    neighbours made redundant keeps its Tile: the first 900 of Old World's 8,192 cost 0.0002 of agreement."""
+    import numpy as np
+    import earthgeo as eg
+    work = Path(work)
+    work.mkdir(parents=True, exist_ok=True)
+    P = FIT_PARAMS
+    mref = eg.MapRef(map_key)
+    land, thin = mref.land, mref.thin
+    filled = land | thin
+    valid = ~thin
+    wgt = region_weights(mref, valid, regions) if regions else None
+    y = np.where(filled, np.int8(1), np.int8(-1))
+    marg = (np.abs(saturated_sdf(filled, P["D"])) * P["margin"]).astype(np.float32)
+    del filled, land, thin
+    mref._land = mref._thin = None
+    meta, idx, c = load_model(source)
+    B = TentBasis(mref.H, mref.W, P["K"])
+    B.idx = [np.asarray(a, np.int64) for a in idx]
+    f = B.forward(c)
+    n_valid = int(valid.sum())
+    log = lambda m: print(f"[{map_key}] {m}", flush=True)
+    out = []
+    for _ in range(cycles):
+        imp = term_importance(B, c, f, y, valid, marg)
+        keep = np.ones(len(c), bool)
+        keep[np.argsort(imp)[:drop]] = False
+        offs = B.offsets()
+        B.idx = [a[keep[offs[k]:offs[k + 1]]] for k, a in enumerate(B.idx)]
+        c, f, J, _ = _newton(B, c[keep], y, valid, marg, P["lam"], P["newton"], P["tol"], P["maxit"], log, wgt)
+        name = f"model-{len(c)}.npz"
+        _save_ckpt(work / name, map_key, B, c, mref.H, mref.W)
+        rec = {"terms": len(c), "checkpoint": name, "agreement": int((((f > 0) == (y > 0)) & valid).sum()) / n_valid}
+        out.append(rec)
+        log(f"{rec['terms']:>8} agreement {rec['agreement'] * 100:.4f}% J {J:.1f}")
+    return out
 
 
 def curve(map_key, work, min_sample, only=None):
@@ -977,8 +1179,8 @@ def adopt(map_key, work, version=1, budget=None):
         start = params.get("start_from")
         if not params.get("region_weights") or not start:
             raise SystemExit(f"RESULT fail --budget adopts a region-weighted fit grown with --start-from; {work} is not")
-        if not 0 < budget <= 8192:
-            raise SystemExit("RESULT fail the budget is at most 8,192 terms (the Europe map's budget)")
+        if not 0 < budget <= FIT_BUDGET_MAX:
+            raise SystemExit(f"RESULT fail the budget is at most {FIT_BUDGET_MAX} terms")
         old = fit_spec(map_key)["bodies"]
         if sha256_file(dst / start["checkpoint"]) != start["sha256"]:
             raise SystemExit(f"RESULT fail the fit started from {start['checkpoint']} {start['sha256'][:12]}, which "
@@ -992,7 +1194,8 @@ def adopt(map_key, work, version=1, budget=None):
             raise SystemExit(f"RESULT fail no evaluated step of {work} lies within {budget} terms")
         ship = max(within, key=lambda p: p["terms"])
         shutil.copyfile(work / ship["checkpoint"], dst / ship["checkpoint"])
-        doc = dict(doc, base_params=base["params"], base_inputs_sha256=base["inputs_sha256"],
+        doc = dict(doc, base_params=base.get("base_params", base["params"]),
+                   base_inputs_sha256=base.get("base_inputs_sha256", base["inputs_sha256"]),
                    points=bpts + [dict(p, stage="region") for p in doc["points"]])
         doc["note"] = (doc["note"] + "; stage base: the folder's earlier fit through the start checkpoint "
                        "(base_params), stage region: the region-weighted growth from it (params)")
@@ -1076,6 +1279,19 @@ def bandfix_digest(B):
     return tnconfig.bandfix_digest(B)
 
 
+def bandfix_generation(B, map_key, geo_id=None):
+    import tnconfig
+    return tnconfig.bandfix_generation(B, map_key, geo_id)
+
+
+def bandfix_sea_px(B, map_key):
+    """The newest generation's sea_px (0, every body of open water, on the tables before it): only that generation
+    is ever emitted, and one that keeps an older K+ table keeps that table's classes."""
+    rows = (B.get("generations") or {}).get(map_key) or []
+    last = rows[-1] if rows else {}
+    return 0 if last.get("shared") else int(last.get("sea_px") or 0)
+
+
 def bandfix_file(map_key, s, version):
     return f"bandfix_{map_key}_s{int(s)}_v{int(version)}.lua"
 
@@ -1089,10 +1305,12 @@ def ref_classes(mref):
     return cls
 
 
-def sea_channels(map_key, mref, cls, steps):
+def sea_channels(map_key, mref, cls, steps, sea_px=0):
     """bool per pixel: the thin water of the ocean class within `steps` 8-connected pixels of open water along thin
     water: straits, sounds and inlets narrower than three pixels, which the coast fit fills as land. A river drawn in
-    the same class stops being one here; the rest of it stays thin water."""
+    the same class stops being one here; the rest of it stays thin water. With sea_px only a body of open water of at
+    least that many pixels counts: a lake's rivers are no sea's channels, and at the steps' end such a river stops as
+    a blunt head with its side streams cut to stubs (the Alpine Rhine and the Valtellina at scale 6)."""
     import numpy as np
     from PIL import Image
     from scipy import ndimage as ndi
@@ -1100,8 +1318,14 @@ def sea_channels(map_key, mref, cls, steps):
     rgb = np.asarray(Image.open(mref.land_path.with_name(f"{map_key}-classes.png")).convert("RGB"))
     ocean = (rgb[..., 0] == 20) & (rgb[..., 1] == 40) & (rgb[..., 2] == 110)
     allowed = (cls == 2) & ocean
-    return ndi.binary_dilation(cls == 0, structure=np.ones((3, 3), bool), iterations=int(steps),
-                               mask=allowed | (cls == 0)) & allowed
+    seed = cls == 0
+    if sea_px:
+        lab, _ = ndi.label(seed, structure=np.ones((3, 3), bool))
+        sizes = np.bincount(lab.ravel())
+        sizes[0] = 0
+        seed = sizes[lab] >= int(sea_px)
+    return ndi.binary_dilation(seed, structure=np.ones((3, 3), bool), iterations=int(steps),
+                               mask=allowed | seed) & allowed
 
 
 def bandfix_classes(map_key, mref, B):
@@ -1109,7 +1333,7 @@ def bandfix_classes(map_key, mref, B):
     opens it, and the islets the raster lost (tools/build_islets.py) count as land."""
     import numpy as np
     cls = ref_classes(mref)
-    cls[sea_channels(map_key, mref, cls, B["channel_px"])] = 0
+    cls[sea_channels(map_key, mref, cls, B["channel_px"], bandfix_sea_px(B, map_key))] = 0
     p = BANDFIX_DATA / f"islets-{map_key}.json"
     if p.exists():
         px = np.asarray(json.loads(p.read_text(encoding="utf-8"))["pixels"], np.int64).reshape(-1, 2)
@@ -1261,10 +1485,22 @@ def fit_band(Gp, lines, s, i, j, r0, n, W):
     return f
 
 
+def lake_bodies(mref):
+    """bool per pixel: open water at least 7 pixels across (a morphological opening), lakes and estuaries, not a
+    river's own wide reach. A course inside such a body needs no mask, because the body is the river there."""
+    import numpy as np
+    from scipy import ndimage as ndi
+    water = ~mref.land & ~mref.thin
+    box = np.ones((3, 3), bool)
+    return ndi.binary_dilation(ndi.binary_erosion(water, box, iterations=3), box, iterations=3, mask=water)
+
+
 def waterway_footprint(cfg, mref, map_key, s, margin_tiles):
     """bool per pixel: within (half-width + margin) tiles of any waterway, canal or dam centreline, or of a
     turning basin, at scale s, pixel by pixel conservatively (a pixel's sample points lie within half a
-    diagonal of its centre), from the committed waterway manifest (both canal states)."""
+    diagonal of its centre), from the committed waterway manifest (both canal states). On a map with a later
+    table generation a river's course inside a lake masks nothing, so the handler keeps the lake's shore, where
+    the corridor left the coast fit's round blob."""
     import math
     import numpy as np
     import build_waterways as bw
@@ -1279,9 +1515,33 @@ def waterway_footprint(cfg, mref, map_key, s, margin_tiles):
     geo = bw.MapGeo(cfg, map_key)
     ox, oy = geo.offset(s)
     reach = math.sqrt(2) / 2
+    bodies = lake_bodies(mref) if (cfg["bandfix"].get("generations") or {}).get(map_key) else None
     for f in rec["features"]:
         P = (np.asarray(f["polyline_geo"], float) - [ox, oy]) / s - 0.5
-        bw.band_into(mask, P, (f["reach_tiles"] + margin_tiles) / s + reach)
+        r = (f["reach_tiles"] + margin_tiles) / s + reach
+        if bodies is None or f["kind"] != "river":
+            bw.band_into(mask, P, r)
+            continue
+        Q = bw.resample(P, 1.0)
+        rows = np.clip(np.floor(Q[:, 1] + 0.5).astype(np.int64), 0, mref.H - 1)
+        cols = np.clip(np.floor(Q[:, 0] + 0.5).astype(np.int64), 0, mref.W - 1)
+        on = ~bodies[rows, cols]
+        # the band narrows towards the mouth with the warp's share (natural.mouth), in quarter steps of that share
+        inner_px, outer_px = bw.mouth_px(bw.ww_cfg(cfg)["natural"]["mouth"], f["id"], s)
+        near = (f["reach_near_tiles"] + margin_tiles) / s + reach
+        arc = np.arange(len(Q)) * float(np.hypot(*np.diff(P, axis=0).T).sum()) / max(len(Q) - 1, 1)
+        d = np.abs(arc - f["coast_arc_tiles"] / s)
+        step = np.ceil(np.clip((d - inner_px) / (outer_px - inner_px), 0, 1) * 4).astype(np.int64)
+        i, n = 0, len(Q)
+        while i < n:
+            if not on[i]:
+                i += 1
+                continue
+            j = i
+            while j + 1 < n and on[j + 1] and step[j + 1] == step[i]:
+                j += 1
+            bw.band_into(mask, Q[max(i - 1, 0):j + 2], near + (r - near) * step[i] / 4)
+            i = j + 1
     half = bw.ww_cfg(cfg)["basin_tiles"] / 2 + bw.warp_reach(bw.ww_cfg(cfg), s)
     for b in rec.get("basins") or []:
         cx, cy = (b["centre"][0] - ox) / s - 0.5, (b["centre"][1] - oy) / s - 0.5
@@ -1575,7 +1835,8 @@ def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None,
     cfg, B = bandfix_cfg()
     if map_key not in (B.get("tables") or {}):
         raise SystemExit(f"RESULT fail config.lua bandfix.tables lists no K+ tables for {map_key}")
-    scales = [int(s) for s in (scales or cfg["scales"]["values"])]
+    # the shared K+ table is the union over the scales Exact coastlines serves
+    scales = [int(s) for s in (scales or cfg["scales"]["exact_coast"])]
     spec = fit_spec(map_key)
     ck = FITS / map_key / spec["bodies"]["geo"]["checkpoint"]
     meta, idx, coef = load_model(ck)
@@ -1593,6 +1854,7 @@ def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None,
     scored, L = cls != 2, cls == 1
     rel_ck = ck.relative_to(REPO).as_posix()
     label = cfg["maps"][map_key]["display"]
+    version, shared_version = bandfix_generation(B, map_key)
     inputs = {"checkpoint": rel_ck, "checkpoint_sha256": sha256_file(ck),
               "land_sha256": sha256_file(mref.land_path), "thinwater_sha256": sha256_file(mref.thin_path),
               "bandfix_config_sha256": bandfix_digest(B),
@@ -1619,7 +1881,7 @@ def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None,
     rows = encode_runs(sym, Kp, nsym, B)
     round_trip(rows, sym, Kp, nsym, B, f"{map_key} shared table")
     kpix, kplus = int(K.sum()), int(Kp.sum())
-    shared_name = bandfix_shared_file(map_key, B["version"])
+    shared_name = bandfix_shared_file(map_key, shared_version)
     header = [f"Generated by tools/build_geo.py (band fix emitter {BANDFIX_EMITTER}) from {rel_ck}",
               f"(sha256 {inputs['checkpoint_sha256']})",
               f"and data-src/earthmaps/{map_key}-land.png and -thinwater.png.",
@@ -1627,8 +1889,12 @@ def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None,
               "Name-free data: scripts/bandfix.lua reads it with config.lua's bandfix group.",
               "Never edit by hand: rerun the tool (plan hard rule 9)."]
     sp = out_dir / shared_name
-    _write_lf(sp, render_rows(header, rows, {"format": BANDFIX_EMITTER, "width": mref.W, "height": mref.H,
-                                             "k_pixels": kpix}))
+    shared_text = render_rows(header, rows, {"format": BANDFIX_EMITTER, "width": mref.W, "height": mref.H,
+                                             "k_pixels": kpix})
+    if shared_version != version and sp.exists() and sp.read_text(encoding="utf-8") != shared_text:
+        raise SystemExit(f"RESULT fail {shared_name} is an older generation's K+ table and this emission differs: the "
+                         f"coast moved, so bandfix.generations.{map_key} needs a K+ table of its own")
+    _write_lf(sp, shared_text)
     rec = {"format": BANDFIX_FORMAT, "tool": "tools/build_geo.py", "emitter_version": BANDFIX_EMITTER,
            "map": map_key, "inputs": inputs,
            "rule": {"band": "closed: a sample point at least half a reference pixel from every other-class square "
@@ -1659,7 +1925,7 @@ def emit_bandfix(map_key, out_dir=BANDFIX_GENERATED, manifest=True, scales=None,
         bits = M.astype(np.uint8)
         mrows = encode_runs(bits, M, 2, B)
         round_trip(mrows, bits, M, 2, B, f"{map_key} s{s} masks")
-        name = bandfix_file(map_key, s, B["version"])
+        name = bandfix_file(map_key, s, version)
         mheader = [f"Generated by tools/build_geo.py (band fix emitter {BANDFIX_EMITTER}) from",
                    f"data-src/waterways/manifest-{map_key}.json (sha256 {P1[s]['ww_sha']})",
                    f"and {shared_name}.",
@@ -1705,7 +1971,8 @@ def emit_bandfix_masks(map_key, out_dir=BANDFIX_GENERATED, log=print):
     cls = bandfix_classes(map_key, mref, B)
     order = B["symbol_order"]
     nsym = len(order)
-    shared_name = bandfix_shared_file(map_key, B["version"])
+    version, shared_version = bandfix_generation(B, map_key)
+    shared_name = bandfix_shared_file(map_key, shared_version)
     rows, _ = read_bandfix_table(Path(out_dir) / shared_name)
     sym = np.full(cls.shape, order.index("none"), np.uint8)
     for r, payload in rows.items():
@@ -1716,14 +1983,14 @@ def emit_bandfix_masks(map_key, out_dir=BANDFIX_GENERATED, log=print):
     label = cfg["maps"][map_key]["display"]
     mp = BANDFIX_DATA / f"manifest-{map_key}.json"
     rec = json.loads(mp.read_text(encoding="utf-8"))
-    for s in [int(x) for x in cfg["scales"]["values"]]:
+    for s in [int(x) for x in cfg["scales"]["exact_coast"]]:
         mask, ww_sha = waterway_footprint(cfg, mref, map_key, s, float(B["mask_margin_tiles"]))
         mask &= scored
         M = mask & Kp
         bits = M.astype(np.uint8)
         mrows = encode_runs(bits, M, 2, B)
         round_trip(mrows, bits, M, 2, B, f"{map_key} s{s} masks")
-        name = bandfix_file(map_key, s, B["version"])
+        name = bandfix_file(map_key, s, version)
         mheader = [f"Generated by tools/build_geo.py (band fix emitter {BANDFIX_EMITTER}) from",
                    f"data-src/waterways/manifest-{map_key}.json (sha256 {ww_sha})",
                    f"and {shared_name}.",
@@ -1735,7 +2002,8 @@ def emit_bandfix_masks(map_key, out_dir=BANDFIX_GENERATED, log=print):
         _write_lf(f, render_rows(mheader, mrows, {"format": BANDFIX_EMITTER, "scale": s, "width": mref.W,
                                                   "height": mref.H, "masked_pixels": int(M.sum())}))
         srec = rec["scales"][str(s)]
-        srec.update({"sha256": sha256_file(f), "bytes": f.stat().st_size,
+        srec.update({"file": f"terra-nauvis/scripts/generated/{name}", "sha256": sha256_file(f),
+                     "bytes": f.stat().st_size,
                      "data_bytes_with_shared": f.stat().st_size + rec["shared"]["bytes"],
                      "masked_kplus_pixels": int(M.sum()), "footprint_pixels": int(mask.sum()),
                      "waterway_manifest_sha256": ww_sha})
@@ -1790,8 +2058,9 @@ class BandfixRule:
         self.cfg, self.B, self.s = cfg, B, int(scale)
         m = cfg["maps"][map_key]
         self.W, self.H, self.wr, self.hr = m["width_px"], m["height_px"], m["wr"], m["hr"]
-        shared, sf = read_bandfix_table(Path(generated) / bandfix_shared_file(map_key, B["version"]))
-        masks, mf = read_bandfix_table(Path(generated) / bandfix_file(map_key, scale, B["version"]))
+        version, shared_version = bandfix_generation(B, map_key)
+        shared, sf = read_bandfix_table(Path(generated) / bandfix_shared_file(map_key, shared_version))
+        masks, mf = read_bandfix_table(Path(generated) / bandfix_file(map_key, scale, version))
         if sf.get("width") != self.W or sf.get("height") != self.H or mf.get("scale") != self.s:
             raise SystemExit(f"RESULT fail the {map_key} tables do not match config.lua's map or scale {scale}")
         order = B["symbol_order"]
@@ -1907,14 +2176,16 @@ class BandfixRule:
 
 
 def bandfix_files(map_key, B, scales):
-    return [bandfix_shared_file(map_key, B["version"])] + [bandfix_file(map_key, s, B["version"]) for s in scales]
+    """The newest generation's tables of a map: an older generation's are released, so no emission writes them."""
+    version, shared_version = bandfix_generation(B, map_key)
+    return [bandfix_shared_file(map_key, shared_version)] + [bandfix_file(map_key, s, version) for s in scales]
 
 
 def check_bandfix(map_key, scales=None):
     """T16: two emissions byte-identical to each other and to the committed tables (every offered scale:
     the shared table is the union over them)."""
     cfg, B = bandfix_cfg()
-    scales = [int(s) for s in cfg["scales"]["values"]]
+    scales = [int(s) for s in cfg["scales"]["exact_coast"]]
     fails = []
     with tempfile.TemporaryDirectory(prefix="tn-bandfix-") as td:
         runs = []
@@ -1967,6 +2238,24 @@ def main(argv=None):
                         "in the map's own frame; repeatable, overlaps take the largest); off by default")
     p.add_argument("--start-from", help="continue the growth from this checkpoint of the same reference (an "
                                         "earlier fit's growth step) instead of the least-squares start")
+    p.add_argument("--hold", dest="holds", type=parse_hold, action="append",
+                   help="lon0,lon1,lat0,lat1: a box the growth adds no term for; repeatable")
+    p.add_argument("--footprint", help="scale,weight[,open share]: the waterway footprints at that scale weigh this "
+                                       "much and stay open to the growth inside a hold box at that share")
+    p.add_argument("--step-terms", help="extra growth steps, comma separated term counts")
+    p.add_argument("--thrift", action="store_true", help="rank new terms by gain per Tile, not by gain")
+    p.add_argument("--restore", help="older.npz,lon0,lon1,lat0,lat1,weight: grow only on the islands that checkpoint "
+                                     "draws inside the box and --start-from does not")
+    p = sub.add_parser("round")
+    p.add_argument("--checkpoint", required=True)
+    p.add_argument("--grid", type=float, default=0.125, help="the coefficient grid in reference px")
+    p = sub.add_parser("prune")
+    p.add_argument("--map", required=True)
+    p.add_argument("--checkpoint", required=True)
+    p.add_argument("--work", required=True)
+    p.add_argument("--drop", type=int, default=300, help="terms dropped per cycle")
+    p.add_argument("--cycles", type=int, default=3)
+    p.add_argument("--region", action="append", type=parse_region, help="the weights of the refits, as fit's --region")
     p = sub.add_parser("curve")
     p.add_argument("--map", required=True)
     p.add_argument("--work")
@@ -1976,14 +2265,25 @@ def main(argv=None):
     p.add_argument("--map", required=True)
     p.add_argument("--work")
     p.add_argument("--budget", type=int, help="a region-weighted fit grown with --start-from: ship its largest "
-                                              "evaluated step within this many terms (at most 8,192)")
+                                              "evaluated step within this many terms")
+    p.add_argument("--file-version", type=int, default=1, help="the version in the generated geo file's name: a "
+                                                               "released file is never emitted again")
     a = ap.parse_args(argv)
     if a.cmd == "fit":
         st = fit(a.map, a.work or default_work(a.map), a.nmax, a.stop_agreement, a.extra_steps, a.max_steps,
-                 a.through, a.region, a.start_from)
+                 a.through, a.region, a.start_from, a.holds,
+                 [float(x) for x in a.footprint.split(",")] if a.footprint else None,
+                 [int(x) for x in a.step_terms.split(",")] if a.step_terms else None, a.thrift,
+                 a.restore.split(",") if a.restore else None)
         last = st["points"][-1] if st["points"] else {}
         print(f"RESULT ok fit {a.map} steps={len(st['points'])} terms={last.get('terms')} "
               f"agreement={last.get('sample_agreement')}")
+        return 0
+    if a.cmd == "prune":
+        print(f"RESULT ok pruned {prune(a.map, a.checkpoint, a.work, a.drop, a.cycles, a.region)}")
+        return 0
+    if a.cmd == "round":
+        print(f"RESULT ok rounded {round_checkpoint(a.checkpoint, a.grid)}")
         return 0
     if a.cmd == "curve":
         only = {int(x) for x in a.only.split(",")} if a.only else None
@@ -1992,7 +2292,7 @@ def main(argv=None):
         print(f"RESULT ok curve {a.map} evaluated={n} of {len(doc['points'])}")
         return 0
     if a.cmd == "adopt":
-        rep = adopt(a.map, a.work or default_work(a.map), budget=a.budget)
+        rep = adopt(a.map, a.work or default_work(a.map), a.file_version, a.budget)
         print(json.dumps({k: {"checkpoint": v["checkpoint"], "terms": v["terms"], "t1": v["t1"]["agreement"]}
                           for k, v in rep.items()}, indent=1))
         print(f"RESULT ok adopted {rep['geo']['checkpoint']} and {rep['land_coarse']['checkpoint']}")

@@ -1,23 +1,28 @@
--- Destroyed Europe (ARCHITECTURE.md, "Region layer" and milestone contract 10; milestone destroyed-europe;
+-- Destroyed Europe (ARCHITECTURE.md, "Region layer" and contract 10;
 -- APPROVALS 10; D12; S3 section 6; R3 7.1).
 --
 -- The zone reads one region-layer interface name, tn_destroyed_depth: the outline of
 -- data-src/approvals/destroyed-zone.json less its keep rows (Britain, Denmark and the Carpathians), in tiles.
 -- Each seed moves the outline's vertices and warps its edges harder than the shared warp, the same way on
--- every map. No region formula lives here (the static
+-- every map (DECISIONS 2026-10-30 10:05). No region formula lives here (the static
 -- regions row fails one outside regions.lua). The zone is cut by the start disc around the spawn, which the
 -- spawn shift keeps at the origin on every map, so every spawn city, the zone's included, starts on normal
 -- ground with normal trees (T7). Its heat climbs from a heat-1 rim to a core that mixes Alien Biomes' four
 -- heat bands (R3 7.1), and the Alien Biomes temperature's next version lifts the zone to it, so AB's
 -- volcanic tiles, its lava decals, volcanic rocks and the volcanic tree follow. Past the rim, which keeps
 -- the climate's temperature and trees, a class per tile mixes those with black ash, red rock and red
--- grass; nothing else changes (APPROVALS 10).
+-- grass (2026-10-30 16:35; config.lua destroyed.chaos); nothing else changes (APPROVALS 10).
 -- The lift sits behind the toggle tn_destroyed, a name switch whose folded if()
 -- compiles climate-tiles' first temperature alone when off (U5). Without Alien Biomes nothing here is
 -- named by any preset: the toggle bakes off at the data stage and the presets keep the fallback climate
 -- (FEAS-17), so the world equals the zone off. Every body is analytic in x, y, map_seed and per-save
 -- numbers: firewall-clean, as the region layer is, so the Entity program, where Alien Biomes' trees read
 -- temperature, may read it. Every number comes from config.lua's destroyed group (S-5).
+--
+-- All of the above is what a world made on 0.1.0 and 0.1.1 keeps. A new world with the zone on names the barrier's heat
+-- and class in place of those names (bottom of this file). Those read a second outline with no start cut, whose depth
+-- counts land edges alone (config.lua destroyed.outline): a barrier of wasteland where the zone meets land, a heart of
+-- heat ground past it, and the zone runs to the shore on every sea side.
 local cfg = require("prototypes.config")
 
 local AB = mods["alien-biomes"] ~= nil
@@ -51,12 +56,15 @@ def(N.fine, "multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(
 
 -- The heat inside the zone, from lift_px in, frayed by the fine noise, so the rim keeps the climate's
 -- temperature and its trees and plants: it climbs to rim + ramp, and the noise mixes the core's bands.
-def(N.heat, "if(" .. N.zone .. " + " .. K.scale .. " * (" .. num(H.lift_fray_px) .. " * " .. N.fine .. " - " ..
-  num(H.lift_px) .. ") > 0, clamp(" .. num(H.rim) .. " + min(" .. num(H.per_tile) .. " * " .. N.zone .. ", " ..
-  num(H.ramp) .. ") + " .. num(NZ.amplitude) .. " * " .. N.fine .. ", " .. num(H.rim) .. ", " .. num(H.cap) ..
-  "), -inf)")
+local function heat_over(zone)
+  return "if(" .. zone .. " + " .. K.scale .. " * (" .. num(H.lift_fray_px) .. " * " .. N.fine .. " - " ..
+    num(H.lift_px) .. ") > 0, clamp(" .. num(H.rim) .. " + min(" .. num(H.per_tile) .. " * " .. zone .. ", " ..
+    num(H.ramp) .. ") + " .. num(NZ.amplitude) .. " * " .. N.fine .. ", " .. num(H.rim) .. ", " .. num(H.cap) ..
+    "), -inf)"
+end
+def(N.heat, heat_over(N.zone))
 
--- The Alien Biomes temperature's next version (decision 21: climate-tiles' first stays defined, unchanged):
+-- The Alien Biomes temperature's next version (design rule 21: climate-tiles' first stays defined, unchanged):
 -- the zone's heat where it is hotter, with the toggle on. It reads AB's controls through the first
 -- version, so it exists only with Alien Biomes, as that one does.
 if AB then
@@ -94,6 +102,94 @@ if AB then
     def(t.body, "if(" .. K.destroyed .. " > " .. num(D.switch_threshold) .. ", if(elevation > 0, if(" ..
       C.names.class .. " == " .. num(t.class) .. ", " .. num(C.score) .. ", -inf), -inf), -inf)")
   end
+
+  -- The barrier (config.lua destroyed.barrier). A preset with the zone on names the next heat and class in place of
+  -- the released ones, so the tile scores and the temperature keep their text and a save keeps its zone. The class
+  -- reads lava in the Tile program, and the heat in both, so the Entity program pays for the edge, blob and flow
+  -- noises, and the open mask adds the kind noise.
+  local B = D.barrier
+  local BN = B.names
+  local O = D.outline.names
+
+  -- A noise in reference pixels that stops shrinking at its floor (config.lua destroyed.barrier: scale 1's specks).
+  local function floored(P)
+    return "multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(P.seed1) .. ", octaves = " ..
+      num(P.octaves) .. ", persistence = " .. num(P.persistence) .. ", input_scale = 1 / max(" ..
+      num(P.wavelength_px) .. " * " .. K.scale .. ", " .. num(P.floor_tiles) .. "), output_scale = 1}"
+  end
+  def(BN.edge, noise(B.edge))
+  def(BN.blob, floored(B.blob))
+  def(BN.flow, floored(B.flow))
+  def(BN.kind, floored(B.kind))
+  def(BN.macro, floored(B.macro))
+  def(BN.zone, K.scale .. " * (" .. O.depth .. " - " .. num(B.fray_px) .. " * (1 + clamp(" .. BN.edge .. ", -1, 1)))")
+  def(BN.lava, BN.blob .. " + " .. num(B.flow_lift) .. " * clamp((" .. BN.blob .. " - " .. num(B.flow_from) .. ") / " ..
+    num(B.flow_span) .. ", 0, 1) * clamp(1 - abs(" .. BN.flow .. ") / " .. num(B.flow_width) .. ", 0, 1)")
+  local grain = "noise_layer_noise(" .. num(cfg.climate.grain.layer) .. ")"
+  -- An amplitude in reference pixels on a noise measured in tiles (config.lua destroyed.barrier.swing_tiles).
+  local function swing(px)
+    return "min(" .. num(px) .. ", " .. num(px * B.swing_tiles) .. " / " .. K.scale .. ")"
+  end
+  local lifted = "depth + " .. swing(H.lift_fray_px) .. " * " .. N.fine .. " - " .. num(B.lift_px)
+  -- The spawn stands in the zone (destroyed.barrier.start): the hottest bands wait a little way out.
+  local top = "min(" .. num(H.cap) .. ", " .. num(B.start.cap) .. " + " .. num(B.start.per_tile) .. " * max(0, " ..
+    D.start.distance .. " - " .. num(B.start.cool_tiles) .. "))"
+  def(BN.heat, "if(min(" .. O.present .. ", " .. lifted .. ") > 0, clamp(" .. num(B.t_at) .. " + " .. num(B.gain) ..
+    " * (" .. BN.lava .. " - " .. num(B.lava_at) .. ") + " .. num(B.gain_hot) .. " * max(0, " .. BN.lava .. " - " ..
+    num(B.lava_at) .. ") + " .. num(B.fine) .. " * " .. N.fine .. " + " ..
+    num(B.t_grain) .. " * grain, " ..
+    num(H.rim) .. ", " .. top .. "), -inf)", {depth = BN.zone .. " / " .. K.scale, grain = grain})
+
+  -- Where the wasteland is: every tile the class or the lift takes. The class reads it, and the Entity program, so
+  -- what a zone excludes stops on the tile the wasteland starts on.
+  def(BN.reach, "min(" .. O.present .. ", max(" .. lifted .. ", depth - " .. num(B.feather_in) .. " + " ..
+    swing(B.feather_px) .. " * " .. N.fine .. " + " .. num(B.feather_kind) .. " * " .. BN.kind .. " + " ..
+    swing(B.feather_grain) .. " * grain))", {depth = BN.zone .. " / " .. K.scale, grain = grain})
+  def(BN.open, "if(" .. BN.reach .. " + " .. swing(B.open_px) .. " > 0, 0, 1)")
+
+  -- Room to build round the spawn (destroyed.barrier.start): 1 outside the zone and past the clearing.
+  def(BN.thin, "max(" .. BN.open .. ", clamp((" .. D.start.distance .. " - " .. num(B.start.rock_tiles) .. ") / " ..
+    num(B.start.rock_span) .. ", " .. num(B.start.rock_floor) .. ", 1))")
+
+  local rock2 = "if(" .. BN.macro .. " * " .. num(B.grey_mac) .. " + " .. num(B.grey_kind) .. " * " .. BN.kind ..
+    " + " .. num(B.grey_grain) .. " * grain > " .. num(B.grey_at) .. " + " .. num(B.grey_out) .. " * (1 - core), " ..
+    L[T.grey_dirt] .. ", if(" .. BN.kind .. " + " .. num(B.black_fine) .. " * " .. N.fine .. " + " ..
+    num(B.black_grain) ..
+    " * grain < " .. num(B.black_below) .. " + " .. num(B.black_in) .. " * core + " .. num(B.heart_black) ..
+    " * heart + " .. num(B.black_mac) .. " * (1 - heart) * " .. BN.macro .. ", if(sandy > 0, " .. L[T.black_sand] ..
+    ", " .. L[T.black_dirt] .. "), if(sandy > 0, " .. L[T.red_sand] .. ", " .. L[T.red_dirt] .. ")))"
+  -- Heat ground needs the lift: without it class 0 is ordinary ground, in specks inside the wasteland.
+  def(BN.class, "if(" .. BN.reach .. " <= 0, 0, if(min(" .. lifted .. ", " .. BN.lava .. " + " .. num(B.ground_fine) ..
+    " * " .. N.fine .. " + " .. num(B.ground_grain) .. " * grain - " .. num(B.penalty) .. " * (1 - core) + " ..
+    num(B.heart_gain) .. " * heart - " .. num(B.ground_at) .. ") > 0, 0, if(grassy < " .. num(B.grass_cut) .. ", " ..
+    L[T.grass] .. ", " ..
+    rock2 .. ")))", {
+      depth = BN.zone .. " / " .. K.scale,
+      grain = grain,
+      sandy = num(B.sand_mac) .. " * " .. BN.macro .. " + " .. N.fine .. " + " .. num(B.sand_grain) .. " * grain - " ..
+        num(B.sand_cut),
+      core = "clamp((depth - " .. num(B.barrier_px) .. " - " .. num(B.barrier_mac) .. " * " .. BN.macro ..
+        ") / " .. num(B.ramp_px) .. ", 0, 1)",
+      heart = "clamp((depth - " .. num(B.heart_px) .. " - " .. num(B.heart_mac) .. " * " .. BN.macro ..
+        ") / " .. num(B.heart_ramp) .. ", 0, 1)",
+      grassy = "depth / " .. num(B.grass_px) .. " + " .. num(B.grass_mac) .. " * " .. BN.macro .. " + " ..
+        num(B.grass_fine) .. " * " .. N.fine .. " + " .. num(B.grass_heart) .. " * heart",
+    })
+
+  -- The exclusion (config.lua destroyed.exclusion): the key's prototype holds 0, so a world made before keeps every
+  -- hook's off branch and the dead trees' copies place nothing.
+  local X = D.exclusion
+  def(X.key, "0")
+  for _, p in ipairs(X.palms) do
+    def(p.body, p.inner .. " * " .. BN.open)
+  end
+  local G2 = B.dead
+  def(BN.dead_noise, "multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(G2.seed1) .. ", octaves = " ..
+    num(G2.octaves) .. ", persistence = " .. num(G2.persistence) .. ", input_scale = 1 / " ..
+    num(G2.wavelength_tiles) .. ", output_scale = 1}")
+  def(BN.dead, "if(" .. BN.reach .. " > 0, if(" .. BN.lava .. " < " .. num(B.lava_at) .. ", " .. num(G2.peak) ..
+    " * " .. BN.thin .. " * clamp((" .. BN.dead_noise .. " - " .. num(G2.cut) .. ") / " .. num(G2.span) ..
+    ", 0, 1), 0), 0)")
 end
 
 data:extend(E)
