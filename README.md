@@ -5,7 +5,7 @@ Terra Nauvis turns Nauvis into Earth. You pick one of three maps and start at a 
 Asia and Australia). Coasts, rivers, climate, mountain ranges and the big ore fields come from a map
 of the real world. Great rivers have walkable fords, the Kiel, Corinth, Suez and Panama canals are
 open to ships on the maps that hold them, and the start has a lake, the base game's starting ore
-and no biters. Biomes are about 1.5 times the size of the base game's. Version 0.3.1 needs Factorio
+and no biters. Biomes are about 1.5 times the size of the base game's. Version 0.3.2 needs Factorio
 2.1.24 or newer. Alien Biomes and Space Age are optional.
 
 ![The Old World map at map scale 12](docs/images/old-world-s12.jpg)
@@ -48,7 +48,7 @@ large mod pack, and two are crops of the map above.
 ## Install
 
 1. Download `terra-nauvis_<version>.zip` from the
-   [Releases page](https://github.com/jakemismas/factorio-terra-nauvis/releases/tag/v0.3.1).
+   [Releases page](https://github.com/jakemismas/factorio-terra-nauvis/releases/tag/v0.3.2).
 2. Put the zip in your mods folder. Do not unzip it.
    - Windows: `%APPDATA%\Factorio\mods`
    - Linux: `~/.factorio/mods`
@@ -63,8 +63,8 @@ downloads the host's other mods, such as Alien Biomes, from the portal.
 To start a world, set the startup settings below under **Settings > Mod settings > Startup**, then
 pick **Terra Nauvis: Old World**, Europe or Atlantic in the preset list on the new-game screen. A
 world keeps its startup settings for life, so set them before you press Play. Worlds made before
-0.3.0 do not load. Worlds made on 0.3.0 keep loading unchanged; the new terrain and settings of
-0.3.1 apply to new worlds.
+0.3.0 do not load. Worlds made on 0.3.0 and 0.3.1 keep loading unchanged; the new terrain and settings of
+0.3.1 and 0.3.2 apply to new worlds.
 
 Large scales mean long trips. Moscow is about 7,960 tiles from Frankfurt at scale 6 and about 15,900
 at scale 12, roughly 15 and 30 minutes on foot.

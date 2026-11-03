@@ -911,6 +911,12 @@ local DE = {
   dev_wobble_a = NOISE .. "destroyed_dev_wobble_a_v1",
   dev_wobble_b = NOISE .. "destroyed_dev_wobble_b_v1",
   dev_fray = NOISE .. "destroyed_dev_fray_v1",
+  -- 0.3.2's next devastation field (destroyed.dev.next): the position with a finer fray, the width at a jogged point
+  dev2 = NOISE .. "destroyed_dev_v2",
+  dev_width2 = NOISE .. "destroyed_dev_width_v2",
+  dev_jog_x = NOISE .. "destroyed_dev_jog_x_v1",
+  dev_jog_y = NOISE .. "destroyed_dev_jog_y_v1",
+  dev_fray2 = NOISE .. "destroyed_dev_fray_v2",
   -- 0.3.1's Moscow zone (config.lua moscow): its outline, the Moscow position, the picklist's key and the Europe key
   mz_land = NOISE .. "moscow_outline_land_v1",
   mz_sea = NOISE .. "moscow_outline_sea_v1",
@@ -919,6 +925,7 @@ local DE = {
   mz_present = NOISE .. "moscow_outline_present_v1",
   mz_depth = NOISE .. "moscow_outline_depth_v1",
   mz_dev = NOISE .. "moscow_dev_v1",
+  mz_dev2 = NOISE .. "moscow_dev_v2",
   mz_key = NOISE .. "moscow",
   eu_key = NOISE .. "destroyed_europe",
   temperature = NOISE .. "temperature_ab_v2",
@@ -995,7 +1002,7 @@ return {
   identity = {
     id = ID,
     title = "Terra Nauvis",
-    version = "0.3.1",
+    version = "0.3.2",
     author = "Jake Mismas",
     factorio_version = "2.1",
     base_version = "2.1.24",
@@ -1780,6 +1787,12 @@ return {
       names = {DE.dev, DE.dev_ragged, DE.dev_width, DE.heat4, DE.class4, DE.reach2, DE.open2, DE.out_present3,
                DE.out_depth3, DE.chaos_dry, DE.dev_wobble_a, DE.dev_wobble_b,
                DE.dev_fray},
+    },
+    -- The next devastation field (0.3.2; destroyed.dev.next): Alien Biomes only, named over dev and width by a preset
+    -- with the zone on.
+    {
+      release = "0.3.2",
+      names = {DE.dev2, DE.dev_width2, DE.dev_jog_x, DE.dev_jog_y, DE.dev_fray2, DE.mz_dev2},
     },
     -- The second hotspot table's bodies: under files its table, which releases the row names regions.lua composes
     -- from it, as the region table does. No geography: a preset names them over the first table's (rule 15).
@@ -3587,6 +3600,31 @@ return {
       pyrenees = {strip_px = 30, snow_at = 0.6, snow_px = 20, south = 0.3, gate_px = 25, gate_per_px = 10},
       -- the dry dirt: class 7 of the red palette's class body, with the same score
       tiles = {{tile = "mineral-brown-dirt-1", class = 7, body = DE.chaos_dry}},
+      -- 0.3.2: a new world with the zone on names these over dev and width (presets.lua destroyed_values), and every
+      -- cut reads them by name. The width noise runs from under a tenth of width_px to more than twice it within a
+      -- few hundred tiles, so where it changes fastest the black ash and heat cuts followed its smooth contour, a line
+      -- running straight for 100 tiles and more, which the tile fray (a few tiles) could not bend.
+      --   jog    the width reads its noise at a point moved by jog_x and jog_y, basis noises in tiles, so its contour
+      --          frays by about their size however fast the width changes
+      --   fray   a finer tile fray the position adds, basis noises in tiles, so the cuts that follow the position's
+      --          own contour (dry dirt first) bend within every few dozen tiles. Its two coarse octaves stay small
+      --          beside the bands' width and its finest two small beside a tile's step of the field, so the class
+      --          sequence bends without leaving islands of one class in the next; each zone's presence takes it too
+      --          (over the scale, in reference pixels), so the zone's own outer edge frays as its cuts do; inside the
+      --          Pyrenees' snow yield it ramps in over snow_ramp_tiles from the zone's edge, which stays on the snow's
+      --          own edge, and the yield's gate line frays by the outline's edge fray and this fray
+      next = {
+        names = {dev = DE.dev2, width = DE.dev_width2, jog_x = DE.dev_jog_x, jog_y = DE.dev_jog_y,
+                 fray = DE.dev_fray2},
+        jog = {{tiles = 7.3, amp = 1, seed1 = 7926}, {tiles = 15.7, amp = 2, seed1 = 7927},
+               {tiles = 31.1, amp = 4, seed1 = 7928}, {tiles = 63.7, amp = 6, seed1 = 7933},
+               {tiles = 127.3, amp = 12, seed1 = 7934}},
+        fray = {{tiles = 4.7, amp = 1.5, seed1 = 7929}, {tiles = 9.1, amp = 3, seed1 = 7930},
+                {tiles = 17.3, amp = 8, seed1 = 7931}, {tiles = 34.9, amp = 10, seed1 = 7932},
+                {tiles = 69.7, amp = 4, seed1 = 7935}, {tiles = 139.1, amp = 8, seed1 = 7936}},
+        jog_shift = 40000,
+        snow_ramp_tiles = 48,
+      },
     },
   },
 
@@ -3616,6 +3654,10 @@ return {
     outline = {names = {land = DE.mz_land, sea = DE.mz_sea, inside = DE.mz_inside, sd = DE.mz_sd,
                         present = DE.mz_present, depth = DE.mz_depth}},
     dev = DE.mz_dev, start_px = 6, ragged_share = 0.6,
+    -- 0.3.2: the next Moscow position, read by the next devastation field (destroyed.dev.next): its presence takes
+    -- the field's next fray over the scale, since the outline's own contour, a smooth curve, drew the zone's edge
+    -- wherever the field reached it
+    next = {dev = DE.mz_dev2},
     corrupt = {depth = BC.mz_corrupt, union = BC.out_depth3, big_px = 4000, fray = 14,
                gap = {name = BC.mz_gap, wavelength_px = 30, octaves = 2, persistence = 0.5, seed1 = 7924, mid = 3,
                       amp = 9, low = 0, top = 12}},

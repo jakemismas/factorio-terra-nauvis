@@ -274,6 +274,9 @@ local function destroyed_values(map_key, v, names)
     out[D.chaos.names.class] = D.dev.names.class
     out[D.barrier.names.reach] = D.dev.names.reach
     out[D.barrier.names.open] = D.dev.names.open
+    -- 0.3.2: the next position and width (destroyed.dev.next), which every cut reads by name
+    out[D.dev.names.dev] = D.dev.next.names.dev
+    out[D.dev.names.width] = D.dev.next.names.width
     out[D.barrier.names.zone] = D.barrier.names.zone3
     out[D.outline.names.present] = D.outline.next.present
     out[D.outline.names.depth] = D.outline.next.depth

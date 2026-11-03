@@ -246,13 +246,55 @@ if AB then
   local MO = MZ.outline.names
   def(MZ.dev, "if(" .. MO.present .. " > 0, " .. K.scale .. " * (" .. MO.depth .. " - " .. num(MZ.start_px) .. " + " ..
     num(MZ.ragged_share) .. " * " .. DN.ragged .. "), " .. num(DV.outside_tiles) .. ")")
-  def(DN.dev, "max(if(" .. MZ.europe.key .. " > " .. num(MZ.match) .. ", if(" .. DN.present .. " > 0, min(" ..
-    K.scale .. " * (" .. DN.depth .. " - " .. num(DV.start_px) .. " + " .. DN.ragged .. "), " .. K.scale ..
-    " * snow), " .. num(DV.outside_tiles) .. "), " .. num(DV.outside_tiles) .. "), if(abs(" .. MZ.key .. " - " ..
-    num(MZ.chaos) .. ") < " .. num(MZ.match) .. ", " .. MZ.dev .. ", " .. num(DV.outside_tiles) .. "))", {
-      snow = num(PY.snow_px) .. " * (" .. num(PY.snow_at) .. " - " .. cold .. ") - " .. num(PY.south) .. " * " .. cut ..
-        " + " .. num(PY.gate_per_px) .. " * max(0, -" .. cut .. " - " .. num(PY.gate_px) .. ")",
-    })
+  -- add: a term both zones' positions take, sadd one the snow's yield takes (so the zone keeps to the snow's own edge),
+  -- padd one Europe's presence takes; mz: the Moscow position the field reads
+  local function dev_text(add, sadd, mz, padd)
+    return "max(if(" .. MZ.europe.key .. " > " .. num(MZ.match) .. ", if(" .. DN.present .. padd .. " > 0, min(" ..
+      K.scale .. " * (" .. DN.depth .. " - " .. num(DV.start_px) .. " + " .. DN.ragged .. ")" .. add .. ", " ..
+      K.scale .. " * snow" .. sadd .. "), " .. num(DV.outside_tiles) .. "), " .. num(DV.outside_tiles) ..
+      "), if(abs(" .. MZ.key .. " - " .. num(MZ.chaos) .. ") < " .. num(MZ.match) .. ", " .. mz .. add .. ", " ..
+      num(DV.outside_tiles) .. "))"
+  end
+  local snow_text = num(PY.snow_px) .. " * (" .. num(PY.snow_at) .. " - " .. cold .. ") - " .. num(PY.south) .. " * " ..
+    cut .. " + " .. num(PY.gate_per_px) .. " * max(0, -" .. cut .. " - " .. num(PY.gate_px) .. ")"
+  def(DN.dev, dev_text("", "", MZ.dev, ""), {snow = snow_text})
+  -- 0.3.2 (destroyed.dev.next): the position plus a finer tile fray, and the width read at a jogged point. A preset
+  -- with the zone on names them over dev and width, so every cut, the reach and the heat read them by name; neither
+  -- reads the name it replaces.
+  local NX = DV.next
+  local NN = NX.names
+  local function basis_sum(list, shift)
+    local t = {}
+    for _, o in ipairs(list) do
+      t[#t + 1] = num(o.amp) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(o.seed1) ..
+        ", input_scale = 1 / " .. num(o.tiles) .. ", output_scale = 1" ..
+        (shift and (", offset_x = " .. num(shift)) or "") .. "}"
+    end
+    return table.concat(t, " + ")
+  end
+  def(NN.fray, basis_sum(NX.fray))
+  def(NN.jog_x, basis_sum(NX.jog))
+  def(NN.jog_y, basis_sum(NX.jog, NX.jog_shift))
+  local EF = D.outline.edge_fray
+  local padd = " + " .. NN.fray .. " / " .. K.scale
+  def(MZ.next.dev, "if(" .. MO.present .. padd .. " > 0, " ..
+    K.scale .. " * (" .. MO.depth .. " - " .. num(MZ.start_px) .. " + " .. num(MZ.ragged_share) .. " * " ..
+    DN.ragged .. "), " .. num(DV.outside_tiles) .. ")")
+  -- the snow's yield with its gate line frayed as the presences are: the gate turns the yield off within a few tiles,
+  -- so its smooth line, the Iberia cut's, drew the heat ground's edge north of the massif
+  local snow_next = num(PY.snow_px) .. " * (" .. num(PY.snow_at) .. " - " .. cold .. ") - " .. num(PY.south) .. " * " ..
+    cut .. " + " .. num(PY.gate_per_px) .. " * max(0, -" .. cut .. " - " .. num(PY.gate_px) .. " + " .. fray(EF.px) ..
+    padd .. ")"
+  -- inside the snow's yield the fray ramps in over snow_ramp_tiles from the zone's edge, so the black ash and heat
+  -- cuts fray there and the zone still meets the snow's own edge
+  local sadd = " + " .. NN.fray .. " * clamp(" .. K.scale .. " * snow / " .. num(NX.snow_ramp_tiles) .. ", 0, 1)"
+  def(NN.dev, dev_text(" + " .. NN.fray, sadd, MZ.next.dev, padd), {snow = snow_next})
+  local W = DV.width
+  def(NN.width, num(DV.width_px) .. " * " .. K.scale .. " * clamp(1 + " .. num(W.amp) .. " * " ..
+    "multioctave_noise{x = x + " .. NN.jog_x .. ", y = y + " .. NN.jog_y .. ", seed0 = map_seed, seed1 = " ..
+    num(W.seed1) .. ", octaves = " .. num(W.octaves) .. ", persistence = " .. num(W.persistence) ..
+    ", input_scale = 1 / (" .. num(W.wavelength_px) .. " * " .. K.scale .. "), output_scale = 1}" .. ", " ..
+    num(W.low) .. ", " .. num(W.high) .. ")")
   -- A cut, positive inside it: the position, the cut's own fray in tiles (macro and kind in reference pixels, fine and
   -- grain in tiles), less the cut's place in widths, which the wobble noises move.
   local function cut_at(F)

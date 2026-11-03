@@ -2820,6 +2820,27 @@
     "slice": "extras",
     "registered": "2026-11-03"
    },
+   "tn_destroyed_dev_fray_v2": {
+    "type": "noise-expression",
+    "sha256": "e111dc37128c9f972a76a80d96c45471c9a2af96e192afbdfb67cca3774f015d",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_destroyed_dev_jog_x_v1": {
+    "type": "noise-expression",
+    "sha256": "9931bd3e122044902926d4cb26b09f51a7f19c5113269358068d601a4c007af8",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_destroyed_dev_jog_y_v1": {
+    "type": "noise-expression",
+    "sha256": "e0caf4ac69258b5b1dbd52ffa21691d4c7f54b54e54e9ae0d87a4e01fbcd84d4",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_destroyed_dev_ragged_v1": {
     "type": "noise-expression",
     "sha256": "a6ebd5d24bf3fe0dddbca2b49e46f3ec9e6698c31b8b46a77901c1a0dbec2964",
@@ -2834,9 +2855,23 @@
     "slice": "extras",
     "registered": "2026-11-03"
    },
+   "tn_destroyed_dev_v2": {
+    "type": "noise-expression",
+    "sha256": "69ee9e2882e080a91a6c8eb4c40385814ba0318506b27be0e0d5bb609c0b51ae",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_destroyed_dev_width_v1": {
     "type": "noise-expression",
     "sha256": "ee9cf8eb3653ed7aafb25dfed5b913a8c4503ea41275a4a4af72a713c16f2867",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_destroyed_dev_width_v2": {
+    "type": "noise-expression",
+    "sha256": "3a197f8019971195337f45b18a777a6bbb46439fcaca44383135183e4f99f87c",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-03"
@@ -3226,6 +3261,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_elevation_olde_world_v9": {
+    "type": "noise-expression",
+    "sha256": "8b1bb1447d5d9fb58cf07013c0810f678c3f4ae266c6de86584cfd13bfc179fe",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_enemy_layer_v1": {
     "type": "noise-expression",
     "sha256": "cc16aa8e8604ebc8d78b3184527dd862aa5c3aa82a91062bee50e9c0ce0a7a46",
@@ -3457,6 +3499,13 @@
     "slice": "extras",
     "registered": "2026-11-02"
    },
+   "tn_fords_olde_world_s12_v8": {
+    "type": "noise-expression",
+    "sha256": "afd6e9626dc49731ede0d8747a08f404b097875db47c8fc7f355115ec1105fe2",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_fords_olde_world_s1_v7": {
     "type": "noise-expression",
     "sha256": "e80cb78f5d7e443125757807fd5c9d36c8cd7b465df2a46ca6838e4bc8b98585",
@@ -3470,6 +3519,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
+   },
+   "tn_fords_olde_world_s24_v8": {
+    "type": "noise-expression",
+    "sha256": "10c30cf82f5151abb377f68e59a9367a4486906dce9d1b3a2ea25976906f4614",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
    },
    "tn_fords_olde_world_s2_v7": {
     "type": "noise-expression",
@@ -3590,12 +3646,33 @@
     "slice": "extras",
     "registered": "2026-11-02"
    },
+   "tn_geo_fray_fit_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "1f9ceede0ab3206dcb6b4909782104df6eb53495c596713215b7ad26f255e308",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_geo_fray_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "1e00e3f6387f30c03f8f223f052ad4e1c87e30558e08b87201ea442a49856433",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_geo_lean_olde_world_v1": {
     "type": "noise-expression",
     "sha256": "72131ea859726a8f7c128f6b4801e36720f562aecfe2a0c0e10c4b16d1a9d1d4",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-02"
+   },
+   "tn_geo_olde_world_v10": {
+    "type": "noise-expression",
+    "sha256": "348ac7c2c27a6fd543e4e1b3574cd75abceb177b448f92ba0bbb9da00b7f5dbd",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
    },
    "tn_geo_olde_world_v8": {
     "type": "noise-expression",
@@ -7097,6 +7174,13 @@
     "slice": "extras",
     "registered": "2026-11-02"
    },
+   "tn_inland_lakes_olde_world_v4": {
+    "type": "noise-expression",
+    "sha256": "89aa241cae159d692f6e7175abad6e18caf2de50b77f38036317d01904f82233",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_land_coarse_atlantic_v8": {
     "type": "noise-expression",
     "sha256": "928301135396f9d5db0ef2bbbbf40778b3fd0867f1c17121df41b7399e985fc8",
@@ -7555,6 +7639,13 @@
    "tn_moscow_dev_v1": {
     "type": "noise-expression",
     "sha256": "164f5f7c73c883310e3802120f7677d4a0da75fb366c97d2b2eebe7dc80c9842",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_moscow_dev_v2": {
+    "type": "noise-expression",
+    "sha256": "aa79fd004e255561431b0cb3a6ef42595a278de2e9cd5dac761cc6e943d48183",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-03"
@@ -8491,6 +8582,34 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
+   },
+   "tn_overlay_land_fray_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "e31fc22dedc058e6c54f7b605cfae1aa4d9e7ad3a792629ce25bf1c2c10932ba",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_overlay_land_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "790897f4aa62efbb687359bfca6634c5bd3de5bc9e0aaf57318aee551a46ee44",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_overlay_water_fray_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "81940a061eec3716791dc35b8be05f4c10cdd6dea099a47dd3c8cacdde8d4940",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_overlay_water_olde_world_v1": {
+    "type": "noise-expression",
+    "sha256": "e83a717625944e081fb029bfd8622d9ec3373c0439e6d096dd7b5f8cc8bed2e9",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
    },
    "tn_palm_a_p_v1": {
     "type": "noise-expression",
@@ -11922,6 +12041,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_shore_olde_world_v7": {
+    "type": "noise-expression",
+    "sha256": "1a859825487c267979627d24b5b1784a69f85945f391ae44b5e9637ffb321db4",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_spawn_bias_atlantic_v3": {
     "type": "noise-expression",
     "sha256": "dc86c716bc4b480c42e3a9e0bd14ab2d290387eef93d944931d80c0c604aebfb",
@@ -14309,6 +14435,13 @@
     "slice": "extras",
     "registered": "2026-11-02"
    },
+   "tn_warp_x_olde_world_s12_v3": {
+    "type": "noise-expression",
+    "sha256": "2e1c38592f0f169c68b50a034ad85f6e3fe181aa080bd4eb3beee9559d078e05",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_warp_x_olde_world_s1_v2": {
     "type": "noise-expression",
     "sha256": "9478f21a3efef38ebbfab0b6c1303f943b386f666c9e2ef085e45e5892f5f12d",
@@ -14644,6 +14777,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-02"
+   },
+   "tn_warp_y_olde_world_s12_v3": {
+    "type": "noise-expression",
+    "sha256": "9c244d5489b7f001576ea09cc7355886f28672aeecf651c6dbcfe6acc27d954c",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
    },
    "tn_warp_y_olde_world_s1_v2": {
     "type": "noise-expression",
@@ -14981,6 +15121,13 @@
     "slice": "extras",
     "registered": "2026-11-02"
    },
+   "tn_ww_olde_world_s12_v8": {
+    "type": "noise-expression",
+    "sha256": "0e1d5ebda3c0eb7ff8c01cb065d16c3e8d63d0457f36a8dae3ec40b152a38d9a",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_ww_olde_world_s1_v7": {
     "type": "noise-expression",
     "sha256": "56fae9433f774252a1dd04fdddc94d3b4dac9ed0473f14c78e79d962a8f147b2",
@@ -14994,6 +15141,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
+   },
+   "tn_ww_olde_world_s24_v8": {
+    "type": "noise-expression",
+    "sha256": "bf400eafd1d72d32663c3a125c4b6b2b4a3f0bdff907dc920f7a8f3a91555fc6",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-03"
    },
    "tn_ww_olde_world_s2_v7": {
     "type": "noise-expression",
@@ -15045,6 +15199,6 @@
     "registered": "2026-11-01"
    }
   },
-  "sha256": "f7e80e067e3f99e228c7573bda3822813e7296cf859b5b91295f300f75e8d542"
+  "sha256": "54e1ac9c8bef61e8b0e4cb0e75d94f751fc7e78a748ebb65d613c85a9945a480"
  }
 }

@@ -4,6 +4,23 @@ All notable changes to terra-nauvis are documented in this file. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.3.2] - 2026-11-03
+
+### Changed
+
+- Old World past scale 6, on new worlds made from a Terra Nauvis preset: islands the coast fit missed (Okinawa, the
+  Visayas, the Solomons, Yapen, the Kurils, Shark Bay and more) are drawn from the reference map, the Sognefjord is
+  open from the sea to its inner arms, and the Aral is two basins again without the square island. Scales 1 to 6
+  keep their coasts.
+- Old World past scale 6, on new worlds: coasts fray at tile scale, with fewer straight runs and right angles, and a
+  world made from the Map type entry alone now gets the same coasts as one made from the preset.
+- Old World past scale 6, on new worlds: the Volga's Samara Bend draws as a bend instead of a hook. Every other river
+  keeps its course.
+- Chaos zones on new worlds (Destroyed Europe, and the Moscow zone at Chaos): the edges between dry dirt, scorched
+  red grass, black ash and heat ground fray at tile level and bend every few dozen tiles, so no class edge runs
+  straight for a hundred tiles any more, and the Moscow zone's own edge frays as Destroyed Europe's does.
+- Worlds made on 0.3.1 keep loading unchanged; the new terrain applies to new worlds only.
+
 ## [0.3.1] - 2026-11-03
 
 ### Added
