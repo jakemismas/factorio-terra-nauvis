@@ -1,11 +1,128 @@
 {
  "format": "tn-ranges-v2/1",
  "units": "degrees (lat, lon) and metres above sea level",
- "note": "The second ranges table's source (0.3.0, Earth mods recommendation 4, approved by Jake 2026-11-01 23:20). Each range is a crest polyline through named summits, passes and massifs ordered along the main divide, each vertex with its published elevation rounded to the metre; a vertex that names an area carries a representative height (rep true). The second table draws snow, its grey rim and highland rocks, no cliffs (ridges.lua, union_bodies). The cold field reads one snow verdict per crest piece (its highest vertex), so a long range is split at its real passes and gorges into sections, and only a section whose highest peak clears its snow line is listed: the others drew highland rocks alone. passes are named passes and gorges that cut a crest: build_ranges.py puts each at the crest point nearest it. The 400 km unnamed-gap rule of approvals-data.json applies to every pass-free stretch. See PROVENANCE.md.",
+ "note": "The second ranges table's source (0.3.0, Earth mods recommendation 4, approved by Jake 2026-11-01 23:20). Each range is a crest polyline through named summits, passes and massifs ordered along the main divide, each vertex with its published elevation rounded to the metre; a vertex that names an area carries a representative height (rep true). The second table draws cliffs (the union's chopped line field), highland rocks and, where a section's highest peak clears its snow line, snow with a narrow ragged rim (ridges.lua). The cold field reads one snow verdict per crest piece, so a long range is split at its real passes and gorges into sections, each with its own verdict. cold false keeps a row out of the cold field (Africa holds no snow). passes are named passes and gorges that cut a crest: build_ranges.py puts each at the crest point nearest it. The 400 km unnamed-gap rule of approvals-data.json applies to every pass-free stretch. See PROVENANCE.md.",
  "rules": {
   "unnamed_gap_every_km": 400
  },
  "ranges": [
+  {
+   "id": "taurus",
+   "name": "Taurus Mountains",
+   "crest": [
+    {
+     "name": "Akdag (Lycian Taurus)",
+     "lat": 36.55,
+     "lon": 29.57,
+     "height": 3016
+    },
+    {
+     "name": "Kizlarsivrisi (Beydaglari)",
+     "lat": 36.64,
+     "lon": 30.13,
+     "height": 3070
+    },
+    {
+     "name": "Dedegol Dagi",
+     "lat": 37.63,
+     "lon": 31.28,
+     "height": 2992
+    },
+    {
+     "name": "Geyik Daglari",
+     "lat": 36.88,
+     "lon": 32.15,
+     "height": 2877
+    },
+    {
+     "name": "Medetsiz (Bolkar Daglari)",
+     "lat": 37.4,
+     "lon": 34.62,
+     "height": 3524
+    },
+    {
+     "name": "Demirkazik (Aladaglar)",
+     "lat": 37.83,
+     "lon": 35.16,
+     "height": 3756
+    },
+    {
+     "name": "Binboga Daglari",
+     "lat": 38.33,
+     "lon": 36.47,
+     "height": 2957
+    },
+    {
+     "name": "Nurhak Dagi",
+     "lat": 37.95,
+     "lon": 37.43,
+     "height": 3081
+    },
+    {
+     "name": "Malatya Daglari",
+     "lat": 38.15,
+     "lon": 38.55,
+     "height": 2500,
+     "rep": true
+    },
+    {
+     "name": "Southeastern Taurus at Sason",
+     "lat": 38.4,
+     "lon": 41.3,
+     "height": 2800,
+     "rep": true
+    },
+    {
+     "name": "Bitlis gorge",
+     "lat": 38.4,
+     "lon": 42.12,
+     "height": 1500,
+     "rep": true
+    }
+   ],
+   "passes": [
+    {
+     "id": "cilician_gates",
+     "name": "Cilician Gates (Gulek pass)",
+     "lat": 37.28,
+     "lon": 34.79
+    }
+   ]
+  },
+  {
+   "id": "talysh",
+   "name": "Talysh Mountains",
+   "crest": [
+    {
+     "name": "Talysh north",
+     "lat": 38.85,
+     "lon": 48.3,
+     "height": 2000,
+     "rep": true
+    },
+    {
+     "name": "Komurgoy",
+     "lat": 38.45,
+     "lon": 48.55,
+     "height": 2493,
+     "rep": true
+    },
+    {
+     "name": "Talysh south (Masuleh)",
+     "lat": 37.15,
+     "lon": 48.95,
+     "height": 2700,
+     "rep": true
+    },
+    {
+     "name": "Manjil gorge (Sefid Rud)",
+     "lat": 36.74,
+     "lon": 49.4,
+     "height": 350,
+     "rep": true
+    }
+   ]
+  },
   {
    "id": "alborz",
    "name": "Alborz (Elburz), central",
@@ -40,6 +157,126 @@
      "lat": 35.85,
      "lon": 52.95,
      "height": 2100,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "alborz_east",
+   "name": "Alborz (Elburz), eastern",
+   "crest": [
+    {
+     "name": "Gaduk pass (Firuzkuh)",
+     "lat": 35.85,
+     "lon": 52.95,
+     "height": 2100,
+     "rep": true
+    },
+    {
+     "name": "Shahvar",
+     "lat": 36.4,
+     "lon": 54.95,
+     "height": 3945
+    },
+    {
+     "name": "Golestan forest",
+     "lat": 37.35,
+     "lon": 56.2,
+     "height": 2000,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "ethiopia_west",
+   "name": "Ethiopian Highlands, north-western plateau",
+   "cold": false,
+   "crest": [
+    {
+     "name": "Eritrean highlands at Asmara",
+     "lat": 15.33,
+     "lon": 38.93,
+     "height": 2400,
+     "rep": true
+    },
+    {
+     "name": "Ras Dashen (Simien Mountains)",
+     "lat": 13.24,
+     "lon": 38.37,
+     "height": 4550
+    },
+    {
+     "name": "Mount Guna",
+     "lat": 11.72,
+     "lon": 38.24,
+     "height": 4231
+    },
+    {
+     "name": "Choke Mountains",
+     "lat": 10.7,
+     "lon": 37.85,
+     "height": 4100
+    },
+    {
+     "name": "Abay (Blue Nile) gorge",
+     "lat": 10.05,
+     "lon": 38.2,
+     "height": 1200,
+     "rep": true
+    },
+    {
+     "name": "Entoto",
+     "lat": 9.1,
+     "lon": 38.75,
+     "height": 3200,
+     "rep": true
+    },
+    {
+     "name": "Gurage highlands",
+     "lat": 8.15,
+     "lon": 38.1,
+     "height": 3700,
+     "rep": true
+    }
+   ],
+   "passes": [
+    {
+     "id": "abay_gorge",
+     "name": "Abay (Blue Nile) gorge",
+     "lat": 10.05,
+     "lon": 38.2
+    }
+   ]
+  },
+  {
+   "id": "ethiopia_east",
+   "name": "Ethiopian Highlands, south-eastern plateau",
+   "cold": false,
+   "crest": [
+    {
+     "name": "Gara Muleta (Ahmar Mountains)",
+     "lat": 9.15,
+     "lon": 41.6,
+     "height": 3405
+    },
+    {
+     "name": "Arsi Mountains (Mount Kaka)",
+     "lat": 7.83,
+     "lon": 39.33,
+     "height": 4180,
+     "rep": true
+    },
+    {
+     "name": "Tullu Dimtu (Bale Mountains)",
+     "lat": 6.92,
+     "lon": 39.78,
+     "height": 4377
+    },
+    {
+     "name": "Bale-Sidamo highlands",
+     "lat": 6.2,
+     "lon": 39.3,
+     "height": 3000,
      "rep": true
     }
    ]
@@ -270,6 +507,38 @@
    ]
   },
   {
+   "id": "cascades_oregon_south",
+   "name": "Cascade Range, Oregon (Three Sisters to Crater Lake)",
+   "crest": [
+    {
+     "name": "Santiam Pass",
+     "lat": 44.42,
+     "lon": -121.87,
+     "height": 1455
+    },
+    {
+     "name": "South Sister",
+     "lat": 44.103,
+     "lon": -121.769,
+     "height": 3159
+    },
+    {
+     "name": "Crater Lake (Mount Mazama)",
+     "lat": 42.94,
+     "lon": -122.11,
+     "height": 2487,
+     "rep": true
+    },
+    {
+     "name": "Klamath gap",
+     "lat": 42.2,
+     "lon": -121.95,
+     "height": 1300,
+     "rep": true
+    }
+   ]
+  },
+  {
    "id": "cascades_shasta",
    "name": "Cascade Range, Mount Shasta",
    "crest": [
@@ -291,6 +560,229 @@
      "lat": 40.95,
      "lon": -121.85,
      "height": 900,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "cascades_lassen",
+   "name": "Cascade Range, Lassen",
+   "crest": [
+    {
+     "name": "Pit River gorge",
+     "lat": 40.95,
+     "lon": -121.85,
+     "height": 900,
+     "rep": true
+    },
+    {
+     "name": "Lassen Peak",
+     "lat": 40.488,
+     "lon": -121.505,
+     "height": 3189
+    },
+    {
+     "name": "Feather River",
+     "lat": 39.9,
+     "lon": -121.2,
+     "height": 1500,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "sierra_north",
+   "name": "Sierra Nevada, northern (Tahoe)",
+   "crest": [
+    {
+     "name": "Lakes Basin",
+     "lat": 39.75,
+     "lon": -120.7,
+     "height": 2000,
+     "rep": true
+    },
+    {
+     "name": "Donner Pass",
+     "lat": 39.32,
+     "lon": -120.33,
+     "height": 2160
+    },
+    {
+     "name": "Pyramid Peak",
+     "lat": 38.85,
+     "lon": -120.16,
+     "height": 3044
+    },
+    {
+     "name": "Sonora Pass",
+     "lat": 38.33,
+     "lon": -119.64,
+     "height": 2933
+    }
+   ]
+  },
+  {
+   "id": "sierra_high",
+   "name": "Sierra Nevada, High Sierra (Yosemite to Whitney)",
+   "crest": [
+    {
+     "name": "Sonora Pass",
+     "lat": 38.33,
+     "lon": -119.64,
+     "height": 2933
+    },
+    {
+     "name": "Mount Lyell",
+     "lat": 37.739,
+     "lon": -119.271,
+     "height": 3999
+    },
+    {
+     "name": "Mount Whitney",
+     "lat": 36.578,
+     "lon": -118.292,
+     "height": 4421
+    },
+    {
+     "name": "Olancha Peak",
+     "lat": 36.265,
+     "lon": -118.118,
+     "height": 3695
+    }
+   ]
+  },
+  {
+   "id": "sierra_south",
+   "name": "Sierra Nevada, southern (Kern Plateau to Tehachapi)",
+   "crest": [
+    {
+     "name": "Olancha Peak",
+     "lat": 36.265,
+     "lon": -118.118,
+     "height": 3695
+    },
+    {
+     "name": "Kern Plateau",
+     "lat": 35.75,
+     "lon": -118.3,
+     "height": 2500,
+     "rep": true
+    },
+    {
+     "name": "Tehachapi Pass",
+     "lat": 35.1,
+     "lon": -118.3,
+     "height": 1225,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "gdr_north",
+   "name": "Great Dividing Range, Queensland",
+   "crest": [
+    {
+     "name": "McIlwraith Range (Cape York)",
+     "lat": -13.75,
+     "lon": 143.32,
+     "height": 823,
+     "rep": true
+    },
+    {
+     "name": "Bartle Frere (Bellenden Ker Range)",
+     "lat": -17.4,
+     "lon": 145.81,
+     "height": 1622
+    },
+    {
+     "name": "Mount Dalrymple (Clarke Range)",
+     "lat": -21.03,
+     "lon": 148.62,
+     "height": 1259,
+     "rep": true
+    },
+    {
+     "name": "Carnarvon Range",
+     "lat": -25.05,
+     "lon": 148.2,
+     "height": 1000,
+     "rep": true
+    },
+    {
+     "name": "Bunya Mountains",
+     "lat": -26.87,
+     "lon": 151.58,
+     "height": 1135
+    },
+    {
+     "name": "Toowoomba range",
+     "lat": -27.56,
+     "lon": 151.95,
+     "height": 700,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "gdr_south",
+   "name": "Great Dividing Range, New South Wales and Victoria",
+   "crest": [
+    {
+     "name": "McPherson Range",
+     "lat": -28.3,
+     "lon": 152.3,
+     "height": 1100,
+     "rep": true
+    },
+    {
+     "name": "Round Mountain (New England)",
+     "lat": -30.43,
+     "lon": 152.25,
+     "height": 1584
+    },
+    {
+     "name": "Barrington Tops",
+     "lat": -31.95,
+     "lon": 151.47,
+     "height": 1586
+    },
+    {
+     "name": "Hunter gap",
+     "lat": -32.3,
+     "lon": 150.7,
+     "height": 700,
+     "rep": true
+    },
+    {
+     "name": "Blue Mountains",
+     "lat": -33.7,
+     "lon": 150.3,
+     "height": 1100,
+     "rep": true
+    },
+    {
+     "name": "Mount Kosciuszko",
+     "lat": -36.456,
+     "lon": 148.263,
+     "height": 2228
+    },
+    {
+     "name": "Mount Bogong",
+     "lat": -36.737,
+     "lon": 147.305,
+     "height": 1986
+    },
+    {
+     "name": "Mount Buller",
+     "lat": -37.146,
+     "lon": 146.44,
+     "height": 1805
+    },
+    {
+     "name": "Kinglake ranges",
+     "lat": -37.4,
+     "lon": 145.1,
+     "height": 800,
      "rep": true
     }
    ]
@@ -342,6 +834,32 @@
      "lat": 46.6,
      "lon": 93.6,
      "height": 4220,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "gobi_altai",
+   "name": "Gobi Altai",
+   "crest": [
+    {
+     "name": "Gobi Altai west",
+     "lat": 46.2,
+     "lon": 95.5,
+     "height": 3500,
+     "rep": true
+    },
+    {
+     "name": "Ikh Bogd",
+     "lat": 44.95,
+     "lon": 100.25,
+     "height": 3957
+    },
+    {
+     "name": "Gurvan Saikhan",
+     "lat": 43.55,
+     "lon": 103.8,
+     "height": 2825,
      "rep": true
     }
    ]

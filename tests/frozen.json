@@ -13368,30 +13368,9 @@
    "slice": "extras",
    "registered": "2026-11-02"
   },
-  "tn_highland_atlantic_v2": {
-   "type": "noise-expression",
-   "sha256": "e671d847168b43808575164776f9aa1c0eb280fc950775d8bad8e3078c60df30",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_highland_cold_atlantic_v2": {
-   "type": "noise-expression",
-   "sha256": "de7ad0975889c118efd25e8f7f91a9f3b5e25229ad7fb858071baf8652aecb2c",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
   "tn_highland_cold_cap_v2": {
    "type": "noise-expression",
    "sha256": "0c0c8c6ec4ab73f1950346b2622b57c3870107db1fe20e2dbeee0b0ae7cf1236",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_highland_cold_europe_v2": {
-   "type": "noise-expression",
-   "sha256": "44caaa36a52cb2f90a0fb0b4889af23a3f41b0e5e8368ebce8be26cbeaeb18a1",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-11-02"
@@ -13410,51 +13389,9 @@
    "slice": "extras",
    "registered": "2026-11-02"
   },
-  "tn_highland_cold_olde_world_v2": {
-   "type": "noise-expression",
-   "sha256": "ab5430ef3805b0dbf49117269eadd84fb895c1019c3bc3050bcaa995bb95df1f",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
   "tn_highland_cold_v2": {
    "type": "noise-expression",
    "sha256": "3da7e28fe43b0f14ed05919db74e8c30cdbab40598ac3703a04a2cf520f83225",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_highland_europe_v2": {
-   "type": "noise-expression",
-   "sha256": "dc24928d51700b82b1e895623a11805bb2f223ab6175ba0f99d591744c00f2a0",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_highland_olde_world_v2": {
-   "type": "noise-expression",
-   "sha256": "b5901aab685e5206b09bca1c1473f171ec0963ed853c18cf65c5f06c949ceb0b",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_highland_tile_atlantic_v2": {
-   "type": "noise-expression",
-   "sha256": "f73d72ca66588abfcff10acc97cca875932cf62ffbcd72b6bcad083dd8458a79",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_highland_tile_europe_v2": {
-   "type": "noise-expression",
-   "sha256": "00b1e445bcf051277edfd9b67077a361259763d90d18aa7c33d46f621993ebdf",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_highland_tile_olde_world_v2": {
-   "type": "noise-expression",
-   "sha256": "943c915c97ae0d521222be5658d449d53121e8fcef06b1b81841a17b1bf82dd3",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-11-02"
@@ -13700,27 +13637,6 @@
   "tn_ore_uranium_ore_r_v2": {
    "type": "noise-expression",
    "sha256": "33b1ab7c56466bc943c4df6b3036a32d539d6b8d39bb838eb9a638b9a2a0be3f",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_passes_atlantic_v2": {
-   "type": "noise-expression",
-   "sha256": "2700837e130d229def10b3b77ebf22e05dff7bbd04d685d9629d63270675eb02",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_passes_europe_v2": {
-   "type": "noise-expression",
-   "sha256": "1c8db4b9e7d00edb3e1b702a32dc8c83cd1ade544afabce93ca7eacb646bcb80",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_passes_olde_world_v2": {
-   "type": "noise-expression",
-   "sha256": "c588e8867b98d589a73fc9e5e5cfc14b2aa24ba3ef0f1609e585dc2cbfd023da",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-11-02"
