@@ -369,7 +369,7 @@ end
 -- table's forest and marsh aggregates, each under the first table's name.
 local function second_tables()
   local out = {}
-  for _, points in ipairs({cfg.hotspots_v2.points, cfg.regions_v2.points}) do
+  for _, points in ipairs({cfg.hotspots_v2.points, cfg.regions_v2.points, cfg.hotspots_v3.points}) do
     for k, value in pairs(points) do
       out[k] = value
     end

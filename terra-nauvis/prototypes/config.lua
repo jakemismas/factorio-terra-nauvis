@@ -1625,6 +1625,19 @@ return {
                NOISE .. "ore_wobble_v1", NOISE .. "ore_trees", NOISE .. "ore_open_v1", NOISE .. "ore_open_plants_v1",
                NOISE .. "ore_open_v2", NOISE .. "ore_open_plants_v2"},
     },
+    -- The third hotspot table's bodies (0.3.1): under files its table, which releases the row names regions.lua
+    -- composes from it. No geography: 0.3.1's presets name them over the second table's.
+    {
+      release = "0.3.1",
+      names = {HS .. "iron_ore_v4", HS .. "copper_ore_v4", HS .. "coal_v4", HS .. "stone_v4", HS .. "uranium_ore_v4",
+               HS .. "iron_ore_qty_v4", HS .. "copper_ore_qty_v4", HS .. "coal_qty_v4", HS .. "stone_qty_v4",
+               HS .. "uranium_ore_qty_v4", HS .. "stone_rich_v1", NOISE .. "ore_gap_v3", NOISE .. "enemy_layer_v3",
+               NOISE .. "enemy_v4", NOISE .. "enemy_v5", ORE .. "iron_ore_r_v3", ORE .. "copper_ore_r_v3",
+               ORE .. "coal_r_v3", ORE .. "stone_r_v3", ORE .. "uranium_ore_r_v3", ORE .. "iron_ore_p_v4",
+               ORE .. "copper_ore_p_v4", ORE .. "coal_p_v4", ORE .. "stone_p_v4", ORE .. "uranium_ore_p_v4",
+               NOISE .. "ore_open_v3", NOISE .. "ore_open_plants_v3"},
+      files = {"prototypes/tables/hotspots_v3.lua"},
+    },
     -- Ore at vanilla's measure (plan-0302 7b and 7c): regular patches on vanilla's function with the footprint gap,
     -- and the solid hotspots' third version (resources.natural.fn2, hotspots_v2.v3); 0.3.0's presets name them.
     {
@@ -2514,21 +2527,25 @@ return {
     ramp = {name = REN.RAMP, from = 450, span = 3550, gain = 0.5},
     ramped = {"iron-ore", "copper-ore", "coal", "stone"},
     -- r2: 0.3.0's richness wrapper (richness_v2), and p3 its probability wrapper of a solid ore (edge_v1, lombok).
+    -- r3 and p4: 0.3.1's, which read the fourth solid bodies (hotspots_v3.bodies) of the third hotspot table.
     ores = {
       {resource = "iron-ore", probability = "entity:iron-ore:probability", richness = "entity:iron-ore:richness",
        p_v1 = RDN.ORE_IRON, p = REN.ORE_IRON_P2, r = REN.ORE_IRON_R, r2 = ORE .. "iron_ore_r_v2",
-       p3 = ORE .. "iron_ore_p_v3"},
+       p3 = ORE .. "iron_ore_p_v3", r3 = ORE .. "iron_ore_r_v3", p4 = ORE .. "iron_ore_p_v4"},
       {resource = "copper-ore", probability = "entity:copper-ore:probability",
        richness = "entity:copper-ore:richness", p_v1 = RDN.ORE_COPPER, p = REN.ORE_COPPER_P2, r = REN.ORE_COPPER_R,
-       r2 = ORE .. "copper_ore_r_v2", p3 = ORE .. "copper_ore_p_v3"},
+       r2 = ORE .. "copper_ore_r_v2", p3 = ORE .. "copper_ore_p_v3", r3 = ORE .. "copper_ore_r_v3",
+       p4 = ORE .. "copper_ore_p_v4"},
       {resource = "coal", probability = "entity:coal:probability", richness = "entity:coal:richness",
-       p_v1 = RDN.ORE_COAL, p = REN.ORE_COAL_P2, r = REN.ORE_COAL_R, r2 = ORE .. "coal_r_v2", p3 = ORE .. "coal_p_v3"},
+       p_v1 = RDN.ORE_COAL, p = REN.ORE_COAL_P2, r = REN.ORE_COAL_R, r2 = ORE .. "coal_r_v2", p3 = ORE .. "coal_p_v3",
+       r3 = ORE .. "coal_r_v3", p4 = ORE .. "coal_p_v4"},
       {resource = "stone", probability = "entity:stone:probability", richness = "entity:stone:richness",
        p_v1 = RDN.ORE_STONE, p = REN.ORE_STONE_P2, r = REN.ORE_STONE_R, r2 = ORE .. "stone_r_v2",
-       p3 = ORE .. "stone_p_v3"},
+       p3 = ORE .. "stone_p_v3", r3 = ORE .. "stone_r_v3", p4 = ORE .. "stone_p_v4"},
       {resource = "uranium-ore", probability = "entity:uranium-ore:probability",
        richness = "entity:uranium-ore:richness", p_v1 = RDN.ORE_URANIUM, p = REN.ORE_URANIUM_P2, r = REN.ORE_URANIUM_R,
-       r2 = ORE .. "uranium_ore_r_v2", p3 = ORE .. "uranium_ore_p_v3"},
+       r2 = ORE .. "uranium_ore_r_v2", p3 = ORE .. "uranium_ore_p_v3", r3 = ORE .. "uranium_ore_r_v3",
+       p4 = ORE .. "uranium_ore_p_v4"},
       {resource = "crude-oil", probability = "entity:crude-oil:probability", richness = "entity:crude-oil:richness",
        p_v1 = RDN.ORE_OIL, p = REN.ORE_OIL_P2, r = REN.ORE_OIL_R, r2 = ORE .. "crude_oil_r_v2"},
     },
@@ -2554,7 +2571,8 @@ return {
     -- ref_scale reading left far bands at 0.6 to 0.8 of vanilla's, the ramp put them up to 1.5 times over it); a
     -- solid hotspot's richness is the third hotspot table's (hotspots_v2.v3), which no longer takes the lift.
     richness_v2 = {vanilla = true, ref_scale = 6, rich_offset = 1000, rich_span = 2600, lift = 1.25, cube_root = 1 / 3,
-                   lombok = {resource = "copper-ore", row = "copper_sumbawa", cut_lon = 116.765, reach_px = 70},
+                   lombok = {resource = "copper-ore", row = "copper_sumbawa", row3 = "copper_sumbawa_3",
+                             cut_lon = 116.765, reach_px = 70},
                    edge = {wobble = NOISE .. "ore_wobble_v1", seed1 = 7441, trim = 6, mid = 0.5, amp = 0.35, half = 0.5,
                            long = 32, short = 12}},
     -- Trees off a hotspot's solid ore (0.3.0, new worlds; data-final-fixes.lua): forest stood on whole coal fields
@@ -2571,7 +2589,9 @@ return {
     -- place, so a world made with v1 keeps it.
     ore_trees = {key = NOISE .. "ore_trees", open = NOISE .. "ore_open_v1", open_v2 = NOISE .. "ore_open_v2",
                  margin = 2500, floor = 0.08,
-                 plants = {open = NOISE .. "ore_open_plants_v1", open_v2 = NOISE .. "ore_open_plants_v2", margin = 300,
+                 open_v3 = NOISE .. "ore_open_v3",
+                 plants = {open = NOISE .. "ore_open_plants_v1", open_v2 = NOISE .. "ore_open_plants_v2",
+                           open_v3 = NOISE .. "ore_open_plants_v3", margin = 300,
                            floor = 0.35,
                            keep = {"rock", "decal", "crater", "puddle", "stone"}, drop = {}}},
     offshore = {resource = "offshore-oil", probability = "entity:offshore-oil:probability",
@@ -2982,6 +3002,31 @@ return {
              level = 0.3, lobe = 0.55, full_scale = 6, grain = {0.2, 0.3, 0.6}, offset = 0.66, small_map = 0.2,
              near = 0.4, full_distance = 2400, capped = 1, radius = {base = 15, gain = 4, span = 325}, height = 0.16,
              clear = 10},
+  },
+
+  -- The third hotspot table (0.3.1, new worlds; tables/hotspots_v3.lua; release versioning rule 14): the
+  -- rows of the first two tables whose discs stood in the sea or a lake, moved onto land under new ids (Marmara,
+  -- Portland, Sumbawa, Aswan), and for small discs `rich`, the factor on a row's ore per tile (up to 3) that lets the
+  -- disc hold its design total in the room it has. Everything of the second table's solid method (hotspots_v2.v3)
+  -- is read as it is; only the rows differ, so the solid ores' fourth bodies, the gap, the enemy layer and nests, the
+  -- trees' shares and the probability and richness wrappers stand under new names, which 0.3.1's presets name in
+  -- their place (`points`; data-final-fixes.lua names the wrappers and the shares). A world made before keeps the
+  -- bodies it was made on. rich_body is the per-ore body of the factor: 1 outside a factored row's footprint.
+  hotspots_v3 = {
+    enemy_layer = NOISE .. "enemy_layer_v3",
+    gap = NOISE .. "ore_gap_v3",
+    nests = NOISE .. "enemy_v4",
+    scatter = NOISE .. "enemy_v5",
+    bodies = {["iron-ore"] = HS .. "iron_ore_v4", ["copper-ore"] = HS .. "copper_ore_v4", coal = HS .. "coal_v4",
+              stone = HS .. "stone_v4", ["uranium-ore"] = HS .. "uranium_ore_v4"},
+    parts = {["iron-ore"] = {qty = HS .. "iron_ore_qty_v4"}, ["copper-ore"] = {qty = HS .. "copper_ore_qty_v4"},
+             coal = {qty = HS .. "coal_qty_v4"}, stone = {qty = HS .. "stone_qty_v4"},
+             ["uranium-ore"] = {qty = HS .. "uranium_ore_qty_v4"}},
+    rich_body = {stone = HS .. "stone_rich_v1"},
+    points = {[REN.HS_IRON] = HS .. "iron_ore_v4", [REN.HS_COPPER] = HS .. "copper_ore_v4",
+              [REN.HS_COAL] = HS .. "coal_v4", [REN.HS_STONE] = HS .. "stone_v4",
+              [REN.HS_URANIUM] = HS .. "uranium_ore_v4", [REN.ORE_GAP] = NOISE .. "ore_gap_v3",
+              [REN.ENEMY_LAYER] = NOISE .. "enemy_layer_v3"},
   },
 
   -- The offshore field stamps (APPROVALS 3): each map's body is

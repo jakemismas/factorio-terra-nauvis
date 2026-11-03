@@ -687,6 +687,7 @@ REGION_MAX_SHARE = 3                               # the destroyed zone's warp r
 REGION_TABLE = "prototypes/tables/regions.lua"     # relative to the mod folder, as `files` spells it
 HOTSPOT_TABLE2 = "prototypes/tables/hotspots_v2.lua"     # its rows take region names too, less the weight
 REGION_TABLE2 = "prototypes/tables/regions_v2.lua"       # its rows take region names too (0.3.0)
+HOTSPOT_TABLE3 = "prototypes/tables/hotspots_v3.lua"     # its rows take region names too, less the weight (0.3.1)
 REGION_ROW_KINDS = ("sd", "w", "depth")            # every row's signed distance, weight and depth
 REGION_CENTRE_KINDS = ("hu", "hv", "pd")           # a hotspot disc's jittered centre and plain distance
 REGION_AGGREGATES = ("destroyed_sd", "destroyed_w", "destroyed_depth", "forest_w", "forest_sum", "tree_mult",
@@ -794,10 +795,10 @@ def region_names(cfg, rows=None):
     return {"aggregates": {k: n[k] for k in REGION_AGGREGATES}, "internal": internal, "rows": per}
 
 
-def hotspot2_row_names(cfg):
-    """Every row name regions.lua composes for the second hotspot table's rows: a hotspot row's, less the weight."""
-    table = _eval_text((region_table_path(cfg).parent / "hotspots_v2.lua").read_text(encoding="utf-8"),
-                       region_table_path(cfg).parent / "hotspots_v2.lua")
+def hotspot2_row_names(cfg, table_file="hotspots_v2.lua"):
+    """Every row name regions.lua composes for a later hotspot table's rows: a hotspot row's, less the weight."""
+    table = _eval_text((region_table_path(cfg).parent / table_file).read_text(encoding="utf-8"),
+                       region_table_path(cfg).parent / table_file)
     kinds = tuple(k for k in REGION_ROW_KINDS if k != "w") + REGION_CENTRE_KINDS
     return sorted(region_row_name(cfg, k, r["id"]) for r in table["rows"] for k in kinds)
 
@@ -1020,6 +1021,18 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         if rs["ore_trees"].get("open_v2"):
             pen[rs["ore_trees"]["open"]] = rs["ore_trees"]["open_v2"]
             pen[rs["ore_trees"]["plants"]["open"]] = rs["ore_trees"]["plants"]["open_v2"]
+    # 0.3.1: the third hotspot table's bodies, wrappers, nests and tree shares over the second table's
+    h3 = cfg.get("hotspots_v3")
+    if rs and h3:
+        pen.update(h3["points"])
+        for o in rs["ores"]:
+            if o.get("p4"):
+                pen[o["probability"]] = o["p4"]
+                pen[o["richness"]] = o["r3"]
+        pen[K["enemy"]] = h3["scatter"]
+        if rs.get("ore_trees") and rs["ore_trees"].get("open_v3"):
+            pen[rs["ore_trees"]["open"]] = rs["ore_trees"]["open_v3"]
+            pen[rs["ore_trees"]["plants"]["open"]] = rs["ore_trees"]["plants"]["open_v3"]
     return pen
 
 
@@ -1062,6 +1075,8 @@ def release_of(cfg):
             names += region_noise_names(cfg)
         if HOTSPOT_TABLE2 in (r.get("files") or []):
             names += hotspot2_row_names(cfg)
+        if HOTSPOT_TABLE3 in (r.get("files") or []):
+            names += hotspot2_row_names(cfg, "hotspots_v3.lua")
         if REGION_TABLE2 in (r.get("files") or []):
             names += region2_row_names(cfg)
         for n in names:

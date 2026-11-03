@@ -4927,12 +4927,12 @@ def row_hotspots(repo=REPO):
     approvals-data.json, and its rows are the region table's hotspot rows (ids, resources, maps, radii
     and biter multipliers), so the bodies read the same discs the region layer draws."""
     import build_hotspots
-    f = build_hotspots.table_findings() + build_hotspots.table2_findings()
+    f = build_hotspots.table_findings() + build_hotspots.table2_findings() + build_hotspots.table3_findings()
     try:
         rows, _ = build_hotspots.load_table()
     except (build_hotspots.HotspotError, tnconfig.ConfigError) as e:
         rows, f = [], f + [str(e)]
-    return f, (f"prototypes/tables/hotspots.lua and hotspots_v2.lua re-emit byte for byte from their sources ({len(rows)} rows, "
+    return f, (f"prototypes/tables/hotspots.lua, hotspots_v2.lua and hotspots_v3.lua re-emit byte for byte from their sources ({len(rows)} rows, "
                f"{sum(1 for r in rows if r['offshore'])} offshore fields) and matches the region table's hotspot rows")
 
 

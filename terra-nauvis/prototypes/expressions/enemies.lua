@@ -165,6 +165,8 @@ layer(EN.layer, T.rows)
 -- The second hotspot table's rows (config.lua hotspots_v2): new worlds' presets name this body in the first one's
 -- place.
 layer(H2.enemy_layer, require("prototypes.hotspot_rows_v2").rows, {}, true)
+-- The third table's rows (config.lua hotspots_v3, 0.3.1): the same layer over the rows with the moved discs.
+layer(cfg.hotspots_v3.enemy_layer, require("prototypes.hotspot_rows_v3").rows, {}, true)
 
 if #E > 0 then
   data:extend(E)

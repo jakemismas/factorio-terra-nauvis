@@ -41,6 +41,7 @@
 local cfg = require("prototypes.config")
 local T = require("prototypes.tables.regions")
 local T2 = require("prototypes.tables.hotspots_v2")
+local T3 = require("prototypes.tables.hotspots_v3")
 local TR2 = require("prototypes.tables.regions_v2")
 local TC = require("prototypes.tables.zone_outline")
 local TC2 = require("prototypes.tables.zone_outline_v2")
@@ -397,6 +398,10 @@ end
 -- The rows only the second hotspot table holds: their bodies, less the weight no aggregate of theirs reads, since
 -- this layer's aggregates are released bodies and take no row. prototypes/expressions/hotspots_v2.lua reads them.
 for _, r in ipairs(T2.rows) do
+  row_bodies(r, true)
+end
+-- The third hotspot table's rows (0.3.1), the same way: the moved discs under new ids.
+for _, r in ipairs(T3.rows) do
   row_bodies(r, true)
 end
 

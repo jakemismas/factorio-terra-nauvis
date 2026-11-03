@@ -1218,7 +1218,8 @@ end
 -- richness round it. Up to ref_scale the regular branch folds to the first wrapper's text.
 local RV = RS.richness_v2
 local ORE_CURVES = require("prototypes.ore_curves")
-local function richness_v2(W, keys, o, ap, rich, hs)
+local function richness_v2(W, keys, o, ap, rich, hs, gen)
+  gen = gen or {name = o.r2, bodies = cfg.hotspots_v2.v3.bodies}
   local S = cfg.keys.scale
   local function f(d)
     return "max((" .. num(RV.rich_offset) .. " + " .. d .. ") / " .. num(RV.rich_span) .. ", 1)"
@@ -1244,21 +1245,25 @@ local function richness_v2(W, keys, o, ap, rich, hs)
   local hot = hs.r
   local fh
   local V3 = cfg.hotspots_v2.v3
-  if not FLUID[o.resource] and V3.bodies[o.resource] then
+  if not FLUID[o.resource] and gen.bodies[o.resource] then
     -- the third table (hotspots_v2.v3): per_tile times vanilla's mean regular ore per tile here, times the body's
     -- height (held to peak_cap of a body_tiles cone's mean, where bodies crowd) over that mean, times the richness
     -- slider
     local h = HROW[o.resource]
     -- a far field's smaller bodies (ore_curves.lua body_scale) stand f ^ 0.5 as high: the mean height reads that
     hot = num(V3.rich_fit * V3.per_tile / ORE_CURVES.body_height(h)) .. " / rv_fh * " .. ORE_CURVES.per_tile(h) ..
-      " * var('control:" .. o.resource .. ":richness') * min(" .. V3.bodies[o.resource] .. ", " ..
+      " * var('control:" .. o.resource .. ":richness') * min(" .. gen.bodies[o.resource] .. ", " ..
       num(V3.peak_cap * ORE_CURVES.body_height(h)) .. " * rv_fh)"
+    -- the third table's factor on a small row's ore per tile (hotspots_v3 rich), 1 off its footprint
+    if gen.rich_body and gen.rich_body[o.resource] then
+      hot = hot .. " * " .. gen.rich_body[o.resource]
+    end
     fh = ORE_CURVES.height_scale(h)
   elseif not FLUID[o.resource] then
     hot = hs.r .. " * max(1, " .. num(RV.lift) .. " * " .. F("rv_d") .. " / (" .. F("distance") .. ") ^ " ..
       num(RV.cube_root) .. ")"
   end
-  local w = wrapper(o.r2, rich, ap, "if(" .. on .. ", max(rv_base, " .. hot .. "), rv_base)")
+  local w = wrapper(gen.name, rich, ap, "if(" .. on .. ", max(rv_base, " .. hot .. "), rv_base)")
   if string.find(base .. " " .. hot, "rv_d", 1, true) then
     w.local_expressions.rv_d = "if(" .. far .. ", distance * " .. num(RV.ref_scale) .. " / " .. S .. ", distance)"
   end
@@ -1270,13 +1275,14 @@ local function richness_v2(W, keys, o, ap, rich, hs)
     w.local_expressions.rv_fh = fh
   end
   W[#W + 1] = w
-  keys[o.richness] = o.r2
+  keys[o.richness] = gen.name
 end
 
 -- 0.3.0's probability wrapper of a solid ore: the hotspot term's value lowered by the wobble (config.lua
 -- resources.richness_v2.edge), and Batu Hijau's copper kept off Lombok (richness_v2.lombok). The value is the second
 -- table's body: new worlds read that table through the first one's names.
-local function probability_v3(W, keys, o)
+local function probability_v3(W, keys, o, gen)
+  gen = gen or {name = o.p3, bodies = cfg.hotspots_v2.v3.bodies, lombok_row = RV.lombok.row}
   local keep = "1"
   local LB = RV.lombok
   if o.resource == LB.resource then
@@ -1296,22 +1302,22 @@ local function probability_v3(W, keys, o)
     for i = #west - 1, 1, -1 do
       fold = "if(" .. cfg.keys.map .. " == " .. num(ids[i]) .. ", " .. west[i] .. ", " .. fold .. ")"
     end
-    local pd = cfg.regions.names.row.pd .. LB.row .. cfg.regions.names.suffix
+    local pd = cfg.regions.names.row.pd .. gen.lombok_row .. cfg.regions.names.suffix
     keep = "(1 - " .. fold .. " * (" .. pd .. " < " .. num(LB.reach_px) .. "))"
   end
   -- the cone's least slope, the first table's bound (config.lua hotspots.size note)
   local rq = HROW[o.resource].rq
   local slope = cfg.hotspots.spot.cone_factor / (math.pi * rq * rq * rq)
   local v3 = cfg.hotspots_v2.v3
-  local body = v3.bodies[o.resource] or cfg.hotspots_v2.bodies[o.resource]
-  local edge_trim = v3.bodies[o.resource] and v3.trim or RV.edge.trim
+  local body = gen.bodies[o.resource] or cfg.hotspots_v2.bodies[o.resource]
+  local edge_trim = gen.bodies[o.resource] and v3.trim or RV.edge.trim
   -- a far field's bodies (ore_curves.lua body_scale) are f ^ 0.5 as wide: the wobble's trim follows them
-  local fscale = v3.bodies[o.resource] and (" * " .. ORE_CURVES.height_scale(HROW[o.resource])) or ""
+  local fscale = gen.bodies[o.resource] and (" * " .. ORE_CURVES.height_scale(HROW[o.resource])) or ""
   local value = "clamp(" .. body .. " - " .. num(edge_trim * slope) .. " * " ..
     RV.edge.wobble .. fscale .. ", 0, 1)"
-  W[#W + 1] = {type = "noise-expression", name = o.p3, expression = "if(" .. on .. ", max(" .. o.p_v1 .. ", " ..
+  W[#W + 1] = {type = "noise-expression", name = gen.name, expression = "if(" .. on .. ", max(" .. o.p_v1 .. ", " ..
                value .. " * " .. clear .. " * " .. keep .. "), " .. o.p_v1 .. ")"}
-  keys[o.probability] = o.p3
+  keys[o.probability] = gen.name
 end
 
 -- Each Earth ore: the probability wrapper's next version and the richness wrapper.
@@ -1334,6 +1340,12 @@ local function ore_wrappers(W, keys)
       end
       if o.p3 then
         probability_v3(W, keys, o)
+      end
+      -- 0.3.1: the same two wrappers over the third table's bodies (config.lua hotspots_v3)
+      if o.r3 and o.p4 then
+        local H3 = cfg.hotspots_v3
+        richness_v2(W, keys, o, ap, rich, hs, {name = o.r3, bodies = H3.bodies, rich_body = H3.rich_body})
+        probability_v3(W, keys, o, {name = o.p4, bodies = H3.bodies, lombok_row = RV.lombok.row3})
       end
     elseif ap then
       log(cfg.identity.title .. ": " .. o.resource .. " has no wrapper this version builds; its ore keeps no " ..
@@ -1385,6 +1397,26 @@ local function enemy_wrapper(W, keys)
                      ", 0)",
                  }}
     keys[cfg.keys.enemy] = SC.wrapper
+    -- 0.3.1: the nests over the third table's layer, and the scatter off its solid bodies (config.lua hotspots_v3)
+    local H3 = cfg.hotspots_v3
+    W[#W + 1] = wrapper(H3.nests, live, ebp, "if(" .. on .. ", if(" .. H3.enemy_layer ..
+      " > " .. num(H2.nests.outside) .. ", " .. H3.enemy_layer .. ", live_value), live_value)")
+    local solid3 = {}
+    for _, resource in ipairs(RS.ramped) do
+      solid3[#solid3 + 1] = H3.bodies[resource]
+    end
+    solid3[#solid3 + 1] = H3.bodies["uranium-ore"]
+    local L3 = {}
+    for k, v in pairs(W[#W - 1].local_expressions) do
+      L3[k] = v
+    end
+    L3.base = H3.nests
+    L3.fit = "if(" .. on .. ", if(" .. H3.enemy_layer .. " > " .. num(H2.nests.outside) .. ", " ..
+      num(SC.footprint_share) .. ", 1), 1)"
+    L3.ore = "if(" .. on .. ", max(" .. table.concat(solid3, ", ") .. ") > " .. num(-SC.ore_margin) .. ", 0)"
+    W[#W + 1] = {type = "noise-expression", name = H3.scatter, expression = W[#W - 1].expression,
+                 local_expressions = L3}
+    keys[cfg.keys.enemy] = H3.scatter
   end
 end
 
@@ -1441,6 +1473,9 @@ offshore_wrappers(W, keys)
 keys[RS.ore_trees.key] = cfg.neutral.one
 keys[RS.ore_trees.open] = RS.ore_trees.open_v2
 keys[RS.ore_trees.plants.open] = RS.ore_trees.plants.open_v2
+-- 0.3.1: the shares follow the third table's bodies
+keys[RS.ore_trees.open] = RS.ore_trees.open_v3
+keys[RS.ore_trees.plants.open] = RS.ore_trees.plants.open_v3
 if #W > 0 then
   data:extend(W)
 end

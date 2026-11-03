@@ -3,6 +3,7 @@
 
   python tools/build_hotspots.py emit     write terra-nauvis/prototypes/tables/hotspots.lua
   python tools/build_hotspots.py emit2    write terra-nauvis/prototypes/tables/hotspots_v2.lua
+  python tools/build_hotspots.py emit3    write terra-nauvis/prototypes/tables/hotspots_v3.lua
   python tools/build_hotspots.py check    emit both in memory and compare with the committed tables
   python tools/build_hotspots.py list     the rows per map and resource, on each table
 
@@ -36,6 +37,11 @@ shares are computed offline from data-src/earthmaps/<map>-land.png and stored in
 jitter, the city margin) holds a spawn city of one of its maps fails: no field stands at a start. A row's least_tiles,
 where the json gives one, is the least its ore footprint reaches in tiles at any scale: at scale 1 the floor of 48
 tiles is no wider than a regular ore patch. The enemy layer keeps to the footprint without it.
+
+The third table, hotspots_v3.lua, is the rows of data-src/hotspots/hotspots-v3.json: rows that move off the sea or the
+lake onto land (new ids, so every released region body stays), the ids they retire from the first two tables, per row
+the factor `rich` raises a small disc's ore per tile by (at most 3), and the rivals of the whole set. A row may carry
+its own jitter_km, so a coastal disc stays on land over its jitter.
 """
 import argparse
 import hashlib
@@ -57,6 +63,9 @@ TABLE = MOD / "prototypes" / "tables" / "hotspots.lua"
 APPROVALS = REPO / "data-src" / "approvals" / "approvals-data.json"
 TABLE2 = MOD / "prototypes" / "tables" / "hotspots_v2.lua"
 ROWS2 = REPO / "data-src" / "hotspots" / "hotspots-v2.json"
+TABLE3 = MOD / "prototypes" / "tables" / "hotspots_v3.lua"
+ROWS3 = REPO / "data-src" / "hotspots" / "hotspots-v3.json"
+RICH_MAX = 3   # the most a row's ore per tile may be raised over the table's rule
 
 TOOL_VERSION = 1
 OFFSHORE = "offshore-oil"
@@ -473,11 +482,138 @@ def table2_findings(cfg=None, path=TABLE2):
     return out + city_findings(rows, cfg, appr)
 
 
+def derive3(cfg, appr, data, first, rows2, retired2):
+    """The third table's rows, the ids it retires and the per-tile factors, over the first two tables' kept rows."""
+    kpp = km_per_px(appr)
+    margin = float(appr["rules"]["city_margin_km"])
+    share_j = float(appr["rules"]["jitter_fraction"])
+    live = {r["id"] for r in first if r["id"] not in retired2} | {r["id"] for r in rows2}
+    rows = []
+    for h in data["rows"]:
+        rid = build_regions.slug(h["id"])
+        maps = [m for m in cfg["map_order"] if m in h["maps"]]
+        rkm = float(h["radius_km"])
+        share = {m: round(float(h["land_share"][m]), DIGITS) for m in maps}
+        jit = float(h["jitter_km"]) if "jitter_km" in h else rkm * share_j
+        row = {"id": rid, "layer": "hotspot", "shape": "disc", "warp": 0, "mult": build_regions.ENEMY_MULT,
+               "resource": h["resource"], "lat": float(h["lat"]), "lon": float(h["lon"]), "radius_km": rkm,
+               "jitter_km": jit, "phase": build_regions.phase_of(rid), "strength": int(h["strength"]),
+               "radius_px": round(rkm / kpp, DIGITS), "cap_px": round((rkm + margin) / kpp, DIGITS),
+               "offshore": False, "maps": maps, "share": share,
+               "source": f"hotspots-v3.json {h['id']} (a moved row)"}
+        if "least_tiles" in h:
+            row["least_tiles"] = int(h["least_tiles"])
+        rows.append(row)
+    retired = [build_regions.slug(i) for i in data.get("retired", [])]
+    for rid in retired:
+        if rid not in live:
+            raise HotspotError(f"hotspots-v3.json retires {rid}, which the first two tables do not hold")
+    ids = [r["id"] for r in rows]
+    taken = live | {r["id"] for r in first}
+    dup = sorted({i for i in ids if ids.count(i) > 1 or i in taken})
+    if dup:
+        raise HotspotError(f"hotspots-v3.json ids {dup} repeat: a row of its own needs a name of its own")
+    rich = {}
+    final = (live - set(retired)) | set(ids)
+    for hid, pairs in data.get("rich", {}).items():
+        rid = build_regions.slug(hid)
+        ok = rid in final and isinstance(pairs, list) and pairs
+        for pair in pairs if ok else []:
+            m, upto = pair
+            ok = ok and isinstance(m, (int, float)) and not isinstance(m, bool) and 1 < m <= RICH_MAX and                 isinstance(upto, int) and upto >= 0
+        if not ok:
+            raise HotspotError(f"hotspots-v3.json rich {rid}: not a live row at pairs of [a factor over 1 and up to "
+                               f"{RICH_MAX}, the largest scale it applies at (0 for every scale)]")
+        total = 1.0
+        for m, _ in pairs:
+            total *= m
+        if total > RICH_MAX * RICH_MAX:
+            raise HotspotError(f"hotspots-v3.json rich {rid}: the factors multiply past {RICH_MAX * RICH_MAX}")
+        rich[rid] = [(float(m), upto) for m, upto in pairs]
+    return rows, retired, rich
+
+
+def build3(cfg=None, appr_path=APPROVALS, rows_path=ROWS3, rows2_path=ROWS2):
+    cfg = cfg or tnconfig.load()
+    appr = json.loads(Path(appr_path).read_text(encoding="utf-8"))
+    data2 = json.loads(Path(rows2_path).read_text(encoding="utf-8"))
+    data3 = json.loads(Path(rows_path).read_text(encoding="utf-8"))
+    first, _ = derive(cfg, appr)
+    regions = {r["id"]: r for r in build_regions.load_table() if r.get("layer") == "hotspot"}
+    rows2, retired2, _ = derive2(cfg, appr, data2, first)
+    rows3, retired3, rich = derive3(cfg, appr, data3, first, rows2, retired2)
+    kept = [dict(r, lat=regions[r["id"]]["lat"], lon=regions[r["id"]]["lon"], jitter_km=regions[r["id"]]["jitter_km"])
+            for r in first if r["id"] not in retired2 and r["id"] not in retired3]
+    kept += [r for r in rows2 if r["id"] not in retired3]
+    rivals = rivals_of(kept + rows3, km_per_px(appr))
+    text = emit_text3(rows3, retired3, rich, rivals, sha256(rows_path), cfg["map_order"])
+    return rows3, retired3, rivals, text
+
+
+HEADER3 = """\
+-- The third hotspot table (config.lua hotspots_v3; ARCHITECTURE.md, release versioning rule 14).
+-- Written by tools/build_hotspots.py (writer {tool}) from
+--   data-src/hotspots/hotspots-v3.json sha256 {src}
+-- Never edit by hand: an edit is an edit of that file, then `python tools/build_hotspots.py emit3`; the static gate
+-- row re-emits this file and fails on a difference.
+--
+-- Pure data, like config.lua. rows: rows of the first two tables moved onto land, each with the region fields of
+-- prototypes/tables/regions.lua and the hotspot fields of the second table. retired: the ids of the first two tables
+-- this table's readers do not read. rich: per row, the factor its ore per tile is raised by over the rule's, so a
+-- small disc holds its design total in the room it has. rivals: per row of the whole set, the rows of another ore
+-- whose footprints it keeps out of.
+"""
+
+
+def emit_text3(rows, retired, rich, rivals, src_sha, map_order):
+    out = HEADER3.format(tool=TOOL_VERSION, src=src_sha).splitlines()
+    out += ["return {", "  rows = {"]
+    for r in rows:
+        out += emit_row2(r, map_order)
+    out += ["  },"]
+    out += ["  retired = {"]
+    out += build_regions.wrap_items([lua_str(i) for i in retired], "    ")
+    out += ["  },", "  rich = {"]
+    for k, pairs in sorted(rich.items()):
+        out.append(f"    {k} = {{" + ", ".join(f"{{{lua_num(m)}, {upto}}}" for m, upto in pairs) + "},")
+    out += ["  },", "  rivals = {"]
+    for k, v in rivals.items():
+        out += build_regions.wrap_items([f"{k} = {{" + ", ".join(lua_str(i) for i in v) + "}"], "    ")
+    out += ["  },", "}"]
+    for line in out:
+        if len(line) > MAX_COLUMNS:
+            raise HotspotError(f"a line of {len(line)} columns: {line[:60]}")
+    return "\n".join(out) + "\n"
+
+
+def table3_findings(cfg=None, path=TABLE3):
+    """Findings of the third table: a fresh emission, its rows' shapes and the spawn cities."""
+    cfg = cfg or tnconfig.load()
+    try:
+        rows, retired, rivals, text = build3(cfg)
+    except (HotspotError, tnconfig.ConfigError, OSError, KeyError, ValueError) as e:
+        return [f"hotspots-v3.json: {e}"]
+    try:
+        have = Path(path).read_text(encoding="utf-8")
+    except OSError as e:
+        return [f"{path}: unreadable ({e})"]
+    out = []
+    if have != text:
+        out.append(f"{Path(path).name} differs from a fresh emission: rerun python tools/build_hotspots.py emit3")
+    for r in rows:
+        problems = row_problems(r, cfg["map_order"], STRENGTHS2)
+        if problems:
+            out.append(f"row {r['id']}: {problems[0]}")
+    appr = json.loads(APPROVALS.read_text(encoding="utf-8"))
+    return out + city_findings(rows, cfg, appr)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("emit")
     sub.add_parser("emit2")
+    sub.add_parser("emit3")
     sub.add_parser("check")
     sub.add_parser("list")
     a = ap.parse_args(argv)
@@ -494,8 +630,14 @@ def main(argv=None):
             print(f"RESULT ok emitted {len(rows)} rows, {len(retired)} retired, {len(rivals)} with rivals, to "
                   f"{TABLE2.relative_to(REPO).as_posix()} sha256 {sha256(TABLE2)}")
             return 0
+        if a.cmd == "emit3":
+            rows, retired, rivals, text = build3()
+            TABLE3.write_text(text, encoding="utf-8", newline="\n")
+            print(f"RESULT ok emitted {len(rows)} rows, {len(retired)} retired, {len(rivals)} with rivals, to "
+                  f"{TABLE3.relative_to(REPO).as_posix()} sha256 {sha256(TABLE3)}")
+            return 0
         if a.cmd == "check":
-            f = table_findings() + table2_findings()
+            f = table_findings() + table2_findings() + table3_findings()
             print(f"RESULT {'ok' if not f else 'fail'} table check{': ' + f[0] if f else ''}")
             return 0 if not f else 1
         cfg = tnconfig.load()

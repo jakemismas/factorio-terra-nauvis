@@ -1,0 +1,194 @@
+{
+ "format": 1,
+ "retired": [
+  "stone-marmara-island",
+  "stone-portland",
+  "stone-aswan",
+  "copper-sumbawa",
+  "stone-estremoz",
+  "stone-shuitou",
+  "copper-collahuasi"
+ ],
+ "rich": {
+  "stone-carrara": [
+   [
+    2.5,
+    6
+   ]
+  ],
+  "stone-estremoz-3": [
+   [
+    1.4,
+    0
+   ],
+   [
+    1.3,
+    6
+   ]
+  ],
+  "stone-pentelicus": [
+   [
+    1.4,
+    0
+   ]
+  ],
+  "stone-denizli": [
+   [
+    1.4,
+    0
+   ]
+  ],
+  "stone-mutoko": [
+   [
+    1.5,
+    0
+   ]
+  ],
+  "stone-aswan-3": [
+   [
+    1.45,
+    0
+   ]
+  ],
+  "stone-shuitou-3": [
+   [
+    1.3,
+    0
+   ]
+  ]
+ },
+ "rows": [
+  {
+   "id": "stone-marmara-island-3",
+   "resource": "stone",
+   "lat": 40.15,
+   "lon": 27.64,
+   "radius_km": 15,
+   "jitter_km": 4,
+   "strength": 2,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "land_share": {
+    "europe": 1.0,
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   },
+   "note": "replaces stone-marmara-island: the island's disc was 0.9 sea; the mainland south shore holds the disc at 98 percent land or more over its jitter"
+  },
+  {
+   "id": "stone-portland-3",
+   "resource": "stone",
+   "lat": 50.76,
+   "lon": -2.22,
+   "radius_km": 10,
+   "jitter_km": 4,
+   "strength": 2,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "land_share": {
+    "europe": 1.0,
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   },
+   "note": "replaces stone-portland: the Isle of Portland's disc was mostly sea; the Dorset heath 17 km north-west of Purbeck holds a disc of 16 km radius entirely on land in the mask (Purbeck itself reads 0.64, Poole Harbour and the coast take the rest)"
+  },
+  {
+   "id": "copper-sumbawa-3",
+   "resource": "copper-ore",
+   "lat": -8.75,
+   "lon": 117.19,
+   "radius_km": 30,
+   "jitter_km": 8,
+   "strength": 3,
+   "least_tiles": 60,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   },
+   "note": "replaces copper-sumbawa: onto Sumbawa's land, 1.0 land in the mask and in the Old World scale 12 render (the mask's west coast stands 0.1 degree west of the game's, so 117.00 E read 0.45 sea in game)"
+  },
+  {
+   "id": "stone-aswan-3",
+   "resource": "stone",
+   "lat": 24.1,
+   "lon": 33.05,
+   "radius_km": 15,
+   "jitter_km": 4,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "land_share": {
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   },
+   "note": "replaces stone-aswan: east of Lake Nasser, 1.0 land against 0.80 and a third of the disc in the lake in game"
+  },
+  {
+   "id": "stone-estremoz-3",
+   "resource": "stone",
+   "lat": 38.8,
+   "lon": -7.45,
+   "radius_km": 15,
+   "jitter_km": 7.5,
+   "strength": 2,
+   "least_tiles": 60,
+   "maps": [
+    "europe",
+    "atlantic",
+    "olde_world"
+   ],
+   "land_share": {
+    "europe": 1.0,
+    "atlantic": 1.0,
+    "olde_world": 1.0
+   },
+   "note": "stone-estremoz at a footprint of at least 60 tiles at any scale"
+  },
+  {
+   "id": "stone-shuitou-3",
+   "resource": "stone",
+   "lat": 24.8,
+   "lon": 118.36,
+   "radius_km": 20,
+   "jitter_km": 4,
+   "strength": 2,
+   "maps": [
+    "atlantic",
+    "olde_world"
+   ],
+   "land_share": {
+    "atlantic": 0.971,
+    "olde_world": 0.971
+   },
+   "note": "stone-shuitou 13 km inland: its disc read a third sea in game"
+  },
+  {
+   "id": "copper-collahuasi-3",
+   "resource": "copper-ore",
+   "lat": -20.98,
+   "lon": -68.38,
+   "radius_km": 45,
+   "jitter_km": 12,
+   "strength": 3,
+   "maps": [
+    "atlantic"
+   ],
+   "land_share": {
+    "atlantic": 1.0
+   },
+   "note": "copper-collahuasi 0.32 degree east: the Andes ridge's ore clearance runs through the old centre, so 37 ore tiles formed"
+  }
+ ]
+}
