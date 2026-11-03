@@ -13,6 +13,11 @@
    "checkpoint": "model-256.npz",
    "file": "land_coarse_olde_world_v1.lua",
    "note": "Old World's coarse land field, the 256-tent checkpoint of the same fit"
+  },
+  "geo_lean": {
+   "checkpoint": "model-lean-5840.npz",
+   "file": "geo_olde_world_v3.lua",
+   "note": "Old World's lean coast fit, read past scale 6"
   }
  }
 }

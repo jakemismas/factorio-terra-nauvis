@@ -122,6 +122,45 @@ measured costs (5 a term, 6.5 a factor, 4 a row group) against `model-8192.npz`'
 against 4,404 serving 8,192. `geo_olde_world_v1.lua`, `model-8192.npz` and `model-4096.npz` stay for the worlds of tn_geo
 18 and this lineage.
 
+## Lean stage (2026-11-02, the coast fit's cost; config.lua coast.split)
+
+Past scale 6 the map reads a lean fit, a refit of the same reference to about 30 percent less Tile, so a scale 12 or
+24 world generates faster; scales 1 to 6 keep `model-9360.npz`, from which the band fix's tables are built. Lean
+growth starts from the base stage's 4,096-term step and is weighted toward Europe and the places players know (the
+Thames, Calais, Brittany, the Cotentin, Jutland and the Danish straits, Venice and the Rhine by Koblenz, 64), then
+regrows the reference islands of up to 400 px that `model-9360.npz` draws and the lean fit had lost (`--restore`,
+weight 32), prunes 400 terms with a refit to the reference, regrows Europe's lost islands again, and grows 40 terms on
+Brest, Crozon and Alderney, which the prune had smoothed away (weight 1,024). Work folders outside the repo
+(`<work folder>/fits-coast2`):
+
+```
+W7="--region=-12,45,35,72,16 --region=172,180,60,68,6 --region=95,150,-12,46,2 --region=-20,52,-36,35,2 --region=112,180,-50,-10,2 --region=45,95,0,35,2 --region=45,180,46,80,2"
+PL="--region=-0.5,2.0,51.0,52.0,64 --region=1.0,3.0,50.5,51.4,64 --region=-5.5,-2.5,47.3,49.0,64 --region=-2.5,-0.8,48.5,49.9,64 --region=7.5,13.5,54.0,58.0,64 --region=11.5,13.8,44.8,46.0,64 --region=6.5,8.5,49.8,51.0,64"
+python tools/build_geo.py fit --map olde_world --work A --start-from data-src/fits/olde_world/model-4096.npz --nmax 8000 --through 8000 --stop-agreement 0.9999 --step-terms 4600,5000,5500,6000,6500,7000,7500 $W7 --footprint 6,32,0.4 --thrift
+python tools/build_geo.py fit --map olde_world --work D --start-from A/model-5000.npz --nmax 6000 --through 6000 --stop-agreement 0.9999 --step-terms 5300,5600,5800 $W7 --region=-18,-15.5,12.5,16.5,16 $PL --footprint 6,32,0.4 --thrift
+python tools/build_geo.py fit --map olde_world --work F --start-from D/model-5600.npz --nmax 6300 --through 6300 --stop-agreement 0.9999 --step-terms 5750,5900,6050,6200 $W7 --region=-18,-15.5,12.5,16.5,16 $PL --footprint 6,32,0.4 --thrift --restore=data-src/fits/olde_world/model-9360.npz,-180,180,-90,90,32
+python tools/build_geo.py prune --map olde_world --checkpoint F/model-6050.npz --work G --drop 200 --cycles 2 $W7 --region=-18,-15.5,12.5,16.5,16 $PL
+python tools/build_geo.py fit --map olde_world --work H --start-from G/model-5650.npz --nmax 5800 --through 5800 --stop-agreement 0.9999 --step-terms 5700,5750 $W7 --region=-18,-15.5,12.5,16.5,16 $PL --region=-5.3,-4.0,47.9,48.7,256 --footprint 6,32,0.4 --thrift --restore=data-src/fits/olde_world/model-9360.npz,-12,45,35,72,32
+python tools/build_geo.py fit --map olde_world --work I --start-from H/model-5800.npz --nmax 5880 --through 5880 --stop-agreement 0.9999 --step-terms 5820,5840,5860 $W7 --region=-18,-15.5,12.5,16.5,16 $PL --region=-5.3,-4.0,47.9,48.7,1024 --region=-2.4,-2.0,49.6,49.8,1024 --footprint 6,32,0.4 --thrift
+```
+
+A stopped after its 6,000-term step and D after 6,000; F restored 170 islands and H 63. Each step's checkpoint, first
+16 of its sha256: A 5,000 `94f780b67289f724`; D 5,600 `6a2dd2f37767a5da`; F 6,050 `03690fd45edae678`; G 5,650
+`d392732ee673afee`; H 5,800 `64283c809f7fa48a`; I 5,840 `10b166e08a48297d` (`model-lean-5840.npz`).
+
+`model-lean-5840.npz` against `model-9360.npz`, t1_metrics over every reference pixel centre (the earlier tables'
+measure; boxes with only the box covered):
+
+| Checkpoint | Terms | Tile (5 a term, 6.5 a factor, 4 a row group) | Agreement | Coast p99 | Islands of 65 px or more present | Europe box: agreement, p99, islands | Britain | Scandinavia | Mediterranean |
+|---|---|---|---|---|---|---|---|---|---|
+| `model-9360.npz` (scales 1 to 6) | 9,360 | 77,449 | 0.994454 | 3.81 px | 277 of 374 | 0.9893, 1.58 px, 73 of 77 | 13 of 13 | 31 of 34 | 22 of 25 |
+| `model-lean-5840.npz` (past scale 6) | 5,840 | 55,477 | 0.992217 | 5.70 px | 267 of 374 | 0.9816, 3.54 px, 72 of 77 | 13 of 13 | 30 of 34 | 22 of 25 |
+
+Inside the place boxes the lean fit keeps the fine fit's coast p99 against the reference: the Rhine by Koblenz 0.71
+px, the Thames 1.57, Brittany 1.50, Jutland and the Danish straits 1.58, Venice 1.57 (`model-9360.npz`: 0.71, 1.50,
+1.50, 1.58, 1.50). Components of the fit's class at pixel centres with no pixel of that class in the reference: 17
+islets of 206 px and 29 lakes of 304 px (`model-9360.npz`: 25 of 135 px and 26 of 209 px).
+
 ## Emission
 
 ```
@@ -129,7 +168,8 @@ python tools/build_geo.py emit --map olde_world
 ```
 
 `fit.json` names the checkpoint of each body (and the region fit's budget); the tool writes
-`terra-nauvis/prototypes/generated/geo_olde_world_v2.lua` (from `model-9360.npz`) and
+`terra-nauvis/prototypes/generated/geo_olde_world_v2.lua` (from `model-9360.npz`),
+`terra-nauvis/prototypes/generated/geo_olde_world_v3.lua` (from `model-lean-5840.npz`, the lean stage's `geo_lean` body) and
 `terra-nauvis/prototypes/generated/land_coarse_olde_world_v1.lua` (from `model-256.npz`, unchanged)
 and records terms, factors, row groups, input and output sha256 in `manifest.json`. numpy's
 `savez` stamps the zip entries with the run's time, so a rerun writes other bytes holding the same
@@ -145,5 +185,6 @@ arrays; the committed files are the inputs of record.
 | `model-8192.npz` | `f28272b9d304191e074c25db1878fceb8057e37c876244535fa429a7817e594e` | the region stage's growth step of 8,192 terms: the fit of tn_geo 18, which `geo_olde_world_v1.lua` holds, and the island stage's `--restore` |
 | `model-4096.npz` | `bb0ab3adc7931212881690a2c97f1123d245817ea88485d1bee925685345b37a` | the base stage's growth step of 4,096 terms: the region stage's `--start-from` |
 | `model-256.npz` | `c0d42bdc216603a5c99a1f50fb0720b39fda91e2b249d9df765d82b9fb31d9f5` | the base stage's growth step of 256 terms: the coarse land field |
-| `fit.json` | `2bb8d7c8d3e598a4b027bc8b03fbc41c78bcf063eab2d76b3c39dad09e4e25fa` | `build_geo.py adopt --budget 9360 --file-version 2`: which checkpoint each body uses |
-| `manifest.json` | `008e16fe968c98d1b0b656d4c63c619936ffc90133c9097a03594b39c39cfe85` | `build_geo.py emit` |
+| `model-lean-5840.npz` | `10b166e08a48297dfa765b70d3235671d2ac38b32567498473aa9f73283fc4e1` | the lean stage's last growth step (I), copied: the `geo_lean` body, read past scale 6 |
+| `fit.json` | `3f6b6e82d9112cc75e2a2f099619b044f52e1a5e4432ddcc2ace8ee75eeb2ab7` | `build_geo.py adopt --budget 9360 --file-version 2`: which checkpoint each body uses |
+| `manifest.json` | `e5ff23c650a1516d11bb8a3be876697baec804135e824841361555238a034670` | `build_geo.py emit` |

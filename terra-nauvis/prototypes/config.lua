@@ -668,6 +668,8 @@ local OAS = {
   OW_CITY_CX = NOISE .. "city_cx_olde_world_v1",
   OW_CITY_CY = NOISE .. "city_cy_olde_world_v1",
   OW7_GEO_FILE = "prototypes/generated/geo_olde_world_v2.lua",
+  -- The lean fit (data-src/fits/olde_world PROVENANCE, stage lean): the coast fit past scale 6 (coast.split).
+  OW8_LEAN_FILE = "prototypes/generated/geo_olde_world_v3.lua",
   OW7_SPAWN_FILE = "prototypes/generated/spawn_olde_world_v2.lua",
   OW7_WW_FILES = {"prototypes/generated/waterways_olde_world_s1_v2.lua",
                    "prototypes/generated/waterways_olde_world_s2_v2.lua",
@@ -690,6 +692,9 @@ local OAS = {
   -- 0.3.0: Old World's and Atlantic's version 8, the composition of version 7 under names of their own.
   OW8_ENTRY = NOISE .. "elevation_olde_world_v8",
   OW8_GEO = NOISE .. "geo_olde_world_v8",
+  -- The two fits OW8_GEO picks between by the folded scale (coast.geo_split).
+  OW8_GEO_FINE = NOISE .. "geo_fine_olde_world_v1",
+  OW8_GEO_LEAN = NOISE .. "geo_lean_olde_world_v1",
   OW8_LAND_COARSE = NOISE .. "land_coarse_olde_world_v8",
   OW8_DETAIL = NOISE .. "detail_olde_world_v8",
   OW8_FAR = NOISE .. "far_olde_world_v8",
@@ -1752,7 +1757,8 @@ return {
       map = "olde_world",
       geography = 21,
       names = {
-               OAS.OW8_GX, OAS.OW8_GY, OAS.OW8_U, OAS.OW8_V, OAS.OW8_GEO, OAS.OW8_LAND_COARSE, OAS.OW8_DETAIL,
+               OAS.OW8_GX, OAS.OW8_GY, OAS.OW8_U, OAS.OW8_V, OAS.OW8_GEO, OAS.OW8_GEO_FINE, OAS.OW8_GEO_LEAN,
+               OAS.OW8_LAND_COARSE, OAS.OW8_DETAIL,
                OAS.OW8_FAR, OAS.OW8_ENTRY, OAS.OW8_CX, OAS.OW8_CY, OAS.OW8_LAKES, OAS.OW8_SHORE, OAS.OW8_SPAWN_LAKE,
                OAS.OW8_SPAWN_BIAS, OAS.OW_WW7[1], OAS.OW_WW7[2], OAS.OW_WW7[3], OAS.OW_WW7[4], OAS.OW_WW7[5],
                OAS.OW_WW7[6], OAS.OW_WW7[7], OAS.OW_WW7[8], OAS.OW_CANALS7[1], OAS.OW_CANALS7[2], OAS.OW_CANALS7[3],
@@ -1769,7 +1775,8 @@ return {
                OAS.OW_WARP2[24], OAS.OW_WARP2[25], OAS.OW_WARP2[26], OAS.OW_WARP2[27], OAS.OW_WARP2[28],
                OAS.OW_WARP2[29], OAS.OW_WARP2[30], OAS.OW_WARP2[31], OAS.OW_WARP2[32]},
       files = {
-               OAS.OW7_GEO_FILE, OW_LAND_COARSE_FILE, OAS.OW7_SPAWN_FILE, "prototypes/tables/hotspots.lua",
+               OAS.OW7_GEO_FILE, OAS.OW8_LEAN_FILE, OW_LAND_COARSE_FILE, OAS.OW7_SPAWN_FILE,
+               "prototypes/tables/hotspots.lua",
                OAS.OW7_WW_FILES[1], OAS.OW7_WW_FILES[2], OAS.OW7_WW_FILES[3], OAS.OW7_WW_FILES[4],
                OAS.OW7_WW_FILES[5], OAS.OW7_WW_FILES[6], OAS.OW7_WW_FILES[7], OAS.OW7_WW_FILES[8]},
     },
@@ -1878,6 +1885,13 @@ return {
   --     and 2 it would be, and there the reference pixel keeps its class (design notes 2026-10-28
   --     05:30, deep water 1 tile beyond the edge).
   coast = {
+    -- split: the geography versions listed (by geo_id) read their fine fit (the version's fits.geo) up to max_scale
+    -- and a lean fit, a refit of the same reference to a smaller Tile budget (data-src/fits PROVENANCE, stage lean),
+    -- past it, each under a name of its own; the version's geo body picks one by the folded scale. Scales up to
+    -- max_scale keep the fine fit, which the band fix's tables were built from.
+    split = {max_scale = 6, versions = {
+      [21] = {fine = OAS.OW8_GEO_FINE, lean = OAS.OW8_GEO_LEAN, lean_file = OAS.OW8_LEAN_FILE},
+    }},
     transfer_offset = 0.1,
     transfer_clamp_px = 16,
     detail_amplitude_px = 0.45,

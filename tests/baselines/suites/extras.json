@@ -3268,23 +3268,9 @@
     "slice": "extras",
     "registered": "2026-11-02"
    },
-   "tn_geo_atlantic_v8": {
-    "type": "noise-expression",
-    "sha256": "246e1ec3e5767c40f24446963dd6a2f82332a70f87eb3fd79582ee1bb0b1cf5c",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_geo_europe_v7": {
     "type": "noise-expression",
     "sha256": "a04e33ea2090d6b14438d0396b66db8f10df733fdbb988623e06b5f12be241ae",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_geo_olde_world_v8": {
-    "type": "noise-expression",
-    "sha256": "092cb544833e290de50db65d0bcd3a0eaa4f1a044ab43ac23267aa64db35b653",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"

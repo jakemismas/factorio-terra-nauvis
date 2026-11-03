@@ -34,7 +34,7 @@
 --                                          rivers, straits, basins and open canals, each set picked by
 --                                          the folded scale (waterways.lua); dams come after the lakes
 --                                          so no lake reopens a dammed isthmus, and a carve still cuts
---                                          the start land guarantee
+--                                          the start land guarantee (TST-06)
 --   elevation = if(e < 0, min(e, stamp), e)  a version with an offshore stamp (resources-enemies): the
 --                                          map's stamp key, a Map type fallback, names the stamp body
 --                                          (resources.lua) with hotspots on and the neutral zero off,
@@ -55,6 +55,7 @@ local FILES = {
   ["prototypes/generated/geo_atlantic_v2.lua"] = require("prototypes.generated.geo_atlantic_v2"),
   ["prototypes/generated/land_coarse_atlantic_v1.lua"] = require("prototypes.generated.land_coarse_atlantic_v1"),
   ["prototypes/generated/geo_olde_world_v2.lua"] = require("prototypes.generated.geo_olde_world_v2"),
+  ["prototypes/generated/geo_olde_world_v3.lua"] = require("prototypes.generated.geo_olde_world_v3"),
   ["prototypes/generated/land_coarse_olde_world_v1.lua"] = require("prototypes.generated.land_coarse_olde_world_v1"),
 }
 
@@ -78,7 +79,7 @@ end
 -- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain, or to
 -- fit_u and fit_v where the version warps its fit. The game parses every body's text at startup (about
 -- 0.5 us a byte) and expands every noise-function call there, so each map carries its fit once: one
--- geography version per map until the first release.
+-- geography version per map until the first release (DECISIONS 2026-10-30 10:55; issue #1).
 local function fit_body(name, file, g, fit_u, fit_v)
   local fit = FILES[file]
   if not fit then
@@ -122,6 +123,21 @@ local function tile_octaves(parts, g, axis, s)
     end
     parts[#parts + 1] = "if(" .. s .. " >= " .. num(o.min_scale) .. ", " .. term .. ", 0)"
   end
+end
+
+-- A warped version's coast fit. A version listed in coast.split (2026-11-02, the coast fit's cost) reads its fine fit
+-- up to the split's max_scale and its lean fit, a refit to a smaller Tile budget, past it, each under a name of its
+-- own. The scale is a folded constant, so the program compiles only the fit its scale picks; scales 1 to 6, where the
+-- band fix's tables were built from the fine fit, keep it exactly.
+local function warped_fits(g, s, wu, wv)
+  local split = C.split and C.split.versions[g.geo_id]
+  if not split then
+    fit_body(g.geo, g.fits.geo, g, wu, wv)
+    return
+  end
+  fit_body(split.fine, g.fits.geo, g, wu, wv)
+  fit_body(split.lean, split.lean_file, g, wu, wv)
+  def(g.geo, "if(" .. s .. " > " .. num(C.split.max_scale) .. ", " .. split.lean .. ", " .. split.fine .. ")")
 end
 
 -- The shore body's land term. The shore fray (config.lua shore.fray): near the coast the land gain wanders by a noise
@@ -196,7 +212,7 @@ local function version(m, g)
       tile_octaves(parts, g, axis, s)
       return table.concat(parts, " + ")
     end
-    fit_body(g.geo, g.fits.geo, g, warped(g.u, C.warp.u, "u"), warped(g.v, C.warp.v, "v"))
+    warped_fits(g, s, warped(g.u, C.warp.u, "u"), warped(g.v, C.warp.v, "v"))
   else
     fit_body(g.geo, g.fits.geo, g)
   end
@@ -337,7 +353,7 @@ local function version(m, g)
   -- A version with a spawn record (spawn-cities) adds step 4, the start land guarantee, and step 7,
   -- the spawn lake and the version's inland lakes (spawn.lua defines all three). A version with
   -- waterways (waterways) wraps the rest in steps 5 and 6, the dams and carves (waterways.lua): a
-  -- named waterway still cuts the guarantee, and no lake reopens a dammed isthmus.
+  -- named waterway still cuts the guarantee (TST-06), and no lake reopens a dammed isthmus.
   local sp = g.spawn
   if sp then
     -- A version with a lakes field (edge-and-lakes) reads its inland lakes through the per-save switch,

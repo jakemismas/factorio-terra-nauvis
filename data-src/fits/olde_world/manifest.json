@@ -23,6 +23,16 @@
    "file": "terra-nauvis/prototypes/generated/land_coarse_olde_world_v1.lua",
    "sha256": "da22dd413a2fcf7cb1ef518b3afd9175bab27fdab8ddaf1ef4b3bf3d6507c2cd",
    "bytes": 19448
+  },
+  "geo_lean": {
+   "terms": 5840,
+   "factors": 3226,
+   "row_groups": 1327,
+   "checkpoint": "data-src/fits/olde_world/model-lean-5840.npz",
+   "checkpoint_sha256": "10b166e08a48297dfa765b70d3235671d2ac38b32567498473aa9f73283fc4e1",
+   "file": "terra-nauvis/prototypes/generated/geo_olde_world_v3.lua",
+   "sha256": "37927c4ddd395691e78f9408bcfbf9a26b70f3eaa16969326bd66a49f50d4977",
+   "bytes": 345458
   }
  }
 }
