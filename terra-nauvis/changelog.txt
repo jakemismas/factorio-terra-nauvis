@@ -5,7 +5,7 @@ Date: 2026-11-01
     - At map scale 12 on new Old World and Atlantic worlds, rivers bend more finely, so banks run
       straight for shorter stretches, and the ends of river fords wander instead of crossing in a
       straight line.
-    - New worlds use the next geography version of each map. Worlds made before keep theirs.
+    - New worlds use the next geography version of each map.
     - Biter bases on new worlds stand scattered instead of in even rows, with about 60 percent of
       the spawners. Nests keep off hotspot ore.
     - Ordinary ore patches on new worlds are vanilla's own again, in size, shape and richness for
@@ -52,6 +52,34 @@ Date: 2026-11-01
     - The tooltips of the optional layers give each one's map generation cost at Old World scale 12.
     - With Space Age and Alien Biomes, tree farms can plant on the base game's grass, dirt, sand and
       desert ground that Earth maps put back beside Alien Biomes.
+    - With Destroyed Europe on beside Alien Biomes, the zone's ground on new worlds is mostly
+      cracked volcanic heat ground with lava pools, without the light grey and red sand patches; the
+      Alps inside it take that heat ground instead of brown dirt, and its dead great forests stand
+      half as dense.
+    - Destroyed Europe on new worlds takes in Jutland and the north German coast while the Danish
+      islands stay out, reaches the foothills of the Pyrenees, and takes in Veneto, Friuli and
+      western Istria. The band between its heat ground and ordinary land varies in width and breaks
+      in places.
+    - The grey rims along snow lines, on mountain ranges and in the cold north, are narrow and
+      ragged on new worlds and break in places, instead of wide grey bands. Desert ranges such as
+      the Atlas and the Zagros carry no snow.
+    - Biomes on new worlds are about 1.5 times larger: the presets open the Moisture and Terrain
+      type sliders, and Alien Biomes' temperature sliders, at 150 percent scale.
+    - Deserts on new worlds meet grass across a narrower, broken band of dirt. The Namib is a
+      desert; Sicily, Greece and Cyprus take grass and dirt instead of sand; the Pacific coast of
+      North America, southern Chile, Japan, Korea and eastern Madagascar are greener.
+    - The snow line across northern Europe and Siberia on new worlds runs at the tree line, about 64
+      to 70 N, with green taiga south of it.
+    - New worlds have savanna and dry scrub in East Africa, the Karoo, the Cerrado and the Caatinga,
+      a greener Pampas and northern Australia, and grass and scrub in California and central Chile
+      instead of sand.
+    - Great forests grow in Borneo, Sumatra, New Guinea, the Pacific Northwest, the Appalachians and
+      Valdivia, and marshes spread in the Sundarbans, the Inner Niger Delta and the Mekong delta, on
+      new worlds of the maps that hold them.
+    - New worlds have four more snowy ranges, the Alborz, the Tian Shan, the Altai and the Cascades,
+      on the maps that hold them: snow, a thin ragged rim and rock fields, without cliffs.
+    - Each map keeps only its 0.3.0 geography version, so the game starts about 4.5 seconds faster
+      with a large mod pack. Worlds made on versions before 0.3.0 no longer load.
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2026-11-01

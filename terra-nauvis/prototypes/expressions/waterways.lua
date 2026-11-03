@@ -17,21 +17,10 @@ local cfg = require("prototypes.config")
 -- map's waterway files and scale. A geography version binds the files its waterway_files names, 1 when it names
 -- none, so a river release moves one map's new worlds and no released body (ARCHITECTURE.md, "Release versioning
 -- policy", rule 11). Each list runs in the order of the scale list of the record that names it.
+local WV = cfg.waterways.versions
 local FILES = {
   europe = {
-    {
-      require("prototypes.generated.waterways_europe_s1_v1"),
-      require("prototypes.generated.waterways_europe_s2_v1"),
-      require("prototypes.generated.waterways_europe_s3_v1"),
-      require("prototypes.generated.waterways_europe_s4_v1"),
-      require("prototypes.generated.waterways_europe_s5_v1"),
-      require("prototypes.generated.waterways_europe_s6_v1"),
-    },
-    {
-      require("prototypes.generated.waterways_europe_s12_v1"),
-      require("prototypes.generated.waterways_europe_s24_v1"),
-    },
-    -- 3: version 7 serves every offered scale from the released files
+    -- version 7 serves every offered scale from the first files (0.3.0 dropped version 6 and its scale extension)
     {
       require("prototypes.generated.waterways_europe_s1_v1"),
       require("prototypes.generated.waterways_europe_s2_v1"),
@@ -44,15 +33,7 @@ local FILES = {
     },
   },
   atlantic = {
-    [1] = {
-      require("prototypes.generated.waterways_atlantic_s1_v1"),
-      require("prototypes.generated.waterways_atlantic_s2_v1"),
-      require("prototypes.generated.waterways_atlantic_s3_v1"),
-      require("prototypes.generated.waterways_atlantic_s4_v1"),
-      require("prototypes.generated.waterways_atlantic_s5_v1"),
-      require("prototypes.generated.waterways_atlantic_s6_v1"),
-    },
-    [2] = {
+    [WV.atlantic] = {
       require("prototypes.generated.waterways_atlantic_s1_v2"),
       require("prototypes.generated.waterways_atlantic_s2_v2"),
       require("prototypes.generated.waterways_atlantic_s3_v2"),
@@ -64,15 +45,7 @@ local FILES = {
     },
   },
   olde_world = {
-    [1] = {
-      require("prototypes.generated.waterways_olde_world_s1_v1"),
-      require("prototypes.generated.waterways_olde_world_s2_v1"),
-      require("prototypes.generated.waterways_olde_world_s3_v1"),
-      require("prototypes.generated.waterways_olde_world_s4_v1"),
-      require("prototypes.generated.waterways_olde_world_s5_v1"),
-      require("prototypes.generated.waterways_olde_world_s6_v1"),
-    },
-    [2] = {
+    [WV.olde_world] = {
       require("prototypes.generated.waterways_olde_world_s1_v2"),
       require("prototypes.generated.waterways_olde_world_s2_v2"),
       require("prototypes.generated.waterways_olde_world_s3_v2"),

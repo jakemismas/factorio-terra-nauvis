@@ -5189,7 +5189,10 @@ def stamp_fallbacks(cfg, map_key, version):
     if not version.get("fields"):
         return []
     lg = (cfg.get("layer_chain_geo") or {}).get(map_key)
-    layer = next((v for v in tnconfig.geography_versions(cfg)[map_key] if v["geo_id"] == lg), None)
+    # the layer chain is the map's frame once its version was dropped (config.lua frames, 0.3.0)
+    frame = tnconfig.frames(cfg).get(map_key)
+    layer = next((v for v in tnconfig.geography_versions(cfg)[map_key] + ([frame] if frame else [])
+                  if v["geo_id"] == lg), None)
     own = {e["name"] for e in version["fallbacks"]}
     return [e for e in (layer or {}).get("fallbacks", []) if e.get("frozen") and e["name"] not in own]
 
@@ -9053,7 +9056,9 @@ def rd_dump_findings(cfg, d0, d1, table, base="M0"):
     # the chain the ridge bodies read: the layer chain (config.lua layer_chain_geo), which a later
     # geography version keeps
     for mk, versions in tnconfig.geography_versions(cfg).items():
-        g = next((v for v in versions if v["geo_id"] == (cfg.get("layer_chain_geo") or {}).get(mk)), None)
+        frame = tnconfig.frames(cfg).get(mk)
+        g = next((v for v in versions + ([frame] if frame else [])
+                  if v["geo_id"] == (cfg.get("layer_chain_geo") or {}).get(mk)), None)
         if g:
             allowed_maps[mk] = {g["u"], g["v"]}
     for name in ridge:
@@ -29880,7 +29885,8 @@ def cmd_freeze(a):
         # no record an earlier milestone's snapshot holds may move (a hand-dropped record re-registered by
         # this milestone would come back with a new milestone and date)
         snaps, _ = tnfrozen.suite_snapshots(REGISTRY, before=entry["id"], suites=SUITES)
-        bad = tnfrozen.snapshot_problems(new_fz, snaps)
+        # 0.3.0's collapse (tests/collapsed.json) took exactly the records it lists out of every snapshot's registry
+        bad = tnfrozen.snapshot_problems(new_fz, snaps, tnfrozen.with_collapse(None, tnfrozen.read_collapse()))
         if bad:
             raise GateError(f"freeze would break an earlier slice's frozen snapshot: {bad[:2]}; freeze registers "
                             f"nothing")

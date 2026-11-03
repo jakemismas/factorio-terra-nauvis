@@ -10,12 +10,17 @@ versions follow [Semantic Versioning](https://semver.org/).
 
 - Exact coastlines at scales 1 and 2 on new Old World and Atlantic worlds (tn_geo 21 and 22): a tile reads the
   reference blurred and interpolated between pixel centres, moved by the warp tables plus a short tile noise, in every
-  K+ pixel. Specks and islets of up to 8 tiles with nothing to join go under. Worlds made before keep their coast.
+  K+ pixel. Specks and islets of up to 8 tiles with nothing to join go under.
 - River sets of tn_geo 21, 22 and 23 at scales 1 and 2 take a wider bank noise, so each bank wanders on its own.
 - The spawn lake of tn_geo 21 and 22 takes a third warp row up to scale 2.
-- New worlds (tn_geo 21 to 23): biter bases stand scattered instead of in even rows, ore holds the same richness
-  per tile at scales 12 and 24 as at 6, hotspot ore is at least as rich per tile as the ore round it, trees thin
-  out on hotspot ore, and Batu Hijau's copper keeps off Lombok.
+- New worlds (tn_geo 21 to 23): biter bases stand scattered instead of in even rows, trees thin out on hotspot ore,
+  and Batu Hijau's copper keeps off Lombok.
+- Ordinary ore patches on new worlds are vanilla's own again, in size, shape and richness for their distance from the
+  spawn, and keep out of ore hotspots. Presets set the ore sliders to 1.
+- An ore hotspot on new worlds holds three to six times a large ordinary patch at its distance, at most about 100
+  million, about 1.75 times as rich per tile as the ordinary ore round it, in more bodies for a stronger field. The
+  map's ore size and richness sliders reach hotspots, and the Ore hotspot amount setting adds or removes bodies.
+- A start with less than nine tenths of vanilla's average coal gets topped up to that average.
 - New worlds: the snow line runs north of Russia's main lowland, a spawn in the cold north starts in a clearing off
   the snow, and palms grow on warm Mediterranean shores (with Destroyed Europe on as well).
 - With Space Age, the plants and decoratives Terra Nauvis re-lists keep the tiles of the other planets that place them.
@@ -52,6 +57,29 @@ versions follow [Semantic Versioning](https://semver.org/).
 - Beside Alien Biomes with Space Age, the tree farm plant (tree-plant) lists the vanilla land tiles again (Space Age's
   own list, tiles.vanilla.tiles): Alien Biomes rewrites the list to its own tiles, and Earth presets restore vanilla
   grass, dirt, sand and red desert, where agricultural towers planted nothing.
+- With Destroyed Europe on beside Alien Biomes, the zone's ground on new worlds is mostly cracked volcanic heat ground
+  with lava pools, without the light grey and red sand patches; the Alps inside it take that heat ground instead of
+  brown dirt, and its dead great forests stand half as dense.
+- Destroyed Europe on new worlds takes in Jutland and the north German coast while the Danish islands stay out,
+  reaches the foothills of the Pyrenees, and takes in Veneto, Friuli and western Istria. The band between its heat
+  ground and ordinary land varies in width and breaks in places.
+- The grey rims along snow lines, on mountain ranges and in the cold north, are narrow and ragged on new worlds and
+  break in places, instead of wide grey bands. Desert ranges such as the Atlas and the Zagros carry no snow.
+- Biomes on new worlds are about 1.5 times larger: the presets open the Moisture and Terrain type sliders, and Alien
+  Biomes' temperature sliders, at 150 percent scale.
+- Deserts on new worlds meet grass across a narrower, broken band of dirt. The Namib is a desert; Sicily, Greece and
+  Cyprus take grass and dirt instead of sand; the Pacific coast of North America, southern Chile, Japan, Korea and
+  eastern Madagascar are greener.
+- The snow line across northern Europe and Siberia on new worlds runs at the tree line, about 64 to 70 N, with green
+  taiga south of it.
+- New worlds have savanna and dry scrub in East Africa, the Karoo, the Cerrado and the Caatinga, a greener Pampas and
+  northern Australia, and grass and scrub in California and central Chile instead of sand.
+- Great forests grow in Borneo, Sumatra, New Guinea, the Pacific Northwest, the Appalachians and Valdivia, and marshes
+  spread in the Sundarbans, the Inner Niger Delta and the Mekong delta, on new worlds of the maps that hold them.
+- New worlds have four more snowy ranges, the Alborz, the Tian Shan, the Altai and the Cascades, on the maps that hold
+  them: snow, a thin ragged rim and rock fields, without cliffs.
+- Each map keeps only its 0.3.0 geography version, so the game starts about 4.5 seconds faster with a large mod pack.
+  Worlds made on versions before 0.3.0 no longer load.
 
 ## [0.2.0] - 2026-11-01
 

@@ -52,10 +52,8 @@ local waterways = require("prototypes.expressions.waterways")
 local FILES = {
   ["prototypes/generated/geo_europe_v1.lua"] = require("prototypes.generated.geo_europe_v1"),
   ["prototypes/generated/land_coarse_europe_v1.lua"] = require("prototypes.generated.land_coarse_europe_v1"),
-  ["prototypes/generated/geo_atlantic_v1.lua"] = require("prototypes.generated.geo_atlantic_v1"),
   ["prototypes/generated/geo_atlantic_v2.lua"] = require("prototypes.generated.geo_atlantic_v2"),
   ["prototypes/generated/land_coarse_atlantic_v1.lua"] = require("prototypes.generated.land_coarse_atlantic_v1"),
-  ["prototypes/generated/geo_olde_world_v1.lua"] = require("prototypes.generated.geo_olde_world_v1"),
   ["prototypes/generated/geo_olde_world_v2.lua"] = require("prototypes.generated.geo_olde_world_v2"),
   ["prototypes/generated/land_coarse_olde_world_v1.lua"] = require("prototypes.generated.land_coarse_olde_world_v1"),
 }
@@ -144,6 +142,20 @@ local function shore_land(g, s, o, locals)
   return "gl * cv * (1 + fr) + " .. o
 end
 
+-- A coordinate chain on city offset names cx and cy: geo tiles, the map's chosen city at world (0, 0) (S7, spawn by
+-- shift), and reference pixels with pixel centres at integer u, v: the tile holding a pixel centre, evaluated at its
+-- integer corner, reads exactly that centre at every integer scale. A version's chain, or a map's frame (config.lua
+-- frames), which every map-wide layer reads.
+local function chain(m, g)
+  local s = K.scale
+  -- the integer-corner offset in tiles, floor(s / corner_offset_divisor) (U2; config.lua)
+  local corner = "floor(" .. s .. " / " .. num(cfg.coordinates.corner_offset_divisor) .. ")"
+  def(g.gx, "x + " .. g.cx)
+  def(g.gy, "y + " .. g.cy)
+  def(g.u, "(" .. g.gx .. " - " .. corner .. ") / " .. s .. " + " .. num(m.wr))
+  def(g.v, "(" .. g.gy .. " - " .. corner .. ") / " .. s .. " + " .. num(m.hr))
+end
+
 -- One geography version of a map: its chain, fit bodies, detail, box and elevation entry. Returns
 -- the entry's prototype.
 local function version(m, g)
@@ -161,13 +173,7 @@ local function version(m, g)
   -- the integer-corner offset in tiles, floor(s / corner_offset_divisor) (U2; config.lua)
   local corner = "floor(" .. s .. " / " .. num(cfg.coordinates.corner_offset_divisor) .. ")"
 
-  -- Geo tiles: the map's chosen city sits at world (0, 0) (S7, spawn by shift).
-  def(g.gx, "x + " .. g.cx)
-  def(g.gy, "y + " .. g.cy)
-  -- Reference pixels with pixel centres at integer u, v: the tile holding a pixel centre,
-  -- evaluated at its integer corner, reads exactly that centre at every integer scale.
-  def(g.u, "(" .. g.gx .. " - " .. corner .. ") / " .. s .. " + " .. num(m.wr))
-  def(g.v, "(" .. g.gy .. " - " .. corner .. ") / " .. s .. " + " .. num(m.hr))
+  chain(m, g)
 
   -- The coast fit (Tile only) and the coarse land field, the one land field outside Tile (design rule 8).
   -- A version with a coast warp (config.lua coast.warp) reads its fit at warped coordinates; the coarse
@@ -412,6 +418,11 @@ for _, key in ipairs(cfg.map_order) do
       entry.localised_name = {"noise-expression." .. picked}
       entry.order = g.map_type_order
     end
+  end
+  -- the map's frame: the chain the map-wide layers read, kept when its version was dropped
+  local f = cfg.frames[key]
+  if f then
+    chain(cfg.maps[key], f)
   end
 end
 

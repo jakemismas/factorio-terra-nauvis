@@ -300,6 +300,79 @@ def moved(moves, name, sha256):
     return bool(moves) and sha256 in ((moves.get("records") or {}).get(name) or [])
 
 
+# The collapse (0.3.0: one geography version per map; on the maintainer's
+# word that no world exists on any version before 0.3.0). Unlike the unreleased waiver, no release tag voids it: it
+# names exactly what the collapse took out of landed states, so the append-only checks excuse that and hold every other
+# record, row, version and file as before.
+#   versions     the geo_id of every geography version config.lua's geography no longer lists
+#   geographies  the tn_geo ids whose release_registry rows left with them
+#   frames       the tn_geo ids whose rows stay as a map's frame (config.lua frames), which may only lose names this
+#                file drops and files it lists
+#   records      {name: [sha256]}: every record the registry dropped, at the hash a landed state registered it
+#   files        the mod-relative generated files the tree dropped
+COLLAPSE = REPO / "tests" / "collapsed.json"
+COLLAPSE_FORMAT = "tn-collapsed/1"
+COLLAPSE_KEYS = ("format", "ruling", "versions", "geographies", "frames", "records", "files")
+
+
+def collapse_problems(c):
+    """The collapse record's shape ([] when it holds)."""
+    if not isinstance(c, dict):
+        return [f"tests/collapsed.json is a {type(c).__name__}, not a JSON object"]
+    out = []
+    if sorted(c) != sorted(COLLAPSE_KEYS):
+        out.append(f"tests/collapsed.json holds {sorted(c)}, want {sorted(COLLAPSE_KEYS)}")
+    if c.get("format") != COLLAPSE_FORMAT:
+        out.append(f"tests/collapsed.json format {c.get('format')!r}, want {COLLAPSE_FORMAT!r}")
+    if not (isinstance(c.get("ruling"), str) and c.get("ruling")):
+        out.append("tests/collapsed.json names no ruling")
+    for k in ("versions", "geographies", "frames"):
+        v = c.get(k)
+        if not (isinstance(v, list) and all(isinstance(g, int) and not isinstance(g, bool) for g in v)):
+            out.append(f"tests/collapsed.json {k} is not a list of tn_geo ids")
+    if set(c.get("geographies") or []) & set(c.get("frames") or []):
+        out.append("tests/collapsed.json retires and keeps a frame of the same tn_geo id")
+    files = c.get("files")
+    if not (isinstance(files, list) and all(isinstance(f, str) and f for f in files)):
+        out.append("tests/collapsed.json files is not a list of mod-relative paths")
+    recs = c.get("records")
+    if not isinstance(recs, dict):
+        return out + ["tests/collapsed.json records is not a table"]
+    for name, hashes in sorted(recs.items()):
+        if not (isinstance(hashes, list) and hashes and all(isinstance(h, str) and SHA256_RE.fullmatch(h) for h in hashes)):
+            out.append(f"tests/collapsed.json {name}: not a list of sha256 values")
+    return out
+
+
+def read_collapse(path=COLLAPSE):
+    """The collapse record, or None when the file is absent. Raises RegistryUnreadable when it does not
+    parse or breaks its shape (fail closed)."""
+    p = Path(path)
+    if not p.exists():
+        return None
+    try:
+        c = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        raise RegistryUnreadable(f"tests/collapsed.json does not parse ({e}) (fail closed)") from e
+    probs = collapse_problems(c)
+    if probs:
+        raise RegistryUnreadable(f"{probs[0]} (fail closed)")
+    return c
+
+
+def with_collapse(moves, collapse):
+    """The waiver the append-only checks read: `moves` (the unreleased waiver, or None) with the collapse's records
+    and retired tn_geo ids added; None when both are empty."""
+    if not collapse:
+        return moves
+    recs = {n: list(h) for n, h in ((moves or {}).get("records") or {}).items()}
+    for n, hashes in (collapse.get("records") or {}).items():
+        recs[n] = sorted(set(recs.get(n, [])) | set(hashes))
+    geos = sorted(set((moves or {}).get("geographies") or []) | set(collapse.get("geographies") or []))
+    return {"format": MOVES_FORMAT, "ruling": (moves or {}).get("ruling") or collapse.get("ruling"),
+            "geographies": geos, "records": recs}
+
+
 def record_changes(mine, ref):
     """The fields in which a record differs from a reference record, over every field of either (a
     field one of them lacks counts as changed); [] when they are equal."""

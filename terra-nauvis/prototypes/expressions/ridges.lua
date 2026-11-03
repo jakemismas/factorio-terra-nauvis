@@ -544,7 +544,7 @@ local function map_bodies(key)
   -- the chain every map-wide layer reads (config.lua layer_chain_geo): a later geography version keeps
   -- its frame, so these registered bodies never move with one
   local g
-  for _, v in ipairs((cfg.geography[key] or {}).versions or {}) do
+  for _, v in ipairs({cfg.frames[key]}) do
     if v.geo_id == cfg.layer_chain_geo[key] then
       g = v
     end
@@ -743,7 +743,7 @@ end
 
 local function line_bodies(key)
   local g
-  for _, v in ipairs((cfg.geography[key] or {}).versions or {}) do
+  for _, v in ipairs({cfg.frames[key]}) do
     if v.geo_id == cfg.layer_chain_geo[key] then
       g = v
     end

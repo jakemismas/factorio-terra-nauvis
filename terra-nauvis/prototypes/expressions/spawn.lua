@@ -33,9 +33,7 @@ local destroyed = require("prototypes.tables.destroyed")
 -- module names), keyed by its path as config.lua's release_registry files and spawn records name it.
 local FILES = {
   ["prototypes/generated/spawn_europe_v1.lua"] = require("prototypes.generated.spawn_europe_v1"),
-  ["prototypes/generated/spawn_atlantic_v1.lua"] = require("prototypes.generated.spawn_atlantic_v1"),
   ["prototypes/generated/spawn_atlantic_v2.lua"] = require("prototypes.generated.spawn_atlantic_v2"),
-  ["prototypes/generated/spawn_olde_world_v1.lua"] = require("prototypes.generated.spawn_olde_world_v1"),
   ["prototypes/generated/spawn_olde_world_v2.lua"] = require("prototypes.generated.spawn_olde_world_v2"),
 }
 

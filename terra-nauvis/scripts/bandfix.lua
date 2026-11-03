@@ -1,4 +1,4 @@
--- Exact coastlines (ARCHITECTURE.md, "Control stage"; contract 11; S12, S13-bandfix; design notes
+-- Exact coastlines (ARCHITECTURE.md, "Control stage"; contract 11; S12, S13-bandfix; DECISIONS
 -- 07:05, 12:35 and 13:45). The mod's only per-chunk handler. on_chunk_generated is registered only on a
 -- save whose Nauvis surface carries the band-fix key (config.lua bandfix.key set to bandfix.on; absent
 -- means off): on_init records the save's state once (storage.earth.bandfix) and both on_init and on_load
@@ -23,13 +23,13 @@
 --      reference on every shore, however far the coast fit strays, and the line where a write stops is a rounded,
 --      wobbling curve instead of the raster's stairs. A pixel whose band
 --      region holds no 2 x 2 block of tiles (an islet or a channel narrower than a pixel) is drawn as a blob
---      around its centre, whatever the blur reads there; below smooth.min_scale the rule is
+--      around its centre, whatever the blur reads there (DECISIONS 13:45); below smooth.min_scale the rule is
 --      S12's closed rule. Land of an open-sea pixel (no land around it) becomes deep water, and where the chunk
 --      writes anything, so do those pixels' shallow tiles; in a chunk left with no land, all shallow tiles reading
 --      open sea do; so a false island sinks without a pale patch or a ghost of its shallows;
 --   5. the classes of the written tiles' bounding box are read once: a written tile that would stand as a
 --      strip one tile wide takes its neighbour in the box along, when that neighbour belongs to the same
---      reference class;
+--      reference class (DECISIONS 13:45);
 --      From bandfix_next.from_geo on, at scales from smooth.min_scale, steps 3 and 4 read every tile of a K pixel
 --      instead: the reference, blurred the same way, is read at the tile moved by a smooth warp, as one field from
 --      land to water, and a tile takes the class that field holds past a small margin, in either class of pixel. The
@@ -53,7 +53,9 @@ local coastcover = require("scripts.coastcover")
 
 -- One require per generated table (the registration scan reads literal module names): per map and table
 -- version its K+ table and its mask table for every offered scale. A save reads the version of its own tn_geo
--- (generation below), so a released table stays what the saves made with it read.
+-- (generation below), so a released table stays what the saves made with it read. Atlantic's and Old World's first
+-- generation served only their dropped versions 6 (0.3.0: one geography version per map), so a save of one finds no
+-- table and its handler stays off (M.state).
 local TABLES = {
   europe = {
     [1] = {
@@ -69,17 +71,6 @@ local TABLES = {
     },
   },
   atlantic = {
-    [1] = {
-      shared = require("scripts.generated.bandfix_atlantic_v1"),
-      scales = {
-        require("scripts.generated.bandfix_atlantic_s1_v1"),
-        require("scripts.generated.bandfix_atlantic_s2_v1"),
-        require("scripts.generated.bandfix_atlantic_s3_v1"),
-        require("scripts.generated.bandfix_atlantic_s4_v1"),
-        require("scripts.generated.bandfix_atlantic_s5_v1"),
-        require("scripts.generated.bandfix_atlantic_s6_v1"),
-      },
-    },
     [2] = {
       shared = require("scripts.generated.bandfix_atlantic_v2"),
       scales = {
@@ -93,17 +84,6 @@ local TABLES = {
     },
   },
   olde_world = {
-    [1] = {
-      shared = require("scripts.generated.bandfix_olde_world_v1"),
-      scales = {
-        require("scripts.generated.bandfix_olde_world_s1_v1"),
-        require("scripts.generated.bandfix_olde_world_s2_v1"),
-        require("scripts.generated.bandfix_olde_world_s3_v1"),
-        require("scripts.generated.bandfix_olde_world_s4_v1"),
-        require("scripts.generated.bandfix_olde_world_s5_v1"),
-        require("scripts.generated.bandfix_olde_world_s6_v1"),
-      },
-    },
     [2] = {
       shared = require("scripts.generated.bandfix_olde_world_v2"),
       scales = {

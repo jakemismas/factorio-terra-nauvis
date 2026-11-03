@@ -73,6 +73,12 @@ def scales_of(cfg, map_key):
     import tnconfig
     versions = tnconfig.geography_versions(cfg)[map_key]
     bearings = (tnconfig.spawn_of(versions[-1]) or {}).get("bearings")
+    # 0.3.0 dropped the versions before each map's newest (config.lua frames): a file its frame's release row still
+    # lists was emitted by that dropped version, on the released list it was built on
+    frame = tnconfig.frames(cfg).get(map_key)
+    if frame and any(r.get("geography") == frame["geo_id"] and bearings in (r.get("files") or [])
+                     for r in tnconfig.release_registry(cfg)):
+        return [int(s) for s in cfg["scales"]["released"]]
     first = next((v for v in versions if (tnconfig.spawn_of(v) or {}).get("bearings") == bearings), versions[-1])
     return tnconfig.version_scales(cfg, first)
 

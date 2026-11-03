@@ -2098,6 +2098,18 @@ def fallback_findings(cfg):
                     out.append(f"frozen fallback {n} is in no release_registry row: it would never be registered")
                 if not e.get("frozen") and n in released:
                     out.append(f"fallback {n} mirrors a startup setting but is a released body (U3)")
+    # a map's frame (config.lua frames, 0.3.0): its city offset names, which no preset bakes, frozen and released
+    for key, fr in tnconfig.frames(cfg).items():
+        for e in fr["fallbacks"]:
+            n = e["name"]
+            if n not in keys:
+                out.append(f"frame fallback {n} of {key} is not a preset key (preset_keys)")
+            if map_suffixes(n, maps) != [key]:
+                out.append(f"frame fallback {n} does not end in _{key} (or _{key}_v<n>)")
+            if n in fw:
+                out.append(f"frame fallback {n} is a firewall body")
+            if n not in released:
+                out.append(f"frame fallback {n} is in no release_registry row: it would never be registered")
     return out
 
 
@@ -2343,7 +2355,7 @@ def _norm_bytes(b):
     return b.replace(b"\r\n", b"\n")
 
 
-def _release_value_findings(ref_v, work_v, where, ref):
+def _release_value_findings(ref_v, work_v, where, ref, collapse=None):
     if isinstance(ref_v, dict):
         if not isinstance(work_v, dict):
             return [f"{where} is a table on {ref} and {work_v!r} here (a value a registered body is built from)"]
@@ -2354,8 +2366,14 @@ def _release_value_findings(ref_v, work_v, where, ref):
             if k not in work_v:
                 out.append(f"{where}.{k} is on {ref} and gone here (a value a registered body is built from)")
                 continue
-            out += _release_value_findings(ref_v[k], work_v[k], f"{where}.{k}", ref)
+            out += _release_value_findings(ref_v[k], work_v[k], f"{where}.{k}", ref, collapse)
         return out
+    # 0.3.0's collapse (tests/collapsed.json) took the versions it lists out of geography.<map>.versions: the rest of
+    # the landed list still leads the list here, unchanged
+    if collapse and isinstance(ref_v, list) and where.startswith("config.lua geography.") and \
+            where.endswith(".versions"):
+        gone = set(collapse.get("versions") or [])
+        ref_v = [v for v in ref_v if not (isinstance(v, dict) and v.get("geo_id") in gone)]
     # A list of versions, or of the tn_geo ids a term applies to (coast.warp.geographies and the edge band's fold list),
     # only grows: a new entry reaches only the new version, which is how the next geography version keeps its map's coast
     # warp.
@@ -2431,11 +2449,40 @@ def release_input_files(cfg):
     return sorted(files)
 
 
-def release_input_findings(work, refs):
+def _collapsed_row(r, wrows, collapse):
+    """Whether 0.3.0's collapse (tests/collapsed.json) excuses landed release row `r` here: a retired tn_geo id's row
+    is gone, a frame's row lost only names the collapse dropped and files it lists or another row here names, and a
+    row of no geography left whole when every name it released was dropped and each of its files is so placed."""
+    if not collapse:
+        return False
+    # a file a lost row named leaves with it (the collapse lists it) or stays named by a row here
+    recs = set(collapse.get("records") or {})
+    files = set(collapse.get("files") or []) | {f for w in wrows for f in (w.get("files") or [])}
+    geo = r.get("geography")
+    if geo is None:
+        return (set(r.get("names") or []) <= recs and set(r.get("files") or []) <= files and
+                without_withdrawn(r) not in [without_withdrawn(w) for w in wrows])
+    mine = [w for w in wrows if w.get("geography") == geo and w.get("map") == r.get("map")]
+    if geo in (collapse.get("geographies") or []):
+        return not mine
+    if geo in (collapse.get("frames") or []) and len(mine) == 1:
+        w = mine[0]
+        lost_n = set(r.get("names") or []) - set(w.get("names") or [])
+        lost_f = set(r.get("files") or []) - set(w.get("files") or [])
+        same = {k: v for k, v in r.items() if k not in ("names", "files")} == \
+            {k: v for k, v in w.items() if k not in ("names", "files")}
+        return (same and lost_n <= recs and lost_f <= files and set(w.get("names") or []) <= set(r.get("names") or [])
+                and set(w.get("files") or []) <= set(r.get("files") or []))
+    return False
+
+
+def release_input_findings(work, refs, collapse=None):
     """What the working tree changed in place of the data a reference's landed bodies are built from.
     `work` and each `refs[ref]` are {"cfg": <config table>, "files": {<mod-relative path>: <sha256, or
     None when absent>}, "tables": {<repo-relative path>: <table, or None>}}. A reference without a
-    release_registry row freezes nothing (nothing has landed)."""
+    release_registry row freezes nothing (nothing has landed). `collapse` (tests/collapsed.json, 0.3.0's one
+    geography version per map) excuses exactly what it lists: the versions it drops from geography.<map>.versions,
+    the release rows it retires or trims to a frame (_collapsed_row) and the generated files it drops."""
     out = []
     wcfg = _as_dict(work.get("cfg"))
     for ref, d in sorted(refs.items()):
@@ -2449,7 +2496,7 @@ def release_input_findings(work, refs):
                 if where not in got:
                     out.append(f"{where} is on {ref} and gone here (a value a registered body is built from)")
                     continue
-                out += _release_value_findings(v, got[where], where, ref)
+                out += _release_value_findings(v, got[where], where, ref, collapse)
         rsets, wsets = _as_dict(rc.get("settings")), _as_dict(wcfg.get("settings"))
         for key, named in sorted(release_settings(rc).items(), key=lambda kv: str(kv[0])):
             where = f"config.lua settings.{key}.allowed_values"
@@ -2466,6 +2513,8 @@ def release_input_findings(work, refs):
                            f"an append (ship a new setting under the next geography version)")
         wrows = [r for r in (wcfg.get("release_registry") or []) if isinstance(r, dict)]
         for r in rows:
+            if _collapsed_row(r, wrows, collapse):
+                continue
             if r.get("geography") is None and r.get("map") is None:
                 # a row of no geography (a layer's or a milestone's shared bodies, from region-layer and
                 # climate-tiles several): no id names it, so the landed row must stand here unchanged
@@ -2484,6 +2533,8 @@ def release_input_findings(work, refs):
                 continue
             want = _as_dict(d.get("files")).get(f)
             have = _as_dict(work.get("files")).get(f)
+            if have is None and collapse and f in (collapse.get("files") or []):
+                continue
             if want is None:
                 out.append(f"terra-nauvis/{f}: {ref}'s landed rows name it but {ref} holds no such file (fail closed)")
             elif have != want:
@@ -2581,6 +2632,39 @@ def moves_findings(repo, tags):
     return [], None if tags else moves
 
 
+def collapse_findings(repo, work_fz, work_cfg):
+    """(findings, the collapse or None): tests/collapsed.json (tools/tnfrozen.py), 0.3.0's one geography version per
+    map, which no release voids. It must hold what it names gone: no record it lists in tests/frozen.json, no version
+    it lists in config.lua's geography, no retired tn_geo id in the release registry, each frame id a frame of
+    config.lua, and no file it lists in the tree. A collapse with a finding excuses nothing (fail closed)."""
+    repo = Path(repo)
+    try:
+        c = tnfrozen.read_collapse(repo / "tests" / "collapsed.json")
+    except tnfrozen.RegistryUnreadable as e:
+        return [str(e)], None
+    if not c:
+        return [], None
+    out = []
+    bodies = _as_dict(_as_dict(work_fz).get("bodies"))
+    out += [f"tests/collapsed.json drops {n}, which tests/frozen.json still registers" for n in sorted(c["records"])
+            if n in bodies]
+    try:
+        ids = {v["geo_id"] for vs in tnconfig.geography_versions(work_cfg).values() for v in vs}
+        geo = tnconfig.geo_maps(work_cfg)
+        fr = {f["geo_id"] for f in tnconfig.frames(work_cfg).values()}
+    except tnconfig.ConfigError as e:
+        return out + [f"tests/collapsed.json cannot be held to config.lua: {e}"], None
+    out += [f"tests/collapsed.json drops geography version {g}, which config.lua still lists" for g in c["versions"]
+            if g in ids]
+    out += [f"tests/collapsed.json retires tn_geo id {g}, which the release registry still names" for g in
+            c["geographies"] if g in geo]
+    out += [f"tests/collapsed.json keeps tn_geo id {g} as a frame, which config.lua frames lacks" for g in c["frames"]
+            if g not in fr]
+    out += [f"tests/collapsed.json drops terra-nauvis/{f}, which is still in the tree" for f in c["files"]
+            if (repo / "terra-nauvis" / f).exists()]
+    return out, (c if not out else None)
+
+
 def row_append_only(repo=REPO):
     repo = Path(repo)
     try:
@@ -2591,7 +2675,9 @@ def row_append_only(repo=REPO):
     work_fz = load_json(repo / "tests" / "frozen.json")
     work_cfg = tnconfig.load(repo / "terra-nauvis" / "prototypes" / "config.lua")
     mv_f, moves = moves_findings(repo, tags)
-    f = mv_f + append_only_findings(work_fz, work_cfg, refs, moves)
+    co_f, collapse = collapse_findings(repo, work_fz, work_cfg)
+    moves = tnfrozen.with_collapse(moves, collapse)
+    f = mv_f + co_f + append_only_findings(work_fz, work_cfg, refs, moves)
     # The inputs of a landed body are fixed from its first release: before
     # one, the bodies row holds what they build to the registry, and the waiver holds the registry.
     try:
@@ -2599,7 +2685,7 @@ def row_append_only(repo=REPO):
     except ReferenceUnreadable as e:
         return f + [str(e)], "the release inputs' reference is unreadable"
     work_in["cfg"] = work_cfg
-    f = sorted(set(f + release_input_findings(work_in, ref_in)))
+    f = sorted(set(f + release_input_findings(work_in, ref_in, collapse)))
     snap_f, snap_seen = snapshot_findings(repo, work_fz, refs, moves)
     f = sorted(set(f + snap_f))
     landed = sorted(ref for ref, d in ref_in.items() if d["cfg"].get("release_registry"))
@@ -2608,7 +2694,9 @@ def row_append_only(repo=REPO):
     return f, (f"registered records (whole: type, sha256, dump, slice, date), tn_map and tn_geo ids and stored "
                f"message keys append-only against {seen}, and the records against the frozen snapshots of the "
                f"slices before the registry's newest ({snap_seen}), {waived} waived by name and hash (no release "
-               f"yet); the landed bodies' inputs (config values, spawn-city setting lists, rows, generated files, "
+               f"yet, or 0.3.0's collapse: {len((collapse or {}).get('records') or {})} records, versions "
+               f"{(collapse or {}).get('versions')}, rows retired {(collapse or {}).get('geographies')} or kept as "
+               f"frames {(collapse or {}).get('frames')}); the landed bodies' inputs (config values, spawn-city setting lists, rows, generated files, "
                f"tables) fixed against {', '.join(landed) or 'no release yet'}")
 
 
@@ -4059,6 +4147,26 @@ def unreleased_moves_fixtures(cfg, fz, ref, name, dropped, rehashed):
                     [Path(p).name for p in mans] == ["fx-a.json"], found[:1]))
         moves_ok, _ = moves_findings_on(td, ns)
         out.append(("seal: a sealed waiver passes with a release tag", moves_ok, ""))
+    # 0.3.0's collapse (tests/collapsed.json): no release voids it, it excuses a dropped record at its landed hash
+    # only, and it fails closed while the tree still holds what it names gone or when it breaks its shape
+    col = {"format": tnfrozen.COLLAPSE_FORMAT, "ruling": "fixture", "versions": [], "geographies": [], "frames": [],
+           "records": {name: [rec["sha256"]]}, "files": []}
+    f = append_only_findings(dropped, cfg, main, tnfrozen.with_collapse(None, col))
+    out.append(("collapse: a dropped record the collapse lists at its landed hash passes", not f, f[:1]))
+    out.append(("collapse: a dropped record the collapse lists at another hash fails",
+                bool(append_only_findings(dropped, cfg, main, tnfrozen.with_collapse(
+                    None, dict(col, records={name: ["4" * 64]})))), ""))
+    with tempfile.TemporaryDirectory(prefix="tn-collapse-") as td:
+        p = Path(td) / "tests" / "collapsed.json"
+        p.parent.mkdir()
+        p.write_text(json.dumps(col), encoding="utf-8")
+        f, got = collapse_findings(td, dropped, cfg)
+        out.append(("collapse: a collapse whose records left the registry applies", not f and got == col, f[:1]))
+        f, got = collapse_findings(td, fz, cfg)
+        out.append(("collapse: a record the registry still holds fails closed", bool(f) and got is None, ""))
+        p.write_text(json.dumps(dict(col, format="x")), encoding="utf-8")
+        f, got = collapse_findings(td, dropped, cfg)
+        out.append(("collapse: a collapse of another format fails closed", bool(f) and got is None, ""))
     return out
 
 
@@ -4252,11 +4360,13 @@ def release_input_fixtures(cfg):
         "a new map table": lambda w: w["tables"][tables[0]].__setitem__("tn_fixture_map", {"version": 1}),
         f"maps.{m0}.display renamed": lambda w: set_path(w, ("maps", m0, "display"), "Fixture"),
     }
+    # 0.3.0's collapse (tests/collapsed.json): the tree's band-fix group still counts the tables the collapse dropped
+    col = tnfrozen.read_collapse() or None
     for label, edit in failing.items():
-        f = release_input_findings(work(edit), {"main": ref})
+        f = release_input_findings(work(edit), {"main": ref}, col)
         out.append((f"release inputs: {label} fails", bool(f), f[:1]))
     for label, edit in passing.items():
-        f = release_input_findings(work(edit), {"main": ref})
+        f = release_input_findings(work(edit), {"main": ref}, col)
         out.append((f"release inputs: {label} passes", not f, f[:1]))
     unlanded = copy.deepcopy(ref)
     unlanded["cfg"] = dict(copy.deepcopy(cfg), release_registry=[])
@@ -4266,6 +4376,57 @@ def release_input_fixtures(cfg):
     hollow["files"][files[0]] = None
     f = release_input_findings(base, {"main": hollow})
     out.append(("release inputs: a landed row naming a file its reference lacks fails closed", bool(f), f[:1]))
+    out += collapse_input_fixtures(cfg, base, ref, geo, files, col)
+    return out
+
+
+def collapse_input_fixtures(cfg, base, ref, geo, files, col=None):
+    """0.3.0's collapse (tests/collapsed.json, `col`) on the release inputs: a geography version, a retired release
+    row, a frame row's lost name and a generated file pass only when the collapse lists them, and fail when it does
+    not (the tree's own collapse, without that entry)."""
+    out = []
+    v0 = cfg["geography"][geo[0]]["versions"][0]
+    row = next(r for r in cfg["release_registry"] if r.get("geography") is not None and r.get("names"))
+    lost = sorted(row["names"])[0]
+    c0 = {"versions": [], "geographies": [], "frames": [], "records": {}, "files": list((col or {}).get("files") or [])}
+    c = dict(c0, versions=[v0["geo_id"]])
+
+    def work(edit):
+        w = copy.deepcopy(base)
+        edit(w)
+        return w
+
+    def drop_version(w):
+        w["cfg"]["geography"][geo[0]]["versions"] = w["cfg"]["geography"][geo[0]]["versions"][1:]
+
+    def drop_row(w):
+        w["cfg"]["release_registry"] = [r for r in w["cfg"]["release_registry"] if r is not row and r != row]
+
+    def trim_row(w):
+        for r in w["cfg"]["release_registry"]:
+            if r == row:
+                r["names"] = [n for n in r["names"] if n != lost]
+
+    def drop_file(w):
+        w["files"][files[0]] = None
+
+    cases = (
+        ("a geography version dropped", drop_version, c, dict(c, versions=[9999])),
+        ("a release row retired", drop_row, dict(c, versions=[], geographies=[row["geography"]]),
+         dict(c, versions=[], geographies=[9999])),
+        ("a frame row that lost a dropped name", trim_row,
+         dict(c, versions=[], frames=[row["geography"]], records={lost: ["0" * 64]}),
+         dict(c, versions=[], frames=[row["geography"]], records={})),
+        ("a generated file dropped", drop_file, dict(c, versions=[], files=c0["files"] + [files[0]]), c0),
+    )
+    out.append(("collapse: the tree against itself passes under its own collapse",
+                not release_input_findings(base, {"main": ref}, c0), release_input_findings(base, {"main": ref}, c0)[:1]))
+    for label, edit, listed, unlisted in cases:
+        w = work(edit)
+        f = release_input_findings(w, {"main": ref}, listed)
+        out.append((f"collapse: {label} the collapse lists passes", not f, f[:1]))
+        out.append((f"collapse: {label} the collapse does not list fails",
+                    bool(release_input_findings(w, {"main": ref}, unlisted)), ""))
     return out
 
 

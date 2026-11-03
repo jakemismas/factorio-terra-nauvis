@@ -315,14 +315,16 @@ def fallbacks(cfg):
     """The Map type fallbacks of every geography version, per map: {map key: [entry, ...]}, each
     name once, in version order (a version's `fallbacks` lists the per-save names its elevation
     entry reads, which a Map type pick leaves to prototype-level fallbacks valued as that version's
-    preset bakes them). A fallback without `frozen` (or false) mirrors a startup setting and is U3's
+    preset bakes them), then the map's frame's (config.lua frames: its city offset names, frozen). A
+    fallback without `frozen` (or false) mirrors a startup setting and is U3's
     one exemption, never registered; a frozen one is a constant body, registered like every Earth
     body, so no later version moves it. One prototype serves every map and version that lists a
     name, so each listing of it must carry the same flags (map_qualified, frozen)."""
     out, flags = {}, {}
+    fr = frames(cfg)
     for key, versions in geography_versions(cfg).items():
         lst, seen = [], set()
-        for v in versions:
+        for v in versions + ([fr[key]] if key in fr else []):
             for e in v["fallbacks"]:
                 f = (e["map_qualified"], bool(e.get("frozen")))
                 if flags.setdefault(e["name"], f) != f:
@@ -598,6 +600,51 @@ def geography_versions(cfg):
             raise ConfigError(f"config.lua geography.{key} names {dup} in more than one role or version: each version "
                               f"takes names of its own and never re-points an older one's (ruling 21)")
         out[key] = versions
+    return out
+
+
+FRAME_NAMES = ("gx", "gy", "u", "v", "cx", "cy")
+FRAME_FIELDS = set(FRAME_NAMES) | {"geo_id", "city_offset", "fallbacks"}
+
+
+def frames(cfg):
+    """`frames` (0.3.0: one geography version per map) is keyed by map key, each {geo_id, gx, gy, u, v, cx, cy,
+    city_offset, fallbacks}: the coordinate chain of the map's layer_chain_geo release, kept when that version was
+    dropped because every map-wide layer reads it by name. geo_id is the map's layer_chain_geo and no version's,
+    the names are noise names no version takes, and the fallbacks are exactly cx then cy, map-qualified and frozen
+    (no preset bakes them; presets.lua values them as city_offset). {map key: frame}; {} without the group."""
+    out = {}
+    maps = set(_keyed(cfg, "maps"))
+    lc = cfg.get("layer_chain_geo") or {}
+    raw = cfg.get("frames")
+    if raw in (None, [], {}):
+        return out
+    if not isinstance(raw, dict):
+        raise ConfigError("config.lua frames must be keyed by map key")
+    taken = {n for vs in geography_versions(cfg).values() for v in vs for n in own_names(v)}
+    ids = {v["geo_id"] for vs in geography_versions(cfg).values() for v in vs}
+    for key, f in raw.items():
+        where = f"frames.{key}"
+        if key not in maps:
+            raise ConfigError(f"config.lua {where} is not a map key")
+        if not isinstance(f, dict) or set(f) != FRAME_FIELDS:
+            raise ConfigError(f"config.lua {where} must hold exactly {sorted(FRAME_FIELDS)}")
+        for n in FRAME_NAMES:
+            if not isinstance(f[n], str) or not f[n]:
+                raise ConfigError(f"config.lua {where}.{n} must be a noise name")
+        if f["geo_id"] != lc.get(key) or f["geo_id"] in ids:
+            raise ConfigError(f"config.lua {where}.geo_id {f['geo_id']!r} must be the map's layer_chain_geo "
+                              f"({lc.get(key)!r}) and no geography version's")
+        off = f["city_offset"]
+        if not (isinstance(off, list) and len(off) == 2 and all(isinstance(x, str) and x for x in off)):
+            raise ConfigError(f"config.lua {where}.city_offset must name the city fold's two bodies")
+        fb = _fallback_entries(f["fallbacks"], f"{where}.fallbacks")
+        if [e["name"] for e in fb] != [f["cx"], f["cy"]] or not all(e["map_qualified"] and e.get("frozen") for e in fb):
+            raise ConfigError(f"config.lua {where}.fallbacks must be exactly cx then cy, map-qualified and frozen")
+        clash = sorted(set(f[n] for n in FRAME_NAMES) & taken)
+        if clash:
+            raise ConfigError(f"config.lua {where} names {clash}, which a geography version takes as its own")
+        out[key] = f
     return out
 
 
@@ -1054,6 +1101,15 @@ def id_space_problems(cfg):
             elif any(r["map"] != k for r in own):
                 out.append(f"config.lua geography.{k}.versions[{i}].geo_id {v['geo_id']!r} is registered under map "
                            f"{[r['map'] for r in own]} in release_registry, not {k!r} (an id names one map)")
+        # a map's frame (0.3.0) keeps its dropped version's tn_geo id and release row
+        for k, f in frames(cfg).items():
+            own = [r for r in rows if r.get("geography") == f["geo_id"]]
+            if not own:
+                out.append(f"config.lua frames.{k}.geo_id {f['geo_id']!r} has no release_registry row (each geography "
+                           f"release is registered with its map)")
+            elif any(r["map"] != k for r in own):
+                out.append(f"config.lua frames.{k}.geo_id {f['geo_id']!r} is registered under map "
+                           f"{[r['map'] for r in own]} in release_registry, not {k!r} (an id names one map)")
         presets = _keyed(cfg, "presets")
         for field in ("name", "order"):
             for v in _duplicates([p.get(field) for p in presets.values() if isinstance(p, dict)]):
@@ -1159,7 +1215,7 @@ def schema_problems(cfg):
     """Every shape problem of config.lua's groups, as messages (the T16 names row reports them)."""
     out = [f"config.lua {g} is retired: it lives in {home} (every version per map), and a top-level copy is read by "
            f"no one" for g, home in RETIRED_GROUPS.items() if g in cfg]
-    for fn in (map_keys, firewall_names, fallbacks, release_registry, toggles, geography_versions, start_masks,
+    for fn in (map_keys, firewall_names, fallbacks, release_registry, toggles, geography_versions, frames, start_masks,
                withheld_presets, water_slider):
         try:
             fn(cfg)
@@ -1271,6 +1327,16 @@ def schema_problems(cfg):
                 if unkeyed:
                     out.append(f"config.lua {where}: its preset bakes {unkeyed}, which preset_keys lacks (the "
                                f"guards strip and check only preset_keys)")
+        # each map's frame: every name a released body, its geo_id a release row of its map
+        for key, f in frames(cfg).items():
+            missing = sorted(f[n] for n in FRAME_NAMES if f[n] not in rel)
+            missing += [x for x in f["city_offset"] if x not in rel]
+            if missing:
+                out.append(f"config.lua frames.{key} names {missing}, which no release_registry row lists")
+            walled = sorted(f[n] for n in FRAME_NAMES if f[n] in set(firewall_names(cfg)))
+            if walled:
+                out.append(f"config.lua frames.{key} puts {walled} in the firewall: the map-wide layers read the "
+                           f"frame in every program")
         # each map's waterways.sets is the record of its newest version that composes the waterways
         all_sets = ((cfg.get("waterways") or {}).get("sets")) or {}
         for key, versions in geography_versions(cfg).items():

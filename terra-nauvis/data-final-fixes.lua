@@ -1272,7 +1272,7 @@ local function probability_v3(W, keys, o)
     -- row: the map's u against the strait's column, folded on the per-save map number
     local west, ids = {}, {}
     for _, key in ipairs(cfg.map_order) do
-      for _, v in ipairs((cfg.geography[key] or {}).versions or {}) do
+      for _, v in ipairs({cfg.frames[key]}) do
         if v.geo_id == cfg.layer_chain_geo[key] then
           local cut = (LB.cut_lon - cfg.maps[key].lon_left_edge) * cfg.coordinates.px_per_degree - 1 / 2
           west[#west + 1] = "(" .. v.u .. " < " .. num(cut) .. ")"

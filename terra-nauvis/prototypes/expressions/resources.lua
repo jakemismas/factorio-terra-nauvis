@@ -62,7 +62,7 @@ end
 local MAPS = {}
 for _, key in ipairs(cfg.map_order) do
   local g
-  for _, v in ipairs((cfg.geography[key] or {}).versions or {}) do
+  for _, v in ipairs({cfg.frames[key]}) do
     if v.geo_id == cfg.layer_chain_geo[key] then
       g = v
     end

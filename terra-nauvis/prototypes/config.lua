@@ -32,18 +32,13 @@ local K_SPAWN_BIAS = NOISE .. "spawn_bias"
 -- chain carries the map's radii and extent and reads the city offset through the map's own
 -- map-qualified per-save names, so a Map type pick alone (which sets only elevation) still renders the
 -- map, and no map-dependent value reaches the entry through tn_map or a shared key. Each map keeps one
--- geography version until the first release.
+-- geography version.
 -- The generated files (tools/build_geo.py): name-free data that a geography version's fit bodies
 -- bind to its own chain, so a later version binds the same files instead of emitting new ones.
 local EU_GEO_FILE = "prototypes/generated/geo_europe_v1.lua"
 local EU_LAND_COARSE_FILE = "prototypes/generated/land_coarse_europe_v1.lua"
-
-local AT_GEO_FILE = "prototypes/generated/geo_atlantic_v1.lua"
 local AT_LAND_COARSE_FILE = "prototypes/generated/land_coarse_atlantic_v1.lua"
-
-local OW_GEO_FILE = "prototypes/generated/geo_olde_world_v1.lua"
 local OW_LAND_COARSE_FILE = "prototypes/generated/land_coarse_olde_world_v1.lua"
-
 
 -- The spawn bodies (spawn.lua). The city number is a map-qualified per-save number that mirrors the
 -- map's spawn-city setting (0 random, k the k-th city of the setting); the fold turns it, or the
@@ -54,8 +49,6 @@ local EU_CITY = NOISE .. "city_europe"
 local EU_CITY_INDEX = NOISE .. "city_index_europe_v1"
 local EU_CITY_CX = NOISE .. "city_cx_europe_v1"
 local EU_CITY_CY = NOISE .. "city_cy_europe_v1"
-local EU_SPAWN_LAKE = NOISE .. "spawn_lake_europe_v1"
-local EU_SPAWN_BIAS = NOISE .. "spawn_bias_europe_v1"
 local START_LAND = NOISE .. "start_land_v1"
 local DISTANCE = NOISE .. "distance_v1"
 -- The spawn bearings per city and scale (tools/build_spawn.py): name-free data.
@@ -79,19 +72,6 @@ local EU_WW_FILES = {"prototypes/generated/waterways_europe_s1_v1.lua",
                      "prototypes/generated/waterways_europe_s4_v1.lua",
                      "prototypes/generated/waterways_europe_s5_v1.lua",
                      "prototypes/generated/waterways_europe_s6_v1.lua"}
-local AT_WW_FILES = {"prototypes/generated/waterways_atlantic_s1_v1.lua",
-                     "prototypes/generated/waterways_atlantic_s2_v1.lua",
-                     "prototypes/generated/waterways_atlantic_s3_v1.lua",
-                     "prototypes/generated/waterways_atlantic_s4_v1.lua",
-                     "prototypes/generated/waterways_atlantic_s5_v1.lua",
-                     "prototypes/generated/waterways_atlantic_s6_v1.lua"}
-local OW_WW_FILES = {"prototypes/generated/waterways_olde_world_s1_v1.lua",
-                     "prototypes/generated/waterways_olde_world_s2_v1.lua",
-                     "prototypes/generated/waterways_olde_world_s3_v1.lua",
-                     "prototypes/generated/waterways_olde_world_s4_v1.lua",
-                     "prototypes/generated/waterways_olde_world_s5_v1.lua",
-                     "prototypes/generated/waterways_olde_world_s6_v1.lua"}
--- Each map's sets, as the version that composes them names them (one table for both places).
 
 -- The region layer: every region body carries its version suffix. These are its
 -- fixed names; a row's own names come from the row name stems below and the row's id.
@@ -556,43 +536,17 @@ local REN = {
 -- 2026-10-29 16:05 and 17:50): the far-field box sinks land into deep water across a noise-warped band
 -- just inside the extent (coast.edge_band), so a coast the box cuts reads as a wavy coastline, and a
 -- map's inland lakes compose only when the per-save switch tn_inland_lakes names tn_one. Europe's
--- version 6 carries these names.
+-- version 6 carried these names; its frame (config.lua frames) keeps the chain names.
 -- edge-and-lakes' names (one table: the 200-local limit)
 local ELN = {
   K_INLAND_LAKES = NOISE .. "inland_lakes",
-  EU6_ENTRY = NOISE .. "elevation_europe_v6",
-  EU6_GEO = NOISE .. "geo_europe_v6",
-  EU6_LAND_COARSE = NOISE .. "land_coarse_europe_v6",
-  EU6_DETAIL = NOISE .. "detail_europe_v6",
-  EU6_FAR = NOISE .. "far_europe_v6",
   EU6_GX = NOISE .. "gx_europe_v6",
   EU6_GY = NOISE .. "gy_europe_v6",
   EU6_U = NOISE .. "u_europe_v6",
   EU6_V = NOISE .. "v_europe_v6",
   EU6_CX = NOISE .. "cx_europe_v6",
   EU6_CY = NOISE .. "cy_europe_v6",
-  EU6_LAKES = NOISE .. "inland_lakes_europe_v5",
-  EU6_SHORE = NOISE .. "shore_europe_v3",
-  EU_WW4 = {NOISE .. "ww_europe_s1_v4", NOISE .. "ww_europe_s2_v4", NOISE .. "ww_europe_s3_v4",
-            NOISE .. "ww_europe_s4_v4", NOISE .. "ww_europe_s5_v4", NOISE .. "ww_europe_s6_v4"},
-  EU_CANALS4 = {NOISE .. "canals_europe_s1_v4", NOISE .. "canals_europe_s2_v4", NOISE .. "canals_europe_s3_v4",
-                NOISE .. "canals_europe_s4_v4", NOISE .. "canals_europe_s5_v4", NOISE .. "canals_europe_s6_v4"},
-  EU_DAMS4 = {NOISE .. "dams_europe_s1_v4", NOISE .. "dams_europe_s2_v4", NOISE .. "dams_europe_s3_v4",
-              NOISE .. "dams_europe_s4_v4", NOISE .. "dams_europe_s5_v4", NOISE .. "dams_europe_s6_v4"},
-  EU_FORDS4 = {NOISE .. "fords_europe_s1_v4", NOISE .. "fords_europe_s2_v4", NOISE .. "fords_europe_s3_v4",
-               NOISE .. "fords_europe_s4_v4", NOISE .. "fords_europe_s5_v4", NOISE .. "fords_europe_s6_v4"},
-  -- Europe's scales past its released list (geography.europe.versions[1].extension).
-  EUX_ENTRY = NOISE .. "elevation_europe_x_v1",
-  EUX_WW = {NOISE .. "ww_europe_s12_v4", NOISE .. "ww_europe_s24_v4"},
-  EUX_CANALS = {NOISE .. "canals_europe_s12_v4", NOISE .. "canals_europe_s24_v4"},
-  EUX_DAMS = {NOISE .. "dams_europe_s12_v4", NOISE .. "dams_europe_s24_v4"},
-  EUX_FORDS = {NOISE .. "fords_europe_s12_v4", NOISE .. "fords_europe_s24_v4"},
-  EUX_WARP = {
-    NOISE .. "warp_x_europe_s12_v1", NOISE .. "warp_y_europe_s12_v1",
-    NOISE .. "warp_xp_europe_s12_v1", NOISE .. "warp_yp_europe_s12_v1",
-    NOISE .. "warp_x_europe_s24_v1", NOISE .. "warp_y_europe_s24_v1",
-    NOISE .. "warp_xp_europe_s24_v1", NOISE .. "warp_yp_europe_s24_v1",
-  },
+  -- Europe's scale 12 and 24 waterway files, which version 7 binds with the scale 1 to 6 files.
   EUX_WW_FILES = {"prototypes/generated/waterways_europe_s12_v1.lua",
                   "prototypes/generated/waterways_europe_s24_v1.lua"},
   -- 0.3.0: Europe's version 7, the composition of version 6 and its scale extension under names of its own, at
@@ -643,85 +597,32 @@ local ELN = {
     NOISE .. "warp_xp_europe_s24_v2", NOISE .. "warp_yp_europe_s24_v2",
   },
 }
-local EU_SETS4 = {ww = ELN.EU_WW4, canals = ELN.EU_CANALS4, dams = ELN.EU_DAMS4, fords = ELN.EU_FORDS4}
 -- The Old World and Atlantic spawn city (2026-10-30): each map's spawn-city
 -- setting moves the spawn through the city fold, with the spawn lake, start mask version 2 and the
--- inland lakes behind the inland lakes switch, and the soft map edge, as Europe's version 6 does:
--- Atlantic's and Old World's version 6. One table: the 200-local limit.
+-- inland lakes behind the inland lakes switch, and the soft map edge, as Europe's version 6 did:
+-- Atlantic's and Old World's version 6, whose frames keep the chain names, and the files and names the 0.3.0
+-- versions share with them. One table: the 200-local limit.
 local OAS = {
-  AT6_ENTRY = NOISE .. "elevation_atlantic_v6",
-  AT6_GEO = NOISE .. "geo_atlantic_v6",
-  AT6_LAND_COARSE = NOISE .. "land_coarse_atlantic_v6",
-  AT6_DETAIL = NOISE .. "detail_atlantic_v6",
-  AT6_FAR = NOISE .. "far_atlantic_v6",
   AT6_GX = NOISE .. "gx_atlantic_v6",
   AT6_GY = NOISE .. "gy_atlantic_v6",
   AT6_U = NOISE .. "u_atlantic_v6",
   AT6_V = NOISE .. "v_atlantic_v6",
   AT6_CX = NOISE .. "cx_atlantic_v6",
   AT6_CY = NOISE .. "cy_atlantic_v6",
-  AT6_LAKES = NOISE .. "inland_lakes_atlantic_v1",
-  AT6_SHORE = NOISE .. "shore_atlantic_v4",
   AT_CITY = NOISE .. "city_atlantic",
   AT_CITY_INDEX = NOISE .. "city_index_atlantic_v1",
   AT_CITY_CX = NOISE .. "city_cx_atlantic_v1",
   AT_CITY_CY = NOISE .. "city_cy_atlantic_v1",
-  AT_SPAWN_LAKE = NOISE .. "spawn_lake_atlantic_v1",
-  AT_SPAWN_BIAS = NOISE .. "spawn_bias_atlantic_v1",
-  AT_SPAWN_FILE = "prototypes/generated/spawn_atlantic_v1.lua",
-  AT_WW5 = {NOISE .. "ww_atlantic_s1_v5", NOISE .. "ww_atlantic_s2_v5", NOISE .. "ww_atlantic_s3_v5",
-            NOISE .. "ww_atlantic_s4_v5", NOISE .. "ww_atlantic_s5_v5", NOISE .. "ww_atlantic_s6_v5"},
-  AT_CANALS5 = {NOISE .. "canals_atlantic_s1_v5", NOISE .. "canals_atlantic_s2_v5", NOISE .. "canals_atlantic_s3_v5",
-                NOISE .. "canals_atlantic_s4_v5", NOISE .. "canals_atlantic_s5_v5", NOISE .. "canals_atlantic_s6_v5"},
-  AT_DAMS5 = {NOISE .. "dams_atlantic_s1_v5", NOISE .. "dams_atlantic_s2_v5", NOISE .. "dams_atlantic_s3_v5",
-              NOISE .. "dams_atlantic_s4_v5", NOISE .. "dams_atlantic_s5_v5", NOISE .. "dams_atlantic_s6_v5"},
-  AT_FORDS5 = {NOISE .. "fords_atlantic_s1_v5", NOISE .. "fords_atlantic_s2_v5", NOISE .. "fords_atlantic_s3_v5",
-               NOISE .. "fords_atlantic_s4_v5", NOISE .. "fords_atlantic_s5_v5", NOISE .. "fords_atlantic_s6_v5"},
-  OW6_ENTRY = NOISE .. "elevation_olde_world_v6",
-  OW6_GEO = NOISE .. "geo_olde_world_v6",
-  OW6_LAND_COARSE = NOISE .. "land_coarse_olde_world_v6",
-  OW6_DETAIL = NOISE .. "detail_olde_world_v6",
-  OW6_FAR = NOISE .. "far_olde_world_v6",
   OW6_GX = NOISE .. "gx_olde_world_v6",
   OW6_GY = NOISE .. "gy_olde_world_v6",
   OW6_U = NOISE .. "u_olde_world_v6",
   OW6_V = NOISE .. "v_olde_world_v6",
   OW6_CX = NOISE .. "cx_olde_world_v6",
   OW6_CY = NOISE .. "cy_olde_world_v6",
-  OW6_LAKES = NOISE .. "inland_lakes_olde_world_v1",
-  OW6_SHORE = NOISE .. "shore_olde_world_v4",
   OW_CITY = NOISE .. "city_olde_world",
   OW_CITY_INDEX = NOISE .. "city_index_olde_world_v1",
   OW_CITY_CX = NOISE .. "city_cx_olde_world_v1",
   OW_CITY_CY = NOISE .. "city_cy_olde_world_v1",
-  OW_SPAWN_LAKE = NOISE .. "spawn_lake_olde_world_v1",
-  OW_SPAWN_BIAS = NOISE .. "spawn_bias_olde_world_v1",
-  OW_SPAWN_FILE = "prototypes/generated/spawn_olde_world_v1.lua",
-  OW_WW5 = {NOISE .. "ww_olde_world_s1_v5", NOISE .. "ww_olde_world_s2_v5", NOISE .. "ww_olde_world_s3_v5",
-            NOISE .. "ww_olde_world_s4_v5", NOISE .. "ww_olde_world_s5_v5", NOISE .. "ww_olde_world_s6_v5"},
-  OW_CANALS5 = {NOISE .. "canals_olde_world_s1_v5", NOISE .. "canals_olde_world_s2_v5",
-                NOISE .. "canals_olde_world_s3_v5", NOISE .. "canals_olde_world_s4_v5",
-                NOISE .. "canals_olde_world_s5_v5", NOISE .. "canals_olde_world_s6_v5"},
-  OW_DAMS5 = {NOISE .. "dams_olde_world_s1_v5", NOISE .. "dams_olde_world_s2_v5", NOISE .. "dams_olde_world_s3_v5",
-              NOISE .. "dams_olde_world_s4_v5", NOISE .. "dams_olde_world_s5_v5", NOISE .. "dams_olde_world_s6_v5"},
-  OW_FORDS5 = {NOISE .. "fords_olde_world_s1_v5", NOISE .. "fords_olde_world_s2_v5",
-               NOISE .. "fords_olde_world_s3_v5", NOISE .. "fords_olde_world_s4_v5",
-               NOISE .. "fords_olde_world_s5_v5", NOISE .. "fords_olde_world_s6_v5"},
-  OW7_ENTRY = NOISE .. "elevation_olde_world_v7",
-  OW7_GEO = NOISE .. "geo_olde_world_v7",
-  OW7_LAND_COARSE = NOISE .. "land_coarse_olde_world_v7",
-  OW7_DETAIL = NOISE .. "detail_olde_world_v7",
-  OW7_FAR = NOISE .. "far_olde_world_v7",
-  OW7_GX = NOISE .. "gx_olde_world_v7",
-  OW7_GY = NOISE .. "gy_olde_world_v7",
-  OW7_U = NOISE .. "u_olde_world_v7",
-  OW7_V = NOISE .. "v_olde_world_v7",
-  OW7_CX = NOISE .. "cx_olde_world_v7",
-  OW7_CY = NOISE .. "cy_olde_world_v7",
-  OW7_LAKES = NOISE .. "inland_lakes_olde_world_v2",
-  OW7_SHORE = NOISE .. "shore_olde_world_v5",
-  OW7_SPAWN_LAKE = NOISE .. "spawn_lake_olde_world_v2",
-  OW7_SPAWN_BIAS = NOISE .. "spawn_bias_olde_world_v2",
   OW7_GEO_FILE = "prototypes/generated/geo_olde_world_v2.lua",
   OW7_SPAWN_FILE = "prototypes/generated/spawn_olde_world_v2.lua",
   OW7_WW_FILES = {"prototypes/generated/waterways_olde_world_s1_v2.lua",
@@ -732,59 +633,6 @@ local OAS = {
                    "prototypes/generated/waterways_olde_world_s6_v2.lua",
                    "prototypes/generated/waterways_olde_world_s12_v2.lua",
                    "prototypes/generated/waterways_olde_world_s24_v2.lua"},
-  OW_WW6 = {NOISE .. "ww_olde_world_s1_v6", NOISE .. "ww_olde_world_s2_v6",
-    NOISE .. "ww_olde_world_s3_v6", NOISE .. "ww_olde_world_s4_v6",
-    NOISE .. "ww_olde_world_s5_v6", NOISE .. "ww_olde_world_s6_v6",
-    NOISE .. "ww_olde_world_s12_v6", NOISE .. "ww_olde_world_s24_v6"},
-  OW_CANALS6 = {NOISE .. "canals_olde_world_s1_v6", NOISE .. "canals_olde_world_s2_v6",
-    NOISE .. "canals_olde_world_s3_v6", NOISE .. "canals_olde_world_s4_v6",
-    NOISE .. "canals_olde_world_s5_v6", NOISE .. "canals_olde_world_s6_v6",
-    NOISE .. "canals_olde_world_s12_v6", NOISE .. "canals_olde_world_s24_v6"},
-  OW_DAMS6 = {NOISE .. "dams_olde_world_s1_v6", NOISE .. "dams_olde_world_s2_v6",
-    NOISE .. "dams_olde_world_s3_v6", NOISE .. "dams_olde_world_s4_v6",
-    NOISE .. "dams_olde_world_s5_v6", NOISE .. "dams_olde_world_s6_v6",
-    NOISE .. "dams_olde_world_s12_v6", NOISE .. "dams_olde_world_s24_v6"},
-  OW_WARP = {
-    NOISE .. "warp_x_olde_world_s1_v1", NOISE .. "warp_y_olde_world_s1_v1",
-    NOISE .. "warp_xp_olde_world_s1_v1", NOISE .. "warp_yp_olde_world_s1_v1",
-    NOISE .. "warp_x_olde_world_s2_v1", NOISE .. "warp_y_olde_world_s2_v1",
-    NOISE .. "warp_xp_olde_world_s2_v1", NOISE .. "warp_yp_olde_world_s2_v1",
-    NOISE .. "warp_x_olde_world_s3_v1", NOISE .. "warp_y_olde_world_s3_v1",
-    NOISE .. "warp_xp_olde_world_s3_v1", NOISE .. "warp_yp_olde_world_s3_v1",
-    NOISE .. "warp_x_olde_world_s4_v1", NOISE .. "warp_y_olde_world_s4_v1",
-    NOISE .. "warp_xp_olde_world_s4_v1", NOISE .. "warp_yp_olde_world_s4_v1",
-    NOISE .. "warp_x_olde_world_s5_v1", NOISE .. "warp_y_olde_world_s5_v1",
-    NOISE .. "warp_xp_olde_world_s5_v1", NOISE .. "warp_yp_olde_world_s5_v1",
-    NOISE .. "warp_x_olde_world_s6_v1", NOISE .. "warp_y_olde_world_s6_v1",
-    NOISE .. "warp_xp_olde_world_s6_v1", NOISE .. "warp_yp_olde_world_s6_v1",
-    NOISE .. "warp_x_olde_world_s12_v1", NOISE .. "warp_y_olde_world_s12_v1",
-    NOISE .. "warp_xp_olde_world_s12_v1", NOISE .. "warp_yp_olde_world_s12_v1",
-    NOISE .. "warp_x_olde_world_s24_v1", NOISE .. "warp_y_olde_world_s24_v1",
-    NOISE .. "warp_xp_olde_world_s24_v1", NOISE .. "warp_yp_olde_world_s24_v1",
-  },
-  OW_MOUTH = {NOISE .. "mouth_olde_world_s1_v1", NOISE .. "mouth_olde_world_s2_v1",
-    NOISE .. "mouth_olde_world_s3_v1", NOISE .. "mouth_olde_world_s4_v1",
-    NOISE .. "mouth_olde_world_s5_v1", NOISE .. "mouth_olde_world_s6_v1",
-    NOISE .. "mouth_olde_world_s12_v1", NOISE .. "mouth_olde_world_s24_v1"},
-  OW_FORDS6 = {NOISE .. "fords_olde_world_s1_v6", NOISE .. "fords_olde_world_s2_v6",
-    NOISE .. "fords_olde_world_s3_v6", NOISE .. "fords_olde_world_s4_v6",
-    NOISE .. "fords_olde_world_s5_v6", NOISE .. "fords_olde_world_s6_v6",
-    NOISE .. "fords_olde_world_s12_v6", NOISE .. "fords_olde_world_s24_v6"},
-  AT7_ENTRY = NOISE .. "elevation_atlantic_v7",
-  AT7_GEO = NOISE .. "geo_atlantic_v7",
-  AT7_LAND_COARSE = NOISE .. "land_coarse_atlantic_v7",
-  AT7_DETAIL = NOISE .. "detail_atlantic_v7",
-  AT7_FAR = NOISE .. "far_atlantic_v7",
-  AT7_GX = NOISE .. "gx_atlantic_v7",
-  AT7_GY = NOISE .. "gy_atlantic_v7",
-  AT7_U = NOISE .. "u_atlantic_v7",
-  AT7_V = NOISE .. "v_atlantic_v7",
-  AT7_CX = NOISE .. "cx_atlantic_v7",
-  AT7_CY = NOISE .. "cy_atlantic_v7",
-  AT7_LAKES = NOISE .. "inland_lakes_atlantic_v2",
-  AT7_SHORE = NOISE .. "shore_atlantic_v5",
-  AT7_SPAWN_LAKE = NOISE .. "spawn_lake_atlantic_v2",
-  AT7_SPAWN_BIAS = NOISE .. "spawn_bias_atlantic_v2",
   AT7_GEO_FILE = "prototypes/generated/geo_atlantic_v2.lua",
   AT7_SPAWN_FILE = "prototypes/generated/spawn_atlantic_v2.lua",
   AT7_WW_FILES = {"prototypes/generated/waterways_atlantic_s1_v2.lua",
@@ -795,44 +643,6 @@ local OAS = {
                    "prototypes/generated/waterways_atlantic_s6_v2.lua",
                    "prototypes/generated/waterways_atlantic_s12_v2.lua",
                    "prototypes/generated/waterways_atlantic_s24_v2.lua"},
-  AT_WW6 = {NOISE .. "ww_atlantic_s1_v6", NOISE .. "ww_atlantic_s2_v6",
-    NOISE .. "ww_atlantic_s3_v6", NOISE .. "ww_atlantic_s4_v6",
-    NOISE .. "ww_atlantic_s5_v6", NOISE .. "ww_atlantic_s6_v6",
-    NOISE .. "ww_atlantic_s12_v6", NOISE .. "ww_atlantic_s24_v6"},
-  AT_CANALS6 = {NOISE .. "canals_atlantic_s1_v6", NOISE .. "canals_atlantic_s2_v6",
-    NOISE .. "canals_atlantic_s3_v6", NOISE .. "canals_atlantic_s4_v6",
-    NOISE .. "canals_atlantic_s5_v6", NOISE .. "canals_atlantic_s6_v6",
-    NOISE .. "canals_atlantic_s12_v6", NOISE .. "canals_atlantic_s24_v6"},
-  AT_DAMS6 = {NOISE .. "dams_atlantic_s1_v6", NOISE .. "dams_atlantic_s2_v6",
-    NOISE .. "dams_atlantic_s3_v6", NOISE .. "dams_atlantic_s4_v6",
-    NOISE .. "dams_atlantic_s5_v6", NOISE .. "dams_atlantic_s6_v6",
-    NOISE .. "dams_atlantic_s12_v6", NOISE .. "dams_atlantic_s24_v6"},
-  AT_WARP = {
-    NOISE .. "warp_x_atlantic_s1_v1", NOISE .. "warp_y_atlantic_s1_v1",
-    NOISE .. "warp_xp_atlantic_s1_v1", NOISE .. "warp_yp_atlantic_s1_v1",
-    NOISE .. "warp_x_atlantic_s2_v1", NOISE .. "warp_y_atlantic_s2_v1",
-    NOISE .. "warp_xp_atlantic_s2_v1", NOISE .. "warp_yp_atlantic_s2_v1",
-    NOISE .. "warp_x_atlantic_s3_v1", NOISE .. "warp_y_atlantic_s3_v1",
-    NOISE .. "warp_xp_atlantic_s3_v1", NOISE .. "warp_yp_atlantic_s3_v1",
-    NOISE .. "warp_x_atlantic_s4_v1", NOISE .. "warp_y_atlantic_s4_v1",
-    NOISE .. "warp_xp_atlantic_s4_v1", NOISE .. "warp_yp_atlantic_s4_v1",
-    NOISE .. "warp_x_atlantic_s5_v1", NOISE .. "warp_y_atlantic_s5_v1",
-    NOISE .. "warp_xp_atlantic_s5_v1", NOISE .. "warp_yp_atlantic_s5_v1",
-    NOISE .. "warp_x_atlantic_s6_v1", NOISE .. "warp_y_atlantic_s6_v1",
-    NOISE .. "warp_xp_atlantic_s6_v1", NOISE .. "warp_yp_atlantic_s6_v1",
-    NOISE .. "warp_x_atlantic_s12_v1", NOISE .. "warp_y_atlantic_s12_v1",
-    NOISE .. "warp_xp_atlantic_s12_v1", NOISE .. "warp_yp_atlantic_s12_v1",
-    NOISE .. "warp_x_atlantic_s24_v1", NOISE .. "warp_y_atlantic_s24_v1",
-    NOISE .. "warp_xp_atlantic_s24_v1", NOISE .. "warp_yp_atlantic_s24_v1",
-  },
-  AT_MOUTH = {NOISE .. "mouth_atlantic_s1_v1", NOISE .. "mouth_atlantic_s2_v1",
-    NOISE .. "mouth_atlantic_s3_v1", NOISE .. "mouth_atlantic_s4_v1",
-    NOISE .. "mouth_atlantic_s5_v1", NOISE .. "mouth_atlantic_s6_v1",
-    NOISE .. "mouth_atlantic_s12_v1", NOISE .. "mouth_atlantic_s24_v1"},
-  AT_FORDS6 = {NOISE .. "fords_atlantic_s1_v6", NOISE .. "fords_atlantic_s2_v6",
-    NOISE .. "fords_atlantic_s3_v6", NOISE .. "fords_atlantic_s4_v6",
-    NOISE .. "fords_atlantic_s5_v6", NOISE .. "fords_atlantic_s6_v6",
-    NOISE .. "fords_atlantic_s12_v6", NOISE .. "fords_atlantic_s24_v6"},
   -- 0.3.0: Old World's and Atlantic's version 8, the composition of version 7 under names of their own.
   OW8_ENTRY = NOISE .. "elevation_olde_world_v8",
   OW8_GEO = NOISE .. "geo_olde_world_v8",
@@ -933,10 +743,6 @@ local OAS = {
   },
 }
 local OAS_SETS = {
-  atlantic = {ww = OAS.AT_WW5, canals = OAS.AT_CANALS5, dams = OAS.AT_DAMS5, fords = OAS.AT_FORDS5},
-  atlantic_v7 = {ww = OAS.AT_WW6, canals = OAS.AT_CANALS6, dams = OAS.AT_DAMS6, fords = OAS.AT_FORDS6},
-  olde_world = {ww = OAS.OW_WW5, canals = OAS.OW_CANALS5, dams = OAS.OW_DAMS5, fords = OAS.OW_FORDS5},
-  olde_world_v7 = {ww = OAS.OW_WW6, canals = OAS.OW_CANALS6, dams = OAS.OW_DAMS6, fords = OAS.OW_FORDS6},
   atlantic_v8 = {ww = OAS.AT_WW7, canals = OAS.AT_CANALS7, dams = OAS.AT_DAMS7, fords = OAS.AT_FORDS7},
   olde_world_v8 = {ww = OAS.OW_WW7, canals = OAS.OW_CANALS7, dams = OAS.OW_DAMS7, fords = OAS.OW_FORDS7},
   europe_v7 = {ww = ELN.EU_WW5, canals = ELN.EU_CANALS5, dams = ELN.EU_DAMS5, fords = ELN.EU_FORDS5},
@@ -1123,16 +929,7 @@ return {
   -- takes no tn_geo: nothing but the elevation name and the ford set differs, and no save of the version holds these
   -- scales. geo_id names the version it extends; waterway_files its slot in
   -- waterways.lua FILES.
-  scale_extensions = {
-    europe = {
-      geo_id = 14,
-      entry = ELN.EUX_ENTRY,
-      scales = {12, 24},
-      waterways = {ww = ELN.EUX_WW, canals = ELN.EUX_CANALS, dams = ELN.EUX_DAMS, fords = ELN.EUX_FORDS},
-      waterway_files = 2,
-      warp = ELN.EUX_WARP,
-    },
-  },
+  scale_extensions = {},
 
   -- Mod settings. Values are short ASCII tokens, so labels can change without invalidating stored
   -- values (S11). Each new setting goes here and into tests/design-rules.json.
@@ -1324,7 +1121,9 @@ return {
   -- One version per map: nothing had shipped and no saves existed, so every superseded version was
   -- retired (its issue, 2026-10-30 10:26; design notes 2026-10-30 10:55). After the first release
   -- a map's versions only grow again: a later version takes names of its own and an older one stays
-  -- defined, unchanged, for the worlds that name it (design rule 21).
+  -- defined, unchanged, for the worlds that name it (design rule 21). 0.3.0 collapsed them again to one per map
+  --: tests/collapsed.json names every version,
+  -- row, record and file that left, and each dropped version's chain stays as its map's frame (frames below).
   --
   -- geo_id is the version's geography release, the number its preset bakes as tn_geo. tn_geo is
   -- one id space across every map: each geography release of any map takes the next unused
@@ -1335,39 +1134,6 @@ return {
     europe = {
       map_type_order = "3000-tn-a",
       versions = {
-        {
-          -- Version 6: the spawn at the chosen city, the waterways, the shore body, the offshore field
-          -- stamp, the soft map edge in its far-field box (edge = true: coast.edge_band) and its inland
-          -- lakes read through the inland lakes switch (lakes: the per-save toggle key, a Map type
-          -- fallback mirroring the setting), so with the switch off only the spawn lake, the waterways
-          -- and the coast fit's own water remain.
-          geo_id = 14,
-          entry = ELN.EU6_ENTRY,
-          geo = ELN.EU6_GEO, land_coarse = ELN.EU6_LAND_COARSE, detail = ELN.EU6_DETAIL, far = ELN.EU6_FAR,
-          gx = ELN.EU6_GX, gy = ELN.EU6_GY, u = ELN.EU6_U, v = ELN.EU6_V,
-          cx = ELN.EU6_CX, cy = ELN.EU6_CY, city_offset = {EU_CITY_CX, EU_CITY_CY},
-          start_mask = START_MASK2,
-          fits = {geo = EU_GEO_FILE, land_coarse = EU_LAND_COARSE_FILE},
-          fallbacks = {
-            {name = K_SCALE, map_qualified = false},
-            {name = ELN.EU6_CX, map_qualified = true, frozen = true},
-            {name = ELN.EU6_CY, map_qualified = true, frozen = true},
-            {name = EU_CITY, map_qualified = true},
-            {name = K_CANALS, map_qualified = false},
-            {name = REN.EU_FIELDS_KEY, map_qualified = true},
-            {name = ELN.K_INLAND_LAKES, map_qualified = false},
-          },
-          spawn = {
-            city_setting = "spawn_city_europe", city = EU_CITY, city_index = EU_CITY_INDEX,
-            spawn_lake = EU_SPAWN_LAKE, spawn_bias = EU_SPAWN_BIAS, inland_lakes = ELN.EU6_LAKES,
-            start_land = START_LAND, distance = DISTANCE, bearings = EU_SPAWN_FILE,
-          },
-          waterways = EU_SETS4,
-          shore = ELN.EU6_SHORE,
-          fields = REN.EU_FIELDS_KEY,
-          edge = true,
-          lakes = ELN.K_INLAND_LAKES,
-        },
         {
           -- Version 7 (Europe, 0.3.0): version 6 and its scale extension in one version at every offered
           -- scale, every body that reads the chain under a name of its own, the fit, frame and generated files kept.
@@ -1395,7 +1161,6 @@ return {
           },
           waterways = OAS_SETS.europe_v7,
           scales = SCALE_LISTS.offered,
-          waterway_files = 3,
           warp = ELN.EU7_WARP,
           shore = ELN.EU7_SHORE,
           fields = REN.EU_FIELDS_KEY,
@@ -1407,71 +1172,6 @@ return {
     atlantic = {
       map_type_order = "3000-tn-b",
       versions = {
-        {
-          -- Version 6 (Atlantic): the composition of Europe's version 6: the city fold moves every
-          -- geography read, the spawn lake and starting-ore bias sit on the city's generated bearing
-          -- (start mask version 2), and the inland lakes compose through the inland lakes switch.
-          geo_id = 17,
-          entry = OAS.AT6_ENTRY,
-          geo = OAS.AT6_GEO, land_coarse = OAS.AT6_LAND_COARSE, detail = OAS.AT6_DETAIL, far = OAS.AT6_FAR,
-          gx = OAS.AT6_GX, gy = OAS.AT6_GY, u = OAS.AT6_U, v = OAS.AT6_V,
-          cx = OAS.AT6_CX, cy = OAS.AT6_CY, city_offset = {OAS.AT_CITY_CX, OAS.AT_CITY_CY},
-          start_mask = START_MASK2,
-          fits = {geo = AT_GEO_FILE, land_coarse = AT_LAND_COARSE_FILE},
-          fallbacks = {
-            {name = K_SCALE, map_qualified = false},
-            {name = OAS.AT6_CX, map_qualified = true, frozen = true},
-            {name = OAS.AT6_CY, map_qualified = true, frozen = true},
-            {name = OAS.AT_CITY, map_qualified = true},
-            {name = K_CANALS, map_qualified = false},
-            {name = REN.AT_FIELDS_KEY, map_qualified = true},
-            {name = ELN.K_INLAND_LAKES, map_qualified = false},
-          },
-          spawn = {
-            city_setting = "spawn_city_atlantic", city = OAS.AT_CITY, city_index = OAS.AT_CITY_INDEX,
-            spawn_lake = OAS.AT_SPAWN_LAKE, spawn_bias = OAS.AT_SPAWN_BIAS, inland_lakes = OAS.AT6_LAKES,
-            start_land = START_LAND, distance = DISTANCE, bearings = OAS.AT_SPAWN_FILE,
-          },
-          waterways = OAS_SETS.atlantic,
-          shore = OAS.AT6_SHORE,
-          fields = REN.AT_FIELDS_KEY,
-          edge = true,
-          lakes = ELN.K_INLAND_LAKES,
-        },
-        {
-          -- Version 7 (Atlantic): the composition of version 6 over a new coast fit, so the new-game preview
-          -- reads crisper; every body that reads the fit takes its own name, and the frame is kept.
-          geo_id = 20,
-          entry = OAS.AT7_ENTRY,
-          geo = OAS.AT7_GEO, land_coarse = OAS.AT7_LAND_COARSE, detail = OAS.AT7_DETAIL, far = OAS.AT7_FAR,
-          gx = OAS.AT7_GX, gy = OAS.AT7_GY, u = OAS.AT7_U, v = OAS.AT7_V,
-          cx = OAS.AT7_CX, cy = OAS.AT7_CY, city_offset = {OAS.AT_CITY_CX, OAS.AT_CITY_CY},
-          start_mask = START_MASK2,
-          fits = {geo = OAS.AT7_GEO_FILE, land_coarse = AT_LAND_COARSE_FILE},
-          fallbacks = {
-            {name = K_SCALE, map_qualified = false},
-            {name = OAS.AT7_CX, map_qualified = true, frozen = true},
-            {name = OAS.AT7_CY, map_qualified = true, frozen = true},
-            {name = OAS.AT_CITY, map_qualified = true},
-            {name = K_CANALS, map_qualified = false},
-            {name = REN.AT_FIELDS_KEY, map_qualified = true},
-            {name = ELN.K_INLAND_LAKES, map_qualified = false},
-          },
-          spawn = {
-            city_setting = "spawn_city_atlantic", city = OAS.AT_CITY, city_index = OAS.AT_CITY_INDEX,
-            spawn_lake = OAS.AT7_SPAWN_LAKE, spawn_bias = OAS.AT7_SPAWN_BIAS, inland_lakes = OAS.AT7_LAKES,
-            start_land = START_LAND, distance = DISTANCE, bearings = OAS.AT7_SPAWN_FILE,
-          },
-          waterways = OAS_SETS.atlantic_v7,
-          scales = SCALE_LISTS.offered,
-          waterway_files = 2,
-          mouths = OAS.AT_MOUTH,
-          warp = OAS.AT_WARP,
-          shore = OAS.AT7_SHORE,
-          fields = REN.AT_FIELDS_KEY,
-          edge = true,
-          lakes = ELN.K_INLAND_LAKES,
-        },
         {
           -- Version 8 (Atlantic, 0.3.0): the composition of version 7, every body that reads the chain under a
           -- name of its own, the fit, frame and generated files kept.
@@ -1511,71 +1211,6 @@ return {
     olde_world = {
       map_type_order = "3000-tn-c",
       versions = {
-        {
-          -- Version 6 (Old World): the composition of Europe's version 6: the city fold moves every
-          -- geography read, the spawn lake and starting-ore bias sit on the city's generated bearing
-          -- (start mask version 2), and the inland lakes compose through the inland lakes switch.
-          geo_id = 18,
-          entry = OAS.OW6_ENTRY,
-          geo = OAS.OW6_GEO, land_coarse = OAS.OW6_LAND_COARSE, detail = OAS.OW6_DETAIL, far = OAS.OW6_FAR,
-          gx = OAS.OW6_GX, gy = OAS.OW6_GY, u = OAS.OW6_U, v = OAS.OW6_V,
-          cx = OAS.OW6_CX, cy = OAS.OW6_CY, city_offset = {OAS.OW_CITY_CX, OAS.OW_CITY_CY},
-          start_mask = START_MASK2,
-          fits = {geo = OW_GEO_FILE, land_coarse = OW_LAND_COARSE_FILE},
-          fallbacks = {
-            {name = K_SCALE, map_qualified = false},
-            {name = OAS.OW6_CX, map_qualified = true, frozen = true},
-            {name = OAS.OW6_CY, map_qualified = true, frozen = true},
-            {name = OAS.OW_CITY, map_qualified = true},
-            {name = K_CANALS, map_qualified = false},
-            {name = REN.OW_FIELDS_KEY, map_qualified = true},
-            {name = ELN.K_INLAND_LAKES, map_qualified = false},
-          },
-          spawn = {
-            city_setting = "spawn_city_olde_world", city = OAS.OW_CITY, city_index = OAS.OW_CITY_INDEX,
-            spawn_lake = OAS.OW_SPAWN_LAKE, spawn_bias = OAS.OW_SPAWN_BIAS, inland_lakes = OAS.OW6_LAKES,
-            start_land = START_LAND, distance = DISTANCE, bearings = OAS.OW_SPAWN_FILE,
-          },
-          waterways = OAS_SETS.olde_world,
-          shore = OAS.OW6_SHORE,
-          fields = REN.OW_FIELDS_KEY,
-          edge = true,
-          lakes = ELN.K_INLAND_LAKES,
-        },
-        {
-          -- Version 7 (Old World): the composition of version 6 over a new coast fit, so the new-game preview
-          -- reads crisper; every body that reads the fit takes its own name, and the frame is kept.
-          geo_id = 19,
-          entry = OAS.OW7_ENTRY,
-          geo = OAS.OW7_GEO, land_coarse = OAS.OW7_LAND_COARSE, detail = OAS.OW7_DETAIL, far = OAS.OW7_FAR,
-          gx = OAS.OW7_GX, gy = OAS.OW7_GY, u = OAS.OW7_U, v = OAS.OW7_V,
-          cx = OAS.OW7_CX, cy = OAS.OW7_CY, city_offset = {OAS.OW_CITY_CX, OAS.OW_CITY_CY},
-          start_mask = START_MASK2,
-          fits = {geo = OAS.OW7_GEO_FILE, land_coarse = OW_LAND_COARSE_FILE},
-          fallbacks = {
-            {name = K_SCALE, map_qualified = false},
-            {name = OAS.OW7_CX, map_qualified = true, frozen = true},
-            {name = OAS.OW7_CY, map_qualified = true, frozen = true},
-            {name = OAS.OW_CITY, map_qualified = true},
-            {name = K_CANALS, map_qualified = false},
-            {name = REN.OW_FIELDS_KEY, map_qualified = true},
-            {name = ELN.K_INLAND_LAKES, map_qualified = false},
-          },
-          spawn = {
-            city_setting = "spawn_city_olde_world", city = OAS.OW_CITY, city_index = OAS.OW_CITY_INDEX,
-            spawn_lake = OAS.OW7_SPAWN_LAKE, spawn_bias = OAS.OW7_SPAWN_BIAS, inland_lakes = OAS.OW7_LAKES,
-            start_land = START_LAND, distance = DISTANCE, bearings = OAS.OW7_SPAWN_FILE,
-          },
-          waterways = OAS_SETS.olde_world_v7,
-          scales = SCALE_LISTS.offered,
-          waterway_files = 2,
-          mouths = OAS.OW_MOUTH,
-          warp = OAS.OW_WARP,
-          shore = OAS.OW7_SHORE,
-          fields = REN.OW_FIELDS_KEY,
-          edge = true,
-          lakes = ELN.K_INLAND_LAKES,
-        },
         {
           -- Version 8 (Old World, 0.3.0): the composition of version 7, every body that reads the chain under a
           -- name of its own, the fit, frame and generated files kept.
@@ -1621,6 +1256,33 @@ return {
   -- same city offset under names of its own); a version that moves the frame needs layer bodies of its
   -- own.
   layer_chain_geo = {europe = 14, atlantic = 17, olde_world = 18},
+
+  -- The frames (0.3.0: one geography version per map, no world exists on an earlier
+  -- version): the coordinate chain of each layer_chain_geo release, kept when its version was dropped, because every
+  -- map-wide layer body reads it by name. A frame is that chain alone: its geo tiles and reference pixels on the
+  -- city offset names cx and cy, which no preset bakes, so they are frozen Map type fallbacks valued as the map's
+  -- city fold (city_offset), the offset the 0.3.0 version's own names carry too. coast.lua defines the chain,
+  -- presets.lua the two fallbacks.
+  frames = {
+    europe = {
+      geo_id = 14, gx = ELN.EU6_GX, gy = ELN.EU6_GY, u = ELN.EU6_U, v = ELN.EU6_V, cx = ELN.EU6_CX, cy = ELN.EU6_CY,
+      city_offset = {EU_CITY_CX, EU_CITY_CY},
+      fallbacks = {{name = ELN.EU6_CX, map_qualified = true, frozen = true},
+                   {name = ELN.EU6_CY, map_qualified = true, frozen = true}},
+    },
+    atlantic = {
+      geo_id = 17, gx = OAS.AT6_GX, gy = OAS.AT6_GY, u = OAS.AT6_U, v = OAS.AT6_V, cx = OAS.AT6_CX, cy = OAS.AT6_CY,
+      city_offset = {OAS.AT_CITY_CX, OAS.AT_CITY_CY},
+      fallbacks = {{name = OAS.AT6_CX, map_qualified = true, frozen = true},
+                   {name = OAS.AT6_CY, map_qualified = true, frozen = true}},
+    },
+    olde_world = {
+      geo_id = 18, gx = OAS.OW6_GX, gy = OAS.OW6_GY, u = OAS.OW6_U, v = OAS.OW6_V, cx = OAS.OW6_CX, cy = OAS.OW6_CY,
+      city_offset = {OAS.OW_CITY_CX, OAS.OW_CITY_CY},
+      fallbacks = {{name = OAS.OW6_CX, map_qualified = true, frozen = true},
+                   {name = OAS.OW6_CY, map_qualified = true, frozen = true}},
+    },
+  },
 
   -- The water slider (D15: inert on Earth presets). Vanilla 2.1.23 reads control:water:* in exactly
   -- three named expressions (core/prototypes/noise-programs.lua): water_level (10 * log2 of the
@@ -1708,8 +1370,6 @@ return {
                  ELN.K_INLAND_LAKES, ELN.EU6_CX, ELN.EU6_CY,
                  -- the Old World and Atlantic spawn city: the maps' city numbers and the new versions' offset names
                  OAS.AT_CITY, OAS.OW_CITY, OAS.AT6_CX, OAS.AT6_CY, OAS.OW6_CX, OAS.OW6_CY,
-                 OAS.AT7_CX, OAS.AT7_CY,
-                 OAS.OW7_CX, OAS.OW7_CY,
                  OAS.OW8_CX, OAS.OW8_CY, OAS.AT8_CX, OAS.AT8_CY, ELN.EU7_CX, ELN.EU7_CY,
                  -- destroyed-europe: the zone toggle (temperature and the city numbers are listed above)
                  DE.K,
@@ -1728,97 +1388,48 @@ return {
     -- each map's entry and the terms only it reads; the ford sets reach Tile only, through the
     -- water-shallow hook
     europe = {
-      ELN.EU6_ENTRY, ELN.EU6_GEO, ELN.EU6_DETAIL, ELN.EU6_FAR, ELN.EU6_LAKES, ELN.EU6_SHORE, REN.EU_FIELDS,
-      START_LAND, ELN.EU_WW4[1], ELN.EU_WW4[2], ELN.EU_WW4[3], ELN.EU_WW4[4], ELN.EU_WW4[5], ELN.EU_WW4[6],
-      ELN.EU_CANALS4[1], ELN.EU_CANALS4[2], ELN.EU_CANALS4[3], ELN.EU_CANALS4[4], ELN.EU_CANALS4[5],
-      ELN.EU_CANALS4[6], ELN.EU_DAMS4[1], ELN.EU_DAMS4[2], ELN.EU_DAMS4[3], ELN.EU_DAMS4[4], ELN.EU_DAMS4[5],
-      ELN.EU_DAMS4[6], ELN.EU_FORDS4[1], ELN.EU_FORDS4[2], ELN.EU_FORDS4[3], ELN.EU_FORDS4[4], ELN.EU_FORDS4[5],
-      ELN.EU_FORDS4[6],
-      ELN.EUX_ENTRY, ELN.EUX_WW[1], ELN.EUX_WW[2], ELN.EUX_CANALS[1], ELN.EUX_CANALS[2], ELN.EUX_DAMS[1],
-      ELN.EUX_DAMS[2], ELN.EUX_FORDS[1], ELN.EUX_FORDS[2], ELN.EUX_WARP[1], ELN.EUX_WARP[2], ELN.EUX_WARP[3],
-      ELN.EUX_WARP[4], ELN.EUX_WARP[5], ELN.EUX_WARP[6], ELN.EUX_WARP[7], ELN.EUX_WARP[8],
-      ELN.EU7_ENTRY, ELN.EU7_GEO, ELN.EU7_DETAIL, ELN.EU7_FAR, ELN.EU7_LAKES, ELN.EU7_SHORE, ELN.EU_WW5[1],
-      ELN.EU_WW5[2], ELN.EU_WW5[3], ELN.EU_WW5[4], ELN.EU_WW5[5], ELN.EU_WW5[6], ELN.EU_WW5[7], ELN.EU_WW5[8],
-      ELN.EU_CANALS5[1], ELN.EU_CANALS5[2], ELN.EU_CANALS5[3], ELN.EU_CANALS5[4], ELN.EU_CANALS5[5],
-      ELN.EU_CANALS5[6], ELN.EU_CANALS5[7], ELN.EU_CANALS5[8], ELN.EU_DAMS5[1], ELN.EU_DAMS5[2], ELN.EU_DAMS5[3],
-      ELN.EU_DAMS5[4], ELN.EU_DAMS5[5], ELN.EU_DAMS5[6], ELN.EU_DAMS5[7], ELN.EU_DAMS5[8], ELN.EU_FORDS5[1],
-      ELN.EU_FORDS5[2], ELN.EU_FORDS5[3], ELN.EU_FORDS5[4], ELN.EU_FORDS5[5], ELN.EU_FORDS5[6], ELN.EU_FORDS5[7],
-      ELN.EU_FORDS5[8], ELN.EU7_WARP[1], ELN.EU7_WARP[2], ELN.EU7_WARP[3], ELN.EU7_WARP[4], ELN.EU7_WARP[5],
-      ELN.EU7_WARP[6], ELN.EU7_WARP[7], ELN.EU7_WARP[8], ELN.EU7_WARP[9], ELN.EU7_WARP[10], ELN.EU7_WARP[11],
-      ELN.EU7_WARP[12], ELN.EU7_WARP[13], ELN.EU7_WARP[14], ELN.EU7_WARP[15], ELN.EU7_WARP[16], ELN.EU7_WARP[17],
-      ELN.EU7_WARP[18], ELN.EU7_WARP[19], ELN.EU7_WARP[20], ELN.EU7_WARP[21], ELN.EU7_WARP[22], ELN.EU7_WARP[23],
-      ELN.EU7_WARP[24], ELN.EU7_WARP[25], ELN.EU7_WARP[26], ELN.EU7_WARP[27], ELN.EU7_WARP[28], ELN.EU7_WARP[29],
-      ELN.EU7_WARP[30], ELN.EU7_WARP[31], ELN.EU7_WARP[32],
+      REN.EU_FIELDS, START_LAND, ELN.EU7_ENTRY, ELN.EU7_GEO, ELN.EU7_DETAIL, ELN.EU7_FAR, ELN.EU7_LAKES,
+      ELN.EU7_SHORE, ELN.EU_WW5[1], ELN.EU_WW5[2], ELN.EU_WW5[3], ELN.EU_WW5[4], ELN.EU_WW5[5], ELN.EU_WW5[6],
+      ELN.EU_WW5[7], ELN.EU_WW5[8], ELN.EU_CANALS5[1], ELN.EU_CANALS5[2], ELN.EU_CANALS5[3], ELN.EU_CANALS5[4],
+      ELN.EU_CANALS5[5], ELN.EU_CANALS5[6], ELN.EU_CANALS5[7], ELN.EU_CANALS5[8], ELN.EU_DAMS5[1], ELN.EU_DAMS5[2],
+      ELN.EU_DAMS5[3], ELN.EU_DAMS5[4], ELN.EU_DAMS5[5], ELN.EU_DAMS5[6], ELN.EU_DAMS5[7], ELN.EU_DAMS5[8],
+      ELN.EU_FORDS5[1], ELN.EU_FORDS5[2], ELN.EU_FORDS5[3], ELN.EU_FORDS5[4], ELN.EU_FORDS5[5], ELN.EU_FORDS5[6],
+      ELN.EU_FORDS5[7], ELN.EU_FORDS5[8], ELN.EU7_WARP[1], ELN.EU7_WARP[2], ELN.EU7_WARP[3], ELN.EU7_WARP[4],
+      ELN.EU7_WARP[5], ELN.EU7_WARP[6], ELN.EU7_WARP[7], ELN.EU7_WARP[8], ELN.EU7_WARP[9], ELN.EU7_WARP[10],
+      ELN.EU7_WARP[11], ELN.EU7_WARP[12], ELN.EU7_WARP[13], ELN.EU7_WARP[14], ELN.EU7_WARP[15], ELN.EU7_WARP[16],
+      ELN.EU7_WARP[17], ELN.EU7_WARP[18], ELN.EU7_WARP[19], ELN.EU7_WARP[20], ELN.EU7_WARP[21], ELN.EU7_WARP[22],
+      ELN.EU7_WARP[23], ELN.EU7_WARP[24], ELN.EU7_WARP[25], ELN.EU7_WARP[26], ELN.EU7_WARP[27], ELN.EU7_WARP[28],
+      ELN.EU7_WARP[29], ELN.EU7_WARP[30], ELN.EU7_WARP[31], ELN.EU7_WARP[32],
     },
     atlantic = {
-      OAS.AT6_ENTRY, OAS.AT6_GEO, OAS.AT6_DETAIL, OAS.AT6_FAR, OAS.AT6_LAKES, OAS.AT6_SHORE, REN.AT_FIELDS,
-      START_LAND, OAS.AT_WW5[1], OAS.AT_WW5[2], OAS.AT_WW5[3], OAS.AT_WW5[4], OAS.AT_WW5[5], OAS.AT_WW5[6],
-      OAS.AT_CANALS5[1], OAS.AT_CANALS5[2], OAS.AT_CANALS5[3], OAS.AT_CANALS5[4], OAS.AT_CANALS5[5],
-      OAS.AT_CANALS5[6], OAS.AT_DAMS5[1], OAS.AT_DAMS5[2], OAS.AT_DAMS5[3], OAS.AT_DAMS5[4], OAS.AT_DAMS5[5],
-      OAS.AT_DAMS5[6], OAS.AT_FORDS5[1], OAS.AT_FORDS5[2], OAS.AT_FORDS5[3], OAS.AT_FORDS5[4], OAS.AT_FORDS5[5],
-      OAS.AT_FORDS5[6],
-      OAS.AT7_ENTRY, OAS.AT7_GEO, OAS.AT7_DETAIL, OAS.AT7_FAR, OAS.AT7_LAKES, OAS.AT7_SHORE,
-      OAS.AT_WW6[1], OAS.AT_WW6[2], OAS.AT_WW6[3], OAS.AT_WW6[4], OAS.AT_WW6[5], OAS.AT_WW6[6],
-      OAS.AT_CANALS6[1], OAS.AT_CANALS6[2], OAS.AT_CANALS6[3], OAS.AT_CANALS6[4], OAS.AT_CANALS6[5], OAS.AT_CANALS6[6],
-      OAS.AT_DAMS6[1], OAS.AT_DAMS6[2], OAS.AT_DAMS6[3], OAS.AT_DAMS6[4], OAS.AT_DAMS6[5], OAS.AT_DAMS6[6],
-      OAS.AT_FORDS6[1], OAS.AT_FORDS6[2], OAS.AT_FORDS6[3], OAS.AT_FORDS6[4], OAS.AT_FORDS6[5], OAS.AT_FORDS6[6],
-      OAS.AT_MOUTH[1], OAS.AT_MOUTH[2], OAS.AT_MOUTH[3], OAS.AT_MOUTH[4], OAS.AT_MOUTH[5], OAS.AT_MOUTH[6],
-      OAS.AT_WARP[1], OAS.AT_WARP[2], OAS.AT_WARP[3], OAS.AT_WARP[4], OAS.AT_WARP[5], OAS.AT_WARP[6],
-      OAS.AT_WARP[7], OAS.AT_WARP[8], OAS.AT_WARP[9], OAS.AT_WARP[10], OAS.AT_WARP[11], OAS.AT_WARP[12],
-      OAS.AT_WARP[13], OAS.AT_WARP[14], OAS.AT_WARP[15], OAS.AT_WARP[16], OAS.AT_WARP[17], OAS.AT_WARP[18],
-      OAS.AT_WARP[19], OAS.AT_WARP[20], OAS.AT_WARP[21], OAS.AT_WARP[22], OAS.AT_WARP[23], OAS.AT_WARP[24],
-      OAS.AT_WW6[7], OAS.AT_WW6[8], OAS.AT_CANALS6[7], OAS.AT_CANALS6[8], OAS.AT_DAMS6[7], OAS.AT_DAMS6[8],
-      OAS.AT_FORDS6[7], OAS.AT_FORDS6[8], OAS.AT_MOUTH[7], OAS.AT_MOUTH[8],
-      OAS.AT_WARP[25], OAS.AT_WARP[26], OAS.AT_WARP[27], OAS.AT_WARP[28],
-      OAS.AT_WARP[29], OAS.AT_WARP[30], OAS.AT_WARP[31], OAS.AT_WARP[32],
-      OAS.AT8_ENTRY, OAS.AT8_GEO, OAS.AT8_DETAIL, OAS.AT8_FAR, OAS.AT8_LAKES, OAS.AT8_SHORE, OAS.AT_WW7[1],
-      OAS.AT_WW7[2], OAS.AT_WW7[3], OAS.AT_WW7[4], OAS.AT_WW7[5], OAS.AT_WW7[6], OAS.AT_WW7[7], OAS.AT_WW7[8],
-      OAS.AT_CANALS7[1], OAS.AT_CANALS7[2], OAS.AT_CANALS7[3], OAS.AT_CANALS7[4], OAS.AT_CANALS7[5],
-      OAS.AT_CANALS7[6], OAS.AT_CANALS7[7], OAS.AT_CANALS7[8], OAS.AT_DAMS7[1], OAS.AT_DAMS7[2], OAS.AT_DAMS7[3],
-      OAS.AT_DAMS7[4], OAS.AT_DAMS7[5], OAS.AT_DAMS7[6], OAS.AT_DAMS7[7], OAS.AT_DAMS7[8], OAS.AT_FORDS7[1],
-      OAS.AT_FORDS7[2], OAS.AT_FORDS7[3], OAS.AT_FORDS7[4], OAS.AT_FORDS7[5], OAS.AT_FORDS7[6], OAS.AT_FORDS7[7],
-      OAS.AT_FORDS7[8], OAS.AT_MOUTH2[1], OAS.AT_MOUTH2[2], OAS.AT_MOUTH2[3], OAS.AT_MOUTH2[4], OAS.AT_MOUTH2[5],
-      OAS.AT_MOUTH2[6], OAS.AT_MOUTH2[7], OAS.AT_MOUTH2[8], OAS.AT_WARP2[1], OAS.AT_WARP2[2], OAS.AT_WARP2[3],
-      OAS.AT_WARP2[4], OAS.AT_WARP2[5], OAS.AT_WARP2[6], OAS.AT_WARP2[7], OAS.AT_WARP2[8], OAS.AT_WARP2[9],
-      OAS.AT_WARP2[10], OAS.AT_WARP2[11], OAS.AT_WARP2[12], OAS.AT_WARP2[13], OAS.AT_WARP2[14], OAS.AT_WARP2[15],
-      OAS.AT_WARP2[16], OAS.AT_WARP2[17], OAS.AT_WARP2[18], OAS.AT_WARP2[19], OAS.AT_WARP2[20], OAS.AT_WARP2[21],
-      OAS.AT_WARP2[22], OAS.AT_WARP2[23], OAS.AT_WARP2[24], OAS.AT_WARP2[25], OAS.AT_WARP2[26], OAS.AT_WARP2[27],
-      OAS.AT_WARP2[28], OAS.AT_WARP2[29], OAS.AT_WARP2[30], OAS.AT_WARP2[31], OAS.AT_WARP2[32],
+      REN.AT_FIELDS, START_LAND, OAS.AT8_ENTRY, OAS.AT8_GEO, OAS.AT8_DETAIL, OAS.AT8_FAR, OAS.AT8_LAKES,
+      OAS.AT8_SHORE, OAS.AT_WW7[1], OAS.AT_WW7[2], OAS.AT_WW7[3], OAS.AT_WW7[4], OAS.AT_WW7[5], OAS.AT_WW7[6],
+      OAS.AT_WW7[7], OAS.AT_WW7[8], OAS.AT_CANALS7[1], OAS.AT_CANALS7[2], OAS.AT_CANALS7[3], OAS.AT_CANALS7[4],
+      OAS.AT_CANALS7[5], OAS.AT_CANALS7[6], OAS.AT_CANALS7[7], OAS.AT_CANALS7[8], OAS.AT_DAMS7[1], OAS.AT_DAMS7[2],
+      OAS.AT_DAMS7[3], OAS.AT_DAMS7[4], OAS.AT_DAMS7[5], OAS.AT_DAMS7[6], OAS.AT_DAMS7[7], OAS.AT_DAMS7[8],
+      OAS.AT_FORDS7[1], OAS.AT_FORDS7[2], OAS.AT_FORDS7[3], OAS.AT_FORDS7[4], OAS.AT_FORDS7[5], OAS.AT_FORDS7[6],
+      OAS.AT_FORDS7[7], OAS.AT_FORDS7[8], OAS.AT_MOUTH2[1], OAS.AT_MOUTH2[2], OAS.AT_MOUTH2[3], OAS.AT_MOUTH2[4],
+      OAS.AT_MOUTH2[5], OAS.AT_MOUTH2[6], OAS.AT_MOUTH2[7], OAS.AT_MOUTH2[8], OAS.AT_WARP2[1], OAS.AT_WARP2[2],
+      OAS.AT_WARP2[3], OAS.AT_WARP2[4], OAS.AT_WARP2[5], OAS.AT_WARP2[6], OAS.AT_WARP2[7], OAS.AT_WARP2[8],
+      OAS.AT_WARP2[9], OAS.AT_WARP2[10], OAS.AT_WARP2[11], OAS.AT_WARP2[12], OAS.AT_WARP2[13], OAS.AT_WARP2[14],
+      OAS.AT_WARP2[15], OAS.AT_WARP2[16], OAS.AT_WARP2[17], OAS.AT_WARP2[18], OAS.AT_WARP2[19], OAS.AT_WARP2[20],
+      OAS.AT_WARP2[21], OAS.AT_WARP2[22], OAS.AT_WARP2[23], OAS.AT_WARP2[24], OAS.AT_WARP2[25], OAS.AT_WARP2[26],
+      OAS.AT_WARP2[27], OAS.AT_WARP2[28], OAS.AT_WARP2[29], OAS.AT_WARP2[30], OAS.AT_WARP2[31], OAS.AT_WARP2[32],
     },
     olde_world = {
-      OAS.OW6_ENTRY, OAS.OW6_GEO, OAS.OW6_DETAIL, OAS.OW6_FAR, OAS.OW6_LAKES, OAS.OW6_SHORE, REN.OW_FIELDS,
-      START_LAND, OAS.OW_WW5[1], OAS.OW_WW5[2], OAS.OW_WW5[3], OAS.OW_WW5[4], OAS.OW_WW5[5], OAS.OW_WW5[6],
-      OAS.OW_CANALS5[1], OAS.OW_CANALS5[2], OAS.OW_CANALS5[3], OAS.OW_CANALS5[4], OAS.OW_CANALS5[5],
-      OAS.OW_CANALS5[6], OAS.OW_DAMS5[1], OAS.OW_DAMS5[2], OAS.OW_DAMS5[3], OAS.OW_DAMS5[4], OAS.OW_DAMS5[5],
-      OAS.OW_DAMS5[6], OAS.OW_FORDS5[1], OAS.OW_FORDS5[2], OAS.OW_FORDS5[3], OAS.OW_FORDS5[4], OAS.OW_FORDS5[5],
-      OAS.OW_FORDS5[6],
-      OAS.OW7_ENTRY, OAS.OW7_GEO, OAS.OW7_DETAIL, OAS.OW7_FAR, OAS.OW7_LAKES, OAS.OW7_SHORE,
-      OAS.OW_WW6[1], OAS.OW_WW6[2], OAS.OW_WW6[3], OAS.OW_WW6[4], OAS.OW_WW6[5], OAS.OW_WW6[6],
-      OAS.OW_CANALS6[1], OAS.OW_CANALS6[2], OAS.OW_CANALS6[3], OAS.OW_CANALS6[4], OAS.OW_CANALS6[5], OAS.OW_CANALS6[6],
-      OAS.OW_DAMS6[1], OAS.OW_DAMS6[2], OAS.OW_DAMS6[3], OAS.OW_DAMS6[4], OAS.OW_DAMS6[5], OAS.OW_DAMS6[6],
-      OAS.OW_FORDS6[1], OAS.OW_FORDS6[2], OAS.OW_FORDS6[3], OAS.OW_FORDS6[4], OAS.OW_FORDS6[5], OAS.OW_FORDS6[6],
-      OAS.OW_MOUTH[1], OAS.OW_MOUTH[2], OAS.OW_MOUTH[3], OAS.OW_MOUTH[4], OAS.OW_MOUTH[5], OAS.OW_MOUTH[6],
-      OAS.OW_WARP[1], OAS.OW_WARP[2], OAS.OW_WARP[3], OAS.OW_WARP[4], OAS.OW_WARP[5], OAS.OW_WARP[6],
-      OAS.OW_WARP[7], OAS.OW_WARP[8], OAS.OW_WARP[9], OAS.OW_WARP[10], OAS.OW_WARP[11], OAS.OW_WARP[12],
-      OAS.OW_WARP[13], OAS.OW_WARP[14], OAS.OW_WARP[15], OAS.OW_WARP[16], OAS.OW_WARP[17], OAS.OW_WARP[18],
-      OAS.OW_WARP[19], OAS.OW_WARP[20], OAS.OW_WARP[21], OAS.OW_WARP[22], OAS.OW_WARP[23], OAS.OW_WARP[24],
-      OAS.OW_WW6[7], OAS.OW_WW6[8], OAS.OW_CANALS6[7], OAS.OW_CANALS6[8], OAS.OW_DAMS6[7], OAS.OW_DAMS6[8],
-      OAS.OW_FORDS6[7], OAS.OW_FORDS6[8], OAS.OW_MOUTH[7], OAS.OW_MOUTH[8],
-      OAS.OW_WARP[25], OAS.OW_WARP[26], OAS.OW_WARP[27], OAS.OW_WARP[28],
-      OAS.OW_WARP[29], OAS.OW_WARP[30], OAS.OW_WARP[31], OAS.OW_WARP[32],
-      OAS.OW8_ENTRY, OAS.OW8_GEO, OAS.OW8_DETAIL, OAS.OW8_FAR, OAS.OW8_LAKES, OAS.OW8_SHORE, OAS.OW_WW7[1],
-      OAS.OW_WW7[2], OAS.OW_WW7[3], OAS.OW_WW7[4], OAS.OW_WW7[5], OAS.OW_WW7[6], OAS.OW_WW7[7], OAS.OW_WW7[8],
-      OAS.OW_CANALS7[1], OAS.OW_CANALS7[2], OAS.OW_CANALS7[3], OAS.OW_CANALS7[4], OAS.OW_CANALS7[5],
-      OAS.OW_CANALS7[6], OAS.OW_CANALS7[7], OAS.OW_CANALS7[8], OAS.OW_DAMS7[1], OAS.OW_DAMS7[2], OAS.OW_DAMS7[3],
-      OAS.OW_DAMS7[4], OAS.OW_DAMS7[5], OAS.OW_DAMS7[6], OAS.OW_DAMS7[7], OAS.OW_DAMS7[8], OAS.OW_FORDS7[1],
-      OAS.OW_FORDS7[2], OAS.OW_FORDS7[3], OAS.OW_FORDS7[4], OAS.OW_FORDS7[5], OAS.OW_FORDS7[6], OAS.OW_FORDS7[7],
-      OAS.OW_FORDS7[8], OAS.OW_MOUTH2[1], OAS.OW_MOUTH2[2], OAS.OW_MOUTH2[3], OAS.OW_MOUTH2[4], OAS.OW_MOUTH2[5],
-      OAS.OW_MOUTH2[6], OAS.OW_MOUTH2[7], OAS.OW_MOUTH2[8], OAS.OW_WARP2[1], OAS.OW_WARP2[2], OAS.OW_WARP2[3],
-      OAS.OW_WARP2[4], OAS.OW_WARP2[5], OAS.OW_WARP2[6], OAS.OW_WARP2[7], OAS.OW_WARP2[8], OAS.OW_WARP2[9],
-      OAS.OW_WARP2[10], OAS.OW_WARP2[11], OAS.OW_WARP2[12], OAS.OW_WARP2[13], OAS.OW_WARP2[14], OAS.OW_WARP2[15],
-      OAS.OW_WARP2[16], OAS.OW_WARP2[17], OAS.OW_WARP2[18], OAS.OW_WARP2[19], OAS.OW_WARP2[20], OAS.OW_WARP2[21],
-      OAS.OW_WARP2[22], OAS.OW_WARP2[23], OAS.OW_WARP2[24], OAS.OW_WARP2[25], OAS.OW_WARP2[26], OAS.OW_WARP2[27],
-      OAS.OW_WARP2[28], OAS.OW_WARP2[29], OAS.OW_WARP2[30], OAS.OW_WARP2[31], OAS.OW_WARP2[32],
+      REN.OW_FIELDS, START_LAND, OAS.OW8_ENTRY, OAS.OW8_GEO, OAS.OW8_DETAIL, OAS.OW8_FAR, OAS.OW8_LAKES,
+      OAS.OW8_SHORE, OAS.OW_WW7[1], OAS.OW_WW7[2], OAS.OW_WW7[3], OAS.OW_WW7[4], OAS.OW_WW7[5], OAS.OW_WW7[6],
+      OAS.OW_WW7[7], OAS.OW_WW7[8], OAS.OW_CANALS7[1], OAS.OW_CANALS7[2], OAS.OW_CANALS7[3], OAS.OW_CANALS7[4],
+      OAS.OW_CANALS7[5], OAS.OW_CANALS7[6], OAS.OW_CANALS7[7], OAS.OW_CANALS7[8], OAS.OW_DAMS7[1], OAS.OW_DAMS7[2],
+      OAS.OW_DAMS7[3], OAS.OW_DAMS7[4], OAS.OW_DAMS7[5], OAS.OW_DAMS7[6], OAS.OW_DAMS7[7], OAS.OW_DAMS7[8],
+      OAS.OW_FORDS7[1], OAS.OW_FORDS7[2], OAS.OW_FORDS7[3], OAS.OW_FORDS7[4], OAS.OW_FORDS7[5], OAS.OW_FORDS7[6],
+      OAS.OW_FORDS7[7], OAS.OW_FORDS7[8], OAS.OW_MOUTH2[1], OAS.OW_MOUTH2[2], OAS.OW_MOUTH2[3], OAS.OW_MOUTH2[4],
+      OAS.OW_MOUTH2[5], OAS.OW_MOUTH2[6], OAS.OW_MOUTH2[7], OAS.OW_MOUTH2[8], OAS.OW_WARP2[1], OAS.OW_WARP2[2],
+      OAS.OW_WARP2[3], OAS.OW_WARP2[4], OAS.OW_WARP2[5], OAS.OW_WARP2[6], OAS.OW_WARP2[7], OAS.OW_WARP2[8],
+      OAS.OW_WARP2[9], OAS.OW_WARP2[10], OAS.OW_WARP2[11], OAS.OW_WARP2[12], OAS.OW_WARP2[13], OAS.OW_WARP2[14],
+      OAS.OW_WARP2[15], OAS.OW_WARP2[16], OAS.OW_WARP2[17], OAS.OW_WARP2[18], OAS.OW_WARP2[19], OAS.OW_WARP2[20],
+      OAS.OW_WARP2[21], OAS.OW_WARP2[22], OAS.OW_WARP2[23], OAS.OW_WARP2[24], OAS.OW_WARP2[25], OAS.OW_WARP2[26],
+      OAS.OW_WARP2[27], OAS.OW_WARP2[28], OAS.OW_WARP2[29], OAS.OW_WARP2[30], OAS.OW_WARP2[31], OAS.OW_WARP2[32],
     },
   },
 
@@ -2054,134 +1665,35 @@ return {
                REN.ORE_PATCH_STONE, REN.ORE_PATCH_URANIUM, REN.ORE_PATCH_OIL, REN.ORE_PATCH_OFFSHORE},
       files = {"prototypes/tables/hotspots.lua"},
     },
-    -- The soft map edge and the inland lakes switch: each map's next geography
-    -- version, every name its own. The switch's prototype is a Map type fallback that mirrors the
-    -- inland lakes setting, so no row registers it (U3's one exemption).
+    -- Each map's version 6 (0.1.0), dropped in 0.3.0 (one geography version per map) but for its frame (config.lua
+    -- frames), the chain every map-wide layer reads, and the shared bodies the 0.3.0 versions still name: the
+    -- offshore stamp, the start mask, the city fold, the start land guarantee, distance and the hook gate's keys.
+    -- tests/collapsed.json names what each row lost.
     {
       release = "0.1.0",
       map = "europe",
       geography = 14,
-      names = {
-               ELN.EU6_GX, ELN.EU6_GY, ELN.EU6_U, ELN.EU6_V, ELN.EU6_GEO, ELN.EU6_LAND_COARSE, ELN.EU6_DETAIL,
-               ELN.EU6_FAR,
-               ELN.EU6_ENTRY, ELN.EU6_CX, ELN.EU6_CY, ELN.EU6_LAKES, ELN.EU6_SHORE, REN.EU_FIELDS,
-               START_MASK2, EU_CITY_INDEX, EU_CITY_CX, EU_CITY_CY, EU_SPAWN_LAKE, EU_SPAWN_BIAS, START_LAND, DISTANCE,
-               K_ON, K_FORDS, ONE, ZERO,
-               ELN.EU_WW4[1], ELN.EU_WW4[2], ELN.EU_WW4[3], ELN.EU_WW4[4], ELN.EU_WW4[5], ELN.EU_WW4[6],
-               ELN.EU_CANALS4[1], ELN.EU_CANALS4[2], ELN.EU_CANALS4[3], ELN.EU_CANALS4[4], ELN.EU_CANALS4[5],
-               ELN.EU_CANALS4[6],
-               ELN.EU_DAMS4[1], ELN.EU_DAMS4[2], ELN.EU_DAMS4[3], ELN.EU_DAMS4[4], ELN.EU_DAMS4[5], ELN.EU_DAMS4[6],
-               ELN.EU_FORDS4[1], ELN.EU_FORDS4[2], ELN.EU_FORDS4[3], ELN.EU_FORDS4[4], ELN.EU_FORDS4[5],
-               ELN.EU_FORDS4[6]},
-      files = {EU_GEO_FILE, EU_LAND_COARSE_FILE, EU_SPAWN_FILE, "prototypes/tables/hotspots.lua",
-               EU_WW_FILES[1], EU_WW_FILES[2], EU_WW_FILES[3], EU_WW_FILES[4], EU_WW_FILES[5], EU_WW_FILES[6]},
+      names = {ELN.EU6_GX, ELN.EU6_GY, ELN.EU6_U, ELN.EU6_V, ELN.EU6_CX, ELN.EU6_CY,
+               REN.EU_FIELDS, START_MASK2, EU_CITY_INDEX, EU_CITY_CX, EU_CITY_CY, START_LAND, DISTANCE, K_ON, K_FORDS,
+               ONE, ZERO},
+      files = {EU_GEO_FILE, EU_LAND_COARSE_FILE, EU_SPAWN_FILE, "prototypes/tables/hotspots.lua", EU_WW_FILES[1],
+               EU_WW_FILES[2], EU_WW_FILES[3], EU_WW_FILES[4], EU_WW_FILES[5], EU_WW_FILES[6]},
     },
-    -- Europe's scales 12 and 24: an entry and sets on the released version's chain, so the row names no tn_geo.
-    {
-      release = "0.2.0",
-      names = {ELN.EUX_ENTRY, ELN.EUX_WW[1], ELN.EUX_WW[2], ELN.EUX_CANALS[1], ELN.EUX_CANALS[2], ELN.EUX_DAMS[1],
-               ELN.EUX_DAMS[2], ELN.EUX_FORDS[1], ELN.EUX_FORDS[2], ELN.EUX_WARP[1], ELN.EUX_WARP[2], ELN.EUX_WARP[3],
-               ELN.EUX_WARP[4], ELN.EUX_WARP[5], ELN.EUX_WARP[6], ELN.EUX_WARP[7], ELN.EUX_WARP[8]},
-      files = {ELN.EUX_WW_FILES[1], ELN.EUX_WW_FILES[2]},
-    },
-    -- The Old World and Atlantic spawn city: each map's version 6.
     {
       release = "0.1.0",
       map = "atlantic",
       geography = 17,
-      names = {
-               OAS.AT6_GX, OAS.AT6_GY, OAS.AT6_U, OAS.AT6_V, OAS.AT6_GEO, OAS.AT6_LAND_COARSE, OAS.AT6_DETAIL,
-               OAS.AT6_FAR,
-               OAS.AT6_ENTRY, OAS.AT6_CX, OAS.AT6_CY, OAS.AT6_LAKES, OAS.AT6_SHORE, REN.AT_FIELDS,
-               OAS.AT_CITY_INDEX, OAS.AT_CITY_CX, OAS.AT_CITY_CY, OAS.AT_SPAWN_LAKE,
-               OAS.AT_SPAWN_BIAS,
-               OAS.AT_WW5[1], OAS.AT_WW5[2], OAS.AT_WW5[3], OAS.AT_WW5[4], OAS.AT_WW5[5], OAS.AT_WW5[6],
-               OAS.AT_CANALS5[1], OAS.AT_CANALS5[2], OAS.AT_CANALS5[3], OAS.AT_CANALS5[4], OAS.AT_CANALS5[5],
-               OAS.AT_CANALS5[6],
-               OAS.AT_DAMS5[1], OAS.AT_DAMS5[2], OAS.AT_DAMS5[3], OAS.AT_DAMS5[4], OAS.AT_DAMS5[5], OAS.AT_DAMS5[6],
-               OAS.AT_FORDS5[1], OAS.AT_FORDS5[2], OAS.AT_FORDS5[3], OAS.AT_FORDS5[4], OAS.AT_FORDS5[5],
-               OAS.AT_FORDS5[6]},
-      files = {AT_GEO_FILE, AT_LAND_COARSE_FILE, OAS.AT_SPAWN_FILE, "prototypes/tables/hotspots.lua",
-               AT_WW_FILES[1], AT_WW_FILES[2], AT_WW_FILES[3], AT_WW_FILES[4], AT_WW_FILES[5],
-               AT_WW_FILES[6]},
-    },
-    -- Atlantic's version 7: a new coast fit, with every body that reads it under a name of its own.
-    {
-      release = "0.2.0",
-      map = "atlantic",
-      geography = 20,
-      names = {
-               OAS.AT7_GX, OAS.AT7_GY, OAS.AT7_U, OAS.AT7_V, OAS.AT7_GEO,
-               OAS.AT7_LAND_COARSE, OAS.AT7_DETAIL, OAS.AT7_FAR, OAS.AT7_ENTRY, OAS.AT7_CX,
-               OAS.AT7_CY, OAS.AT7_LAKES, OAS.AT7_SHORE, OAS.AT7_SPAWN_LAKE, OAS.AT7_SPAWN_BIAS,
-               OAS.AT_WW6[1], OAS.AT_WW6[2], OAS.AT_WW6[3], OAS.AT_WW6[4], OAS.AT_WW6[5],
-               OAS.AT_WW6[6], OAS.AT_CANALS6[1], OAS.AT_CANALS6[2], OAS.AT_CANALS6[3], OAS.AT_CANALS6[4],
-               OAS.AT_CANALS6[5], OAS.AT_CANALS6[6], OAS.AT_DAMS6[1], OAS.AT_DAMS6[2], OAS.AT_DAMS6[3],
-               OAS.AT_DAMS6[4], OAS.AT_DAMS6[5], OAS.AT_DAMS6[6], OAS.AT_FORDS6[1], OAS.AT_FORDS6[2],
-               OAS.AT_FORDS6[3], OAS.AT_FORDS6[4], OAS.AT_FORDS6[5], OAS.AT_FORDS6[6],
-               OAS.AT_MOUTH[1], OAS.AT_MOUTH[2], OAS.AT_MOUTH[3], OAS.AT_MOUTH[4], OAS.AT_MOUTH[5],
-               OAS.AT_MOUTH[6],
-               OAS.AT_WARP[1], OAS.AT_WARP[2], OAS.AT_WARP[3], OAS.AT_WARP[4], OAS.AT_WARP[5], OAS.AT_WARP[6],
-               OAS.AT_WARP[7], OAS.AT_WARP[8], OAS.AT_WARP[9], OAS.AT_WARP[10], OAS.AT_WARP[11], OAS.AT_WARP[12],
-               OAS.AT_WARP[13], OAS.AT_WARP[14], OAS.AT_WARP[15], OAS.AT_WARP[16], OAS.AT_WARP[17], OAS.AT_WARP[18],
-               OAS.AT_WARP[19], OAS.AT_WARP[20], OAS.AT_WARP[21], OAS.AT_WARP[22], OAS.AT_WARP[23], OAS.AT_WARP[24],
-               OAS.AT_WW6[7], OAS.AT_WW6[8], OAS.AT_CANALS6[7], OAS.AT_CANALS6[8], OAS.AT_DAMS6[7], OAS.AT_DAMS6[8],
-               OAS.AT_FORDS6[7], OAS.AT_FORDS6[8], OAS.AT_MOUTH[7], OAS.AT_MOUTH[8],
-               OAS.AT_WARP[25], OAS.AT_WARP[26], OAS.AT_WARP[27], OAS.AT_WARP[28],
-               OAS.AT_WARP[29], OAS.AT_WARP[30], OAS.AT_WARP[31], OAS.AT_WARP[32]},
-      files = {OAS.AT7_GEO_FILE, AT_LAND_COARSE_FILE, OAS.AT7_SPAWN_FILE,
-               "prototypes/tables/hotspots.lua", OAS.AT7_WW_FILES[1], OAS.AT7_WW_FILES[2],
-               OAS.AT7_WW_FILES[3], OAS.AT7_WW_FILES[4], OAS.AT7_WW_FILES[5],
-               OAS.AT7_WW_FILES[6], OAS.AT7_WW_FILES[7], OAS.AT7_WW_FILES[8]},
+      names = {OAS.AT6_GX, OAS.AT6_GY, OAS.AT6_U, OAS.AT6_V, OAS.AT6_CX, OAS.AT6_CY,
+               REN.AT_FIELDS, OAS.AT_CITY_INDEX, OAS.AT_CITY_CX, OAS.AT_CITY_CY},
+      files = {AT_LAND_COARSE_FILE, "prototypes/tables/hotspots.lua"},
     },
     {
       release = "0.1.0",
       map = "olde_world",
       geography = 18,
-      names = {
-               OAS.OW6_GX, OAS.OW6_GY, OAS.OW6_U, OAS.OW6_V, OAS.OW6_GEO, OAS.OW6_LAND_COARSE, OAS.OW6_DETAIL,
-               OAS.OW6_FAR,
-               OAS.OW6_ENTRY, OAS.OW6_CX, OAS.OW6_CY, OAS.OW6_LAKES, OAS.OW6_SHORE, REN.OW_FIELDS,
-               OAS.OW_CITY_INDEX, OAS.OW_CITY_CX, OAS.OW_CITY_CY, OAS.OW_SPAWN_LAKE,
-               OAS.OW_SPAWN_BIAS,
-               OAS.OW_WW5[1], OAS.OW_WW5[2], OAS.OW_WW5[3], OAS.OW_WW5[4], OAS.OW_WW5[5], OAS.OW_WW5[6],
-               OAS.OW_CANALS5[1], OAS.OW_CANALS5[2], OAS.OW_CANALS5[3], OAS.OW_CANALS5[4], OAS.OW_CANALS5[5],
-               OAS.OW_CANALS5[6],
-               OAS.OW_DAMS5[1], OAS.OW_DAMS5[2], OAS.OW_DAMS5[3], OAS.OW_DAMS5[4], OAS.OW_DAMS5[5], OAS.OW_DAMS5[6],
-               OAS.OW_FORDS5[1], OAS.OW_FORDS5[2], OAS.OW_FORDS5[3], OAS.OW_FORDS5[4], OAS.OW_FORDS5[5],
-               OAS.OW_FORDS5[6]},
-      files = {OW_GEO_FILE, OW_LAND_COARSE_FILE, OAS.OW_SPAWN_FILE, "prototypes/tables/hotspots.lua",
-               OW_WW_FILES[1], OW_WW_FILES[2], OW_WW_FILES[3], OW_WW_FILES[4], OW_WW_FILES[5],
-               OW_WW_FILES[6]},
-    },
-    -- Old World's version 7: a new coast fit, with every body that reads it under a name of its own.
-    {
-      release = "0.2.0",
-      map = "olde_world",
-      geography = 19,
-      names = {
-               OAS.OW7_GX, OAS.OW7_GY, OAS.OW7_U, OAS.OW7_V, OAS.OW7_GEO,
-               OAS.OW7_LAND_COARSE, OAS.OW7_DETAIL, OAS.OW7_FAR, OAS.OW7_ENTRY, OAS.OW7_CX,
-               OAS.OW7_CY, OAS.OW7_LAKES, OAS.OW7_SHORE, OAS.OW7_SPAWN_LAKE, OAS.OW7_SPAWN_BIAS,
-               OAS.OW_WW6[1], OAS.OW_WW6[2], OAS.OW_WW6[3], OAS.OW_WW6[4], OAS.OW_WW6[5],
-               OAS.OW_WW6[6], OAS.OW_CANALS6[1], OAS.OW_CANALS6[2], OAS.OW_CANALS6[3], OAS.OW_CANALS6[4],
-               OAS.OW_CANALS6[5], OAS.OW_CANALS6[6], OAS.OW_DAMS6[1], OAS.OW_DAMS6[2], OAS.OW_DAMS6[3],
-               OAS.OW_DAMS6[4], OAS.OW_DAMS6[5], OAS.OW_DAMS6[6], OAS.OW_FORDS6[1], OAS.OW_FORDS6[2],
-               OAS.OW_FORDS6[3], OAS.OW_FORDS6[4], OAS.OW_FORDS6[5], OAS.OW_FORDS6[6],
-               OAS.OW_MOUTH[1], OAS.OW_MOUTH[2], OAS.OW_MOUTH[3], OAS.OW_MOUTH[4], OAS.OW_MOUTH[5],
-               OAS.OW_MOUTH[6],
-               OAS.OW_WARP[1], OAS.OW_WARP[2], OAS.OW_WARP[3], OAS.OW_WARP[4], OAS.OW_WARP[5], OAS.OW_WARP[6],
-               OAS.OW_WARP[7], OAS.OW_WARP[8], OAS.OW_WARP[9], OAS.OW_WARP[10], OAS.OW_WARP[11], OAS.OW_WARP[12],
-               OAS.OW_WARP[13], OAS.OW_WARP[14], OAS.OW_WARP[15], OAS.OW_WARP[16], OAS.OW_WARP[17], OAS.OW_WARP[18],
-               OAS.OW_WARP[19], OAS.OW_WARP[20], OAS.OW_WARP[21], OAS.OW_WARP[22], OAS.OW_WARP[23], OAS.OW_WARP[24],
-               OAS.OW_WW6[7], OAS.OW_WW6[8], OAS.OW_CANALS6[7], OAS.OW_CANALS6[8], OAS.OW_DAMS6[7], OAS.OW_DAMS6[8],
-               OAS.OW_FORDS6[7], OAS.OW_FORDS6[8], OAS.OW_MOUTH[7], OAS.OW_MOUTH[8],
-               OAS.OW_WARP[25], OAS.OW_WARP[26], OAS.OW_WARP[27], OAS.OW_WARP[28],
-               OAS.OW_WARP[29], OAS.OW_WARP[30], OAS.OW_WARP[31], OAS.OW_WARP[32]},
-      files = {OAS.OW7_GEO_FILE, OW_LAND_COARSE_FILE, OAS.OW7_SPAWN_FILE,
-               "prototypes/tables/hotspots.lua", OAS.OW7_WW_FILES[1], OAS.OW7_WW_FILES[2],
-               OAS.OW7_WW_FILES[3], OAS.OW7_WW_FILES[4], OAS.OW7_WW_FILES[5],
-               OAS.OW7_WW_FILES[6], OAS.OW7_WW_FILES[7], OAS.OW7_WW_FILES[8]},
+      names = {OAS.OW6_GX, OAS.OW6_GY, OAS.OW6_U, OAS.OW6_V, OAS.OW6_CX, OAS.OW6_CY,
+               REN.OW_FIELDS, OAS.OW_CITY_INDEX, OAS.OW_CITY_CX, OAS.OW_CITY_CY},
+      files = {OW_LAND_COARSE_FILE, "prototypes/tables/hotspots.lua"},
     },
     -- 0.3.0: Old World's version 8, version 7's composition under names of its own.
     {

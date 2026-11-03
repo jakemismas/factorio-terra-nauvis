@@ -192,12 +192,14 @@ def placeholder_names(cfg):
 
 
 def active_moves(repo=REPO):
-    """The waiver of a tree with no release yet (tnfrozen.active_moves), or None. Fails closed."""
+    """The waiver of a tree with no release yet (tnfrozen.active_moves), or None, with 0.3.0's collapse
+    (tests/collapsed.json, which no release voids) added. Fails closed."""
     import tn_static
     try:
-        return tnfrozen.active_moves(tn_static.release_tag_refs(repo), Path(repo) / "tests" / "unreleased-moves.json")
+        moves = tnfrozen.active_moves(tn_static.release_tag_refs(repo), Path(repo) / "tests" / "unreleased-moves.json")
     except tn_static.ReferenceUnreadable as e:
         raise tnfrozen.RegistryUnreadable(str(e)) from e
+    return tnfrozen.with_collapse(moves, tnfrozen.read_collapse(Path(repo) / "tests" / "collapsed.json"))
 
 
 def offline_body_problems(mod_dir, cfg, frozen, registry, suites=tnfrozen.SUITES, where="the offline data stage"):
@@ -230,7 +232,11 @@ def released_problems(frozen, cfg, repo=REPO):
         refs, _ = tn_static.append_only_reference(repo, tags)
     except tn_static.ReferenceUnreadable as e:
         return [f"the earlier releases are unreadable: {e} (fail closed)"]
-    return [f"against the earlier releases: {x}" for x in tn_static.append_only_findings(frozen, cfg, refs)]
+    # 0.3.0's collapse (tests/collapsed.json) excuses exactly the records and tn_geo ids it took out
+    found, collapse = tn_static.collapse_findings(repo, frozen, cfg)
+    moves = tnfrozen.with_collapse(None, collapse)
+    found += tn_static.append_only_findings(frozen, cfg, refs, moves)
+    return [f"against the earlier releases: {x}" for x in found]
 
 
 def release_problems(cfg, frozen_path=FROZEN, registry=None, mod_dir=MOD, suites=tnfrozen.SUITES, repo=REPO):

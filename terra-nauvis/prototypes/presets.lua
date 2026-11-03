@@ -477,6 +477,25 @@ for _, key in ipairs(cfg.preset_order) do
   end
 end
 
+-- A fallback's body: a number's text, or the name of the expression that folds it.
+local function fallback_body(value)
+  return type(value) == "number" and num(value) or value
+end
+
+-- The map's frame (config.lua frames): its city offset names, which no preset bakes, hold the city fold, as the
+-- frame's dropped version baked them.
+local function frame_fallbacks(key, fallbacks, seen)
+  local fr = cfg.frames[key]
+  for i, f in ipairs(fr and fr.fallbacks or {}) do
+    local value = fr.city_offset[i]
+    if f.name ~= (i == 1 and fr.cx or fr.cy) or seen[f.name] ~= nil then
+      error("the frame fallback " .. f.name .. " of " .. key .. " must be the frame's cx then cy, defined once")
+    end
+    seen[f.name] = value
+    fallbacks[#fallbacks + 1] = {type = "noise-expression", name = f.name, expression = fallback_body(value)}
+  end
+end
+
 -- The fallbacks of every geography version: one prototype per name, valued as every version that
 -- reads it bakes it (a number, or the name of the expression that folds it).
 local fallbacks, seen = {}, {}
@@ -491,12 +510,12 @@ for _, key in ipairs(cfg.map_order) do
       end
       if seen[f.name] == nil then
         seen[f.name] = value
-        local body = type(value) == "number" and num(value) or value
-        fallbacks[#fallbacks + 1] = {type = "noise-expression", name = f.name, expression = body}
+        fallbacks[#fallbacks + 1] = {type = "noise-expression", name = f.name, expression = fallback_body(value)}
       elseif seen[f.name] ~= value then
         error("the Map type fallback " .. f.name .. " differs between versions or maps: one fallback holds one value")
       end
     end
   end
+  frame_fallbacks(key, fallbacks, seen)
 end
 data:extend(fallbacks)

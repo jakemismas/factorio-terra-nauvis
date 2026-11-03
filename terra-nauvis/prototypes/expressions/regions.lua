@@ -1,4 +1,4 @@
--- The region layer (ARCHITECTURE.md, "Region layer"; S10 design (d), design notes 07:45; contract 5).
+-- The region layer (ARCHITECTURE.md, "Region layer"; S10 design (d), DECISIONS 07:45; contract 5).
 --
 -- Every row of prototypes/tables/regions.lua becomes three named expressions, in reference pixels of
 -- the region frame (config.lua regions.frame):
@@ -34,7 +34,7 @@
 -- condition). The layer reads only x, y, map_seed and per-save constants through the chain, so it is
 -- firewall-clean (S10 1.6) and the Entity program may read it. With no consumer nothing here compiles
 -- (unreferenced expressions are free, R6 Q4). tn_map has no prototype: consumers are preset-only
---.
+-- (DECISIONS 2026-10-28 03:40).
 --
 -- One named expression per quantity (A-7; S10: a copy under another name costs about +646): every
 -- consumer reads these names, and a T16 static row fails any region formula outside this file.
@@ -91,11 +91,11 @@ end
 
 local MAPS = {}
 for _, key in ipairs(cfg.map_order) do
-  -- the geography version config.lua's layer_chain_geo names for the map, the chain the layer was
-  -- registered against; every later version keeps that frame (the same city offset under names of its
-  -- own), so its preset worlds read the same values here through the frozen offset fallbacks
+  -- the frame of the geography release config.lua's layer_chain_geo names for the map (config.lua frames), the
+  -- chain the layer was registered against; every later version keeps that frame (the same city offset under names
+  -- of its own), so its preset worlds read the same values here through the frozen offset fallbacks
   local g
-  for _, v in ipairs((cfg.geography[key] or {}).versions or {}) do
+  for _, v in ipairs({cfg.frames[key]}) do
     if v.geo_id == cfg.layer_chain_geo[key] then
       g = v
     end
