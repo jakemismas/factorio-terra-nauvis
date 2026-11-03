@@ -251,30 +251,6 @@ local function band_term(pts, run, piece, k, B, H, heights, opts)
     ") < " .. S .. " * " .. num(span) .. " + " .. num(RD.ore_clear_tiles) .. ")"
 end
 
--- The crest segments of one range on a map, added to the crest body's locals and terms: each term is
--- the ridge's half-width at the tile's nearest crest point (from wide, tiles per vertex) minus the
--- distance to that point, so the largest term is how far inside the ridge the tile lies.
-local function add_segments(C, pts, segs, wide)
-  for _, i in ipairs(segs) do
-    local a, b = pts[i], pts[i + 1]
-    local dx, dy = b[1] - a[1], b[2] - a[2]
-    local l2 = dx * dx + dy * dy
-    if l2 > 0 then
-      local s = tostring(#C.terms + 1)
-      C.L["du" .. s] = minus(C.u, a[1])
-      C.L["dv" .. s] = minus(C.v, a[2])
-      C.L["t" .. s] = "clamp((du" .. s .. " * " .. num(dx) .. " + dv" .. s .. " * " .. num(dy) .. ") * " ..
-        num(1 / l2) .. ", 0, 1)"
-      C.L["qx" .. s] = "du" .. s .. " - t" .. s .. " * " .. num(dx)
-      C.L["qy" .. s] = "dv" .. s .. " - t" .. s .. " * " .. num(dy)
-      C.L["r" .. s] = S .. " * sqrt(qx" .. s .. " * qx" .. s .. " + qy" .. s .. " * qy" .. s .. ")"
-      C.terms[#C.terms + 1] = "(" .. num(wide[i]) .. " + t" .. s .. " * " .. num(wide[i + 1] - wide[i]) .. ") * " ..
-        C.run .. " - r" .. s
-      C.near[#C.near + 1] = "r" .. s
-    end
-  end
-end
-
 -- One opening on a map: a slot across the crest at a pass or a gap; at an edge crossing, the tiles
 -- within edge_tiles of the map's extent (its edges at -1/2 and W - 1/2 in this frame) and within
 -- edge_reach_tiles of the crossing.
@@ -382,7 +358,9 @@ local function highland(key, Bd, O, NM)
         num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
     end
   end
-  def(NM.high, joined("max", terms, "-inf"), L)
+  if NM.high then
+    def(NM.high, joined("max", terms, "-inf"), L)
+  end
   -- The tiles pay for their own crest functions, so they read them at the wandering point itself, their reach
   -- follows the vertex heights, one local per piece, and a piece ends round: its box's corners drew flat-topped
   -- tabs of grey ground.
@@ -399,7 +377,9 @@ local function highland(key, Bd, O, NM)
       ")"
     terms[k] = h.reach_text .. " - sqrt(a" .. s .. " * a" .. s .. " + e" .. s .. " * e" .. s .. ")"
   end
-  def(NM.high_tile, joined("max", terms, "-inf"), T2)
+  if NM.high_tile then
+    def(NM.high_tile, joined("max", terms, "-inf"), T2)
+  end
   -- The cold field (config.lua ridges.cold): one field per piece, on the pieces the rocks read, so the rocks' reach
   -- covers every cold tile and the palm mask can stand on it.
   local CO, m = RD.cold, cfg.maps[key]
@@ -482,6 +462,9 @@ local function highland(key, Bd, O, NM)
     end
     def(NM.cold2, joined("max", cterms, "-inf"), L2)
   end
+  if not NM.passes then
+    return
+  end
   local P, ds = {}, {}
   for i, c in ipairs(O.named) do
     local s = tostring(i)
@@ -502,8 +485,8 @@ end
 -- The union (0.3.0, Earth mods recommendation 4): both tables' ranges in the next keep, run, crest band, highland
 -- reach, tile reach and passes, and in the cold field's second version, which only 0.3.0 reads; line_bodies below
 -- builds the union's line field (crest and openings) with the chop (ridges.union.field), which keeps every straight
--- cliff run short. map_bodies' bodies read the first
--- table alone, so a world made before keeps every ridge it had. g is the map's frame, waves its noise rows.
+-- cliff run short.
+-- g is the map's frame, waves its noise rows.
 local function union_bodies(key, m, g, waves)
   local centre = " + " .. num(RD.centre_tiles)
   local O2 = {u = N.wander_u[key], v = N.wander_v[key], fixed_u = g.u, fixed_v = g.v, L = {}, terms = {}, keeps = {},
@@ -541,8 +524,9 @@ local function union_bodies(key, m, g, waves)
                           passes = UN.passes[key]})
 end
 
--- A map's ridge bodies: the wandering axis, the run, the depth, the distance to the axis, the keep, the
--- height (the crest key) and the openings (Cliff), and the crest band (Entity).
+-- A map's first-table ridge bodies: the wandering axis, the run, the keep and the crest band (Entity), and the
+-- cold field's first line. The first table's depth, distance to the axis, crest, openings, highland, tile reach and
+-- passes left in 0.3.0 (tests/collapsed.json): no preset names them.
 local function map_bodies(key)
   -- the chain every map-wide layer reads (config.lua layer_chain_geo): a later geography version keeps
   -- its frame, so these registered bodies never move with one
@@ -580,7 +564,6 @@ local function map_bodies(key)
   -- the width's multiplier: at 0 the ridge has thinned to nothing and only the fray is left
   def(N.run[key], "max(0, (" .. num(RD.run_base) .. " + " .. waves(RD.run) .. ") * (1 - " .. N.keep[key] .. ") + " ..
     N.keep[key] .. ")")
-  local C = {u = N.wander_u[key], v = N.wander_v[key], run = N.run[key], L = {}, terms = {}, near = {}}
   local O = {u = N.wander_u[key], v = N.wander_v[key], fixed_u = g.u, fixed_v = g.v, L = {}, terms = {}, keeps = {},
              named = {}}
   local centre = " + " .. num(RD.centre_tiles)
@@ -594,7 +577,6 @@ local function map_bodies(key)
         pts[i] = {pu, pv}
         wide[i] = half_width(r.heights[i], i == 1 or i == #r.crest)
       end
-      add_segments(C, pts, segs, wide)
       local banded = {}
       for _, i in ipairs(segs) do
         if in_band(m, pts[i], pts[i + 1]) then
@@ -609,27 +591,18 @@ local function map_bodies(key)
       end
     end
   end
-  def(N.depth[key], joined("max", C.terms, "-inf"), C.L)
-  def(N.near[key], joined("min", C.near, "inf"), C.L)
-  def(N.crest[key], "(" .. minus(N.depth[key], RD.bias_tiles) .. ") / " .. num(RD.ramp_tiles) .. " + " ..
-    waves(RD.fray))
-  O.terms[#O.terms + 1] = "(" .. waves(RD.gaps.noise) .. " < " .. num(RD.gaps.threshold) .. " + " ..
-    num(RD.gaps.thin_gain) .. " * clamp(1 - (" .. N.depth[key] .. " + " .. N.near[key] .. ") / " ..
-    num(RD.gaps.thin_tiles) .. ", 0, 1) - " .. num(RD.gaps.collar_gain) .. " * " .. N.keep[key] .. ")"
   def(N.keep[key], joined("max", O.keeps, "0"), O.L)
-  def(N.openings[key], joined("max", O.terms, "0"), O.L)
   if #Bd.terms == 0 then
     def(N.band[key], "0")
   else
     def(N.band[key], joined("max", Bd.terms, "0"), Bd.L)
   end
-  highland(key, Bd, O, {high = N.high_map[key], high_tile = N.high_tile_map[key], cold = N.cold.map[key],
-                        passes = N.passes[key]})
+  highland(key, Bd, O, {cold = N.cold.map[key]})
   union_bodies(key, m, g, waves)
 end
 
 for _, key in ipairs(cfg.map_order) do
-  if cfg.geography[key] and N.crest[key] and N.openings[key] and N.band[key] then
+  if cfg.geography[key] and N.band[key] then
     map_bodies(key)
   end
 end
@@ -908,7 +881,7 @@ local function line_bodies(key, ranges, LNN, RUN, KP, OPT)
 end
 
 for _, key in ipairs(cfg.map_order) do
-  if cfg.geography[key] and N.crest[key] and N.openings[key] and N.band[key] then
+  if cfg.geography[key] and N.band[key] then
     line_bodies(key, T.ranges, LN.names, N.run[key], N.keep[key])
     -- the union's line field (0.3.0): both tables' ranges, its own keep and run (union_bodies) and the chop
     local U = cfg.ridges.union
@@ -923,8 +896,6 @@ def(N.height, "if(" .. on .. ", " .. K.crest .. ", -inf)")
 def(N.free, "distance < max(" .. num(RD.start.radius_tiles) .. ", starting_area_radius) + " ..
   num(RD.start.margin_tiles))
 -- The two cliff properties (S5): the contours of the height, and the cliffiness gaps.
-def(N.cliff_elevation, "cliff_elevation_0 + cliff_elevation_interval * clamp(1 + " .. N.height .. ", " ..
-  num(RD.contour.low) .. ", " .. num(RD.contour.high) .. ")")
 def(N.cliffiness, "if(" .. on .. ", " .. num(RD.cliffiness) .. " * (1 - " .. K.openings .. ") * (1 - " .. N.free ..
   "), 0)")
 def(LN.names.cliff_elevation, "cliff_elevation_0 + cliff_elevation_interval * clamp(1 + " .. N.height .. ", " ..

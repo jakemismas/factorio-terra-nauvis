@@ -4476,61 +4476,12 @@
    "slice": "ridges",
    "registered": "2026-10-30"
   },
-  "tn_cliff_elevation_v1": {
-   "type": "noise-expression",
-   "sha256": "a68bfd3892c8c62806b42c2d48fe2ba28292e4e05eee7bae7822db1160138461",
-   "dump": "m1",
-   "slice": "ridges",
-   "registered": "2026-10-30"
-  },
   "tn_cliffiness_v1": {
    "type": "noise-expression",
    "sha256": "6d6b69899ee0d73ee56075e820d9fe63533cb69343d8d918ad72df1359c3b276",
    "dump": "m1",
    "slice": "ridges",
    "registered": "2026-10-29"
-  },
-  "tn_crest_atlantic_v1": {
-   "type": "noise-expression",
-   "sha256": "84e2af8079436820432a185e272ad61676e854785a327aafa1ad9dbf2574b258",
-   "dump": "m1",
-   "slice": "ridges",
-   "registered": "2026-10-30"
-  },
-  "tn_crest_europe_v1": {
-   "type": "noise-expression",
-   "sha256": "66681f19222769ded4585b8ca89259e92eb7188dfaac0b294257945f35458e5a",
-   "dump": "m1",
-   "slice": "ridges",
-   "registered": "2026-10-30"
-  },
-  "tn_crest_olde_world_v1": {
-   "type": "noise-expression",
-   "sha256": "aa876692a73af11e1ec6835ce9f75096bb77ed46f0a351322ba3d3ea0433a1ca",
-   "dump": "m1",
-   "slice": "ridges",
-   "registered": "2026-10-30"
-  },
-  "tn_openings_atlantic_v1": {
-   "type": "noise-expression",
-   "sha256": "4d5fe82417f17fd15b4b5fda0eff22696d1e93e780fb8a41a5aa5618b688d317",
-   "dump": "m1",
-   "slice": "ridges",
-   "registered": "2026-10-30"
-  },
-  "tn_openings_europe_v1": {
-   "type": "noise-expression",
-   "sha256": "02a698e677b83067f5d87b687c5c7c33ae21e3792b9472356f70c5f062679423",
-   "dump": "m1",
-   "slice": "ridges",
-   "registered": "2026-10-30"
-  },
-  "tn_openings_olde_world_v1": {
-   "type": "noise-expression",
-   "sha256": "65f21168b7eba39b5130fbcd4efb003a4044bada240b14c42ee6d8ab81b0a276",
-   "dump": "m1",
-   "slice": "ridges",
-   "registered": "2026-10-30"
   },
   "tn_ore_coal_p_v1": {
    "type": "noise-expression",
@@ -5283,27 +5234,6 @@
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_ridge_depth_atlantic_v1": {
-   "type": "noise-expression",
-   "sha256": "80d444eb5f3887ec4a49789ffacdd5427ff88e2dc34f54a234614b041b5cf7ff",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_ridge_depth_europe_v1": {
-   "type": "noise-expression",
-   "sha256": "e9b3dc77bec89aec43e653d5cac7a8e616641096da1a2f71becb3c101b961167",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_ridge_depth_olde_world_v1": {
-   "type": "noise-expression",
-   "sha256": "9110804e1d1b6e785876ca7697319383e311f81709eeec95fa1f8f39d6254c60",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
   "tn_ridge_height_v1": {
    "type": "noise-expression",
    "sha256": "e9a36108da9c3fdea131497188f69eea15291b60f2cf4acfb58eed8e0cd36ec7",
@@ -5328,27 +5258,6 @@
   "tn_ridge_keep_olde_world_v1": {
    "type": "noise-expression",
    "sha256": "891afee9b5d10d73332224d360a079cb943f831c6c57a9397c09aa8907daac07",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_ridge_near_atlantic_v1": {
-   "type": "noise-expression",
-   "sha256": "38aaadc03795b88c29545f1e32ce701474dc36aee13b14d23265d9d356ee7391",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_ridge_near_europe_v1": {
-   "type": "noise-expression",
-   "sha256": "a58a37f7108bbf59254b1fdb3cbb38c3e84bb74b1adea0e185bafd9c76229cd0",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_ridge_near_olde_world_v1": {
-   "type": "noise-expression",
-   "sha256": "d576a4293f831d33ac2d46c1aa417265311d53f1fcf75ccde795109c77a8cf61",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
@@ -5500,20 +5409,6 @@
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_highland_atlantic_v1": {
-   "type": "noise-expression",
-   "sha256": "bac169bf70407ed0d1d5d64f28670a4ec6e9a3a971b872d374c73ac3669e286f",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_highland_europe_v1": {
-   "type": "noise-expression",
-   "sha256": "5c7e0bd36c9400c2811b6bd7f9bdcd1b7e61cac55c94fe4894f868de233a309c",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
   "tn_highland_fray_tile_v1": {
    "type": "noise-expression",
    "sha256": "0c1f7dd317f2c87acc876e15c7414af4b9204e5bf6b6c2dd24f8263bc87094b8",
@@ -5556,13 +5451,6 @@
    "slice": "extras",
    "registered": "2026-10-30"
   },
-  "tn_highland_olde_world_v1": {
-   "type": "noise-expression",
-   "sha256": "88f4a006943af83c779aea24c5ead115103206d5d8a749c23205b291e4717951",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
   "tn_highland_rise_tile_v1": {
    "type": "noise-expression",
    "sha256": "847e9ced4a708bf184c5a805b1270d4e7f0cc102ffb1f92cd3ed5ae429c5fff0",
@@ -5587,27 +5475,6 @@
   "tn_highland_rocks_v1": {
    "type": "noise-expression",
    "sha256": "bd33098df24e76865944c686fa716e7aedca6a58940cdc8afd7b0bf579922042",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_highland_tile_atlantic_v1": {
-   "type": "noise-expression",
-   "sha256": "74a529a22eef6465ba19d54475d76a66a2a5dcb0b949831bf86a8a536d4d1a89",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_highland_tile_europe_v1": {
-   "type": "noise-expression",
-   "sha256": "eaa5f7c052154be94905bee6a6dff28ec0874ec1ef7a190797b9b5be43d94d6b",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_highland_tile_olde_world_v1": {
-   "type": "noise-expression",
-   "sha256": "83825a7aeebc56fce7c3945a18e37ed9e1754db937d60236a871842c15788b61",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"
@@ -5678,27 +5545,6 @@
   "tn_ore_uranium_ore_patches_v1": {
    "type": "noise-expression",
    "sha256": "ab4893fc107001518878cafc37d2940b25450965ff853e5fb73dedf636f70c91",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_passes_atlantic_v1": {
-   "type": "noise-expression",
-   "sha256": "b8015856c742433db7e64607706a8307d9271a7aa4b840e3f8ca4026b0ec9cb8",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_passes_europe_v1": {
-   "type": "noise-expression",
-   "sha256": "caeec42e454a19d3d85386a92a53612d12f204a4c73766054efc86f9fd4312bf",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-10-30"
-  },
-  "tn_passes_olde_world_v1": {
-   "type": "noise-expression",
-   "sha256": "6c1be6fc72ff4c9ac977779424c039e8c293c6c305158cb97d3df986007646ff",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-10-30"

@@ -2452,7 +2452,8 @@ def release_input_files(cfg):
 def _collapsed_row(r, wrows, collapse):
     """Whether 0.3.0's collapse (tests/collapsed.json) excuses landed release row `r` here: a retired tn_geo id's row
     is gone, a frame's row lost only names the collapse dropped and files it lists or another row here names, and a
-    row of no geography left whole when every name it released was dropped and each of its files is so placed."""
+    row of no geography left whole when every name it released was dropped and each of its files is so placed, or
+    kept with the rest of its names (the same release and fields, no name added) when each name it lost was dropped."""
     if not collapse:
         return False
     # a file a lost row named leaves with it (the collapse lists it) or stays named by a row here
@@ -2460,8 +2461,21 @@ def _collapsed_row(r, wrows, collapse):
     files = set(collapse.get("files") or []) | {f for w in wrows for f in (w.get("files") or [])}
     geo = r.get("geography")
     if geo is None:
-        return (set(r.get("names") or []) <= recs and set(r.get("files") or []) <= files and
-                without_withdrawn(r) not in [without_withdrawn(w) for w in wrows])
+        if (set(r.get("names") or []) <= recs and set(r.get("files") or []) <= files and
+                without_withdrawn(r) not in [without_withdrawn(w) for w in wrows]):
+            return True
+        other = {k: v for k, v in r.items() if k not in ("names", "files")}
+        rn, rf = list(r.get("names") or []), set(r.get("files") or [])
+        for w in wrows:
+            if w.get("geography") is not None or w.get("map") is not None:
+                continue
+            if {k: v for k, v in w.items() if k not in ("names", "files")} != other:
+                continue
+            wn, wf = list(w.get("names") or []), set(w.get("files") or [])
+            kept_in_order = [n for n in rn if n in set(wn)] == wn
+            if wn and kept_in_order and set(rn) - set(wn) <= recs and rf - wf <= files and wf <= rf:
+                return True
+        return False
     mine = [w for w in wrows if w.get("geography") == geo and w.get("map") == r.get("map")]
     if geo in (collapse.get("geographies") or []):
         return not mine
@@ -4410,6 +4424,15 @@ def collapse_input_fixtures(cfg, base, ref, geo, files, col=None):
     def drop_file(w):
         w["files"][files[0]] = None
 
+    none_row = next((r for r in cfg["release_registry"] if r.get("geography") is None and len(r.get("names") or []) > 1),
+                    None)
+    none_lost = sorted(none_row["names"])[0] if none_row else None
+
+    def trim_none_row(w):
+        for r in w["cfg"]["release_registry"]:
+            if r == none_row:
+                r["names"] = [n for n in r["names"] if n != none_lost]
+
     cases = (
         ("a geography version dropped", drop_version, c, dict(c, versions=[9999])),
         ("a release row retired", drop_row, dict(c, versions=[], geographies=[row["geography"]]),
@@ -4418,6 +4441,8 @@ def collapse_input_fixtures(cfg, base, ref, geo, files, col=None):
          dict(c, versions=[], frames=[row["geography"]], records={lost: ["0" * 64]}),
          dict(c, versions=[], frames=[row["geography"]], records={})),
         ("a generated file dropped", drop_file, dict(c, versions=[], files=c0["files"] + [files[0]]), c0),
+        ("a row of no geography that lost a dropped name", trim_none_row,
+         dict(c, versions=[], records={none_lost: ["0" * 64]}), dict(c, versions=[], records={})),
     )
     out.append(("collapse: the tree against itself passes under its own collapse",
                 not release_input_findings(base, {"main": ref}, c0), release_input_findings(base, {"main": ref}, c0)[:1]))

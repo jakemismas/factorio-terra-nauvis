@@ -126,6 +126,18 @@
   "tn_canals_olde_world_s6_v6": [
    "09b82974a1a72eb12fcc6b774cd17a4f389e1a085594460b16f7e7c0aa04f005"
   ],
+  "tn_cliff_elevation_v1": [
+   "a68bfd3892c8c62806b42c2d48fe2ba28292e4e05eee7bae7822db1160138461"
+  ],
+  "tn_crest_atlantic_v1": [
+   "84e2af8079436820432a185e272ad61676e854785a327aafa1ad9dbf2574b258"
+  ],
+  "tn_crest_europe_v1": [
+   "66681f19222769ded4585b8ca89259e92eb7188dfaac0b294257945f35458e5a"
+  ],
+  "tn_crest_olde_world_v1": [
+   "aa876692a73af11e1ec6835ce9f75096bb77ed46f0a351322ba3d3ea0433a1ca"
+  ],
   "tn_cx_atlantic_v7": [
    "d992bbcfb12f7629264ff768ef3a6130a71e94708d7f2cd3aa6c2b3cc3057f0e"
   ],
@@ -429,6 +441,24 @@
   "tn_gy_olde_world_v7": [
    "9bb31252a5ddbb62ef1deaa7a40f25ba1a661674c286f334e6b97f38d5da2135"
   ],
+  "tn_highland_atlantic_v1": [
+   "bac169bf70407ed0d1d5d64f28670a4ec6e9a3a971b872d374c73ac3669e286f"
+  ],
+  "tn_highland_europe_v1": [
+   "5c7e0bd36c9400c2811b6bd7f9bdcd1b7e61cac55c94fe4894f868de233a309c"
+  ],
+  "tn_highland_olde_world_v1": [
+   "88f4a006943af83c779aea24c5ead115103206d5d8a749c23205b291e4717951"
+  ],
+  "tn_highland_tile_atlantic_v1": [
+   "74a529a22eef6465ba19d54475d76a66a2a5dcb0b949831bf86a8a536d4d1a89"
+  ],
+  "tn_highland_tile_europe_v1": [
+   "eaa5f7c052154be94905bee6a6dff28ec0874ec1ef7a190797b9b5be43d94d6b"
+  ],
+  "tn_highland_tile_olde_world_v1": [
+   "83825a7aeebc56fce7c3945a18e37ed9e1754db937d60236a871842c15788b61"
+  ],
   "tn_inland_lakes_atlantic_v1": [
    "075239a181229bc814ebe9c6aee64e95572866d88278b4219fd65a5b5e79fda7"
   ],
@@ -506,6 +536,42 @@
   ],
   "tn_mouth_olde_world_s6_v1": [
    "d5427b5b4b807eed9314209adced0dbb65337bf1bd8a9a988c011d43b6b89bc7"
+  ],
+  "tn_openings_atlantic_v1": [
+   "4d5fe82417f17fd15b4b5fda0eff22696d1e93e780fb8a41a5aa5618b688d317"
+  ],
+  "tn_openings_europe_v1": [
+   "02a698e677b83067f5d87b687c5c7c33ae21e3792b9472356f70c5f062679423"
+  ],
+  "tn_openings_olde_world_v1": [
+   "65f21168b7eba39b5130fbcd4efb003a4044bada240b14c42ee6d8ab81b0a276"
+  ],
+  "tn_passes_atlantic_v1": [
+   "b8015856c742433db7e64607706a8307d9271a7aa4b840e3f8ca4026b0ec9cb8"
+  ],
+  "tn_passes_europe_v1": [
+   "caeec42e454a19d3d85386a92a53612d12f204a4c73766054efc86f9fd4312bf"
+  ],
+  "tn_passes_olde_world_v1": [
+   "6c1be6fc72ff4c9ac977779424c039e8c293c6c305158cb97d3df986007646ff"
+  ],
+  "tn_ridge_depth_atlantic_v1": [
+   "80d444eb5f3887ec4a49789ffacdd5427ff88e2dc34f54a234614b041b5cf7ff"
+  ],
+  "tn_ridge_depth_europe_v1": [
+   "e9b3dc77bec89aec43e653d5cac7a8e616641096da1a2f71becb3c101b961167"
+  ],
+  "tn_ridge_depth_olde_world_v1": [
+   "9110804e1d1b6e785876ca7697319383e311f81709eeec95fa1f8f39d6254c60"
+  ],
+  "tn_ridge_near_atlantic_v1": [
+   "38aaadc03795b88c29545f1e32ce701474dc36aee13b14d23265d9d356ee7391"
+  ],
+  "tn_ridge_near_europe_v1": [
+   "a58a37f7108bbf59254b1fdb3cbb38c3e84bb74b1adea0e185bafd9c76229cd0"
+  ],
+  "tn_ridge_near_olde_world_v1": [
+   "d576a4293f831d33ac2d46c1aa417265311d53f1fcf75ccde795109c77a8cf61"
   ],
   "tn_shore_atlantic_v4": [
    "746c91aa26d6cbcebc7bd50d79563dca1cc2e79a5549b08e1adca761b4f99b53"
