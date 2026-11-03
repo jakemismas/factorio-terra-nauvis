@@ -907,6 +907,12 @@ local BC = {
   out_ulster = NOISE .. "blue_outline_ulster_v1",
   out_land = NOISE .. "blue_outline_land_v1",
   out_depth = NOISE .. "blue_outline_depth_v1",
+  -- 0.3.1's next outline (prototypes/tables/zone_blue_v2.lua): the United Kingdom alone
+  out_britain2 = NOISE .. "blue_outline_britain_v2",
+  out_sea2 = NOISE .. "blue_outline_sea_v2",
+  out_ulster2 = NOISE .. "blue_outline_ulster_v2",
+  out_land2 = NOISE .. "blue_outline_land_v2",
+  out_depth2 = NOISE .. "blue_outline_depth_v2",
 }
 
 -- Exact coastlines: the per-save name switch a map's preset carries, set to the
@@ -1097,9 +1103,9 @@ return {
       name = ID .. "-destroyed-europe", type = "bool-setting", setting_type = "startup", default_value = false,
       order = "c-f",
     },
-    -- Blue corrupted UK and Australia (default off): Alien Biomes' mauve grass, with blue and purple ground mixed in,
-    -- on the UK and Australia. It needs Alien Biomes: without it the toggle bakes off. Baked per save through the
-    -- toggle tn_blue.
+    -- Blue corrupted UK (default off): Alien Biomes' mauve grass, with blue and purple ground mixed in, on the UK
+    -- (worlds made before 0.3.1 also on Australia). It needs Alien Biomes: without it the toggle bakes off. Baked per
+    -- save through the toggle tn_blue.
     blue_corrupted = {
       name = ID .. "-blue-corrupted", type = "bool-setting", setting_type = "startup", default_value = false,
       order = "c-fa",
@@ -1467,6 +1473,8 @@ return {
                  -- Blue corrupted UK and Australia: the zone toggle, and with it on the names each redirect wraps
                  BC.K, BC.temperature_under, BC.moisture_under, BC.aux_under, BC.palm_a_under, BC.palm_b_under,
                  CT.AB_KEEP_BODY,
+                 -- 0.3.1: Blue corrupted UK's outline depth, which a new world with the zone on names the next one
+                 BC.out_depth,
                  -- coast-band-fix: the band-fix key, on presets whose map the setting acts on
                  BFN.K,
                  -- 0.3.1: the spawn lake name Atlantic's entry reads, which a preset past the released folds' cities
@@ -1946,6 +1954,13 @@ return {
                BC.blue_1, BC.aubergine_dirt, BC.purple_dirt, BC.aubergine_rim, BC.out_britain, BC.out_australia,
                BC.out_sea, BC.out_ulster, BC.out_land, BC.out_depth},
       files = {"prototypes/tables/zone_blue.lua"},
+    },
+    -- Blue corrupted UK's next outline (0.3.1; blue.outline.next): the United Kingdom alone. No geography; defined on
+    -- every load, as the first outline's bodies are; a preset with the zone on names the next depth over the first.
+    {
+      release = "0.3.1",
+      names = {BC.out_britain2, BC.out_sea2, BC.out_ulster2, BC.out_land2, BC.out_depth2},
+      files = {"prototypes/tables/zone_blue_v2.lua"},
     },
     -- The list hook's body (tiles.scan), defined on every load like the other tile bodies.
     {
@@ -3350,6 +3365,10 @@ return {
     outline = {
       names = {britain = BC.out_britain, australia = BC.out_australia, sea = BC.out_sea, ulster = BC.out_ulster,
                land = BC.out_land, depth = BC.out_depth},
+      -- 0.3.1: a new world with the zone on reads the next outline's depth in place of the first (presets.lua
+      -- blue_values), which holds the United Kingdom alone
+      next = {britain = BC.out_britain2, sea = BC.out_sea2, ulster = BC.out_ulster2, land = BC.out_land2,
+              depth = BC.out_depth2},
       inside_px = 4000,
     },
     climate = {

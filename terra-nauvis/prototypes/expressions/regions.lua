@@ -46,6 +46,7 @@ local TR2 = require("prototypes.tables.regions_v2")
 local TC = require("prototypes.tables.zone_outline")
 local TC2 = require("prototypes.tables.zone_outline_v2")
 local TB = require("prototypes.tables.zone_blue")
+local TB2 = require("prototypes.tables.zone_blue_v2")
 
 local R = cfg.regions
 local N = R.names
@@ -598,11 +599,11 @@ end
 outline(TC, cfg.destroyed.outline.names)
 outline(TC2, cfg.destroyed.outline.next)
 
--- The shapes of Blue corrupted UK and Australia (config.lua blue; prototypes/tables/zone_blue.lua). A sea shape needs
--- its crossing count alone, so it costs a fraction of a distance to every edge, and a map skips the shapes it does not
--- hold.
-local function blue_outline()
-  local O = cfg.blue.outline.names
+-- The shapes of Blue corrupted (config.lua blue; prototypes/tables/zone_blue.lua). A sea shape needs its crossing
+-- count alone, so it costs a fraction of a distance to every edge, and a map skips the shapes it does not hold. BT is
+-- the table, O the names it builds: the first release's, then 0.3.1's next outline
+-- (prototypes/tables/zone_blue_v2.lua), which holds the United Kingdom alone.
+local function blue_outline(BT, O)
   local big = num(cfg.blue.outline.inside_px)
 
   local function holds(shape, M)
@@ -641,20 +642,22 @@ local function blue_outline()
     local text, L = crossings(pixels(shape), QU, QV)
     def(name, text, L)
   end
-  sea_shape(O.britain, TB.britain)
-  sea_shape(O.australia, TB.australia)
+  sea_shape(O.britain, BT.britain)
+  if BT.australia then
+    sea_shape(O.australia, BT.australia)
+  end
   def(O.sea, by_map(function(M)
     local parts = {}
-    if holds(TB.britain, M) then
+    if holds(BT.britain, M) then
       parts[#parts + 1] = O.britain
     end
-    if holds(TB.australia, M) then
+    if BT.australia and holds(BT.australia, M) then
       parts[#parts + 1] = O.australia
     end
     return joined("max", parts, "0")
   end))
 
-  local U = TB.ulster
+  local U = BT.ulster
   local pts = {}
   for i, v in ipairs(U.vertices) do
     local a, b = to_px(v.lat, v.lon)
@@ -683,7 +686,8 @@ local function blue_outline()
   def(O.depth, "max((2 * " .. O.ulster .. " - 1) * sqrt(" .. O.land .. ") + " .. N.rough .. ", " .. big .. " * (2 * " ..
     O.sea .. " - 1))")
 end
-blue_outline()
+blue_outline(TB, cfg.blue.outline.names)
+blue_outline(TB2, cfg.blue.outline.next)
 
 -- Great forests.
 local function boosted(x)

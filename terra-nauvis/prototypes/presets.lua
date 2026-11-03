@@ -356,7 +356,7 @@ local function bandfix_names(map_key)
   return out
 end
 
--- Blue corrupted UK and Australia (config.lua blue): with the toggle on, each climate field and palm key names its zone
+-- Blue corrupted UK (config.lua blue): with the toggle on, each climate field and palm key names its zone
 -- body and its under name what it held, and the list hook's keep body names the zone's. It runs after every other
 -- step, so it wraps Destroyed Europe's temperature and palms when both are on. A world made before holds none of these.
 local function blue_values(names)
@@ -372,6 +372,8 @@ local function blue_values(names)
       out[p.key] = p.body
     end
     out[cfg.tiles.scan.body] = B.names.keep
+    -- 0.3.1: the next outline's depth (blue.outline.next), the United Kingdom alone
+    out[B.outline.names.depth] = B.outline.next.depth
   end
   return out
 end
