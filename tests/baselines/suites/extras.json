@@ -636,6 +636,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_chaos_grey_rock_v1": {
+    "type": "noise-expression",
+    "sha256": "6db2a1af684bce8d63c733b947534fe9fc22ebf7b2051dd0ff9984fdbd44d364",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
    "tn_chaos_red_dirt_v1": {
     "type": "noise-expression",
     "sha256": "f09b0cf3589478f43d5bc907e9e18db84143506113dd0087ae06b378f7e9e188",
@@ -2774,6 +2781,13 @@
    "tn_destroyed_class_v4": {
     "type": "noise-expression",
     "sha256": "774efced78a96334121b0aebe66d9c58bf1a6579ed438f3b07e233556a0c4332",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_destroyed_class_v5": {
+    "type": "noise-expression",
+    "sha256": "556897e8f93cd39ce1c31def77a53c40e15f2c01751c57090f11edde1c8bf95e",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-03"
@@ -7919,6 +7933,13 @@
    "tn_north_drop_v3": {
     "type": "noise-expression",
     "sha256": "3ced5f47e6656cf37642f53dd563090c451283c148c829c80a30c7309dc44207",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-03"
+   },
+   "tn_north_drop_v4": {
+    "type": "noise-expression",
+    "sha256": "20445a52879935a108a9297b3cc0ffef3cdbcd51966ba6ff829bcdd65d5c4d6b",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-03"
@@ -15199,6 +15220,6 @@
     "registered": "2026-11-01"
    }
   },
-  "sha256": "54e1ac9c8bef61e8b0e4cb0e75d94f751fc7e78a748ebb65d613c85a9945a480"
+  "sha256": "b7fd65aff00a942526d983016528550e2ecd999e75f82a66ef6eedc292297d62"
  }
 }

@@ -16,9 +16,10 @@ versions follow [Semantic Versioning](https://semver.org/).
   world made from the Map type entry alone now gets the same coasts as one made from the preset.
 - Old World past scale 6, on new worlds: the Volga's Samara Bend draws as a bend instead of a hook. Every other river
   keeps its course.
-- Chaos zones on new worlds (Destroyed Europe, and the Moscow zone at Chaos): the edges between dry dirt, scorched
-  red grass, black ash and heat ground fray at tile level and bend every few dozen tiles, so no class edge runs
-  straight for a hundred tiles any more, and the Moscow zone's own edge frays as Destroyed Europe's does.
+- Chaos zones on new worlds (Destroyed Europe, and the Moscow zone at Chaos): the zone fades from heat ground
+  through black ash into a grey rocky strip, with no red grass or dry dirt band and no patches of outside ground
+  inside the zone under High North snow. Its edges fray at tile level and bend every few dozen tiles, so no edge
+  runs straight for a hundred tiles any more, and the Moscow zone's own edge frays as Destroyed Europe's does.
 - Worlds made on 0.3.1 keep loading unchanged; the new terrain applies to new worlds only.
 
 ## [0.3.1] - 2026-11-03

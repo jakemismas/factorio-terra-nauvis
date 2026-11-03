@@ -4,7 +4,7 @@
 -- The zone reads one region-layer interface name, tn_destroyed_depth: the outline of
 -- data-src/approvals/destroyed-zone.json less its keep rows (Britain, Denmark and the Carpathians), in tiles.
 -- Each seed moves the outline's vertices and warps its edges harder than the shared warp, the same way on
--- every map. No region formula lives here (the static
+-- every map (DECISIONS 2026-10-30 10:05). No region formula lives here (the static
 -- regions row fails one outside regions.lua). The zone is cut by the start disc around the spawn, which the
 -- spawn shift keeps at the origin on every map, so every spawn city, the zone's included, starts on normal
 -- ground with normal trees (T7). Its heat climbs from a heat-1 rim to a core that mixes Alien Biomes' four
@@ -324,6 +324,17 @@ if AB then
   def(DN.class, "if(" .. DN.reach .. " <= 0, 0, if(" .. cut_at(CU.heat) .. " > 0, 0, if(" .. cut_at(CU.ash) ..
     " > 0, " .. L[T.black_dirt] .. ", if(" .. cut_at(CU.scorched) .. " > 0, " .. L[T.grass] .. ", " ..
     num(DV.tiles[1].class) .. "))))", at)
+  -- 0.3.2 (destroyed.dev.next.class): heat ground, black ash, then grey rock to the zone's edge. The grey band's width
+  -- in the position's tiles is the dry cut less the ash cut, which the position itself drops out of: where it is under
+  -- thin the black ash takes the band, and the ash cut moves out by the break noise's share of the band's place in
+  -- widths, so the band narrows and breaks off along the edge instead of thinning to a bright line.
+  local NC = NX.class
+  local BK = NC.brk
+  local ash = "(" .. cut_at(CU.ash) .. " + " .. num(CU.ash.at - CU.dry.at) .. " * " .. DN.width .. " * clamp((" ..
+    noise(BK) .. " - " .. num(BK.at) .. ") / " .. num(BK.span) .. ", 0, 1))"
+  def(NN.class, "if(" .. DN.reach .. " <= 0, 0, if(" .. cut_at(CU.heat) .. " > 0, 0, if(max(" .. ash .. ", " ..
+    num(NC.thin) .. " - " .. DN.reach .. " + " .. ash .. ") > 0, " .. L[T.black_dirt] .. ", " .. num(NC.grey) ..
+    ")))", at)
   -- The heat ground: heat 1 at the cut, rising by ramp degrees a width, and never hotter than the lava blob's
   -- temperature or the spawn's cooler cap.
   def(DN.heat, "if(h > 0, clamp(min(" .. hot .. ", " .. num(H.rim) .. " + " .. num(DV.ramp) .. " * h / " .. DN.width ..

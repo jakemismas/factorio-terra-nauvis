@@ -15201,6 +15201,27 @@
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-11-03"
+  },
+  "tn_chaos_grey_rock_v1": {
+   "type": "noise-expression",
+   "sha256": "6db2a1af684bce8d63c733b947534fe9fc22ebf7b2051dd0ff9984fdbd44d364",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_class_v5": {
+   "type": "noise-expression",
+   "sha256": "556897e8f93cd39ce1c31def77a53c40e15f2c01751c57090f11edde1c8bf95e",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_north_drop_v4": {
+   "type": "noise-expression",
+   "sha256": "20445a52879935a108a9297b3cc0ffef3cdbcd51966ba6ff829bcdd65d5c4d6b",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
   }
  }
 }
