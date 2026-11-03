@@ -17,11 +17,12 @@ versions follow [Semantic Versioning](https://semver.org/).
   and Batu Hijau's copper keeps off Lombok.
 - Ordinary ore patches on new worlds are vanilla's own again, in size, shape and richness for their distance from the
   spawn, and keep out of ore hotspots. Presets set the ore sliders to 1. Past about 1,000 tiles from the spawn they
-  grow richer at half vanilla's pace, and from about 4,000 tiles they stop growing, so far ore hotspots stand well
-  above them.
+  grow richer at half vanilla's pace, and from about 4,000 tiles they stop growing.
 - An ore hotspot on new worlds holds three to six times a large ordinary patch at its distance, at most about 100
-  million, about 1.75 times as rich per tile as vanilla's ordinary ore, in more bodies for a stronger field. The map's
-  ore size and richness sliders reach hotspots, and the Ore hotspot amount setting adds or removes bodies.
+  million, about 1.75 times as rich per tile as vanilla's ordinary ore, in more bodies for a stronger field. Far out
+  it is two to two and a half times as rich per tile as the ordinary ore round it, so far fields spread over a
+  district of large bodies instead of a few small rich ones. The map's ore size and richness sliders reach hotspots,
+  and the Ore hotspot size setting adds or removes bodies.
 - A start with less than nine tenths of vanilla's average coal gets topped up to that average.
 - New worlds: the snow line runs north of Russia's main lowland, a spawn in the cold north starts in a clearing off
   the snow, and palms grow on warm Mediterranean shores (with Destroyed Europe on as well).
@@ -93,10 +94,12 @@ versions follow [Semantic Versioning](https://semver.org/).
   of tiles, and the ends of fords are rougher.
 - New Old World worlds at scales 12 and 24 generate faster: their coast fit costs about 28 percent less, and the
   Thames and Cotentin shores are cleaned up.
-- Ore hotspots on new worlds have rougher outlines, and far fields reach their design total in fewer, larger bodies,
-  capped by strength at about 46 to 73 million.
+- Ore hotspots on new worlds have rougher outlines, and each field's design total is capped by its strength, at about
+  46 to 73 million.
 - The first range table's unused ridge bodies are gone, so the game starts a little faster with a large mod pack.
 - The README describes 0.3.0, with a new map render and in-game shots.
+- The Ore hotspot amount setting is now called Ore hotspot size, and its values read Small, Normal, Large and Huge
+  instead of 50, 100, 200 and 400 percent; the values themselves are unchanged.
 
 ## [0.2.0] - 2026-11-01
 

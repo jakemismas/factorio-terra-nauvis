@@ -38,12 +38,13 @@ Destroyed Europe and Blue corrupted UK and Australia on.*
   stand as walls with short breaks. Big rocks and stony ground gather round each range, and high
   ranges carry snow and rock with a narrow, broken grey rim. Desert ranges such as the Atlas and the
   Zagros have no snow.
-- **Ore.** Ordinary patches are the base game's own in size and shape. Their richness follows the
-  base game's out to about 1,000 tiles from the spawn, then grows at half its pace and stops growing
-  at about 4,000 tiles. Historic ore fields sit at their real sites, such as Kiruna, the Ruhr, the
+- **Ore.** Ordinary patches are the base game's own in size and shape. Their amount follows the base
+  game's out to about 1,000 tiles from the spawn, then grows at half its pace and stops growing at
+  about 4,000 tiles. Historic ore fields sit at their real sites, such as Kiruna, the Ruhr, the
   Donbas, Ghawar and the Copperbelt. A field holds three to six times a large base-game patch at the
-  same distance, at most about 100 million, with about 1.75 times the base game's ore per tile.
-  Biter nests stand about three times as thick inside it.
+  same distance, at most about 100 million. It stays two to three times as rich per tile as the
+  ordinary ore round it and keeps a large footprint at any distance. Biter nests stand about three
+  times as thick inside it.
 - **Forests and marshes.** Great forests carry about twice the trees of the land around them, from
   the Black Forest and the taiga to the Congo, Borneo, New Guinea, the Appalachians and Valdivia, on
   the maps that hold them. Marshes include the Sundarbans, the Inner Niger Delta and the Mekong delta.
@@ -54,7 +55,7 @@ Destroyed Europe and Blue corrupted UK and Australia on.*
 ## Screenshots
 
 In-game shots at player zoom on Old World at map scale 12, with Destroyed Europe and Blue corrupted
-on, Ore hotspot amount at 200 percent, and a pack of 82 mods that includes Space Age and Alien Biomes.
+on, Ore hotspot size at Large, and a pack of 82 mods that includes Space Age and Alien Biomes.
 
 ![Cracked volcanic ground with lava pools at the Frankfurt spawn](docs/images/destroyed-europe-frankfurt.jpg)
 
@@ -141,7 +142,7 @@ tagged release.
 
 Set everything before you press Play. A world made from a preset keeps its scale, spawn city and
 every startup setting below for life, and a message tells you when a setting no longer matches.
-Ore hotspot amount is the one exception: it gives no message.
+Ore hotspot size is the one exception: it gives no message.
 
 The presets set the Moisture and Terrain type sliders, and Alien Biomes' temperature sliders, to
 150 percent scale, which is what makes the biomes larger. If you set them back to 100 percent, you
@@ -154,10 +155,10 @@ moves any terrain it generates afterwards. Use the preset unless you want exactl
 
 ## Recommended settings
 
-This is how we play, not the default. Set **Ore hotspot amount** to 200 percent, and on the new-game
+This is how we play, not the default. Set **Ore hotspot size** to Large, and on the new-game
 screen's Resources tab lower each ore's **Frequency** to 50 percent. Ore near home gets sparse and
 every historic field holds twice as many ore bodies, so the real deposits become worth the trip. The
-mod's own default for the hotspot amount stays at 100 percent.
+mod's own default for the hotspot size stays at Normal.
 
 ## Settings
 
@@ -173,8 +174,8 @@ running game. The tooltip of each optional layer gives its map generation cost a
 | Canals | On | Opens the Kiel and Corinth canals on every map, Suez on Atlantic and Old World, and Panama on Atlantic, as sea-level channels at least 7 tiles wide that Cargo Ships can use. Off keeps every isthmus closed. |
 | Great forests | On | Gives each great forest about twice the trees of the land around it, and the cold taiga forests more. Trees still follow the climate, so a forest in a dry place stays thinner. |
 | Ridges | On | Places cliff ridges along the map's mountain ranges (10 on Europe, 21 on Old World, 26 on Atlantic). They are the only cliffs on the map. Passes sit at the historic crossings, with a gap at least every 400 km wide enough for a double track. No ridge crosses the starting area. Off gives a map with no cliffs. |
-| Ore hotspots | On | Adds the historic ore fields: dense ore across a footprint that moves a little with the map seed, with about three times the base game's biter nests inside it, plus offshore oil fields on deep water when the Oil Rig mod is installed. On a solid ore field the map's size slider scales its area and total and the richness slider its ore per tile; the frequency slider does not reach it, and crude oil hotspots take only Ore hotspot amount. Ordinary ore stays out of a hotspot's disc, and no field lies at a spawn city. Off gives the base game's ore alone. |
-| Ore hotspot amount | 100 percent | How much ore and oil every hotspot holds: 50, 100, 200 or 400 percent. On a solid ore field a higher percentage adds ore bodies inside its footprint instead of richness; oil wells get richer. It never moves a hotspot or its footprint. |
+| Ore hotspots | On | Adds the historic ore fields: dense ore across a footprint that moves a little with the map seed, with about three times the base game's biter nests inside it, plus offshore oil fields on deep water when the Oil Rig mod is installed. On a solid ore field the map's size slider scales its area and total and the richness slider its ore per tile; the frequency slider does not reach it, and crude oil hotspots take only Ore hotspot size. Ordinary ore stays out of a hotspot's disc, and no field lies at a spawn city. Off gives the base game's ore alone. |
+| Ore hotspot size | Normal | How much ground each ore hotspot covers: Small, Normal, Large or Huge. Normal: a field holds several large ordinary patches' worth of ore, up to about 100 million, in a few big ore bodies about twice as rich per tile as the ore around it. Large and Huge add more ore bodies (two and four times the ore); Small halves it. Richness per tile stays the same. Oil hotspots get richer wells instead. Applies to new worlds. |
 | Inland lakes | Off | Scatters small random lakes across the land, about eight in every 1,024 x 1,024 tiles, away from coasts and the starting area. Off leaves only the lake at the spawn city, the rivers and the real lakes of the map. |
 | Destroyed Europe | Off | Needs Alien Biomes. Turns the middle of Europe into volcanic wasteland: France, the Low Countries, Germany with Jutland and the north German coast, Switzerland, Austria, Poland, Slovenia to Ljubljana, Veneto, Friuli, western Istria and Italy down to about Rome, reaching the foothills of the Pyrenees. Most of it is cracked volcanic ground with lava pools and some black and red rock, and a great forest inside stands as a dead forest. Where the zone meets ordinary land it frays out through scorched red grass, black ash and red rock, in a band that changes width and breaks in places. Britain, the Danish islands and the Carpathians stay outside. You can walk and build on all of it at full speed, and it absorbs pollution like grass. Biter and worm creep and the dry plants inside turn ember red, and the zone shows red on the map view. Its outline changes with the map seed. A spawn city you choose inside the zone starts in it, on cooler ground; Random never picks one there. Without Alien Biomes nothing changes and the game warns you. |
 | Blue corrupted UK and Australia | Off | Needs Alien Biomes. Turns the UK and Australia into Alien Biomes' blue and purple lands: mostly mauve grass with some blue grass, purple grass and purple dirt, and the violet, white and blue trees and plants that grow there. The Europe map holds the UK only. In Ireland the zone stops at the Northern Ireland border, which frays into normal ground. Alien Biomes' blue and purple lands appear nowhere else, with this setting on or off, and its green and olive plants do not grow inside the zone. Biter and worm creep and the brown plants and mud inside turn blue-purple. |
@@ -241,12 +242,10 @@ no errors and runs ten game minutes clean.
   ridges are the only cliffs. A world started with cliffs at none gets its ridges back beyond the
   starting area. On solid ore hotspots the size slider scales a field's area and total and the
   richness slider its ore per tile; the frequency slider does not reach them, and crude oil hotspots
-  take only the Ore hotspot amount setting. The other sliders work.
-- **Far hotspots stand far above the ore round them.** Ordinary ore stops growing richer at about
-  4,000 tiles from the spawn, while a hotspot keeps about 1.75 times the base game's ore per tile,
-  so far out a hotspot is many times as rich per tile as the ordinary patches nearby. Each field's
-  total is capped by its strength, at most about 100 million, and varies around its design; small or
-  coastal footprints hold less.
+  take only the Ore hotspot size setting. The other sliders work.
+- **Hotspot totals vary.** Each field's total is capped by its strength, at most about 100 million,
+  and varies around its design. A field whose disc has little land, such as a small or coastal
+  footprint, holds less.
 - **The Europe map has the weakest coast of the three.** Exact coastlines does not run on it, so its
   noise coast strays further from the reference. Old World gives you a closer Europe.
 - **Coasts at scales 6, 12 and 24 still show steps.** At scale 6 some coasts that Exact coastlines
