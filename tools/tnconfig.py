@@ -1041,6 +1041,9 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     mt = map_type_version(geography_versions(cfg)[map_key], version)
     if mt and int(scale) > mt["map_type_of"]["above_scale"]:
         pen[K["elevation"]] = mt["entry"]
+        own = version_scales(cfg, mt)
+        if waterways_of(mt) and int(scale) in own:
+            pen[K["fords"]] = waterways_of(mt)["fords"][own.index(int(scale))]
     # the next spawn folds (presets.lua spawn_next_values, after baked): a city number past the released folds'
     # cities names the next folds over the version's city offset, its map's frame, the spawn lake and the bias
     nx, sp = spawn_next_of(cfg, version), spawn_of(version)

@@ -554,12 +554,18 @@ local function geo_next_values(v)
 end
 
 -- A Map type version of the preset's version (config.lua geography, map_type_of): past its above_scale the preset
--- names its entry for elevation, so a preset world and a Map-type-only world read one entry. Not part of baked(): the
--- version's own fallbacks stay its base's.
+-- names its entry for elevation, so a preset world and a Map-type-only world read one entry, and its ford set for the
+-- save's scale under the ford key. Not part of baked(): the version's own fallbacks stay its base's.
 local function map_type_values(map_key, v)
   for _, o in ipairs(cfg.geography[map_key].versions) do
     if o.map_type_of and o.map_type_of.geo_id == v.geo_id and scale > o.map_type_of.above_scale then
-      return {[K.elevation] = o.entry}
+      local out = {[K.elevation] = o.entry}
+      for pos, s in ipairs(o.scales or cfg.scales.released) do
+        if s == scale and o.waterways then
+          out[K.fords] = o.waterways.fords[pos]
+        end
+      end
+      return out
     end
   end
   return {}

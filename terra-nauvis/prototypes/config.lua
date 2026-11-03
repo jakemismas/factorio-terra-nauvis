@@ -706,6 +706,14 @@ local OAS = {
   OW_FIT_FRAY1 = NOISE .. "geo_fray_fit_olde_world_v1",
   OW_LAND_FRAY1 = NOISE .. "overlay_land_fray_olde_world_v1",
   OW_WATER_FRAY1 = NOISE .. "overlay_water_fray_olde_world_v1",
+  -- 0.3.2: the version 9 river and ford sets at scales 12 and 24, built from waterways.next's files (the Samara Bend
+  -- rounded); its other scales and kinds read version 8's sets.
+  OW_WW8 = {NOISE .. "ww_olde_world_s12_v8", NOISE .. "ww_olde_world_s24_v8"},
+  OW_FORDS8 = {NOISE .. "fords_olde_world_s12_v8", NOISE .. "fords_olde_world_s24_v8"},
+  -- the version 9 river warp at scale 12 round the Samara Bend (waterways.next calm): x then y
+  OW_WARP3 = {NOISE .. "warp_x_olde_world_s12_v3", NOISE .. "warp_y_olde_world_s12_v3"},
+  OW9_WW_FILES = {"prototypes/generated/waterways_olde_world_s12_v3.lua",
+                  "prototypes/generated/waterways_olde_world_s24_v3.lua"},
   -- 0.3.2: Old World's geo body past scale 6 over OW9_GEO (coast.overlay): its land and water layers drawn from the
   -- reference raster, combined with it by max() and min(), each layer bound to version 8's warped chain.
   OW10_GEO = NOISE .. "geo_olde_world_v10",
@@ -819,6 +827,14 @@ local OAS = {
 local OAS_SETS = {
   atlantic_v8 = {ww = OAS.AT_WW7, canals = OAS.AT_CANALS7, dams = OAS.AT_DAMS7, fords = OAS.AT_FORDS7},
   olde_world_v8 = {ww = OAS.OW_WW7, canals = OAS.OW_CANALS7, dams = OAS.OW_DAMS7, fords = OAS.OW_FORDS7},
+  -- 0.3.2: Old World's version 9 (a Map type version): version 8's sets, the rivers and fords past scale 6 of their own
+  olde_world_v9 = {
+    ww = {OAS.OW_WW7[1], OAS.OW_WW7[2], OAS.OW_WW7[3], OAS.OW_WW7[4], OAS.OW_WW7[5], OAS.OW_WW7[6], OAS.OW_WW8[1],
+          OAS.OW_WW8[2]},
+    canals = OAS.OW_CANALS7, dams = OAS.OW_DAMS7,
+    fords = {OAS.OW_FORDS7[1], OAS.OW_FORDS7[2], OAS.OW_FORDS7[3], OAS.OW_FORDS7[4], OAS.OW_FORDS7[5],
+             OAS.OW_FORDS7[6], OAS.OW_FORDS8[1], OAS.OW_FORDS8[2]},
+  },
   europe_v7 = {ww = ELN.EU_WW5, canals = ELN.EU_CANALS5, dams = ELN.EU_DAMS5, fords = ELN.EU_FORDS5},
 }
 -- Destroyed Europe (APPROVALS 10; D12; S3 section 6). The toggle key tn_destroyed
@@ -1418,7 +1434,7 @@ return {
             spawn_lake = OAS.OW8_SPAWN_LAKE, spawn_bias = OAS.OW8_SPAWN_BIAS, inland_lakes = OAS.OW9_LAKES,
             lake_floor = true, start_land = START_LAND, distance = DISTANCE, bearings = OAS.OW7_SPAWN_FILE,
           },
-          waterways = OAS_SETS.olde_world_v8,
+          waterways = OAS_SETS.olde_world_v9,
           scales = SCALE_LISTS.offered,
           waterway_files = 2,
           mouths = OAS.OW_MOUTH2,
@@ -1633,8 +1649,8 @@ return {
       OAS.OW10_GEO, OAS.OW10_LAND, OAS.OW10_WATER,
       OAS.OW8_LAKES,
       -- 0.3.2: the Map type version 9's own bodies (geography 24)
-      OAS.OW9_ENTRY, OAS.OW9_SHORE, OAS.OW9_LAKES, OAS.OW_GEO_FRAY1, OAS.OW_FIT_FRAY1, OAS.OW_LAND_FRAY1,
-      OAS.OW_WATER_FRAY1,
+      OAS.OW9_ENTRY, OAS.OW9_SHORE, OAS.OW9_LAKES, OAS.OW_GEO_FRAY1, OAS.OW_WW8[1], OAS.OW_WW8[2], OAS.OW_FORDS8[1],
+      OAS.OW_FORDS8[2], OAS.OW_WARP3[1], OAS.OW_WARP3[2], OAS.OW_FIT_FRAY1, OAS.OW_LAND_FRAY1, OAS.OW_WATER_FRAY1,
       OAS.OW8_SHORE, OAS.OW_WW7[1], OAS.OW_WW7[2], OAS.OW_WW7[3], OAS.OW_WW7[4], OAS.OW_WW7[5], OAS.OW_WW7[6],
       OAS.OW_WW7[7], OAS.OW_WW7[8], OAS.OW_CANALS7[1], OAS.OW_CANALS7[2], OAS.OW_CANALS7[3], OAS.OW_CANALS7[4],
       OAS.OW_CANALS7[5], OAS.OW_CANALS7[6], OAS.OW_CANALS7[7], OAS.OW_CANALS7[8], OAS.OW_DAMS7[1], OAS.OW_DAMS7[2],
@@ -1992,8 +2008,10 @@ return {
       release = "0.3.2",
       map = "olde_world",
       geography = 24,
-      names = {OAS.OW9_ENTRY, OAS.OW9_SHORE, OAS.OW9_LAKES, OAS.OW_GEO_FRAY1, OAS.OW_FIT_FRAY1, OAS.OW_LAND_FRAY1,
-               OAS.OW_WATER_FRAY1},
+      names = {OAS.OW9_ENTRY, OAS.OW9_SHORE, OAS.OW9_LAKES, OAS.OW_GEO_FRAY1, OAS.OW_WW8[1], OAS.OW_WW8[2],
+               OAS.OW_FORDS8[1], OAS.OW_FORDS8[2], OAS.OW_WARP3[1], OAS.OW_WARP3[2], OAS.OW_FIT_FRAY1,
+               OAS.OW_LAND_FRAY1, OAS.OW_WATER_FRAY1},
+      files = {OAS.OW9_WW_FILES[1], OAS.OW9_WW_FILES[2]},
     },
     -- 0.3.2: Old World's geo body over the next one (coast.overlay) and its two layers, which a new world's preset
     -- names over version 8's past scale 6.
@@ -3847,7 +3865,20 @@ return {
   waterways = {
     version = 1,
     versions = {atlantic = 2, olde_world = 2},
-    sets = {europe = OAS_SETS.europe_v7, atlantic = OAS_SETS.atlantic_v8, olde_world = OAS_SETS.olde_world_v8},
+    -- next (0.3.2): a map's files past its released ones at some scales, emitted as `version` for `scales` beside them
+    -- (tools/build_waterways.py, manifest-<map>-next.json), with `round` applied: each listed river's course inside
+    -- box_px (reference px: first column, first row, last column, last row) and one vertex beyond each end corner-cut
+    -- `passes` times, so a tight bend the simplification left as a few long segments meeting at sharp vertices reads as
+    -- one curve, then simplified at simplify_tiles. The Volga's Samara Bend (48.5 to 50.4 E, 53.0 to 54.4 N, Tolyatti
+    -- to Syzran) at scales 12 and 24. calm: at its scale the next river and ford sets read the rivers' warp under
+    -- names of their own (warp, x then y), whose fine meander (natural.warp_fine) fades to 0 within inner_tiles of
+    -- centre_px (reference px) and is whole past outer_tiles: there the meander octaves, 34 tiles at 230 and 13 at 95,
+    -- bent the bend's two reaches by different amounts into a hook with near-right corners. Every tile past
+    -- outer_tiles reads the warp it read before, so no other river moves.
+    next = {olde_world = {version = 3, scales = {12, 24}, round = {
+      {river = "volga", box_px = {3040, 1245, 3126, 1308}, passes = 4, simplify_tiles = 0.5},
+    }, calm = {scale = 12, centre_px = {3112, 1295}, inner_tiles = 160, outer_tiles = 320, warp = OAS.OW_WARP3}}},
+    sets = {europe = OAS_SETS.europe_v7, atlantic = OAS_SETS.atlantic_v8, olde_world = OAS_SETS.olde_world_v9},
     floor_tiles = 7, river_floor_tiles = 3, two_way_tiles = 11, margin_tiles = 0.25,
     river_k = {major = 3, minor = 2},
     river_cap_tiles = {major = 48, minor = 36},

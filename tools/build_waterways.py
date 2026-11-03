@@ -1518,8 +1518,51 @@ def place_fords(w, geo, s, P, hw_at, others, fid, basins):
     return fords, skipped
 
 
-def build_scale(cfg, data, geo, s):
-    """Every set of one map at scale s, as data (the emitter renders it)."""
+def chaikin(P, passes):
+    """Corner cutting with both ends kept: each pass puts each inner segment's points at 1/4 and 3/4 of it."""
+    np = _np()
+    Q = np.asarray(P, float)
+    for _ in range(passes):
+        if len(Q) < 3:
+            break
+        a, b = Q[:-1], Q[1:]
+        cut = np.empty((2 * len(a), 2))
+        cut[0::2] = 0.75 * a + 0.25 * b
+        cut[1::2] = 0.25 * a + 0.75 * b
+        Q = np.vstack([Q[:1], cut[1:-1], Q[-1:]])
+    return Q
+
+
+def round_course(P, box, passes, grid, eps=0.0):
+    """A course with its vertices inside box (geo tiles x0, y0, x1, y1) and one beyond each end corner-cut `passes`
+    times (chaikin), so a tight bend the simplification left as a few long segments meeting at sharp vertices reads as
+    one curve, then simplified at eps tiles (Douglas-Peucker) so the curve takes few segments; the rest of the course
+    keeps its vertices. Returns (course, whether any vertex lay inside)."""
+    np = _np()
+    P = np.asarray(P, float)
+    x0, y0, x1, y1 = box
+    inside = np.nonzero((P[:, 0] >= x0) & (P[:, 0] <= x1) & (P[:, 1] >= y0) & (P[:, 1] <= y1))[0]
+    if not len(inside):
+        return P, False
+    a, b = max(0, int(inside[0]) - 1), min(len(P) - 1, int(inside[-1]) + 1)
+    mid = chaikin(P[a:b + 1], passes)
+    if eps > 0:
+        mid = dp_simplify(mid, eps)
+    return dedupe(snap(np.vstack([P[:a], mid, P[b + 1:]]), grid)), True
+
+
+def rounds_at(w, map_key, s, version):
+    """The rounded bends (waterways.next) a map's files of `version` take at scale s: {river id: (box px, passes,
+    simplify tiles)}."""
+    nx = (w.get("next") or {}).get(map_key) or {}
+    if nx.get("version") != version or int(s) not in [int(x) for x in nx.get("scales") or []]:
+        return {}
+    return {r["river"]: (r["box_px"], int(r["passes"]), float(r.get("simplify_tiles") or 0))
+            for r in nx.get("round") or []}
+
+
+def build_scale(cfg, data, geo, s, rounds=None):
+    """Every set of one map at scale s, as data (the emitter renders it); rounds: rounds_at()'s bends."""
     w = ww_cfg(cfg)
     np = _np()
     tol, keep = scale_cut(w, data, s)
@@ -1527,6 +1570,15 @@ def build_scale(cfg, data, geo, s):
     for r in data["rivers"][:keep]:
         hw = half_width(w, "river", s, river_class=r["class"]) * (r.get("route") or {}).get("width_share", 1)
         win, P, bend = shaped(w, r, "river", s, geo, tol)
+        if r["id"] in (rounds or {}):
+            (c0, r0, c1, r1), passes, eps = rounds[r["id"]]
+            ox, oy = geo.offset(s)
+            box = ((c0 + 0.5) * s + ox, (r0 + 0.5) * s + oy, (c1 + 0.5) * s + ox, (r1 + 0.5) * s + oy)
+            P, hit = round_course(P, box, passes, w["vertex_grid"], eps)
+            if not hit:
+                raise SystemExit(f"waterways.next rounds {r['id']} at scale {s}, but no vertex of it lies in box_px")
+            v, worst, runs = turn_windows(P, w["bend"]["window_tiles"], w["bend"]["limit_degrees"])
+            bend = dict(bend, violations=v, worst_deg=worst, runs=runs)
         feats.append({"kind": "river", "id": r["id"], "name": r["name"], "class": r["class"], "hw": hw,
                       "depth": w["depth"]["river"], "window": win, "P": P, "bend": bend,
                       "meanders": bool((r.get("route") or {}).get("window_px"))})
@@ -1845,22 +1897,32 @@ def feature_record(f, s, w):
     return rec
 
 
-def emit_map(cfg, map_key, out_dir=GENERATED, manifest=True, scales=None):
+def next_of(w, map_key):
+    """A map's next files (waterways.next, 0.3.2): {version, scales, round}, or None."""
+    return (w.get("next") or {}).get(map_key)
+
+
+def emit_map(cfg, map_key, out_dir=GENERATED, manifest=True, scales=None, nxt=False):
     """Write the map's six generated files (and its manifest) and return the manifest record. The
     river-safe starts stay in the manifest's per-scale records only: no Lua file is emitted for them
-."""
+. nxt: the map's next files (waterways.next) at their scales, with their
+    rounded bends, and their own manifest."""
     w = ww_cfg(cfg)
     data, dp = load_data(map_key)
     data_sha = sha256_file(dp)
     data_rel = dp.relative_to(REPO).as_posix()
     geo = MapGeo(cfg, map_key)
-    version = map_version(w, map_key)
+    version = next_of(w, map_key)["version"] if nxt else map_version(w, map_key)
+    if nxt:
+        scales = [int(x) for x in next_of(w, map_key)["scales"] if not scales or int(x) in scales]
     rec = {"format": "tn-waterways-manifest/1", "tool": "tools/build_waterways.py", "emitter_version": EMITTER_VERSION,
            "map": map_key, "input": {"file": data_rel, "sha256": data_sha}, "coast_fit": geo.fit_land()[1],
-           "config": {k: w[k] for k in sorted(w) if k != "sets"}, "scales": {}}
+           "config": {k: w[k] for k in sorted(w) if k not in ("sets", "next")}, "scales": {}}
+    if nxt:
+        rec["next"] = next_of(w, map_key)
     starts = {}
     for s in scales or cfg["scales"]["values"]:
-        built = build_scale(cfg, data, geo, s)
+        built = build_scale(cfg, data, geo, s, rounds_at(w, map_key, s, version))
         exprs, stats = render_sets(cfg, built)
         text = render_lua(cfg, map_key, s, exprs, stats, data_rel, data_sha)
         name = file_name(map_key, s, version)
@@ -1882,7 +1944,9 @@ def emit_map(cfg, map_key, out_dir=GENERATED, manifest=True, scales=None):
         if mask is not None:
             srec["starts"] = starts[s]
         rec["scales"][str(s)] = srec
-    if manifest:
+    if manifest and nxt:
+        write_json(DATA / f"manifest-{map_key}-next.json", rec)
+    elif manifest:
         write_manifests(cfg, map_key, rec)
     return rec
 
@@ -1897,7 +1961,7 @@ def released_config(cfg, w):
     """config.lua's waterways group as the released manifests hold it: per-scale tables at the released scales and no
     key that only scales past them read."""
     n = len(cfg["scales"]["released"])
-    out = json.loads(json.dumps({k: w[k] for k in sorted(w) if k not in ("sets", "river_cap_tiles")}))
+    out = json.loads(json.dumps({k: w[k] for k in sorted(w) if k not in ("sets", "river_cap_tiles", "next")}))
     out["tolerance_tiles"] = out["tolerance_tiles"][:n]
     out["smoothing"]["least_tiles"] = out["smoothing"]["least_tiles"][:n]
     out["smoothing"].pop("windows_past_six", None)
@@ -1933,7 +1997,13 @@ def check(cfg, maps):
                 d = Path(td) / f"run{n}"
                 emit_map(cfg, map_key, d, manifest=False)
                 runs.append(d)
-            for name in [file_name(map_key, s, map_version(w, map_key)) for s in cfg["scales"]["values"]]:
+            names = [file_name(map_key, s, map_version(w, map_key)) for s in cfg["scales"]["values"]]
+            nx = next_of(w, map_key)
+            if nx:
+                for n in range(2):
+                    emit_map(cfg, map_key, Path(td) / f"run{n}", manifest=False, nxt=True)
+                names += [file_name(map_key, s, nx["version"]) for s in nx["scales"]]
+            for name in names:
                 a, b = (runs[0] / name).read_bytes(), (runs[1] / name).read_bytes()
                 committed = GENERATED / name
                 if a != b:
@@ -2302,6 +2372,9 @@ def main(argv=None):
             only = [int(x) for x in a.scales.split(",")] if a.scales else None
             rec = emit_map(cfg, key, scales=only)
             print(json.dumps({"map": key, "scales": {s: r["stats"] for s, r in rec["scales"].items()}}))
+            if next_of(ww_cfg(cfg), key):
+                rec = emit_map(cfg, key, scales=only, nxt=True)
+                print(json.dumps({"map": key, "next": {s: r["stats"] for s, r in rec["scales"].items()}}))
         write_provenance(cfg)
         print("RESULT ok emit")
         return 0
