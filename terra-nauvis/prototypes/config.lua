@@ -2287,8 +2287,12 @@ return {
     -- and fray times the ragged factor plus the edge rows (field units, wavelengths in tiles) fray its edge, which the
     -- slow region noise left smooth for hundreds of tiles.
     union = {
+      -- wide: the first table's pieces also take these rows (0.3.0, the cold field's second version): their reach is a
+      -- crest's whole length, and with the edge rows alone southern Norway's east edge still ran straight for about
+      -- 1,000 tiles at map view
       cold = {ref_px = 15, fray = 0.05, taper = 1,
-              edge = {{seed1 = 7523, tiles = 26, amplitude = 0.05}, {seed1 = 7524, tiles = 70, amplitude = 0.07}}},
+              edge = {{seed1 = 7523, tiles = 26, amplitude = 0.05}, {seed1 = 7524, tiles = 70, amplitude = 0.07}},
+              wide = {{seed1 = 7531, tiles = 240, amplitude = 0.12}, {seed1 = 7532, tiles = 560, amplitude = 0.12}}},
       -- field: the union's line field (ridges.lua line_bodies): each chop row is a gap where sin(2 pi / tiles * axis +
       -- phase * slow noise + jitter) passes level, axis the map's x or y in tiles and jitter fast noise in tiles; the x
       -- row cuts every east-west run and the y row every north-south one, so no cliff holds one row of the 4-tile
