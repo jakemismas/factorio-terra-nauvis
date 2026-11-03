@@ -14,7 +14,7 @@
 -- No map slider reaches a hotspot: the switch and the amount setting are its only controls. Ore never leaves a
 -- footprint at any scale, seed or amount: a cone is held to its room, as in the first table. A row's least_tiles
 -- raises its footprint at low scales, where the table's floor is no wider than a regular patch; the enemy layer keeps
--- to the footprint without it, so the wider field is not one solid biter base (DECISIONS 2026-10-31, Indonesia).
+-- to the footprint without it, so the wider field is not one solid biter base.
 local cfg = require("prototypes.config")
 local V = require("prototypes.hotspot_rows_v2")
 
@@ -138,7 +138,7 @@ end
 -- s<j> where its spots start, c<j> the radius it allows there, b<j> its bar. T takes what the resource's body reads,
 -- Q what its quantity body reads and Bars what its bars body reads. The chain from a bar to a spot reads each local
 -- many times and the game copies a local at every read, so a row's quantity and bar stand in named bodies of their
--- own: as locals of the resource's body they added 1.8 s to every start (DECISIONS 2026-10-31, the release candidate).
+-- own: as locals of the resource's body they added 1.8 s to every start.
 local function row_locals(h, r, j, T, Q, Bars)
   local L = {}
   local unit = TG.per_km2 / h.spots_per_km2 * h.base_density * h.mean_size

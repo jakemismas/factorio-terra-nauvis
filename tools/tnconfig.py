@@ -209,14 +209,18 @@ TABLES_DIR = REPO / "terra-nauvis" / "prototypes" / "tables"
 
 
 def city_table_files(tables_dir=TABLES_DIR):
-    """{map key: path of the table file that holds it} over prototypes/tables/cities*.lua; a map held
-    by two files raises ConfigError."""
-    out = {}
+    """{map key: path of the table file that holds the map's newest version} over prototypes/tables/cities*.lua, as
+    prototypes/city_tables.lua merges them (0.3.1: a map's next version is a file of its own); two files holding one
+    map at the same version raise ConfigError."""
+    out, ver = {}, {}
     for p in sorted(Path(tables_dir).glob("cities*.lua")):
-        for key in load(p):
-            if key in out:
-                raise ConfigError(f"the spawn-city tables {out[key].name} and {p.name} both hold the map {key}")
-            out[key] = p
+        for key, tbl in load(p).items():
+            v = tbl.get("version")
+            if key in out and ver[key] == v:
+                raise ConfigError(f"the spawn-city tables {out[key].name} and {p.name} both hold the map {key} at "
+                                  f"version {v}")
+            if key not in out or v > ver[key]:
+                out[key], ver[key] = p, v
     return out
 
 
@@ -508,6 +512,13 @@ def _waterways_record(ww, where, cfg, key, scales=None):
         raise ConfigError(f"config.lua {where}.waterways must map exactly {list(WATERWAY_KINDS)} to one set name per "
                           f"scale ({n})")
     return ww
+
+
+def spawn_next_of(cfg, version):
+    """The next spawn folds of a geography version (config.lua spawn_next, 0.3.1), or None: served, the number of
+    cities the released folds serve, the next city offset names, spawn lake and bias, and their bearings file."""
+    vs = ((cfg.get("spawn_next") or {}).get("versions")) or {}
+    return vs.get(version.get("geo_id")) or vs.get(str(version.get("geo_id"))) or None
 
 
 def city_number(cfg, version, value=None):
@@ -978,6 +989,16 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     if (bf and cfg["settings"][bf["setting"]]["default_value"] and map_key in (bf.get("maps") or [])
             and int(scale) in [int(s) for s in cfg["scales"]["exact_coast"]]):
         pen[bf["key"]] = bf["on"]
+    # the next spawn folds (presets.lua spawn_next_values, after baked): a city number past the released folds'
+    # cities names the next folds over the version's city offset, its map's frame, the spawn lake and the bias
+    nx, sp = spawn_next_of(cfg, version), spawn_of(version)
+    if nx and sp and isinstance(pen.get(sp["city"]), int) and pen[sp["city"]] > nx["served"]:
+        pen[version["cx"]], pen[version["cy"]] = nx["city_offset"][0], nx["city_offset"][1]
+        fr = frames(cfg).get(map_key)
+        if fr:
+            pen[fr["cx"]], pen[fr["cy"]] = nx["city_offset"][0], nx["city_offset"][1]
+        pen[K["spawn_lake"]] = pen[sp["spawn_lake"]] = nx["spawn_lake"]
+        pen[K["spawn_bias"]] = nx["spawn_bias"]
     # the second hotspot table: presets.lua baked names it over the first table's
     pen.update((cfg.get("hotspots_v2") or {}).get("points") or {})
     # the second region table: presets.lua baked names its forest and marsh aggregates over the first table's

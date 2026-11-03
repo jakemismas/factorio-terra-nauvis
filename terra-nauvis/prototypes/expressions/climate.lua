@@ -84,7 +84,7 @@ end
 -- The city offset of the world's map folded into one constant added to each noise's seed1, so each
 -- spawn city gets a climate texture of its own: the world shifts to put the city at the origin, so a
 -- noise of plain x and y would repeat around every city of a seed. A seed folds at compile time; x + cx
--- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (DECISIONS
+-- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (design notes
 -- 2026-10-30 11:10).
 local SH = C.city_shift
 def(N.shift, by_map(function(X)

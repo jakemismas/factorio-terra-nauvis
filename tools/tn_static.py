@@ -2336,6 +2336,27 @@ RELEASE_TABLES_DIR = "terra-nauvis/prototypes/tables/"
 # the list, and control code reads that number back through the same list. So the list is fixed
 # exactly: no reorder and no append (an append changes n, so every random-city save moves).
 RELEASE_SETTING_REFS = (("spawn", "city_setting"),)
+# The one append the list takes (0.3.1, config.lua spawn_next): every version naming the setting has next spawn folds
+# whose `served` is the landed list's city count. Its released folds then keep "% n + 1" and their chains over exactly
+# the landed cities, its random pick stays on them, and a landed number keeps its city, so the append moves no
+# registered body and no save; the appended cities reach new worlds through the next folds alone.
+
+
+def next_folds_serve(cfg, key, count):
+    """Whether every geography version of `cfg` that names the setting `key` (spawn.city_setting) has next spawn folds
+    (spawn_next.versions[geo_id]) serving exactly `count` cities; False when no version names it."""
+    nx = _as_dict(_as_dict(cfg.get("spawn_next")).get("versions"))
+    named = False
+    for g in _as_dict(cfg.get("geography")).values():
+        for v in _as_dict(g).get("versions") or []:
+            v = _as_dict(v)
+            if _as_dict(v.get("spawn")).get("city_setting") != key:
+                continue
+            named = True
+            rec = _as_dict(nx.get(v.get("geo_id")) or nx.get(str(v.get("geo_id"))))
+            if rec.get("served") != count:
+                return False
+    return named
 
 
 def release_settings(cfg):
@@ -2518,6 +2539,8 @@ def release_input_findings(work, refs, collapse=None):
             have = _as_dict(wsets.get(key)).get("allowed_values")
             if not isinstance(want, list):
                 out.append(f"{where}: {ref}'s {named[0]} names it but {ref} holds no such list (fail closed)")
+            elif isinstance(have, list) and len(have) > len(want) and have[:len(want)] == want and                     next_folds_serve(wcfg, key, len(want) - 1):
+                continue
             elif have != want:
                 state = "gone" if not isinstance(have, list) else (
                     "reordered" if sorted(have) == sorted(want) else "changed")
@@ -4332,6 +4355,17 @@ def release_input_fixtures(cfg):
         vals = list(w["cfg"]["settings"][cs]["allowed_values"])
         w["cfg"]["settings"][cs] = dict(w["cfg"]["settings"][cs], allowed_values=edit(vals))
 
+    def served_append(w, served):
+        # an append behind next spawn folds serving `served` cities (spawn_next, 0.3.1) on every version naming cs
+        n = len(w["cfg"]["settings"][cs]["allowed_values"]) - 1
+        city_values(w, lambda v: v + ["tn-fixture-city"])
+        nx = {}
+        for g in w["cfg"]["geography"].values():
+            for v in g.get("versions") or []:
+                if (v.get("spawn") or {}).get("city_setting") == cs:
+                    nx[v["geo_id"]] = {"served": n if served is None else served}
+        w["cfg"]["spawn_next"] = {"versions": nx}
+
     failing = {
         "a regenerated file": regen,
         "a landed file removed": drop_file,
@@ -4358,11 +4392,16 @@ def release_input_fixtures(cfg):
         f"settings.{cs} a city inserted": lambda w: city_values(w, lambda v: v[:2] + ["tn-fixture-city"] + v[2:]),
         f"settings.{cs} sorted": lambda w: city_values(w, lambda v: v[:1] + sorted(v[1:], reverse=True)),
         f"settings.{cs} a city removed": lambda w: city_values(w, lambda v: v[:-1]),
+        f"settings.{cs} a city appended behind next folds serving one city fewer": lambda w: served_append(w, len(
+            cfg["settings"][cs]["allowed_values"]) - 2),
+        f"settings.{cs} a city inserted behind next folds": lambda w: (served_append(w, None), city_values(
+            w, lambda v: v[:2] + [v[-1]] + v[2:-1])),
         f"settings.{cs} removed": lambda w: w["cfg"]["settings"].pop(cs),
     }
     passing = {
         "the tree against itself": lambda w: None,
         f"settings.{cs} order key changed": lambda w: set_path(w, ("settings", cs, "order"), "z-fixture"),
+        f"settings.{cs} a city appended behind next folds serving the landed cities": lambda w: served_append(w, None),
         "a new setting added": lambda w: set_path(w, ("settings", "tn_fixture_setting"),
                                                   {"name": "x", "allowed_values": ["a"]}),
         "a geography version appended": add_version,

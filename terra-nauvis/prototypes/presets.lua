@@ -14,7 +14,7 @@
 -- keeps the gate's prototype (off), so it has no fords (ARCHITECTURE.md, "Map type entries"). A
 -- preset's geography version (its elevation entry, start mask, coarse field, city offset and tn_geo)
 -- is chosen in one place, geography() below, so climate-tiles can give Alien Biomes worlds a cheaper
--- geography without touching base worlds (DECISIONS 10:20).
+-- geography without touching base worlds.
 --
 -- A Map type pick sets only elevation, so every other per-save name a geography version's entry
 -- reads gets a prototype-level fallback valued as that version's preset bakes it under the current
@@ -26,17 +26,17 @@
 -- A preset is not defined while a mod of its withheld_with list is loaded: from europe-coast to
 -- region-layer Alien Biomes' palms read elevation in the Entity program, so beside them a preset
 -- would have carried its fine field there (constraint S-3). climate-tiles ships the palm switch
--- (plan reconciliation 9) and empties the lists. Its fallbacks stay defined, so the map's Map type
+-- (design note 9) and empties the lists. Its fallbacks stay defined, so the map's Map type
 -- entry still works there. Withholding reached new worlds only: scripts/guards.lua warned a preset
 -- world that later loaded beside such a mod, and a save made before the switch keeps its palms on
--- its fine field for life (ARCHITECTURE.md, "Alien Biomes"; DECISIONS 2026-10-29 18:40).
+-- its fine field for life (ARCHITECTURE.md, "Alien Biomes"; design notes 2026-10-29 18:40).
 --
 -- From climate-tiles each preset also redirects temperature, moisture and aux to the Earth climate,
 -- the Alien Biomes variant when alien-biomes is loaded and the fallback otherwise (climate.lua), and
 -- points the marsh keys at their bodies and each palm's probability and richness keys at its Earth
 -- copy (trees.lua, built from the frozen Alien Biomes table on every load, so the name is never
 -- dangling), which reads the palm constant where AB reads elevation and closes the palm leak
--- (ARCHITECTURE.md, constraint S-3; plan reconciliation 9), with or without Alien Biomes, so a
+-- (ARCHITECTURE.md, constraint S-3; design note 9), with or without Alien Biomes, so a
 -- world that gains it later meets the switch too; with Alien Biomes it also points the 19 vanilla
 -- tile keys at the shared bonus body and the exclusion key at its body, and data-final-fixes.lua
 -- points a palm's keys at the neutral body when the installed palm differs from the table. Every
@@ -131,7 +131,7 @@ local function climate_names()
     out[key] = 1 / cfg.climate.size.factor
   end
   -- The palm keys with Alien Biomes loaded or not: a world made without it that gains it later
-  -- places its palms from the copies too, never from the fine field (DECISIONS 2026-10-29 18:40).
+  -- places its palms from the copies too, never from the fine field.
   for _, c in ipairs(TL.palm.copies) do
     out[c.key] = c.body
   end
@@ -288,7 +288,7 @@ local function grain_values(map_key)
 end
 
 -- The six base resources at preset_frequency in the preset (0.3.0: 1, vanilla's; D20 set 0.75), planet entries left
--- neutral (planet values multiply preset values; noise skill gotcha). A control another mod removed
+-- neutral (planet values multiply preset values; known noise gotcha). A control another mod removed
 -- is left out.
 local function controls()
   local out = {}
@@ -462,6 +462,27 @@ local function baked(map_key, v)
   return names
 end
 
+-- The next spawn folds (config.lua spawn_next): a new world whose city number is past the cities the version's
+-- released folds serve names the next folds over them, as the city offset under the version's own cx and cy and its
+-- map's frame, the spawn lake under the key and the name the entry reads, and the starting-ore bias under its key. Any
+-- other world, random included, bakes what 0.3.0 baked. Not part of baked(): a Map type fallback stays the released
+-- fold.
+local function spawn_next_values(map_key, v, names)
+  local nx = cfg.spawn_next and cfg.spawn_next.versions[v.geo_id]
+  local sp = v.spawn
+  local out = {}
+  if nx and sp and type(names[sp.city]) == "number" and names[sp.city] > nx.served then
+    local fr = cfg.frames[map_key]
+    out[v.cx], out[v.cy] = nx.city_offset[1], nx.city_offset[2]
+    if fr then
+      out[fr.cx], out[fr.cy] = nx.city_offset[1], nx.city_offset[2]
+    end
+    out[K.spawn_lake], out[sp.spawn_lake] = nx.spawn_lake, nx.spawn_lake
+    out[K.spawn_bias] = nx.spawn_bias
+  end
+  return out
+end
+
 local function withheld(p)
   for _, m in ipairs(p.withheld_with or {}) do
     if mods[m] then
@@ -476,9 +497,14 @@ local presets = data.raw["map-gen-presets"]["default"]
 for _, key in ipairs(cfg.preset_order) do
   local p = cfg.presets[key]
   if not withheld(p) then
+    local v = geography(p.map)
+    local names = baked(p.map, v)
+    for k, value in pairs(spawn_next_values(p.map, v, names)) do
+      names[k] = value
+    end
     presets[p.name] = {
       order = p.order,
-      basic_settings = {property_expression_names = baked(p.map, geography(p.map)), autoplace_controls = controls()},
+      basic_settings = {property_expression_names = names, autoplace_controls = controls()},
     }
   end
 end
@@ -509,6 +535,12 @@ for _, key in ipairs(cfg.map_order) do
   local g = cfg.geography[key]
   for _, v in ipairs(g and g.versions or {}) do
     local names = baked(key, v)
+    -- A city past the released folds' cities (config.lua spawn_next) falls back to random on a Map-type-only world,
+    -- which reads the released folds through its frozen fallbacks.
+    local nx = cfg.spawn_next and cfg.spawn_next.versions[v.geo_id]
+    if nx and v.spawn and type(names[v.spawn.city]) == "number" and names[v.spawn.city] > nx.served then
+      names[v.spawn.city] = 0
+    end
     for _, f in ipairs(v.fallbacks) do
       local value = names[f.name]
       if value == nil then

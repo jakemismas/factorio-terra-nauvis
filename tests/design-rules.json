@@ -21,7 +21,7 @@
     "ankara", "kyiv", "london"]
   },
   "spawn_city_atlantic": {
-   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-spawn-city-atlantic (random plus 50 of 50, default random; EM:settings.lua:92-105); section 12 removes none on this map (data-src/approvals/approvals-data.json cities.atlantic.dropdown)",
+   "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-spawn-city-atlantic (random plus 50 of 50, default random; EM:settings.lua:92-105); section 12 removes none on this map (data-src/approvals/approvals-data.json cities.atlantic.dropdown); 0.3.1 appends frankfurt and moscow, so every earlier value keeps its number",
    "type": "string-setting",
    "setting_type": "startup",
    "default_value": "random",
@@ -30,7 +30,7 @@
     "nanchang", "songling", "delhi", "hampi", "bam", "aktobe", "semey", "moron", "bangkok", "mexico-city",
     "ellesmere-island", "fort-liard", "hearst", "mid-baffin", "okak", "saskatoon", "yellowknife", "qaanaaq",
     "summit-camp", "uranienborg", "albany", "boise", "minneapolis", "el-paso", "hughes", "montgomery", "cordoba",
-    "palmas", "iquitos", "griffith", "newman"]
+    "palmas", "iquitos", "griffith", "newman", "frankfurt", "moscow"]
   },
   "spawn_city_olde_world": {
    "source": "docs/plan/APPROVALS.md section 1a, row terra-nauvis-spawn-city-old-world (random plus 30 of 30, default random; EM:settings.lua:124-137); section 12 removes none on this map (data-src/approvals/approvals-data.json cities.olde_world.dropdown); the start-city decision of 2026-10-30 07:35 appends frankfurt, aachen and moscow",

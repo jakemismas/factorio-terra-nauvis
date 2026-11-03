@@ -35,6 +35,7 @@ local FILES = {
   ["prototypes/generated/spawn_europe_v1.lua"] = require("prototypes.generated.spawn_europe_v1"),
   ["prototypes/generated/spawn_atlantic_v2.lua"] = require("prototypes.generated.spawn_atlantic_v2"),
   ["prototypes/generated/spawn_olde_world_v2.lua"] = require("prototypes.generated.spawn_olde_world_v2"),
+  ["prototypes/generated/spawn_atlantic_v3.lua"] = require("prototypes.generated.spawn_atlantic_v3"),
 }
 
 local K = cfg.keys
@@ -135,7 +136,7 @@ end
 -- number of the map's cities outside the zone, then that city's index of 1 to n. A preset with the zone on
 -- and the spawn city at random bakes this body as the map's city number, so the fold resolves it as it
 -- resolves a chosen city; the index folds to a constant like the fold's own pick.
-local function pool_body(name, key, setting, tbl)
+local function pool_body(name, key, setting, tbl, count)
   local inside = {}
   for _, value in ipairs(destroyed.zone_cities[key] or {}) do
     if not tbl.cities[value] then
@@ -145,7 +146,7 @@ local function pool_body(name, key, setting, tbl)
   end
   local pool = {}
   for i, value in ipairs(setting.allowed_values) do
-    if i > 1 and not inside[value] then
+    if i > 1 and i - 1 <= count and not inside[value] then
       pool[#pool + 1] = i - 1
     end
   end
@@ -158,36 +159,13 @@ local function pool_body(name, key, setting, tbl)
     num(H.high_div) .. ") * " .. num(H.high_mult) .. ") % " .. num(#pool) .. " + 1"})
 end
 
--- The spawn bodies of one geography version of a map (its spawn record names them).
-local function spawn(map_key, v)
-  local sp = v.spawn
-  local m = cfg.maps[map_key]
-  local setting = cfg.settings[sp.city_setting]
-  local tbl = cities[map_key]
-  if not (setting and tbl) then
-    error("config.lua gives " .. v.entry .. " a spawn record without its setting or city table")
-  end
-  local data = FILES[sp.bearings]
-  if not data then
-    error("no generated spawn bearings are loaded from " .. tostring(sp.bearings) .. " for " .. v.entry)
-  end
-  local s = K.scale
-  local dist = sp.distance
-
-  -- distance on Earth presets: from the spawn, which the shift keeps at the origin, whatever
-  -- starting_points holds (S7: one patch per ore, 0 enemies within 150 tiles).
-  def(dist, "sqrt(x * x + y * y)")
-
-  -- The start land guarantee: land inside `radius` tiles of the spawn, -inf (neutral for max) beyond.
-  local G = S.land
-  def(sp.start_land, "if(" .. dist .. " < " .. num(G.radius) .. ", (" .. num(G.radius) .. " - " .. dist .. ") * " ..
-    num(G.slope) .. " + " .. num(cfg.coast.transfer_offset) .. ", -inf)")
-
-  -- The cities in the setting's order (its first value is random), as reference pixels.
+-- The cities of a map in its setting's order (the first value is random), as reference pixels: the first `count`,
+-- or every one when count is nil.
+local function city_list(map_key, m, setting, tbl, count)
   local px = cfg.coordinates.px_per_degree
   local list = {}
   for i, value in ipairs(setting.allowed_values) do
-    if i > 1 then
+    if i > 1 and (not count or i - 1 <= count) then
       local c = tbl.cities[value]
       if not c then
         error("the city table of " .. map_key .. " has no row " .. value)
@@ -196,30 +174,29 @@ local function spawn(map_key, v)
                          row = math.floor((m.lat_top_edge - c.lat) * px)}
     end
   end
-  local n = #list
-  local H = S.hash
-  -- random (0): the folded hash of map_seed, an index of 1 to n
-  def(sp.city_index, "if(" .. sp.city .. " > 0, " .. sp.city .. ", (map_seed_small * " .. num(H.small_mult) ..
-    " + floor(map_seed / " .. num(H.high_div) .. ") * " .. num(H.high_mult) .. ") % " .. num(n) .. " + 1)")
-
-  -- Destroyed Europe's random pool (APPROVALS 10): pool_body above, one per map
-  -- (every version with a spawn record names the same body, which def defines once).
-  local pool_name = cfg.destroyed and cfg.destroyed.pools[map_key]
-  if pool_name then
-    pool_body(pool_name, map_key, setting, tbl)
+  if count and #list ~= count then
+    error("the spawn-city setting of " .. map_key .. " lists " .. #list .. " cities, fewer than the " .. count ..
+      " the released folds serve")
   end
+  return list
+end
 
+-- The folds of one city list, each an if() chain over the resolved index: the city offset, the spawn lake on the
+-- city's generated bearing and the starting-ore bias, under `names` (cx, cy, spawn_lake, spawn_bias).
+local function folds(map_key, m, v, index, list, data, names)
+  local n = #list
+  local s = K.scale
   local function chain(field, radius)
     local text = "0"
     for k = n, 1, -1 do
-      text = "if(" .. sp.city_index .. " == " .. num(k) .. ", " .. operand(list[k][field] - radius) .. ", " .. text ..
+      text = "if(" .. index .. " == " .. num(k) .. ", " .. operand(list[k][field] - radius) .. ", " .. text ..
         ")"
     end
     return text
   end
   local corner = "floor(" .. s .. " / " .. num(cfg.coordinates.corner_offset_divisor) .. ")"
-  def(v.city_offset[1], s .. " * " .. chain("col", m.wr) .. " + " .. corner)
-  def(v.city_offset[2], s .. " * " .. chain("row", m.hr) .. " + " .. corner)
+  def(names.cx, s .. " * " .. chain("col", m.wr) .. " + " .. corner)
+  def(names.cy, s .. " * " .. chain("row", m.hr) .. " + " .. corner)
 
   -- The city's generated bearing and coastal flag at the save's scale: an if() chain over the index,
   -- each branch one over the scale; folds to a constant like the offsets.
@@ -237,7 +214,7 @@ local function spawn(map_key, v)
         inner = "if(" .. s .. " == " .. num((v.scales or cfg.scales.released)[si]) .. ", " .. value_of(per_scale[si]) ..
           ", " .. inner .. ")"
       end
-      text = "if(" .. sp.city_index .. " == " .. num(k) .. ", " .. inner .. ", " .. text .. ")"
+      text = "if(" .. index .. " == " .. num(k) .. ", " .. inner .. ", " .. text .. ")"
     end
     return text
   end
@@ -268,7 +245,7 @@ local function spawn(map_key, v)
     lake_n = table.concat(parts, " + ")
     lake_wx, lake_wy = "x + " .. warp(LS.warp, "x"), "y + " .. warp(LS.warp, "y")
   end
-  def(sp.spawn_lake, num(L.magnitude) .. " * ((lake_d + lake_n) / " .. num(L.divisor) .. " - " .. num(L.offset) ..
+  def(names.spawn_lake, num(L.magnitude) .. " * ((lake_d + lake_n) / " .. num(L.divisor) .. " - " .. num(L.offset) ..
     ")", {
       lake_angle = angle,
       lake_x = num(L.distance) .. " * cos(lake_angle)",
@@ -281,14 +258,69 @@ local function spawn(map_key, v)
 
   -- The starting-ore bias: on a coastal start, a tilt of the start area toward the city's own land
   -- (the generated bias bearing and width).
-  def(sp.spawn_bias, "if(bias_on > 0, clamp(1 + (x * cos(bias_angle) + y * sin(bias_angle)) / bias_width, 0, 1), 1)",
-    {
+  def(names.spawn_bias,
+    "if(bias_on > 0, clamp(1 + (x * cos(bias_angle) + y * sin(bias_angle)) / bias_width, 0, 1), 1)", {
       bias_on = by_city_scale("coastal", operand),
       bias_angle = by_city_scale("bias", function(b)
         return operand(b * turn)
       end),
       bias_width = by_city_scale("bias_width", operand),
     })
+end
+
+-- The spawn bodies of one geography version of a map (its spawn record names them).
+local function spawn(map_key, v)
+  local sp = v.spawn
+  local m = cfg.maps[map_key]
+  local setting = cfg.settings[sp.city_setting]
+  local tbl = cities[map_key]
+  if not (setting and tbl) then
+    error("config.lua gives " .. v.entry .. " a spawn record without its setting or city table")
+  end
+  local data = FILES[sp.bearings]
+  if not data then
+    error("no generated spawn bearings are loaded from " .. tostring(sp.bearings) .. " for " .. v.entry)
+  end
+  local dist = sp.distance
+
+  -- distance on Earth presets: from the spawn, which the shift keeps at the origin, whatever
+  -- starting_points holds (S7: one patch per ore, 0 enemies within 150 tiles).
+  def(dist, "sqrt(x * x + y * y)")
+
+  -- The start land guarantee: land inside `radius` tiles of the spawn, -inf (neutral for max) beyond.
+  local G = S.land
+  def(sp.start_land, "if(" .. dist .. " < " .. num(G.radius) .. ", (" .. num(G.radius) .. " - " .. dist .. ") * " ..
+    num(G.slope) .. " + " .. num(cfg.coast.transfer_offset) .. ", -inf)")
+
+  -- The cities in the setting's order (its first value is random), as reference pixels; a version with next folds
+  -- (config.lua spawn_next) serves the first `served` of them here.
+  local nx = cfg.spawn_next and cfg.spawn_next.versions[v.geo_id]
+  local list = city_list(map_key, m, setting, tbl, nx and nx.served)
+  local n = #list
+  local H = S.hash
+  -- random (0): the folded hash of map_seed, an index of 1 to n
+  def(sp.city_index, "if(" .. sp.city .. " > 0, " .. sp.city .. ", (map_seed_small * " .. num(H.small_mult) ..
+    " + floor(map_seed / " .. num(H.high_div) .. ") * " .. num(H.high_mult) .. ") % " .. num(n) .. " + 1)")
+
+  -- Destroyed Europe's random pool (APPROVALS 10): pool_body above, one per map
+  -- (every version with a spawn record names the same body, which def defines once).
+  local pool_name = cfg.destroyed and cfg.destroyed.pools[map_key]
+  if pool_name then
+    pool_body(pool_name, map_key, setting, tbl, n)
+  end
+
+  folds(map_key, m, v, sp.city_index, list, data,
+        {cx = v.city_offset[1], cy = v.city_offset[2], spawn_lake = sp.spawn_lake, spawn_bias = sp.spawn_bias})
+  -- The next folds over every city of the setting, read by the same resolved index: past the served cities it holds
+  -- the chosen city's number, and random stays on the served ones.
+  if nx then
+    local next_data = FILES[nx.bearings]
+    if not next_data then
+      error("no generated spawn bearings are loaded from " .. tostring(nx.bearings) .. " for " .. v.entry)
+    end
+    folds(map_key, m, v, sp.city_index, city_list(map_key, m, setting, tbl), next_data,
+          {cx = nx.city_offset[1], cy = nx.city_offset[2], spawn_lake = nx.spawn_lake, spawn_bias = nx.spawn_bias})
+  end
 
   -- The inland lakes: spot noise in the version's geo tiles, a fixed count of conical spots per
   -- region, with rough shores; positive (no lake) within coast_px of the version's coast fit and

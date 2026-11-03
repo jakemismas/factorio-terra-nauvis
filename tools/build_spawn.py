@@ -317,11 +317,14 @@ def table_file(map_key):
     return tables[map_key]
 
 
-def city_pixels(cfg, map_key):
-    """[(setting value, col, row)] of the map's cities in the setting's order (random excluded)."""
+def city_pixels(cfg, map_key, count=None):
+    """[(setting value, col, row)] of the map's cities in the setting's order (random excluded): the first `count`, or
+    every one (the newest record's file holds them all)."""
     import tnconfig
     g = spawn_record(cfg, map_key)
     values = cfg["settings"][g["city_setting"]]["allowed_values"]
+    if count is not None:
+        values = values[:count + 1]
     table = tnconfig.load(table_file(map_key))[map_key]["cities"]
     m = cfg["maps"][map_key]
     ppd = cfg["coordinates"]["px_per_degree"]
@@ -441,8 +444,7 @@ def start_mask_of(cfg, map_key):
 
 
 def spawn_record(cfg, map_key):
-    """The spawn record of the map's newest geography version (the one its preset names), whose
-    bearings file this tool writes."""
+    """The spawn record of the map's newest geography version (the one its preset names)."""
     import tnconfig
     sp = tnconfig.spawn_of(tnconfig.geography_versions(cfg)[map_key][-1])
     if not sp:
@@ -450,10 +452,40 @@ def spawn_record(cfg, map_key):
     return sp
 
 
-def out_path(map_key):
-    """The bearings file the newest version's spawn record names (prototypes/generated/...)."""
+def spawn_next(cfg, map_key):
+    """The next spawn folds of the map's newest geography version (config.lua spawn_next, 0.3.1), or None."""
     import tnconfig
-    return REPO / "terra-nauvis" / spawn_record(tnconfig.load(), map_key)["bearings"]
+    return tnconfig.spawn_next_of(cfg, tnconfig.geography_versions(cfg)[map_key][-1])
+
+
+def out_path(map_key):
+    """The bearings file this tool writes: the next folds' where the newest version has them (they hold every city of
+    the setting), else the newest version's spawn record's (prototypes/generated/...)."""
+    import tnconfig
+    cfg = tnconfig.load()
+    nx = spawn_next(cfg, map_key)
+    return REPO / "terra-nauvis" / (nx or spawn_record(cfg, map_key))["bearings"]
+
+
+def released_rows(map_key):
+    """Failures: a city the released folds serve whose rows in the next folds' file differ from the released file's
+    (every old city keeps its spawn), [] without next folds."""
+    import tnconfig
+    cfg = tnconfig.load()
+    nx = spawn_next(cfg, map_key)
+    if not nx:
+        return []
+    old = tnconfig.load(REPO / "terra-nauvis" / spawn_record(cfg, map_key)["bearings"])
+    new = tnconfig.load(out_path(map_key))
+    fails = []
+    served = [v for v, _, _ in city_pixels(cfg, map_key, nx["served"])]
+    for f in FIELDS:
+        if set(old[f]) != set(served):
+            fails.append(f"the released file's {f} holds {len(old[f])} cities, the released folds serve {len(served)}")
+        for v in served:
+            if new[f].get(v) != old[f].get(v):
+                fails.append(f"{v}: {f} {new[f].get(v)} in {out_path(map_key).name}, {old[f].get(v)} released")
+    return fails
 
 
 def emit(map_key):
@@ -480,7 +512,8 @@ def check(map_key):
     if have != a:
         fails.append(f"{out_path(map_key).name} differs from a fresh emission (rerun: python tools/build_spawn.py emit "
                      f"--map {map_key})")
-    return fails
+    # next folds: every city the released folds serve keeps the released file's rows
+    return fails + (released_rows(map_key) if have == a else [])
 
 
 def main(argv=None):
