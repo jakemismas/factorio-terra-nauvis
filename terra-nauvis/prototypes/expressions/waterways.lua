@@ -86,7 +86,7 @@ local function fn(f)
   return {parameters = params, expression = f.expression, local_expressions = locals}
 end
 
--- The natural course (config.lua natural; DECISIONS 2026-10-30): one warp of the geo tiles every set
+-- The natural course (config.lua natural; design notes 2026-10-30): one warp of the geo tiles every set
 -- of a version reads, so the fords stay on their rivers and the cost is a few noise evaluations per tile,
 -- not per segment. Each octave is one basis noise per axis in geo tiles, anchored like the coast's detail,
 -- so the same ground wanders the same way from every spawn. Rivers read X and Y, the whole warp; straits,

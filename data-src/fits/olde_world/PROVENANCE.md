@@ -183,6 +183,33 @@ python tools/build_geo.py fit --map olde_world --work ow-r8 --start-from ow-r7/m
 ow-r1 ran through its 9,440-term step and ow-r3 through 9,480 (both stopped there). The emission adds
 `terra-nauvis/prototypes/generated/geo_olde_world_v4.lua` (the `geo_next` body of `fit.json`).
 
+## Overlay stage (0.3.2, the coasts past scale 6; config.lua coast.overlay)
+
+Past scale 6 a new world reads `tn_geo_olde_world_v10`: `model-next-10100.npz` with two layers drawn straight from the
+reference raster, `min(max(next, land - 1024), 1024 - water)`. Each layer is level-0 tents, one per reference pixel of
+its mask and of the mask's 8-neighbour ring, valued 1,024 plus the pixel's signed distance to the mask's outline
+(half a pixel at the outermost centres, capped at 4 inside, minus half a pixel or more on the ring). Away from a mask a
+layer reads exactly -1,024 (land) or +1,024 (water), so the next fit's coasts pass to the bit; no refit runs and no other
+coast moves. `fit.json`'s `overlay` record holds the inputs:
+
+- land: every reference island of 3 px or more (8-connected) the next fit draws under 30 percent of, with a pixel in
+  the 30 worst Old World cells of the 0.3.1 coast audit or in the 22 cells where the next fit misses islands the lean
+  fit drew; an island that would split the fit's water (a strait the fit draws narrower than the reference) is left out.
+- water: the Sognefjord and its arms, the reference water (thin water too) 8-connected to a seed in the fjord inside its
+  box where the fit reads above -1 px, made 4-connected at diagonal steps; with `fill`, the reference land inside the
+  fit's lakes in that box joins the land layer, so the fjord's own outline reads.
+- patches: per box, the differences between the fit and the reference (thin water counts as either) that lie wholly
+  inside it, reference land joining the land layer and reference water the water layer: the Aral, and one box round
+  each far difference of 250 px or fewer in the cells the next fit scores more than 1 px p95 worse than the lean fit.
+
+```
+python tools/build_geo.py overlay --map olde_world
+python tools/build_geo.py emit --map olde_world
+```
+
+The emission adds `terra-nauvis/prototypes/generated/overlay_land_olde_world_v1.lua` and
+`overlay_water_olde_world_v1.lua` (the `overlay_land` and `overlay_water` bodies of `fit.json`).
+
 ## Emission
 
 ```
@@ -209,5 +236,7 @@ arrays; the committed files are the inputs of record.
 | `model-256.npz` | `c0d42bdc216603a5c99a1f50fb0720b39fda91e2b249d9df765d82b9fb31d9f5` | the base stage's growth step of 256 terms: the coarse land field |
 | `model-lean-5840.npz` | `10b166e08a48297dfa765b70d3235671d2ac38b32567498473aa9f73283fc4e1` | the lean stage's last growth step (I), copied: the `geo_lean` body, read past scale 6 |
 | `model-next-10100.npz` | `a6268664795275bf06d86c71076767a4c9ece8596fb4c95e728c216c5529d667` | the regrowth stage's last growth step, copied: the `geo_next` body, read past scale 6 (0.3.1) |
-| `fit.json` | `6c49bb8145e0826ba79063fa2c4ebf3f17e6d249b6beddd3a59b4433df1f8b1d` | `build_geo.py adopt --budget 9360 --file-version 2`: which checkpoint each body uses |
-| `manifest.json` | `7ed63d472e1354cde3e461cf8b9c5e1d263d597ebc7923d8d9a1dd781f0c50d3` | `build_geo.py emit` |
+| `overlay-land-1.npz` | `f819277da6130e3fcf6bfc9d17b2aea44e750b530dec125f0392500fecd44306` | `build_geo.py overlay`: the land layer of `fit.json`'s overlay record (0.3.2) |
+| `overlay-water-1.npz` | `7266f24e770fbe5e1e6cbb68fcc1e271c46f71f2763bc1baacc789b604ef5433` | `build_geo.py overlay`: the water layer of `fit.json`'s overlay record (0.3.2) |
+| `fit.json` | `09a38ff2a32562537ececa0003137b5dc65dbbb9efb6e416eebb4de1f046eb60` | `build_geo.py adopt --budget 9360 --file-version 2`, then the overlay record (0.3.2): which checkpoint each body uses |
+| `manifest.json` | `4057affee74fd4d5ccefc3bf9034c1da2c238750650693bd630f22ed14f256e8` | `build_geo.py emit` |

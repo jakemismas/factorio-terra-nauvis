@@ -1001,6 +1001,11 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     gn = gn.get(version["geo_id"]) or gn.get(str(version["geo_id"]))
     if gn and int(scale) > gn["above_scale"]:
         pen[version["geo"]] = gn["body"]
+    # 0.3.2: the overlay geo body (presets.lua geo_next_values, config.lua coast.overlay) wins over the next one
+    go = ((cfg.get("coast") or {}).get("overlay") or {}).get("versions") or {}
+    go = go.get(version["geo_id"]) or go.get(str(version["geo_id"]))
+    if go and int(scale) > go["above_scale"]:
+        pen[version["geo"]] = go["body"]
     # the next spawn folds (presets.lua spawn_next_values, after baked): a city number past the released folds'
     # cities names the next folds over the version's city offset, its map's frame, the spawn lake and the bias
     nx, sp = spawn_next_of(cfg, version), spawn_of(version)

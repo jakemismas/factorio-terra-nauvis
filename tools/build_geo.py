@@ -20,6 +20,8 @@
   python tools/build_geo.py adopt --map atlantic       copy the smallest checkpoint at or above T1's
                                                        bar, the 256-term one and the curve into
                                                        data-src/fits/<map>/ and write fit.json
+  python tools/build_geo.py overlay --map olde_world   the land and water layers of fit.json's overlay
+                                                       record from the reference (config.lua coast.overlay)
 
 S1-fit's one-sided multilevel tent model (data-src/fits/<map>/, copied from the planning commit, see
 PROVENANCE.md there) becomes two scale-independent bodies: the shipped coast fit
@@ -76,9 +78,10 @@ def fit_spec(map_key):
 
 def spec_bodies(spec):
     """The bodies a fit.json emits: geo and land_coarse, plus geo_lean where the map has a lean fit (the coast fit
-    past scale 6, config.lua coast.split_max_scale) and geo_next where it has a next geo body (config.lua coast.next,
-    0.3.1)."""
-    return [b for b in ("geo", "land_coarse", "geo_lean", "geo_next") if b in spec["bodies"]]
+    past scale 6, config.lua coast.split_max_scale), geo_next where it has a next geo body (config.lua coast.next,
+    0.3.1) and the overlay's land and water layers (config.lua coast.overlay, 0.3.2)."""
+    return [b for b in ("geo", "land_coarse", "geo_lean", "geo_next", "overlay_land", "overlay_water")
+            if b in spec["bodies"]]
 
 
 # ------------------------------------------------------------------------------------------------ model
@@ -188,6 +191,64 @@ def tent_body(meta, idx, coef):
     return locs, bsum(rows), {"terms": n, "factors": factors, "row_groups": len(groups)}
 
 
+OVERLAY_CLUSTER_GAP_PX = 4    # tents this close join one cluster of an overlay body
+
+
+def overlay_body(meta, idx, coef):
+    """(locals, expression, stats) of an overlay layer (level-0 tents only), cluster by cluster: each cluster of
+    tents (8-connected after growing OVERLAY_CLUSTER_GAP_PX) reads its own coordinates, U and V less its corner, and
+    its own factors on them, and the clusters sum in order along the map. The game compiles each distinct expression
+    once and keeps a value in a register from its first use to its last, so factors two far-apart islands shared would
+    stay live between them; local factors keep the program's registers to about one cluster's. U - i0 and the factor
+    differences are exact in float32; only the order of each sum differs from the plain tents body's."""
+    import numpy as np
+    from scipy import ndimage as ndi
+    if meta["K"] != 0:
+        raise SystemExit("RESULT fail an overlay body holds level-0 tents only")
+    nw = meta["shapes"][0][1]
+    flat = idx[0].astype(np.int64)
+    j_all, i_all = flat // nw, flat % nw
+    keep = coef != 0
+    j_all, i_all, c_all = j_all[keep], i_all[keep], coef[keep]
+    j0, i0 = int(j_all.min()), int(i_all.min())
+    grid = np.zeros((int(j_all.max()) - j0 + 1, int(i_all.max()) - i0 + 1), bool)
+    grid[j_all - j0, i_all - i0] = True
+    lab, n = ndi.label(ndi.binary_dilation(grid, np.ones((3, 3), bool), iterations=OVERLAY_CLUSTER_GAP_PX // 2))
+    cl = lab[j_all - j0, i_all - i0]
+    order = np.lexsort((i_all, j_all, cl))
+    first = {}
+    for k in order:
+        first.setdefault(int(cl[k]), (int(i_all[k]), int(j_all[k])))
+    clusters = sorted(first, key=lambda c: (min(i_all[cl == c]), c))
+    locs, parts, nterms = {}, [], 0
+    for q, c in enumerate(clusters, 1):
+        sel = cl == c
+        ci, cj, cc = i_all[sel], j_all[sel], c_all[sel]
+        a, b = int(ci.min()), int(cj.min())
+        un, vn = f"U{q}", f"V{q}"
+        locs[un], locs[vn] = f"U - {a}", f"V - {b}"
+        rows = defaultdict(list)
+        for i, j, v in zip(ci.tolist(), cj.tolist(), cc.tolist()):
+            fu, fv = f"u{q}_{i - a}", f"v{q}_{j - b}"
+            if fu not in locs:
+                locs[fu] = f"max(0, 1 - abs({un} - {i - a}))"
+            if fv not in locs:
+                locs[fv] = f"max(0, 1 - abs({vn} - {j - b}))"
+            rows[fv].append(f"{float(np.float32(v)):.9g} * {fu}")
+            nterms += 1
+        rsums = []
+        for fv in sorted(rows, key=lambda s: int(s.split("_")[1])):
+            rn = "r" + fv[1:]
+            locs[rn] = bsum(rows[fv])
+            rsums.append(f"{fv} * {rn}")
+        sn = f"s{q}"
+        locs[sn] = bsum(rsums)
+        parts.append(sn)
+    factors = sum(1 for name in locs if name[0] in "uv")
+    return locs, bsum(parts), {"terms": nterms, "factors": factors, "row_groups": sum(1 for k in locs if k[0] == "r"),
+                                "clusters": len(clusters)}
+
+
 def lua_string_lines(text, first_prefix, last_suffix, indent="  "):
     """A Lua double-quoted literal of `text` (no quote or backslash in it) as physical lines of at
     most MAX_COLUMNS: `first_prefix` + '"' starts the first line, '"' + `last_suffix` ends the last,
@@ -231,7 +292,7 @@ def emit_body(map_key, body, spec):
     b = spec["bodies"][body]
     model = FITS / map_key / b["checkpoint"]
     meta, idx, coef = load_model(model)
-    locs, expr, stats = tent_body(meta, idx, coef)
+    locs, expr, stats = (overlay_body if meta.get("mode") == "overlay" else tent_body)(meta, idx, coef)
     digest = sha256_file(model)
     rel = model.relative_to(REPO).as_posix()
     header = [f"Generated by tools/build_geo.py (emitter {EMITTER_VERSION}) from {rel}",
@@ -2222,6 +2283,227 @@ def check_bandfix(map_key, scales=None):
     return fails
 
 
+# ------------------------------------------------------------------------------------------------ overlay layers
+
+# 0.3.2 (config.lua coast.overlay): a land layer and a water layer drawn straight from the reference raster, which a geo
+# body combines with a fit as min(max(fit, land - offset), offset - water). Each layer is level-0 tents (one per
+# reference pixel) over a mask and the ring of pixels round it: offset + the signed distance to the mask's outline
+# (positive inside, half a pixel at its outermost centres, minus half a pixel on the ring), and no tent elsewhere, so
+# away from a mask a layer reads exactly -offset (land) or +offset (water) and the fit passes unchanged; inside, the
+# outline is the bilinear contour half way between a mask pixel's centre and its neighbours'. The fit's coasts outside
+# the masks cannot move: max() only adds land, min() only adds water.
+OVERLAY_INSIDE_CAP_PX = 4.0   # the fit's own saturation (its target's D)
+OVERLAY_RING_PX = 1.5         # the ring's deepest value
+OVERLAY_MIN_PX = 0.2          # the least a smoothed mask or ring pixel's centre reads inside or outside
+OVERLAY_GRID_PX = 0.125       # the grid a smoothed layer's values are rounded to
+
+
+def overlay_spec(map_key):
+    spec = fit_spec(map_key)
+    if "overlay" not in spec:
+        raise SystemExit(f"RESULT fail {map_key}/fit.json has no overlay record")
+    return spec["overlay"]
+
+
+def overlay_offset():
+    import tnconfig
+    return float(tnconfig.load()["coast"]["overlay"]["offset_px"])
+
+
+def _boxes_mask(mref, boxes):
+    import numpy as np
+    m = np.zeros((mref.H, mref.W), bool)
+    for b in boxes:
+        r0, r1, c0, c1 = region_box_px(mref, b)
+        m[r0:r1, c0:c1] = True
+    return m
+
+
+def _cells_boxes(cells, size):
+    h = size / 2
+    return [(lon - h, lon + h, lat - h, lat + h) for lat, lon in cells]
+
+
+def overlay_land_mask(mref, base_land, rec):
+    """bool per pixel: whole reference land components (8-connected) of min_px or more that the base fit draws under
+    max_cover of, with a pixel inside one of the record's cells or boxes. An island that would seal the base fit's
+    water, where the fit draws a strait narrower than the reference does, is left out (overlay_seals)."""
+    import numpy as np
+    from scipy import ndimage as ndi
+    land = mref.land
+    lab, n = ndi.label(land, np.ones((3, 3), bool))
+    area = np.bincount(lab.ravel(), minlength=n + 1)
+    cov = np.bincount(lab.ravel(), weights=base_land.ravel().astype(np.float64), minlength=n + 1)
+    pick = (area >= rec["min_px"]) & (cov / np.maximum(area, 1) < rec["max_cover"])
+    pick[0] = False
+    inside = _boxes_mask(mref, _cells_boxes(rec.get("cells", []), rec.get("cell_deg", 1.5)) + rec.get("boxes", []))
+    hit = np.zeros(n + 1, bool)
+    hit[np.unique(lab[inside & pick[lab]])] = True
+    hit[0] = False
+    objs = ndi.find_objects(lab)
+    for k in np.nonzero(hit)[0]:
+        if overlay_seals(lab, k, objs[k - 1], base_land):
+            hit[k] = False
+    return hit[lab]
+
+
+OVERLAY_SEAL_REACH_PX = 16    # the window round an island in which its water connectivity is checked
+
+
+def overlay_seals(lab, k, sl, base_land):
+    """Whether reference island k, drawn with its 4-neighbours as land, splits a water component of the base fit (of 4
+    px or more, 4-connected) inside the island's box grown by OVERLAY_SEAL_REACH_PX."""
+    import numpy as np
+    from scipy import ndimage as ndi
+    R = OVERLAY_SEAL_REACH_PX
+    r0, r1 = max(0, sl[0].start - R), min(lab.shape[0], sl[0].stop + R)
+    c0, c1 = max(0, sl[1].start - R), min(lab.shape[1], sl[1].stop + R)
+    water = ~base_land[r0:r1, c0:c1]
+    isl = ndi.binary_dilation(lab[r0:r1, c0:c1] == k, ndi.generate_binary_structure(2, 1))
+
+    def count(w):
+        wl, wn = ndi.label(w)
+        return int((np.bincount(wl.ravel(), minlength=wn + 1)[1:] >= 4).sum())
+    return count(water & ~isl) > count(water)
+
+
+def overlay_fill_mask(mref, base_land, rec):
+    """bool per pixel: per channel record with `fill`, the reference land inside the base fit's lakes in its box (water
+    components touching no box edge), so the channel's own outline, not the fit's wider lakes, reads."""
+    import numpy as np
+    from scipy import ndimage as ndi
+    out = np.zeros((mref.H, mref.W), bool)
+    for ch in rec["channels"]:
+        if not ch.get("fill"):
+            continue
+        r0, r1, c0, c1 = region_box_px(mref, ch["box"])
+        lab, n = ndi.label(~base_land[r0:r1, c0:c1], np.ones((3, 3), bool))
+        edge = np.zeros(n + 1, bool)
+        edge[np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]]))] = True
+        edge[0] = True
+        out[r0:r1, c0:c1] |= ~edge[lab] & mref.land[r0:r1, c0:c1]
+    return out
+
+
+def overlay_water_mask(mref, base, rec):
+    """bool per pixel: per channel record, the reference water (thin water too) inside its box 8-connected to its seed,
+    where the base fit reads above -keep_px (deeper water already is sea); overlay_model makes it 4-connected."""
+    import numpy as np
+    from scipy import ndimage as ndi
+    out = np.zeros((mref.H, mref.W), bool)
+    for ch in rec["channels"]:
+        r0, r1, c0, c1 = region_box_px(mref, ch["box"])
+        water = ~mref.land[r0:r1, c0:c1]
+        lab, _ = ndi.label(water, np.ones((3, 3), bool))
+        u, v = mref.lonlat_to_uv(*ch["seed"])
+        k = lab[int(math.floor(v)) - r0, int(math.floor(u)) - c0]
+        if not k:
+            raise SystemExit(f"RESULT fail overlay channel seed {ch['seed']} is not on reference water")
+        out[r0:r1, c0:c1] |= (lab == k) & (base[r0:r1, c0:c1] > -float(rec["keep_px"]))
+    return out
+
+
+def _four_connect(m):
+    """m with a pixel added at every diagonal-only step (two mask pixels touching at a corner only), until none is
+    left, so a bilinear contour never pinches the mask at a saddle."""
+    m = m.copy()
+    while True:
+        a, b, c, d = m[:-1, :-1], m[:-1, 1:], m[1:, :-1], m[1:, 1:]
+        fix_b, fix_a = a & d & ~b & ~c, b & c & ~a & ~d
+        if not (fix_a.any() or fix_b.any()):
+            return m
+        m[:-1, 1:] |= fix_b
+        m[:-1, :-1] |= fix_a
+
+
+def overlay_patch_masks(mref, base_land, rec):
+    """(land, water) bool per pixel: per patch box, the components (8-connected) of the difference between the base fit
+    and the reference that lie wholly inside the box, at least min_px each: reference land the fit draws as water joins
+    the land layer, reference water the fit draws as land the water layer. Thin water (rivers and channels the fit is
+    not scored on; the waterways draw rivers) counts as either, so no patch carves a river."""
+    import numpy as np
+    from scipy import ndimage as ndi
+    add, carve = np.zeros((mref.H, mref.W), bool), np.zeros((mref.H, mref.W), bool)
+    for p in rec.get("patches", []):
+        r0, r1, c0, c1 = region_box_px(mref, p["box"])
+        land, thin, fit = mref.land[r0:r1, c0:c1], mref.thin[r0:r1, c0:c1], base_land[r0:r1, c0:c1]
+        diff = (land & ~fit) | (~land & ~thin & fit)
+        lab, n = ndi.label(diff, np.ones((3, 3), bool))
+        area = np.bincount(lab.ravel(), minlength=n + 1)
+        edge = np.zeros(n + 1, bool)
+        edge[np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]]))] = True
+        keep = ~edge & (area >= p.get("min_px", 1))
+        keep[0] = False
+        k = keep[lab]
+        add[r0:r1, c0:c1] |= k & land
+        carve[r0:r1, c0:c1] |= k & ~land
+    return add, carve
+
+
+def overlay_model(meta_base, mask, offset, smooth_px=0.0):
+    """A level-0 tents model of offset + the mask's signed distance on the mask (made 4-connected) and its 8-ring (see
+    above). With
+    smooth_px, the signed distance is first blurred by a Gaussian of that sigma, so the outline follows the reference's
+    shape rather than its pixel staircase (whose straight sides and square corners read as blocks at 12 tiles a
+    pixel); every mask pixel's centre still reads at least OVERLAY_MIN_PX inside and every ring pixel's at least that
+    outside, so no island or channel of the mask is lost or joined."""
+    import numpy as np
+    from scipy import ndimage as ndi
+    mask = _four_connect(mask)
+    ring = ndi.binary_dilation(mask, np.ones((3, 3), bool)) & ~mask
+    rows, cols = np.nonzero(mask | ring)
+    sd = np.zeros(len(rows))
+    near = ndi.binary_dilation(mask, np.ones((3, 3), bool), iterations=8)
+    lab, _ = ndi.label(near)
+    for k, (ys, xs) in enumerate(ndi.find_objects(lab), 1):
+        m = mask[ys, xs] & (lab[ys, xs] == k)
+        s = (np.clip(ndi.distance_transform_edt(m) - 0.5, 0, OVERLAY_INSIDE_CAP_PX) -
+             np.clip(ndi.distance_transform_edt(~m) - 0.5, 0, 3.0)).astype(np.float32)
+        if smooth_px:
+            s = ndi.gaussian_filter(s, smooth_px, mode="nearest")
+        pick = (rows >= ys.start) & (rows < ys.stop) & (cols >= xs.start) & (cols < xs.stop)
+        pick &= lab[rows, cols] == k
+        sd[pick] = s[rows[pick] - ys.start, cols[pick] - xs.start]
+    least = OVERLAY_MIN_PX if smooth_px else 0.5
+    inner = mask[rows, cols]
+    val = np.where(inner, np.clip(sd, least, OVERLAY_INSIDE_CAP_PX), -np.clip(-sd, least, OVERLAY_RING_PX))
+    if smooth_px:
+        # a coarse grid of values: the game compiles each distinct coefficient-factor product once, so values the
+        # pixel staircase repeats keep the program small; the grid moves an outline by under a sixteenth of a pixel
+        val = np.where(inner, np.maximum(np.round(val / OVERLAY_GRID_PX), 1), np.minimum(np.round(val / OVERLAY_GRID_PX),
+                                                                                         -1)) * OVERLAY_GRID_PX
+    val = val + offset
+    nw = meta_base["shapes"][0][1]
+    flat = rows.astype(np.int64) * nw + cols
+    order = np.argsort(flat)
+    meta = {"map": meta_base["map"], "family": "mr", "mode": "overlay", "step": 1, "K": 0,
+            "shapes": [meta_base["shapes"][0]], "H": meta_base["H"], "W": meta_base["W"], "Hs": meta_base["Hs"],
+            "Ws": meta_base["Ws"], "terms": int(len(flat)), "offset_px": offset, "mask_px": int(mask.sum()),
+            "tool": "tools/build_geo.py overlay"}
+    return meta, [flat[order]], val[order].astype(np.float64)
+
+
+def overlay_build(map_key):
+    """Writes the overlay record's land and water layer checkpoints into data-src/fits/<map>/ from the reference and
+    the base checkpoint; returns {layer: (file, terms, mask px)}."""
+    import earthgeo as eg
+    rec = overlay_spec(map_key)
+    offset = overlay_offset()
+    mref = eg.MapRef(map_key)
+    meta_b, idx_b, coef_b = load_model(FITS / map_key / rec["base"])
+    base = pixel_values(meta_b, idx_b, coef_b)
+    out = {}
+    add, carve = overlay_patch_masks(mref, base > 0, rec)
+    land = overlay_land_mask(mref, base > 0, rec["land"]) | overlay_fill_mask(mref, base > 0, rec["water"]) | add
+    water = overlay_water_mask(mref, base, rec["water"]) | carve
+    for layer, mask in (("land", land), ("water", water)):
+        meta, idx, coef = overlay_model(meta_b, mask, offset, float(rec.get("smooth_px", 0)))
+        p = FITS / map_key / rec[layer]["checkpoint"]
+        save_model(p, meta, idx, coef)
+        out[layer] = (p.name, meta["terms"], meta["mask_px"])
+    return out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -2234,6 +2516,8 @@ def main(argv=None):
             p.add_argument("--masks-only", action="store_true",
                            help="with --bandfix on emit: rewrite the mask tables from the committed K+ table")
             p.add_argument("--scales", help="comma list of scales (default: every offered scale)")
+    p = sub.add_parser("overlay", help="the overlay's land and water layers from the reference (fit.json overlay)")
+    p.add_argument("--map", required=True)
     p = sub.add_parser("refit-islands")
     p.add_argument("--map", required=True)
     p.add_argument("--src", default="model-8192.npz")
@@ -2344,6 +2628,10 @@ def main(argv=None):
         print(f"RESULT {'ok' if not fails else 'fail'} checks=2 failed={len(fails)} "
               f"two emissions byte-identical to the committed generated files")
         return 0 if not fails else 1
+    if a.cmd == "overlay":
+        rep = overlay_build(a.map)
+        print(f"RESULT ok overlay {a.map} " + " ".join(f"{k}={v[0]} tents={v[1]} mask_px={v[2]}" for k, v in rep.items()))
+        return 0
     if a.cmd == "refit-islands":
         rep = refit_islands(a.map, a.src, a.dst)
         print(json.dumps(rep, indent=1))

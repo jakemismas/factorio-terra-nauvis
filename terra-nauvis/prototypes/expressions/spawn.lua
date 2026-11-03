@@ -1,6 +1,6 @@
 -- Spawn expressions (ARCHITECTURE.md, "Expression inventory"; contracts 1 and 2).
 --
--- The start mask (design rule 8; DECISIONS 08:00): vanilla's starting_resources_lake_mask reads elevation
+-- The start mask (design rule 8): vanilla's starting_resources_lake_mask reads elevation
 -- in every starting-ore spot noise, which on an Earth preset would carry the fine coast into the
 -- Entity program. Earth presets point that key at a start mask version (config.lua's start_mask;
 -- each geography version names the one its preset bakes). Each version names its formula:
@@ -107,7 +107,7 @@ local function noise(seed1, wavelength, cx, cy)
     " / " .. num(wavelength) .. shift .. "}"
 end
 
--- One axis of a lake's domain warp (DECISIONS 2026-10-30, the rivers' natural course): amplitude times
+-- One axis of a lake's domain warp: amplitude times
 -- one basis noise per octave row of config.lua, so a lake's shore wanders off the circle its distance draws. A row
 -- with max_scale moves the shore only up to that scale.
 local function warp(octaves, axis, cx, cy)

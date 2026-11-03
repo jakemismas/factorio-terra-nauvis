@@ -43,6 +43,28 @@
    "file": "terra-nauvis/prototypes/generated/geo_olde_world_v4.lua",
    "sha256": "7e4bdf234d7edea40e93ef5c7f59611e51f9862a6021673ffa978598bd9449a8",
    "bytes": 514674
+  },
+  "overlay_land": {
+   "terms": 11957,
+   "factors": 3381,
+   "row_groups": 1452,
+   "clusters": 151,
+   "checkpoint": "data-src/fits/olde_world/overlay-land-1.npz",
+   "checkpoint_sha256": "f819277da6130e3fcf6bfc9d17b2aea44e750b530dec125f0392500fecd44306",
+   "file": "terra-nauvis/prototypes/generated/overlay_land_olde_world_v1.lua",
+   "sha256": "f96e4e5769fb33ae84b1a8dd6734cb3e548cf3f2a605d0c2c69c883f592466cd",
+   "bytes": 448396
+  },
+  "overlay_water": {
+   "terms": 6564,
+   "factors": 1243,
+   "row_groups": 547,
+   "clusters": 32,
+   "checkpoint": "data-src/fits/olde_world/overlay-water-1.npz",
+   "checkpoint_sha256": "7266f24e770fbe5e1e6cbb68fcc1e271c46f71f2763bc1baacc789b604ef5433",
+   "file": "terra-nauvis/prototypes/generated/overlay_water_olde_world_v1.lua",
+   "sha256": "1525fd7d21f5ae31ab0f831a2042400c9b47ae67b68e7255208f86c6358795f9",
+   "bytes": 208166
   }
  }
 }

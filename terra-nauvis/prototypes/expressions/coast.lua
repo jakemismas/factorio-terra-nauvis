@@ -34,7 +34,7 @@
 --                                          rivers, straits, basins and open canals, each set picked by
 --                                          the folded scale (waterways.lua); dams come after the lakes
 --                                          so no lake reopens a dammed isthmus, and a carve still cuts
---                                          the start land guarantee (TST-06)
+--                                          the start land guarantee
 --   elevation = if(e < 0, min(e, stamp), e)  a version with an offshore stamp (resources-enemies): the
 --                                          map's stamp key, a Map type fallback, names the stamp body
 --                                          (resources.lua) with hotspots on and the neutral zero off,
@@ -57,6 +57,9 @@ local FILES = {
   ["prototypes/generated/geo_olde_world_v2.lua"] = require("prototypes.generated.geo_olde_world_v2"),
   ["prototypes/generated/geo_olde_world_v3.lua"] = require("prototypes.generated.geo_olde_world_v3"),
   ["prototypes/generated/geo_olde_world_v4.lua"] = require("prototypes.generated.geo_olde_world_v4"),
+  ["prototypes/generated/overlay_land_olde_world_v1.lua"] = require("prototypes.generated.overlay_land_olde_world_v1"),
+  ["prototypes/generated/overlay_water_olde_world_v1.lua"] =
+    require("prototypes.generated.overlay_water_olde_world_v1"),
   ["prototypes/generated/land_coarse_olde_world_v1.lua"] = require("prototypes.generated.land_coarse_olde_world_v1"),
 }
 
@@ -80,7 +83,7 @@ end
 -- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain, or to
 -- fit_u and fit_v where the version warps its fit. The game parses every body's text at startup (about
 -- 0.5 us a byte) and expands every noise-function call there, so each map carries its fit once: one
--- geography version per map until the first release (DECISIONS 2026-10-30 10:55; issue #1).
+-- geography version per map until the first release.
 local function fit_body(name, file, g, fit_u, fit_v)
   local fit = FILES[file]
   if not fit then
@@ -122,6 +125,21 @@ local function next_fit(g, wu, wv)
   end
 end
 
+-- The overlay geo body of a version (config.lua coast.overlay, 0.3.2), which a new world's preset names over the
+-- version's own past above_scale: its next body with the land layer added by max() and the water layer by min(), both
+-- generated from the reference raster and bound to the same (warped) chain. Away from its mask a layer reads exactly
+-- -offset_px (land) or +offset_px (water), so the next body passes unchanged there.
+local function overlay_fit(g, wu, wv)
+  local O = C.overlay and C.overlay.versions[g.geo_id]
+  if not O then
+    return
+  end
+  fit_body(O.land, O.land_file, g, wu, wv)
+  fit_body(O.water, O.water_file, g, wu, wv)
+  local off = num(C.overlay.offset_px)
+  def(O.body, "min(max(" .. O.over .. ", " .. O.land .. " - " .. off .. "), " .. off .. " - " .. O.water .. ")")
+end
+
 -- Octaves fixed in tiles (config.lua coast.warp.tile_octaves) appended to a warped axis, each folded to 0 below its
 -- min_scale.
 local function tile_octaves(parts, g, axis, s)
@@ -147,6 +165,7 @@ end
 local function warped_fits(g, s, wu, wv)
   local split = C.split and C.split.versions[g.geo_id]
   next_fit(g, wu, wv)
+  overlay_fit(g, wu, wv)
   if not split then
     fit_body(g.geo, g.fits.geo, g, wu, wv)
     return
@@ -369,7 +388,7 @@ local function version(m, g)
   -- A version with a spawn record (spawn-cities) adds step 4, the start land guarantee, and step 7,
   -- the spawn lake and the version's inland lakes (spawn.lua defines all three). A version with
   -- waterways (waterways) wraps the rest in steps 5 and 6, the dams and carves (waterways.lua): a
-  -- named waterway still cuts the guarantee (TST-06), and no lake reopens a dammed isthmus.
+  -- named waterway still cuts the guarantee, and no lake reopens a dammed isthmus.
   local sp = g.spawn
   if sp then
     -- A version with a lakes field (edge-and-lakes) reads its inland lakes through the per-save switch,
