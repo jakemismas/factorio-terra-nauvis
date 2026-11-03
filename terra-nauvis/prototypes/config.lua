@@ -3412,12 +3412,29 @@ return {
                   half = 0.5, gain = 0.6},
       ford_edge = {seed1 = 7509, wavelength = {5, 0.5}, amplitude = {0.6, 0.2}, hold_above = 6},
       -- ford_fine: the listed geographies add these octaves to J, fixed in tiles, past ford_edge.hold_above.
+      -- soft: the ford set alone adds these octaves to J, then under at tiles J falls at slope, so a ford's end keeps
+      -- its wiggle where the noise runs low but seldom pulls back from a bank, and bias_tiles lengthens it everywhere:
+      -- with the fine octaves alone a ford read as a pale rectangle across its river (f-eyetest row 5).
       ford_fine = {geographies = {21, 22}, max_scale = 12,
                    octaves = {{seed1 = 7523, wavelength_tiles = 9, amplitude_tiles = 2.0},
-                              {seed1 = 7524, wavelength_tiles = 5, amplitude_tiles = 0.8}}},
-      -- warp_fine: the listed geographies' rivers bend by these octaves, fixed in tiles, from min_scale up.
-      warp_fine = {geographies = {21, 22}, min_scale = 12, max_scale = 12,
-                   octaves = {{seed1x = 7525, seed1y = 7526, wavelength_tiles = 7, amplitude_tiles = 1.1}}},
+                              {seed1 = 7524, wavelength_tiles = 5, amplitude_tiles = 0.8}},
+                   soft = {bias_tiles = 1.5, at = -3, slope = 0.3,
+                           octaves = {{seed1 = 7547, wavelength_tiles = 17, amplitude_tiles = 3.2}}}},
+      -- bank_fine: the listed geographies' river sets (kind) widen B by these octaves, fixed in tiles, so a bank
+      -- tangent to a grid axis on a meander breaks within a few tiles instead of running straight along it.
+      bank_fine = {geographies = {21, 22}, min_scale = 12, max_scale = 12, kind = "ww",
+                   octaves = {{seed1 = 7548, wavelength_tiles = 11, amplitude_tiles = 1.6}}},
+      -- warp_fine: the listed geographies' rivers bend by these octaves, fixed in tiles, from min_scale up. They fade
+      -- in over fade_outer_tiles from the spawn_fade's inner disc, not spawn_fade's longer reach: the meander octaves
+      -- are what keep a reach near the spawn from running straight along a grid axis (f-eyetest rows 1 and 8).
+      warp_fine = {geographies = {21, 22}, min_scale = 12, max_scale = 12, fade_outer_tiles = 220,
+                   octaves = {{seed1x = 7525, seed1y = 7526, wavelength_tiles = 7, amplitude_tiles = 1.1},
+                              {meander = true, seed1x = 7541, seed1y = 7542,
+                               wavelength_tiles = 230, amplitude_tiles = 34},
+                              {meander = true, seed1x = 7543, seed1y = 7544,
+                               wavelength_tiles = 95, amplitude_tiles = 13},
+                              {meander = true, seed1x = 7545, seed1y = 7546,
+                               wavelength_tiles = 38, amplitude_tiles = 4.5}}},
       profile = {source = 0.7, mouth = 1.35, tip = 0.12, taper_tiles = {10, 45}, step_tiles = 0.75,
                  step_per_scale = 0.125, taper_full_scale = 6},
       basin = {half_length_tiles = 8, radius_tiles = 12, least_river_scale = 4},

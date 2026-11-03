@@ -13095,20 +13095,6 @@
    "slice": "extras",
    "registered": "2026-11-01"
   },
-  "tn_fords_atlantic_s12_v7": {
-   "type": "noise-expression",
-   "sha256": "aae7df48bd5f91f57ea3fb21d2fa533a20ce52a1cbd0649cfc315cd15a1e5187",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_fords_olde_world_s12_v7": {
-   "type": "noise-expression",
-   "sha256": "b723f31f7583a071635ed8d35139167558d32ad786bd98afc425c10a3317a64f",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
   "tn_marsh_pool_fray_v1": {
    "type": "noise-expression",
    "sha256": "e9a79467791dc85a0eebf7e8ec4b7bac82e6656f4f8f2d2b924f9d3906b8529a",
@@ -13119,20 +13105,6 @@
   "tn_marsh_water_mud_v2": {
    "type": "noise-expression",
    "sha256": "f7eb200628c92800e7ccc9fb6022dca211af9f288854d344043d98ae79bae187",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_warp_x_atlantic_s12_v2": {
-   "type": "noise-expression",
-   "sha256": "17de86307d86b1d2fc8ae13b0f95095a2fadd00c328d0752a14180377de64b4b",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_warp_x_olde_world_s12_v2": {
-   "type": "noise-expression",
-   "sha256": "bf66fda8a20ad1e4bc0cdaed68cb75ba79990ade24aa5c832afbdd91fc2955b1",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-11-01"
@@ -13151,20 +13123,6 @@
    "slice": "extras",
    "registered": "2026-11-01"
   },
-  "tn_warp_y_atlantic_s12_v2": {
-   "type": "noise-expression",
-   "sha256": "4a7cd8dc3f14954041b7815263e647db4b718e2aba8b9cd68bf3dbcc34797b44",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_warp_y_olde_world_s12_v2": {
-   "type": "noise-expression",
-   "sha256": "bffab00d27cf11ce0df6eae2f6acc00dc49f1b5c106e58f220ab69de4b13ab31",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
   "tn_warp_yp_atlantic_s12_v2": {
    "type": "noise-expression",
    "sha256": "42307d036dc78c6dbff86af582a636a8e0a040e50dce165b1987826a61eea5d0",
@@ -13175,20 +13133,6 @@
   "tn_warp_yp_olde_world_s12_v2": {
    "type": "noise-expression",
    "sha256": "06b1fcd76b5ae4d5fd8161be5a765e0a11e8f312baf62247dee764ff4c0ddb7c",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ww_atlantic_s12_v7": {
-   "type": "noise-expression",
-   "sha256": "41e763876e7f950c7c5070e6fc75f9b419c5acefeeba2078a132a76ac2d8c3ce",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ww_olde_world_s12_v7": {
-   "type": "noise-expression",
-   "sha256": "00e87e85a8f9f61e9005b3145d06eb15c9ca9938e29b92dc3092ff7d22c7fb89",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-11-01"

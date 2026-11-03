@@ -86,7 +86,7 @@ local function fn(f)
   return {parameters = params, expression = f.expression, local_expressions = locals}
 end
 
--- The natural course (config.lua natural; design notes 2026-10-30): one warp of the geo tiles every set
+-- The natural course (config.lua natural; DECISIONS 2026-10-30): one warp of the geo tiles every set
 -- of a version reads, so the fords stay on their rivers and the cost is a few noise evaluations per tile,
 -- not per segment. Each octave is one basis noise per axis in geo tiles, anchored like the coast's detail,
 -- so the same ground wanders the same way from every spawn. Rivers read X and Y, the whole warp; straits,
@@ -110,26 +110,37 @@ end
 
 -- The fine meander (config.lua natural.warp_fine): rivers only, octaves fixed in tiles, so a bank bends between the
 -- coarse octaves' bends. Named on as the warp rows' locals, so the warp bodies carry them.
-local function fine_warp(N, g, scale, noise, locals, rx, ry)
+-- A row with fade_outer_tiles puts its octaves in fx and fy under a fade of their own (fadef), else in rx and ry.
+local function fine_warp(N, g, scale, noise, locals, rx, ry, fx, fy)
   local WF = N.warp_fine
   if not fine_row(WF, g, scale) then
     return
   end
+  local own = WF.fade_outer_tiles ~= nil
+  if own then
+    local inner = N.spawn_fade.inner_tiles
+    locals.fadef = "clamp((sqrt(x * x + y * y) - " .. num(inner) .. ") / " .. num(WF.fade_outer_tiles - inner) ..
+      ", 0, 1)"
+  end
+  local ox, oy = own and fx or rx, own and fy or ry
   for i, o in ipairs(WF.octaves) do
     local k = #N.warp + i
     local nx, ny = "wx" .. k, "wy" .. k
+    if o.meander then
+      nx, ny = "mx" .. k, "my" .. k
+    end
     locals[nx] = noise(o.seed1x, {o.wavelength_tiles, 0})
     locals[ny] = noise(o.seed1y, {o.wavelength_tiles, 0})
-    rx[#rx + 1] = num(o.amplitude_tiles) .. " * " .. nx
-    ry[#ry + 1] = num(o.amplitude_tiles) .. " * " .. ny
+    ox[#ox + 1] = num(o.amplitude_tiles) .. " * " .. nx
+    oy[#oy + 1] = num(o.amplitude_tiles) .. " * " .. ny
   end
 end
 
 -- The fine bank (config.lua natural.bank_fine): octaves fixed in tiles that only widen B. A scale the row does not
 -- serve, and a version not listed, keep the bank as it was.
-local function fine_bank(N, g, scale, noise, half)
+local function fine_bank(N, g, scale, noise, half, kind)
   local BF = N.bank_fine
-  if not fine_row(BF, g, scale) then
+  if not fine_row(BF, g, scale) or (BF.kind and BF.kind ~= kind) then
     return ""
   end
   local out = ""
@@ -173,17 +184,22 @@ local function natural_locals(g, mouth, scale, kind)
     px[i] = num(o.passage) .. " * " .. rx[i]
     py[i] = num(o.passage) .. " * " .. ry[i]
   end
-  fine_warp(N, g, scale, noise, locals, rx, ry)
+  local fx, fy = {}, {}
+  fine_warp(N, g, scale, noise, locals, rx, ry, fx, fy)
   local F = N.spawn_fade
   local outer = math.max(F.outer_tiles, F.outer_per_scale * scale)
   locals.fade = "clamp((sqrt(x * x + y * y) - " .. num(F.inner_tiles) .. ") / " .. num(outer - F.inner_tiles) ..
     ", 0, 1)"
-  local function warped(tile, parts, share)
-    return tile .. " + fade * " .. (share or "") .. "(" .. table.concat(parts, " + ") .. ")"
+  local function warped(tile, parts, share, own)
+    local text = tile .. " + fade * " .. (share or "") .. "(" .. table.concat(parts, " + ") .. ")"
+    if own and #own > 0 then
+      text = text .. " + fadef * " .. (share or "") .. "(" .. table.concat(own, " + ") .. ")"
+    end
+    return text
   end
   -- A river keeps its polyline at the sea (generated mouth, natural.mouth), so Exact coastlines can shape a delta
   -- right up to it instead of leaving the coast fit there.
-  locals.X, locals.Y = warped(g.gx, rx, mouth and "M * "), warped(g.gy, ry, mouth and "M * ")
+  locals.X, locals.Y = warped(g.gx, rx, mouth and "M * ", fx), warped(g.gy, ry, mouth and "M * ", fy)
   if mouth then
     locals.M = mouth
   end
@@ -205,7 +221,7 @@ local function natural_locals(g, mouth, scale, kind)
   end
   locals.B = "(" .. num(bank.amplitude[1]) .. " + " .. num(bank.amplitude[2]) .. " * " .. s .. ") * (" .. half ..
     " + " .. half .. " * clamp(" .. bn .. ", -1, 1))"
-  locals.B = locals.B .. fine_bank(N, g, scale, noise, half)
+  locals.B = locals.B .. fine_bank(N, g, scale, noise, half, kind)
   local FE = N.ford_edge
   if scale > FE.hold_above then
     local h = FE.hold_above
@@ -215,7 +231,17 @@ local function natural_locals(g, mouth, scale, kind)
     locals.J = "(" .. num(FE.amplitude[1]) .. " + " .. num(FE.amplitude[2]) .. " * " .. s .. ") * " ..
       noise(FE.seed1, FE.wavelength)
   end
-  locals.J = locals.J .. fine_ford(N, g, scale, noise)
+  local FF = N.ford_fine
+  if kind == "fords" and FF and FF.soft and fine_row(FF, g, scale, FE.hold_above) then
+    local SF = FF.soft
+    locals.Jr = locals.J .. fine_ford(N, g, scale, noise)
+    for _, o in ipairs(SF.octaves) do
+      locals.Jr = locals.Jr .. " + " .. num(o.amplitude_tiles) .. " * " .. noise(o.seed1, {o.wavelength_tiles, 0})
+    end
+    locals.J = num(SF.bias_tiles) .. " + max(Jr, " .. num(SF.slope) .. " * Jr + " .. num(SF.at * (1 - SF.slope)) .. ")"
+  else
+    locals.J = locals.J .. fine_ford(N, g, scale, noise)
+  end
   return locals
 end
 
@@ -255,14 +281,27 @@ local function emit_sets(key, g, rec)
         end
         for k, part in ipairs(WARP_PARTS) do
           warp[part] = rec.warp[(pos - 1) * #WARP_PARTS + k]
-          E[#E + 1] = {type = "noise-expression", name = warp[part], expression = full[part], local_expressions = inner}
+          -- fadef only where a river's own warp reads it, so the passages' bodies keep their text
+          local own = inner
+          if full.fadef and (part == "X" or part == "Y") then
+            own = {fadef = full.fadef}
+            for name, v in pairs(full) do
+              if name:match("^m[xy]%d") then
+                own[name] = v
+              end
+            end
+            for name, v in pairs(inner) do
+              own[name] = v
+            end
+          end
+          E[#E + 1] = {type = "noise-expression", name = warp[part], expression = full[part], local_expressions = own}
         end
       end
       local function set(kind, expression, functions)
         local name = sets[kind][pos]
         local locals = natural_locals(g, (kind == "ww" or kind == "fords") and mouth, s, kind)
         if warp then
-          local kept = {W = locals.W, B = locals.B, J = locals.J}
+          local kept = {W = locals.W, B = locals.B, J = locals.J, Jr = kind == "fords" and locals.Jr or nil}
           for part, body in pairs(warp) do
             kept[part] = body
           end

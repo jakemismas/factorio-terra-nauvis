@@ -3044,13 +3044,6 @@
     "slice": "waterways",
     "registered": "2026-10-28"
    },
-   "tn_fords_atlantic_s12_v7": {
-    "type": "noise-expression",
-    "sha256": "aae7df48bd5f91f57ea3fb21d2fa533a20ce52a1cbd0649cfc315cd15a1e5187",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_fords_atlantic_s1_v7": {
     "type": "noise-expression",
     "sha256": "6c2d9d9c26130a850a50e50a86fbf7f17a8125a81f2fc45417e0230bbe781f3f",
@@ -3152,13 +3145,6 @@
    "tn_fords_europe_s6_v5": {
     "type": "noise-expression",
     "sha256": "d69b1b5f46d64b5dcffc6669dace53fbf35a480ed85229e6cf51219fb42cd40b",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_fords_olde_world_s12_v7": {
-    "type": "noise-expression",
-    "sha256": "b723f31f7583a071635ed8d35139167558d32ad786bd98afc425c10a3317a64f",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12979,13 +12965,6 @@
     "slice": "region-layer",
     "registered": "2026-10-28"
    },
-   "tn_warp_x_atlantic_s12_v2": {
-    "type": "noise-expression",
-    "sha256": "17de86307d86b1d2fc8ae13b0f95095a2fadd00c328d0752a14180377de64b4b",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_warp_x_atlantic_s1_v2": {
     "type": "noise-expression",
     "sha256": "5fc57985f07a95896a84e706dc9088533d30712abb86f88fa4cc64de195d5c29",
@@ -13087,13 +13066,6 @@
    "tn_warp_x_europe_s6_v2": {
     "type": "noise-expression",
     "sha256": "b89bc524cb49c18e2462db25a656e5c047773966e056afa6039f8e3a2f3ea9e7",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_warp_x_olde_world_s12_v2": {
-    "type": "noise-expression",
-    "sha256": "bf66fda8a20ad1e4bc0cdaed68cb75ba79990ade24aa5c832afbdd91fc2955b1",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -13315,13 +13287,6 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
-   "tn_warp_y_atlantic_s12_v2": {
-    "type": "noise-expression",
-    "sha256": "4a7cd8dc3f14954041b7815263e647db4b718e2aba8b9cd68bf3dbcc34797b44",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_warp_y_atlantic_s1_v2": {
     "type": "noise-expression",
     "sha256": "269e16630ec6e40ee29decd524219f6ff88004ccc0b3c5c45403061c8e7d9be8",
@@ -13423,13 +13388,6 @@
    "tn_warp_y_europe_s6_v2": {
     "type": "noise-expression",
     "sha256": "2d7707e65651f96961db49946e61160ae9fca214180f50ef86a424f19a1bcbbb",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_warp_y_olde_world_s12_v2": {
-    "type": "noise-expression",
-    "sha256": "bffab00d27cf11ce0df6eae2f6acc00dc49f1b5c106e58f220ab69de4b13ab31",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -13651,13 +13609,6 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
-   "tn_ww_atlantic_s12_v7": {
-    "type": "noise-expression",
-    "sha256": "41e763876e7f950c7c5070e6fc75f9b419c5acefeeba2078a132a76ac2d8c3ce",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_ww_atlantic_s1_v7": {
     "type": "noise-expression",
     "sha256": "59c9251b981a538f230c1f99834ddd1112b73715f701447d2f3e608e00a0b29b",
@@ -13759,13 +13710,6 @@
    "tn_ww_europe_s6_v5": {
     "type": "noise-expression",
     "sha256": "5f6b4e8c17b62e0610017bd675164f811084624a7109107b2f7c51415976bec6",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_ww_olde_world_s12_v7": {
-    "type": "noise-expression",
-    "sha256": "00e87e85a8f9f61e9005b3145d06eb15c9ca9938e29b92dc3092ff7d22c7fb89",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
