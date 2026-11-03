@@ -2604,6 +2604,14 @@ return {
       -- vanilla's spot radius cap and cube root, and the two texts of its regular spot noise fn2 swaps (a cleared
       -- candidate ranks last and takes a radius of 1: a spot of no quantity and no radius is not one the game makes)
       gap_radius = {cap = 32, cube_root = "1 / 3"},
+      -- flat: regular ore
+      -- reads the distance d' = min(d, knee) + rate * clamp(d - knee, 0, stop - knee), so out to knee tiles it is
+      -- as before, and past it a patch's richness and size grow at rate times vanilla's pace and stop at `stop`
+      -- (real tiles from the spawn at every scale). fn2 keeps vanilla's density and spot quantities at the real
+      -- distance, so every regular spot stays where it was: the spots' output takes vanilla's quantity growth at
+      -- d' over that at d, the blob reads d', and the richness wrapper (richness_v2) takes vanilla's richness
+      -- factor at d' over that at d. Hotspots read prototypes/ore_curves.lua at the real distance, unchanged.
+      flat = {knee = 1000, rate = 0.5, stop = 4000},
       fn2_swaps = {
         {old = "spot_favorability_expression = 1,", new = "spot_favorability_expression = clear,"},
         {old = "spot_radius_expression = min(32, regular_rq_factor * regular_spot_quantity_expression ^ (1/3)),",
@@ -2805,6 +2813,30 @@ return {
       -- the tree shares read it for these bodies): at full height and 6 tiles they ate most of a body_tiles cone
       blob_scale = 0.5,
       trim = 3,
+      -- the outline's grain: a body is a cone plus the shared blob, whose
+      -- finest wave is 8 tiles, so its outline was a smooth curve and its digitized sides ran straight for 8 to 15
+      -- tiles (Kiruna at 12, runs 960 and 961; with the blob off a body is a plain circle, run 975). One more basis
+      -- wave of `wavelength` tiles at `output` of the blob's, under the same height, roughens the outline as vanilla's
+      -- patches are rough: at 0.6 the three fields' straight runs fell to vanilla's rate and their ore held 1.01 to
+      -- 1.02 (run 976); at 1.2 every field shed 10 to 14 fragments (run 977)
+      grain = {seed1 = 7445, wavelength = 4, output = 0.6},
+      -- far fields (f-hotaudit, runs 1007 to 1017): past about 10,000 tiles at scale 12 a design asks for under one or
+      -- two body_tiles cones (vanilla's ore per tile grows with distance, the total is held), so a field was one or
+      -- two whole bodies of a drawn size and held 0.03 to 2.9 times its design (33 over 100 M, 21 under half). Where
+      -- a strength-k_ref row would hold under `bodies` cones, every body's tiles scale by f = k_ref * W1 / bodies
+      -- (ore_curves.lua body_scale, W1 the cones one unit of k asks for, never under `least`): its quantity by
+      -- f ^ 1.5, its height by f ^ 0.5 (the richness wrapper divides by it, so ore per tile stays the design's), the
+      -- blob under it by f ^ blob_power (the blob's waves do not shrink with the body), the outline trim by f ^ 0.5,
+      -- and its size draw narrows to `size` (one large draw set a field's total). So a world-class far field is about
+      -- `bodies` large bodies and a strength-3 one about half that. A small disc whose candidates cannot hold that
+      -- many takes fewer, larger ones (hotspots_v2.lua fr). Far bodies lose less to the blob and the trim than the
+      -- near ones area_fit was fitted on: `fit` takes that back, ramped in below f = fit_from. A row's design total is
+      -- held to total_cap by its K (the maintainer 14:25, "raise the cap"): each is the 100 M ceiling over the worst total /
+      -- design its K reached at scales 6 and 12 (runs c1, c2: K 3 1.95, K 4 1.75, K 5 1.35, K 6 1.26), less 8 percent,
+      -- so no field passes 100 M at amount 100; the amount setting multiplies it.
+      far = {bodies = 5, k_ref = 6, least = 0.06, blob_power = 1, fit = 0.91, fit_from = 0.7,
+             total_cap = {[3] = 46000000, [4] = 52000000, [5] = 68000000, [6] = 73000000},
+             size = {gain = 1.5, power = 0.5}},
       area_fit = 1.65,
       rich_fit = 0.74,
       cube_root = 1 / 3,

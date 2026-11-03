@@ -10,8 +10,10 @@ Date: 2026-11-01
       the spawners. Nests keep off hotspot ore.
     - Ordinary ore patches on new worlds are vanilla's own again, in size, shape and richness for
       their distance from the spawn, and keep out of ore hotspots. Presets set the ore sliders to 1.
+      Past about 1,000 tiles from the spawn they grow richer at half vanilla's pace, and from about
+      4,000 tiles they stop growing, so far ore hotspots stand well above them.
     - An ore hotspot on new worlds holds three to six times a large ordinary patch at its distance,
-      at most about 100 million, about 1.75 times as rich per tile as the ordinary ore round it, in
+      at most about 100 million, about 1.75 times as rich per tile as vanilla's ordinary ore, in
       more bodies for a stronger field. The map's ore size and richness sliders reach hotspots, and
       the Ore hotspot amount setting adds or removes bodies.
     - A start with less than nine tenths of vanilla's average coal gets topped up to that average.

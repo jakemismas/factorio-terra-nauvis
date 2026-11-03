@@ -286,10 +286,21 @@ local function v3_row(h, r, j, Q, T)
   for k, v in pairs(L) do
     T[k], Q[k] = v, v
   end
+  -- W in body_tiles cones, its total held to far.total_cap and its count to top_share of the start disc's candidates
   Q[held] = "pi * " .. sr .. " * " .. sr .. " / hs_pc"
-  Q[W] = "min(" .. num(V3.k[r.strength]) .. " * hs_w, " .. num(H2.top_share) .. " * " .. held .. ")"
-  -- the row's quantity, W bodies' worth, spread over its start disc's candidates: the density its regions reach
-  Q["q" .. j] = st .. " * " .. num(OC.body_quantity(h)) .. " * " .. W .. " / " .. held
+  local kr = V3.k[r.strength]
+  Q[W] = "min(" .. num(kr) .. " * hs_w, " .. num(V3.area_fit / (V3.per_tile * V3.body_tiles) * V3.far.total_cap[kr]) ..
+    " * " .. K.hotspot_amount .. " / hs_p, " .. num(H2.top_share) .. " * " .. held .. ")"
+  -- the row's quantity, W cones' tiles in far bodies of hs_f ^ 1.5 a cone's quantity, spread over its start disc's
+  -- candidates: the density its regions reach
+  Q["q" .. j] = st .. " * " .. num(OC.body_quantity(h)) .. " * " .. W .. " * hs_f ^ " .. num(V3.body_power - 1) ..
+    " * hs_ff / " .. held
+  -- the share of a cone a body at this row's candidates holds: hs_f, or more where W / hs_f bodies would outnumber
+  -- top_share of the candidates (a small disc, Carrara): fewer, larger bodies then hold the same tiles, a little richer
+  for _, k in ipairs({held, W}) do
+    T[k] = Q[k]
+  end
+  T["fr" .. j] = st .. " * " .. W .. " / (" .. num(H2.top_share) .. " * max(1, " .. held .. "))"
   T["c" .. j] = st .. " * " .. room
 end
 
@@ -305,8 +316,8 @@ local function v3_spot(h, rows, i, T, index, part)
     cap[#cap + 1] = "c" .. index[r.id]
   end
   local least = num((SP.min_radius / h.rq) ^ (1 / SP.cube_root))
-  T["raw" .. i] = "(" .. part.qty .. " > 0) * hs_land * " .. num(OC.body_quantity(h) * V3.size.gain) .. " * hs_s ^ " ..
-    num(V3.size.power)
+  T["raw" .. i] = "(" .. part.qty .. " > 0) * hs_land * " .. num(OC.body_quantity(h)) .. " * hs_g * hs_s ^ hs_pw" ..
+    " * hs_fr ^ " .. num(V3.body_power)
   T["qm" .. i] = "raw" .. i .. " * (raw" .. i .. " > " .. least .. ")"
   local radius_cap = #cap == 1 and cap[1] or ("max(" .. table.concat(cap, ", ") .. ")")
   local spacing = "if(" .. S .. " > " .. num(SP.fine_scale) .. ", " .. num(SP.spacing) .. ", " ..
@@ -330,13 +341,27 @@ local function v3_bodies(h, name)
   T.hs_tight = "if(" .. S .. " > " .. num(SP.fine_scale) .. ", -inf, " .. num(blob_reach(h) + SP.min_room) .. ")"
   local Q = {hs_pc = PER_CANDIDATE, hs_tight = T.hs_tight}
   -- bodies per unit of K at a candidate: the amount setting times L(d) over the area per_tile * P(d) asks of each
+  Q.hs_p = "max(1, " .. OC.per_tile(h) .. ")"
   Q.hs_w = num(V3.area_fit / (V3.per_tile * V3.body_tiles)) .. " * " .. K.hotspot_amount .. " * " .. OC.large(h) ..
-    " / max(1, " .. OC.per_tile(h) .. ")"
+    " / hs_p"
+  -- a far field's body size (ore_curves.lua body_scale): the quantity and spots read it, the richness wrapper too
+  Q.hs_f = OC.body_scale(h)
+  T.hs_f = Q.hs_f
+  -- far bodies lose less to the blob and the trim than the near ones area_fit was fitted on: far.fit takes it back,
+  -- ramped in from fit_from so a near field (hs_f 1) keeps its quantity
+  Q.hs_ff = "(" .. num(V3.far.fit) .. " + " .. num(1 - V3.far.fit) .. " * clamp((hs_f - " .. num(V3.far.fit_from) ..
+    ") / " .. num(1 - V3.far.fit_from) .. ", 0, 1))"
   local index = {}
   for j, r in ipairs(rows_of(nil, h.resource)) do
     index[r.id] = tostring(j)
     v3_row(h, r, tostring(j), Q, T)
   end
+  local fr = {"hs_f"}
+  for j = 1, #rows_of(nil, h.resource) do
+    fr[#fr + 1] = "fr" .. j
+  end
+  T.hs_fr = "min(1, max(" .. table.concat(fr, ", ") .. "))"
+  T.hs_w, T.hs_p = Q.hs_w, Q.hs_p
   local part = V3.parts[h.resource]
   def(part.qty, by_map(function(M) return map_qty(rows_of(M.key, h.resource), index) end), Q)
   local branch = {}
@@ -353,9 +378,16 @@ local function v3_bodies(h, name)
   end)
   T.hs_u = "random_penalty{x = x, y = y, source = 1, amplitude = 1, seed = " .. num(h.seed1) .. "}"
   T.hs_s = "random_penalty{x = x, y = y, source = 1, amplitude = 1, seed = " .. num(h.seed1 + V3.size.seed) .. "}"
+  -- a far field's few bodies take a narrower size draw (far.size), so one draw does not set its total
+  local FS = V3.far.size
+  T.hs_g = "if(hs_f < 1, " .. num(FS.gain) .. ", " .. num(V3.size.gain) .. ")"
+  T.hs_pw = "if(hs_f < 1, " .. num(FS.power) .. ", " .. num(V3.size.power) .. ")"
   T.hs_land = "(" .. K.land_coarse .. " > " .. num(HC.land_px) .. ")"
-  def(name, "hs_spot + min(" .. B.name .. " - " .. num(B.mean) .. ", " .. num(B.cap) .. ") * " ..
-    num(V3.blob_scale * blob_height(h)), T)
+  local G = V3.grain
+  def(name, "hs_spot + (min(" .. B.name .. " - " .. num(B.mean) .. ", " .. num(B.cap) .. ") + " ..
+    "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(G.seed1) .. ", input_scale = " ..
+    num(1 / G.wavelength) .. ", output_scale = " .. num(G.output) .. "}) * " ..
+    num(V3.blob_scale * blob_height(h)) .. " * hs_f ^ " .. num(V3.far.blob_power), T)
 end
 
 for _, h in ipairs(HC.resources) do
@@ -383,13 +415,20 @@ open(OT.plants.open, OT.plants.margin, OT.plants.floor)
 -- The shares' next versions: each solid body less the wobble its ore's probability takes, in its cone's least slope
 -- (data-final-fixes.lua probability_v3), so the shares follow the ore that stands.
 -- 0.3.0's presets read the solid ores' third version (H2.v3), so the shares follow its bodies.
+local function trimmed_of(h)
+  local slope = SP.cone_factor / (math.pi * h.rq * h.rq * h.rq)
+  local v3 = V3.bodies[h.resource]
+  if not v3 then
+    return H2.bodies[h.resource] .. " - " .. num(RS.richness_v2.edge.trim * slope) .. " * " ..
+      RS.richness_v2.edge.wobble
+  end
+  -- a far field's bodies are narrower (ore_curves.lua height_scale): the trim follows them, as p3's does
+  return v3 .. " - " .. num(V3.trim * slope) .. " * " .. RS.richness_v2.edge.wobble .. " * " .. OC.height_scale(h)
+end
 local trimmed = {}
 for _, h in ipairs(HC.resources) do
   if H2.bodies[h.resource] and not h.fluid then
-    local slope = SP.cone_factor / (math.pi * h.rq * h.rq * h.rq)
-    local v3 = V3.bodies[h.resource]
-    trimmed[#trimmed + 1] = (v3 or H2.bodies[h.resource]) .. " - " ..
-      num((v3 and V3.trim or RS.richness_v2.edge.trim) * slope) .. " * " .. RS.richness_v2.edge.wobble
+    trimmed[#trimmed + 1] = trimmed_of(h)
   end
 end
 local function open_v2(name, margin, floor)

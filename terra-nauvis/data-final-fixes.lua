@@ -1235,19 +1235,25 @@ local function richness_v2(W, keys, o, ap, rich, hs)
   local own = ramped and ("live_value * " .. RS.ramp.name) or "live_value"
   local base = "if(" .. far .. ", live_value * " .. f("rv_d") .. " / " .. f("distance") ..
     (ramped and (" * " .. ramp("rv_d")) or "") .. ", " .. own .. ")"
+  local flat
   if RV.vanilla then
-    base = "live_value"
+    -- regular ore's richness factor at the flattened distance (resources.natural.flat): 1 out to the knee
+    base = "live_value * rv_flat"
+    flat = f(ORE_CURVES.flat_distance()) .. " / " .. f("distance")
   end
   local hot = hs.r
+  local fh
   local V3 = cfg.hotspots_v2.v3
   if not FLUID[o.resource] and V3.bodies[o.resource] then
     -- the third table (hotspots_v2.v3): per_tile times vanilla's mean regular ore per tile here, times the body's
     -- height (held to peak_cap of a body_tiles cone's mean, where bodies crowd) over that mean, times the richness
     -- slider
     local h = HROW[o.resource]
-    hot = num(V3.rich_fit * V3.per_tile / ORE_CURVES.body_height(h)) .. " * " .. ORE_CURVES.per_tile(h) ..
+    -- a far field's smaller bodies (ore_curves.lua body_scale) stand f ^ 0.5 as high: the mean height reads that
+    hot = num(V3.rich_fit * V3.per_tile / ORE_CURVES.body_height(h)) .. " / rv_fh * " .. ORE_CURVES.per_tile(h) ..
       " * var('control:" .. o.resource .. ":richness') * min(" .. V3.bodies[o.resource] .. ", " ..
-      num(V3.peak_cap * ORE_CURVES.body_height(h)) .. ")"
+      num(V3.peak_cap * ORE_CURVES.body_height(h)) .. " * rv_fh)"
+    fh = ORE_CURVES.height_scale(h)
   elseif not FLUID[o.resource] then
     hot = hs.r .. " * max(1, " .. num(RV.lift) .. " * " .. F("rv_d") .. " / (" .. F("distance") .. ") ^ " ..
       num(RV.cube_root) .. ")"
@@ -1257,6 +1263,12 @@ local function richness_v2(W, keys, o, ap, rich, hs)
     w.local_expressions.rv_d = "if(" .. far .. ", distance * " .. num(RV.ref_scale) .. " / " .. S .. ", distance)"
   end
   w.local_expressions.rv_base = base
+  if flat then
+    w.local_expressions.rv_flat = flat
+  end
+  if fh then
+    w.local_expressions.rv_fh = fh
+  end
   W[#W + 1] = w
   keys[o.richness] = o.r2
 end
@@ -1293,8 +1305,10 @@ local function probability_v3(W, keys, o)
   local v3 = cfg.hotspots_v2.v3
   local body = v3.bodies[o.resource] or cfg.hotspots_v2.bodies[o.resource]
   local edge_trim = v3.bodies[o.resource] and v3.trim or RV.edge.trim
+  -- a far field's bodies (ore_curves.lua body_scale) are f ^ 0.5 as wide: the wobble's trim follows them
+  local fscale = v3.bodies[o.resource] and (" * " .. ORE_CURVES.height_scale(HROW[o.resource])) or ""
   local value = "clamp(" .. body .. " - " .. num(edge_trim * slope) .. " * " ..
-    RV.edge.wobble .. ", 0, 1)"
+    RV.edge.wobble .. fscale .. ", 0, 1)"
   W[#W + 1] = {type = "noise-expression", name = o.p3, expression = "if(" .. on .. ", max(" .. o.p_v1 .. ", " ..
                value .. " * " .. clear .. " * " .. keep .. "), " .. o.p_v1 .. ")"}
   keys[o.probability] = o.p3

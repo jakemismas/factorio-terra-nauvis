@@ -43,6 +43,32 @@ function M.per_tile(h)
     factor("distance")
 end
 
+-- W1(d): the body_tiles cones one unit of k asks for at the amount setting, L(d) over the area per_tile * P(d) asks
+-- of each (area_fit takes back what the outline and the room trim)
+function M.unit_bodies(h)
+  return num(V3.area_fit / (V3.per_tile * V3.body_tiles)) .. " * " .. cfg.keys.hotspot_amount .. " * " ..
+    M.large(h) .. " / max(1, " .. M.per_tile(h) .. ")"
+end
+
+-- f(d): the share of a body_tiles cone's tiles a far field's bodies hold (config.lua hotspots_v2.v3.far)
+function M.body_scale(h)
+  local F = V3.far
+  return "clamp(" .. num(F.k_ref / F.bodies) .. " * " .. M.unit_bodies(h) .. ", " .. num(F.least) .. ", 1)"
+end
+
+-- f ^ (body_power - 1): a far body's height and width against a body_tiles cone's
+function M.height_scale(h)
+  return "(" .. M.body_scale(h) .. ") ^ " .. num(V3.body_power - 1)
+end
+
+-- The distance regular ore grows by (config.lua resources.natural.flat): the real distance to the knee, then rate tiles
+-- per tile to stop, then held. The curves above read the real distance, so a hotspot keeps today's numbers.
+function M.flat_distance()
+  local FL = cfg.resources.natural.flat
+  return "(min(distance, " .. num(FL.knee) .. ") + " .. num(FL.rate) .. " * clamp(distance - " .. num(FL.knee) ..
+    ", 0, " .. num(FL.stop - FL.knee) .. "))"
+end
+
 -- the quantity of a body_tiles cone, and that cone's mean height
 function M.body_quantity(h)
   return (V3.body_tiles / (math.pi * h.rq * h.rq)) ^ V3.body_power
