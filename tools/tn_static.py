@@ -4649,8 +4649,15 @@ def row_ranges(repo=REPO):
         ranges, f = [], f + [str(e)]
     kinds = {k: sum(1 for r in ranges for o in r.get("openings") or [] if o.get("kind") == k)
              for k in build_ranges.KINDS}
-    return f, (f"prototypes/tables/ranges.lua re-emits byte for byte from its sources ({len(ranges)} ranges; openings "
-               f"{kinds}); the passes are approvals-data.json's adopted ones and the unnamed gaps its rule's")
+    # the second table (0.3.0): re-emits from data-src/ridges/ranges-v2.json, no id of the first, the same 400 km rule
+    f2 = build_ranges.table2_findings()
+    try:
+        n2 = len(build_ranges.load_table2())
+    except (build_ranges.RangeError, tnconfig.ConfigError) as e:
+        n2, f2 = 0, f2 + [str(e)]
+    return f + f2, (f"prototypes/tables/ranges.lua re-emits byte for byte from its sources ({len(ranges)} ranges; "
+                    f"openings {kinds}); the passes are approvals-data.json's adopted ones and the unnamed gaps its "
+                    f"rule's; ranges_v2.lua re-emits from ranges-v2.json ({n2} ranges)")
 
 
 def ranges_fixtures(td):

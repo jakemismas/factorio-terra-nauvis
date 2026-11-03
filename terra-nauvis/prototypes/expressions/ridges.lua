@@ -53,8 +53,22 @@
 --            plain fields
 local cfg = require("prototypes.config")
 local T = require("prototypes.tables.ranges")
+-- the second table (0.3.0): ranges the released table lacks, read only by the next bodies (the union below)
+local T2R = require("prototypes.tables.ranges_v2")
 
 local RD = cfg.ridges
+-- both tables' ranges, the first table's first: the union bodies read them in this order
+local function union_ranges()
+  local all, second = {}, {}
+  for _, tab in ipairs({T.ranges, T2R.ranges}) do
+    for _, r in ipairs(tab) do
+      all[#all + 1] = r
+      second[r] = tab == T2R.ranges or nil
+    end
+  end
+  return all, second
+end
+local UR, second = union_ranges()
 local N = RD.names
 local K = cfg.keys
 local SW = cfg.toggles.ridges
@@ -177,7 +191,7 @@ local function reach_px(height)
 end
 
 -- One band term (and its locals) for a piece; P and Q name the scaled axis and cross coordinates.
-local function band_term(pts, run, piece, k, B, H, heights)
+local function band_term(pts, run, piece, k, B, H, heights, opts)
   local vs, tops = {}, {}
   for j = piece.first, piece.last do
     if j == piece.first then
@@ -231,7 +245,7 @@ local function band_term(pts, run, piece, k, B, H, heights)
   end
   H[#H + 1] = {p = p, q = q, f = f, mid = mid, span = span, cos = 2 * span / arc, arc = arc, top = top,
                row = rows / #list, col = cols / #list,
-               reach = reach_px((sum / #list + top) / 2),
+               reach = reach_px((sum / #list + top) / 2), opts = opts,
                reach_text = S .. " * " .. num(c2) .. " + " .. table.concat(W, " + ")}
   return "(abs(" .. q .. " - " .. f .. ") < " .. num(half) .. ") * (abs(" .. p .. " - " .. S .. " * " .. num(mid) ..
     ") < " .. S .. " * " .. num(span) .. " + " .. num(RD.ore_clear_tiles) .. ")"
@@ -321,12 +335,12 @@ end
 
 -- The crest band of one range on a map: its kept segments in runs of consecutive ones, each cut
 -- into monotone pieces.
-local function add_band(Bd, pts, segs, heights)
+local function add_band(Bd, pts, segs, heights, opts)
   local run = {}
   local function flush()
     if #run > 0 then
       for _, piece in ipairs(band_pieces(pts, run)) do
-        Bd.terms[#Bd.terms + 1] = band_term(pts, run, piece, #Bd.terms + 1, Bd.L, Bd.pieces, heights)
+        Bd.terms[#Bd.terms + 1] = band_term(pts, run, piece, #Bd.terms + 1, Bd.L, Bd.pieces, heights, opts)
       end
     end
     run = {}
@@ -352,7 +366,7 @@ end
 -- own pieces through the same locals, so in the Entity program the crest functions and the distance along
 -- each piece cost nothing more: per piece the band is the largest reach less the wandering distance across
 -- it, cut off past the piece's ends. Only the passes' squared distances cost per pass.
-local function highland(key, Bd, O)
+local function highland(key, Bd, O, NM)
   local HG = RD.high
   local L = {wu = N.wander_u[key] .. " * " .. S .. " + " .. num(RD.centre_tiles),
              wv = N.wander_v[key] .. " * " .. S .. " + " .. num(RD.centre_tiles)}
@@ -368,7 +382,7 @@ local function highland(key, Bd, O)
         num(h.span) .. " - abs(" .. h.p .. " - " .. S .. " * " .. num(h.mid) .. "))"
     end
   end
-  def(N.high_map[key], joined("max", terms, "-inf"), L)
+  def(NM.high, joined("max", terms, "-inf"), L)
   -- The tiles pay for their own crest functions, so they read them at the wandering point itself, their reach
   -- follows the vertex heights, one local per piece, and a piece ends round: its box's corners drew flat-topped
   -- tabs of grey ground.
@@ -385,16 +399,28 @@ local function highland(key, Bd, O)
       ")"
     terms[k] = h.reach_text .. " - sqrt(a" .. s .. " * a" .. s .. " + e" .. s .. " * e" .. s .. ")"
   end
-  def(N.high_tile_map[key], joined("max", terms, "-inf"), T2)
+  def(NM.high_tile, joined("max", terms, "-inf"), T2)
   -- The cold field (config.lua ridges.cold): one field per piece, on the pieces the rocks read, so the rocks' reach
   -- covers every cold tile and the palm mask can stand on it.
   local CO, m = RD.cold, cfg.maps[key]
   -- The second version (0.3.0) raises a piece's snow line by dry_rise_m times the largest dry belt weight at its mean
   -- vertex, as climate.lua's dry weight reads the belts.
+  -- The union's second-table pieces (ridges.union.cold): only a piece whose top clears its snow line counts (a grey
+  -- verdict is a flat plateau that slow noise lifts into snow, with straight edges and wide grey), and outside the
+  -- snow edge its field falls k = reach / ref_px times faster, so its rim is as narrow as a ref_px piece's; past its
+  -- ends the distance is the distance across plus taper times the distance past the end, so the snow ends in a V;
+  -- the edge rows (tiles) and fray times
+  -- the ragged factor (12 to 384 tiles) frays the snow edge, which a long straight crest and the slow region noise
+  -- left smooth for hundreds of tiles. Their terms go in C2 as locals. A row with cold = false (the Ethiopian
+  -- Highlands: no snow in Africa) adds none.
+  local UC = cfg.ridges.union.cold
+  local FS2 = CO.snow_at * CO.top_t / (CO.top_t - CO.snow_t)
+  local C2 = {}
   local function cold_terms(rise)
     local out = {}
     for k, h in ipairs(Bd.pieces) do
-      if h.arc >= RD.rocks.short_px then
+      local o = h.opts or {}
+      if h.arc >= RD.rocks.short_px and not o.nocold then
         local plat = m.lat_top_edge - (h.row + 1 / 2) / PPD
         local lat = math.abs(plat)
         local line = math.max(CO.snow_min_m, CO.snow_m - CO.snow_per_degree * math.max(0, lat - CO.snow_lat))
@@ -411,16 +437,51 @@ local function highland(key, Bd, O)
         if h.top >= line - CO.grey_m then
           local s = tostring(k)
           local snowy = h.top >= line
-          local term = "1 - sqrt(a" .. s .. " * a" .. s .. " + e" .. s .. " * e" .. s .. ") / (" ..
-            num(h.reach * (snowy and 1 or CO.grey_reach)) .. " * " .. N.cold.reach .. ")"
-          out[#out + 1] = snowy and term or ("min(" .. num(CO.grey_top) .. ", " .. term .. ")")
+          local dist = "sqrt(a" .. s .. " * a" .. s .. " + e" .. s .. " * e" .. s .. ")"
+          if o.second then
+            -- a second-table piece ends in a V past its ends: a round or pointed cap of a reach several hundred tiles
+            -- across meets the view at right angles to the crest, a straight edge at player zoom; a V's sides are
+            -- diagonals
+            dist = "(a" .. s .. " + " .. num(UC.taper) .. " * e" .. s .. ")"
+          end
+          local term = "1 - " .. dist .. " / (" .. num(h.reach * (snowy and 1 or CO.grey_reach)) .. " * " ..
+            N.cold.reach .. ")"
+          if not o.second then
+            out[#out + 1] = snowy and term or ("min(" .. num(CO.grey_top) .. ", " .. term .. ")")
+          elseif snowy then
+            C2["c" .. s] = term .. " + fr"
+            out[#out + 1] = "min(c" .. s .. ", " .. num(FS2) .. " + " .. num(math.max(1, h.reach / UC.ref_px)) ..
+              " * (c" .. s .. " - " .. num(FS2) .. "))"
+          end
         end
       end
     end
     return out
   end
-  def(N.cold.map[key], joined("max", cold_terms(false), "-inf"), T2)
-  def(N.cold2.map[key], joined("max", cold_terms(true), "-inf"), T2)
+  if NM.cold then
+    def(NM.cold, joined("max", cold_terms(false), "-inf"), T2)
+  end
+  if NM.cold2 then
+    local cterms = cold_terms(true)
+    local L2 = T2
+    if next(C2) then
+      L2 = {}
+      for k, v in pairs(T2) do
+        L2[k] = v
+      end
+      for k, v in pairs(C2) do
+        L2[k] = v
+      end
+      -- the second table's snow edge noise, once for every term: the ragged factor and two rows in tiles
+      local fr = num(UC.fray) .. " * (" .. cfg.climate.ragged.name .. " - 1)"
+      for _, w in ipairs(UC.edge) do
+        fr = fr .. " + " .. num(w.amplitude) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
+          num(w.seed1) .. ", input_scale = " .. num(1 / w.tiles) .. ", output_scale = 1}"
+      end
+      L2.fr = fr
+    end
+    def(NM.cold2, joined("max", cterms, "-inf"), L2)
+  end
   local P, ds = {}, {}
   for i, c in ipairs(O.named) do
     local s = tostring(i)
@@ -431,11 +492,50 @@ local function highland(key, Bd, O)
   local R = RD.rocks
   local inner, outer = R.clear_tiles ^ 2, (R.clear_tiles + R.fade_tiles) ^ 2
   if #ds == 0 then
-    def(N.passes[key], "1")
+    def(NM.passes, "1")
   else
-    def(N.passes[key], "clamp((" .. joined("min", ds, "inf") .. ") * " .. scale2 .. " / " .. num(outer - inner) ..
+    def(NM.passes, "clamp((" .. joined("min", ds, "inf") .. ") * " .. scale2 .. " / " .. num(outer - inner) ..
       " - " .. num(inner / (outer - inner)) .. ", 0, 1)", P)
   end
+end
+
+-- The union (0.3.0, Earth mods recommendation 4): both tables' ranges in the next highland reach, tile reach and
+-- passes, and in the cold field's second version, which only 0.3.0 reads. The second table's ranges draw no cliffs:
+-- the line field's contours hold one row of the cliffs' 4-tile lattice for 20 to 80 tiles and step at right angles,
+-- and neither a wiggle along the crest nor short gaps cured it (reports/f-ranges.md), so they stay out of the crest,
+-- openings and crest band, which a preset still names from the first table. map_bodies' bodies read the first table
+-- alone, so a world made before keeps every ridge it had. g is the map's frame.
+local function union_bodies(key, m, g)
+  local centre = " + " .. num(RD.centre_tiles)
+  local O2 = {u = N.wander_u[key], v = N.wander_v[key], fixed_u = g.u, fixed_v = g.v, L = {}, terms = {}, keeps = {},
+              named = {}}
+  local Bd2 = {L = {bu = g.u .. " * " .. S .. centre, bv = g.v .. " * " .. S .. centre}, terms = {}, pieces = {}}
+  for _, r in ipairs(UR) do
+    local segs = r.segments[key]
+    if segs then
+      local pts, wide = {}, {}
+      for i, ll in ipairs(r.crest) do
+        local pu, pv = to_px(m, ll[1], ll[2])
+        pts[i] = {pu, pv}
+        wide[i] = half_width(r.heights[i], i == 1 or i == #r.crest)
+      end
+      local banded = {}
+      for _, i in ipairs(segs) do
+        if in_band(m, pts[i], pts[i + 1]) then
+          banded[#banded + 1] = i
+        end
+      end
+      add_band(Bd2, pts, banded, r.heights, second[r] and {second = true, nocold = r.cold == false} or nil)
+      for _, o in ipairs(r.openings) do
+        if on_map(o.maps, key) then
+          add_opening(O2, m, pts, o, wide)
+        end
+      end
+    end
+  end
+  local UN = cfg.ridges.union.names
+  highland(key, Bd2, O2, {high = UN.high_map[key], high_tile = UN.high_tile_map[key], cold2 = N.cold2.map[key],
+                          passes = UN.passes[key]})
 end
 
 -- A map's ridge bodies: the wandering axis, the run, the depth, the distance to the axis, the keep, the
@@ -520,7 +620,9 @@ local function map_bodies(key)
   else
     def(N.band[key], joined("max", Bd.terms, "0"), Bd.L)
   end
-  highland(key, Bd, O)
+  highland(key, Bd, O, {high = N.high_map[key], high_tile = N.high_tile_map[key], cold = N.cold.map[key],
+                        passes = N.passes[key]})
+  union_bodies(key, m, g)
 end
 
 for _, key in ipairs(cfg.map_order) do

@@ -1,0 +1,350 @@
+{
+ "format": "tn-ranges-v2/1",
+ "units": "degrees (lat, lon) and metres above sea level",
+ "note": "The second ranges table's source (0.3.0, Earth mods recommendation 4, approved by Jake 2026-11-01 23:20). Each range is a crest polyline through named summits, passes and massifs ordered along the main divide, each vertex with its published elevation rounded to the metre; a vertex that names an area carries a representative height (rep true). The second table draws snow, its grey rim and highland rocks, no cliffs (ridges.lua, union_bodies). The cold field reads one snow verdict per crest piece (its highest vertex), so a long range is split at its real passes and gorges into sections, and only a section whose highest peak clears its snow line is listed: the others drew highland rocks alone. passes are named passes and gorges that cut a crest: build_ranges.py puts each at the crest point nearest it. The 400 km unnamed-gap rule of approvals-data.json applies to every pass-free stretch. See PROVENANCE.md.",
+ "rules": {
+  "unnamed_gap_every_km": 400
+ },
+ "ranges": [
+  {
+   "id": "alborz",
+   "name": "Alborz (Elburz), central",
+   "crest": [
+    {
+     "name": "Manjil gorge (Sefid Rud)",
+     "lat": 36.74,
+     "lon": 49.4,
+     "height": 350,
+     "rep": true
+    },
+    {
+     "name": "Alam-Kuh",
+     "lat": 36.38,
+     "lon": 50.97,
+     "height": 4850
+    },
+    {
+     "name": "Tochal",
+     "lat": 35.88,
+     "lon": 51.42,
+     "height": 3964
+    },
+    {
+     "name": "Damavand",
+     "lat": 35.955,
+     "lon": 52.11,
+     "height": 5610
+    },
+    {
+     "name": "Gaduk pass (Firuzkuh)",
+     "lat": 35.85,
+     "lon": 52.95,
+     "height": 2100,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "tian_shan_west",
+   "name": "Tian Shan, western (Talas and Kyrgyz Ala-Too)",
+   "crest": [
+    {
+     "name": "Greater Chimgan",
+     "lat": 41.55,
+     "lon": 70.03,
+     "height": 3309
+    },
+    {
+     "name": "Manas Peak (Talas Ala-Too)",
+     "lat": 42.3,
+     "lon": 72.0,
+     "height": 4482,
+     "rep": true
+    },
+    {
+     "name": "Semenov-Tian-Shansky Peak (Kyrgyz Ala-Too)",
+     "lat": 42.55,
+     "lon": 74.6,
+     "height": 4895,
+     "rep": true
+    },
+    {
+     "name": "Boom gorge (Chuy river)",
+     "lat": 42.62,
+     "lon": 75.9,
+     "height": 1500,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "tian_shan_central",
+   "name": "Tian Shan, central (Terskey Ala-Too to Khan Tengri)",
+   "crest": [
+    {
+     "name": "Terskey Ala-Too west",
+     "lat": 42.3,
+     "lon": 76.2,
+     "height": 3500,
+     "rep": true
+    },
+    {
+     "name": "Terskey Ala-Too",
+     "lat": 42.1,
+     "lon": 77.8,
+     "height": 5000,
+     "rep": true
+    },
+    {
+     "name": "Jengish Chokusu (Victory Peak)",
+     "lat": 42.035,
+     "lon": 80.13,
+     "height": 7439
+    },
+    {
+     "name": "Haltag range",
+     "lat": 42.7,
+     "lon": 83.0,
+     "height": 4800,
+     "rep": true
+    },
+    {
+     "name": "Narat range",
+     "lat": 43.15,
+     "lon": 84.6,
+     "height": 4000,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "tian_shan_east",
+   "name": "Tian Shan, eastern (Bogda Shan)",
+   "crest": [
+    {
+     "name": "Eren Habirga west",
+     "lat": 43.3,
+     "lon": 85.5,
+     "height": 4000,
+     "rep": true
+    },
+    {
+     "name": "Tianger Peak (Urumqi river head)",
+     "lat": 43.1,
+     "lon": 86.8,
+     "height": 4484,
+     "rep": true
+    },
+    {
+     "name": "Bogda Feng",
+     "lat": 43.8,
+     "lon": 88.32,
+     "height": 5445
+    },
+    {
+     "name": "Bogda Shan east",
+     "lat": 43.45,
+     "lon": 89.8,
+     "height": 3000,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "karlik",
+   "name": "Karlik Tagh (easternmost Tian Shan)",
+   "crest": [
+    {
+     "name": "Karlik Tagh west",
+     "lat": 43.35,
+     "lon": 93.1,
+     "height": 3500,
+     "rep": true
+    },
+    {
+     "name": "Tomur Peak (Karlik Tagh)",
+     "lat": 43.1,
+     "lon": 94.2,
+     "height": 4886,
+     "rep": true
+    },
+    {
+     "name": "Karlik Tagh east",
+     "lat": 42.85,
+     "lon": 95.2,
+     "height": 3000,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "cascades_north",
+   "name": "Cascade Range, North Cascades",
+   "crest": [
+    {
+     "name": "Mount Garibaldi",
+     "lat": 49.85,
+     "lon": -123.0,
+     "height": 2678
+    },
+    {
+     "name": "Mount Baker",
+     "lat": 48.777,
+     "lon": -121.813,
+     "height": 3286
+    },
+    {
+     "name": "Glacier Peak",
+     "lat": 48.112,
+     "lon": -121.113,
+     "height": 3213
+    },
+    {
+     "name": "Snoqualmie Pass",
+     "lat": 47.42,
+     "lon": -121.41,
+     "height": 921
+    }
+   ]
+  },
+  {
+   "id": "cascades_washington",
+   "name": "Cascade Range, Washington (Rainier and Adams)",
+   "crest": [
+    {
+     "name": "Snoqualmie Pass",
+     "lat": 47.42,
+     "lon": -121.41,
+     "height": 921
+    },
+    {
+     "name": "Mount Rainier",
+     "lat": 46.853,
+     "lon": -121.76,
+     "height": 4392
+    },
+    {
+     "name": "Mount Adams",
+     "lat": 46.202,
+     "lon": -121.491,
+     "height": 3743
+    },
+    {
+     "name": "Columbia River Gorge",
+     "lat": 45.7,
+     "lon": -121.8,
+     "height": 100,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "cascades_hood",
+   "name": "Cascade Range, Oregon (Hood and Jefferson)",
+   "crest": [
+    {
+     "name": "Columbia River Gorge",
+     "lat": 45.7,
+     "lon": -121.8,
+     "height": 100,
+     "rep": true
+    },
+    {
+     "name": "Mount Hood",
+     "lat": 45.374,
+     "lon": -121.696,
+     "height": 3429
+    },
+    {
+     "name": "Mount Jefferson",
+     "lat": 44.674,
+     "lon": -121.8,
+     "height": 3199
+    },
+    {
+     "name": "Santiam Pass",
+     "lat": 44.42,
+     "lon": -121.87,
+     "height": 1455
+    }
+   ]
+  },
+  {
+   "id": "cascades_shasta",
+   "name": "Cascade Range, Mount Shasta",
+   "crest": [
+    {
+     "name": "Klamath gap",
+     "lat": 42.2,
+     "lon": -121.95,
+     "height": 1300,
+     "rep": true
+    },
+    {
+     "name": "Mount Shasta",
+     "lat": 41.409,
+     "lon": -122.195,
+     "height": 4322
+    },
+    {
+     "name": "Pit River gorge",
+     "lat": 40.95,
+     "lon": -121.85,
+     "height": 900,
+     "rep": true
+    }
+   ]
+  },
+  {
+   "id": "altai_russian",
+   "name": "Altai, Russian (Katun Range)",
+   "crest": [
+    {
+     "name": "Ivanovsky Range",
+     "lat": 50.3,
+     "lon": 83.7,
+     "height": 2775,
+     "rep": true
+    },
+    {
+     "name": "Belukha",
+     "lat": 49.807,
+     "lon": 86.59,
+     "height": 4506
+    },
+    {
+     "name": "Khuiten Peak (Tavan Bogd)",
+     "lat": 49.15,
+     "lon": 87.82,
+     "height": 4374
+    }
+   ]
+  },
+  {
+   "id": "altai_mongol",
+   "name": "Mongolian Altai",
+   "crest": [
+    {
+     "name": "Khuiten Peak (Tavan Bogd)",
+     "lat": 49.15,
+     "lon": 87.82,
+     "height": 4374
+    },
+    {
+     "name": "Munkh Khairkhan",
+     "lat": 47.0,
+     "lon": 91.6,
+     "height": 4204,
+     "rep": true
+    },
+    {
+     "name": "Sutai",
+     "lat": 46.6,
+     "lon": 93.6,
+     "height": 4220,
+     "rep": true
+    }
+   ]
+  }
+ ]
+}

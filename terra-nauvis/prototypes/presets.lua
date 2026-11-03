@@ -185,9 +185,12 @@ local function ridge_values(map_key)
   if not (crest and openings and band) then
     return {}
   end
+  -- 0.3.0: the band, highland, passes and tile reach a new world takes (ridges.preset, the union of both range
+  -- tables), the first table's where the preset names none
   local out = {[K.cliff_elevation] = RP.cliff_elevation, [K.cliffiness] = RN.cliffiness, [K.crest] = crest,
-               [K.openings] = openings, [K.band] = band, [K.high] = RN.high_map[map_key],
-               [K.passes] = RN.passes[map_key], [K.high_tile] = RN.high_tile_map[map_key]}
+               [K.openings] = openings, [K.band] = (RP.band or RN.band)[map_key],
+               [K.high] = (RP.high or RN.high_map)[map_key], [K.passes] = (RP.passes or RN.passes)[map_key],
+               [K.high_tile] = (RP.high_tile or RN.high_tile_map)[map_key]}
   for name, n in pairs(cfg.trees.restore.rocks) do
     if n.high then
       out[AB and n.key or ("entity:" .. name .. ":probability")] = n.high

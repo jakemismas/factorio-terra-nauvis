@@ -360,7 +360,8 @@ def emit_range(cfg, r):
     ind, inner = "    ", "      "
     out = [ind + "{"]
     out += wrap_items([f"id = {lua_str(r['id'])}", f"name = {lua_str(ascii_name(r['name']))}",
-                       f"crest_km = {lua_num(round(r['crest_km'], 1))}"], inner)
+                       f"crest_km = {lua_num(round(r['crest_km'], 1))}"] +
+                      (["cold = false"] if r.get("cold") is False else []), inner)
     out.append(inner + "crest = {")
     out += wrap_items(["{" + lua_num(a) + ", " + lua_num(b) + "}" for a, b in r["crest"]], inner + "  ")
     out.append(inner + "},")
@@ -467,6 +468,8 @@ def range_problems(r):
     if not isinstance(crest, list) or len(crest) < 2 or not all(isinstance(p, list) and len(p) == 2 for p in crest):
         out.append("crest needs at least 2 {lat, lon} vertices")
         return out
+    if r.get("cold") not in (None, False):
+        out.append("cold is false or absent")
     hs = r.get("heights")
     if not isinstance(hs, list) or len(hs) != len(crest) or not all(isinstance(h, (int, float)) for h in hs):
         out.append("heights needs one number per crest vertex")
@@ -552,12 +555,190 @@ def table_findings(cfg=None, path=TABLE, appr_path=APPROVALS):
     return out
 
 
+# ------------------------------------------------------------------------------------------------ second table
+
+# The second table (0.3.0, Earth mods recommendation 4): ranges the released table lacks, from their own source,
+# data-src/ridges/ranges-v2.json (crest vertices with heights, named passes by position). ranges.lua is a released
+# file whose bodies never change, so these rows live apart and only the next ridge bodies (ridges.lua, the union)
+# read them. The rows have ranges.lua's fields, so every reader takes them unchanged; the 400 km rule places the
+# unnamed gaps and the edge rule its edge openings, as for the first table.
+TABLE2 = MOD / "prototypes" / "tables" / "ranges_v2.lua"
+SOURCE2 = REPO / "data-src" / "ridges" / "ranges-v2.json"
+
+
+def nearest_arc(pts, acc, lat, lon):
+    """The arc km of the crest point nearest (lat, lon), measured in a local plane (lon scaled by cos lat), linear
+    inside a segment as point_at_arc counts."""
+    best = None
+    k = math.cos(math.radians(lat))
+    lens = seg_lengths(pts)
+    for i, (a, b) in enumerate(zip(pts, pts[1:])):
+        ax, ay, bx, by = a[1] * k, a[0], b[1] * k, b[0]
+        px, py = lon * k, lat
+        dx, dy = bx - ax, by - ay
+        l2 = dx * dx + dy * dy
+        t = 0.0 if l2 == 0 else min(1.0, max(0.0, ((px - ax) * dx + (py - ay) * dy) / l2))
+        d = math.hypot(ax + t * dx - px, ay + t * dy - py)
+        if best is None or d < best[0] - 1e-12:
+            best = (d, acc[i] + t * lens[i])
+    return best[1], best[0] * DEG_KM
+
+
+def derive2(cfg, doc):
+    """The second table's ranges from ranges-v2.json, with derive()'s openings, segments and per-map facts."""
+    ppd = float(cfg["coordinates"]["px_per_degree"])
+    every = float(doc["rules"]["unnamed_gap_every_km"])
+    maps = [cfg["maps"][k] for k in cfg["map_order"]]
+    out, seen = [], set()
+    for rr in doc["ranges"]:
+        rid = rr["id"]
+        if rid in seen:
+            raise RangeError(f"ranges-v2.json lists {rid} twice")
+        seen.add(rid)
+        pts = [(float(v["lat"]), float(v["lon"])) for v in rr["crest"]]
+        heights = [float(v["height"]) for v in rr["crest"]]
+        if len(pts) < 2:
+            raise RangeError(f"{rid}: a crest needs at least 2 vertices")
+        acc = arcs_of(pts)
+        length = acc[-1]
+        on_maps = [m["key"] for m in maps if any(inside(m, la, lo, ppd) for la, lo in pts)]
+        openings = []
+        for p in rr.get("passes") or []:
+            arc, off = nearest_arc(pts, acc, float(p["lat"]), float(p["lon"]))
+            if off > 60:
+                raise RangeError(f"{rid}: pass {p['id']} lies {off:.0f} km from the crest")
+            la, lo, seg = point_at_arc(pts, arc)
+            openings.append({"kind": "pass", "id": p["id"], "arc_km": arc, "lat": la, "lon": lo, "seg": seg,
+                             "cited_maps": [m["key"] for m in maps if inside(m, la, lo, ppd)]})
+        openings.sort(key=lambda o: o["arc_km"])
+        stops = [0.0] + [o["arc_km"] for o in openings] + [length]
+        k = 0
+        for a, b in zip(stops, stops[1:]):
+            n = max(0, math.ceil((b - a) / every - 1e-9) - 1)
+            for arc in place_gaps(acc, a, b, n, every):
+                k += 1
+                la, lo, seg = point_at_arc(pts, arc)
+                openings.append({"kind": "gap", "id": f"{rid}_gap_{k}", "arc_km": arc, "lat": la, "lon": lo,
+                                 "seg": seg})
+        segments = {}
+        for m in maps:
+            if m["key"] in on_maps:
+                segments[m["key"]] = [i + 1 for i, (a, b) in enumerate(zip(pts, pts[1:]))
+                                      if seg_near(m, a, b, ppd, MARGIN_PX)]
+        for o in openings:
+            o["maps"] = [mk for mk in on_maps if inside(cfg["maps"][mk], o["lat"], o["lon"], ppd, MARGIN_PX)]
+        for m in maps:
+            if m["key"] not in on_maps or all(inside(m, la, lo, ppd) for la, lo in pts):
+                continue
+            if any(m["key"] in o.get("cited_maps", []) for o in openings if o["kind"] == "pass"):
+                continue
+            for j, (la, lo, seg) in enumerate(edge_crossings(m, pts, ppd), 1):
+                arc = acc[seg - 1] + gc_km(pts[seg - 1][0], pts[seg - 1][1], la, lo)
+                openings.append({"kind": "edge", "id": f"{rid}_edge_{m['key']}_{j}", "arc_km": arc, "lat": la,
+                                 "lon": lo, "seg": seg, "maps": [m["key"]]})
+        openings.sort(key=lambda o: (o["arc_km"], KINDS.index(o["kind"]), o["id"]))
+        for o in openings:
+            o.pop("cited_maps", None)
+            if o["kind"] != "edge" and o["arc_km"] <= TIP_KM:
+                o["tip"] = -1
+            elif o["kind"] != "edge" and o["arc_km"] >= length - TIP_KM:
+                o["tip"] = 1
+            elif o["kind"] != "edge":
+                for i in range(1, len(acc) - 1):
+                    if abs(o["arc_km"] - acc[i]) <= TIP_KM:
+                        o["vertex"] = i + 1
+                        o["lat"], o["lon"] = pts[i]
+                        o["seg"] = i + 1
+                        break
+        row = {"id": rid, "name": rr["name"], "crest_km": length, "crest": [list(p) for p in pts],
+               "heights": heights, "segments": segments, "openings": openings}
+        if rr.get("cold") is False:
+            row["cold"] = False
+        out.append(row)
+    return out
+
+
+HEADER2 = """\
+-- Ridge ranges, second table (0.3.0, Earth mods recommendation 4): ranges the released table (ranges.lua) lacks.
+-- Written by tools/build_ranges.py (writer {tool}) from
+--   data-src/ridges/ranges-v2.json sha256 {src}
+-- Never edit by hand: edit ranges-v2.json, then `python tools/build_ranges.py emit2`; the static gate row re-emits
+-- this file and fails on a difference.
+--
+-- Pure data with ranges.lua's fields (see its header). Only the next ridge bodies read it (ridges.lua, the union of
+-- both tables): the released bodies read ranges.lua alone, so no world made before changes. Passes are named passes
+-- and gorges at the crest point nearest them; gaps follow the {every} km rule; edges the map-edge rule.
+"""
+
+
+def build2(cfg=None, src=SOURCE2):
+    cfg = cfg or tnconfig.load()
+    doc = json.loads(Path(src).read_text(encoding="utf-8"))
+    ranges = derive2(cfg, doc)
+    every = float(doc["rules"]["unnamed_gap_every_km"])
+    out = HEADER2.format(tool=TOOL_VERSION, src=sha256(src), every=lua_num(every)).splitlines()
+    out += ["return {", "  ranges = {"]
+    for r in ranges:
+        out += emit_range(cfg, r)
+    out += ["  },", "}"]
+    for line in out:
+        if len(line) > MAX_COLUMNS:
+            raise RangeError(f"a line of {len(line)} columns")
+    return ranges, "\n".join(out) + "\n"
+
+
+def load_table2(path=TABLE2):
+    return load_table(path)
+
+
+def table2_findings(cfg=None, path=TABLE2):
+    """The second table re-emits byte for byte from ranges-v2.json, shares no id with the first, and holds no
+    pass-free stretch over the rule's km on the whole crest or on any map."""
+    cfg = cfg or tnconfig.load()
+    out = []
+    try:
+        _, text = build2(cfg)
+    except (RangeError, OSError, KeyError, ValueError) as e:
+        return [f"ranges-v2.json: {e}"]
+    try:
+        have = Path(path).read_text(encoding="utf-8")
+    except OSError as e:
+        return [f"{path}: unreadable ({e})"]
+    if have != text:
+        a, b = have.splitlines(), text.splitlines()
+        i = next((k for k in range(min(len(a), len(b))) if a[k] != b[k]), min(len(a), len(b)))
+        out.append(f"{Path(path).name} differs from a fresh emission at line {i + 1}: rerun python tools/build_ranges.py "
+                   f"emit2")
+    try:
+        ranges = load_table2(path)
+        first = {r["id"] for r in load_table()}
+    except (RangeError, tnconfig.ConfigError) as e:
+        return out + [str(e)]
+    every = float(json.loads(SOURCE2.read_text(encoding="utf-8"))["rules"]["unnamed_gap_every_km"])
+    for r in ranges:
+        if r["id"] in first:
+            out.append(f"{r['id']} is in both tables")
+        cuts = sorted(o["arc_km"] for o in r.get("openings") or [] if o["kind"] in ("pass", "gap"))
+        stops = [0.0] + cuts + [float(r["crest_km"])]
+        longest = max(b - a for a, b in zip(stops, stops[1:]))
+        if longest > every + ARC_TOLERANCE_KM:
+            out.append(f"{r['id']}: a pass-free stretch of {longest:.1f} km, over {every:g}")
+        for mk in (r.get("segments") or {}):
+            st = map_stretches(cfg, r, mk)
+            if st and max(st) > every + ARC_TOLERANCE_KM:
+                out.append(f"{r['id']} on {mk}: a pass-free stretch of {max(st):.1f} km, over {every:g}")
+    return out
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     sub.add_parser("emit")
     sub.add_parser("check")
     sub.add_parser("list")
+    sub.add_parser("emit2")
+    sub.add_parser("check2")
+    sub.add_parser("list2")
     a = ap.parse_args(argv)
     try:
         if a.cmd == "emit":
@@ -566,12 +747,22 @@ def main(argv=None):
             TABLE.write_text(text, encoding="utf-8", newline="\n")
             print(f"RESULT ok emitted {len(ranges)} ranges to {TABLE.relative_to(REPO).as_posix()} sha256 {sha256(TABLE)}")
             return 0
+        if a.cmd == "emit2":
+            ranges, text = build2()
+            TABLE2.write_text(text, encoding="utf-8", newline="\n")
+            print(f"RESULT ok emitted {len(ranges)} ranges to {TABLE2.relative_to(REPO).as_posix()} sha256 "
+                  f"{sha256(TABLE2)}")
+            return 0
         if a.cmd == "check":
             f = table_findings()
             print(f"RESULT {'ok' if not f else 'fail'} table check{': ' + f[0] if f else ''}")
             return 0 if not f else 1
+        if a.cmd == "check2":
+            f = table2_findings()
+            print(f"RESULT {'ok' if not f else 'fail'} table2 check{': ' + f[0] if f else ''}")
+            return 0 if not f else 1
         cfg = tnconfig.load()
-        ranges = load_table()
+        ranges = load_table2() if a.cmd == "list2" else load_table()
         for r in ranges:
             kinds = {k: sum(1 for o in r["openings"] if o["kind"] == k) for k in KINDS}
             print(f"{r['id']}: {r['crest_km']} km, {len(r['crest']) - 1} segments, openings {kinds}")

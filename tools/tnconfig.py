@@ -876,8 +876,10 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         if map_key in rp["crest"] and map_key in rp["openings"] and map_key in n["band"]:
             pen.update({K["cliff_elevation"]: rp["cliff_elevation"], K["cliffiness"]: n["cliffiness"],
                         K["crest"]: rp["crest"][map_key], K["openings"]: rp["openings"][map_key],
-                        K["band"]: n["band"][map_key], K["high"]: n["high_map"][map_key],
-                        K["passes"]: n["passes"][map_key], K["high_tile"]: n["high_tile_map"][map_key]})
+                        K["band"]: rp.get("band", n["band"])[map_key],
+                        K["high"]: rp.get("high", n["high_map"])[map_key],
+                        K["passes"]: rp.get("passes", n["passes"])[map_key],
+                        K["high_tile"]: rp.get("high_tile", n["high_tile_map"])[map_key]})
             for name, r in cfg["trees"]["restore"]["rocks"].items():
                 if r.get("high"):
                     pen[r["key"] if ab else f"entity:{name}:probability"] = r["high"]

@@ -464,6 +464,18 @@ local RDN = {
   EU_LINE_ALONG = NOISE .. "line_along_europe" .. RD_V,
   AT_LINE_ALONG = NOISE .. "line_along_atlantic" .. RD_V,
   OW_LINE_ALONG = NOISE .. "line_along_olde_world" .. RD_V,
+  -- 0.3.0 (Earth mods recommendation 4): the union of both range tables (ranges.lua and ranges_v2.lua), the bodies
+  -- new worlds point at (ridges.preset): the highland, tile reach and passes over both tables. The bodies above read
+  -- the first table alone and stay as they are.
+  EU_HIGH2 = NOISE .. "highland_europe_v2",
+  AT_HIGH2 = NOISE .. "highland_atlantic_v2",
+  OW_HIGH2 = NOISE .. "highland_olde_world_v2",
+  EU_HIGH_TILE2 = NOISE .. "highland_tile_europe_v2",
+  AT_HIGH_TILE2 = NOISE .. "highland_tile_atlantic_v2",
+  OW_HIGH_TILE2 = NOISE .. "highland_tile_olde_world_v2",
+  EU_PASSES2 = NOISE .. "passes_europe_v2",
+  AT_PASSES2 = NOISE .. "passes_atlantic_v2",
+  OW_PASSES2 = NOISE .. "passes_olde_world_v2",
 }
 
 -- Resources and enemies (ARCHITECTURE.md contract 9; S6 A5 and A6E).
@@ -2014,6 +2026,15 @@ return {
                RDN.EU_LINE_REACH, RDN.AT_LINE_REACH, RDN.OW_LINE_REACH, RDN.EU_LINE_ALONG, RDN.AT_LINE_ALONG,
                RDN.OW_LINE_ALONG},
     },
+    -- The ridges' union (0.3.0, Earth mods recommendation 4): under files the second range table, which releases the
+    -- ranges it holds; the next highland, tile reach and passes over both tables, which a preset names over the first
+    -- table's. No geography.
+    {
+      release = "0.3.0",
+      names = {RDN.EU_HIGH2, RDN.AT_HIGH2, RDN.OW_HIGH2, RDN.EU_HIGH_TILE2, RDN.AT_HIGH_TILE2, RDN.OW_HIGH_TILE2,
+               RDN.EU_PASSES2, RDN.AT_PASSES2, RDN.OW_PASSES2},
+      files = {"prototypes/tables/ranges_v2.lua"},
+    },
     -- The hotspot, ramp, sea and enemy bodies and the wrappers of the pack's live autoplace:
     -- no geography of their own. The Oil Rig's offshore-oil wrappers exist only
     -- with the Oil Rig loaded, so tests/frozen.json registers them from the M3 dump with the "live"
@@ -2696,6 +2717,28 @@ return {
       cliff_elevation = RDN.RD_CLIFF_ELEVATION2,
       crest = {europe = RDN.EU_CREST2, atlantic = RDN.AT_CREST2, olde_world = RDN.OW_CREST2},
       openings = {europe = RDN.EU_OPENINGS2, atlantic = RDN.AT_OPENINGS2, olde_world = RDN.OW_OPENINGS2},
+      -- 0.3.0: the union of both range tables (ridges.union)
+      high = {europe = RDN.EU_HIGH2, atlantic = RDN.AT_HIGH2, olde_world = RDN.OW_HIGH2},
+      passes = {europe = RDN.EU_PASSES2, atlantic = RDN.AT_PASSES2, olde_world = RDN.OW_PASSES2},
+      high_tile = {europe = RDN.EU_HIGH_TILE2, atlantic = RDN.AT_HIGH_TILE2, olde_world = RDN.OW_HIGH_TILE2},
+    },
+    -- The union (0.3.0, Earth mods recommendation 4): ridges.lua's next highland, tile reach and passes over both range
+    -- tables, ranges.lua (released, 16 ranges) and ranges_v2.lua (data-src/ridges/ranges-v2.json, the ranges it
+    -- lacked), which a preset names (preset above); the cold field's second version (names.cold2, 0.3.0) reads the
+    -- union's pieces too. The second table's ranges draw no cliffs: the crest, openings and crest band stay the first
+    -- table's. cold: a second-table piece enters the cold field only when its top clears its snow line, and outside
+    -- the snow edge its field falls reach / ref_px times faster (ridges.lua highland), so its grey rim is as narrow as
+    -- a ref_px piece's; past its ends its distance is the distance across plus taper times the distance past the end,
+    -- so the snow ends in a V with diagonal sides, and fray times the ragged factor plus the edge rows (field units,
+    -- wavelengths in tiles) fray its edge, which the slow region noise left smooth for hundreds of tiles.
+    union = {
+      cold = {ref_px = 15, fray = 0.05, taper = 1,
+              edge = {{seed1 = 7523, tiles = 26, amplitude = 0.05}, {seed1 = 7524, tiles = 70, amplitude = 0.07}}},
+      names = {
+        high_map = {europe = RDN.EU_HIGH2, atlantic = RDN.AT_HIGH2, olde_world = RDN.OW_HIGH2},
+        high_tile_map = {europe = RDN.EU_HIGH_TILE2, atlantic = RDN.AT_HIGH_TILE2, olde_world = RDN.OW_HIGH_TILE2},
+        passes = {europe = RDN.EU_PASSES2, atlantic = RDN.AT_PASSES2, olde_world = RDN.OW_PASSES2},
+      },
     },
     flank_tiles = 16.37,
     ramp_tiles = 48,
