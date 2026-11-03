@@ -84,7 +84,7 @@ end
 -- The city offset of the world's map folded into one constant added to each noise's seed1, so each
 -- spawn city gets a climate texture of its own: the world shifts to put the city at the origin, so a
 -- noise of plain x and y would repeat around every city of a seed. A seed folds at compile time; x + cx
--- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (design notes
+-- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (DECISIONS
 -- 2026-10-30 11:10).
 local SH = C.city_shift
 def(N.shift, by_map(function(X)
@@ -465,14 +465,22 @@ if AB then
     -- tile that scatters specks 75 tiles past the massif's edge.
     local capped = "min(t, " .. CG.cap .. " + " .. T2 .. " - " .. N.ab.temperature .. " + " ..
       num(G.temperature * RD_COLD.cap_grain) .. " * " .. G2.field .. ")"
+    local t_at = {t = "min(" .. T3 .. " + " .. num(G.temperature) .. " * " .. G2.field .. " + " .. BELT.t ..
+      " * (1 - " .. NN.belt .. "), max(" .. T3 .. ", " .. num(T.ab.max) .. "))"}
     if zone_ranges then
       -- Inside the zone's lift a range keeps the zone's ground (config.lua destroyed.range_heat): the cap stays off it.
       capped = "max(" .. capped .. ", if(" .. T2 .. " > " .. num(T.ab.max) .. ", min(t, " ..
         num(cfg.destroyed.range_heat) .. "), -inf))"
+      -- 0.3.0: the zone's fray (config.lua climate.grain.zone_fray), inside the lift alone and within its rim and cap,
+      -- and the spawn's cooler cap (destroyed.barrier.start), so the fray adds no heat 3 near the start
+      local DH, BS = cfg.destroyed.heat, cfg.destroyed.barrier.start
+      t_at.c = capped
+      t_at.top = "min(" .. num(DH.cap) .. ", " .. num(BS.cap) .. " + " .. num(BS.per_tile) .. " * max(0, " ..
+        cfg.destroyed.start.distance .. " - " .. num(BS.cool_tiles) .. "))"
+      capped = "if(" .. T2 .. " > " .. num(T.ab.max) .. ", clamp(c + " .. num(G.zone_fray) .. " * noise_layer_noise(" ..
+        num(G.layer) .. "), min(c, " .. num(DH.rim) .. "), max(c, top)), c)"
     end
-    def(G2.temperature, capped,
-      {t = "min(" .. T3 .. " + " .. num(G.temperature) .. " * " .. G2.field .. " + " .. BELT.t .. " * (1 - " ..
-         NN.belt .. "), max(" .. T3 .. ", " .. num(T.ab.max) .. "))"})
+    def(G2.temperature, capped, t_at)
     -- 0.3.0 (north2): in the taiga the tundra belts' cooling of the grasses (tundra_bare_old tv -12) is undone, or the
     -- grey took a degree and more south of the line
     local TV = BELT.tv

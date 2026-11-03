@@ -186,6 +186,19 @@ local CT = {
   TM2_11 = NOISE .. "tile_mix_11_v2",
   TM2_12 = NOISE .. "tile_mix_12_v2",
   TM_FRAY = NOISE .. "tile_mix_fray_v1",
+  TM3_1 = NOISE .. "tile_mix_1_v3",
+  TM3_2 = NOISE .. "tile_mix_2_v3",
+  TM3_3 = NOISE .. "tile_mix_3_v3",
+  TM3_4 = NOISE .. "tile_mix_4_v3",
+  TM3_5 = NOISE .. "tile_mix_5_v3",
+  TM3_6 = NOISE .. "tile_mix_6_v3",
+  TM3_7 = NOISE .. "tile_mix_7_v3",
+  TM3_8 = NOISE .. "tile_mix_8_v3",
+  TM3_9 = NOISE .. "tile_mix_9_v3",
+  TM3_10 = NOISE .. "tile_mix_10_v3",
+  TM3_11 = NOISE .. "tile_mix_11_v3",
+  TM3_12 = NOISE .. "tile_mix_12_v3",
+  TM_FRAY2 = NOISE .. "tile_mix_fray_v2",
   K_TILE_T = NOISE .. "tile_temperature",
   K_TILE_TV = NOISE .. "tile_temperature_veg",
   K_TILE_M = NOISE .. "tile_moisture",
@@ -1501,7 +1514,8 @@ return {
                CT.CL_T_AB_GV3, CT.CL_GRAIN3, CT.CL_M_AB_G3, CT.CL_M_AB_N2, CT.CL_A_AB_G3, CT.FROZEN_BODY2, CT.CL_RAGGED,
                CT.CL_BELT_M2, CT.CL_BELT_EDGE2, CT.CL_LIFT_M2, RDN.RD_COLD_F2, RDN.RD_COLD_GATED2, RDN.RD_COLD_HIGH2,
                RDN.RD_COLD_CAP2,
-               RDN.EU_COLD2, RDN.AT_COLD2, RDN.OW_COLD2,
+               RDN.EU_COLD2, RDN.AT_COLD2, RDN.OW_COLD2, CT.TM_FRAY2, CT.TM3_1, CT.TM3_2, CT.TM3_3, CT.TM3_4, CT.TM3_5,
+               CT.TM3_6, CT.TM3_7, CT.TM3_8, CT.TM3_9, CT.TM3_10, CT.TM3_11, CT.TM3_12,
                TFN.PALM_A_P4, TFN.PALM_B_P4, TFN.PALM_ALLOW2, TFN.PALM_MED, TFN.PALM_SHORE, DE.palm_a2, DE.palm_b2,
                TFN.PALM_B_P5, DE.dead2, TFN.ZP_KEY, TFN.NB_KEY, TFN.NB_OPEN, TFN.NB_TILE, TFN.NB_OUT,
                TF_ROCKS["big-sand-rock"].cold, TF_ROCKS["big-sand-rock"].cold_high, TF_ROCKS["medium-sand-rock"].cold,
@@ -2892,6 +2906,10 @@ return {
       heart_px = 110, heart_mac = 20, heart_ramp = 60, heart_gain = 0.6, heart_black = 0.9,
       grey_at = 0.45, grey_out = 0.6, grey_mac = 1, grey_kind = 0.35, grey_grain = 0.3, t_grain = 4,
       next = {ground_at = -0.35,
+              -- ground: the fine and grain shares of the heat ground's edge against the rock (0.3.0, The quality bar:
+              -- no straight runs over about 6 tiles). At the released 0.12 and 0.18 the lava blob's 60-tile contour
+              -- drew that edge, a line running straight for 70 tiles east of the Rhine at scale 12.
+              ground = {fine = 0.35, grain = 0.45},
               -- gap: a shift in reference pixels, clamp(mid + amp * noise, low, top); at top the heat ground starts at
               -- the wasteland's frayed edge (the barrier breaks), at low the barrier runs low pixels wider
               gap = {wavelength_px = 36, octaves = 3, persistence = 0.55, seed1 = 7908, mid = 40, amp = 110,
@@ -3523,6 +3541,12 @@ return {
              -- rust colour no real grassland has); veg_zone_t is the natural ceiling, over which only
              -- Destroyed Europe's heat lies, and which keeps the zone's tiles as they were.
              veg_prefix = "vegetation-", veg_key = CT.K_TILE_TV, veg_cap = 79.5, veg_zone_t = 99,
+             -- 0.3.0 (The quality bar: no straight runs over about 6 tiles): the zone takes no grain, so its heat bands met
+             -- on the contours of the heat's 24-tile noise and ran straight for 20 to 39 tiles (Prague, Frankfurt).
+             -- The cold north's second tile temperature adds zone_fray times noise_layer_noise inside the zone's lift,
+             -- never past the lift's rim or cap (near the spawn its cooler cap), so no ground outside the volcanic band
+             -- shows through and no heat 3 lands by the start.
+             zone_fray = 5,
              -- Alien Biomes deals its ice tiles half of all frozen ground by one noise's sign, and their grey
              -- blue covered more of the Arctic than snow did: each gives up this much score, so ice
              -- keeps to the noise's lows.
@@ -3915,6 +3939,16 @@ return {
               weights = {0.25, -0.25, 0.875, -1, 1, 0.375, -0.375, 0.75, -0.75, -0.5, 0.5, -0.875},
               fields = {CT.TM2_1, CT.TM2_2, CT.TM2_3, CT.TM2_4, CT.TM2_5, CT.TM2_6, CT.TM2_7, CT.TM2_8, CT.TM2_9,
                         CT.TM2_10, CT.TM2_11, CT.TM2_12}},
+      -- The fray on all ground (0.3.0, The quality bar: no straight runs over about 6 tiles on natural edges). Two tiles of
+      -- one box meet on a contour of their pairs' difference wherever the ground is not cold: Alien Biomes' yellow
+      -- grasses and tan dirts (Bamako, Rio), and through the vanilla mix the vanilla grasses (New York), whose seams
+      -- ran straight along the axes for 15 to 40 tiles. fray2's fields add the fray at `warm` on every ground and at
+      -- fray's amount on the cold, so a preset naming them keeps the snow's seams as they were.
+      -- fine: noise_layer_noise's share in fray2: at fray's 0.25 the seams bent only on fray's own 16 tiles and still
+      -- ran straight for 20 tiles at Bamako.
+      fray2 = {body = CT.TM_FRAY2, warm = 0.8, fine = 1,
+               fields = {CT.TM3_1, CT.TM3_2, CT.TM3_3, CT.TM3_4, CT.TM3_5, CT.TM3_6, CT.TM3_7, CT.TM3_8, CT.TM3_9,
+                         CT.TM3_10, CT.TM3_11, CT.TM3_12}},
     },
     -- The list hook (Alien Biomes' long tile restrictions, design notes 2026-10-30 12:55): the game walks a
     -- restriction entry by entry for every tile of a chunk, so a vanilla land tile, on no AB list, costs a

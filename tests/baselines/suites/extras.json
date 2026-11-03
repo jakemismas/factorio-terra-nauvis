@@ -2589,13 +2589,6 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
-   "tn_destroyed_class_v3": {
-    "type": "noise-expression",
-    "sha256": "26dbc22961f6ee6b4a70afbee102c2574e2a6b6a836f4f4096e68ab256a969ba",
-    "dump": "m2",
-    "slice": "extras",
-    "registered": "2026-11-02"
-   },
    "tn_destroyed_clear": {
     "type": "noise-expression",
     "sha256": "92ca84ec053a674e57325bedfc99819a94109b597d8b5902b1cb18363d5e641d",
@@ -11074,13 +11067,6 @@
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-01"
-   },
-   "tn_temperature_ab_v7": {
-    "type": "noise-expression",
-    "sha256": "00b950f522a69a44f278116b1da7803c8dfb9c15b362b614fa6816fe64df2576",
-    "dump": "m2",
-    "slice": "extras",
-    "registered": "2026-11-02"
    },
    "tn_temperature_fb_v1": {
     "type": "noise-expression",

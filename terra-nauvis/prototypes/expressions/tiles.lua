@@ -149,6 +149,17 @@ if mods["alien-biomes"] then
   for i, name in ipairs(FR.fields) do
     def(name, shared_field(i) .. " + " .. num(FR.weights[i]) .. " * " .. FR.body)
   end
+  -- 0.3.0: the fray on all ground (config.lua tiles.noise_share.fray2): warm everywhere, fray's amount on the cold.
+  local F2 = NS.fray2
+  def(F2.body, "(" .. num(F2.warm) .. " + " .. num(FR.amount - F2.warm) .. " * clamp((" .. num(FR.t) .. " - " ..
+    GK.temperature .. ") / " .. num(FR.span) .. ", 0, 1)) * (" .. num(FN.gain) ..
+    " * multioctave_noise{x = x, y = y, persistence = " .. num(FN.persistence) .. ", seed0 = map_seed, seed1 = " ..
+    num(FN.seed1) .. ", octaves = " .. num(FN.octaves) .. ", input_scale = 1 / " .. num(FN.wavelength_tiles) ..
+    ", output_scale = " .. num(FN.output_scale) .. "} + " .. num(F2.fine) .. " * noise_layer_noise(" ..
+    num(cfg.climate.grain.layer) .. "))")
+  for i, name in ipairs(F2.fields) do
+    def(name, shared_field(i) .. " + " .. num(FR.weights[i]) .. " * " .. F2.body)
+  end
 end
 
 -- The frozen tile (config.lua tiles.frozen): the key at its off value, and the body north of the snow line and on a

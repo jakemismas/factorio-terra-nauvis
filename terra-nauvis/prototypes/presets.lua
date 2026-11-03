@@ -273,7 +273,7 @@ local function grain_values(map_key)
       out[TL.vanilla.keys[t]] = fray and TL.vanilla.next.high or TL.vanilla.body_high
     end
     for i, name in ipairs(TL.noise_share.fields) do
-      out[name] = TL.noise_share.fray.fields[i]
+      out[name] = TL.noise_share.fray2.fields[i]
     end
   end
   if AB and cfg.tiles.vanilla.mix.maps[map_key] then

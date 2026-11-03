@@ -186,9 +186,10 @@ if AB then
   -- The next class's rock: black ash or black sand, else red dirt; no grey dirt, no red sand (destroyed.barrier.next).
   local rock3 = black .. L[T.red_dirt] .. ")"
   -- Heat ground needs the lift: without it class 0 is ordinary ground, in specks inside the wasteland.
-  local function class_body(name, depth, ground_at, palette)
-    def(name, "if(" .. BN.reach .. " <= 0, 0, if(min(" .. lifted .. ", " .. BN.lava .. " + " .. num(B.ground_fine) ..
-    " * " .. N.fine .. " + " .. num(B.ground_grain) .. " * grain - " .. num(B.penalty) .. " * (1 - core) + " ..
+  local function class_body(name, depth, ground_at, palette, ground)
+    ground = ground or {fine = B.ground_fine, grain = B.ground_grain}
+    def(name, "if(" .. BN.reach .. " <= 0, 0, if(min(" .. lifted .. ", " .. BN.lava .. " + " .. num(ground.fine) ..
+    " * " .. N.fine .. " + " .. num(ground.grain) .. " * grain - " .. num(B.penalty) .. " * (1 - core) + " ..
     num(B.heart_gain) .. " * heart - " .. num(ground_at) .. ") > 0, 0, if(grassy < " .. num(B.grass_cut) .. ", " ..
     L[T.grass] .. ", " ..
     palette .. ")))", {
@@ -205,7 +206,7 @@ if AB then
     })
   end
   class_body(BN.class, BN.zone .. " / " .. K.scale, B.ground_at, rock2)
-  class_body(BN.class3, shifted, B.next.ground_at, rock3)
+  class_body(BN.class3, shifted, B.next.ground_at, rock3, B.next.ground)
 
   -- The exclusion (config.lua destroyed.exclusion): the key's prototype holds 0, so a world made before keeps every
   -- hook's off branch and the dead trees' copies place nothing.

@@ -13879,13 +13879,6 @@
    "slice": "extras",
    "registered": "2026-11-02"
   },
-  "tn_destroyed_class_v3": {
-   "type": "noise-expression",
-   "sha256": "26dbc22961f6ee6b4a70afbee102c2574e2a6b6a836f4f4096e68ab256a969ba",
-   "dump": "m2",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
   "tn_destroyed_dead_v2": {
    "type": "noise-expression",
    "sha256": "142a87aa4a98a43cb0032ef351cc4b03ab7bfb6ac8f340a61c0edb0b903aad16",
@@ -13945,13 +13938,6 @@
   "tn_north_lead_v2": {
    "type": "noise-expression",
    "sha256": "dd041c28b0a9e3983e19ad37bda00575380b4f45a3331aa6ea7a36db04e2fbe5",
-   "dump": "m2",
-   "slice": "extras",
-   "registered": "2026-11-02"
-  },
-  "tn_temperature_ab_v7": {
-   "type": "noise-expression",
-   "sha256": "00b950f522a69a44f278116b1da7803c8dfb9c15b362b614fa6816fe64df2576",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-11-02"
