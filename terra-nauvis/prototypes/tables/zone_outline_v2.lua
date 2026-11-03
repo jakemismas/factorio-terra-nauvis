@@ -1,5 +1,5 @@
 -- The outline of a Destroyed Europe made on 0.3.0 and after (config.lua destroyed.outline.next): zone_outline.lua's
--- outline, which worlds made before keep, with four changes. All of northern
+-- outline, which worlds made before keep, with four changes (Jake, 2026-11-01, screenshot 10). All of northern
 -- Germany and Jutland come in, and the Danish islands stay out: the Denmark keep row is no longer a land keep, the
 -- North Sea edge runs on past Norway and Sweden (norway, sweden), and the sea cut nordic takes Funen, Zealand, the
 -- smaller Danish islands, Bornholm and Scania out of the presence. The south of France runs to the Pyrenees and not
@@ -13,7 +13,7 @@
 -- alone and runs through water on every map, so it reads its crossing count and takes no roughness; a land cut is a
 -- keep the barrier measures from as well, and takes the shared roughness as a keep row does. A cut holds one latlon
 -- list for every map, or maps, one list per map key, folded on the map. Fitted from previews at seed 1000
--- (<work folder>/f-chaos/cuts.py, nordic2.py): nordic, one list, is the mid-line of the straits between the zone's
+-- (by the zone work's fitting scripts): nordic, one list, is the mid-line of the straits between the zone's
 -- land (Jutland north and south of the Limfjord with Als and the islets within 3 pixels of its coast, the Wadden
 -- islands, the German and Polish coast with Fehmarn and all of Rugen) and the rest (the Danish islands, Samsoe, Laesoe,
 -- Anholt, Bornholm, Scandinavia), on the three maps at scales 1, 6 and 12 at once, so it keeps at least a quarter

@@ -341,7 +341,7 @@ local function v3_bodies(h, name)
   T.hs_tight = "if(" .. S .. " > " .. num(SP.fine_scale) .. ", -inf, " .. num(blob_reach(h) + SP.min_room) .. ")"
   local Q = {hs_pc = PER_CANDIDATE, hs_tight = T.hs_tight}
   -- bodies per unit of K at a candidate: the amount setting times L(d) over the area per_tile * P(d) asks of each
-  Q.hs_p = "max(1, " .. OC.per_tile(h) .. ")"
+  Q.hs_p = "max(1, " .. OC.area_per_tile(h) .. ")"
   Q.hs_w = num(V3.area_fit / (V3.per_tile * V3.body_tiles)) .. " * " .. K.hotspot_amount .. " * " .. OC.large(h) ..
     " / hs_p"
   -- a far field's body size (ore_curves.lua body_scale): the quantity and spots read it, the richness wrapper too

@@ -34,13 +34,29 @@ function M.large(h)
   return num(V3.p90[h.resource] * V3.size_max[h.resource]) .. " * " .. quantity(h, dc) .. " * " .. factor(dc)
 end
 
--- P(d): the mean regular ore per tile, q / (pi r^2) of the typical spot, r = min(radius_cap, rq q^(1/3)); written
--- as the larger of its two branches, so it reads 0, not 0 / 0, where the fade leaves no quantity
-function M.per_tile(h)
-  local q = "(" .. num(h.mean_size) .. " * " .. quantity(h, "distance") .. ")"
+-- vanilla's mean regular ore per tile at distance d, q / (pi r^2) of the typical spot, r = min(radius_cap,
+-- rq q^(1/3)); written as the larger of its two branches, so it reads 0, not 0 / 0, where the fade leaves no quantity
+local function mean_per_tile(h, d)
+  local q = "(" .. num(h.mean_size) .. " * " .. quantity(h, d) .. ")"
   return num(V3.per_tile_fit) .. " * max(" .. q .. " ^ " .. num(V3.cube_root) .. " / " ..
     num(math.pi * h.rq * h.rq) .. ", " .. q .. " / " .. num(math.pi * V3.radius_cap * V3.radius_cap) .. ") * " ..
-    factor("distance")
+    factor(d)
+end
+
+-- P(d): what a hotspot's per tile is per_tile times: vanilla's mean regular ore per tile at the real distance, held
+-- to flat_ratio / per_tile times the regular ore's own (the flattened distance, flat_distance below), so a far field
+-- stays flat_ratio times as rich per tile as the regular ore round it and its total spreads over more tiles (Jake
+-- 15:50: hotspots always take up a decent area); near fields, where the first is the lower, are unchanged
+function M.per_tile(h)
+  return "min(" .. mean_per_tile(h, "distance") .. ", " .. num(V3.flat_ratio / V3.per_tile) .. " * " ..
+    mean_per_tile(h, M.flat_distance()) .. ")"
+end
+
+-- the P(d) a field's area (its bodies' worth) is read from: per_tile's, with the held branch over flat_fit, so a far
+-- field of full-size bodies, which loses less to the blob and the trim than near fields, keeps the cap tip's total
+function M.area_per_tile(h)
+  return "min(" .. mean_per_tile(h, "distance") .. ", " .. num(V3.flat_ratio / V3.per_tile / V3.flat_fit) .. " * " ..
+    mean_per_tile(h, M.flat_distance()) .. ")"
 end
 
 -- W1(d): the body_tiles cones one unit of k asks for at the amount setting, L(d) over the area per_tile * P(d) asks

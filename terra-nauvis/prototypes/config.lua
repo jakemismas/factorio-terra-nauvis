@@ -2764,6 +2764,13 @@ return {
       p90 = {["iron-ore"] = 0.9, ["copper-ore"] = 0.93, coal = 0.92, stone = 0.92, ["uranium-ore"] = 1.05},
       per_tile_fit = 1.05,
       per_tile = 1.75,
+      -- past where per_tile times vanilla's P(d) passes flat_ratio times the flattened regular ore per tile
+      -- (resources.natural.flat), a field's per tile is held there and its total spreads over more tiles
+      -- (ore_curves.lua per_tile; the maintainer 15:50, "never tiny rich bodies"); 2.2 reads 2.1 to 2.7 times the regular ore
+      -- in game (the design's P is the typical spot's, a little under a measured patch's mean)
+      flat_ratio = 2.2,
+      -- far fields at full body size held 1.12 times the cap tip's totals (run r1): their area reads flat_fit less
+      flat_fit = 0.9,
       radius_cap = 32,
       quantity = {per_km2 = 1000000, fade_from = 150, fade_span = 300, double_from = 300, double_span = 1300},
       body_tiles = 600,

@@ -16,10 +16,12 @@ versions follow [Semantic Versioning](https://semver.org/).
 - New worlds (tn_geo 21 to 23): biter bases stand scattered instead of in even rows, trees thin out on hotspot ore,
   and Batu Hijau's copper keeps off Lombok.
 - Ordinary ore patches on new worlds are vanilla's own again, in size, shape and richness for their distance from the
-  spawn, and keep out of ore hotspots. Presets set the ore sliders to 1.
+  spawn, and keep out of ore hotspots. Presets set the ore sliders to 1. Past about 1,000 tiles from the spawn they
+  grow richer at half vanilla's pace, and from about 4,000 tiles they stop growing, so far ore hotspots stand well
+  above them.
 - An ore hotspot on new worlds holds three to six times a large ordinary patch at its distance, at most about 100
-  million, about 1.75 times as rich per tile as the ordinary ore round it, in more bodies for a stronger field. The
-  map's ore size and richness sliders reach hotspots, and the Ore hotspot amount setting adds or removes bodies.
+  million, about 1.75 times as rich per tile as vanilla's ordinary ore, in more bodies for a stronger field. The map's
+  ore size and richness sliders reach hotspots, and the Ore hotspot amount setting adds or removes bodies.
 - A start with less than nine tenths of vanilla's average coal gets topped up to that average.
 - New worlds: the snow line runs north of Russia's main lowland, a spawn in the cold north starts in a clearing off
   the snow, and palms grow on warm Mediterranean shores (with Destroyed Europe on as well).
@@ -76,10 +78,25 @@ versions follow [Semantic Versioning](https://semver.org/).
   northern Australia, and grass and scrub in California and central Chile instead of sand.
 - Great forests grow in Borneo, Sumatra, New Guinea, the Pacific Northwest, the Appalachians and Valdivia, and marshes
   spread in the Sundarbans, the Inner Niger Delta and the Mekong delta, on new worlds of the maps that hold them.
-- New worlds have four more snowy ranges, the Alborz, the Tian Shan, the Altai and the Cascades, on the maps that hold
-  them: snow, a thin ragged rim and rock fields, without cliffs.
+- New worlds have ten more mountain ranges with cliff ridges, snow and rock fields on the maps that hold them: the
+  Taurus, the Talysh, the Alborz, the Ethiopian Highlands, the Tian Shan, the Altai, the Gobi Altai, the Great
+  Dividing Range, the Sierra Nevada and the Cascades. Cliffs on every range stand as walls with short breaks, so
+  straight cliff runs are shorter, the Alps, the Pyrenees and the Zagros included.
 - Each map keeps only its 0.3.0 geography version, so the game starts about 4.5 seconds faster with a large mod pack.
   Worlds made on versions before 0.3.0 no longer load.
+- Ground seams on new worlds fray finely, so grass, dirt, sand and snow meet along ragged edges instead of long smooth
+  lines, and inside Destroyed Europe the heat ground frays against its rock.
+- With Destroyed Europe on, the zone's light grey sand and red dirt patches are gone on new worlds: they break into
+  heat ground and black ash.
+- Inland lakes on new worlds no longer fold into L shapes, and fewer small water specks sit beside them.
+- At scale 12 on new Old World and Atlantic worlds, rivers meander, so their banks no longer run straight for hundreds
+  of tiles, and the ends of fords are rougher.
+- New Old World worlds at scales 12 and 24 generate faster: their coast fit costs about 28 percent less, and the
+  Thames and Cotentin shores are cleaned up.
+- Ore hotspots on new worlds have rougher outlines, and far fields reach their design total in fewer, larger bodies,
+  capped by strength at about 46 to 73 million.
+- The first range table's unused ridge bodies are gone, so the game starts a little faster with a large mod pack.
+- The README describes 0.3.0, with a new map render and in-game shots.
 
 ## [0.2.0] - 2026-11-01
 

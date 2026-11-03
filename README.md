@@ -31,17 +31,19 @@ Destroyed Europe and Blue corrupted UK and Australia on.*
   Africa, the Karoo, the Cerrado and the Caatinga. Rain forest in the Congo, the Amazon, Borneo and
   New Guinea. Southern Scandinavia is green, and taiga runs across northern Europe and Siberia up to a
   snow line at about 64 to 70 degrees north. Biomes are about 1.5 times the size of the base game's.
-- **Mountains.** Cliff ridges follow 9 ranges on Europe, 13 on Old World and 16 on Atlantic. Each has
-  passes at its historic crossings and a gap at least every 400 km that fits a double track. Big
-  rocks and stony ground gather round each range, and high ranges carry snow and rock with a narrow,
-  broken grey rim. The Alborz, the Tian Shan, the Altai and
-  the Cascades are snowy ranges without cliffs, on the maps that hold them. Desert ranges such as the
-  Atlas and the Zagros have no snow.
-- **Ore.** Ordinary patches are the base game's own, in size, shape and richness for their distance
-  from the spawn. Historic ore fields sit at their real sites, such as Kiruna, the Ruhr, the Donbas,
-  Ghawar and the Copperbelt. A field holds three to six times a large ordinary patch at the same
-  distance, at most about 100 million, with about 1.75 times the ore per tile. Biter nests stand about
-  three times as thick inside it.
+- **Mountains.** Cliff ridges follow 10 ranges on Europe, 21 on Old World and 26 on Atlantic, from
+  the Alps, the Pyrenees and the Himalayas to the Taurus, the Alborz, the Tian Shan, the Altai, the
+  Ethiopian Highlands, the Great Dividing Range, the Sierra Nevada and the Cascades. Each has passes
+  at its historic crossings and a gap at least every 400 km that fits a double track, and its cliffs
+  stand as walls with short breaks. Big rocks and stony ground gather round each range, and high
+  ranges carry snow and rock with a narrow, broken grey rim. Desert ranges such as the Atlas and the
+  Zagros have no snow.
+- **Ore.** Ordinary patches are the base game's own in size and shape. Their richness follows the
+  base game's out to about 1,000 tiles from the spawn, then grows at half its pace and stops growing
+  at about 4,000 tiles. Historic ore fields sit at their real sites, such as Kiruna, the Ruhr, the
+  Donbas, Ghawar and the Copperbelt. A field holds three to six times a large base-game patch at the
+  same distance, at most about 100 million, with about 1.75 times the base game's ore per tile.
+  Biter nests stand about three times as thick inside it.
 - **Forests and marshes.** Great forests carry about twice the trees of the land around them, from
   the Black Forest and the taiga to the Congo, Borneo, New Guinea, the Appalachians and Valdivia, on
   the maps that hold them. Marshes include the Sundarbans, the Inner Niger Delta and the Mekong delta.
@@ -170,7 +172,7 @@ running game. The tooltip of each optional layer gives its map generation cost a
 | Spawn city: Old World | Random | Where an Old World game starts: Random or one of 33 cities. |
 | Canals | On | Opens the Kiel and Corinth canals on every map, Suez on Atlantic and Old World, and Panama on Atlantic, as sea-level channels at least 7 tiles wide that Cargo Ships can use. Off keeps every isthmus closed. |
 | Great forests | On | Gives each great forest about twice the trees of the land around it, and the cold taiga forests more. Trees still follow the climate, so a forest in a dry place stays thinner. |
-| Ridges | On | Places cliff ridges along the map's mountain ranges (9 on Europe, 13 on Old World, 16 on Atlantic). They are the only cliffs on the map. Passes sit at the historic crossings, with a gap at least every 400 km wide enough for a double track. No ridge crosses the starting area. Off gives a map with no cliffs. |
+| Ridges | On | Places cliff ridges along the map's mountain ranges (10 on Europe, 21 on Old World, 26 on Atlantic). They are the only cliffs on the map. Passes sit at the historic crossings, with a gap at least every 400 km wide enough for a double track. No ridge crosses the starting area. Off gives a map with no cliffs. |
 | Ore hotspots | On | Adds the historic ore fields: dense ore across a footprint that moves a little with the map seed, with about three times the base game's biter nests inside it, plus offshore oil fields on deep water when the Oil Rig mod is installed. On a solid ore field the map's size slider scales its area and total and the richness slider its ore per tile; the frequency slider does not reach it, and crude oil hotspots take only Ore hotspot amount. Ordinary ore stays out of a hotspot's disc, and no field lies at a spawn city. Off gives the base game's ore alone. |
 | Ore hotspot amount | 100 percent | How much ore and oil every hotspot holds: 50, 100, 200 or 400 percent. On a solid ore field a higher percentage adds ore bodies inside its footprint instead of richness; oil wells get richer. It never moves a hotspot or its footprint. |
 | Inland lakes | Off | Scatters small random lakes across the land, about eight in every 1,024 x 1,024 tiles, away from coasts and the starting area. Off leaves only the lake at the spawn city, the rivers and the real lakes of the map. |
@@ -233,18 +235,18 @@ no errors and runs ten game minutes clean.
 
 - **Worlds made before 0.3.0 do not load.** Each map now keeps only its 0.3.0 terrain, which makes
   the game start about 4.5 seconds faster with a large pack. Start a new world.
-- **Multiplayer has had one kind of test**, the 15-minute run above. Larger games and longer sessions
-  are untested.
+- **Multiplayer has had one kind of test**, the 15-minute run above. Larger games and games longer
+  than 15 minutes are untested.
 - **Map sliders.** The water and cliffs sliders do not change an Earth map: the coast stays, and
   ridges are the only cliffs. A world started with cliffs at none gets its ridges back beyond the
   starting area. On solid ore hotspots the size slider scales a field's area and total and the
   richness slider its ore per tile; the frequency slider does not reach them, and crude oil hotspots
   take only the Ore hotspot amount setting. The other sliders work.
-- **Far hotspots stay at their cap.** A field is sized as if it were at most 2,000 tiles from the
-  spawn, while ordinary ore keeps getting richer with distance. Past about 4,000 tiles a hotspot holds
-  less than a large ordinary patch nearby, in compact bodies that are richer per tile. A field's total
-  also varies by about 30 percent either way around its design, and small or coastal footprints hold
-  less.
+- **Far hotspots stand far above the ore round them.** Ordinary ore stops growing richer at about
+  4,000 tiles from the spawn, while a hotspot keeps about 1.75 times the base game's ore per tile,
+  so far out a hotspot is many times as rich per tile as the ordinary patches nearby. Each field's
+  total is capped by its strength, at most about 100 million, and varies around its design; small or
+  coastal footprints hold less.
 - **The Europe map has the weakest coast of the three.** Exact coastlines does not run on it, so its
   noise coast strays further from the reference. Old World gives you a closer Europe.
 - **Coasts at scales 6, 12 and 24 still show steps.** At scale 6 some coasts that Exact coastlines
