@@ -2139,6 +2139,12 @@ return {
       -- (1,159 water specks of 1 to 4 tiles in a 3,072 tile window at Frankfurt, Old World 12). Only a version whose
       -- spawn record sets lake_floor reads it, so the bodies of earlier versions stay byte-identical.
       floor = 0.5,
+      -- The same versions warp with warp_floor and hold the fine shore noise at or above shore_min (P3 lakes,
+      -- 2026-11-02): at warp's amplitudes the warp's slope passed 1 and folded cones into L shapes with straight
+      -- sides (Atlantic 12, 137,-212), and folds and the shore noise's dips cut 1 to 10 tile pools off the shores.
+      warp_floor = {{seed1x = 7209, seed1y = 7210, wavelength = 48, amplitude = 8},
+                    {seed1x = 7211, seed1y = 7212, wavelength = 16, amplitude = 1}},
+      shore_min = -0.5,
     },
   },
 
