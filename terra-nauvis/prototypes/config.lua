@@ -116,6 +116,10 @@ local RG_WX = NOISE .. "region_wx" .. RG_V
 local RG_WY = NOISE .. "region_wy" .. RG_V
 local RG_ROUGH = NOISE .. "region_rough" .. RG_V
 local RG_MARSH_ROUGH = NOISE .. "region_marsh_rough" .. RG_V
+-- 0.3.0: the forest and marsh aggregates over both region tables (regions_v2)
+local RG_FOREST_W2 = NOISE .. "forest_w_v2"
+local RG_FOREST_SUM2 = NOISE .. "forest_sum_v2"
+local RG_MARSH_W2 = NOISE .. "marsh_w_v2"
 
 -- The Earth climate: latitude and longitude on the map's chain, the dry belts, the temperature core and
 -- the Alien Biomes and fallback variants the presets redirect temperature, moisture and aux to.
@@ -175,6 +179,7 @@ local CT = {
   CL_A_AB_G3 = NOISE .. "aux_ab_v4",
   CL_RAGGED = NOISE .. "band_ragged_v1",
   CL_BELT_M2 = NOISE .. "tile_belt_m_v2",
+  CL_BELT_EDGE2 = NOISE .. "tile_belt_edge_v1",
   CL_LIFT_M2 = NOISE .. "lift_m_v2",
   TM_1 = NOISE .. "tile_mix_1_v1",
   TM_2 = NOISE .. "tile_mix_2_v1",
@@ -1636,6 +1641,8 @@ return {
                  -- 0.3.0: the trees' hook gate off hotspot ore (resources.ore_trees), and its shares, which presets
                  -- point at their next versions
                  NOISE .. "ore_trees", NOISE .. "ore_open_v1", NOISE .. "ore_open_plants_v1",
+                 -- 0.3.0: the forest and marsh aggregates, which presets point at the second region table's
+                 RG_FOREST_W, RG_FOREST_SUM, RG_MARSH_W,
                  "water_level", "segmentation_multiplier", "nauvis_segmentation_multiplier",
                  "distance", EU_CITY, K_SPAWN_LAKE, K_SPAWN_BIAS, K_ON, K_FORDS, K_CANALS,
                  "temperature", "moisture", "aux", CT.MARSH_MUD, CT.MARSH_SHALLOW, CT.MARSH_GRASS,
@@ -1869,7 +1876,8 @@ return {
       names = {CT.CL_N_D2, CT.CL_N_DROP2, CT.CL_N_LEAD2, CT.CL_N_BELT2, CT.CL_N_CLEAR, CT.CL_N_CLEAR_W, CT.CL_T_AB_N2,
                CT.CL_T_AB_G3,
                CT.CL_T_AB_GV3, CT.CL_GRAIN3, CT.CL_M_AB_G3, CT.CL_M_AB_N2, CT.CL_A_AB_G3, CT.FROZEN_BODY2, CT.CL_RAGGED,
-               CT.CL_BELT_M2, CT.CL_LIFT_M2, RDN.RD_COLD_F2, RDN.RD_COLD_GATED2, RDN.RD_COLD_HIGH2, RDN.RD_COLD_CAP2,
+               CT.CL_BELT_M2, CT.CL_BELT_EDGE2, CT.CL_LIFT_M2, RDN.RD_COLD_F2, RDN.RD_COLD_GATED2, RDN.RD_COLD_HIGH2,
+               RDN.RD_COLD_CAP2,
                RDN.EU_COLD2, RDN.AT_COLD2, RDN.OW_COLD2,
                TFN.PALM_A_P4, TFN.PALM_B_P4, TFN.PALM_ALLOW2, TFN.PALM_MED, TFN.PALM_SHORE, DE.palm_a2, DE.palm_b2,
                TFN.PALM_B_P5, DE.dead2, TFN.ZP_KEY, TFN.NB_KEY, TFN.NB_OPEN, TFN.NB_TILE, TFN.NB_OUT,
@@ -1877,6 +1885,14 @@ return {
                TF_ROCKS["small-sand-rock"].cold, TF_ROCKS["red-desert-decal"].cold, TF_ROCKS["sand-decal"].cold,
                TF_ROCKS["sand-dune-decal"].cold},
       files = {"prototypes/tables/palm_coast.lua"},
+    },
+    -- The second region table (0.3.0, Earth mods recommendation 3): under files its table, which releases the row names
+    -- regions.lua composes from it, and the forest and marsh aggregates over both tables, which a preset names over the
+    -- first table's (regions_v2.points). No geography.
+    {
+      release = "0.3.0",
+      names = {RG_FOREST_W2, RG_FOREST_SUM2, RG_MARSH_W2},
+      files = {"prototypes/tables/regions_v2.lua"},
     },
     -- The marsh pools' frayed edge (0.3.0). No geography; a preset names the second water-mud body over the first.
     {
@@ -3821,6 +3837,17 @@ return {
     },
   },
 
+  -- The second region table (0.3.0, Earth mods recommendation 3): prototypes/tables/regions_v2.lua
+  -- holds the great forests and marshes outside Europe that the released first table lacks (9 of its 16 forests and 6
+  -- of its 12 marshes lie in Europe). Its rows take the first table's names and bodies; names are the forest and marsh
+  -- aggregates over both tables' rows, which every new world reads through the first aggregates' names (points), so
+  -- every consumer (trees, the marsh pools and moisture, the vanilla tiles' marsh cut, the zone's dead forest) reads
+  -- them unchanged.
+  regions_v2 = {
+    names = {forest_w = RG_FOREST_W2, forest_sum = RG_FOREST_SUM2, marsh_w = RG_MARSH_W2},
+    points = {[RG_FOREST_W] = RG_FOREST_W2, [RG_FOREST_SUM] = RG_FOREST_SUM2, [RG_MARSH_W] = RG_MARSH_W2},
+  },
+
   -- The shore body (ARCHITECTURE.md, "Elevation composition" step 2, recalibrated
   -- with Alien Biomes, design experiment 9): the sign-offset transfer of v1 with its own land and water
   -- gains, so the tile class is still the sign of c (T1 unchanged) while
@@ -3978,6 +4005,27 @@ return {
       -- spared only while Etna's cap held it temperate): the Mediterranean's northern shores take the moisture of a dry
       -- scrub, dirt and grass, not dunes.
       {id = "mediterranean", since = "0.3.0", lat = {33.5, 41.5}, lon = {-10, 36}, ramp = {1.5, 3}, m = 0.4},
+      -- Savannas, dry scrub and Mediterranean coasts (0.3.0, Earth mods recommendation 2): EarthMaps
+      -- paints these as dry land, and the global hot belt alone drew them as the same even grass as their humid
+      -- neighbours, or, inside a dry belt's box, as desert where the real ground is savanna or scrub. Moisture only, so
+      -- trees and decoratives keep their climate: the savannas of East Africa and the Cerrado and the dry scrub of the
+      -- Caatinga and the Karoo take dry dirt and sand among their grass, the Pampas a wetter grassland, and northern
+      -- Australia's savanna and California's and central Chile's Mediterranean coasts, inside the dry belts, grass and
+      -- scrub instead of dunes. The Mediterranean basin's own interiors (the Meseta, Anatolia) lie in the temperate
+      -- band, whose vanilla tiles read the released moisture, so no row here reaches them; their ground is a third dirt
+      -- already. edge: the row takes the dry belts' desert edge (climate.desert_edge) at its weight, so the dirt
+      -- between the sand it draws and the grass breaks and varies (no perfect bands): without it an even dirt ring 300
+      -- tiles wide, never under 2 tiles, ran round every sand patch in the Karoo and the Caatinga.
+      {id = "east_africa", since = "0.3.0", lat = {-11, 3}, lon = {29.5, 41}, ramp = {2, 1.5}, m = -0.08,
+       edge = true},
+      {id = "karoo", since = "0.3.0", lat = {-33.6, -29}, lon = {18.5, 26.5}, ramp = {1, 1.5}, m = -0.28, edge = true},
+      {id = "cerrado", since = "0.3.0", lat = {-21, -5}, lon = {-56, -43}, ramp = {2, 2}, m = -0.08, edge = true},
+      {id = "caatinga", since = "0.3.0", lat = {-14.5, -3}, lon = {-43.5, -36}, ramp = {1.5, 1.2}, m = -0.22,
+       edge = true},
+      {id = "pampas", since = "0.3.0", lat = {-38.5, -30.5}, lon = {-64, -57.5}, ramp = {1.5, 1.5}, m = 0.15},
+      {id = "north_australia", since = "0.3.0", lat = {-18.5, -10.5}, lon = {121, 146}, ramp = {2.5, 2}, m = 0.3},
+      {id = "california", since = "0.3.0", lat = {32, 41}, lon = {-125, -116.8}, ramp = {1.2, 1}, m = 0.5},
+      {id = "chile_central", since = "0.3.0", lat = {-37.5, -30}, lon = {-74, -69.5}, ramp = {1.2, 0.8}, m = 0.5},
       {id = "sahel", lat = {9, 18}, lon = {-18, 42}, ramp = {3, 4}, m = 0.5},
       {id = "congo", lat = {-12, 8}, lon = {6, 34}, ramp = {2, 3}, tv = -40, m = 0.2},
       {id = "guinea", lat = {3, 10}, lon = {-15, 10}, ramp = {2, 3}, tv = -40, m = 0.2},
@@ -4112,10 +4160,28 @@ return {
     -- drew an arc of one grey against another.
     north2 = {
       front = {{-180, 58}, {-170, 61}, {-150, 62}, {-130, 61}, {-110, 58}, {-95, 55.5}, {-80, 53}, {-65, 52}, {-55, 51},
-               {-40, 60}, {-20, 64.5}, {-5, 62.5}, {5, 61.5}, {12, 60.5}, {18, 60.5}, {25, 62}, {30, 62.5}, {37, 62.5},
-               {45, 62.5}, {55, 62}, {60, 61}, {75, 60}, {90, 60}, {105, 59}, {120, 58}, {135, 56.5}, {150, 56},
-               {165, 56.5}, {180, 57}},
+               {-40, 60}, {-20, 64.5}, {-5, 64}, {5, 65.5}, {12, 66.5}, {18, 67}, {25, 67.5}, {37, 67.5}, {45, 67},
+               {55, 67}, {60, 66.5}, {70, 66.5}, {80, 67}, {90, 68.5}, {100, 70}, {120, 70}, {135, 69.5}, {150, 68.5},
+               {160, 67}, {170, 64}, {180, 62}},
       meander = 1, south_per_degree = 8,
+      -- The taiga (0.3.0, Earth mods recommendation 1): the Eurasian line runs at the real tree line,
+      -- 66 to 68 N and 70 N on Taimyr, not at 59 to 62.5 N, where it put most of the three taiga great forests on snow.
+      -- South of it the continental core is still below Alien Biomes' frozen point from about 62.6 N in Siberia, so the
+      -- core is held at least per_degree per degree south of the line, up to t: the cold trees' window (T 0 to 10, on
+      -- grass), with the slope and the fray of the line. lon_from and lon_ramp keep it to Eurasia (Iceland and
+      -- Greenland keep their own ground). The lead (lead_t) reads that slope as if it went on past t: on the floor
+      -- itself, t plus noise sat under lead_t times the factor wherever the factor passed 2, and the rim spread in grey
+      -- blotches 3 degrees deep.
+      -- The tundra belts were drawn for ground north of the old line, under snow: on the cold grasses south of the new
+      -- one, tundra_bare_old's tv -12 held the grasses' temperature under Alien Biomes' grey dirt and its m -0.2 and
+      -- tundra_pale_old's a -0.2 drew grey and white dirt over most of 60 to 70 N. In the taiga, the ground south of
+      -- w_north degrees north of the line (none from w_ramp further on: the snow's edge wanders with the noise) where
+      -- the plain core is under m_core (fully under m_core_full: the boreal north, not the steppe south of it), the
+      -- tiles take none of a belt's cooling of the grasses or pull on the aux, and their moisture lifts by m, no
+      -- further than m_top: on cold ground at 0.9 and up Alien Biomes' water-mud outscores its grey and drew one-tile
+      -- puddles.
+      taiga = {t = 8, per_degree = 8, lon_from = -8, lon_ramp = 6, m = 0.45, w_north = 1, w_ramp = 0.5, m_core = 10,
+               m_core_full = 4, m_top = 0.86},
       -- The lead (0.3.0, the grey band south of the line covered southern Scandinavia, the Baltic,
       -- Russia at 55 to 60 N, Siberia and Canada): the ground whose temperature is under lead_t times the ragged factor
       -- (climate.ragged), over lead_t_ramp, a rim on the snow's edge that breaks and widens along it, instead of
@@ -4153,7 +4219,7 @@ return {
              ab = {temperature = CT.CL_T_AB, moisture = CT.CL_M_AB, aux = CT.CL_A_AB},
              grain = {field = CT.CL_GRAIN, temperature = CT.CL_T_AB_G, moisture = CT.CL_M_AB_G, aux = CT.CL_A_AB_G,
                       veg = CT.CL_T_AB_GV},
-             belts2 = {m = CT.CL_BELT_M2}, lift2 = {m = CT.CL_LIFT_M2},
+             belts2 = {m = CT.CL_BELT_M2, edge = CT.CL_BELT_EDGE2}, lift2 = {m = CT.CL_LIFT_M2},
              belts = {t = CT.CL_BELT_T, tv = CT.CL_BELT_TV, m = CT.CL_BELT_M, a = CT.CL_BELT_A,
                       wild = CT.CL_BELT_WILD},
              lift = {m = CT.CL_LIFT_M, bare = CT.CL_LIFT_BARE, j = CT.CL_LIFT_J, ab = CT.CL_M_AB_L,

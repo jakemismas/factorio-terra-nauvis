@@ -41,6 +41,7 @@
 local cfg = require("prototypes.config")
 local T = require("prototypes.tables.regions")
 local T2 = require("prototypes.tables.hotspots_v2")
+local TR2 = require("prototypes.tables.regions_v2")
 local TC = require("prototypes.tables.zone_outline")
 local TC2 = require("prototypes.tables.zone_outline_v2")
 local TB = require("prototypes.tables.zone_blue")
@@ -399,10 +400,20 @@ for _, r in ipairs(T2.rows) do
   row_bodies(r, true)
 end
 
--- A map's rows of a layer (and of a destroyed mode).
-local function on_map(M, layer, mode)
+-- The second region table (config.lua regions_v2): its rows' bodies, and with the first table's rows the list its
+-- aggregates sum.
+local ROWS2 = {}
+for _, x in ipairs(ROWS) do
+  ROWS2[#ROWS2 + 1] = x
+end
+for _, r in ipairs(TR2.rows) do
+  ROWS2[#ROWS2 + 1] = {row = r, names = row_bodies(r)}
+end
+
+-- A map's rows of a layer (and of a destroyed mode), from the first table or the list given.
+local function on_map(M, layer, mode, rows)
   local out = {}
-  for _, x in ipairs(ROWS) do
+  for _, x in ipairs(rows or ROWS) do
     local r = x.row
     if r.layer == layer and (mode == nil or (r.mode or "include") == mode) then
       for _, mk in ipairs(r.maps) do
@@ -687,6 +698,19 @@ def(N.tree_mult, "1 + " .. num(R.forest_boost) .. " * " .. N.forest_sum)
 -- Marshes.
 def(N.marsh_w, by_map(function(M) return joined("max", each(on_map(M, "marsh"), function(x) return x.names.w end),
   "0") end))
+
+-- 0.3.0: the forest and marsh aggregates over both tables (config.lua regions_v2), the first versions' formulas.
+local NR2 = cfg.regions_v2.names
+def(NR2.forest_w, by_map(function(M)
+  return joined("max", each(on_map(M, "forest", nil, ROWS2), function(x) return x.names.w end), "0")
+end))
+def(NR2.forest_sum, by_map(function(M)
+  local terms = each(on_map(M, "forest", nil, ROWS2), boosted)
+  return #terms > 0 and table.concat(terms, " + ") or "0"
+end))
+def(NR2.marsh_w, by_map(function(M)
+  return joined("max", each(on_map(M, "marsh", nil, ROWS2), function(x) return x.names.w end), "0")
+end))
 
 -- The highland's noise (ridges.lua), in reference pixels, all of it noise this layer already computes: the fray
 -- rocks read, the one tile scores read, and the massif factor, which breaks a long even crest.

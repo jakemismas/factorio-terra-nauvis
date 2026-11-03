@@ -628,6 +628,7 @@ def geography(cfg):
 REGION_MAX_SHARE = 3                               # the destroyed zone's warp runs past the shared warp
 REGION_TABLE = "prototypes/tables/regions.lua"     # relative to the mod folder, as `files` spells it
 HOTSPOT_TABLE2 = "prototypes/tables/hotspots_v2.lua"     # its rows take region names too, less the weight
+REGION_TABLE2 = "prototypes/tables/regions_v2.lua"       # its rows take region names too (0.3.0)
 REGION_ROW_KINDS = ("sd", "w", "depth")            # every row's signed distance, weight and depth
 REGION_CENTRE_KINDS = ("hu", "hv", "pd")           # a hotspot disc's jittered centre and plain distance
 REGION_AGGREGATES = ("destroyed_sd", "destroyed_w", "destroyed_depth", "forest_w", "forest_sum", "tree_mult",
@@ -741,6 +742,13 @@ def hotspot2_row_names(cfg):
                        region_table_path(cfg).parent / "hotspots_v2.lua")
     kinds = tuple(k for k in REGION_ROW_KINDS if k != "w") + REGION_CENTRE_KINDS
     return sorted(region_row_name(cfg, k, r["id"]) for r in table["rows"] for k in kinds)
+
+
+def region2_row_names(cfg):
+    """Every row name regions.lua composes for the second region table's rows: a row's sd, weight and depth."""
+    path = region_table_path(cfg).parent / "regions_v2.lua"
+    table = _eval_text(path.read_text(encoding="utf-8"), path)
+    return sorted(region_row_name(cfg, k, r["id"]) for r in table["rows"] for k in REGION_ROW_KINDS)
 
 
 def region_noise_names(cfg, rows=None):
@@ -919,6 +927,8 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         pen[bf["key"]] = bf["on"]
     # the second hotspot table: presets.lua baked names it over the first table's
     pen.update((cfg.get("hotspots_v2") or {}).get("points") or {})
+    # the second region table: presets.lua baked names its forest and marsh aggregates over the first table's
+    pen.update((cfg.get("regions_v2") or {}).get("points") or {})
     if rs and cfg.get("hotspots_v2"):
         pen[K["enemy"]] = cfg["hotspots_v2"]["nests"]["wrapper"]
     # the scattered bases (data-final-fixes.lua enemy_wrapper): 0.3.0's presets name them over the nests
@@ -972,6 +982,8 @@ def release_of(cfg):
             names += region_noise_names(cfg)
         if HOTSPOT_TABLE2 in (r.get("files") or []):
             names += hotspot2_row_names(cfg)
+        if REGION_TABLE2 in (r.get("files") or []):
+            names += region2_row_names(cfg)
         for n in names:
             out[n] = r["release"]
     return out

@@ -14880,13 +14880,6 @@
    "slice": "extras",
    "registered": "2026-11-01"
   },
-  "tn_north_d_v2": {
-   "type": "noise-expression",
-   "sha256": "45601896d9529bd58f1ad7d4ebbd6708b5d17aa278093d9628ac2472a57f93a2",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
   "tn_ore_open_plants_v1": {
    "type": "noise-expression",
    "sha256": "b3f85fcc2b39237b40fa180256a747ab9141380261e40d3ff1c251514d07aae6",
@@ -15069,23 +15062,9 @@
    "slice": "extras",
    "registered": "2026-11-01"
   },
-  "tn_north_drop_v2": {
-   "type": "noise-expression",
-   "sha256": "0881a2f86b14f0d6b2bfb50d831c8862d29bec9d63484427e009eaa4e22336be",
-   "dump": "m2",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
   "tn_temperature_ab_v6": {
    "type": "noise-expression",
    "sha256": "54ebd2458ea99bc16f21b78fd4091ee2bed7fe4b18e55c917672cc26b70cd0c6",
-   "dump": "m2",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_temperature_veg_v3": {
-   "type": "noise-expression",
-   "sha256": "4a703afc480ab45482a8edfc43ed789e4c2e77dc6f024a318051aab88fb667d6",
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-11-01"

@@ -180,6 +180,20 @@ end
 -- since and t, tv, a or wild needs that field's next body the same way, read by cold_north below.
 local BELT2 = N.belts2
 def(BELT2.m, belt_sum("m", true), BELT_AT)
+-- 0.3.0: the largest weight of the rows that take the dry belts' desert edge (a row's edge = true), read by the cold
+-- north's second line beside the dry weight.
+def(BELT2.edge, by_map(function(X)
+  local parts = {}
+  for _, b in ipairs(C.tile_belts) do
+    if b.edge and overlaps(b.lat, X.lat) and overlaps(b.lon, X.lon) then
+      parts[#parts + 1] = belt_weight(b)
+    end
+  end
+  if #parts == 0 then
+    return "0"
+  end
+  return #parts == 1 and parts[1] or ("max(" .. table.concat(parts, ", ") .. ")")
+end), BELT_AT)
 def(BELT.wild, by_map(function(X)
   local parts = {}
   for _, b in ipairs(belt_list(X, "wild")) do
@@ -390,9 +404,18 @@ if AB then
     -- 0.3.0 (north2, ragged): the cold field's next versions, the moisture belts and lift with their new rows
     local CG = F.ragged and RN.cold2 or RN.cold
     local BELT_M = F.ragged and BELT2.m or BELT.m
-    def(NN.drop, "max(0, " .. N.core .. " - (" .. num(F.south_per_degree) .. " * max(0, -" .. NN.d .. ") - " ..
+    local drop = "max(0, " .. N.core .. " - (" .. num(F.south_per_degree) .. " * max(0, -" .. NN.d .. ") - " ..
       num(F.near_per_degree) .. " * clamp(" .. NN.d .. ", 0, " .. num(F.near_degrees) .. ") - " ..
-      num(F.far_per_degree) .. " * max(0, " .. NN.d .. " - " .. num(F.near_degrees) .. ")))")
+      num(F.far_per_degree) .. " * max(0, " .. NN.d .. " - " .. num(F.near_degrees) .. ")))"
+    if F.taiga then
+      -- 0.3.0 (north2): the taiga's floor under the core south of the line (config.lua climate.north2.taiga), a
+      -- negative drop; it never exceeds the cap above, so at most one of the two terms is not 0.
+      local TG2 = F.taiga
+      drop = drop .. " - clamp((" .. N.lon .. " - " .. num(TG2.lon_from) .. ") / " .. num(TG2.lon_ramp) ..
+        ", 0, 1) * max(0, min(" .. num(TG2.t) .. ", " .. num(TG2.per_degree) .. " * -" .. NN.d .. ") - " .. N.core ..
+        ")"
+    end
+    def(NN.drop, drop)
     def(NN.belt, "clamp((" .. NN.d .. " + " .. num(F.belt_from) .. ") / " .. num(F.belt_ramp) .. ", 0, 1)")
     if F.ragged then
       -- 0.3.0: a rim that hugs the snow's own frayed edge: ground up to lead_t times the factor over 0 (the
@@ -401,8 +424,17 @@ if AB then
       -- (a degree-wide band drew grey and green blotches 500 tiles across, apart from the snow).
       -- The grain the tile temperature takes (G2.field) frays it as it frays the snow's edge: on the plain, smooth
       -- temperature the rim's outline ran along a latitude line where the factor sat at its max.
+      local t_lead = NN.temperature
+      if F.taiga then
+        -- 0.3.0 (north2): past the taiga's floor the lead reads the floor's slope going on (config.lua
+        -- climate.north2.taiga), so the rim stays on the line's edge.
+        local TG2 = F.taiga
+        t_lead = NN.temperature .. " + clamp((" .. N.lon .. " - " .. num(TG2.lon_from) .. ") / " .. num(TG2.lon_ramp) ..
+          ", 0, 1) * max(0, " .. num(TG2.per_degree) .. " * -" .. NN.d .. " - max(" .. N.core .. ", " .. num(TG2.t) ..
+          "))"
+      end
       def(NN.lead, "clamp((" .. num(F.lead_t) .. " * w - t - " .. num(G.temperature) .. " * " .. G2.field .. ") / " ..
-        num(F.lead_t_ramp) .. ", 0, 1)", {w = RG.name, t = NN.temperature})
+        num(F.lead_t_ramp) .. ", 0, 1)", {w = RG.name, t = t_lead})
     else
       def(NN.lead, "clamp((" .. NN.d .. " + " .. num(F.lead_degrees) .. ") / " .. num(F.lead_ramp) .. ", 0, 1)")
     end
@@ -415,6 +447,15 @@ if AB then
       def(NN.temperature, T2 .. " - " .. NN.drop)
     end
     local T3 = NN.temperature
+    -- 0.3.0 (north2): the taiga's weight (config.lua climate.north2.taiga): Eurasia, south of w_north degrees north of
+    -- the line (none from w_ramp further), where the plain core is cold (full under m_core_full, none from m_core)
+    local TW
+    if F.taiga then
+      local TG2 = F.taiga
+      TW = "clamp((" .. N.lon .. " - " .. num(TG2.lon_from) .. ") / " .. num(TG2.lon_ramp) .. ", 0, 1) * clamp((" ..
+        num(TG2.w_north + TG2.w_ramp) .. " - " .. NN.d .. ") / " .. num(TG2.w_ramp) .. ", 0, 1) * clamp((" ..
+        num(TG2.m_core) .. " - " .. N.core .. ") / " .. num(TG2.m_core - TG2.m_core_full) .. ", 0, 1)"
+    end
     def(G2.field, "max(clamp((" .. num(G.cold_t) .. " - cold) / " .. num(G.cold_span) .. ", 0, 1), clamp((hot - " ..
       num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1), clamp(" .. BELT.wild ..
       ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ") * (1 + " .. num(GR.fray) .. " * " .. CG.high ..
@@ -432,8 +473,14 @@ if AB then
     def(G2.temperature, capped,
       {t = "min(" .. T3 .. " + " .. num(G.temperature) .. " * " .. G2.field .. " + " .. BELT.t .. " * (1 - " ..
          NN.belt .. "), max(" .. T3 .. ", " .. num(T.ab.max) .. "))"})
+    -- 0.3.0 (north2): in the taiga the tundra belts' cooling of the grasses (tundra_bare_old tv -12) is undone, or the
+    -- grey took a degree and more south of the line
+    local TV = BELT.tv
+    if TW then
+      TV = "(" .. BELT.tv .. " + " .. TW .. " * max(0, -" .. BELT.tv .. "))"
+    end
     def(G2.veg, "if(" .. T3 .. " > " .. num(G.veg_zone_t) .. ", " .. G2.temperature .. ", min(" .. G2.temperature ..
-      " + " .. BELT.tv .. ", " .. num(G.veg_cap) .. "))")
+      " + " .. TV .. ", " .. num(G.veg_cap) .. "))")
     -- 0.3.0 (north2, ragged): a massif's dry flank is its rim and snow alone, where the cap cools the ground under
     -- top_t (ridges.cold): over the whole reach, the moisture's fall and the lift's stop drew a wide grey or dirt ring.
     -- Where the ragged factor is under grey_w the rim thins out to none, the snow's frayed edge included, so the snow
@@ -452,10 +499,23 @@ if AB then
     if F.ragged then
       GREY = "max(" .. NN.lead .. ", " .. HIGH .. ")"
     end
+    -- 0.3.0 (north2): in the taiga the tundra's pale pull (tundra_pale_old a -0.2) is undone too, or Alien Biomes'
+    -- white dirt took the moisture lows
+    local BA = BELT.a
+    if TW then
+      BA = "(" .. BELT.a .. " + " .. TW .. " * max(0, -" .. BELT.a .. "))"
+    end
     def(G2.aux, "max(a, " .. num(F.aux_floor) .. " * " .. GREY .. ")",
-      {a = ab_aux(" + " .. num(G.aux) .. " * " .. G2.field, BELT.a .. " + ")})
+      {a = ab_aux(" + " .. num(G.aux) .. " * " .. G2.field, BA .. " + ")})
     local kept, kept_at = lifted(G2.moisture, " * (1 - " .. HIGH .. ")", F.ragged and N.lift2.m or nil)
     kept_at.kept = kept
+    if F.taiga then
+      -- 0.3.0 (north2): the taiga's moisture lift (config.lua climate.north2.taiga.m), under its own top
+      local TG2 = F.taiga
+      kept_at.kept0 = kept
+      kept_at.kept = "max(kept0, min(" .. num(TG2.m_top) .. ", kept0 + " .. num(TG2.m) .. " * " .. TW .. " * (1 - " ..
+        HIGH .. ")))"
+    end
     -- 0.3.0 (north2, ragged): the desert edge (config.lua climate.desert_edge). In the dry belts the tile moisture is
     -- pulled away from the dirt band's middle by a gain over the ragged factor, so the dry dirt between sand and grass
     -- narrows by that gain, breaks where the factor is 0 and widens where it is high; the wet side rises no further
@@ -463,7 +523,8 @@ if AB then
     local K2 = "kept"
     if F.ragged then
       local DE2 = C.desert_edge
-      kept_at.dz = "clamp(" .. num(DE2.dry_gain) .. " * (" .. N.dry .. " - " .. num(DE2.dry_from) .. "), 0, 1)"
+      kept_at.dz = "max(clamp(" .. num(DE2.dry_gain) .. " * (" .. N.dry .. " - " .. num(DE2.dry_from) .. "), 0, 1), " ..
+        BELT2.edge .. ")"
       kept_at.dk = "min(" .. num(DE2.max) .. ", " .. num(DE2.gain) .. " / max(" .. num(DE2.floor) .. ", " ..
         RG.name .. "))"
       kept_at.sharp = "kept + dz * (clamp(" .. num(DE2.mid) .. " + (kept - " .. num(DE2.mid) .. ") * dk, min(kept, " ..
