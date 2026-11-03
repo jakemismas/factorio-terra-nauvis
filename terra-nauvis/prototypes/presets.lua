@@ -14,7 +14,7 @@
 -- keeps the gate's prototype (off), so it has no fords (ARCHITECTURE.md, "Map type entries"). A
 -- preset's geography version (its elevation entry, start mask, coarse field, city offset and tn_geo)
 -- is chosen in one place, geography() below, so climate-tiles can give Alien Biomes worlds a cheaper
--- geography without touching base worlds.
+-- geography without touching base worlds (DECISIONS 10:20).
 --
 -- A Map type pick sets only elevation, so every other per-save name a geography version's entry
 -- reads gets a prototype-level fallback valued as that version's preset bakes it under the current
@@ -26,17 +26,17 @@
 -- A preset is not defined while a mod of its withheld_with list is loaded: from europe-coast to
 -- region-layer Alien Biomes' palms read elevation in the Entity program, so beside them a preset
 -- would have carried its fine field there (constraint S-3). climate-tiles ships the palm switch
--- (design note 9) and empties the lists. Its fallbacks stay defined, so the map's Map type
+-- (plan reconciliation 9) and empties the lists. Its fallbacks stay defined, so the map's Map type
 -- entry still works there. Withholding reached new worlds only: scripts/guards.lua warned a preset
 -- world that later loaded beside such a mod, and a save made before the switch keeps its palms on
--- its fine field for life (ARCHITECTURE.md, "Alien Biomes"; design notes 2026-10-29 18:40).
+-- its fine field for life (ARCHITECTURE.md, "Alien Biomes"; DECISIONS 2026-10-29 18:40).
 --
 -- From climate-tiles each preset also redirects temperature, moisture and aux to the Earth climate,
 -- the Alien Biomes variant when alien-biomes is loaded and the fallback otherwise (climate.lua), and
 -- points the marsh keys at their bodies and each palm's probability and richness keys at its Earth
 -- copy (trees.lua, built from the frozen Alien Biomes table on every load, so the name is never
 -- dangling), which reads the palm constant where AB reads elevation and closes the palm leak
--- (ARCHITECTURE.md, constraint S-3; design note 9), with or without Alien Biomes, so a
+-- (ARCHITECTURE.md, constraint S-3; plan reconciliation 9), with or without Alien Biomes, so a
 -- world that gains it later meets the switch too; with Alien Biomes it also points the 19 vanilla
 -- tile keys at the shared bonus body and the exclusion key at its body, and data-final-fixes.lua
 -- points a palm's keys at the neutral body when the installed palm differs from the table. Every
@@ -96,6 +96,11 @@ end
 local scale = tonumber(settings.startup[cfg.settings.scale.name].value)
 -- The hotspot amount is a percentage in the setting and a multiplier in the bodies.
 local hotspot_amount = tonumber(settings.startup[cfg.settings.hotspot_amount.name].value) / cfg.hotspots.amount_percent
+-- The regional scarcity level (resources.scarcity): the setting's value as a number.
+local scarcity = cfg.resources.scarcity.levels[settings.startup[cfg.settings.regional_scarcity.name].value]
+if not scarcity then
+  error("config.lua resources.scarcity.levels has no level for the setting's value")
+end
 
 -- The per-save city number a spawn-city setting stands for: its value's position in the setting's
 -- allowed values, less one, so random (the first) is 0 and the first city 1.
@@ -126,7 +131,7 @@ local function climate_names()
     out[key] = 1 / cfg.climate.size.factor
   end
   -- The palm keys with Alien Biomes loaded or not: a world made without it that gains it later
-  -- places its palms from the copies too, never from the fine field.
+  -- places its palms from the copies too, never from the fine field (DECISIONS 2026-10-29 18:40).
   for _, c in ipairs(TL.palm.copies) do
     out[c.key] = c.body
   end
@@ -283,7 +288,7 @@ local function grain_values(map_key)
 end
 
 -- The six base resources at preset_frequency in the preset (0.3.0: 1, vanilla's; D20 set 0.75), planet entries left
--- neutral (planet values multiply preset values; known noise gotcha). A control another mod removed
+-- neutral (planet values multiply preset values; noise skill gotcha). A control another mod removed
 -- is left out.
 local function controls()
   local out = {}
@@ -402,6 +407,7 @@ local function baked(map_key, v)
     [K.map] = cfg.maps[map_key].id,
     [K.scale] = scale,
     [K.hotspot_amount] = hotspot_amount,
+    [K.scarcity] = scarcity,
     [K.geo] = v.geo_id,
     [v.cx] = v.city_offset[1],
     [v.cy] = v.city_offset[2],

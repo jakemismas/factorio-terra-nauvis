@@ -14,7 +14,7 @@
 -- No map slider reaches a hotspot: the switch and the amount setting are its only controls. Ore never leaves a
 -- footprint at any scale, seed or amount: a cone is held to its room, as in the first table. A row's least_tiles
 -- raises its footprint at low scales, where the table's floor is no wider than a regular patch; the enemy layer keeps
--- to the footprint without it, so the wider field is not one solid biter base.
+-- to the footprint without it, so the wider field is not one solid biter base (DECISIONS 2026-10-31, Indonesia).
 local cfg = require("prototypes.config")
 local V = require("prototypes.hotspot_rows_v2")
 
@@ -138,7 +138,7 @@ end
 -- s<j> where its spots start, c<j> the radius it allows there, b<j> its bar. T takes what the resource's body reads,
 -- Q what its quantity body reads and Bars what its bars body reads. The chain from a bar to a spot reads each local
 -- many times and the game copies a local at every read, so a row's quantity and bar stand in named bodies of their
--- own: as locals of the resource's body they added 1.8 s to every start.
+-- own: as locals of the resource's body they added 1.8 s to every start (DECISIONS 2026-10-31, the release candidate).
 local function row_locals(h, r, j, T, Q, Bars)
   local L = {}
   local unit = TG.per_km2 / h.spots_per_km2 * h.base_density * h.mean_size
@@ -461,5 +461,63 @@ def(H2.gap, "if(" .. K.hotspots .. " > " .. num(cfg.ridges.switch_threshold) .. 
   end
   return #parts == 0 and num(NP.no_gap) or #parts == 1 and parts[1] or ("min(" .. table.concat(parts, ", ") .. ")")
 end) .. ", " .. num(NP.no_gap) .. ")", GL)
+
+-- Regional scarcity (config.lua resources.scarcity). A resource's province weight: 1 within reach_px of any of its
+-- footprints on the map (scaled), falling to 0 over a width that varies from a hard edge to about wide.px, the edge
+-- moved in and out by a ragged noise; read only at spot candidates. Not gated by the hotspot switch: the provinces
+-- are geology, the rows only where they stand.
+local SC = RS.scarcity
+local function wave_px(wavelength_px, seed1)
+  return "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(seed1) .. ", input_scale = 1 / (" ..
+    num(wavelength_px) .. " * " .. S .. ")}"
+end
+local function level_share(res)
+  local sh = SC.shares[res]
+  return "if(" .. K.scarcity .. " > " .. num((SC.levels.medium + SC.levels.strong) / 2) .. ", " .. num(sh.strong) ..
+    ", if(" .. K.scarcity .. " > " .. num((SC.levels.off + SC.levels.medium) / 2) .. ", " .. num(sh.medium) .. ", 1))"
+end
+for _, res in ipairs({"iron-ore", "copper-ore", "coal", "stone", "uranium-ore", "crude-oil"}) do
+  local N = SC.names[res]
+  local PL = {}
+  for j, r in ipairs(rows_of(nil, res)) do
+    PL["g" .. j] = PD .. r.id .. SUFFIX .. " * " .. S .. " - " .. footprint(r)
+  end
+  local index = {}
+  for j, r in ipairs(rows_of(nil, res)) do
+    index[r.id] = "g" .. j
+  end
+  PL.gap = by_map(function(M)
+    local parts = {}
+    for _, r in ipairs(rows_of(M.key, res)) do
+      parts[#parts + 1] = index[r.id]
+    end
+    return #parts == 0 and num(SC.no_gap) or #parts == 1 and parts[1] or ("min(" .. table.concat(parts, ", ") .. ")")
+  end)
+  PL.edge = "(" .. num(SC.reach_px) .. " + " .. num(SC.rag.px) .. " * " ..
+    wave_px(SC.rag.wavelength_px, SC.rag.seed1) .. ") * " .. S
+  PL.wide = "max(1, " .. num(SC.wide.px) .. " * " .. S .. " * (" .. num(SC.wide.base) .. " + " .. num(SC.wide.gain) ..
+    " * " .. wave_px(SC.wide.wavelength_px, SC.wide.seed1) .. "))"
+  def(N.province, "clamp((edge + wide - gap) / wide, 0, 1)", PL)
+  -- The keep: 0 or 1 for a whole spot region. near is the region's nearest point to the spawn, which sits at the
+  -- origin on Earth presets.
+  -- (spot regions are centred on multiples of the region size: rx * R is the region's centre)
+  local R, H = num(SC.region), num(SC.region / 2)
+  local KL = {
+    rx = "floor((x + " .. H .. ") / " .. R .. ")",
+    ry = "floor((y + " .. H .. ") / " .. R .. ")",
+    nx = "max(0, max(rx * " .. R .. " - " .. H .. ", -(rx * " .. R .. " + " .. H .. ")))",
+    ny = "max(0, max(ry * " .. R .. " - " .. H .. ", -(ry * " .. R .. " + " .. H .. ")))",
+    ramp = "clamp((sqrt(nx * nx + ny * ny) - " .. num(SC.ramp.from) .. " * " .. S .. " - " .. num(SC.ramp.margin) ..
+      ") / (" .. num(SC.ramp.full - SC.ramp.from) .. " * " .. S .. "), 0, 1)",
+    -- a hash of the region and the map seed in [0, 1), the same at every candidate of the region (random_penalty
+    -- with a region's constant x and y was measured to vary inside it)
+    hash = "sin(rx * " .. num(SC.hash.a) .. " + ry * " .. num(SC.hash.b) .. " + " .. num(N.seed) .. " + " ..
+      num(SC.hash.seed_gain) .. " * map_seed_small) * " .. num(SC.hash.gain),
+    draw = "hash - floor(hash)",
+    bar = "1 - (1 - " .. level_share(res) .. ") * ramp * (1 - " .. N.province .. ")",
+  }
+  -- a bar of 1 (off, or a region touching the near disc) keeps the region whatever the draw
+  def(N.keep, "max(bar >= 1, draw < bar)", KL)
+end
 
 data:extend(E)

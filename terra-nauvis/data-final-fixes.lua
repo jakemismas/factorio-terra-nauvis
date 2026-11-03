@@ -11,9 +11,9 @@
 -- with the gate tn_on (prototype off, Earth presets on) outermost, so on every other world the hook
 -- folds to the off value and the world stays hash- and complexity-identical (T13; S3: a gate inside the
 -- score cost default worlds Tile +7,489). Hooks run here, after every mod's data stage, so each wraps a
--- tile's final autoplace; a tile placed nowhere before is registered on Nauvis (noise rule 2).
+-- tile's final autoplace; a tile placed nowhere before is registered on Nauvis (noise skill rule 2).
 --
--- water-shallow: the on branch is max() of the ford key tn_fords, which an Earth
+-- water-shallow (DECISIONS 12:35; A-2): the on branch is max() of the ford key tn_fords, which an Earth
 -- preset points at its map's ford set for the save's scale, and the marsh key (climate-tiles). Where
 -- another mod gives the tile an autoplace (Alien Biomes' coastal shallows), that expression is the off
 -- value and joins the max(), so its shallows are unchanged on every world; without one the off value is
@@ -300,7 +300,7 @@ local function exclusion_hooks()
   vegetation_hooks()
 end
 
--- The palm switch: Earth presets name the Earth copies of the palms, built here because
+-- The palm switch (DECISIONS 08:00; trees.lua): Earth presets name the Earth copies of the palms, built here because
 -- Alien Biomes' data-final-fixes, which runs first, is the last to touch a tree. The installed palms are held to
 -- config.lua's digest (tools/build_palms.py writes the same text): a palm that differs or lost its autoplace
 -- (Alien Biomes' disable-vegetation setting, a newer release) makes every copy the neutral body and points both keys at
@@ -592,7 +592,7 @@ else
 end
 
 -- Trees and forests. Beside Alien Biomes, the base game's living trees, rocks, decals and plants come
--- back on Earth presets (S3 section 5; R3 3.4 items 3 to 6; design note 10): AB nils their
+-- back on Earth presets (S3 section 5; R3 3.4 items 3 to 6; plan reconciliation 10): AB nils their
 -- autoplace or takes them off Nauvis, so each is rebuilt from prototypes/tables/vanilla.lua behind the gate
 -- tn_on with its key (trees.lua), restricted to the vanilla land tiles so AB's land keeps AB's own, and
 -- listed on Nauvis where the base game lists it (trees ride the trees control). Then the great-forests
@@ -881,7 +881,7 @@ local function boost_hooks()
   log(cfg.identity.title .. ": the great-forests hook on " .. #names .. " living trees")
 end
 
--- The list hook beside Alien Biomes (config.lua tiles.scan; design notes 2026-10-30 12:55): every AB-only
+-- The list hook beside Alien Biomes (config.lua tiles.scan; DECISIONS 2026-10-30 12:55): every AB-only
 -- decorative and tree Nauvis places, with a list longer than the vanilla land tiles and none of them on
 -- it, gets them at its front and, behind the gate, its probability times the keep body. On every world
 -- without an Earth preset the hook folds and no vanilla land tile is placed beside Alien Biomes, so the
@@ -1104,7 +1104,7 @@ if AB then
   zone_plant_hooks()
 end
 
--- Ridges: the Earth-gated ridge exclusion on ore probability. For each Earth
+-- Ridges: the Earth-gated ridge exclusion on ore probability (DECISIONS 08:00). For each Earth
 -- ore of config.lua's ridges group whose resource has an autoplace, a wrapper body holds the live
 -- probability expression (as the pack leaves it: base, Alien Biomes, the Oil Rig and the rest load
 -- before this) times the ore clearance of prototypes/expressions/ridges.lua, and every Terra Nauvis
@@ -1418,7 +1418,13 @@ local function natural_patches(W, keys)
       keys[b.live] = b.name
       -- 0.3.0: vanilla's function with the footprint gap (resources.natural.fn2); a world made earlier keeps b.name
       if b.name2 then
-        W[#W + 1] = {type = "noise-expression", name = b.name2, expression = (string.gsub(text, NP.vanilla_fn, NP.fn2))}
+        -- and the keep of regional scarcity (resources.scarcity); offshore oil keeps every patch
+        local keep = b.scarcity and RS.scarcity.names[b.scarcity].keep or cfg.neutral.one
+        local scarcity_on = b.scarcity and ("(" .. cfg.keys.scarcity .. " > " .. RS.scarcity.levels.off .. ")") or
+          cfg.neutral.zero
+        W[#W + 1] = {type = "noise-expression", name = b.name2,
+                     expression = (string.gsub(text, NP.vanilla_fn .. "{", NP.fn2 .. "{" .. NP.keep_param .. " = " ..
+                       keep .. ", " .. NP.on_param .. " = " .. scarcity_on .. ", "))}
         keys[b.live] = b.name2
       end
     end

@@ -100,6 +100,12 @@ versions follow [Semantic Versioning](https://semver.org/).
 - The README describes 0.3.0, with a new map render and in-game shots.
 - The Ore hotspot amount setting is now called Ore hotspot size, and its values read Small, Normal, Large and Huge
   instead of 50, 100, 200 and 400 percent; the values themselves are unchanged.
+- The new setting Regional scarcity, Medium by default, makes ordinary ore patches on new worlds rarer outside the
+  regions where each resource is found on Earth, from about 1,500 tiles from the spawn at scale 12: whole patches drop
+  out, uranium and oil most, stone least, and the patches that remain keep their size. The start and the hotspots stay
+  the same.
+- The snow on the old ranges of new worlds frays at its edges like the new ranges' snow, so southern Norway's massif
+  loses its long straight eastern edge.
 
 ## [0.2.0] - 2026-11-01
 

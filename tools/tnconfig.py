@@ -950,6 +950,10 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         # exists only beside it)
         amount = cfg["settings"]["hotspot_amount"]["default_value"]
         pen[K["hotspot_amount"]] = int(amount) / cfg["hotspots"]["amount_percent"]
+        # 0.3.0: the regional scarcity level at the setting's default (resources.scarcity)
+        sc = rs.get("scarcity")
+        if sc:
+            pen[sc["key"]] = sc["levels"][cfg["settings"][sc["setting"]]["default_value"]]
         for b in rs["natural"]["bodies"]:
             if rs["offshore"]["resource"] not in b["live"]:
                 # 0.3.0: vanilla's function with the footprint gap (resources.natural.fn2)

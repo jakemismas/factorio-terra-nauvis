@@ -72,6 +72,13 @@
    "default_value": "100",
    "allowed_values": ["50", "100", "200", "400"]
   },
+  "regional_scarcity": {
+   "source": "Jake 2026-11-02 16:35 (0.3.0): regional scarcity of regular ore past about 1,500 tiles at scale 12; startup, a dropdown of off, medium and strong, default medium",
+   "type": "string-setting",
+   "setting_type": "startup",
+   "default_value": "medium",
+   "allowed_values": ["off", "medium", "strong"]
+  },
   "inland_lakes": {
    "source": "Decision of 2026-10-29 17:50 after the first playtest (no random lakes, only the lake at the chosen spawn city; DECISIONS, edge-and-lakes): startup, bool, default off",
    "type": "bool-setting",
