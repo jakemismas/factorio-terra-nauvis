@@ -459,7 +459,7 @@ def(N.destroyed_depth, N.destroyed_sd .. " * " .. K.scale)
 -- by the whole outline, so a sea edge that lands on an island still frays. A vertex's locals repeat per body, and
 -- each folds per save. OT is the table, O the names it builds: the first release's, then 0.3.0's next outline
 -- (prototypes/tables/zone_outline_v2.lua), which adds the fixed cuts.
-local function outline(OT, O)
+local function outline(OT, O, NP)
   local Q = cfg.destroyed.outline
   local verts = OT.vertices
   local n = #verts
@@ -526,7 +526,7 @@ local function outline(OT, O)
     def(O.isles, text, isles)
   end
 
-  local present = {O.sd, "-" .. O.isles}
+  local present, opened, deep = {O.sd, "-" .. O.isles}, {}, {}
   local function fray(FR, per_tile)
     -- in tiles: size tiles, but never more than cap reference pixels (at scale 1 a tile is a reference pixel)
     return (per_tile and ("min(" .. num(FR.cap) .. ", " .. num(FR.size) .. " / " .. K.scale .. ")") or num(FR.size)) ..
@@ -581,6 +581,10 @@ local function outline(OT, O)
       def(name, "(" .. ctext .. ") + " .. N.rough, cl)
       depth[#depth + 1] = "-" .. name .. (c.depth_px and (" + " .. num(c.depth_px)) or "")
       present[#present + 1] = "-" .. name .. " + " .. fray(Q.cut_fray, true)
+      if NP and NP.cuts[c.id] then
+        opened[#present] = NP.cuts[c.id](name) .. " + " .. fray(Q.cut_fray, true)
+        deep[#depth] = NP.cuts[c.id](name) .. " + " .. num(NP.depth_add)
+      end
     else
       local cpts = cut_points(c.latlon)
       local SL, scross = lines(cpts, QU, QV, true)
@@ -595,9 +599,31 @@ local function outline(OT, O)
   end
   def(O.present, joined("min", present))
   def(O.depth, joined("min", depth))
+  -- A later presence over the same outline (NP): every term the same, but a land cut NP.cuts names opens where its
+  -- function says, so the zone may cross the cut's line there.
+  if NP then
+    local parts, dparts = {}, {}
+    for i, t in ipairs(present) do
+      parts[i] = opened[i] or t
+    end
+    for i, t in ipairs(depth) do
+      dparts[i] = deep[i] or t
+    end
+    def(NP.present, joined("min", parts))
+    def(NP.depth, joined("min", dparts))
+  end
 end
 outline(TC, cfg.destroyed.outline.names)
-outline(TC2, cfg.destroyed.outline.next)
+-- 0.3.1 (destroyed.dev.pyrenees): the next outline's presence and depth with the Iberia cut moved strip_px into Spain,
+-- under the Pyrenees' snow: the zone then reaches the massif's snow, and the devastation field yields to the snow
+-- there (destroyed.lua). The depth's cut term starts at the field's own start_px, so where no snow stands the field's
+-- edge stands on the moved cut.
+local DV = cfg.destroyed.dev
+local PY = DV.pyrenees
+outline(TC2, cfg.destroyed.outline.next, {present = DV.names.present, depth = DV.names.depth, depth_add = DV.start_px,
+                                          cuts = {iberia = function(name)
+  return num(PY.strip_px) .. " - " .. name
+end}})
 
 -- The shapes of Blue corrupted (config.lua blue; prototypes/tables/zone_blue.lua). A sea shape needs its crossing
 -- count alone, so it costs a fraction of a distance to every edge, and a map skips the shapes it does not hold. BT is

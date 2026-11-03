@@ -213,6 +213,71 @@ if AB then
   class_body(BN.class, BN.zone .. " / " .. K.scale, B.ground_at, rock2)
   class_body(BN.class3, shifted, B.next.ground_at, rock3, B.next.ground)
 
+  -- The devastation field (0.3.1; config.lua destroyed.dev). A preset with the zone on names its heat, class, reach and
+  -- open mask over the barrier's. One position in tiles, and every class a cut on it, so the classes follow each other
+  -- from the edge in and none stands outside its band: dry dirt, scorched red grass, black ash, then heat ground.
+  local DV = D.dev
+  local DN = DV.names
+  local PY = DV.pyrenees
+  def(DN.ragged, num(DV.ragged.px) .. " * " .. noise(DV.ragged))
+  def(DN.width, num(DV.width_px) .. " * " .. K.scale .. " * clamp(1 + " .. num(DV.width.amp) .. " * " ..
+    noise(DV.width) .. ", " .. num(DV.width.low) .. ", " .. num(DV.width.high) .. ")")
+  def(DN.wobble_a, noise(DV.wobble.a))
+  def(DN.wobble_b, noise(DV.wobble.b))
+  local tf = {}
+  for _, o in ipairs(DV.tile_fray) do
+    tf[#tf + 1] = num(o.amp) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(o.seed1) ..
+      ", input_scale = 1 / " .. num(o.tiles) .. ", output_scale = 1}"
+  end
+  def(DN.fray, table.concat(tf, " + "))
+  -- Near the Iberia cut the position yields to the massif's snow, so the snow's own frayed edge is the zone's there;
+  -- the cut's depth into Spain (south pixels a pixel) keeps the yield from rising again past the snow, and the gate
+  -- takes the yield off from gate_px north of the cut, so no other range in the zone takes snow back.
+  local cut = D.outline.next.cuts.iberia
+  local cold = cfg.ridges.names.cold2.gated
+  def(DN.dev, "if(" .. DN.present .. " > 0, min(" .. K.scale .. " * (" .. DN.depth .. " - " .. num(DV.start_px) ..
+    " + " .. DN.ragged .. "), " .. K.scale .. " * snow), " .. num(DV.outside_tiles) .. ")", {
+      snow = num(PY.snow_px) .. " * (" .. num(PY.snow_at) .. " - " .. cold .. ") - " .. num(PY.south) .. " * " .. cut ..
+        " + " .. num(PY.gate_per_px) .. " * max(0, -" .. cut .. " - " .. num(PY.gate_px) .. ")",
+    })
+  -- A cut, positive inside it: the position, the cut's own fray in tiles (macro and kind in reference pixels, fine and
+  -- grain in tiles), less the cut's place in widths, which the wobble noises move.
+  local function cut_at(F)
+    local t = {DN.dev, DN.fray}
+    local function add(c, what)
+      if c ~= 0 then
+        t[#t + 1] = num(c) .. " * " .. what
+      end
+    end
+    add(F.macro, K.scale .. " * " .. BN.macro)
+    add(F.kind, K.scale .. " * " .. BN.kind)
+    add(F.fine, N.fine)
+    add(F.grain, "grain")
+    local at = {num(F.at)}
+    if F.a ~= 0 then
+      at[#at + 1] = num(F.a) .. " * " .. DN.wobble_a
+    end
+    if F.b ~= 0 then
+      at[#at + 1] = num(F.b) .. " * " .. DN.wobble_b
+    end
+    return "(" .. table.concat(t, " + ") .. " - (" .. table.concat(at, " + ") .. ") * " .. DN.width .. ")"
+  end
+  local CU = DV.cuts
+  local at = {grain = grain}
+  def(DN.reach, cut_at(CU.dry), at)
+  def(DN.open, "if(" .. DN.reach .. " + " .. num(DV.open_tiles) .. " > 0, 0, 1)")
+  def(DN.class, "if(" .. DN.reach .. " <= 0, 0, if(" .. cut_at(CU.heat) .. " > 0, 0, if(" .. cut_at(CU.ash) ..
+    " > 0, " .. L[T.black_dirt] .. ", if(" .. cut_at(CU.scorched) .. " > 0, " .. L[T.grass] .. ", " ..
+    num(DV.tiles[1].class) .. "))))", at)
+  -- The heat ground: heat 1 at the cut, rising by ramp degrees a width, and never hotter than the lava blob's
+  -- temperature or the spawn's cooler cap.
+  def(DN.heat, "if(h > 0, clamp(min(" .. hot .. ", " .. num(H.rim) .. " + " .. num(DV.ramp) .. " * h / " .. DN.width ..
+    "), " .. num(H.rim) .. ", " .. top .. "), -inf)", {h = cut_at(CU.heat), grain = grain})
+  for _, t in ipairs(DV.tiles) do
+    def(t.body, "if(" .. K.destroyed .. " > " .. num(D.switch_threshold) .. ", if(elevation > 0, if(" ..
+      C.names.class .. " == " .. num(t.class) .. ", " .. num(C.score) .. ", -inf), -inf), -inf)")
+  end
+
   -- The exclusion (config.lua destroyed.exclusion): the key's prototype holds 0, so a world made before keeps every
   -- hook's off branch and the dead trees' copies place nothing.
   local X = D.exclusion

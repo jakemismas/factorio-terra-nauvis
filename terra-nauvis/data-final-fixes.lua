@@ -255,6 +255,12 @@ local function with_chaos(name, text)
       return "max(" .. text .. ", " .. t.body .. ")"
     end
   end
+  -- 0.3.1: the devastation field's dry dirt (destroyed.dev.tiles), whose score folds to -inf on every world made before
+  for _, t in ipairs(cfg.destroyed.dev.tiles) do
+    if t.tile == name then
+      return "max(" .. text .. ", " .. t.body .. ")"
+    end
+  end
   return text
 end
 

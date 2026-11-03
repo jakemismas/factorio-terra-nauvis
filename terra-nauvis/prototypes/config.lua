@@ -864,6 +864,20 @@ local DE = {
   heat3 = NOISE .. "destroyed_heat_v3",
   class3 = NOISE .. "destroyed_class_v3",
   gap = NOISE .. "destroyed_gap_v1",
+  -- 0.3.1's devastation field (destroyed.dev): one ordered gradient from the zone's edge in
+  dev = NOISE .. "destroyed_dev_v1",
+  dev_ragged = NOISE .. "destroyed_dev_ragged_v1",
+  dev_width = NOISE .. "destroyed_dev_width_v1",
+  heat4 = NOISE .. "destroyed_heat_v4",
+  class4 = NOISE .. "destroyed_class_v4",
+  reach2 = NOISE .. "destroyed_reach_v2",
+  open2 = NOISE .. "destroyed_open_v2",
+  out_present3 = NOISE .. "destroyed_outline_present_v3",
+  out_depth3 = NOISE .. "destroyed_outline_depth_v3",
+  chaos_dry = NOISE .. "chaos_brown_dirt_v1",
+  dev_wobble_a = NOISE .. "destroyed_dev_wobble_a_v1",
+  dev_wobble_b = NOISE .. "destroyed_dev_wobble_b_v1",
+  dev_fray = NOISE .. "destroyed_dev_fray_v1",
   temperature = NOISE .. "temperature_ab_v2",
   pool_europe = NOISE .. "city_pool_europe_v1",
   pool_atlantic = NOISE .. "city_pool_atlantic_v1",
@@ -1403,6 +1417,9 @@ return {
                  -- 0.3.0: the barrier's zone and the outline's presence and depth, which presets point at their next
                  -- versions (destroyed.barrier.next, destroyed.outline.next)
                  DE.zone2, DE.out_present, DE.out_depth,
+                 -- 0.3.1: the barrier's reach and open mask, which presets point at the devastation field's
+                 -- (destroyed.dev)
+                 DE.reach, DE.open,
                  REN.HS_IRON, REN.HS_COPPER, REN.HS_COAL, REN.HS_STONE, REN.HS_URANIUM, REN.HS_OIL, REN.ORE_GAP,
                  REN.ENEMY_LAYER,
                  -- 0.3.0: the trees' hook gate off hotspot ore (resources.ore_trees), and its shares, which presets
@@ -1643,6 +1660,15 @@ return {
       names = {DE.out_land2, DE.out_sea2, DE.out_inside2, DE.out_sd2, DE.out_present2, DE.out_depth2, DE.out_nordic,
                DE.out_iberia, DE.zone3, DE.heat3, DE.class3, DE.gap},
       files = {"prototypes/tables/zone_outline_v2.lua"},
+    },
+    -- The Chaos zone's devastation field (0.3.1; destroyed.dev). The presence and depth are defined on every load, as
+    -- the outline's are; the rest exist with Alien Biomes only. A preset with the zone on names them over the
+    -- barrier's.
+    {
+      release = "0.3.1",
+      names = {DE.dev, DE.dev_ragged, DE.dev_width, DE.heat4, DE.class4, DE.reach2, DE.open2, DE.out_present3,
+               DE.out_depth3, DE.chaos_dry, DE.dev_wobble_a, DE.dev_wobble_b,
+               DE.dev_fray},
     },
     -- The second hotspot table's bodies: under files its table, which releases the row names regions.lua composes
     -- from it, as the region table does. No geography: a preset names them over the first table's (rule 15).
@@ -3344,6 +3370,51 @@ return {
     -- ground.
     range_heat = 106,
     switch_threshold = 0.5,
+    -- The devastation field (0.3.1; prototypes/expressions/destroyed.lua): a new world with the zone on names these
+    -- over the barrier's heat, class, reach and open mask, so the zone fades into ordinary ground as one ordered
+    -- gradient: from its edge in, dry dirt, scorched red grass, black ash, then heat ground climbing from heat 1
+    -- through heat 2 and heat 3 into the lava blob's mix. Every class is a cut on one position in tiles, never a noise
+    -- of its own, so no class stands outside its band.
+    --   dev     the position: the next outline's depth less start_px, moved out and in by the ragged offset (px times
+    --           a noise of wavelength_px and two coarser octaves), all in reference pixels times the scale, so it
+    --           scales with the map; outside the presence it is outside_tiles
+    --   width   the gradient's width in tiles: width_px times the scale times clamp(1 + amp * noise, low, high), so it
+    --           narrows to almost nothing in places and runs more than twice as wide in others (NO PERFECT BANDS)
+    --   cuts    dry_at, scorched_at, ash_at and heat_at, in widths from the edge, each moved by wobble times its share
+    --           of the two wobble noises, so each band narrows, widens and breaks on its own
+    --   fray    each cut moves by its own share of the zone's noises, macro and kind in reference pixels, fine and
+    --           grain in tiles: about a tenth of each octave's wavelength, so an edge bends at every scale and seldom
+    --           closes round an island
+    --   ramp    from the heat cut in, the heat ground's temperature rises from heat 1 by ramp degrees a width, and the
+    --           lava blob's temperature (the barrier's) takes over where it is cooler
+    --   pyrenees  the Iberia cut moves strip_px into Spain, under the massif's snow (regions.lua), and near the cut
+    --           (up to gate_px north of it) the position yields to the snow: snow_px pixels a unit of the highland's
+    --           cold field under snow_at, the field at the snow's north edge, less south pixels a pixel of the cut's
+    --           depth, so the zone's edge stands on the snow's own frayed edge and never passes the snow into Spain
+    dev = {
+      names = {dev = DE.dev, ragged = DE.dev_ragged, width = DE.dev_width, heat = DE.heat4, class = DE.class4,
+               reach = DE.reach2, open = DE.open2, present = DE.out_present3, depth = DE.out_depth3,
+               wobble_a = DE.dev_wobble_a, wobble_b = DE.dev_wobble_b, fray = DE.dev_fray},
+      start_px = 40, width_px = 22, outside_tiles = -100000,
+      ragged = {px = 18, wavelength_px = 25, octaves = 3, persistence = 0.5, seed1 = 7917},
+      width = {amp = 1.6, low = 0.03, high = 2.4, wavelength_px = 40, octaves = 2, persistence = 0.5, seed1 = 7918},
+      wobble = {a = {wavelength_px = 50, octaves = 2, persistence = 0.5, seed1 = 7919},
+                b = {wavelength_px = 50, octaves = 2, persistence = 0.5, seed1 = 7920}},
+      cuts = {
+        dry = {at = 0, a = 0, b = 0, kind = 5, macro = 0, fine = 8, grain = 1},
+        scorched = {at = 0.25, a = 0.15, b = 0, kind = 0, macro = 6, fine = -8, grain = 1},
+        ash = {at = 0.5, a = 0, b = -0.18, kind = -5, macro = -4, fine = 6, grain = 1},
+        heat = {at = 1, a = 0.12, b = -0.12, kind = 4, macro = -4, fine = -6, grain = 1},
+      },
+      -- the tile fray every cut adds: basis noises in tiles, finest first, so no edge runs straight along the grid
+      tile_fray = {{tiles = 6, amp = 1.4, seed1 = 7921}, {tiles = 13, amp = 2.2, seed1 = 7922},
+                   {tiles = 27, amp = 3, seed1 = 7923}},
+      ramp = 60,
+      open_tiles = 2,
+      pyrenees = {strip_px = 30, snow_at = 0.6, snow_px = 20, south = 0.3, gate_px = 25, gate_per_px = 10},
+      -- the dry dirt: class 7 of the red palette's class body, with the same score
+      tiles = {{tile = "mineral-brown-dirt-1", class = 7, body = DE.chaos_dry}},
+    },
   },
 
   -- Blue corrupted UK and Australia (prototypes/expressions/blue.lua, prototypes/tables/zone_blue.lua). Mostly mauve

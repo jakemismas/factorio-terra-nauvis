@@ -253,6 +253,12 @@ local function destroyed_values(map_key, v, names)
     -- destroyed.outline.next), which reach and the rest read by name
     out[D.names.heat] = D.barrier.names.heat3
     out[D.chaos.names.class] = D.barrier.names.class3
+    -- 0.3.1: the devastation field's heat, class, reach and open mask over the barrier's (destroyed.dev); the dead
+    -- trees, the thinning and the exclusion read the reach and the mask by name
+    out[D.names.heat] = D.dev.names.heat
+    out[D.chaos.names.class] = D.dev.names.class
+    out[D.barrier.names.reach] = D.dev.names.reach
+    out[D.barrier.names.open] = D.dev.names.open
     out[D.barrier.names.zone] = D.barrier.names.zone3
     out[D.outline.names.present] = D.outline.next.present
     out[D.outline.names.depth] = D.outline.next.depth
