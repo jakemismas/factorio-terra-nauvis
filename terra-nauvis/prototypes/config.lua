@@ -2984,6 +2984,12 @@ return {
               -- outline's own smooth contour, a long straight run at scale 12.
               fray = {px = {size = 4, wavelength = 3, octaves = 3, persistence = 0.6, seed1 = 7916},
                       tiles = {size = 6, cap = 1.5, wavelength = 9, octaves = 2, persistence = 0.5, seed1 = 7910}}},
+      -- rock3: the next class's rock.
+      -- Black sand drew as flat light grey and red dirt as red sand. Where either stood, the tile is heat ground (the
+      -- cracked basalt of screenshots 1 and 6) where core plus the macro, fine and grain shares passes heat_at and the
+      -- lift holds, else black ash: past the barrier most of it turns to basalt with ragged black ash left in it, and
+      -- in the barrier basalt patches break up the black ash, so no red field turns into one flat colour.
+      rock3 = {heat_at = 0.75, mac = 0.5, fine = 0.25, grain = 0.25},
       -- The spawn sits inside the zone now: the first tiles stay below heat 3, which slows a player on foot, and the
       -- cap lifts with distance so no ring shows. It only ever lowers the heat, so the start is cooler, never cleared.
       -- Volcanic rock stands ten times as thick as ordinary rock, so inside the zone it and the dead trees thin out to

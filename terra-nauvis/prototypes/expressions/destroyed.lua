@@ -4,7 +4,7 @@
 -- The zone reads one region-layer interface name, tn_destroyed_depth: the outline of
 -- data-src/approvals/destroyed-zone.json less its keep rows (Britain, Denmark and the Carpathians), in tiles.
 -- Each seed moves the outline's vertices and warps its edges harder than the shared warp, the same way on
--- every map. No region formula lives here (the static
+-- every map (DECISIONS 2026-10-30 10:05). No region formula lives here (the static
 -- regions row fails one outside regions.lua). The zone is cut by the start disc around the spawn, which the
 -- spawn shift keeps at the origin on every map, so every spawn city, the zone's included, starts on normal
 -- ground with normal trees (T7). Its heat climbs from a heat-1 rim to a core that mixes Alien Biomes' four
@@ -175,16 +175,21 @@ if AB then
   def(BN.thin, "max(" .. BN.open .. ", clamp((" .. D.start.distance .. " - " .. num(B.start.rock_tiles) .. ") / " ..
     num(B.start.rock_span) .. ", " .. num(B.start.rock_floor) .. ", 1))")
 
-  local black = "if(" .. BN.kind .. " + " .. num(B.black_fine) .. " * " .. N.fine .. " + " ..
+  local blackish = BN.kind .. " + " .. num(B.black_fine) .. " * " .. N.fine .. " + " ..
     num(B.black_grain) ..
     " * grain < " .. num(B.black_below) .. " + " .. num(B.black_in) .. " * core + " .. num(B.heart_black) ..
-    " * heart + " .. num(B.black_mac) .. " * (1 - heart) * " .. BN.macro .. ", if(sandy > 0, " .. L[T.black_sand] ..
-    ", " .. L[T.black_dirt] .. "), "
+    " * heart + " .. num(B.black_mac) .. " * (1 - heart) * " .. BN.macro
+  local black = "if(" .. blackish .. ", if(sandy > 0, " .. L[T.black_sand] .. ", " .. L[T.black_dirt] .. "), "
   local rock2 = "if(" .. BN.macro .. " * " .. num(B.grey_mac) .. " + " .. num(B.grey_kind) .. " * " .. BN.kind ..
     " + " .. num(B.grey_grain) .. " * grain > " .. num(B.grey_at) .. " + " .. num(B.grey_out) .. " * (1 - core), " ..
     L[T.grey_dirt] .. ", " .. black .. "if(sandy > 0, " .. L[T.red_sand] .. ", " .. L[T.red_dirt] .. ")))"
-  -- The next class's rock: black ash or black sand, else red dirt; no grey dirt, no red sand (destroyed.barrier.next).
-  local rock3 = black .. L[T.red_dirt] .. ")"
+  -- The next class's rock (destroyed.barrier.rock3): black ash, and where black sand or red dirt stood, heat ground or
+  -- black ash by depth and noise. No grey dirt, red sand, black sand or red dirt.
+  local R3 = B.rock3
+  local heated = "if(min(" .. lifted .. ", core + " .. num(R3.mac) .. " * " .. BN.macro .. " + " .. num(R3.fine) ..
+    " * " .. N.fine .. " + " .. num(R3.grain) .. " * grain - " .. num(R3.heat_at) .. ") > 0, 0, " .. L[T.black_dirt] ..
+    ")"
+  local rock3 = "if(" .. blackish .. ", if(sandy > 0, " .. heated .. ", " .. L[T.black_dirt] .. "), " .. heated .. ")"
   -- Heat ground needs the lift: without it class 0 is ordinary ground, in specks inside the wasteland.
   local function class_body(name, depth, ground_at, palette, ground)
     ground = ground or {fine = B.ground_fine, grain = B.ground_grain}
