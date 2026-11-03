@@ -14866,13 +14866,6 @@
    "slice": "extras",
    "registered": "2026-11-01"
   },
-  "tn_enemy_v3": {
-   "type": "noise-expression",
-   "sha256": "57c4285d3db26bbafc9635595471af4eb7d9fb735adee54d2c340abb9e5c7b1f",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
   "tn_frozen_ground_v2": {
    "type": "noise-expression",
    "sha256": "b7bbe61dba901f0a41c6f6bfd325d81ba4554531b8b8c8145f11754a1a078ce9",
@@ -14901,55 +14894,6 @@
    "slice": "extras",
    "registered": "2026-11-01"
   },
-  "tn_ore_coal_p_v3": {
-   "type": "noise-expression",
-   "sha256": "73f9720b8a72277025724153c22b8f7bd71a017d28b471a8d3c3dec1be7406c6",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_coal_r_v2": {
-   "type": "noise-expression",
-   "sha256": "eb5b79ed20e28a27005178b973e524e457bd2013218da4fc48a44e4b65350405",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_copper_ore_p_v3": {
-   "type": "noise-expression",
-   "sha256": "abb59d4cbe9af731b5355ba8400a326a0c5b641e4d319d53e5e3ccc175bf91ae",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_copper_ore_r_v2": {
-   "type": "noise-expression",
-   "sha256": "8f8119437e1a79510e67271a83b154df4fb5045a5a293eca43b0c46b85cedd0b",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_crude_oil_r_v2": {
-   "type": "noise-expression",
-   "sha256": "6719018109fd6e69462af79ccb0b4481050da2450e9054bf38e602b43739958b",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_iron_ore_p_v3": {
-   "type": "noise-expression",
-   "sha256": "5f707d87618ed8a510b9192af3e4c96f0cb576548a686cf225d91979da2b5391",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_iron_ore_r_v2": {
-   "type": "noise-expression",
-   "sha256": "09c21ae0ea9914d3cd41d0cc797211e8439fd0b6426cfed37625be7ea6471a60",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
   "tn_ore_open_plants_v1": {
    "type": "noise-expression",
    "sha256": "b3f85fcc2b39237b40fa180256a747ab9141380261e40d3ff1c251514d07aae6",
@@ -14964,37 +14908,9 @@
    "slice": "extras",
    "registered": "2026-11-01"
   },
-  "tn_ore_stone_p_v3": {
-   "type": "noise-expression",
-   "sha256": "87b57b854c098f38c75ab3838ae49171130c498d0e8a44a88861462ec7baeefc",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_stone_r_v2": {
-   "type": "noise-expression",
-   "sha256": "d065267dd1a64502b7c89df417d84a1b49963aefe7f4213fae0e1349bdb26230",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
   "tn_ore_trees": {
    "type": "noise-expression",
    "sha256": "cd1f5be615780196393b9aabfb243bd6583c4845e7b8d70f3cb4acf696107247",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_uranium_ore_p_v3": {
-   "type": "noise-expression",
-   "sha256": "6cc4946be28b459ee65457708682ba8a109b3b94ceaa3f9f1d27ed1157fe5e4a",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_uranium_ore_r_v2": {
-   "type": "noise-expression",
-   "sha256": "62dc3682b86660dd6447177054fdf19565b3e3176ae8fe33068b8a987dc2e69e",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-11-01"
@@ -15317,20 +15233,6 @@
   "tn_marsh_water_mud_v2": {
    "type": "noise-expression",
    "sha256": "f7eb200628c92800e7ccc9fb6022dca211af9f288854d344043d98ae79bae187",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_open_plants_v2": {
-   "type": "noise-expression",
-   "sha256": "fb4c487edd7202d3271a1decb8c16d6487ae6fec50c367b273394433584fc3bc",
-   "dump": "m1",
-   "slice": "extras",
-   "registered": "2026-11-01"
-  },
-  "tn_ore_open_v2": {
-   "type": "noise-expression",
-   "sha256": "c183bbeeddeeac268566ba8cd6123ffc6b2c3c2e83dd1120cc6030cece227e9c",
    "dump": "m1",
    "slice": "extras",
    "registered": "2026-11-01"

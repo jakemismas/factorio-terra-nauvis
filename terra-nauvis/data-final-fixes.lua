@@ -1217,6 +1217,7 @@ end
 -- distance read as the reference map has it past ref_scale, and a solid hotspot ore lifted to the regular ore's
 -- richness round it. Up to ref_scale the regular branch folds to the first wrapper's text.
 local RV = RS.richness_v2
+local ORE_CURVES = require("prototypes.ore_curves")
 local function richness_v2(W, keys, o, ap, rich, hs)
   local S = cfg.keys.scale
   local function f(d)
@@ -1234,13 +1235,27 @@ local function richness_v2(W, keys, o, ap, rich, hs)
   local own = ramped and ("live_value * " .. RS.ramp.name) or "live_value"
   local base = "if(" .. far .. ", live_value * " .. f("rv_d") .. " / " .. f("distance") ..
     (ramped and (" * " .. ramp("rv_d")) or "") .. ", " .. own .. ")"
+  if RV.vanilla then
+    base = "live_value"
+  end
   local hot = hs.r
-  if not FLUID[o.resource] then
+  local V3 = cfg.hotspots_v2.v3
+  if not FLUID[o.resource] and V3.bodies[o.resource] then
+    -- the third table (hotspots_v2.v3): per_tile times vanilla's mean regular ore per tile here, times the body's
+    -- height (held to peak_cap of a body_tiles cone's mean, where bodies crowd) over that mean, times the richness
+    -- slider
+    local h = HROW[o.resource]
+    hot = num(V3.rich_fit * V3.per_tile / ORE_CURVES.body_height(h)) .. " * " .. ORE_CURVES.per_tile(h) ..
+      " * var('control:" .. o.resource .. ":richness') * min(" .. V3.bodies[o.resource] .. ", " ..
+      num(V3.peak_cap * ORE_CURVES.body_height(h)) .. ")"
+  elseif not FLUID[o.resource] then
     hot = hs.r .. " * max(1, " .. num(RV.lift) .. " * " .. F("rv_d") .. " / (" .. F("distance") .. ") ^ " ..
       num(RV.cube_root) .. ")"
   end
   local w = wrapper(o.r2, rich, ap, "if(" .. on .. ", max(rv_base, " .. hot .. "), rv_base)")
-  w.local_expressions.rv_d = "if(" .. far .. ", distance * " .. num(RV.ref_scale) .. " / " .. S .. ", distance)"
+  if string.find(base .. " " .. hot, "rv_d", 1, true) then
+    w.local_expressions.rv_d = "if(" .. far .. ", distance * " .. num(RV.ref_scale) .. " / " .. S .. ", distance)"
+  end
   w.local_expressions.rv_base = base
   W[#W + 1] = w
   keys[o.richness] = o.r2
@@ -1275,7 +1290,10 @@ local function probability_v3(W, keys, o)
   -- the cone's least slope, the first table's bound (config.lua hotspots.size note)
   local rq = HROW[o.resource].rq
   local slope = cfg.hotspots.spot.cone_factor / (math.pi * rq * rq * rq)
-  local value = "clamp(" .. cfg.hotspots_v2.bodies[o.resource] .. " - " .. num(RV.edge.trim * slope) .. " * " ..
+  local v3 = cfg.hotspots_v2.v3
+  local body = v3.bodies[o.resource] or cfg.hotspots_v2.bodies[o.resource]
+  local edge_trim = v3.bodies[o.resource] and v3.trim or RV.edge.trim
+  local value = "clamp(" .. body .. " - " .. num(edge_trim * slope) .. " * " ..
     RV.edge.wobble .. ", 0, 1)"
   W[#W + 1] = {type = "noise-expression", name = o.p3, expression = "if(" .. on .. ", max(" .. o.p_v1 .. ", " ..
                value .. " * " .. clear .. " * " .. keep .. "), " .. o.p_v1 .. ")"}
@@ -1326,9 +1344,9 @@ local function enemy_wrapper(W, keys)
     local SC = cfg.enemies.scatter
     local solid = {}
     for _, resource in ipairs(RS.ramped) do
-      solid[#solid + 1] = H2.bodies[resource]
+      solid[#solid + 1] = H2.v3.bodies[resource]
     end
-    solid[#solid + 1] = H2.bodies["uranium-ore"]
+    solid[#solid + 1] = H2.v3.bodies["uranium-ore"]
     local function draw(x, y, seed)
       return "random_penalty{x = " .. x .. ", y = " .. y .. ", source = 1, amplitude = 1, seed = " .. num(seed) .. "}"
     end
@@ -1384,6 +1402,11 @@ local function natural_patches(W, keys)
     if type(text) == "string" and string.find(text, NP.vanilla_fn, 1, true) then
       W[#W + 1] = {type = "noise-expression", name = b.name, expression = (string.gsub(text, NP.vanilla_fn, NP.fn))}
       keys[b.live] = b.name
+      -- 0.3.0: vanilla's function with the footprint gap (resources.natural.fn2); a world made earlier keeps b.name
+      if b.name2 then
+        W[#W + 1] = {type = "noise-expression", name = b.name2, expression = (string.gsub(text, NP.vanilla_fn, NP.fn2))}
+        keys[b.live] = b.name2
+      end
     end
   end
 end

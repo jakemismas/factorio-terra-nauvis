@@ -385,4 +385,25 @@ L.starting_patches = num(O.start_level) .. " * (start_body + clamp(1 - abs(start
   " * blobs0 * starting_blob_amplitude)"
 E[#E + 1] = fn
 
+-- 0.3.0's regular patch function (config.lua resources.natural.fn2): vanilla's own, with regular ore kept out of every
+-- hotspot footprint; with clear 1 every term reads as vanilla's.
+local function swap(text, old, new)
+  local i, j = string.find(text, old, 1, true)
+  if not i or string.find(text, old, j + 1, true) then
+    error("resources.lua: vanilla's " .. NP.vanilla_fn .. " no longer holds '" .. old .. "' once; review fn2")
+  end
+  return string.sub(text, 1, i - 1) .. new .. string.sub(text, j + 1)
+end
+local fn2 = deep(data.raw["noise-function"][NP.vanilla_fn])
+fn2.name = NP.fn2
+local L2 = fn2.local_expressions
+L2.clear = "(" .. NP.gap .. " > " .. num(NP.gap_reach) .. " * min(" .. num(NP.gap_radius.cap) ..
+  ", regular_rq_factor * (random_spot_size_maximum * regular_spot_quantity_base_at(distance)) ^ (" ..
+  NP.gap_radius.cube_root .. ")))"
+L2.regular_spot_quantity_expression = "clear * (" .. L2.regular_spot_quantity_expression .. ")"
+for _, sw in ipairs(NP.fn2_swaps) do
+  L2.regular_patches = swap(L2.regular_patches, sw.old, sw.new)
+end
+E[#E + 1] = fn2
+
 data:extend(E)

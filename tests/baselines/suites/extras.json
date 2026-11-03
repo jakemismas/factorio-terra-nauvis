@@ -3450,13 +3450,6 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
-   "tn_enemy_v3": {
-    "type": "noise-expression",
-    "sha256": "57c4285d3db26bbafc9635595471af4eb7d9fb735adee54d2c340abb9e5c7b1f",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_far_atlantic_v6": {
     "type": "noise-expression",
     "sha256": "00de905bd5434e6e86f1093932f7e548ab80d7b537ff7db855dfc2cfc0aee47f",
@@ -8037,13 +8030,6 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
-   "tn_ore_coal_p_v3": {
-    "type": "noise-expression",
-    "sha256": "73f9720b8a72277025724153c22b8f7bd71a017d28b471a8d3c3dec1be7406c6",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_ore_coal_patches_v1": {
     "type": "noise-expression",
     "sha256": "f950ee02c541b0596eabb71517f4f8379e7585126fc00adc3f46ce145c5e2755",
@@ -8057,13 +8043,6 @@
     "dump": "m1",
     "slice": "resources-enemies",
     "registered": "2026-10-29"
-   },
-   "tn_ore_coal_r_v2": {
-    "type": "noise-expression",
-    "sha256": "eb5b79ed20e28a27005178b973e524e457bd2013218da4fc48a44e4b65350405",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
    },
    "tn_ore_copper_ore_p_v1": {
     "type": "noise-expression",
@@ -8079,13 +8058,6 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
-   "tn_ore_copper_ore_p_v3": {
-    "type": "noise-expression",
-    "sha256": "abb59d4cbe9af731b5355ba8400a326a0c5b641e4d319d53e5e3ccc175bf91ae",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_ore_copper_ore_patches_v1": {
     "type": "noise-expression",
     "sha256": "f9b20738d65c871eb7905f0b0d02964be25a4afa408791f4ff34ef6e549f68fc",
@@ -8099,13 +8071,6 @@
     "dump": "m1",
     "slice": "resources-enemies",
     "registered": "2026-10-29"
-   },
-   "tn_ore_copper_ore_r_v2": {
-    "type": "noise-expression",
-    "sha256": "8f8119437e1a79510e67271a83b154df4fb5045a5a293eca43b0c46b85cedd0b",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
    },
    "tn_ore_crude_oil_p_v1": {
     "type": "noise-expression",
@@ -8135,13 +8100,6 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
-   "tn_ore_crude_oil_r_v2": {
-    "type": "noise-expression",
-    "sha256": "6719018109fd6e69462af79ccb0b4481050da2450e9054bf38e602b43739958b",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_ore_gap_v1": {
     "type": "noise-expression",
     "sha256": "0e3cebaca68d866646d1a43388086802e60f6d244102b820a7ae38a648240d5e",
@@ -8170,13 +8128,6 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
-   "tn_ore_iron_ore_p_v3": {
-    "type": "noise-expression",
-    "sha256": "5f707d87618ed8a510b9192af3e4c96f0cb576548a686cf225d91979da2b5391",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_ore_iron_ore_patches_v1": {
     "type": "noise-expression",
     "sha256": "febfcd656fca65d797b77e0ea232e2faf24eb5c1ced56d3f9e9fdcfa8675fe49",
@@ -8190,13 +8141,6 @@
     "dump": "m1",
     "slice": "resources-enemies",
     "registered": "2026-10-29"
-   },
-   "tn_ore_iron_ore_r_v2": {
-    "type": "noise-expression",
-    "sha256": "09c21ae0ea9914d3cd41d0cc797211e8439fd0b6426cfed37625be7ea6471a60",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
    },
    "tn_ore_offshore_oil_patches_v1": {
     "type": "noise-expression",
@@ -8212,23 +8156,9 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
-   "tn_ore_open_plants_v2": {
-    "type": "noise-expression",
-    "sha256": "fb4c487edd7202d3271a1decb8c16d6487ae6fec50c367b273394433584fc3bc",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_ore_open_v1": {
     "type": "noise-expression",
     "sha256": "a21ee4426dc09f3b30ce57c6df449d13d4872554b948b51849a824cc8928b735",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_ore_open_v2": {
-    "type": "noise-expression",
-    "sha256": "c183bbeeddeeac268566ba8cd6123ffc6b2c3c2e83dd1120cc6030cece227e9c",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -8254,13 +8184,6 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
-   "tn_ore_stone_p_v3": {
-    "type": "noise-expression",
-    "sha256": "87b57b854c098f38c75ab3838ae49171130c498d0e8a44a88861462ec7baeefc",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_ore_stone_patches_v1": {
     "type": "noise-expression",
     "sha256": "8a626723fc90e53772059b7f38428f99c3cb93476e79f5c2f5bfc7693d57fe3c",
@@ -8274,13 +8197,6 @@
     "dump": "m1",
     "slice": "resources-enemies",
     "registered": "2026-10-29"
-   },
-   "tn_ore_stone_r_v2": {
-    "type": "noise-expression",
-    "sha256": "d065267dd1a64502b7c89df417d84a1b49963aefe7f4213fae0e1349bdb26230",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
    },
    "tn_ore_trees": {
     "type": "noise-expression",
@@ -8303,13 +8219,6 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
-   "tn_ore_uranium_ore_p_v3": {
-    "type": "noise-expression",
-    "sha256": "6cc4946be28b459ee65457708682ba8a109b3b94ceaa3f9f1d27ed1157fe5e4a",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_ore_uranium_ore_patches_v1": {
     "type": "noise-expression",
     "sha256": "ab4893fc107001518878cafc37d2940b25450965ff853e5fb73dedf636f70c91",
@@ -8323,13 +8232,6 @@
     "dump": "m1",
     "slice": "resources-enemies",
     "registered": "2026-10-29"
-   },
-   "tn_ore_uranium_ore_r_v2": {
-    "type": "noise-expression",
-    "sha256": "62dc3682b86660dd6447177054fdf19565b3e3176ae8fe33068b8a987dc2e69e",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
    },
    "tn_ore_wobble_v1": {
     "type": "noise-expression",

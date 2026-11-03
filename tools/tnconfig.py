@@ -890,7 +890,8 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         pen[K["hotspot_amount"]] = int(amount) / cfg["hotspots"]["amount_percent"]
         for b in rs["natural"]["bodies"]:
             if rs["offshore"]["resource"] not in b["live"]:
-                pen[b["live"]] = b["name"]
+                # 0.3.0: vanilla's function with the footprint gap (resources.natural.fn2)
+                pen[b["live"]] = b.get("name2") or b["name"]
     if version.get("fields"):
         tg = cfg["toggles"]["hotspots"]
         on = cfg["settings"][tg["setting"]]["default_value"]

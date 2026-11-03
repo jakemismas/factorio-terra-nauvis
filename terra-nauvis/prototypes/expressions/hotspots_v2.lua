@@ -264,6 +264,106 @@ for _, h in ipairs(HC.resources) do
   end
 end
 
+-- The solid ores' third version (config.lua hotspots_v2.v3, which says why): the second table's rows, footprints, room,
+-- candidates, blob and lobe noise, with a row's ore set by vanilla's large patch and per-tile ore at its distance
+-- (prototypes/ore_curves.lua) instead of by its footprint's area. A row's candidates carry W bodies of body_tiles each
+-- on average; data-final-fixes.lua's richness wrapper gives the ore per tile.
+local OC = require("prototypes.ore_curves")
+local V3 = H2.v3
+local function v3_row(h, r, j, Q, T)
+  local R, sr, st, room, held, W = "R" .. j, "sr" .. j, "s" .. j, "room" .. j, "held" .. j, "w" .. j
+  local rivals = {}
+  for _, id in ipairs(V.rivals[r.id] or {}) do
+    rivals[#rivals + 1] = BY_ID[id]
+  end
+  local L = {}
+  L[R] = footprint(r)
+  L[sr] = "if(" .. R .. " > " .. num(H2.spread_from) .. ", " .. num(H2.core_share) .. " * " .. R .. ", min(" ..
+    num(HC.core_share) .. " * " .. R .. ", sqrt(" .. num(SP.max_spots) .. " * hs_pc / pi), " .. R .. " - hs_tight))"
+  L[room] = room_of(h, r, rivals, R)
+  L[st] = "(" .. DEPTH .. r.id .. SUFFIX .. " > " .. num(r.radius_px) .. " * " .. S .. " - " .. sr .. ") * (" .. room ..
+    " > " .. num(SP.min_room) .. ")"
+  for k, v in pairs(L) do
+    T[k], Q[k] = v, v
+  end
+  Q[held] = "pi * " .. sr .. " * " .. sr .. " / hs_pc"
+  Q[W] = "min(" .. num(V3.k[r.strength]) .. " * hs_w, " .. num(H2.top_share) .. " * " .. held .. ")"
+  -- the row's quantity, W bodies' worth, spread over its start disc's candidates: the density its regions reach
+  Q["q" .. j] = st .. " * " .. num(OC.body_quantity(h)) .. " * " .. W .. " / " .. held
+  T["c" .. j] = st .. " * " .. room
+end
+
+-- One map's spot noise of a resource's third version, as locals of its body. Every candidate in a start disc offers a
+-- body (size a power of a uniform draw, mean 1, of a body_tiles cone's quantity), and the region's target, the
+-- row's quantity, takes them in an order a draw and the lobe noise set until it is reached: so a field holds W
+-- bodies' worth, its bodies gather where the lobe is low, and the last one is cut to fit. Bodies dealt by a draw
+-- against a share held one field to a third of its design and another to three times it (runs a3 to a6).
+local function v3_spot(h, rows, i, T, index, part)
+  local fav, cap = {}, {}
+  for _, r in ipairs(rows) do
+    fav[#fav + 1] = "s" .. index[r.id]
+    cap[#cap + 1] = "c" .. index[r.id]
+  end
+  local least = num((SP.min_radius / h.rq) ^ (1 / SP.cube_root))
+  T["raw" .. i] = "(" .. part.qty .. " > 0) * hs_land * " .. num(OC.body_quantity(h) * V3.size.gain) .. " * hs_s ^ " ..
+    num(V3.size.power)
+  T["qm" .. i] = "raw" .. i .. " * (raw" .. i .. " > " .. least .. ")"
+  local radius_cap = #cap == 1 and cap[1] or ("max(" .. table.concat(cap, ", ") .. ")")
+  local spacing = "if(" .. S .. " > " .. num(SP.fine_scale) .. ", " .. num(SP.spacing) .. ", " ..
+    num(SP.spacing_fine) .. ")"
+  T["spot" .. i] = "spot_noise{x = x, y = y, density_expression = " .. part.qty .. " * hs_land / hs_pc" ..
+    ", spot_quantity_expression = qm" .. i ..
+    ", spot_radius_expression = max(" .. num(SP.min_radius) .. ", min(" .. radius_cap .. ", " .. num(h.rq) ..
+    " * max(1, qm" .. i .. ") ^ " .. num(SP.cube_root) .. "))" ..
+    ", spot_favorability_expression = " .. sum(fav, "0") .. " * hs_land * (" .. num(V3.order_base) .. " + hs_u - " ..
+    num(V3.lobe_gain) .. " * clamp(" .. H2.lobe.name .. ", -1, 1))" ..
+    ", seed0 = map_seed, seed1 = " .. num(h.seed1) .. ", region_size = " .. num(SP.region_size) ..
+    ", candidate_spot_count = " .. CANDIDATES .. ", suggested_minimum_candidate_point_spacing = " .. spacing ..
+    ", hard_region_target_quantity = 1, basement_value = " .. num(SP.basement) ..
+    ", maximum_spot_basement_radius = " .. num(SP.basement_radius) .. "}"
+  return "spot" .. i
+end
+
+-- A resource's third version: its quantity body, then its body.
+local function v3_bodies(h, name)
+  local T = {hs_pc = PER_CANDIDATE}
+  T.hs_tight = "if(" .. S .. " > " .. num(SP.fine_scale) .. ", -inf, " .. num(blob_reach(h) + SP.min_room) .. ")"
+  local Q = {hs_pc = PER_CANDIDATE, hs_tight = T.hs_tight}
+  -- bodies per unit of K at a candidate: the amount setting times L(d) over the area per_tile * P(d) asks of each
+  Q.hs_w = num(V3.area_fit / (V3.per_tile * V3.body_tiles)) .. " * " .. K.hotspot_amount .. " * " .. OC.large(h) ..
+    " / max(1, " .. OC.per_tile(h) .. ")"
+  local index = {}
+  for j, r in ipairs(rows_of(nil, h.resource)) do
+    index[r.id] = tostring(j)
+    v3_row(h, r, tostring(j), Q, T)
+  end
+  local part = V3.parts[h.resource]
+  def(part.qty, by_map(function(M) return map_qty(rows_of(M.key, h.resource), index) end), Q)
+  local branch = {}
+  for i, M in ipairs(MAPS) do
+    local rows = rows_of(M.key, h.resource)
+    branch[i] = #rows > 0 and v3_spot(h, rows, i, T, index, part) or num(SP.basement)
+  end
+  T.hs_spot = by_map(function(M)
+    for i, X in ipairs(MAPS) do
+      if X == M then
+        return branch[i]
+      end
+    end
+  end)
+  T.hs_u = "random_penalty{x = x, y = y, source = 1, amplitude = 1, seed = " .. num(h.seed1) .. "}"
+  T.hs_s = "random_penalty{x = x, y = y, source = 1, amplitude = 1, seed = " .. num(h.seed1 + V3.size.seed) .. "}"
+  T.hs_land = "(" .. K.land_coarse .. " > " .. num(HC.land_px) .. ")"
+  def(name, "hs_spot + min(" .. B.name .. " - " .. num(B.mean) .. ", " .. num(B.cap) .. ") * " ..
+    num(V3.blob_scale * blob_height(h)), T)
+end
+
+for _, h in ipairs(HC.resources) do
+  if V3.bodies[h.resource] then
+    v3_bodies(h, V3.bodies[h.resource])
+  end
+end
+
 -- Trees off the table's solid ore (config.lua resources.ore_trees): the hook key's off value, and the share of a
 -- tree's probability left near the ore, 1 with hotspots off.
 local OT = RS.ore_trees
@@ -282,12 +382,14 @@ open(OT.plants.open, OT.plants.margin, OT.plants.floor)
 
 -- The shares' next versions: each solid body less the wobble its ore's probability takes, in its cone's least slope
 -- (data-final-fixes.lua probability_v3), so the shares follow the ore that stands.
+-- 0.3.0's presets read the solid ores' third version (H2.v3), so the shares follow its bodies.
 local trimmed = {}
 for _, h in ipairs(HC.resources) do
   if H2.bodies[h.resource] and not h.fluid then
     local slope = SP.cone_factor / (math.pi * h.rq * h.rq * h.rq)
-    trimmed[#trimmed + 1] = H2.bodies[h.resource] .. " - " .. num(RS.richness_v2.edge.trim * slope) .. " * " ..
-      RS.richness_v2.edge.wobble
+    local v3 = V3.bodies[h.resource]
+    trimmed[#trimmed + 1] = (v3 or H2.bodies[h.resource]) .. " - " ..
+      num((v3 and V3.trim or RS.richness_v2.edge.trim) * slope) .. " * " .. RS.richness_v2.edge.wobble
   end
 end
 local function open_v2(name, margin, floor)

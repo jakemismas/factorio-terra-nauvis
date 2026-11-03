@@ -1170,8 +1170,10 @@ return {
       name = ID .. "-hotspots", type = "bool-setting", setting_type = "startup", default_value = true, order = "c-a",
     },
     -- Hotspot amount: the ore and oil in every hotspot, a percentage of what
-    -- the rows hold. It multiplies richness and nothing else, so no footprint moves, and it replaces the map
-    -- sliders, which no longer reach a hotspot. Baked per save through tn_hotspot_amount.
+    -- the rows hold. On the first two tables it multiplies richness and nothing else, so no footprint moves; on
+    -- 0.3.0's solid ores (hotspots_v2.v3) 100 is plan-0302 7c's design and the percentage multiplies the field's
+    -- bodies, so its ore per tile stays the design's, and the map's size and richness sliders reach it too. Oil
+    -- keeps the richness rule. Baked per save through tn_hotspot_amount.
     hotspot_amount = {
       name = ID .. "-hotspot-amount", type = "string-setting", setting_type = "startup", default_value = "100",
       allowed_values = {"50", "100", "200", "400"}, order = "c-aa",
@@ -1873,6 +1875,17 @@ return {
                NOISE .. "ore_wobble_v1", NOISE .. "ore_trees", NOISE .. "ore_open_v1", NOISE .. "ore_open_plants_v1",
                NOISE .. "ore_open_v2", NOISE .. "ore_open_plants_v2"},
     },
+    -- Ore at vanilla's measure (plan-0302 7b and 7c): regular patches on vanilla's function with the footprint gap,
+    -- and the solid hotspots' third version (resources.natural.fn2, hotspots_v2.v3); 0.3.0's presets name them.
+    {
+      release = "0.3.0",
+      names = {ORE .. "all_patches_v2", ORE .. "iron_ore_patches_v2", ORE .. "copper_ore_patches_v2",
+               ORE .. "coal_patches_v2", ORE .. "stone_patches_v2", ORE .. "uranium_ore_patches_v2",
+               ORE .. "crude_oil_patches_v2", ORE .. "offshore_oil_patches_v2",
+               HS .. "iron_ore_v3", HS .. "copper_ore_v3", HS .. "coal_v3", HS .. "stone_v3", HS .. "uranium_ore_v3",
+               HS .. "iron_ore_qty_v3", HS .. "copper_ore_qty_v3", HS .. "coal_qty_v3", HS .. "stone_qty_v3",
+               HS .. "uranium_ore_qty_v3"},
+    },
     -- The palm switch (climate-tiles): the constant and the copies of the installed palm autoplace, built at
     -- data-final-fixes (tiles.palm); with no Alien Biomes each copy is the neutral body.
     {
@@ -2365,11 +2378,15 @@ return {
   --; with `rso_start` off, RSO's
   -- "Ore in starting area", the player asked for no ore there and the whole pass stands down. Scripted
   -- ore never shows in a map preview.
+  -- An ore row may carry its own trigger and top_up (0.3.0, plan-10h item 7: Prague's start held 143,335 coal, over
+  -- half of vanilla's mean, so it got nothing and the next coal stood 496 tiles out past the first nests): under
+  -- trigger times the reference it gets a patch of top_up times the reference less what it holds (not fill times the
+  -- reference), so a thin start reaches top_up of vanilla's mean and a start at or over trigger of it gets nothing.
   start_ore = {
     ores = {
       {resource = "iron-ore", reference = 368000, density = 540},
       {resource = "copper-ore", reference = 357000, density = 860},
-      {resource = "coal", reference = 266000, density = 890},
+      {resource = "coal", reference = 266000, density = 890, trigger = 0.9, top_up = 1},
       {resource = "stone", reference = 159000, density = 750},
     },
     rso_start = "rso-ore-in-start-area",
@@ -2730,7 +2747,11 @@ return {
   -- smallest whole threshold at which no reference river pixel more than 16 px from the sea lies in
   -- the mask on any map.
   resources = {
+    -- frequency is D20's 0.75, which the first two hotspot tables' density floors read (their bodies keep it);
+    -- preset_frequency is what 0.3.0's presets set on the six controls (plan-0302 7c: at default sliders regular
+    -- patches match vanilla's, and frequency changes vanilla's patch count, never a patch)
     frequency = 0.75,
+    preset_frequency = 1,
     controls = {"iron-ore", "copper-ore", "coal", "stone", "uranium-ore", "crude-oil"},
     ramp = {name = REN.RAMP, from = 450, span = 3550, gain = 0.5},
     ramped = {"iron-ore", "copper-ore", "coal", "stone"},
@@ -2770,7 +2791,11 @@ return {
     -- trim tiles inward and its thin rims open into pockets. Lowering the value never moves ore outward, and its
     -- richness stays the hotspot's own where ore remains. A mask on the distance past the nearest footprint read every
     -- row's distance per tile (Entity +3,400) and is not used.
-    richness_v2 = {ref_scale = 6, rich_offset = 1000, rich_span = 2600, lift = 1.25, cube_root = 1 / 3,
+    -- vanilla (plan-0302 7c, 2026-11-02): regular ore reads the live richness as it is, at the real tile distance
+    -- and without the ramp, so a regular patch holds vanilla's ore for its band in real tiles at every scale (the
+    -- ref_scale reading left far bands at 0.6 to 0.8 of vanilla's, the ramp put them up to 1.5 times over it); a
+    -- solid hotspot's richness is the third hotspot table's (hotspots_v2.v3), which no longer takes the lift.
+    richness_v2 = {vanilla = true, ref_scale = 6, rich_offset = 1000, rich_span = 2600, lift = 1.25, cube_root = 1 / 3,
                    lombok = {resource = "copper-ore", row = "copper_sumbawa", cut_lon = 116.765, reach_px = 70},
                    edge = {wobble = NOISE .. "ore_wobble_v1", seed1 = 7441, trim = 6, mid = 0.5, amp = 0.35, half = 0.5,
                            long = 32, short = 12}},
@@ -2849,14 +2874,33 @@ return {
       reach = 2.5,
       warp_reach = 22,
       rim = {width = 0.5, gain = 5},
+      -- 0.3.0 (plan-0302 7b; reports/plan-ore.md FINAL): the shape terms above spread a patch over about 1.25 times
+      -- vanilla's tiles and 1.45 times its span, and the spot sizes add a tail of merged clusters, so ordinary
+      -- patches read huge in game while holding 0.3 to 0.8 of vanilla's ore. New presets point each live patch
+      -- expression at body2, which calls fn2: vanilla's function as the game ships it, and nothing more than
+      -- this map's one rule, that regular ore keeps out of every hotspot footprint (`gap` over gap_reach times the
+      -- largest spot's radius vanilla allows there; a cleared candidate carries nothing and ranks last, so the
+      -- region's ore goes to the candidates outside). With hotspots off it is vanilla's function to the tile.
+      fn2 = ORE .. "all_patches_v2",
+      gap_reach = 2,
+      -- vanilla's spot radius cap and cube root, and the two texts of its regular spot noise fn2 swaps (a cleared
+      -- candidate ranks last and takes a radius of 1: a spot of no quantity and no radius is not one the game makes)
+      gap_radius = {cap = 32, cube_root = "1 / 3"},
+      fn2_swaps = {
+        {old = "spot_favorability_expression = 1,", new = "spot_favorability_expression = clear,"},
+        {old = "spot_radius_expression = min(32, regular_rq_factor * regular_spot_quantity_expression ^ (1/3)),",
+         new = "spot_radius_expression = max(1 - clear, min(32, regular_rq_factor * " ..
+           "regular_spot_quantity_expression ^ (1/3))),"},
+      },
       bodies = {
-        {live = "default-iron-ore-patches", name = REN.ORE_PATCH_IRON},
-        {live = "default-copper-ore-patches", name = REN.ORE_PATCH_COPPER},
-        {live = "default-coal-patches", name = REN.ORE_PATCH_COAL},
-        {live = "default-stone-patches", name = REN.ORE_PATCH_STONE},
-        {live = "default-uranium-ore-patches", name = REN.ORE_PATCH_URANIUM},
-        {live = "default-crude-oil-patches", name = REN.ORE_PATCH_OIL},
-        {live = "default-offshore-oil-patches", name = REN.ORE_PATCH_OFFSHORE},
+        {live = "default-iron-ore-patches", name = REN.ORE_PATCH_IRON, name2 = ORE .. "iron_ore_patches_v2"},
+        {live = "default-copper-ore-patches", name = REN.ORE_PATCH_COPPER, name2 = ORE .. "copper_ore_patches_v2"},
+        {live = "default-coal-patches", name = REN.ORE_PATCH_COAL, name2 = ORE .. "coal_patches_v2"},
+        {live = "default-stone-patches", name = REN.ORE_PATCH_STONE, name2 = ORE .. "stone_patches_v2"},
+        {live = "default-uranium-ore-patches", name = REN.ORE_PATCH_URANIUM, name2 = ORE .. "uranium_ore_patches_v2"},
+        {live = "default-crude-oil-patches", name = REN.ORE_PATCH_OIL, name2 = ORE .. "crude_oil_patches_v2"},
+        {live = "default-offshore-oil-patches", name = REN.ORE_PATCH_OFFSHORE,
+         name2 = ORE .. "offshore_oil_patches_v2"},
       },
     },
   },
@@ -2986,11 +3030,68 @@ return {
              stone = {qty = HS .. "stone_qty_v2", bars = HS .. "stone_bars_v2"},
              ["uranium-ore"] = {qty = HS .. "uranium_ore_qty_v2", bars = HS .. "uranium_ore_bars_v2"},
              ["crude-oil"] = {qty = HS .. "crude_oil_qty_v2", bars = HS .. "crude_oil_bars_v2"}},
-    points = {[REN.HS_IRON] = HS .. "iron_ore_v2", [REN.HS_COPPER] = HS .. "copper_ore_v2",
-              [REN.HS_COAL] = HS .. "coal_v2", [REN.HS_STONE] = HS .. "stone_v2",
-              [REN.HS_URANIUM] = HS .. "uranium_ore_v2",
+    -- 0.3.0's presets name the third table's solid bodies (v3 below) in the first table's place; crude oil keeps v2
+    points = {[REN.HS_IRON] = HS .. "iron_ore_v3", [REN.HS_COPPER] = HS .. "copper_ore_v3",
+              [REN.HS_COAL] = HS .. "coal_v3", [REN.HS_STONE] = HS .. "stone_v3",
+              [REN.HS_URANIUM] = HS .. "uranium_ore_v3",
               [REN.HS_OIL] = HS .. "crude_oil_v2", [REN.ORE_GAP] = NOISE .. "ore_gap_v2",
               [REN.ENEMY_LAYER] = NOISE .. "enemy_layer_v2"},
+    -- The solid ores' third version (plan-0302 7c, 2026-11-02; reports/plan-ore.md FINAL; 0.3.0, new worlds). The
+    -- second table's amount grew with the footprint's area and the distance, and the richness wrapper lifted it
+    -- again, so a field held 10 M (the Ore Mountains) to 2.1 billion (Kiruna) at scale 12, 1.6 to 3.7 times the
+    -- regular ore round it per tile at amount 200. Here, per resource and in real tiles d to the spawn:
+    --   L(d) = p90 * size_max * Q(min(d, cap_distance)) * f(min(d, cap_distance)), vanilla's large (p90) regular
+    --          patch: Q vanilla's regular spot quantity, its fade in, double density and size slider, f vanilla's
+    --          richness distance factor, p90 fitted per ore on the vanilla baseline (previews/f-ore/fit_vanilla.py,
+    --          notes/vanilla-ore-patch-baseline.md); cap_distance holds a world-class (K 6) iron field at about
+    --          100 M, the 7c ceiling, so every total stays in tens of millions
+    --   P(d) = per_tile_fit * q / (pi * r^2) * f(d), vanilla's mean regular ore per tile, q = mean_size * Q(d),
+    --          r = min(radius_cap, rq * q^(1/3)) its typical spot
+    --   a row's total is K * amount * L(d), K by its strength (k), its ore per tile per_tile * P(d) times the
+    --   richness slider, so it reads per_tile times the regular ore round it, and the rest is area: the row
+    --   carries W = area_fit * K * amount * L(d) / (per_tile * P(d) * body_tiles) bodies' worth (at most top_share
+    --   of its start disc's candidates), each body a cone of body_tiles tiles on average (size: gain * k^power of a
+    --   uniform k, mean 1): every candidate in the start disc offers one, and the region's target, the row's W
+    --   bodies' worth, takes them in the order order_base + a draw - lobe_gain * lobe sets until it is reached, so
+    --   a field holds its design wherever its draws fall, its bodies gather where the lobe is low and the last one
+    --   is cut to fit (dealing bodies by a draw against a share held one field to a third of its design and another
+    --   to three times it, runs a3 to a6); the
+    --   richness wrapper sets a tile to rich_fit * per_tile * P(d) * min(v, peak_cap * h) / h, h the mean height
+    --   of a body_tiles cone, so a larger body reads richer, as vanilla's do. area_fit and rich_fit take back what the
+    --   outline wobble, the blob and the room trim from a cone (measured, previews/f-ore). The sliders reach it as
+    --   they reach vanilla's patches (size: Q; richness: per tile), the amount setting as more bodies, and
+    --   frequency not at all. Footprints, rows, rivals, the blob, the lobes' noise, the gap and the nests are the
+    --   second table's.
+    v3 = {
+      bodies = {["iron-ore"] = HS .. "iron_ore_v3", ["copper-ore"] = HS .. "copper_ore_v3", coal = HS .. "coal_v3",
+                stone = HS .. "stone_v3", ["uranium-ore"] = HS .. "uranium_ore_v3"},
+      parts = {["iron-ore"] = {qty = HS .. "iron_ore_qty_v3"}, ["copper-ore"] = {qty = HS .. "copper_ore_qty_v3"},
+               coal = {qty = HS .. "coal_qty_v3"}, stone = {qty = HS .. "stone_qty_v3"},
+               ["uranium-ore"] = {qty = HS .. "uranium_ore_qty_v3"}},
+      k = {[1] = 3, [2] = 3, [3] = 4, [4] = 5, [5] = 6},
+      cap_distance = 2000,
+      size_max = {["iron-ore"] = 2, ["copper-ore"] = 2, coal = 2, stone = 2, ["uranium-ore"] = 4},
+      p90 = {["iron-ore"] = 0.9, ["copper-ore"] = 0.93, coal = 0.92, stone = 0.92, ["uranium-ore"] = 1.05},
+      per_tile_fit = 1.05,
+      per_tile = 1.75,
+      radius_cap = 32,
+      quantity = {per_km2 = 1000000, fade_from = 150, fade_span = 300, double_from = 300, double_span = 1300},
+      body_tiles = 600,
+      size = {gain = 2.5, power = 1.5, seed = 1},
+      order_base = 2,
+      lobe_gain = 0.5,
+      -- a tile reads at most peak_cap times a body_tiles cone's mean height, so crowded bodies in a small footprint
+      -- (Carrara) do not stack into ore several times the design's per tile
+      peak_cap = 4,
+      -- the shared blob at blob_scale of the second table's height, and the outline wobble's trim in tiles (p3 and
+      -- the tree shares read it for these bodies): at full height and 6 tiles they ate most of a body_tiles cone
+      blob_scale = 0.5,
+      trim = 3,
+      area_fit = 1.65,
+      rich_fit = 0.74,
+      cube_root = 1 / 3,
+      body_power = 3 / 2,
+    },
     core_share = 0.75,
     spread_from = 120,
     few_bodies = 5,

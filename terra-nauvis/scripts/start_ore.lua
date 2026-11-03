@@ -1,4 +1,4 @@
--- The start ore guarantee (config.lua start_ore; design notes 2026-10-30): once, from start.on_init on an
+-- The start ore guarantee (config.lua start_ore; DECISIONS 2026-10-30): once, from start.on_init on an
 -- Earth or Map-type-only world, every starting ore gets a patch on the land the spawn reaches on foot
 -- when that land holds too little of it. The starting area is generated before on_init
 -- (worldgen-runtime rule 2) and bandfix.on_init has settled its coast, so the tiles and ore read here are
@@ -166,8 +166,8 @@ function M.ensure(surface)
     if prototypes.entity[ore.resource] and (c.size or 1) > 0 then
       local target = ore.reference * (c.richness or 1)
       local have = reached_amount(surface, reach, ore.resource)
-      if have < C.trigger * target then
-        local amount = floor(C.fill * target)
+      if have < (ore.trigger or C.trigger) * target then
+        local amount = floor(ore.top_up and (ore.top_up * target - have) or C.fill * target)
         local r = max(C.min_radius, floor(C.outline.grow * sqrt(amount / ore.density / pi) + HALF))
         local cx, cy
         while true do
