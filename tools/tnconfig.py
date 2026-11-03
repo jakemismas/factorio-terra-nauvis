@@ -373,7 +373,13 @@ VERSION_FIELDS = set(GEOGRAPHY_NAMES) | {"geo_id", "city_offset", "start_mask", 
 # (coast.edge_band), and `lakes`, the per-save inland lakes switch its entry reads its inland lakes
 # through (a toggle's preset key; only with a spawn record).
 OPTIONAL_VERSION_FIELDS = {"spawn", "waterways", "waterway_files", "mouths", "warp", "shore", "fields", "edge", "lakes", "over",
-                           "basin", "scales"}
+                           "basin", "scales", "map_type_of", "fray_overlay"}
+# A Map type version (0.3.2; prototypes/expressions/coast_fray.lua): map_type_of = {geo_id, above_scale} names an older
+# version of the map whose composition it re-reads by name (chain, box, spawn bodies, sets); its own names are its
+# entry, its geo (fits.geo bound to the older version's warped chain plus the coast fray), its shore and its inland
+# lakes, which read its geo past above_scale. The preset keeps naming the older version and names this entry for
+# elevation past above_scale (presets.lua map_type_values).
+MAP_TYPE_OWN = ("entry", "geo", "shore")
 # A waterways record: per kind, the set names by scale. The sets read the version's chain, so they are
 # its own: a later version that composes the waterways names sets of its own, and config.lua's
 # waterways.sets[map] is the record of the map's newest version that has one.
@@ -471,6 +477,8 @@ def own_names(version):
     and its shore body."""
     if version.get("over"):
         return [version["entry"], version["basin"]["name"]]
+    if version.get("map_type_of"):
+        return [version[n] for n in MAP_TYPE_OWN] + [spawn_of(version)["inland_lakes"]]
     sp = spawn_of(version)
     return ([version[n] for n in GEOGRAPHY_NAMES] + ([sp[n] for n in SPAWN_OWN] if sp else []) + waterway_names(version) +
             shore_names(version))
@@ -581,6 +589,16 @@ def geography_versions(cfg):
             if "over" in v and (v["over"] not in [o["entry"] for o in versions[: i - 1]] or
                                 not isinstance(v.get("basin"), dict) or not v["basin"].get("name")):
                 raise ConfigError(f"config.lua {where}.over must name an older version's entry, with a basin record")
+            if "map_type_of" in v:
+                mt = v["map_type_of"]
+                base = [o for o in versions[: i - 1] if isinstance(mt, dict) and o["geo_id"] == mt.get("geo_id")
+                        and "map_type_of" not in o]
+                if (not isinstance(mt, dict) or set(mt) != {"geo_id", "above_scale"} or not base
+                        or not _positive_int(mt["above_scale"]) or i != len(versions) or "spawn" not in v
+                        or "shore" not in v or not base[0].get("shore")):
+                    raise ConfigError(f"config.lua {where}.map_type_of must be {{geo_id, above_scale}} naming an older "
+                                      f"version (not a Map type one) with a shore body, on the map's newest version, "
+                                      f"which has a spawn record and a shore body of its own")
             if "lakes" in v:
                 keys = {t.get("preset_key") for t in (cfg.get("toggles") or {}).values() if isinstance(t, dict)}
                 if not isinstance(v["lakes"], str) or v["lakes"] not in keys or "spawn" not in v:
@@ -663,13 +681,25 @@ def geography(cfg):
     """{map key: the map's newest geography version}, with the map's `map_type_order` and its
     `entry_versions` (every version's entry, oldest first, the newest last) added, and the fields of
     its spawn record, when it has one, copied to the top level (city_setting, city, city_index, ...;
-    `spawn` stays too): the version the map's preset names, whose entry alone carries the Map type
-    fields. Control code identifies a Map-type-only world by any entry version. Readers that need
-    every version use geography_versions."""
+    `spawn` stays too): the version the map's preset names (a Map type version aside), and
+    `map_type_entry`, the newest version's entry, which alone carries the Map type fields (the
+    preset version's own entry unless a Map type version follows it). Control code identifies a
+    Map-type-only world by any entry version. Readers that need every version use geography_versions."""
     raw = _keyed(cfg, "geography")
-    return {key: dict(versions[-1], **(spawn_of(versions[-1]) or {}), map_type_order=raw[key]["map_type_order"],
-                      entry_versions=[v["entry"] for v in versions])
+    return {key: dict(preset_version(versions), **(spawn_of(preset_version(versions)) or {}),
+                      map_type_order=raw[key]["map_type_order"], entry_versions=[v["entry"] for v in versions],
+                      map_type_entry=versions[-1]["entry"])
             for key, versions in geography_versions(cfg).items()}
+
+
+def preset_version(versions):
+    """The version a map's preset names: its newest, a Map type version (map_type_of) aside (presets.lua geography)."""
+    return [v for v in versions if not v.get("map_type_of")][-1]
+
+
+def map_type_version(versions, version):
+    """The Map type version of a preset's version (map_type_of names its geo_id), or None."""
+    return next((v for v in versions if (v.get("map_type_of") or {}).get("geo_id") == version["geo_id"]), None)
 
 
 # ------------------------------------------------------------------------------------------------ regions
@@ -1006,6 +1036,11 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     go = go.get(version["geo_id"]) or go.get(str(version["geo_id"]))
     if go and int(scale) > go["above_scale"]:
         pen[version["geo"]] = go["body"]
+    # the Map type version's entry (presets.lua map_type_values, after baked): past its above_scale the preset names it
+    # for elevation
+    mt = map_type_version(geography_versions(cfg)[map_key], version)
+    if mt and int(scale) > mt["map_type_of"]["above_scale"]:
+        pen[K["elevation"]] = mt["entry"]
     # the next spawn folds (presets.lua spawn_next_values, after baked): a city number past the released folds'
     # cities names the next folds over the version's city offset, its map's frame, the spawn lake and the bias
     nx, sp = spawn_next_of(cfg, version), spawn_of(version)

@@ -84,13 +84,15 @@ local function num(v)
   return string.format(cfg.number_format, v)
 end
 
--- The geography version a map's preset names: its newest.
+-- The geography version a map's preset names: its newest, a Map type version (map_type_of) aside.
 local function geography(map_key)
   local g = cfg.geography[map_key]
-  if not g or not g.versions or #g.versions == 0 then
-    error("config.lua has no geography version for the preset map " .. map_key)
+  for i = #((g or {}).versions or {}), 1, -1 do
+    if not g.versions[i].map_type_of then
+      return g.versions[i]
+    end
   end
-  return g.versions[#g.versions]
+  error("config.lua has no geography version for the preset map " .. map_key)
 end
 
 local scale = tonumber(settings.startup[cfg.settings.scale.name].value)
@@ -551,6 +553,18 @@ local function geo_next_values(v)
   return {}
 end
 
+-- A Map type version of the preset's version (config.lua geography, map_type_of): past its above_scale the preset
+-- names its entry for elevation, so a preset world and a Map-type-only world read one entry. Not part of baked(): the
+-- version's own fallbacks stay its base's.
+local function map_type_values(map_key, v)
+  for _, o in ipairs(cfg.geography[map_key].versions) do
+    if o.map_type_of and o.map_type_of.geo_id == v.geo_id and scale > o.map_type_of.above_scale then
+      return {[K.elevation] = o.entry}
+    end
+  end
+  return {}
+end
+
 local function withheld(p)
   for _, m in ipairs(p.withheld_with or {}) do
     if mods[m] then
@@ -576,6 +590,7 @@ for _, key in ipairs(cfg.preset_order) do
     local names = baked(p.map, v)
     merge_into(names, spawn_next_values(p.map, v, names))
     merge_into(names, geo_next_values(v))
+    merge_into(names, map_type_values(p.map, v))
     presets[p.name] = {
       order = p.order,
       basic_settings = {property_expression_names = names, autoplace_controls = controls()},

@@ -327,8 +327,8 @@ end
 for _, key in ipairs(cfg.map_order) do
   local versions = (cfg.geography[key] or {}).versions or {}
   for _, g in ipairs(versions) do
-    -- a thin version reads the older version's sets by name
-    if g.waterways and not g.over then
+    -- a thin version and a Map type version (map_type_of) read the older version's sets by name
+    if g.waterways and not g.over and not g.map_type_of then
       emit_sets(key, g, g)
       local X = cfg.scale_extensions[key]
       if X and X.geo_id == g.geo_id then

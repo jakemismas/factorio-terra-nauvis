@@ -364,7 +364,7 @@ def expected_locale(cfg, control_keys=()):
     # the Map type entries: the newest elevation entry of each map carries localised_name
     # {"noise-expression.<entry>"} (D2 amended), so the [noise-expression] section names it
     for g in tnconfig.geography(cfg).values():
-        exp.setdefault("noise-expression", set()).add(g["entry"])
+        exp.setdefault("noise-expression", set()).add(g["map_type_entry"])
     # a scale extension's entry takes those fields at the scales past its version's list
     for x in (cfg.get("scale_extensions") or {}).values():
         exp.setdefault("noise-expression", set()).add(x["entry"])

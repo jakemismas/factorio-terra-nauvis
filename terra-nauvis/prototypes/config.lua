@@ -696,6 +696,16 @@ local OAS = {
   -- chain.
   OW9_GEO = NOISE .. "geo_olde_world_v9",
   OW9_GEO_FILE = "prototypes/generated/geo_olde_world_v4.lua",
+  -- 0.3.2: Old World's Map type version (geography 24, map_type_of 21): its entry, shore, inland lakes and the frayed
+  -- coast fit they read past scale 6 (coast_fray).
+  OW9_ENTRY = NOISE .. "elevation_olde_world_v9",
+  OW9_SHORE = NOISE .. "shore_olde_world_v7",
+  OW9_LAKES = NOISE .. "inland_lakes_olde_world_v4",
+  OW_GEO_FRAY1 = NOISE .. "geo_fray_olde_world_v1",
+  -- with coast.overlay: the frayed fit and overlay layers the frayed geo body combines
+  OW_FIT_FRAY1 = NOISE .. "geo_fray_fit_olde_world_v1",
+  OW_LAND_FRAY1 = NOISE .. "overlay_land_fray_olde_world_v1",
+  OW_WATER_FRAY1 = NOISE .. "overlay_water_fray_olde_world_v1",
   -- 0.3.2: Old World's geo body past scale 6 over OW9_GEO (coast.overlay): its land and water layers drawn from the
   -- reference raster, combined with it by max() and min(), each layer bound to version 8's warped chain.
   OW10_GEO = NOISE .. "geo_olde_world_v10",
@@ -1377,6 +1387,47 @@ return {
           edge = true,
           lakes = ELN.K_INLAND_LAKES,
         },
+        {
+          -- Version 9 (Old World, 0.3.2), a Map type version (map_type_of): the composition of version 8 (geo_id
+          -- 21) by name, its chain, box, spawn bodies and sets, with an entry, shore and inland lakes of its own that
+          -- read `geo` past above_scale and version 8's geo up to it. `geo` is the frayed coast fit (coast_fray): the
+          -- generated fit fits.geo names, bound to version 8's warped chain plus the fray. A Map-type-only world names
+          -- this entry; the Old World preset keeps version 8 (tn_geo 21) and names this entry for elevation past
+          -- above_scale, so both routes read one entry there. fits.geo is the one field that names the coast fit past
+          -- scale 6: the generated file of the preset's next geo body (coast.next).
+          geo_id = 24,
+          map_type_of = {geo_id = 21, above_scale = 6},
+          entry = OAS.OW9_ENTRY,
+          geo = OAS.OW_GEO_FRAY1, land_coarse = OAS.OW8_LAND_COARSE, detail = OAS.OW8_DETAIL, far = OAS.OW8_FAR,
+          fray_overlay = {fit = OAS.OW_FIT_FRAY1, land = OAS.OW_LAND_FRAY1, water = OAS.OW_WATER_FRAY1},
+          gx = OAS.OW8_GX, gy = OAS.OW8_GY, u = OAS.OW8_U, v = OAS.OW8_V,
+          cx = OAS.OW8_CX, cy = OAS.OW8_CY, city_offset = {OAS.OW_CITY_CX, OAS.OW_CITY_CY},
+          start_mask = START_MASK2,
+          fits = {geo = OAS.OW9_GEO_FILE, land_coarse = OW_LAND_COARSE_FILE},
+          fallbacks = {
+            {name = K_SCALE, map_qualified = false},
+            {name = OAS.OW8_CX, map_qualified = true, frozen = true},
+            {name = OAS.OW8_CY, map_qualified = true, frozen = true},
+            {name = OAS.OW_CITY, map_qualified = true},
+            {name = K_CANALS, map_qualified = false},
+            {name = REN.OW_FIELDS_KEY, map_qualified = true},
+            {name = ELN.K_INLAND_LAKES, map_qualified = false},
+          },
+          spawn = {
+            city_setting = "spawn_city_olde_world", city = OAS.OW_CITY, city_index = OAS.OW_CITY_INDEX,
+            spawn_lake = OAS.OW8_SPAWN_LAKE, spawn_bias = OAS.OW8_SPAWN_BIAS, inland_lakes = OAS.OW9_LAKES,
+            lake_floor = true, start_land = START_LAND, distance = DISTANCE, bearings = OAS.OW7_SPAWN_FILE,
+          },
+          waterways = OAS_SETS.olde_world_v8,
+          scales = SCALE_LISTS.offered,
+          waterway_files = 2,
+          mouths = OAS.OW_MOUTH2,
+          warp = OAS.OW_WARP2,
+          shore = OAS.OW9_SHORE,
+          fields = REN.OW_FIELDS_KEY,
+          edge = true,
+          lakes = ELN.K_INLAND_LAKES,
+        },
       },
     },
   },
@@ -1581,6 +1632,9 @@ return {
       REN.OW_FIELDS, START_LAND, OAS.OW8_ENTRY, OAS.OW8_GEO, OAS.OW9_GEO, OAS.OW8_DETAIL, OAS.OW8_FAR,
       OAS.OW10_GEO, OAS.OW10_LAND, OAS.OW10_WATER,
       OAS.OW8_LAKES,
+      -- 0.3.2: the Map type version 9's own bodies (geography 24)
+      OAS.OW9_ENTRY, OAS.OW9_SHORE, OAS.OW9_LAKES, OAS.OW_GEO_FRAY1, OAS.OW_FIT_FRAY1, OAS.OW_LAND_FRAY1,
+      OAS.OW_WATER_FRAY1,
       OAS.OW8_SHORE, OAS.OW_WW7[1], OAS.OW_WW7[2], OAS.OW_WW7[3], OAS.OW_WW7[4], OAS.OW_WW7[5], OAS.OW_WW7[6],
       OAS.OW_WW7[7], OAS.OW_WW7[8], OAS.OW_CANALS7[1], OAS.OW_CANALS7[2], OAS.OW_CANALS7[3], OAS.OW_CANALS7[4],
       OAS.OW_CANALS7[5], OAS.OW_CANALS7[6], OAS.OW_CANALS7[7], OAS.OW_CANALS7[8], OAS.OW_DAMS7[1], OAS.OW_DAMS7[2],
@@ -1932,6 +1986,15 @@ return {
       names = {OAS.OW9_GEO},
       files = {OAS.OW9_GEO_FILE},
     },
+    -- 0.3.2: Old World's Map type version 9 (geography 24), which a Map-type-only world names and the preset names for
+    -- elevation past scale 6, and the coast fray its coast reads there.
+    {
+      release = "0.3.2",
+      map = "olde_world",
+      geography = 24,
+      names = {OAS.OW9_ENTRY, OAS.OW9_SHORE, OAS.OW9_LAKES, OAS.OW_GEO_FRAY1, OAS.OW_FIT_FRAY1, OAS.OW_LAND_FRAY1,
+               OAS.OW_WATER_FRAY1},
+    },
     -- 0.3.2: Old World's geo body over the next one (coast.overlay) and its two layers, which a new world's preset
     -- names over version 8's past scale 6.
     {
@@ -2192,6 +2255,32 @@ return {
       },
     },
   },
+
+  -- The coast fray (0.3.2), read past scale 6 by a Map type version's coast fit (geography map_type_of). The fit
+  -- is a sum of bilinear tents on the reference pixel lattice, so between pixel centres its zero line runs straight
+  -- for up to a pixel (12 or 24 tiles) and turns along the tents' axis-aligned asymptotes, and the coast warp's
+  -- past_six octave (7.2 tiles, 1.32 tiles) bends that into notches with right-angled corners at player zoom. The
+  -- version's fit reads these octaves on each warped axis in place of past_six: amplitude_tiles / scale * basis_noise
+  -- at wavelength_tiles, fixed in tiles and geo-locked through the version's city offset. A warp moves the coast
+  -- without changing what it encloses while its slope stays well under 1, so it adds next to no islet or pool; an
+  -- added value (a jitter on the fit) flips the fit's sign in patches wherever it is flat near zero, so it is refused.
+  coast_fray = {
+    octaves = {
+      {seed1 = {u = 7431, v = 7432}, wavelength_tiles = 6.1, amplitude_tiles = 0.6},
+      {seed1 = {u = 7433, v = 7434}, wavelength_tiles = 3.3, amplitude_tiles = 0.5},
+    },
+  },
+
+
+
+
+
+
+
+
+
+
+
 
   -- The start mask (design rule 8): vanilla's starting_resources_lake_mask with the map's coarse land
   -- field in place of elevation. `versions` holds every version: a geography version names the one

@@ -3646,7 +3646,7 @@ def row_t13_dump_facts(ctx, mods, sec6, row, cache):
     if extra - names["preset"]:
         row.fails.append(f"presets {sorted(extra - names['preset'])} are not config's")
     # only the newest version of each map's elevation entry carries the Map type fields (D2 amended)
-    entries = {g["entry"] for g in tnconfig.geography(cfg).values()}
+    entries = {g["map_type_entry"] for g in tnconfig.geography(cfg).values()}
     for n in earth_noise:
         b = d1["noise-expression"].get(n)
         if b and b.get("intended_property") and n not in entries:
@@ -4680,7 +4680,7 @@ def preset_mgs(ctx, cfg, scale=None, cliffs=True, coast_only=False):
 def maptype_mgs(ctx, cfg):
     """S13's mgs-maptype-europe.json with the shipped name: only elevation, set to the entry."""
     _, _, g = first_preset(cfg)
-    return write_mgs(ctx, "maptype-elevation-only", {cfg["keys"]["elevation"]: g["entry"]})
+    return write_mgs(ctx, "maptype-elevation-only", {cfg["keys"]["elevation"]: g["map_type_entry"]})
 
 
 def blocking_water_colours(dump):
@@ -5243,7 +5243,7 @@ def row_ec_dump_facts(ctx, mods, sec6, row, cache):
                      f"before {ordered_after[:1]} (S13: after Lakes, before Island)")
     carriers = sorted(n for n, b in ne.items() if n.startswith(cfg["identity"]["noise_prefix"]) and
                       b.get("intended_property"))
-    newest = sorted(gg["entry"] for gg in tnconfig.geography(cfg).values())
+    newest = sorted(gg["map_type_entry"] for gg in tnconfig.geography(cfg).values())
     if carriers != newest:
         fails.append(f"Terra Nauvis expressions carrying intended_property {carriers}, want only {newest}")
     pen = preset_pen(d1, pname)
@@ -7318,7 +7318,7 @@ def row_owa_dump_facts(ctx, mods, sec6, row, cache):
     fails, parts = row.fails, []
     maps = [cfg["presets"][k]["map"] for k in cfg["preset_order"]]
     carriers = sorted(n for n, b in ne.items() if n.startswith(prefix) and b.get("intended_property"))
-    want = sorted(tnconfig.geography(cfg)[mk]["entry"] for mk in maps)
+    want = sorted(tnconfig.geography(cfg)[mk]["map_type_entry"] for mk in maps)
     if carriers != want or len(set(want)) != len(maps):
         fails.append(f"Terra Nauvis expressions carrying intended_property {carriers}; want exactly one per map {want}")
     secs = locale_messages(cfg)

@@ -1,6 +1,6 @@
 -- Spawn expressions (ARCHITECTURE.md, "Expression inventory"; contracts 1 and 2).
 --
--- The start mask (design rule 8): vanilla's starting_resources_lake_mask reads elevation
+-- The start mask (design rule 8; DECISIONS 08:00): vanilla's starting_resources_lake_mask reads elevation
 -- in every starting-ore spot noise, which on an Earth preset would carry the fine coast into the
 -- Entity program. Earth presets point that key at a start mask version (config.lua's start_mask;
 -- each geography version names the one its preset bakes). Each version names its formula:
@@ -25,6 +25,7 @@
 -- comes from config.lua, the city tables and the generated bearings (S-5). A body that several
 -- versions name is defined once, and two versions that would build it differently fail at load.
 local cfg = require("prototypes.config")
+local fray = require("prototypes.expressions.coast_fray")
 local cities = require("prototypes.city_tables")
 -- destroyed-europe: the cities its zone covers, which a random pick on a world with the zone on skips
 local destroyed = require("prototypes.tables.destroyed")
@@ -107,7 +108,7 @@ local function noise(seed1, wavelength, cx, cy)
     " / " .. num(wavelength) .. shift .. "}"
 end
 
--- One axis of a lake's domain warp: amplitude times
+-- One axis of a lake's domain warp (DECISIONS 2026-10-30, the rivers' natural course): amplitude times
 -- one basis noise per octave row of config.lua, so a lake's shore wanders off the circle its distance draws. A row
 -- with max_scale moves the shore only up to that scale.
 local function warp(octaves, axis, cx, cy)
@@ -352,7 +353,10 @@ end
 for _, key in ipairs(cfg.map_order) do
   local g = cfg.geography[key]
   for _, v in ipairs(g and g.versions or {}) do
-    if v.spawn then
+    -- a Map type version (coast_fray.lua): its base's bodies by name, which def() keeps, and inland lakes of its own
+    if v.map_type_of then
+      spawn(key, (fray.record(key, v)))
+    elseif v.spawn then
       spawn(key, v)
     end
   end

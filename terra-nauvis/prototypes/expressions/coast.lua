@@ -34,7 +34,7 @@
 --                                          rivers, straits, basins and open canals, each set picked by
 --                                          the folded scale (waterways.lua); dams come after the lakes
 --                                          so no lake reopens a dammed isthmus, and a carve still cuts
---                                          the start land guarantee
+--                                          the start land guarantee (TST-06)
 --   elevation = if(e < 0, min(e, stamp), e)  a version with an offshore stamp (resources-enemies): the
 --                                          map's stamp key, a Map type fallback, names the stamp body
 --                                          (resources.lua) with hotspots on and the neutral zero off,
@@ -46,6 +46,7 @@
 -- constant comes from config.lua (S-5).
 local cfg = require("prototypes.config")
 local waterways = require("prototypes.expressions.waterways")
+local fray = require("prototypes.expressions.coast_fray")
 
 -- One require per generated file the release registry lists (the registration scan reads literal
 -- module names), keyed by its path as config.lua's release_registry files and fits name it.
@@ -83,7 +84,7 @@ end
 -- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain, or to
 -- fit_u and fit_v where the version warps its fit. The game parses every body's text at startup (about
 -- 0.5 us a byte) and expands every noise-function call there, so each map carries its fit once: one
--- geography version per map until the first release.
+-- geography version per map until the first release (DECISIONS 2026-10-30 10:55; issue #1).
 local function fit_body(name, file, g, fit_u, fit_v)
   local fit = FILES[file]
   if not fit then
@@ -207,10 +208,51 @@ local function chain(m, g)
   def(g.v, "(" .. g.gy .. " - " .. corner .. ") / " .. s .. " + " .. num(m.hr))
 end
 
+-- One axis of version g's warped chain (config.lua coast.warp): its coordinate plus the warp terms in reference px, the
+-- past_six octave (unless own_tiles: a Map type version's fray replaces it) and the tile octaves.
+local function warped(g, base, terms, axis, own_tiles)
+  local s = K.scale
+  local P = not own_tiles and C.warp.past_six
+  local parts = {base}
+  for _, o in ipairs(terms) do
+    parts[#parts + 1] = num(o.amplitude_px) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
+      num(o.seed1) .. ", input_scale = 1 / (" .. num(o.wavelength_px) .. " * " .. s .. "), offset_x = " ..
+      g.cx .. ", offset_y = " .. g.cy .. "}"
+  end
+  if P and listed(P.geographies, g) then
+    parts[#parts + 1] = "if(" .. s .. " > " .. num(P.above_scale) .. ", " .. num(P.amplitude_tiles) .. " / " .. s ..
+      " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(P.seed1[axis]) .. ", input_scale = " ..
+      num(1 / P.wavelength_tiles) .. ", offset_x = " .. g.cx .. ", offset_y = " .. g.cy .. "}, 0)"
+  end
+  tile_octaves(parts, g, axis, s)
+  return table.concat(parts, " + ")
+end
+
+local compose
+
 -- One geography version of a map: its chain, fit bodies, detail, box and elevation entry. Returns
 -- the entry's prototype.
 local function version(m, g)
   local s = K.scale
+  -- A Map type version (map_type_of; coast_fray.lua): its base version's composition by name, on a coast fit of its
+  -- own, the generated fit its fits.geo names bound to the base's warped chain plus the fray (config.lua coast_fray).
+  if g.map_type_of then
+    local r, base = fray.record(m.key, g)
+    local wu = warped(base, base.u, C.warp.u, "u", true) .. " + " .. fray.terms(base, "u")
+    local wv = warped(base, base.v, C.warp.v, "v", true) .. " + " .. fray.terms(base, "v")
+    -- over the base's overlay layers (coast.overlay), each bound to the same frayed chain, combined as the overlay body
+    local FO, O = g.fray_overlay, C.overlay and C.overlay.versions[base.geo_id]
+    if FO and O then
+      fit_body(FO.fit, g.fits.geo, base, wu, wv)
+      fit_body(FO.land, O.land_file, base, wu, wv)
+      fit_body(FO.water, O.water_file, base, wu, wv)
+      local off = num(C.overlay.offset_px)
+      def(g.geo, "min(max(" .. FO.fit .. ", " .. FO.land .. " - " .. off .. "), " .. off .. " - " .. FO.water .. ")")
+    else
+      fit_body(g.geo, g.fits.geo, base, wu, wv)
+    end
+    return compose(m, r, fray.pick(g, g.geo .. " + " .. g.detail, base.geo .. " + " .. base.detail), warps(base))
+  end
   -- A thin version (over): one lake on the older entry it names, whose chain, fit and sets it reads by
   -- name, so a save of that entry keeps its bodies and this one adds a few hundred bytes. The lake is
   -- water inside radius_px reference px of its centre and inf outside it, so it moves no other tile.
@@ -231,23 +273,7 @@ local function version(m, g)
   -- field stays on the plain chain, so the warp reaches Tile only.
   local warp = warps(g)
   if warp then
-    local P = C.warp.past_six
-    local function warped(base, terms, axis)
-      local parts = {base}
-      for _, o in ipairs(terms) do
-        parts[#parts + 1] = num(o.amplitude_px) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
-          num(o.seed1) .. ", input_scale = 1 / (" .. num(o.wavelength_px) .. " * " .. s .. "), offset_x = " ..
-          g.cx .. ", offset_y = " .. g.cy .. "}"
-      end
-      if P and listed(P.geographies, g) then
-        parts[#parts + 1] = "if(" .. s .. " > " .. num(P.above_scale) .. ", " .. num(P.amplitude_tiles) .. " / " .. s ..
-          " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(P.seed1[axis]) .. ", input_scale = " ..
-          num(1 / P.wavelength_tiles) .. ", offset_x = " .. g.cx .. ", offset_y = " .. g.cy .. "}, 0)"
-      end
-      tile_octaves(parts, g, axis, s)
-      return table.concat(parts, " + ")
-    end
-    warped_fits(g, s, warped(g.u, C.warp.u, "u"), warped(g.v, C.warp.v, "v"))
+    warped_fits(g, s, warped(g, g.u, C.warp.u, "u"), warped(g, g.v, C.warp.v, "v"))
   else
     fit_body(g.geo, g.fits.geo, g)
   end
@@ -362,11 +388,17 @@ local function version(m, g)
     def(g.far, "if(d < 0, " .. num(C.far_floor) .. ", if(d < ring, " .. num(C.edge_water) .. ", inf))",
       {d = d, ring = ring})
   end
+  return compose(m, g, g.geo .. " + " .. g.detail, warp)
+end
 
+-- The elevation entry of version g on its coast field c (the fit plus the detail): the sign-offset transfer of the
+-- clamped field, then the far field, the spawn terms, the waterways and the stamp. Returns the entry's prototype.
+compose = function(m, g, c, warp)
+  local s = K.scale
   -- The elevation entry: the sign-offset transfer of the clamped coast field, then the far field.
   -- Never name a local e, pi or inf: the built-in constants win over locals (S9).
   local o = num(C.transfer_offset)
-  local cv = "clamp(" .. g.geo .. " + " .. g.detail .. ", " .. num(-C.transfer_clamp_px) .. ", " ..
+  local cv = "clamp(" .. c .. ", " .. num(-C.transfer_clamp_px) .. ", " ..
     num(C.transfer_clamp_px) .. ")"
   local text = "min(if(cv > 0, " .. s .. " * cv + " .. o .. ", " .. s .. " * cv - " .. o .. "), " .. g.far .. ")"
   local locals = {cv = cv}
@@ -388,7 +420,7 @@ local function version(m, g)
   -- A version with a spawn record (spawn-cities) adds step 4, the start land guarantee, and step 7,
   -- the spawn lake and the version's inland lakes (spawn.lua defines all three). A version with
   -- waterways (waterways) wraps the rest in steps 5 and 6, the dams and carves (waterways.lua): a
-  -- named waterway still cuts the guarantee, and no lake reopens a dammed isthmus.
+  -- named waterway still cuts the guarantee (TST-06), and no lake reopens a dammed isthmus.
   local sp = g.spawn
   if sp then
     -- A version with a lakes field (edge-and-lakes) reads its inland lakes through the per-save switch,
