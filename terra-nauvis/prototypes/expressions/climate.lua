@@ -384,7 +384,7 @@ if AB then
   -- line's cap and keeps the temperature's noise, so the edge frays as any climate edge does, and it reads no zone: the
   -- zone's lift stays on top. The zone's lift also stands on the highland's cap, so no zone tile turns cold on a range.
   local RD_COLD = cfg.ridges.cold
-  local function cold_north(F)
+  local function cold_north(F, zone_ranges)
     local NN = F.names
     local G2 = NN.grain
     -- 0.3.0 (north2, ragged): the cold field's next versions, the moisture belts and lift with their new rows
@@ -422,8 +422,14 @@ if AB then
       {cold = "min(" .. T3 .. ", " .. CG.cap .. ")", hot = "min(" .. N.ab.temperature .. ", " .. CG.cap .. ")"})
     -- The cap takes a share of the grain: whole, it reaches 18 at full highland, and on a slope of a quarter degree a
     -- tile that scatters specks 75 tiles past the massif's edge.
-    def(G2.temperature, "min(t, " .. CG.cap .. " + " .. T2 .. " - " .. N.ab.temperature .. " + " ..
-      num(G.temperature * RD_COLD.cap_grain) .. " * " .. G2.field .. ")",
+    local capped = "min(t, " .. CG.cap .. " + " .. T2 .. " - " .. N.ab.temperature .. " + " ..
+      num(G.temperature * RD_COLD.cap_grain) .. " * " .. G2.field .. ")"
+    if zone_ranges then
+      -- Inside the zone's lift a range keeps the zone's ground (config.lua destroyed.range_heat): the cap stays off it.
+      capped = "max(" .. capped .. ", if(" .. T2 .. " > " .. num(T.ab.max) .. ", min(t, " ..
+        num(cfg.destroyed.range_heat) .. "), -inf))"
+    end
+    def(G2.temperature, capped,
       {t = "min(" .. T3 .. " + " .. num(G.temperature) .. " * " .. G2.field .. " + " .. BELT.t .. " * (1 - " ..
          NN.belt .. "), max(" .. T3 .. ", " .. num(T.ab.max) .. "))"})
     def(G2.veg, "if(" .. T3 .. " > " .. num(G.veg_zone_t) .. ", " .. G2.temperature .. ", min(" .. G2.temperature ..
@@ -479,7 +485,7 @@ if AB then
     end
   end
   cold_north(NF)
-  cold_north(NF2)
+  cold_north(NF2, true)
 end
 
 data:extend(E)

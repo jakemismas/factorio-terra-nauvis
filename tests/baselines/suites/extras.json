@@ -3058,13 +3058,6 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
-   "tn_destroyed_dead_v2": {
-    "type": "noise-expression",
-    "sha256": "a9c944184df3b8adf8f3521d621f01159bc1d9a9cd44643b346d82b03ef04e5b",
-    "dump": "m2",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_destroyed_depth_v1": {
     "type": "noise-expression",
     "sha256": "8c4fbc49eb12768f7e451385ab1b4cfd0ff8f0cc147be575ae8c91bfe5397625",

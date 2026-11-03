@@ -230,8 +230,13 @@ local function destroyed_values(map_key, v, names)
   -- The barrier (config.lua destroyed.barrier): a new world with the zone on names the next heat and class in place
   -- of the released ones, which every reader keeps reading by name. A world made before never holds these keys.
   if AB and names[sw.preset_key] == sw.on then
-    out[D.names.heat] = D.barrier.names.heat
-    out[D.chaos.names.class] = D.barrier.names.class
+    -- 0.3.0: the next heat and class, and the next zone and outline over the released ones (destroyed.barrier.next,
+    -- destroyed.outline.next), which reach and the rest read by name
+    out[D.names.heat] = D.barrier.names.heat3
+    out[D.chaos.names.class] = D.barrier.names.class3
+    out[D.barrier.names.zone] = D.barrier.names.zone3
+    out[D.outline.names.present] = D.outline.next.present
+    out[D.outline.names.depth] = D.outline.next.depth
     -- Great forests in the zone stand as dead forests: the dead trees' copies read the first body by name.
     out[D.barrier.names.dead] = D.barrier.names.dead2
     -- The exclusion (config.lua destroyed.exclusion): a palm's key names the masked body, the rest read the key.

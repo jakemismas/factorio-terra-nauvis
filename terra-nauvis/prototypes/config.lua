@@ -971,6 +971,19 @@ local DE = {
   out_isles = NOISE .. "destroyed_outline_isles_v1",
   out_present = NOISE .. "destroyed_outline_present_v1",
   out_depth = NOISE .. "destroyed_outline_depth_v1",
+  -- 0.3.0's next outline (prototypes/tables/zone_outline_v2.lua), its cuts, and the next zone and class
+  out_land2 = NOISE .. "destroyed_outline_land_v2",
+  out_sea2 = NOISE .. "destroyed_outline_sea_v2",
+  out_inside2 = NOISE .. "destroyed_outline_inside_v2",
+  out_sd2 = NOISE .. "destroyed_outline_sd_v2",
+  out_present2 = NOISE .. "destroyed_outline_present_v2",
+  out_depth2 = NOISE .. "destroyed_outline_depth_v2",
+  out_nordic = NOISE .. "destroyed_outline_nordic_v1",
+  out_iberia = NOISE .. "destroyed_outline_iberia_v1",
+  zone3 = NOISE .. "destroyed_zone_v3",
+  heat3 = NOISE .. "destroyed_heat_v3",
+  class3 = NOISE .. "destroyed_class_v3",
+  gap = NOISE .. "destroyed_gap_v1",
   temperature = NOISE .. "temperature_ab_v2",
   pool_europe = NOISE .. "city_pool_europe_v1",
   pool_atlantic = NOISE .. "city_pool_atlantic_v1",
@@ -1615,6 +1628,9 @@ return {
   preset_keys = {"elevation", "starting_resources_lake_mask", K_LAND_COARSE, K_MAP, K_SCALE, K_GEO,
                  -- the barrier's re-points (destroyed.barrier): a preset with the zone on names their next versions
                  DE.heat, DE.chaos_class, DE.clear,
+                 -- 0.3.0: the barrier's zone and the outline's presence and depth, which presets point at their next
+                 -- versions (destroyed.barrier.next, destroyed.outline.next)
+                 DE.zone2, DE.out_present, DE.out_depth,
                  REN.HS_IRON, REN.HS_COPPER, REN.HS_COAL, REN.HS_STONE, REN.HS_URANIUM, REN.HS_OIL, REN.ORE_GAP,
                  REN.ENEMY_LAYER,
                  -- 0.3.0: the trees' hook gate off hotspot ore (resources.ore_trees), and its shares, which presets
@@ -1866,6 +1882,14 @@ return {
     {
       release = "0.3.0",
       names = {CT.MARSH_FRAY, CT.MARSH_MUD_BODY2},
+    },
+    -- The Chaos zone's next outline, zone and class (0.3.0; destroyed.outline.next, destroyed.barrier.next). They exist
+    -- with Alien Biomes only, as the barrier's bodies do; a preset with the zone on names them over the released ones.
+    {
+      release = "0.3.0",
+      names = {DE.out_land2, DE.out_sea2, DE.out_inside2, DE.out_sd2, DE.out_present2, DE.out_depth2, DE.out_nordic,
+               DE.out_iberia, DE.zone3, DE.heat3, DE.class3, DE.gap},
+      files = {"prototypes/tables/zone_outline_v2.lua"},
     },
     -- The second hotspot table's bodies: under files its table, which releases the row names regions.lua composes
     -- from it, as the region table does. No geography: a preset names them over the first table's (rule 15).
@@ -3267,10 +3291,23 @@ return {
     --          one width, and no noise value clears the penalty at core 0. Every class edge takes the grain, and
     --          sand against dirt is a cut off zero as well: noise is 0 on its lattice, so a contour at or near 0 ran
     --          20 to 30 tiles dead straight, along an axis or a diagonal
+    -- next (0.3.0; and 11-02): a preset with the zone on names the next zone, heat and class over the
+    -- released ones, and every reader follows by name.
+    --   zone   the next outline's depth (destroyed.outline.next), cut by the edge noise as before and frayed at tile
+    --          level (next.fray). The reach reads it as it is, so the wasteland's edge frays as before
+    --   heat, class   read it shifted by the gap, the depth plus clamp(mid + amp * gap noise, low, top), and the heat
+    --          stops at the reach. The barrier between the wasteland's edge and the heat ground, and the heart past it,
+    --          narrow to nothing where the shift is high and run wider where it is low, along the edge: no band of one
+    --          width (NO PERFECT BANDS). A shift keeps every noise that frays the barrier's inner edge whole, where a
+    --          stretch of the depth shrank them and the edge followed the outline's smooth contour. The class
+    --          takes heat ground from next.ground_at, so heat 1 to 3 cover most of the zone past the barrier, and a
+    --          rock palette of black ash, black sand and red dirt alone: no grey dirt and no red sand (screenshot 3's
+    --          two biomes out, more of screenshot 1's three)
     barrier = {
       names = {zone = DE.zone2, heat = DE.heat2, class = DE.class2, edge = DE.edge, blob = DE.blob, flow = DE.flow,
                lava = DE.lava, kind = DE.kind2, macro = DE.macro2, reach = DE.reach, open = DE.open, thin = DE.thin,
-               dead = DE.dead, dead_noise = DE.dead_noise, dead2 = DE.dead2},
+               dead = DE.dead, dead_noise = DE.dead_noise, dead2 = DE.dead2, zone3 = DE.zone3, heat3 = DE.heat3,
+               class3 = DE.class3, gap = DE.gap},
       fray_px = 24, feather_in = 20, feather_px = 20, feather_kind = 25, feather_grain = 14, lift_px = 40,
       barrier_px = 68, barrier_mac = 20, ramp_px = 30, penalty = 3,
       lava_at = 0.75, ground_at = 0.06, ground_fine = 0.12, ground_grain = 0.18, t_at = 135, gain = 12, gain_hot = 25,
@@ -3283,6 +3320,16 @@ return {
       -- pools, and what rock stays there is black and grey, rarely red.
       heart_px = 110, heart_mac = 20, heart_ramp = 60, heart_gain = 0.6, heart_black = 0.9,
       grey_at = 0.45, grey_out = 0.6, grey_mac = 1, grey_kind = 0.35, grey_grain = 0.3, t_grain = 4,
+      next = {ground_at = -0.35,
+              -- gap: a shift in reference pixels, clamp(mid + amp * noise, low, top); at top the heat ground starts at
+              -- the wasteland's frayed edge (the barrier breaks), at low the barrier runs low pixels wider
+              gap = {wavelength_px = 36, octaves = 3, persistence = 0.55, seed1 = 7908, mid = 40, amp = 110,
+                     low = -40, top = 140},
+              -- The zone's depth frays in reference pixels (px: size and wavelength) and in tiles (tiles, at most cap
+              -- reference pixels): where the edge noise saturates, the heat ground in a gap would start on the
+              -- outline's own smooth contour, a long straight run at scale 12.
+              fray = {px = {size = 4, wavelength = 3, octaves = 3, persistence = 0.6, seed1 = 7916},
+                      tiles = {size = 6, cap = 1.5, wavelength = 9, octaves = 2, persistence = 0.5, seed1 = 7910}}},
       -- The spawn sits inside the zone now: the first tiles stay below heat 3, which slows a player on foot, and the
       -- cap lifts with distance so no ring shows. It only ever lowers the heat, so the start is cooler, never cleared.
       -- Volcanic rock stands ten times as thick as ordinary rock, so inside the zone it and the dead trees thin out to
@@ -3308,7 +3355,9 @@ return {
               -- A Great forest in the zone is a dead forest (dead2, which a new world's preset names in dead's place):
               -- with the forests on, the dead trees rise to forest.peak times the forest weight times gain, clamped to
               -- 1, in clumps of the same noise from floor up, and thin near the spawn as the rest do.
-              forest = {peak = 0.45, gain = 2, floor = 0.35}},
+              -- peak and floor 0.25 and 0.15: about 0.08 trees a tile at the
+              -- forests' middle, two and a half times the plain zone's
+              forest = {peak = 0.25, gain = 2, floor = 0.15}},
     },
     -- The outline a world made after the first release reads (prototypes/tables/zone_outline.lua). The barrier stands
     -- between the zone and ordinary land, so its depth counts land edges alone and the zone runs to the shore on every
@@ -3318,6 +3367,19 @@ return {
       names = {land = DE.out_land, sea = DE.out_sea, inside = DE.out_inside, sd = DE.out_sd, isles = DE.out_isles,
                present = DE.out_present, depth = DE.out_depth},
       squeeze = 6,
+      -- 0.3.0's next outline (prototypes/tables/zone_outline_v2.lua): the same bodies under their next names, the
+      -- released isles line, and the cuts by id. A sea cut reads cut_px inside and -cut_px outside.
+      next = {land = DE.out_land2, sea = DE.out_sea2, inside = DE.out_inside2, sd = DE.out_sd2, isles = DE.out_isles,
+              present = DE.out_present2, depth = DE.out_depth2,
+              cuts = {nordic = DE.out_nordic, iberia = DE.out_iberia}},
+      cut_px = 1000,
+      -- A land cut's edge in the presence frays at tile level by about size tiles (at most cap reference pixels): the
+      -- shared roughness alone is a smooth curve there, which the tile grid turns into straight runs.
+      cut_fray = {size = 6, cap = 1.5, wavelength = 9, octaves = 2, persistence = 0.5, seed1 = 7909},
+      -- The next outline's own contour in the presence, where the feather lets the wasteland reach it: px in reference
+      -- pixels (size and wavelength), tiles in tiles, at most cap reference pixels.
+      edge_fray = {px = {size = 4, wavelength = 3, octaves = 3, persistence = 0.6, seed1 = 7914},
+                   tiles = {size = 6, cap = 1.5, wavelength = 9, octaves = 2, persistence = 0.5, seed1 = 7915}},
     },
     -- What a zone keeps out (prototypes/zone_exclusion.lua). Data, so another zone can state its own: a tree or plant
     -- that can stand on `tiles` goes where `open` is 0, unless `plants` keeps it; `key` holds 0 on its prototype and
@@ -3358,6 +3420,11 @@ return {
     map_colors = {families = {"orange", "green", "blue", "purple"},
                   bands = {{r = 52, g = 38, b = 38}, {r = 86, g = 36, b = 32}, {r = 168, g = 40, b = 22},
                            {r = 226, g = 62, b = 24}}},
+    -- A range in the zone (climate.lua, the cold north's second grain temperature): the highland's cap pulled the
+    -- zone's lift under Alien Biomes' volcanic band, so the Alps north of Italy drew as brown and beige wasteland.
+    -- Inside the lift the temperature stays at least this (heat 1, cracked basalt), so a range in the zone is Chaos
+    -- ground.
+    range_heat = 106,
     switch_threshold = 0.5,
   },
 

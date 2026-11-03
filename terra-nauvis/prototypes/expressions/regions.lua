@@ -42,6 +42,7 @@ local cfg = require("prototypes.config")
 local T = require("prototypes.tables.regions")
 local T2 = require("prototypes.tables.hotspots_v2")
 local TC = require("prototypes.tables.zone_outline")
+local TC2 = require("prototypes.tables.zone_outline_v2")
 local TB = require("prototypes.tables.zone_blue")
 
 local R = cfg.regions
@@ -439,13 +440,13 @@ def(N.destroyed_depth, N.destroyed_sd .. " * " .. K.scale)
 -- with land edges and sea edges in two bodies, so the barrier can measure from the land edges alone. The presence
 -- stops at the isles line and the keep rows; the depth ignores the isles line, which lies on water, and is squeezed
 -- by the whole outline, so a sea edge that lands on an island still frays. A vertex's locals repeat per body, and
--- each folds per save.
-local function outline()
+-- each folds per save. OT is the table, O the names it builds: the first release's, then 0.3.0's next outline
+-- (prototypes/tables/zone_outline_v2.lua), which adds the fixed cuts.
+local function outline(OT, O)
   local Q = cfg.destroyed.outline
-  local O = Q.names
-  local verts = TC.vertices
+  local verts = OT.vertices
   local n = #verts
-  local qu, qv = query(TC.warp)
+  local qu, qv = query(OT.warp)
 
   local function vertex(L, i)
     local v, s = verts[i], tostring(i)
@@ -498,25 +499,88 @@ local function outline()
   local sign = "(2 * " .. O.inside .. " - 1)"
   def(O.sd, sign .. " * sqrt(min(" .. O.land .. ", " .. O.sea .. ")) + " .. N.rough)
 
-  local pts = {}
-  for i, ll in ipairs(TC.isles) do
-    local u, v = to_px(ll[1], ll[2])
-    pts[i] = {u, v}
+  if type(OT.isles) == "table" then
+    local pts = {}
+    for i, ll in ipairs(OT.isles) do
+      local u, v = to_px(ll[1], ll[2])
+      pts[i] = {u, v}
+    end
+    local text, isles = polygon(pts, QU, QV)
+    def(O.isles, text, isles)
   end
-  local text, isles = polygon(pts, QU, QV)
-  def(O.isles, text, isles)
 
   local present = {O.sd, "-" .. O.isles}
+  local function fray(FR, per_tile)
+    -- in tiles: size tiles, but never more than cap reference pixels (at scale 1 a tile is a reference pixel)
+    return (per_tile and ("min(" .. num(FR.cap) .. ", " .. num(FR.size) .. " / " .. K.scale .. ")") or num(FR.size)) ..
+      " * multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(FR.seed1) .. ", octaves = " ..
+      num(FR.octaves) .. ", persistence = " .. num(FR.persistence) .. ", input_scale = 1 / " ..
+      (per_tile and num(FR.wavelength) or ("(" .. num(FR.wavelength) .. " * " .. K.scale .. ")")) ..
+      ", output_scale = 1}"
+  end
+  if OT.version >= 2 then
+    -- The next outline's presence frays its contour where the wasteland reaches it (destroyed.outline.edge_fray), in
+    -- reference pixels and in tiles: the shared roughness alone is a smooth curve there, which the tile grid turns into
+    -- long straight runs.
+    local EF = Q.edge_fray
+    present[1] = O.sd .. " + " .. fray(EF.px) .. " + " .. fray(EF.tiles, true)
+  end
   local depth = {sign .. " * sqrt(" .. O.land .. ") + " .. N.rough, num(Q.squeeze) .. " * " .. O.sd}
-  for _, id in ipairs(TC.land_keeps) do
+  for _, id in ipairs(OT.land_keeps) do
     local keep = "-" .. N.row.sd .. id .. SUF
     present[#present + 1] = keep
     depth[#depth + 1] = keep
   end
+  -- The fixed cuts (zone_outline_v2.lua). A sea cut reads as far inside or far outside at once, from its crossing
+  -- count alone, as a Blue sea shape does; a land cut is a keep: its signed distance with the shared roughness.
+  local function cut_points(list)
+    local cpts = {}
+    for i, ll in ipairs(list) do
+      local u, v = to_px(ll[1], ll[2])
+      cpts[i] = {u, v}
+    end
+    return cpts
+  end
+  for _, c in ipairs(OT.cuts or {}) do
+    local name = O.cuts[c.id]
+    if c.land then
+      -- one polygon per map when the cut lists maps: each map's locals take the map's key as a prefix
+      local cl = {}
+      local function one(list, prefix)
+        local text, PL = polygon(cut_points(list), QU, QV)
+        for k, v in pairs(PL) do
+          cl[prefix .. k] = v:gsub("%f[%w_](%a+%d*)%f[^%w_]", function(w)
+            return PL[w] and prefix .. w or w
+          end)
+        end
+        return (text:gsub("%f[%w_](%a+%d*)%f[^%w_]", function(w) return PL[w] and prefix .. w or w end))
+      end
+      local ctext
+      if c.maps then
+        ctext = by_map(function(M) return one(c.maps[M.key], M.key .. "_") end)
+      else
+        ctext = one(c.latlon, "")
+      end
+      def(name, "(" .. ctext .. ") + " .. N.rough, cl)
+      depth[#depth + 1] = "-" .. name .. (c.depth_px and (" + " .. num(c.depth_px)) or "")
+      present[#present + 1] = "-" .. name .. " + " .. fray(Q.cut_fray, true)
+    else
+      local cpts = cut_points(c.latlon)
+      local SL, scross = lines(cpts, QU, QV, true)
+      local text = num(Q.cut_px) .. " * (2 * ((" .. table.concat(scross, " + ") .. ") % 2) - 1)"
+      local keep = {}
+      for i in text:gmatch("dv(%d+)") do
+        keep["dv" .. i] = SL["dv" .. i]
+      end
+      def(name, text, keep)
+      present[#present + 1] = "-" .. name
+    end
+  end
   def(O.present, joined("min", present))
   def(O.depth, joined("min", depth))
 end
-outline()
+outline(TC, cfg.destroyed.outline.names)
+outline(TC2, cfg.destroyed.outline.next)
 
 -- The shapes of Blue corrupted UK and Australia (config.lua blue; prototypes/tables/zone_blue.lua). A sea shape needs
 -- its crossing count alone, so it costs a fraction of a distance to every edge, and a map skips the shapes it does not

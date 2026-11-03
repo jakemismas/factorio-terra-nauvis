@@ -123,6 +123,24 @@ if AB then
   def(BN.kind, floored(B.kind))
   def(BN.macro, floored(B.macro))
   def(BN.zone, K.scale .. " * (" .. O.depth .. " - " .. num(B.fray_px) .. " * (1 + clamp(" .. BN.edge .. ", -1, 1)))")
+  -- The next zone (destroyed.barrier.next): the next outline's depth, cut as above and frayed. A preset with the zone
+  -- on names it over the released zone, which reach reads by name, so the wasteland's edge frays as before. The next
+  -- heat and class read it shifted by the gap instead: the barrier between that edge and the heat ground narrows to
+  -- nothing in places and runs wider in others.
+  local GP = B.next.gap
+  def(BN.gap, "clamp(" .. num(GP.mid) .. " + " .. num(GP.amp) .. " * " .. noise(GP) .. ", " .. num(GP.low) .. ", " ..
+    num(GP.top) .. ")")
+  local function fray(FR, per_tile)
+    -- in tiles: size tiles, but never more than cap reference pixels (at scale 1 a tile is a reference pixel)
+    return (per_tile and ("min(" .. num(FR.cap) .. ", " .. num(FR.size) .. " / " .. K.scale .. ")") or num(FR.size)) ..
+      " * multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(FR.seed1) .. ", octaves = " ..
+      num(FR.octaves) .. ", persistence = " .. num(FR.persistence) .. ", input_scale = 1 / " ..
+      (per_tile and num(FR.wavelength) or ("(" .. num(FR.wavelength) .. " * " .. K.scale .. ")")) ..
+      ", output_scale = 1}"
+  end
+  def(BN.zone3, K.scale .. " * (" .. D.outline.next.depth .. " - " .. num(B.fray_px) .. " * (1 + clamp(" .. BN.edge ..
+    ", -1, 1)) + " .. fray(B.next.fray.px) .. " + " .. fray(B.next.fray.tiles, true) .. ")")
+  local shifted = BN.zone3 .. " / " .. K.scale .. " + " .. BN.gap
   def(BN.lava, BN.blob .. " + " .. num(B.flow_lift) .. " * clamp((" .. BN.blob .. " - " .. num(B.flow_from) .. ") / " ..
     num(B.flow_span) .. ", 0, 1) * clamp(1 - abs(" .. BN.flow .. ") / " .. num(B.flow_width) .. ", 0, 1)")
   local grain = "noise_layer_noise(" .. num(cfg.climate.grain.layer) .. ")"
@@ -134,11 +152,13 @@ if AB then
   -- The spawn stands in the zone (destroyed.barrier.start): the hottest bands wait a little way out.
   local top = "min(" .. num(H.cap) .. ", " .. num(B.start.cap) .. " + " .. num(B.start.per_tile) .. " * max(0, " ..
     D.start.distance .. " - " .. num(B.start.cool_tiles) .. "))"
-  def(BN.heat, "if(min(" .. O.present .. ", " .. lifted .. ") > 0, clamp(" .. num(B.t_at) .. " + " .. num(B.gain) ..
+  local hot = "clamp(" .. num(B.t_at) .. " + " .. num(B.gain) ..
     " * (" .. BN.lava .. " - " .. num(B.lava_at) .. ") + " .. num(B.gain_hot) .. " * max(0, " .. BN.lava .. " - " ..
     num(B.lava_at) .. ") + " .. num(B.fine) .. " * " .. N.fine .. " + " ..
     num(B.t_grain) .. " * grain, " ..
-    num(H.rim) .. ", " .. top .. "), -inf)", {depth = BN.zone .. " / " .. K.scale, grain = grain})
+    num(H.rim) .. ", " .. top .. ")"
+  def(BN.heat, "if(min(" .. O.present .. ", " .. lifted .. ") > 0, " .. hot .. ", -inf)",
+    {depth = BN.zone .. " / " .. K.scale, grain = grain})
 
   -- Where the wasteland is: every tile the class or the lift takes. The class reads it, and the Entity program, so
   -- what a zone excludes stops on the tile the wasteland starts on.
@@ -146,25 +166,33 @@ if AB then
     swing(B.feather_px) .. " * " .. N.fine .. " + " .. num(B.feather_kind) .. " * " .. BN.kind .. " + " ..
     swing(B.feather_grain) .. " * grain))", {depth = BN.zone .. " / " .. K.scale, grain = grain})
   def(BN.open, "if(" .. BN.reach .. " + " .. swing(B.open_px) .. " > 0, 0, 1)")
+  -- The next heat: the lift on the shifted depth, and never past the wasteland's edge, which the plain depth draws
+  -- (the reach, read by name).
+  def(BN.heat3, "if(min(" .. O.present .. ", " .. lifted .. ", " .. BN.reach .. ") > 0, " .. hot .. ", -inf)",
+    {depth = shifted, grain = grain})
 
   -- Room to build round the spawn (destroyed.barrier.start): 1 outside the zone and past the clearing.
   def(BN.thin, "max(" .. BN.open .. ", clamp((" .. D.start.distance .. " - " .. num(B.start.rock_tiles) .. ") / " ..
     num(B.start.rock_span) .. ", " .. num(B.start.rock_floor) .. ", 1))")
 
-  local rock2 = "if(" .. BN.macro .. " * " .. num(B.grey_mac) .. " + " .. num(B.grey_kind) .. " * " .. BN.kind ..
-    " + " .. num(B.grey_grain) .. " * grain > " .. num(B.grey_at) .. " + " .. num(B.grey_out) .. " * (1 - core), " ..
-    L[T.grey_dirt] .. ", if(" .. BN.kind .. " + " .. num(B.black_fine) .. " * " .. N.fine .. " + " ..
+  local black = "if(" .. BN.kind .. " + " .. num(B.black_fine) .. " * " .. N.fine .. " + " ..
     num(B.black_grain) ..
     " * grain < " .. num(B.black_below) .. " + " .. num(B.black_in) .. " * core + " .. num(B.heart_black) ..
     " * heart + " .. num(B.black_mac) .. " * (1 - heart) * " .. BN.macro .. ", if(sandy > 0, " .. L[T.black_sand] ..
-    ", " .. L[T.black_dirt] .. "), if(sandy > 0, " .. L[T.red_sand] .. ", " .. L[T.red_dirt] .. ")))"
+    ", " .. L[T.black_dirt] .. "), "
+  local rock2 = "if(" .. BN.macro .. " * " .. num(B.grey_mac) .. " + " .. num(B.grey_kind) .. " * " .. BN.kind ..
+    " + " .. num(B.grey_grain) .. " * grain > " .. num(B.grey_at) .. " + " .. num(B.grey_out) .. " * (1 - core), " ..
+    L[T.grey_dirt] .. ", " .. black .. "if(sandy > 0, " .. L[T.red_sand] .. ", " .. L[T.red_dirt] .. ")))"
+  -- The next class's rock: black ash or black sand, else red dirt; no grey dirt, no red sand (destroyed.barrier.next).
+  local rock3 = black .. L[T.red_dirt] .. ")"
   -- Heat ground needs the lift: without it class 0 is ordinary ground, in specks inside the wasteland.
-  def(BN.class, "if(" .. BN.reach .. " <= 0, 0, if(min(" .. lifted .. ", " .. BN.lava .. " + " .. num(B.ground_fine) ..
+  local function class_body(name, depth, ground_at, palette)
+    def(name, "if(" .. BN.reach .. " <= 0, 0, if(min(" .. lifted .. ", " .. BN.lava .. " + " .. num(B.ground_fine) ..
     " * " .. N.fine .. " + " .. num(B.ground_grain) .. " * grain - " .. num(B.penalty) .. " * (1 - core) + " ..
-    num(B.heart_gain) .. " * heart - " .. num(B.ground_at) .. ") > 0, 0, if(grassy < " .. num(B.grass_cut) .. ", " ..
+    num(B.heart_gain) .. " * heart - " .. num(ground_at) .. ") > 0, 0, if(grassy < " .. num(B.grass_cut) .. ", " ..
     L[T.grass] .. ", " ..
-    rock2 .. ")))", {
-      depth = BN.zone .. " / " .. K.scale,
+    palette .. ")))", {
+      depth = depth,
       grain = grain,
       sandy = num(B.sand_mac) .. " * " .. BN.macro .. " + " .. N.fine .. " + " .. num(B.sand_grain) .. " * grain - " ..
         num(B.sand_cut),
@@ -175,6 +203,9 @@ if AB then
       grassy = "depth / " .. num(B.grass_px) .. " + " .. num(B.grass_mac) .. " * " .. BN.macro .. " + " ..
         num(B.grass_fine) .. " * " .. N.fine .. " + " .. num(B.grass_heart) .. " * heart",
     })
+  end
+  class_body(BN.class, BN.zone .. " / " .. K.scale, B.ground_at, rock2)
+  class_body(BN.class3, shifted, B.next.ground_at, rock3)
 
   -- The exclusion (config.lua destroyed.exclusion): the key's prototype holds 0, so a world made before keeps every
   -- hook's off branch and the dead trees' copies place nothing.
