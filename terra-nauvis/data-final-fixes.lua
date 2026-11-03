@@ -11,9 +11,9 @@
 -- with the gate tn_on (prototype off, Earth presets on) outermost, so on every other world the hook
 -- folds to the off value and the world stays hash- and complexity-identical (T13; S3: a gate inside the
 -- score cost default worlds Tile +7,489). Hooks run here, after every mod's data stage, so each wraps a
--- tile's final autoplace; a tile placed nowhere before is registered on Nauvis (noise skill rule 2).
+-- tile's final autoplace; a tile placed nowhere before is registered on Nauvis (noise rule 2).
 --
--- water-shallow (DECISIONS 12:35; A-2): the on branch is max() of the ford key tn_fords, which an Earth
+-- water-shallow: the on branch is max() of the ford key tn_fords, which an Earth
 -- preset points at its map's ford set for the save's scale, and the marsh key (climate-tiles). Where
 -- another mod gives the tile an autoplace (Alien Biomes' coastal shallows), that expression is the off
 -- value and joins the max(), so its shallows are unchanged on every world; without one the off value is
@@ -104,13 +104,98 @@ local function vanilla_hooks()
   end
 end
 
+-- A tile's own noise is found by its arguments, not by another mod's text: a multioctave_noise call that holds the
+-- shared fields' own parameters (config.lua tiles.noise_share) and a whole-number seed1. A call with any other
+-- argument, or with a call nested in it, keeps the tile's own noise.
+local SHARED_CALL = "multioctave_noise{"
+local SHARED_NAMES = {x = "x", y = "y", seed0 = "map_seed"}
+local shared_calls = 0
+
+local function trim(s)
+  return string.match(s, "^%s*(.-)%s*$")
+end
+
+-- A number, or numbers divided in turn (1/6/4), as the noise language reads them; nil for anything else.
+local function quotient(v)
+  local q
+  for part in string.gmatch(v, "[^/]+") do
+    local n = tonumber(trim(part))
+    if n == nil then
+      return nil
+    end
+    q = q and q / n or n
+  end
+  return q
+end
+
+local function call_args(body)
+  local args = {}
+  for part in string.gmatch(body .. ",", "([^,]*),") do
+    local k, v = string.match(part, "^%s*([%a_][%w_]*)%s*=%s*(.-)%s*$")
+    if k == nil or args[k] ~= nil then
+      return nil
+    end
+    args[k] = v
+  end
+  return args
+end
+
+local function shared_seed(body)
+  local NS = TL.noise_share
+  local numbers = {offset_x = NS.offset_x, persistence = NS.persistence, octaves = NS.octaves,
+                   input_scale = 1 / NS.wavelength_tiles, output_scale = NS.output_scale}
+  local args = not string.find(body, "{", 1, true) and call_args(body)
+  if not args then
+    return nil
+  end
+  for k in pairs(args) do
+    if SHARED_NAMES[k] == nil and numbers[k] == nil and k ~= "seed1" then
+      return nil
+    end
+  end
+  for k, v in pairs(SHARED_NAMES) do
+    if args[k] ~= v then
+      return nil
+    end
+  end
+  for k, v in pairs(numbers) do
+    if args[k] == nil or quotient(args[k]) ~= v then
+      return nil
+    end
+  end
+  return args.seed1 and string.match(args.seed1, "^%d+$")
+end
+
+local function shared_noise(text)
+  local out, pos = {}, 1
+  while true do
+    local s, e = string.find(text, SHARED_CALL, pos, true)
+    local close = s and string.find(text, "}", e + 1, true)
+    if not close then
+      break
+    end
+    local seed = not (s > 1 and string.find(string.sub(text, s - 1, s - 1), "[%w_]")) and
+      shared_seed(string.sub(text, e + 1, close - 1))
+    if seed then
+      out[#out + 1] = string.sub(text, pos, s - 1) .. mixed_noise(seed)
+      shared_calls = shared_calls + 1
+      pos = close + 1
+    else
+      out[#out + 1] = string.sub(text, pos, e)
+      pos = e + 1
+    end
+  end
+  out[#out + 1] = string.sub(text, pos)
+  return table.concat(out)
+end
+
 -- A tile score with the three climate fields read through the grain's copies (config.lua climate.grain)
 -- and its own noise through the shared fields.
 local function grain_scores(text)
   for field, key in pairs(cfg.climate.grain.keys) do
     text = string.gsub(text, "%f[%w_:]" .. field .. "%f[^%w_:]", key)
   end
-  return (string.gsub(text, TL.noise_share.pattern, mixed_noise))
+  return shared_noise(text)
 end
 
 -- The grain's copies reach every Alien Biomes land tile: snow, volcanic and the adopted tiles too, and ice
@@ -140,6 +225,7 @@ local function grain_hooks(excluded, n)
     autoplace.probability_expression = hook(on, original)
   end
   log(cfg.identity.title .. ": climate grain copies on " .. (n + #others) .. " Alien Biomes tiles")
+  log(cfg.identity.title .. ": shared noise in " .. shared_calls .. " tile scores")
 end
 
 -- Vegetation tiles read a temperature of their own, excluded or adopted alike (config.lua climate.grain),
@@ -214,7 +300,7 @@ local function exclusion_hooks()
   vegetation_hooks()
 end
 
--- The palm switch (DECISIONS 08:00; trees.lua): Earth presets name the Earth copies of the palms, built here because
+-- The palm switch: Earth presets name the Earth copies of the palms, built here because
 -- Alien Biomes' data-final-fixes, which runs first, is the last to touch a tree. The installed palms are held to
 -- config.lua's digest (tools/build_palms.py writes the same text): a palm that differs or lost its autoplace
 -- (Alien Biomes' disable-vegetation setting, a newer release) makes every copy the neutral body and points both keys at
@@ -506,7 +592,7 @@ else
 end
 
 -- Trees and forests. Beside Alien Biomes, the base game's living trees, rocks, decals and plants come
--- back on Earth presets (S3 section 5; R3 3.4 items 3 to 6; plan reconciliation 10): AB nils their
+-- back on Earth presets (S3 section 5; R3 3.4 items 3 to 6; design note 10): AB nils their
 -- autoplace or takes them off Nauvis, so each is rebuilt from prototypes/tables/vanilla.lua behind the gate
 -- tn_on with its key (trees.lua), restricted to the vanilla land tiles so AB's land keeps AB's own, and
 -- listed on Nauvis where the base game lists it (trees ride the trees control). Then the great-forests
@@ -608,6 +694,52 @@ local function vanilla_scale(text)
   return (string.gsub(text, "%f[%w_]temperature%f[^%w_]", TR.temperature))
 end
 
+-- The tiles of every other planet that places this decorative (its settings list it, or its property names give
+-- it a probability), sorted: Space Age's Gleba lists light-mud-decal and several of the green plants.
+local function planet_tiles_for(name)
+  local found = {}
+  for pname, planet in pairs(data.raw.planet or {}) do
+    local mgs = pname ~= "nauvis" and planet.map_gen_settings
+    local aps = mgs and mgs.autoplace_settings or {}
+    local listed = aps.decorative and aps.decorative.settings and aps.decorative.settings[name] ~= nil
+    local pen = mgs and mgs.property_expression_names or {}
+    if listed or pen["decorative:" .. name .. ":probability"] ~= nil then
+      for t in pairs(aps.tile and aps.tile.settings or {}) do
+        found[#found + 1] = t
+      end
+    end
+  end
+  table.sort(found)
+  return found
+end
+
+-- A re-listed decorative's tiles: the vanilla land tiles, then the tiles of every other planet that places it
+-- which its old restriction allowed (all of them where it had none), less any Nauvis places. The land list
+-- alone took light-mud-decal off Gleba beside Alien Biomes and Space Age (69 in the probe's near block without
+-- Terra Nauvis, 0 with it). Nauvis never holds an added tile, so no Nauvis chunk changes, and without another
+-- planet the list stays the land list.
+local function relist_restriction(name, old)
+  local list, seen = land_tiles(), {}
+  for _, t in ipairs(list) do
+    seen[t] = true
+  end
+  local allowed
+  if old then
+    allowed = {}
+    for _, t in ipairs(old) do
+      allowed[t] = true
+    end
+  end
+  for _, t in ipairs(planet_tiles_for(name)) do
+    if (allowed == nil or allowed[t]) and not seen[t] and data.raw.tile[t] and
+        not (tile_settings and tile_settings[t] ~= nil) then
+      seen[t] = true
+      list[#list + 1] = t
+    end
+  end
+  return list
+end
+
 -- The decoratives AB keeps but takes off Nauvis: (own score) + key behind the gate, re-listed. The off value
 -- reads none of these locals, so the vanilla-scale text changes no other world.
 local function relist_decoratives(R)
@@ -623,7 +755,7 @@ local function relist_decoratives(R)
           autoplace.local_expressions[k] = vanilla_scale(v)
         end
       end
-      autoplace.tile_restriction = land_tiles()
+      autoplace.tile_restriction = relist_restriction(name, autoplace.tile_restriction)
       list_on_nauvis("decorative", name)
       n = n + 1
     else
@@ -749,7 +881,7 @@ local function boost_hooks()
   log(cfg.identity.title .. ": the great-forests hook on " .. #names .. " living trees")
 end
 
--- The list hook beside Alien Biomes (config.lua tiles.scan; DECISIONS 2026-10-30 12:55): every AB-only
+-- The list hook beside Alien Biomes (config.lua tiles.scan; design notes 2026-10-30 12:55): every AB-only
 -- decorative and tree Nauvis places, with a list longer than the vanilla land tiles and none of them on
 -- it, gets them at its front and, behind the gate, its probability times the keep body. On every world
 -- without an Earth preset the hook folds and no vanilla land tile is placed beside Alien Biomes, so the
@@ -833,8 +965,146 @@ if AB then
   require("prototypes.zone_exclusion").apply(cfg.destroyed.exclusion, on_nauvis)
   require("prototypes.zone_exclusion").apply(cfg.blue.exclusion, on_nauvis)
 end
+-- Trees and plants off a hotspot's solid ore (config.lua resources.ore_trees), with and without Alien Biomes, over
+-- every tile: every tree Nauvis places takes the hook with the trees' share, then every plant but the kept kinds with
+-- the plants'.
+do
+  local OT = cfg.resources.ore_trees
+  local tiles = {}
+  for name in pairs(data.raw.tile) do
+    tiles[#tiles + 1] = name
+  end
+  table.sort(tiles)
+  local apply = require("prototypes.zone_exclusion").apply
+  apply({key = OT.key, open = OT.open, tiles = tiles, plants = {keep = {""}, drop = {}}}, on_nauvis)
+  local every_tree = {}
+  for name in pairs(data.raw.tree or {}) do
+    every_tree[name] = true
+  end
+  apply({key = OT.key, open = OT.plants.open, tiles = tiles, plants = OT.plants, keep_trees = every_tree}, on_nauvis)
+end
 
--- Ridges: the Earth-gated ridge exclusion on ore probability (DECISIONS 08:00). For each Earth
+-- Blue only in the zone (config.lua blue.no_blue): around every other hook, so inside the zone each prototype keeps its
+-- whole text, and a world without the key folds to it everywhere.
+local function no_blue_hooks()
+  local NB = cfg.blue.no_blue
+  local gate = NB.key .. " > " .. num(H.threshold)
+  local function has(name, words)
+    for _, w in ipairs(words) do
+      if string.find(name, w, 1, true) then
+        return true
+      end
+    end
+    return false
+  end
+  local function each(group, kind, pick, wrap)
+    local names, n = {}, 0
+    for name in pairs(group or {}) do
+      names[#names + 1] = name
+    end
+    table.sort(names)
+    for _, name in ipairs(names) do
+      local autoplace = group[name].autoplace
+      if autoplace and autoplace.probability_expression ~= nil and pick(name) and on_nauvis(kind, name, autoplace) then
+        local own = "(" .. tostring(autoplace.probability_expression) .. ")"
+        autoplace.probability_expression = "if(" .. gate .. ", " .. wrap(own, name) .. ", " .. own .. ")"
+        n = n + 1
+      end
+    end
+    return n
+  end
+  local tree_set = {}
+  for _, name in ipairs(NB.trees) do
+    tree_set[name] = true
+  end
+  -- Each blue tile's text as it stands, for its counterpart (NB.swap), which takes the tile's place outside the zone:
+  -- -inf on a tile alone let grey dirt and water-mud take Moscow's teal grass.
+  local swapped = {}
+  local function counterpart(name)
+    for _, p in ipairs(NB.tile_prefixes) do
+      if string.sub(name, 1, #p) == p then
+        for _, w in ipairs(NB.words) do
+          local i = string.find(name, w, 1, true)
+          if i then
+            return string.sub(name, 1, i - 1) .. NB.swap[p] .. string.sub(name, i + #w)
+          end
+        end
+      end
+    end
+  end
+  local tiles = each(data.raw.tile, "tile", function(name)
+    for _, p in ipairs(NB.tile_prefixes) do
+      if string.sub(name, 1, #p) == p then
+        return has(name, NB.words)
+      end
+    end
+    return false
+  end, function(own, name)
+    local c = counterpart(name)
+    if c and data.raw.tile[c] and data.raw.tile[c].autoplace then
+      swapped[c] = swapped[c] or {}
+      table.insert(swapped[c], own .. " + " .. NB.out)
+    end
+    return own .. " + " .. NB.tile
+  end)
+  local counterparts = 0
+  for _, c in ipairs(sorted_keys(swapped)) do
+    local autoplace = data.raw.tile[c].autoplace
+    local own = "(" .. tostring(autoplace.probability_expression) .. ")"
+    autoplace.probability_expression = "if(" .. gate .. ", max(" .. own .. ", " .. table.concat(swapped[c], ", ") ..
+      "), " .. own .. ")"
+    counterparts = counterparts + 1
+  end
+  local plants = each(data.raw["optimized-decorative"], "decorative", function(name)
+    return has(name, NB.words)
+  end, function(own)
+    return own .. " * " .. NB.open
+  end)
+  local trees = each(data.raw.tree, "entity", function(name)
+    return tree_set[name] == true
+  end, function(own)
+    return own .. " * " .. NB.open
+  end)
+  log(cfg.identity.title .. ": blue only in the zone on " .. tiles .. " tiles (" .. counterparts ..
+    " counterparts), " .. plants .. " plants and " .. trees .. " trees")
+end
+if AB then
+  no_blue_hooks()
+end
+
+-- No normal plant in the Blue zone (config.lua blue.plants2): green and olive plants that can stand on its tiles take
+-- its open, behind the zone's own gate and a key only new worlds hold.
+local function zone_plant_hooks()
+  local B, P2 = cfg.blue, cfg.blue.plants2
+  local zone_tiles = {}
+  for _, t in ipairs(B.exclusion.tiles) do
+    zone_tiles[t] = true
+  end
+  local n = 0
+  for _, name in ipairs(sorted_keys(data.raw["optimized-decorative"])) do
+    local autoplace = data.raw["optimized-decorative"][name].autoplace
+    local green = false
+    for _, w in ipairs(P2.words) do
+      green = green or string.find(name, w, 1, true) ~= nil
+    end
+    local stands = autoplace and autoplace.tile_restriction == nil
+    for _, t in ipairs((autoplace or {}).tile_restriction or {}) do
+      stands = stands or zone_tiles[t] == true
+    end
+    if green and stands and autoplace.probability_expression ~= nil and on_nauvis("decorative", name, autoplace) then
+      local own = "(" .. tostring(autoplace.probability_expression) .. ")"
+      autoplace.probability_expression = "if(" .. P2.key .. " > " .. num(H.threshold) .. ", if(" .. B.exclusion.key ..
+        " > " .. num(H.threshold) .. ", " .. own .. " * " .. B.exclusion.open .. ", " .. own .. "), " .. own .. ")"
+      n = n + 1
+    end
+  end
+  log(cfg.identity.title .. ": no normal plant in the blue zone on " .. n .. " plants")
+end
+if AB then
+  zone_plant_hooks()
+end
+
+-- Ridges: the Earth-gated ridge exclusion on ore probability. For each Earth
 -- ore of config.lua's ridges group whose resource has an autoplace, a wrapper body holds the live
 -- probability expression (as the pack leaves it: base, Alien Biomes, the Oil Rig and the rest load
 -- before this) times the ore clearance of prototypes/expressions/ridges.lua, and every Terra Nauvis
@@ -923,9 +1193,11 @@ end
 
 local RS = cfg.resources
 local on = cfg.keys.hotspots .. " > " .. string.format(cfg.number_format, cfg.ridges.switch_threshold)
-local HS = {}
+local HS, FLUID, HROW = {}, {}, {}
 for _, h in ipairs(cfg.hotspots.resources) do
   HS[h.resource] = h.names
+  FLUID[h.resource] = h.fluid ~= nil
+  HROW[h.resource] = h
 end
 local RAMPED = {}
 for _, name in ipairs(RS.ramped) do
@@ -939,6 +1211,75 @@ local function wrapper(name, live, owner, expression)
   locals.live_value = live
   return {type = "noise-expression", name = name, expression = expression, local_expressions = locals,
           local_functions = deep(owner and owner.local_functions)}
+end
+
+-- 0.3.0's richness wrapper of one ore (config.lua resources.richness_v2): the same choice as the first, with the
+-- distance read as the reference map has it past ref_scale, and a solid hotspot ore lifted to the regular ore's
+-- richness round it. Up to ref_scale the regular branch folds to the first wrapper's text.
+local RV = RS.richness_v2
+local function richness_v2(W, keys, o, ap, rich, hs)
+  local S = cfg.keys.scale
+  local function f(d)
+    return "max((" .. num(RV.rich_offset) .. " + " .. d .. ") / " .. num(RV.rich_span) .. ", 1)"
+  end
+  local function ramp(d)
+    local RP = RS.ramp
+    return "(1 + " .. num(RP.gain) .. " * clamp((" .. d .. " - " .. num(RP.from) .. ") / " .. num(RP.span) .. ", 0, 1))"
+  end
+  local ramped = RAMPED[o.resource]
+  local function F(d)
+    return ramped and (f(d) .. " * " .. ramp(d)) or f(d)
+  end
+  local far = S .. " > " .. num(RV.ref_scale)
+  local own = ramped and ("live_value * " .. RS.ramp.name) or "live_value"
+  local base = "if(" .. far .. ", live_value * " .. f("rv_d") .. " / " .. f("distance") ..
+    (ramped and (" * " .. ramp("rv_d")) or "") .. ", " .. own .. ")"
+  local hot = hs.r
+  if not FLUID[o.resource] then
+    hot = hs.r .. " * max(1, " .. num(RV.lift) .. " * " .. F("rv_d") .. " / (" .. F("distance") .. ") ^ " ..
+      num(RV.cube_root) .. ")"
+  end
+  local w = wrapper(o.r2, rich, ap, "if(" .. on .. ", max(rv_base, " .. hot .. "), rv_base)")
+  w.local_expressions.rv_d = "if(" .. far .. ", distance * " .. num(RV.ref_scale) .. " / " .. S .. ", distance)"
+  w.local_expressions.rv_base = base
+  W[#W + 1] = w
+  keys[o.richness] = o.r2
+end
+
+-- 0.3.0's probability wrapper of a solid ore: the hotspot term's value lowered by the wobble (config.lua
+-- resources.richness_v2.edge), and Batu Hijau's copper kept off Lombok (richness_v2.lombok). The value is the second
+-- table's body: new worlds read that table through the first one's names.
+local function probability_v3(W, keys, o)
+  local keep = "1"
+  local LB = RV.lombok
+  if o.resource == LB.resource then
+    -- west of the strait on each map's own chain (the region layer's chain, whose frame later versions keep), near the
+    -- row: the map's u against the strait's column, folded on the per-save map number
+    local west, ids = {}, {}
+    for _, key in ipairs(cfg.map_order) do
+      for _, v in ipairs((cfg.geography[key] or {}).versions or {}) do
+        if v.geo_id == cfg.layer_chain_geo[key] then
+          local cut = (LB.cut_lon - cfg.maps[key].lon_left_edge) * cfg.coordinates.px_per_degree - 1 / 2
+          west[#west + 1] = "(" .. v.u .. " < " .. num(cut) .. ")"
+          ids[#ids + 1] = cfg.maps[key].id
+        end
+      end
+    end
+    local fold = west[#west]
+    for i = #west - 1, 1, -1 do
+      fold = "if(" .. cfg.keys.map .. " == " .. num(ids[i]) .. ", " .. west[i] .. ", " .. fold .. ")"
+    end
+    local pd = cfg.regions.names.row.pd .. LB.row .. cfg.regions.names.suffix
+    keep = "(1 - " .. fold .. " * (" .. pd .. " < " .. num(LB.reach_px) .. "))"
+  end
+  -- the cone's least slope, the first table's bound (config.lua hotspots.size note)
+  local rq = HROW[o.resource].rq
+  local slope = cfg.hotspots.spot.cone_factor / (math.pi * rq * rq * rq)
+  local value = "clamp(" .. cfg.hotspots_v2.bodies[o.resource] .. " - " .. num(RV.edge.trim * slope) .. " * " ..
+    RV.edge.wobble .. ", 0, 1)"
+  W[#W + 1] = {type = "noise-expression", name = o.p3, expression = "if(" .. on .. ", max(" .. o.p_v1 .. ", " ..
+               value .. " * " .. clear .. " * " .. keep .. "), " .. o.p_v1 .. ")"}
+  keys[o.probability] = o.p3
 end
 
 -- Each Earth ore: the probability wrapper's next version and the richness wrapper.
@@ -956,6 +1297,12 @@ local function ore_wrappers(W, keys)
       W[#W + 1] = wrapper(o.r, rich, ap, "if(" .. on .. ", max(" .. base .. ", " .. hs.r .. "), " .. base .. ")")
       keys[o.probability] = o.p
       keys[o.richness] = o.r
+      if o.r2 then
+        richness_v2(W, keys, o, ap, rich, hs)
+      end
+      if o.p3 then
+        probability_v3(W, keys, o)
+      end
     elseif ap then
       log(cfg.identity.title .. ": " .. o.resource .. " has no wrapper this version builds; its ore keeps no " ..
           "hotspots")
@@ -975,7 +1322,37 @@ local function enemy_wrapper(W, keys)
     local H2 = cfg.hotspots_v2
     W[#W + 1] = wrapper(H2.nests.wrapper, live, ebp, "if(" .. on .. ", if(" .. H2.enemy_layer ..
       " > " .. num(H2.nests.outside) .. ", " .. H2.enemy_layer .. ", live_value), live_value)")
-    keys[cfg.keys.enemy] = H2.nests.wrapper
+    -- 0.3.0: the bases scattered (config.lua enemies.scatter), off a hotspot's ore while hotspots are on.
+    local SC = cfg.enemies.scatter
+    local solid = {}
+    for _, resource in ipairs(RS.ramped) do
+      solid[#solid + 1] = H2.bodies[resource]
+    end
+    solid[#solid + 1] = H2.bodies["uranium-ore"]
+    local function draw(x, y, seed)
+      return "random_penalty{x = " .. x .. ", y = " .. y .. ", source = 1, amplitude = 1, seed = " .. num(seed) .. "}"
+    end
+    local L = num(SC.run)
+    -- a run is kept when its draw is under the share and under the two runs' on each side along the row, so kept runs
+    -- stand at least two runs apart and neither spawners nor worms line up along a row
+    W[#W + 1] = {type = "noise-expression", name = SC.wrapper,
+                 expression = "if((base > 0) * (1 - ore) * (run < " .. num(SC.run_share) ..
+                   " * fit) * (run < min(before, after, before2, after2)) > 0, base, min(base, -1))",
+                 local_expressions = {
+                   base = H2.nests.wrapper,
+                   phase = draw("0", "y", SC.seed + 1),
+                   index = "floor((x + " .. L .. " * phase) / " .. L .. ")",
+                   run = draw("index", "y", SC.seed),
+                   before = draw("index - 1", "y", SC.seed),
+                   after = draw("index + 1", "y", SC.seed),
+                   before2 = draw("index - 2", "y", SC.seed),
+                   after2 = draw("index + 2", "y", SC.seed),
+                   fit = "if(" .. on .. ", if(" .. H2.enemy_layer .. " > " .. num(H2.nests.outside) .. ", " ..
+                     num(SC.footprint_share) .. ", 1), 1)",
+                   ore = "if(" .. on .. ", max(" .. table.concat(solid, ", ") .. ") > " .. num(-SC.ore_margin) ..
+                     ", 0)",
+                 }}
+    keys[cfg.keys.enemy] = SC.wrapper
   end
 end
 
@@ -1017,7 +1394,14 @@ natural_patches(W, keys)
 ore_wrappers(W, keys)
 enemy_wrapper(W, keys)
 offshore_wrappers(W, keys)
+-- the trees' hook gate (resources.ore_trees): new presets alone switch it on
+keys[RS.ore_trees.key] = cfg.neutral.one
+keys[RS.ore_trees.open] = RS.ore_trees.open_v2
+keys[RS.ore_trees.plants.open] = RS.ore_trees.plants.open_v2
 if #W > 0 then
   data:extend(W)
 end
 point_presets(keys)
+
+-- The zones' ground and look (prototypes/zone_look.lua): last, so its copies take every hook's final text.
+require("prototypes.zone_look").apply()

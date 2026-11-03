@@ -12,10 +12,11 @@ Software and are not under the GPL.
 
 This zip holds the mod's Lua source. The complete corresponding source of this version also covers
 the build tools (tools/) and the input data (data-src/) that the mod's generated files are made from.
-The repository is private, so a link would not reach you. Instead, the author, Jake Mismas
-(jake@jakemismas.com), gives anyone who received this zip the complete corresponding source of this
-version on request, as a zip of the repository at the version's tag, at no charge beyond the cost of
-delivery. The offer stays valid for at least three years from the day you received this zip.
+Source is available on request from the author, and at https://github.com/jakemismas/terra-nauvis
+once that repository is public. The author, Jake Mismas (jake@jakemismas.com), gives anyone who
+received this zip the complete corresponding source of this version on request, as a zip of the
+repository at the version's tag, at no charge beyond the cost of delivery. The offer stays valid for
+at least three years from the day you received this zip.
 
 The ore hotspots' places and sizes are facts, listed with their sources in the repository's
 data-src/hotspots/deposits-research.md. No dataset ships in this zip; that file's country tables quote the

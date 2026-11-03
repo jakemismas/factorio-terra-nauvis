@@ -1,4 +1,4 @@
--- Ridges (ARCHITECTURE.md, contract 8; S5; APPROVALS 5 and 11; DECISIONS 2026-10-30,
+-- Ridges (ARCHITECTURE.md, contract 8; S5; APPROVALS 5 and 11; design notes 2026-10-30,
 -- ridges that read as mountains).
 --
 -- Every range of prototypes/tables/ranges.lua (tools/build_ranges.py writes it from the approval data,
@@ -31,18 +31,18 @@
 -- program, a cheap superset of the tiles whose centre lies within ore_clear_tiles of the unwandered
 -- crest (read at the centre, where an ore entity stands, not at the integer corner the program samples;
 -- an exact distance there measured Entity +3,028 on Europe against the ridges' +2,000 allocation; the
--- ridges' DECISIONS). Ore clears the axis only: where a ridge wanders off it an ore patch can take a
+-- ridges' design notes). Ore clears the axis only: where a ridge wanders off it an ore patch can take a
 -- cliff out, which reads as one more gap. All read the map's own coordinate chain, so they are
 -- firewall-clean. Shared bodies: the effective height, which the ridges toggle (a name switch to tn_one
 -- or tn_zero) turns into -inf when off, so nothing of a ridge compiles and no cliff is placed (S5: a
 -- constant field places none); the ridge-free start disc (D25 wins inside it, design rule 12); the two cliff
 -- properties; and the ore clearance that data-final-fixes.lua multiplies into every Earth ore
--- probability, without a global cliff_removal_probability edit (DECISIONS 08:00). Every noise reads the
+-- probability, without a global cliff_removal_probability edit. Every noise reads the
 -- frame's geo tiles, so a seed's ridges are one shape for every spawn city; only the Cliff program pays
 -- for the noise, on the 4-tile lattice (S5). Every name and number comes from config.lua (S-5); the
 -- toggle never multiplies (U5).
 --
--- The highlands (2026-10-30: a cliff squiggle on plain grass does not read as a mountain range; DECISIONS
+-- The highlands (2026-10-30: a cliff squiggle on plain grass does not read as a mountain range; design notes
 -- 18:00): a band round each range, wider and stronger the taller the range, faded in outside the ridge-free
 -- start disc, frayed by noise the region layer already computes. It costs only what it reads again:
 --   rocks    in the Entity program, on the crest band's own pieces and one reach per piece: lifts rock_density
@@ -511,7 +511,7 @@ for _, key in ipairs(cfg.map_order) do
   end
 end
 
--- The line field (config.lua ridges.line and ridges.preset; DECISIONS 2026-10-31, ridges as lines). The bodies above
+-- The line field (config.lua ridges.line and ridges.preset; design notes 2026-10-31, ridges as lines). The bodies above
 -- draw a ridge as the outline of a band, so it has two flanks that run side by side and close round its ends: at
 -- scale 1, where a range is about as long as its band is wide, that outline is a box. Here the field is a signed
 -- distance across the crest with its high side on one hand, so its contours follow the crest and stand open at both
@@ -531,7 +531,7 @@ end
 --           / 6) ^ power: a range is shorter at a low scale, so its lines stand closer and fewer of them
 --   along   the distance along the crest in tiles, at the same piece. The line's bends are waves of this, not noise
 --           over the plane: noise with slope enough to bend a line off the lattice folds a contour back on itself
---           into rings, and noise gentle enough not to leaves ruled flats, while a wave along the crest moves a
+--           into rings, and noise gentle enough not to leaves decided flats, while a wave along the crest moves a
 --           contour only along the crest, so any bend is free
 --   h       (side * stretch + fine) / reach + bends, three contours through config.lua's contour clamp: the line at
 --           h = 0 and a side line each way. bends are the waves of along, their lengths in no simple ratio and each

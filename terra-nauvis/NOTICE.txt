@@ -5,8 +5,10 @@ Copyright (C) 2026 Jake Mismas
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License version 3 as published by the Free Software Foundation. It comes with no
-warranty. See LICENSE beside this file. This covers the whole mod except the items under "Not
-covered by the GPL" below. SOURCE-OFFER.txt says how to get the complete source.
+warranty. See LICENSE beside this file. This covers the whole mod, with two limits: data derived
+from the sources under "Third-party data" also stays under its source's licence, and the items
+under "Not covered by the GPL" are not offered under it. SOURCE-OFFER.txt says how to get the
+complete source.
 
 Modified work
 -------------
@@ -34,9 +36,12 @@ OpenStreetMap: the Suez, Kiel and Corinth canal routes and two points at the Str
 data (c) OpenStreetMap contributors, available under the Open Database License
 (https://www.openstreetmap.org/copyright). Changed: simplified and snapped to the map grid.
 
-Wikipedia: place coordinates, lengths and heights were read from Wikipedia articles, cited with pinned
-revisions in the source's docs/plan/research/R7b-geography.json and R7a-hotspots.json. Any Wikipedia text in those
-notes is available under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/).
+Wikipedia: place coordinates, lengths, heights, areas, water depths and some deposit figures were
+read from Wikipedia articles. The source cites them by URL or by name in
+docs/plan/research/R7b-geography.json (where some links pin a revision) and R7a-hotspots.json,
+data-src/hotspots/deposits-research.md and .json, data-src/approvals/approvals-data.json and
+tests/oracle/. Any Wikipedia text in those files is available under CC BY-SA 4.0
+(https://creativecommons.org/licenses/by-sa/4.0/).
 
 Ore hotspots: places and sizes are facts, cited per row in the source's data-src/hotspots/deposits-research.md. Its
 country tables quote the USGS Mineral Commodity Summaries 2026 data release, a United States government
@@ -55,7 +60,11 @@ Other mods
 ----------
 
 Terra Nauvis can work beside Alien Biomes by Earendel, Cargo Ships, Cargo Ships: Oil Rig and Resource
-Spawner Overhaul. The mod contains none of their content and refers to their prototypes by name only.
+Spawner Overhaul. It ships none of their code, text or art. It names some of their prototypes, and
+when they are installed it reads their prototypes at load time and wraps some of their autoplace
+expressions in its own. Beside Alien Biomes it builds its palms from the installed palms, checked
+against a digest, and finds each land tile's own noise call by its parameters, which apart from the
+seed are those of the mod's own shared noise.
 
 Trademarks
 ----------

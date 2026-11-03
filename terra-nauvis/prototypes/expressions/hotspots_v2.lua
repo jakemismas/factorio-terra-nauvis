@@ -14,7 +14,7 @@
 -- No map slider reaches a hotspot: the switch and the amount setting are its only controls. Ore never leaves a
 -- footprint at any scale, seed or amount: a cone is held to its room, as in the first table. A row's least_tiles
 -- raises its footprint at low scales, where the table's floor is no wider than a regular patch; the enemy layer keeps
--- to the footprint without it, so the wider field is not one solid biter base (DECISIONS 2026-10-31, Indonesia).
+-- to the footprint without it, so the wider field is not one solid biter base.
 local cfg = require("prototypes.config")
 local V = require("prototypes.hotspot_rows_v2")
 
@@ -138,7 +138,7 @@ end
 -- s<j> where its spots start, c<j> the radius it allows there, b<j> its bar. T takes what the resource's body reads,
 -- Q what its quantity body reads and Bars what its bars body reads. The chain from a bar to a spot reads each local
 -- many times and the game copies a local at every read, so a row's quantity and bar stand in named bodies of their
--- own: as locals of the resource's body they added 1.8 s to every start (DECISIONS 2026-10-31, the release candidate).
+-- own: as locals of the resource's body they added 1.8 s to every start.
 local function row_locals(h, r, j, T, Q, Bars)
   local L = {}
   local unit = TG.per_km2 / h.spots_per_km2 * h.base_density * h.mean_size
@@ -263,6 +263,48 @@ for _, h in ipairs(HC.resources) do
       num(blob_height(h)), L)
   end
 end
+
+-- Trees off the table's solid ore (config.lua resources.ore_trees): the hook key's off value, and the share of a
+-- tree's probability left near the ore, 1 with hotspots off.
+local OT = RS.ore_trees
+local solid = {}
+for _, resource in ipairs(RS.ramped) do
+  solid[#solid + 1] = H2.bodies[resource]
+end
+solid[#solid + 1] = H2.bodies["uranium-ore"]
+def(OT.key, "0")
+local function open(name, margin, floor)
+  def(name, "if(" .. K.hotspots .. " > " .. num(cfg.ridges.switch_threshold) .. ", clamp(-max(" ..
+    table.concat(solid, ", ") .. ") / " .. num(margin) .. ", " .. num(floor) .. ", 1), 1)")
+end
+open(OT.open, OT.margin, OT.floor)
+open(OT.plants.open, OT.plants.margin, OT.plants.floor)
+
+-- The shares' next versions: each solid body less the wobble its ore's probability takes, in its cone's least slope
+-- (data-final-fixes.lua probability_v3), so the shares follow the ore that stands.
+local trimmed = {}
+for _, h in ipairs(HC.resources) do
+  if H2.bodies[h.resource] and not h.fluid then
+    local slope = SP.cone_factor / (math.pi * h.rq * h.rq * h.rq)
+    trimmed[#trimmed + 1] = H2.bodies[h.resource] .. " - " .. num(RS.richness_v2.edge.trim * slope) .. " * " ..
+      RS.richness_v2.edge.wobble
+  end
+end
+local function open_v2(name, margin, floor)
+  def(name, "if(" .. K.hotspots .. " > " .. num(cfg.ridges.switch_threshold) .. ", clamp(-max(" ..
+    table.concat(trimmed, ", ") .. ") / " .. num(margin) .. ", " .. num(floor) .. ", 1), 1)")
+end
+open_v2(OT.open_v2, OT.margin, OT.floor)
+open_v2(OT.plants.open_v2, OT.plants.margin, OT.plants.floor)
+
+-- The wobble that moves a solid hotspot ore's outline inward (config.lua resources.richness_v2.edge).
+local ED = RS.richness_v2.edge
+local function wave(wavelength, seed1)
+  return "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(seed1) .. ", input_scale = 1 / " ..
+    num(wavelength) .. "}"
+end
+def(ED.wobble, "clamp(" .. num(ED.mid) .. " + " .. num(ED.amp) .. " * (" .. wave(ED.long, ED.seed1) .. " + " ..
+  num(ED.half) .. " * " .. wave(ED.short, ED.seed1 + 1) .. "), 0, 1)")
 
 -- Regular ore keeps out of every footprint of the table, as the first gap body does for the first table's.
 local NP = RS.natural

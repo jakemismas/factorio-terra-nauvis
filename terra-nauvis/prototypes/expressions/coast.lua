@@ -34,7 +34,7 @@
 --                                          rivers, straits, basins and open canals, each set picked by
 --                                          the folded scale (waterways.lua); dams come after the lakes
 --                                          so no lake reopens a dammed isthmus, and a carve still cuts
---                                          the start land guarantee (TST-06)
+--                                          the start land guarantee
 --   elevation = if(e < 0, min(e, stamp), e)  a version with an offshore stamp (resources-enemies): the
 --                                          map's stamp key, a Map type fallback, names the stamp body
 --                                          (resources.lua) with hotspots on and the neutral zero off,
@@ -80,7 +80,7 @@ end
 -- A generated tents body: the fit's name-free locals plus U and V bound to the version's chain, or to
 -- fit_u and fit_v where the version warps its fit. The game parses every body's text at startup (about
 -- 0.5 us a byte) and expands every noise-function call there, so each map carries its fit once: one
--- geography version per map until the first release (DECISIONS 2026-10-30 10:55; issue #1).
+-- geography version per map until the first release.
 local function fit_body(name, file, g, fit_u, fit_v)
   local fit = FILES[file]
   if not fit then
@@ -106,6 +106,42 @@ local function listed(ids, g)
 end
 local function warps(g)
   return listed(C.warp.geographies, g)
+end
+
+-- Octaves fixed in tiles (config.lua coast.warp.tile_octaves) appended to a warped axis, each folded to 0 below its
+-- min_scale.
+local function tile_octaves(parts, g, axis, s)
+  local TO = C.warp.tile_octaves
+  if not (TO and listed(TO.geographies, g)) then
+    return
+  end
+  for _, o in ipairs(TO.terms) do
+    local term = num(o.amplitude_tiles) .. " / " .. s .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " ..
+      num(o.seed1[axis]) .. ", input_scale = " .. num(1 / o.wavelength_tiles) .. ", offset_x = " .. g.cx ..
+      ", offset_y = " .. g.cy .. "}"
+    if o.max_scale then
+      term = "if(" .. s .. " <= " .. num(o.max_scale) .. ", " .. term .. ", 0)"
+    end
+    parts[#parts + 1] = "if(" .. s .. " >= " .. num(o.min_scale) .. ", " .. term .. ", 0)"
+  end
+end
+
+-- The shore body's land term. The shore fray (config.lua shore.fray): near the coast the land gain wanders by a noise
+-- fixed in tiles, so the beach band's inland edge, a contour of the fit, leaves the fit's lattice. Land stays land: the
+-- factor stays above 0. Sets locals.fr where the version is listed.
+local function shore_land(g, s, o, locals)
+  local FR = cfg.shore.fray
+  if not (FR and listed(FR.geographies, g)) then
+    return "gl * cv + " .. o
+  end
+  local terms = {}
+  for _, oc in ipairs(FR.octaves) do
+    terms[#terms + 1] = num(oc.weight) .. " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(oc.seed1) ..
+      ", input_scale = " .. num(1 / oc.wavelength_tiles) .. ", offset_x = " .. g.cx .. ", offset_y = " .. g.cy .. "}"
+  end
+  locals.fr = "if(" .. s .. " >= " .. num(FR.min_scale) .. ", " .. num(FR.amplitude) .. " * clamp(" ..
+    table.concat(terms, " + ") .. ", -1, 1) * clamp(1 - cv * " .. s .. " / " .. num(FR.reach_tiles) .. ", 0, 1), 0)"
+  return "gl * cv * (1 + fr) + " .. o
 end
 
 -- One geography version of a map: its chain, fit bodies, detail, box and elevation entry. Returns
@@ -151,6 +187,7 @@ local function version(m, g)
           " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(P.seed1[axis]) .. ", input_scale = " ..
           num(1 / P.wavelength_tiles) .. ", offset_x = " .. g.cx .. ", offset_y = " .. g.cy .. "}, 0)"
       end
+      tile_octaves(parts, g, axis, s)
       return table.concat(parts, " + ")
     end
     fit_body(g.geo, g.fits.geo, g, warped(g.u, C.warp.u, "u"), warped(g.v, C.warp.v, "v"))
@@ -283,17 +320,18 @@ local function version(m, g)
   -- reads the version's fit, detail and box.
   if g.shore then
     local SH = cfg.shore
-    def(g.shore, "min(if(cv > 0, gl * cv + " .. o .. ", gw * cv - " .. o .. "), " .. g.far .. ")",
-      {cv = cv,
+    local shore_locals = {cv = cv,
        gl = "max(" .. num(SH.land.min) .. ", " .. num(SH.land.per_scale) .. " * " .. s .. ")",
        gw = (warp and num(C.warp.water_gain[g.geo_id]) .. " * " or "") ..
-         "max(" .. num(SH.water.min) .. ", " .. num(SH.water.per_scale) .. " * " .. s .. ")"})
+         "max(" .. num(SH.water.min) .. ", " .. num(SH.water.per_scale) .. " * " .. s .. ")"}
+    local land = shore_land(g, s, o, shore_locals)
+    def(g.shore, "min(if(cv > 0, " .. land .. ", gw * cv - " .. o .. "), " .. g.far .. ")", shore_locals)
     text, locals = g.shore, {}
   end
   -- A version with a spawn record (spawn-cities) adds step 4, the start land guarantee, and step 7,
   -- the spawn lake and the version's inland lakes (spawn.lua defines all three). A version with
   -- waterways (waterways) wraps the rest in steps 5 and 6, the dams and carves (waterways.lua): a
-  -- named waterway still cuts the guarantee (TST-06), and no lake reopens a dammed isthmus.
+  -- named waterway still cuts the guarantee, and no lake reopens a dammed isthmus.
   local sp = g.spawn
   if sp then
     -- A version with a lakes field (edge-and-lakes) reads its inland lakes through the per-save switch,

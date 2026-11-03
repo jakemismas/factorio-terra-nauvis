@@ -19,7 +19,7 @@ local cfg = require("prototypes.config")
 -- policy", rule 11). Each list runs in the order of the scale list of the record that names it.
 local FILES = {
   europe = {
-    [1] = {
+    {
       require("prototypes.generated.waterways_europe_s1_v1"),
       require("prototypes.generated.waterways_europe_s2_v1"),
       require("prototypes.generated.waterways_europe_s3_v1"),
@@ -27,7 +27,18 @@ local FILES = {
       require("prototypes.generated.waterways_europe_s5_v1"),
       require("prototypes.generated.waterways_europe_s6_v1"),
     },
-    [2] = {
+    {
+      require("prototypes.generated.waterways_europe_s12_v1"),
+      require("prototypes.generated.waterways_europe_s24_v1"),
+    },
+    -- 3: version 7 serves every offered scale from the released files
+    {
+      require("prototypes.generated.waterways_europe_s1_v1"),
+      require("prototypes.generated.waterways_europe_s2_v1"),
+      require("prototypes.generated.waterways_europe_s3_v1"),
+      require("prototypes.generated.waterways_europe_s4_v1"),
+      require("prototypes.generated.waterways_europe_s5_v1"),
+      require("prototypes.generated.waterways_europe_s6_v1"),
       require("prototypes.generated.waterways_europe_s12_v1"),
       require("prototypes.generated.waterways_europe_s24_v1"),
     },
@@ -102,17 +113,75 @@ local function fn(f)
   return {parameters = params, expression = f.expression, local_expressions = locals}
 end
 
--- The natural course (config.lua natural; DECISIONS 2026-10-30): one warp of the geo tiles every set
+-- The natural course (config.lua natural; design notes 2026-10-30): one warp of the geo tiles every set
 -- of a version reads, so the fords stay on their rivers and the cost is a few noise evaluations per tile,
 -- not per segment. Each octave is one basis noise per axis in geo tiles, anchored like the coast's detail,
 -- so the same ground wanders the same way from every spawn. Rivers read X and Y, the whole warp; straits,
 -- canals and dams read XP and YP, each octave at its passage share, so a passage keeps the places the
 -- oracle tests. The warp fades out around the spawn, so a river stays where the river-safe starts measured
 -- it. W is the rivers' low-frequency width modulation, B the fine bank noise of rivers and passages, which
--- only ever widens, so no floor moves, J the rough edge of a ford, which would read as a bar across its
--- river without it. T, the rivers' source taper (a generated set of the sources), reads X and Y. Every local
--- reads constants and x, y alone.
-local function natural_locals(g, mouth, scale)
+-- only ever widens, so no floor moves (the river set of a geography low_bank lists takes low_bank's rows up to
+-- its max_scale), J the rough edge of a ford, which would read as a bar across its river without it. T, the
+-- rivers' source taper (a generated set of the sources), reads X and Y. Every local reads constants and x, y alone.
+-- Whether geography version g is in a fine row's list, at a scale the row serves (min_scale, max_scale, above).
+local function fine_row(row, g, scale, above)
+  if not row then
+    return false
+  end
+  local listed = false
+  for _, id in ipairs(row.geographies) do
+    listed = listed or id == g.geo_id
+  end
+  return listed and scale >= (row.min_scale or scale) and scale > (above or 0) and scale <= (row.max_scale or scale)
+end
+
+-- The fine meander (config.lua natural.warp_fine): rivers only, octaves fixed in tiles, so a bank bends between the
+-- coarse octaves' bends. Named on as the warp rows' locals, so the warp bodies carry them.
+local function fine_warp(N, g, scale, noise, locals, rx, ry)
+  local WF = N.warp_fine
+  if not fine_row(WF, g, scale) then
+    return
+  end
+  for i, o in ipairs(WF.octaves) do
+    local k = #N.warp + i
+    local nx, ny = "wx" .. k, "wy" .. k
+    locals[nx] = noise(o.seed1x, {o.wavelength_tiles, 0})
+    locals[ny] = noise(o.seed1y, {o.wavelength_tiles, 0})
+    rx[#rx + 1] = num(o.amplitude_tiles) .. " * " .. nx
+    ry[#ry + 1] = num(o.amplitude_tiles) .. " * " .. ny
+  end
+end
+
+-- The fine bank (config.lua natural.bank_fine): octaves fixed in tiles that only widen B. A scale the row does not
+-- serve, and a version not listed, keep the bank as it was.
+local function fine_bank(N, g, scale, noise, half)
+  local BF = N.bank_fine
+  if not fine_row(BF, g, scale) then
+    return ""
+  end
+  local out = ""
+  for _, o in ipairs(BF.octaves) do
+    out = out .. " + " .. num(o.amplitude_tiles) .. " * (" .. half .. " + " .. half .. " * clamp(" ..
+      noise(o.seed1, {o.wavelength_tiles, 0}) .. ", -1, 1))"
+  end
+  return out
+end
+
+-- The rough ford end past ford_edge.hold_above (config.lua natural.ford_fine): a ford's ends cross rivers 24 to 48
+-- tiles wide there, and J alone left them near-straight lines across the water.
+local function fine_ford(N, g, scale, noise)
+  local FF = N.ford_fine
+  if not fine_row(FF, g, scale, N.ford_edge.hold_above) then
+    return ""
+  end
+  local out = ""
+  for _, o in ipairs(FF.octaves) do
+    out = out .. " + " .. num(o.amplitude_tiles) .. " * " .. noise(o.seed1, {o.wavelength_tiles, 0})
+  end
+  return out
+end
+
+local function natural_locals(g, mouth, scale, kind)
   local N = cfg.waterways.natural
   local s = cfg.keys.scale
   local function noise(seed1, wavelength)
@@ -131,6 +200,7 @@ local function natural_locals(g, mouth, scale)
     px[i] = num(o.passage) .. " * " .. rx[i]
     py[i] = num(o.passage) .. " * " .. ry[i]
   end
+  fine_warp(N, g, scale, noise, locals, rx, ry)
   local F = N.spawn_fade
   local outer = math.max(F.outer_tiles, F.outer_per_scale * scale)
   locals.fade = "clamp((sqrt(x * x + y * y) - " .. num(F.inner_tiles) .. ") / " .. num(outer - F.inner_tiles) ..
@@ -146,9 +216,23 @@ local function natural_locals(g, mouth, scale)
   end
   locals.XP, locals.YP = warped(g.gx, px), warped(g.gy, py)
   locals.W = "1 + " .. num(N.width.amplitude) .. " * clamp(" .. noise(N.width.seed1, N.width.wavelength) .. ", -1, 1)"
-  local half = num(N.bank.half)
-  locals.B = "(" .. num(N.bank.amplitude[1]) .. " + " .. num(N.bank.amplitude[2]) .. " * " .. s .. ") * (" .. half ..
-    " + " .. half .. " * clamp(" .. noise(N.bank.seed1, N.bank.wavelength) .. ", -1, 1))"
+  local bank = N.bank
+  local LB = N.low_bank
+  if LB and kind == "ww" and scale <= LB.max_scale then
+    for _, id in ipairs(LB.geographies) do
+      if id == g.geo_id then
+        bank = LB
+      end
+    end
+  end
+  local half = num(bank.half)
+  local bn = noise(bank.seed1, bank.wavelength)
+  if bank.gain then
+    bn = num(bank.gain) .. " * " .. bn
+  end
+  locals.B = "(" .. num(bank.amplitude[1]) .. " + " .. num(bank.amplitude[2]) .. " * " .. s .. ") * (" .. half ..
+    " + " .. half .. " * clamp(" .. bn .. ", -1, 1))"
+  locals.B = locals.B .. fine_bank(N, g, scale, noise, half)
   local FE = N.ford_edge
   if scale > FE.hold_above then
     local h = FE.hold_above
@@ -158,6 +242,7 @@ local function natural_locals(g, mouth, scale)
     locals.J = "(" .. num(FE.amplitude[1]) .. " + " .. num(FE.amplitude[2]) .. " * " .. s .. ") * " ..
       noise(FE.seed1, FE.wavelength)
   end
+  locals.J = locals.J .. fine_ford(N, g, scale, noise)
   return locals
 end
 
@@ -202,7 +287,7 @@ local function emit_sets(key, g, rec)
       end
       local function set(kind, expression, functions)
         local name = sets[kind][pos]
-        local locals = natural_locals(g, (kind == "ww" or kind == "fords") and mouth, s)
+        local locals = natural_locals(g, (kind == "ww" or kind == "fords") and mouth, s, kind)
         if warp then
           local kept = {W = locals.W, B = locals.B, J = locals.J}
           for part, body in pairs(warp) do

@@ -31,6 +31,11 @@ local function def(name, expression, locals)
 end
 
 def(K.blue, "0")
+-- Blue only in the zone (config.lua blue.no_blue): the gate key, at its off value on every load.
+local NB = B.no_blue
+def(NB.key, "0")
+-- No normal plant in the zone (config.lua blue.plants2): the gate key, off on every load.
+def(B.plants2.key, "0")
 
 if AB then
   local FINE = cfg.destroyed.names.fine
@@ -106,6 +111,11 @@ if AB then
     def(p.under, "0")
     def(p.body, p.under .. " * " .. N.open)
   end
+
+  -- Blue only in the zone: 1 inside the zone's open band with the zone on, 0 everywhere else; the tiles' term from it.
+  def(NB.open, "if(" .. K.blue .. " > " .. num(cfg.destroyed.switch_threshold) .. ", 1 - " .. N.open .. ", 0)")
+  def(NB.tile, "if(" .. NB.open .. " > " .. num(cfg.destroyed.switch_threshold) .. ", 0, -inf)")
+  def(NB.out, "if(" .. NB.open .. " > " .. num(cfg.destroyed.switch_threshold) .. ", -inf, 0)")
 end
 
 data:extend(E)

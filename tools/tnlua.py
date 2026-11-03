@@ -1451,7 +1451,8 @@ def vanilla_raw_problem(path=VANILLA_RAW):
     """None when `path` can seed data.raw, else the one line that says why not and how to make it."""
     import json
     label = _vanilla_label(path)
-    fix = "run python tools/make_vanilla_raw.py (needs Factorio 2.1 installed)"
+    fix = ("run python tools/make_vanilla_raw.py --harness <path to fh.py> (needs Factorio 2.1 installed), or "
+           "--dump with a base-only data-raw-dump.json")
     p = Path(path)
     if not p.is_file():
         return f"{label} is missing: {fix}"

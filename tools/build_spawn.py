@@ -67,10 +67,14 @@ def sha256_file(p):
 
 
 def scales_of(cfg, map_key):
-    """The scales the map's newest geography version serves: the bearings file it names holds these, in this
-    order. Europe's newest is released, so its file keeps 1 to 6 and spawn.lua reads the last row past that."""
+    """The scales the bearings file of the map's newest geography version holds, in this order: those of the oldest
+    version that names the file, which emitted it (a landed file is never re-emitted). Europe's file came with its
+    version 6 and keeps 1 to 6, so spawn.lua reads its last row past that."""
     import tnconfig
-    return tnconfig.version_scales(cfg, tnconfig.geography_versions(cfg)[map_key][-1])
+    versions = tnconfig.geography_versions(cfg)[map_key]
+    bearings = (tnconfig.spawn_of(versions[-1]) or {}).get("bearings")
+    first = next((v for v in versions if (tnconfig.spawn_of(v) or {}).get("bearings") == bearings), versions[-1])
+    return tnconfig.version_scales(cfg, first)
 
 
 def scale_words(scales):

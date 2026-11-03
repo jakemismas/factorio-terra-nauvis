@@ -9,8 +9,8 @@ Definition of Done).
 
 Conventions. Every measured fact carries a source tag that the Sources table at the end resolves to
 a path. "est." marks an estimate, "derived" marks arithmetic on cited numbers, and UNVERIFIED marks
-a claim no run settled. TQ2 tags the Phase 4 quiet-window benchmark, whose numbers filled every
-starting value that waited for it; the values in force live in the plan's section 6.
+a claim no run settled. TQ2 tags the quiet-window benchmark of 2026-10-27 (group `b20261027-0821`),
+whose numbers filled every starting value that waited for it; the values in force live in the plan's section 6.
 Names use the prefixes the maintainer chose (D36, design notes 12:35): `terra-nauvis` for the mod, settings and
 presets, `tn_` for noise names; reports, spikes and design notes entries before 12:35 say `earth-atlas`
 and `earth_`, and a cited name maps by prefix. `prototypes/config.lua` owns the real strings. LP
@@ -80,7 +80,7 @@ so the `prototypes/` and `scripts/` rows below are `terra-nauvis/prototypes/...`
 | `terra-nauvis/data-final-fixes.lua` | Everything that reads other mods' final state: entity wrappers (ores, enemies, offshore oil), gated hooks on shared prototypes (the `water-shallow` hook for fords and marshes; vanilla tiles, trees, rocks and decoratives beside AB; marsh tiles and `grass-1` between the marsh pools without AB; forest boost; AB palm switch; the Earth-gated ridge exclusion on ore probability) | hooks follow the stable-hook rule (Expression graph) | 4 (fords), 6 |
 | `terra-nauvis/control.lua` | Event wiring only | registers exactly the events in "Control stage" | 0 |
 | `terra-nauvis/locale/en/terra-nauvis.cfg` | Setting names and descriptions; `[string-mod-setting] <setting>-<value>=<label>` for every dropdown value, with world size; preset names and descriptions; the `[noise-expression]` Map type names "Terra Nauvis: <map>"; messages, the Map type notice among them | every used key exists; no line without `=` (a missing `=` fails the load, S11) | 0; Map type names 1 and 3 |
-| `terra-nauvis/changelog.txt`, `LICENSE`, `SOURCE-OFFER.txt`, `thumbnail.png` | Factorio changelog, GPLv3 (EarthMaps data reuse), the written source offer (GPLv3 section 6: the zip tells a recipient how to get the mod, `tools/` and `data-src/` from the author), thumbnail (later) | `tools/build_zip.py` ships every file of the folder and refuses anything but Lua, JSON, cfg, txt, png, md and LICENSE | 0, 13 |
+| `terra-nauvis/changelog.txt`, `LICENSE`, `SOURCE-OFFER.txt`, `thumbnail.png` | Factorio changelog, GPLv3 (EarthMaps data reuse), the written source offer (GPLv3 section 6: the zip tells a recipient how to get the mod, `tools/` and `data-src/`, on request from the author and from the public repository once it is public), thumbnail (later) | `tools/build_zip.py` ships every file of the folder and refuses anything but Lua, JSON, cfg, txt, png, md and LICENSE | 0, 13 |
 | `terra-nauvis/prototypes/config.lua` | The single source of names and constants (table below) | pure data: reads no `data`, `settings`, `game` or `script` and calls no function, so the settings, data and control stages and the Python tools (through `tools/tnconfig.py`, a luaparser loader of that subset) read one file; `europe-coast` retired the placeholder group with every name it marked | 0 |
 | `terra-nauvis/prototypes/presets.lua` | The three presets from config, `settings.startup` and `mods`, ordered right after Default; the prototype-level fallbacks the Map type entries read, built from the same table | the redirect table under "Expression graph"; AB keys only with AB loaded, except the four palm keys, which every preset bakes (their copies are defined on every load, so a world that gains AB later meets the palm switch too; design notes 2026-10-29 18:40), Oil Rig keys only with the Oil Rig; each fallback equals what its geography version's preset bakes, for every version (section "Map type entries"); a preset's geography (its elevation entry, coarse field and `tn_geo`) is chosen in one place, `geography()`, so `climate-tiles` can give Alien Biomes worlds a cheaper one; `toolchain`'s placeholder preset, withheld beside Alien Biomes, retired with `europe-coast` | 0 (placeholder), 1 |
 | `terra-nauvis/prototypes/expressions/coast.lua` | Coordinate chain, coast transfer, lattice detail, far-field box, elevation composition, emitted for every geography version of each map as that version's elevation entry over its own chain (`tn_<x>_<map>_v<n>`), older versions unchanged; the map's coarse land field, which the preset key `tn_land_coarse` names. `toolchain`'s placeholder shape retired with `europe-coast` | the firewall names: Tile only; `tn_land_coarse` is the one land field outside Tile; the newest entry of each map carries the Map type fields | 0 (placeholder), 1 |
@@ -343,7 +343,7 @@ firewall-clean names.
 **The coarse land field (decision 8, binding).** The Entity program knows land from one field,
 `tn_land_coarse`: a preset key that each Earth preset maps to its map's
 `tn_land_coarse_<map>_v<n>`, a tents-256 fit of the coast's own target (S9 used Europe's 256-term
-checkpoint in the composite Phase 4 times), defined and budgeted in `europe-coast`. Every Entity-side
+checkpoint in the composite TQ2 times), defined and budgeted in `europe-coast`. Every Entity-side
 land reader uses it and nothing finer: the redirected `starting_resources_lake_mask` (vanilla starting
 ore; S9: the coarse field plus the spawn lake), S6's land-aware hotspot and enemy terms through that
 mask, the random offshore-oil sea mask, and any later reader. It is coarse: 94.5 percent offline on
@@ -388,7 +388,7 @@ decision 8, S9's method):
 | `tn_fields_<map>_v<n>`, through the map-qualified key `tn_fields_<map>` | resources | the hotspot table's offshore rows, the region layer's jittered centres `tn_hu_<id>`, `tn_hv_<id>` moved onto the map's chain by its frame offset; -6 inside each footprint grown by 4 px, else 0; the key is a Map type fallback (`tn_zero` with hotspots off) | Tile only | 9 |
 | `tn_elevation_<map>_v<n>` | coast | the composition below, one entry per map; the newest version carries `intended_property = "elevation"`, the `[noise-expression]` name "Terra Nauvis: <map>" and its order (the Map type entry) | Tile only | 1 (Europe), 3 |
 | `tn_start_mask_v<n>` | spawn | v1: `clamp((tn_scale * tn_land_coarse - floor) / span, 0, 1)`, floor 1 and span 10 from config; it reads neither the spawn lake nor the far-field box (a firewall name). v2 (`spawn-cities`): `clamp((min(2 * tn_land_coarse, tn_spawn_lake) - 1) / 10, 0, 1) * tn_spawn_bias`, the coarse field in reference pixels (full from 5.5, graded below, the same at every scale), the map's spawn lake and its starting-ore bias, through preset keys | Entity | 1, refined 2 |
-| `tn_sea_v<n>` | resources | `tn_land_coarse` below the configured offshore threshold, so rivers, canals, D15 lakes and marshes, which the coarse field reads as land, fall outside it (FEAS-07). Large drawn lakes the coarse field reads as water (Ladoga, the Great Lakes) are not excluded by the threshold; `resources-enemies` excludes them through table rows or records the exception, with the threshold | Entity | 9 |
+| `tn_sea_v<n>` | resources | `tn_land_coarse` below the configured offshore threshold, so rivers, canals, D15 lakes and marshes, which the coarse field reads as land, fall outside it, so random offshore oil keeps off them. Large drawn lakes the coarse field reads as water (Ladoga, the Great Lakes) are not excluded by the threshold; `resources-enemies` excludes them through table rows or records the exception, with the threshold | Entity | 9 |
 | `tn_distance_v<n>` | spawn | `sqrt(x * x + y * y)` | Entity, Cliff | 2 |
 | `tn_temperature_*`, `tn_moisture_*`, `tn_aux_*` (AB and fallback variants) | climate | latitude from `tn_v`, noise, slider controls (`control:hot` and `control:cold` only when AB is loaded, R3 6), region aggregates, `tn_destroyed` | Tile, Entity | 6, 10 |
 | `tn_lat_v1`, `tn_lon_v1`, `tn_dry_v1`, `tn_t_core_v1` | climate | each map's `tn_u`, `tn_v` folded on `tn_map` (preset-only), a meander noise, the dry belts of `config.lua` (EarthMaps' painted sand, design notes climate-tiles) | Tile, Entity | 6 |
@@ -738,7 +738,7 @@ guarantee, carves and lakes commute under `min()`, and no lake can reopen a damm
 **No river cuts a start area (decision 18, binding).** The spawn, its start lake and its starting ore
 sit on one walkable side of any waterway. The composition alone does not ensure it, because vanilla's
 starting patches know nothing of rivers, and curated rivers cross the start discs of about ten Europe
-cities at scale 6 (JI-08: London, Lisbon, Warsaw, Belgrade and others). `waterways` picks the
+cities at scale 6 (London, Lisbon, Warsaw, Belgrade and others). `waterways` picks the
 mechanism, for example a folded per-city nudge of the spawn to the nearest bank with 12 clear tiles
 that keeps the lake and ore on that bank, records it in design notes, and T7 (d) checks every
 city at scales 1 and 6. Any Entity-side term it adds is analytic from tables, never a waterway set
@@ -802,7 +802,7 @@ Rules:
   world made from a Terra Nauvis preset does; the scale setting (now 5) applies to new worlds and to
   worlds that use a Terra Nauvis map type alone" (S2 Q3). No player-facing text promises that a
   changed setting reaches new worlds only: a Map-type-only world follows it, so the setting's own
-  description says so before any change, beside the Map type notice (review round 3, design notes
+  description says so before any change, beside the Map type notice (design notes
   2026-10-28 10:00). On a Map-type-only world it runs on every `on_configuration_changed`, a mod
   update as well as a setting change (a same-version mod whose content changed raises the event too:
   its checksum differs, measured in design notes 2026-10-28 05:30), compares the recorded fallback values with the current
@@ -1104,7 +1104,7 @@ reference to a per-tick event or, outside `scripts/bandfix.lua`, to a per-chunk 
 - Wells take any water tile, and `no_shallow_oil` is forced off with AB (R4 4.2). With the Oil Rig
   loaded, Earth presets redirect `entity:offshore-oil:*` to the Oil Rig's live expression times the
   sea mask `tn_sea_v<n>`, which reads `tn_land_coarse`, plus the field terms
-  (APPROVALS 3). The offshore threshold is set in `resources-enemies` with a design note (FEAS-07).
+  (APPROVALS 3). The offshore threshold is set in `resources-enemies` with a design note.
 - The Oil Rig re-adds offshore oil in `on_init` and `on_configuration_changed`, calls
   `regenerate_entity`, and writes Nauvis map settings by read, modify and write, which keeps
   `property_expression_names` (S11, R4 4.6).
@@ -1114,7 +1114,7 @@ reference to a per-tick event or, outside `scripts/bandfix.lua`, to a per-chunk 
   water_rails.lua), lacks `player`, so characters and biters walk it, and no tile blocks a ship
   (R4 1.3). Masks only so far: `waterways` proves placement (`can_place_entity`) and walkability in
   game. Random offshore oil never reaches a ford, because the sea mask reads the coarse field, which
-  reads rivers as land (FEAS-07).
+  reads rivers as land.
 
 ### bobenemies and the rest of the pack
 
@@ -1171,7 +1171,7 @@ vanilla, 1.249 and 1.213x AB alone. The 8 LP figures below are history.
 | Tile complexity per world | a diagnostic cap with per-feature allocations in the plan's table (P10, P11, section 6.3). the review's provisional 113,000 sat on the 8 LP chord between tents 4,096 (0.993x) and 16,384 (1.641x), which reaches 1.5x near 121,600; TQ2 timed S9's composite (Tile 112,387) at 1.26x at 8 LP, under the chord's 1.44 estimate, while with AB (173,325) it timed 1.66x AB alone at 8 LP, so on M2 the timed rule binds, not the cap | decisions 3 and 5; REVIEW, TQ1b, TQ2 | gate perf step (T15a) |
 | Europe, measured | S9's composite at scale 6, toggles on: Tile 112,387, Entity 12,443, Cliff 124 (with AB 173,325, 25,259, 124), without inland lakes, marshes, turning basins or the land guarantee | S9; TQ2 (the same numbers) | timed by TQ2: 1.19 to 1.26x vanilla and 1.59 to 1.66x AB alone at 8 LP |
 | Olde World, estimated | tents about 78,300 + waterways about 32,700 + about 2,000 | REVIEW | untimed (TQ2 timed Europe only); `olde-world-atlantic` times it |
-| Atlantic | first fit 69,000 to 96,000 (6,800 to 10,400 terms, est.); its waterways get the cap minus the coast minus the headroom the plan reserves for later Tile work (lakes, basins, marshes, offshore stamps; FEAS-08) | REVIEW; FEAS-08 | `olde-world-atlantic` |
+| Atlantic | first fit 69,000 to 96,000 (6,800 to 10,400 terms, est.); its waterways get the cap minus the coast minus the headroom the plan reserves for later Tile work (lakes, basins, marshes, offshore stamps) | REVIEW; the Tile headroom rule below the table | `olde-world-atlantic` |
 | Entity complexity | per-feature allocations in the plan's table (P12, P13, section 6.3); TQ2 measured Europe's composite unchanged (12,443; 25,259 with AB), and Atlantic's and Old World's ceilings stay provisional. Measured increments: hotspots with the enemy layer +1,491 (S6); Europe forests +2,332 (base) and +2,538 over AB (S10); destroyed zone +592 through climate (S3); Atlantic and Old World forests about +5,600 and +5,000 (projected, S10); `tn_land_coarse` inside S9's 12,443, not isolated | S3, S6, S9, S10, TQ2 | gate perf step (T15a) |
 | Entity with AB | Earth plus AB 22,507 against AB alone 24,377 with S3's analytic climate; S9's composite 25,259 | S3, S9 | M2 rows |
 | Cliff complexity | vanilla 287; ridges about 4.4 per range segment; S9's whole Cliff program 124 for three Europe ranges | S5, S9 | T15a |
@@ -1192,9 +1192,9 @@ machine to itself: with the maintainer playing, the timed step fails closed.
 
 Cut order when a map exceeds its budget (design review note): waterway segments first (tolerance up, then
 rivers out from the bottom of APPROVALS 7's list, each through a design note, Europe's 22 rivers
-as a floor; JI-03), tent terms second, never below 99 percent preview-mode T1. A later milestone that
+as a floor), tent terms second, never below 99 percent preview-mode T1. A later milestone that
 exceeds its reserve may trigger the waterway cut order through a design note and a
-`data-src/waterways` edit (FEAS-08). If a map still cannot fit, it takes the runner-up: tents 4,096
+`data-src/waterways` edit. If a map still cannot fit, it takes the runner-up: tents 4,096
 plus the band fix, with its preview shortfall stated. If that map then ships below
 0.990, its T1 row carries the recorded number and the shortfall is listed for the maintainer; the build does not
 loop on it. For Alien Biomes worlds the same order runs in `climate-tiles` against
@@ -1351,7 +1351,7 @@ takes over the Map type fields.
     checks from here, with the leak controls on `ea-leak-fixture` (design notes 15:25 and 16:40; Gate
     above). PERF-15 runs once in the milestone suite, record-only: the benchmark-mode walker times a
     deliberately heavy probe elevation (`tools/mods/ea-heavy-probe`) against M0 and records which
-    `mapGenerator*` column moves, next to Phase 4's BasicTilesSupportCompute finding
+    `mapGenerator*` column moves, next to TQ2's BasicTilesSupportCompute finding
     (BENCHMARKS.md:247-272).
   - *Section 6 parser.* The plan is read with `git show main:the design notes. The fit review
     parsed only the rows in force; the build parses every 6.2 and 6.3 cell in every gate, fails
@@ -1362,12 +1362,10 @@ takes over the Map type fields.
     chained G9 guard: fh.py
     isolation (G1) is the only live-profile protection, fh.py itself refuses graphical and portal
     flags at launch, and copying the built zip into the live mods folder is allowed. Every scan
-    fixture that remains (workflow, attribution) is generated at run time in a temporary directory
+    fixture that remains (workflow) is generated at run time in a temporary directory
     outside the scanned trees and never committed, so the real scans need no exemptions.
-  - *Attribution scan.* The scanner assembles its patterns from fragments at run time
-    and writes its positive-control fixture into a temporary directory: no committed file, command
-    line, CHANGELOG.md or the design notes holds a literal pattern, and the guard is never bypassed
-    (U14).
+  - *Attribution.* A commit guard outside the repository refuses tool attribution on every commit,
+    merge and push, so `static` keeps no copy of that rule.
   - *CI independence.* `static` and `build_zip.py` read only the checked-out tree: no git refs (a
     default `actions/checkout` has no local main on pull requests and branch pushes, so the
     plan-versus-main and budgets-versus-main comparisons are the gate's alone), no fh.py import and
@@ -1395,9 +1393,10 @@ takes over the Map type fields.
   - *Docs and source offer.* The builder writes the CHANGELOG [Unreleased] entry, with the
     measured cold and warm gate times and their run directories, and a the design notes entry for each
     fork (the linter, the placeholder shape, any gate row moved to the suite under rule 4); the
-    commit step keeps them and adds no second entry. The zip's top folder
-    carries `LICENSE` (GPLv3) and `SOURCE-OFFER.txt`, which tells a recipient how to obtain the
-    corresponding source (the mod, `tools/` and `data-src/`) from the author (GPLv3 section 6).
+    commit step keeps them and adds no second entry. The zip's top folder carries `LICENSE` (GPLv3)
+    and `SOURCE-OFFER.txt`, which tells a recipient how to obtain the corresponding source (the mod,
+    `tools/` and `data-src/`): on request from the author, and from the public repository once it is
+    public (GPLv3 section 6).
 
 ### 1. `europe-coast` (part 2, order 0)
 
@@ -1458,7 +1457,7 @@ takes over the Map type fields.
     entry names and a chain of its own and binds the same name-free generated files to it. They have
     no T11 row, since no setting moves them (design notes 2026-10-28 07:20 supersedes the in-place
     re-point of design notes 03:40).
-  - *Timed positions.* Every timed block and band is Phase 4's, fixed in geo coordinates through
+  - *Timed positions.* Every timed block and band is TQ2's, fixed in geo coordinates through
     London's pixel and placed through the save's offset; the scale 1 block holds the scale 6 block's
     extent clear of the start area. Land 92.3 and 79.9 percent.
   - *Generated files and T16.* `build_geo.py` writes name-free data within 120 columns; the gate's
@@ -1469,7 +1468,7 @@ takes over the Map type fields.
     colours; the two creation routes agree on content while their benchmark checksums differ; the
     first-column hitch and the start-area save excess are the coast program's (design notes, the T1,
     T3 and T13, hitch and save-excess entries).
-  - *Review, folded in*. Every Earth preset bakes vanilla's three water-slider readers
+  - *Water sliders, notices and extent*. Every Earth preset bakes vanilla's three water-slider readers
     (`water_inert` row); the presets are withheld beside Alien Biomes until `climate-tiles`
     (`ab_withheld` row); the Map type notice warns that a mod update can move such a world, and its
     drift line runs on every configuration change (T18 suite check, a moved-offset build); from
@@ -1478,7 +1477,7 @@ takes over the Map type fields.
     compares entities as well as tiles and reads back every baked value; the V1 contact sheets are
     committed under `tests/baselines/suites/europe-coast/v1/`, with smoke step 2's preview in the
     manifest.
-  - *Review round 2, folded in*. A Map-type-only world is identified by
+  - *World identity and worker controls*. A Map-type-only world is identified by
     any version of its map's entry and then by `storage`, and every message names its map by the
     preset (T18's older-entry build proves both); the city offset names are pinned to the entry's
     version and registered; a preset world loaded later beside Alien Biomes is warned once and
@@ -1486,14 +1485,14 @@ takes over the Map type fields.
     once (`lane_stop` runner controls); T2 reads back each run's seed with M0's grid as its positive
     control, `t3_detail` probes off-centre tiles and the on-grid's T1, `t12_twice` and `t13_routes`
     prove Earth active against M0.
-  - *Review round 3, folded in*. No player-facing text says a changed
+  - *Scale setting wording and recorded rows*. No player-facing text says a changed
     scale setting reaches new worlds only: the setting's description, the drift line, the preset's
     description and the mod's changelog say that a preset world keeps its scale and that a world
     using a Map type alone follows the setting, which moves its new chunks (the route beside Alien
     Biomes). Section 6.2's recorded rows are complete for this milestone: the walker and the Map type
     route's forced pair also run at 8 LP as the diagnostic, `preview_time` records T15-f, and the
     exploring runs keep each game process's peak working set (T15-h), M1 minus M0.
-  - *Review run 2's review, folded in*. A `tests/frozen.json` record's
+  - *Frozen record labels*. A `tests/frozen.json` record's
     dump label can no longer switch the frozen row off for its body: every record holds the
     `tools/tnfrozen.py` contract in every reader (a label the runner's milestone registry does not
     assign, a typo, a missing label or one the record's milestone could not have produced fails and is
@@ -1563,7 +1562,7 @@ takes over the Map type fields.
   with smoke steps 4 and 1. A group's gate meets the allocations of every unlanded milestone up to it
   together.
 - **Gate.** T7 first on a coastal and low-lying sample (London, Lisbon, Oslo, Amsterdam and Helsinki
-  at scale 1; FEAS-06), then every Europe city at scales 1, 3 and 6 (fast subset in the gate); T4
+  at scale 1: the coarse land field that places starting ore is least exact on coasts), then every Europe city at scales 1, 3 and 6 (fast subset in the gate); T4
   starting-area row; T11 city flip; T13 M5 warning line and its player path
 ; T14 synthetic planet (the Map type entries and their fallbacks are allowed roots);
   T13 the Map type route's spawn; T18 (a) and (c), the notice's player path; V2 city crops.
@@ -1575,7 +1574,7 @@ takes over the Map type fields.
   coarse land field; their presets, city lists and budget rows; `tn_elevation_olde_world_v1` and
   `tn_elevation_atlantic_v1`, each its map's Map type entry with its own map-qualified fallbacks.
 - **Contract.** Atlantic's waterways get the cap minus its coast minus the headroom the plan reserves
-  for later Tile work (FEAS-08). Each 1,000 tent terms saved frees about 8,200 Tile complexity, about
+  for later Tile work. Each 1,000 tent terms saved frees about 8,200 Tile complexity, about
   240 waterway segments (est., REVIEW). No map's entry reads another map's name (A-21).
 - **Gate.** T1 and T15 per map (each map's block at scales 6 and 1); T7 for their cities; T13 and T16
   on all three Map type entries (dump fields, locale, orders, the elevation-only route per map); V1
@@ -1602,7 +1601,7 @@ takes over the Map type fields.
     renders byte for byte as Europe's there), so each new map's route parity and Map type previews
     sit on the nearest window holding 15 to 85 percent reference water (`map_view`), and each map's
     elevation-only preview is compared there with the other maps' entries.
-  - *Timed blocks.* The new maps have no Phase 4 block, so each map's scale 6 block is the 16 x 16
+  - *Timed blocks.* The new maps have no TQ2 block, so each map's scale 6 block is the 16 x 16
     chunk block nearest its spawn whose reference land, and its scale 1 twin's (europe_block's
     rule), both lie in 50 to 95 percent (`map_positions`), fixed in geo coordinates like Europe's.
   - *T1-e* is reported per size bucket on the new maps (plan 6.1); T1-a reads a flipped map's bar
@@ -1654,7 +1653,7 @@ takes over the Map type fields.
 - **Introduces.** `build_waterways.py`; the generated sets for scales 1 to 6 per map; curated rivers
   in APPROVALS 7's priority order inside the cap, written to `data-src/waterways/<map>.json` and bound
   to that list by T16 (rows leave only from the bottom, each through a design note, with Europe's
-  22 as a floor; JI-03); straits open, with Gibraltar, Dover and the Great Belt in the two-way class;
+  22 as a floor); straits open, with Gibraltar, Dover and the Great Belt in the two-way class;
   isthmuses closed; the canals key with dams (Kiel and Corinth on every map, Suez on Olde World and
   Atlantic, Panama on Atlantic; APPROVALS 6); turning basins; T1 corridor masks; the mechanism that
   keeps spawn, lake and starting ore on one bank where a river crosses a start area;
@@ -1674,7 +1673,7 @@ takes over the Map type fields.
 - **Build notes** (binding for the runner; design notes, waterways).
   - *Registry.* FG rows `ww_dump_facts` (the hook text outermost, Nauvis listing the tile, the
     presets' gate, ford key and canals switch, each entry's per-scale pick and no other body naming a
-    set), `ww_emit` (two emissions of all 18 files byte-identical, the manifests' hashes, JI-03),
+    set), `ww_emit` (two emissions of all 18 files byte-identical, the manifests' hashes),
     `ww_t3` (the strait, isthmus and canal oracle rows at Europe's scale 6 in both canal states) and
     `ww_ford` (one Europe ford at scale 6); suite checks `ww_t5`, `ww_fords`, `ww_widths`, `ww_bend`,
     `ww_t1`, `ww_t3_maps` (the oracle rows on every map at scales 1 and 6), `ww_t11`, `ww_m3`,
@@ -1747,8 +1746,8 @@ takes over the Map type fields.
   allocation is a row of the plan's threshold table (section 6.3: 0 everywhere, since nothing reads
   the layer yet).
 - **Gate.** T3 membership (protected features outside at every seed) and locality on sampled
-  membership (FEAS-19); T2 per-seed edges (destroyed zone IoU 0.5 to 0.95 between seeds, S10
-  measured 0.90 to 0.93; other rows by edge displacement, FEAS-20); T13 switches-off identity; T15.
+  membership, since no consumer reads the layer yet; T2 per-seed edges (destroyed zone IoU 0.5 to 0.95 between seeds, S10
+  measured 0.90 to 0.93; other rows by edge displacement, nonzero and within the clamp); T13 switches-off identity; T15.
 - **Build notes** (binding for the runner; design notes, region-layer).
   - *Rows.* FG `rl_dump_facts` (every row's bodies and the aggregates in the M1 dump, no copy under
     another name, nothing outside the layer reading its own names, each aggregate reading exactly its
@@ -1807,7 +1806,7 @@ takes over the Map type fields.
   Tile-side pools and fringe. The climate's deserts follow EarthMaps' painted sand through the dry
   belts in `config.lua`.
 - **Gate.** T3 climate and tile family, with the brief-sourced named places and the D11 numeric row
-, and locality at preview level (FEAS-19); T4 climate slider rows, moisture and aux
+, and locality at preview level, the layer's first consumer; T4 climate slider rows, moisture and aux
   frequency included; T5 re-run, since the transfer changed; T10 climate bands;
   T13 M2 and M6; T15 per map with M2/BAB; V3.
 
@@ -1826,7 +1825,7 @@ takes over the Map type fields.
   parsed nodes to every world's Entity program; operations, registers and complexity stay identical, so
   `zero_cost_diffs` compares Entity's parsed counts no longer.
 - **Gate.** T10 with decision 15's budget; T4 trees rows; T11 forests flip; T17; the D27 table and
-  T15e driver 3 (JI-18); T15 per map including Entity isolation; V4 at a great forest.
+  T15e driver 3, the fixed polluter; T15 per map including Entity isolation; V4 at a great forest.
 
 ### 8. `ridges` (part 6, order 0)
 
@@ -1841,7 +1840,7 @@ takes over the Map type fields.
   into its wrappers.
 - **Contract.** A start area on a crest is a designed opening: no ridge cell inside it, the range
   resuming outside, a known exception listed for the maintainer together with the cliffs-slider
-  "none" preview and the 196 starting chunks (JI-17). This milestone completes every map's full program,
+  "none" preview and the 196 starting chunks, where the engine places no cliffs. This milestone completes every map's full program,
   so its suite times each map at scales 6 and 1.
 - **Gate.** T6 (facing at least 0.9; both-flank coverage at least 0.85 over the crest minus its
   openings at scales 3 to 6, reported at 1 and 2; flood fill through the openings, each at
@@ -1897,7 +1896,7 @@ takes over the Map type fields.
   jittered disc, design note 6; active only beyond twice `starting_area_radius`), joined as
   `max(live, layer)`; offshore fields as a deep-water stamp in the composition (Tile) plus an Oil Rig
   wrapper term (Entity); random offshore oil masked by `tn_sea_v<n>`, whose offshore threshold on
-  `tn_land_coarse` this milestone sets with a design note (FEAS-07).
+  `tn_land_coarse` this milestone sets with a design note.
 - **Contract.** Wrappers are built in data-final-fixes around the live expressions. Every land reader
   here uses `tn_land_coarse`, never a waterway set or the fine coast. Hotspot amounts
   are judged on each disc's land part.
@@ -1987,7 +1986,7 @@ takes over the Map type fields.
   20 n, 100.5, 149.5), -inf)`, n a 96-tile noise; `tn_temperature_ab_v2 = if(tn_destroyed > 0.5,
   max(tn_temperature_ab_v1, heat), tn_temperature_ab_v1)`, which every Earth preset names with Alien Biomes.
   The toggle `destroyed_europe` is a name switch with `requires = "alien-biomes"`: a preset bakes it off
-  without that mod (FEAS-17) and the drift line compares with the same rule. With the zone on and the spawn
+  without that mod and the drift line compares with the same rule. With the zone on and the spawn
   city at random a preset bakes the map's pool `tn_city_pool_<map>_v1` (the fold's hash modulo the cities
   outside the zone, `prototypes/tables/destroyed.lua`) as its city number, which the first fold resolves like
   a chosen city; the drift line and start.lua count it as random. start.lua reads the setting once in
@@ -2101,7 +2100,7 @@ takes over the Map type fields.
   design notes, extras); posters from stitched previews by `contact_sheet.py poster`, never the
   map-export mod's render (D30), in `docs/posters/`; size context in the scale labels, the scale
   tooltip and the preset descriptions (D3) from config.lua's `size_context`, the footprint figures
-  called reported community examples (JI-12); the D36 rename dry run under the test identity
+  called reported community examples, not measurements; the D36 rename dry run under the test identity
   `earth-dry-run`, `edr_` with a registry it builds for that identity; the T16 release-zip and
   tools-scan rows. No hand-out files: D6's exact zip reaches players as a GitHub release
   (`toolchain`'s `release.yml`). README.md is the release handoff's (plan
@@ -2174,7 +2173,7 @@ Items 1 to 9 are settled; each keeps its record. Items 10 to 22 are open.
 14. **D25 against D19 inside start areas.** At scale 6, 8 of Europe's 40 cities lie within
     150 tiles of a crest (23 at scale 1), Aktobe on Atlantic, and Aktobe and Delhi on Old World
     (APPROVALS 5); each such start opens a gap in its range. Listed for the maintainer with the cliffs-slider
-    "none" preview and the 196 starting chunks (JI-17).
+    "none" preview and the 196 starting chunks, where the engine places no cliffs.
 15. **Scripted player headless.** No headless way to create a player is known: the local
     runtime API offers `LuaSimulation.create_test_player` only inside simulations, and fh.py refuses the
     graphical `--mp-connect`. `spawn-cities` proves a route on a loopback server or records in
@@ -2231,7 +2230,7 @@ Paths are relative to the repo root unless they start with `%FACTORIO_GAME%`.
 | S13 | the new-game screen test, design notes 12:35: probe mod `spikes/S13-gui/mods/terra-nauvis-probe` (`data.lua` Map type entries, `data-final-fixes.lua` fallbacks and preset order, `control.lua` the `[TN-PROBE]` dump), `spikes/S13-gui/mgs-maptype-europe.json`, screenshots the design notes to `06`; S13-bandfix (`spikes/S13-bandfix/README.md`, renders the design notes, the coast with Exact coastlines off and on, untimed) is the spike the decision on the setting's default waits on |
 | Decisions, finding ids | the design notes (findings such as TST-08) |
 | TQ1b | the design notes |
-| TQ2 | the design notes (Phase 4, group `b20261027-0821`); its consequences in the design notes 10:20 |
+| TQ2 | the design notes (the quiet-window benchmark, group `b20261027-0821`); its consequences in the design notes 10:20 |
 | TQ3 | the design notes (forced generation at 16 LP, group `b20261027-1223`); the design notes 13:20 |
 | R3, R4, R5, R6, R8 | the design notes, `R4-cargo-ships.md`, `R5-mod-sweep.md`, `R6-noise-capabilities.md`, `R8-perf-footprint.md` |
 | test notes, APPROVALS | the design notes |

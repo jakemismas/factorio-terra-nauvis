@@ -5,8 +5,9 @@ Copyright (C) 2026 Jake Mismas
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License version 3 as published by the Free Software Foundation. It comes with no
-warranty. See LICENSE. This covers the whole repository except the items under "Not covered by the
-GPL" below.
+warranty. See LICENSE. This covers the whole repository, with two limits: data derived from the
+sources under "Third-party data" also stays under its source's licence, and the items under "Not
+covered by the GPL" are not offered under it.
 
 ## Modified work
 
@@ -33,9 +34,9 @@ data (c) OpenStreetMap contributors, available under the Open Database License
 (https://www.openstreetmap.org/copyright). Changed: simplified and snapped to the map grid.
 
 Wikipedia: place coordinates, lengths, heights, areas, water depths and some deposit figures were
-read from Wikipedia articles, cited by URL or by name in docs/plan/research/R7b-geography.json (where some links pin a
-revision) and R7a-hotspots.json, data-src/hotspots/deposits-research.md and .json,
-data-src/approvals/approvals-data.json and tests/oracle/. Any Wikipedia text in those files is
+read from Wikipedia articles, cited by URL or by name in docs/plan/research/R7b-geography.json
+(where some links pin a revision) and R7a-hotspots.json, data-src/hotspots/deposits-research.md and
+.json, data-src/approvals/approvals-data.json and tests/oracle/. Any Wikipedia text in those files is
 available under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/).
 
 Ore hotspots: places and sizes are facts, cited per row in data-src/hotspots/deposits-research.md. Its
@@ -51,10 +52,19 @@ Software, are not offered under the GPL, and are included under the Factorio Ter
 Software keeps all rights and may ask for their removal. Screenshots in this repository show Factorio's
 interface and art, which are also Wube Software's.
 
+Quotations in the notes under docs/plan/ stay under their sources' terms and are cited where they
+appear: the Factorio wiki (https://wiki.factorio.com/) is under CC BY-NC-SA 3.0, Factorio Friday
+Facts belong to Wube Software, and forum posts belong to their authors.
+
 ## Other mods
 
 Terra Nauvis can work beside Alien Biomes by Earendel, Cargo Ships, Cargo Ships: Oil Rig and Resource
-Spawner Overhaul. The mod contains none of their content and refers to their prototypes by name only.
+Spawner Overhaul. The mod ships none of their code, text or art. It names some of their prototypes,
+and when they are installed it reads their prototypes at load time and wraps some of their autoplace
+expressions in its own. Beside Alien Biomes it builds its palms from the installed palms, checked
+against a digest, and finds each land tile's own noise call by its parameters, which apart from the
+seed are those of the mod's own shared noise. Versions up to 0.2.0 held the text of that one Alien
+Biomes call in terra-nauvis/prototypes/config.lua; from 0.3.0 the mod holds none of its text.
 
 ## Trademarks
 

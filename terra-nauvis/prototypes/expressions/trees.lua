@@ -181,6 +181,15 @@ for _, row in ipairs(V.rocks) do
     def(n.high, (string.gsub(row.probability_expression, "%f[%w_]rock_density%f[^%w_]", cfg.ridges.names.rock_density)),
       locals)
   end
+  -- The cold versions (config.lua trees.restore.cold): no tan rock or sand decal on cold ground.
+  local RC = R.cold
+  local fade = " * clamp((temperature - " .. num(RC.lo) .. ") / " .. num(RC.span) .. ", 0, 1)"
+  if n.cold then
+    def(n.cold, n.body .. fade)
+  end
+  if n.cold_high then
+    def(n.cold_high, n.high .. fade)
+  end
 end
 
 -- The re-listed decoratives: one key each at -inf, all naming one body.
@@ -198,6 +207,12 @@ def(R.deco_body, R.deco_on)
 for _, p in ipairs(TR.palm) do
   def(p.body, M.boost(p.base))
   def(p.next, p.body .. " * " .. cfg.tiles.palm_allow.body)
+  def(p.next2, "max(" .. p.body .. " * " .. cfg.tiles.palm_allow2.body .. ", " .. cfg.tiles.palm_allow2.shore.body ..
+    ")")
+  -- The violet palm keeps to the blue zone (config.lua blue.no_blue), whose open exists with Alien Biomes alone.
+  if p.next3 and mods["alien-biomes"] then
+    def(p.next3, p.next2 .. " * " .. cfg.blue.no_blue.open)
+  end
 end
 
 -- The palm mask (config.lua tiles.palm_allow): a product of tests on fields the Entity program holds already.
@@ -205,6 +220,48 @@ local PA = cfg.tiles.palm_allow
 def(PA.body, "(temperature + " .. cfg.climate.names.belts.t .. " > " .. num(PA.warm_t) .. ") * (" .. cfg.keys.high ..
   " + " .. cfg.keys.scale .. " * (" .. cfg.regions.names.highland_fray .. " + " .. num(PA.margin_px) .. ") <= 0) * (" ..
   cfg.climate.names.lat .. " < " .. num(PA.lat) .. ")")
+
+-- The mask of 0.3.0 (config.lua tiles.palm_allow2): the shore field is the squared distance in degrees to the nearest
+-- warm Mediterranean shore segment, on the unmeandered latitude, so it follows the coast and not the climate's wander.
+local PA2 = cfg.tiles.palm_allow2
+local SHORE = require("prototypes.tables.palm_coast").shores
+local CK = PA2.lon_scale
+local shore_locals = {plon = cfg.climate.names.lon .. " * " .. num(CK),
+                      plat = cfg.climate.names.lat .. " - " .. num(cfg.climate.meander.degrees) .. " * " ..
+                        cfg.climate.meander.name}
+local terms = {}
+for _, line in ipairs(SHORE) do
+  for i = 2, #line do
+    local ax, ay = line[i - 1][1] * CK, line[i - 1][2]
+    local bx, by = line[i][1] * CK - ax, line[i][2] - ay
+    local len2 = bx * bx + by * by
+    if len2 > 0 then
+      local k = #terms + 1
+      shore_locals["t" .. k] = "clamp((plon - " .. num(ax) .. ") * " .. num(bx / len2) .. " + (plat - " .. num(ay) ..
+        ") * " .. num(by / len2) .. ", 0, 1)"
+      shore_locals["x" .. k] = "plon - " .. num(ax) .. " - t" .. k .. " * " .. num(bx)
+      shore_locals["y" .. k] = "plat - " .. num(ay) .. " - t" .. k .. " * " .. num(by)
+      terms[k] = "x" .. k .. " * x" .. k .. " + y" .. k .. " * y" .. k
+    end
+  end
+end
+def(PA2.med, "min(" .. table.concat(terms, ", ") .. ")", shore_locals)
+local BAND = PA2.band_px / cfg.coordinates.px_per_degree
+local WARM_LOW = "(temperature + " .. cfg.climate.names.belts.t .. " > " .. num(PA.warm_t) .. ") * (" ..
+  cfg.keys.high .. " + " .. cfg.keys.scale .. " * (" .. cfg.regions.names.highland_fray .. " + " .. num(PA.margin_px) ..
+  ") <= 0)"
+def(PA2.body, WARM_LOW .. " * max(" .. cfg.climate.names.lat .. " < " .. num(PA.lat) .. ", " .. PA2.med .. " < " ..
+  num(BAND * BAND) .. ")")
+local SH = PA2.shore
+local K = cfg.keys
+def(SH.body, "(temperature + " .. cfg.climate.names.belts.t .. " > " .. num(PA.warm_t) .. ") * ((" .. K.high ..
+  " - " .. num(cfg.ridges.high.rock_tiles) .. " / " .. K.scale .. ") / " .. K.scale .. " + " ..
+  cfg.regions.names.highland_fray .. " <= " .. num(SH.reach_px) .. ") * (" .. cfg.climate.names.lat .. " >= " ..
+  num(PA.lat) .. ") * " .. num(SH.p) ..
+  " * clamp(1 - " .. PA2.med .. " / " .. num(BAND * BAND) .. ", 0, 1) * clamp(" .. num(SH.grove_mid) .. " + " ..
+  num(SH.grove) ..
+  " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(SH.seed1) .. ", input_scale = 1 / " ..
+  num(SH.wave_tiles) .. ", output_scale = 1}, 0, 1)")
 
 data:extend(E)
 

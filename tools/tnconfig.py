@@ -385,6 +385,9 @@ FINE_ROLES = ("entry", "geo", "detail", "far")
 SPAWN_FIELDS = ("city_setting", "city", "city_index", "spawn_lake", "spawn_bias", "inland_lakes", "start_land",
                 "distance", "bearings")
 SPAWN_NAMES = ("city", "city_index", "spawn_lake", "spawn_bias", "inland_lakes", "start_land", "distance")
+# lake_floor (optional, true only): the version's inland lakes hold the floor off every spot (config.lua
+# spawn.inland_lakes.floor), so the shore noise leaves no water specks; a version without it keeps its body.
+SPAWN_OPTIONAL = ("lake_floor",)
 # The spawn names that read the version's own chain: each version that has them takes its own (never
 # shared with or re-pointed from another version); the other spawn bodies read no chain and may
 # serve several versions, as a start mask version does.
@@ -468,8 +471,11 @@ def own_names(version):
 
 
 def _spawn_record(sp, where, cfg):
-    if not isinstance(sp, dict) or set(sp) != set(SPAWN_FIELDS):
-        raise ConfigError(f"config.lua {where}.spawn must hold exactly {sorted(SPAWN_FIELDS)}")
+    if not isinstance(sp, dict) or set(sp) - set(SPAWN_OPTIONAL) != set(SPAWN_FIELDS):
+        raise ConfigError(f"config.lua {where}.spawn must hold exactly {sorted(SPAWN_FIELDS)}, and optionally "
+                          f"{sorted(SPAWN_OPTIONAL)}")
+    if "lake_floor" in sp and sp["lake_floor"] is not True:
+        raise ConfigError(f"config.lua {where}.spawn.lake_floor must be true or absent")
     for n in SPAWN_NAMES:
         if not isinstance(sp[n], str) or not sp[n]:
             raise ConfigError(f"config.lua {where}.spawn.{n} must be a noise name")
@@ -824,7 +830,7 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
                 pen[mix["key"]] = mix["amount"]
         else:
             pen[tl["marsh"]["grass"]["key"]] = tl["marsh"]["grass"]["body"]
-            pen[tl["frozen"]["key"]] = tl["frozen"]["body"]
+            pen[tl["frozen"]["key"]] = tl["frozen"].get("body2") or tl["frozen"]["body"]
     # the tree keys (trees-forests; presets.lua tree_names), after the climate keys: the multiplier key at
     # the region layer's multiplier, and with ab=True every restored tree's, rock's and decorative's key
     # at its body and each palm's probability key at its second version
@@ -841,7 +847,13 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
             for key in rs["decoratives"].values():
                 pen[key] = rs["deco_body"]
             for pm in tr["palm"]:
-                pen[pm["key"]] = pm["next"]
+                pen[pm["key"]] = pm.get("next3") or pm.get("next2") or pm["next"]
+            nb = (cfg.get("blue") or {}).get("no_blue")
+            if nb:
+                pen[nb["key"]] = cfg["neutral"]["one"]
+            p2 = (cfg.get("blue") or {}).get("plants2")
+            if p2:
+                pen[p2["key"]] = cfg["neutral"]["one"]
     # the ridges (ridges; presets.lua ridge_values): the two cliff properties at the ridge bodies and the
     # map's crest, openings and band keys; and every Earth ore's probability key at its clearance wrapper,
     # which data-final-fixes.lua adds to every preset (M1 holds all six resources)
@@ -868,8 +880,9 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     rs = cfg.get("resources")
     if rs:
         for o in rs["ores"]:
-            pen[o["probability"]] = o["p"]
-            pen[o["richness"]] = o["r"]
+            # 0.3.0: a cut probability wrapper (p3) and the richness wrapper's next version (r2) where defined
+            pen[o["probability"]] = o.get("p3") or o["p"]
+            pen[o["richness"]] = o.get("r2") or o["r"]
         pen[K["enemy"]] = cfg["enemies"]["wrapper"]
         # a development branch: the hotspot amount and each live patch expression at its Earth body (the Oil Rig's
         # exists only beside it)
@@ -902,6 +915,15 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     pen.update((cfg.get("hotspots_v2") or {}).get("points") or {})
     if rs and cfg.get("hotspots_v2"):
         pen[K["enemy"]] = cfg["hotspots_v2"]["nests"]["wrapper"]
+    # the scattered bases (data-final-fixes.lua enemy_wrapper): 0.3.0's presets name them over the nests
+    if rs and (cfg["enemies"].get("scatter") or {}).get("wrapper"):
+        pen[K["enemy"]] = cfg["enemies"]["scatter"]["wrapper"]
+    # trees off a hotspot's ore (data-final-fixes.lua): new presets switch the hook gate on
+    if rs and rs.get("ore_trees"):
+        pen[rs["ore_trees"]["key"]] = cfg["neutral"]["one"]
+        if rs["ore_trees"].get("open_v2"):
+            pen[rs["ore_trees"]["open"]] = rs["ore_trees"]["open_v2"]
+            pen[rs["ore_trees"]["plants"]["open"]] = rs["ore_trees"]["plants"]["open_v2"]
     return pen
 
 

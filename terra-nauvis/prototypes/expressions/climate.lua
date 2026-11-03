@@ -84,7 +84,7 @@ end
 -- The city offset of the world's map folded into one constant added to each noise's seed1, so each
 -- spawn city gets a climate texture of its own: the world shifts to put the city at the origin, so a
 -- noise of plain x and y would repeat around every city of a seed. A seed folds at compile time; x + cx
--- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (DECISIONS
+-- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (design notes
 -- 2026-10-30 11:10).
 local SH = C.city_shift
 def(N.shift, by_map(function(X)
@@ -242,16 +242,36 @@ def(N.fallback.aux, "clamp(min(" .. num(A.base) .. " + (" .. num(AF.cold_aux) ..
 -- The snow line (config.lua climate.north): d is degrees north of it. Worlds without Alien Biomes read it too, for the
 -- mod's frozen tile.
 local NF = C.north
-local front = {}
-for i = 2, #NF.front do
-  local a, b = NF.front[i - 1], NF.front[i]
-  front[#front + 1] = num((b[2] - a[2]) / (b[1] - a[1])) .. " * (clamp(north_lon, " .. num(a[1]) .. ", " .. num(b[1]) ..
-    ") - " .. num(a[1]) .. ")"
+-- climate.north2 is north with its own front, clearing and names; every other value is north's.
+local NF2 = {}
+for k, v in pairs(NF) do
+  NF2[k] = v
 end
-def(NF.names.d, N.lat .. " + " .. num(NF.meander) .. " * " .. MD.name .. " + " .. num(NF.wave.amplitude) ..
-  " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(NF.wave.seed1) .. ", input_scale = 1 / (" ..
-  num(NF.wave.wave_px) .. " * " .. K.scale .. "), output_scale = 1} - (" .. num(NF.front[1][2]) .. " + " ..
-  table.concat(front, " + ") .. ")", {north_lon = N.lon})
+for k, v in pairs(C.north2) do
+  NF2[k] = v
+end
+local function north_d(F)
+  local front = {}
+  for i = 2, #F.front do
+    local a, b = F.front[i - 1], F.front[i]
+    front[#front + 1] = num((b[2] - a[2]) / (b[1] - a[1])) .. " * (clamp(north_lon, " .. num(a[1]) .. ", " ..
+      num(b[1]) .. ") - " .. num(a[1]) .. ")"
+  end
+  def(F.names.d, N.lat .. " + " .. num(F.meander) .. " * " .. MD.name .. " + " .. num(F.wave.amplitude) ..
+    " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(F.wave.seed1) .. ", input_scale = 1 / (" ..
+    num(F.wave.wave_px) .. " * " .. K.scale .. "), output_scale = 1} - (" .. num(F.front[1][2]) .. " + " ..
+    table.concat(front, " + ") .. ")", {north_lon = N.lon})
+end
+north_d(NF)
+north_d(NF2)
+-- The clearing round the spawn: 1 within inner_tiles of it, 0 past outer_tiles, on a distance the warp stretches by up
+-- to warp of itself, so the edge is no circle.
+local CL = NF2.clear
+def(NF2.names.clear_warp, "multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(CL.seed1) ..
+  ", octaves = " .. num(CL.octaves) .. ", persistence = " .. num(CL.persistence) .. ", input_scale = 1 / " ..
+  num(CL.wave_tiles) .. ", output_scale = 1}")
+def(NF2.names.clear, "clamp((" .. num(CL.outer_tiles) .. " - distance * (1 + " .. num(CL.warp) .. " * " ..
+  NF2.names.clear_warp .. ")) / " .. num(CL.outer_tiles - CL.inner_tiles) .. ", 0, 1)")
 
 if AB then
   -- Alien Biomes' hot and cold sliders: their size shifts the temperature as AB's own average does, their
@@ -346,39 +366,62 @@ if AB then
   -- names over the bodies above (climate.points). d is degrees north of the snow line. The fall lowers the core to the
   -- line's cap and keeps the temperature's noise, so the edge frays as any climate edge does, and it reads no zone: the
   -- zone's lift stays on top. The zone's lift also stands on the highland's cap, so no zone tile turns cold on a range.
-  local NN, CG, RD_COLD = NF.names, RN.cold, cfg.ridges.cold
-  local G2 = NN.grain
-  def(NN.drop, "max(0, " .. N.core .. " - (" .. num(NF.south_per_degree) .. " * max(0, -" .. NN.d .. ") - " ..
-    num(NF.near_per_degree) .. " * clamp(" .. NN.d .. ", 0, " .. num(NF.near_degrees) .. ") - " ..
-    num(NF.far_per_degree) .. " * max(0, " .. NN.d .. " - " .. num(NF.near_degrees) .. ")))")
-  def(NN.belt, "clamp((" .. NN.d .. " + " .. num(NF.belt_from) .. ") / " .. num(NF.belt_ramp) .. ", 0, 1)")
-  def(NN.lead, "clamp((" .. NN.d .. " + " .. num(NF.lead_degrees) .. ") / " .. num(NF.lead_ramp) .. ", 0, 1)")
-  def(NN.temperature, T2 .. " - " .. NN.drop)
-  local T3 = NN.temperature
-  def(G2.field, "max(clamp((" .. num(G.cold_t) .. " - cold) / " .. num(G.cold_span) .. ", 0, 1), clamp((hot - " ..
-    num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1), clamp(" .. BELT.wild ..
-    ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ") * (1 + " .. num(GR.fray) .. " * " .. CG.high ..
-    ") * min(1, " .. num(RD_COLD.fit_scale) .. " / " .. K.scale .. ")",
-    {cold = "min(" .. T3 .. ", " .. CG.cap .. ")", hot = "min(" .. N.ab.temperature .. ", " .. CG.cap .. ")"})
-  -- The cap takes a share of the grain: whole, it reaches 18 at full highland, and on a slope of a quarter degree a
-  -- tile that scatters specks 75 tiles past the massif's edge.
-  def(G2.temperature, "min(t, " .. CG.cap .. " + " .. T2 .. " - " .. N.ab.temperature .. " + " ..
-    num(G.temperature * RD_COLD.cap_grain) .. " * " .. G2.field .. ")",
-    {t = "min(" .. T3 .. " + " .. num(G.temperature) .. " * " .. G2.field .. " + " .. BELT.t .. " * (1 - " ..
-       NN.belt .. "), max(" .. T3 .. ", " .. num(T.ab.max) .. "))"})
-  def(G2.veg, "if(" .. T3 .. " > " .. num(G.veg_zone_t) .. ", " .. G2.temperature .. ", min(" .. G2.temperature ..
-    " + " .. BELT.tv .. ", " .. num(G.veg_cap) .. "))")
-  def(G2.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. G2.field .. " + " .. BELT.m .. " - " ..
-    num(GR.moisture) .. " * " .. CG.high, cfg.tiles.marsh.edge))
-  -- Alien Biomes' white ground sits under aux 0.3, so where aux dips across that line the grey ground of the wasteland
-  -- and of a massif's flanks takes small pale islands: the floor keeps those two to the one grey family.
-  local GREY = "max(" .. NN.lead .. ", clamp(" .. num(NF.aux_high) .. " * " .. CG.high .. ", 0, 1))"
-  def(G2.aux, "max(a, " .. num(NF.aux_floor) .. " * " .. GREY .. ")",
-    {a = ab_aux(" + " .. num(G.aux) .. " * " .. G2.field, BELT.a .. " + ")})
-  local kept, kept_at = lifted(G2.moisture, " * (1 - " .. CG.high .. ")")
-  kept_at.kept = kept
-  -- The same ceiling on a massif's flanks: wet moisture there drew specks of Alien Biomes' wet dirt in the dark grass.
-  def(NN.moisture, "kept - " .. GREY .. " * max(0, kept - " .. num(NF.lead_top) .. ")", kept_at)
+  local CG, RD_COLD = RN.cold, cfg.ridges.cold
+  local function cold_north(F)
+    local NN = F.names
+    local G2 = NN.grain
+    def(NN.drop, "max(0, " .. N.core .. " - (" .. num(F.south_per_degree) .. " * max(0, -" .. NN.d .. ") - " ..
+      num(F.near_per_degree) .. " * clamp(" .. NN.d .. ", 0, " .. num(F.near_degrees) .. ") - " ..
+      num(F.far_per_degree) .. " * max(0, " .. NN.d .. " - " .. num(F.near_degrees) .. ")))")
+    def(NN.belt, "clamp((" .. NN.d .. " + " .. num(F.belt_from) .. ") / " .. num(F.belt_ramp) .. ", 0, 1)")
+    def(NN.lead, "clamp((" .. NN.d .. " + " .. num(F.lead_degrees) .. ") / " .. num(F.lead_ramp) .. ", 0, 1)")
+    if F.clear then
+      -- In the clearing the temperature rises to clear.t where it is colder, and only there, so a warm start keeps
+      -- its own climate.
+      def(NN.temperature, "t + " .. NN.clear .. " * max(0, " .. num(F.clear.t) .. " - t)",
+        {t = T2 .. " - " .. NN.drop})
+    else
+      def(NN.temperature, T2 .. " - " .. NN.drop)
+    end
+    local T3 = NN.temperature
+    def(G2.field, "max(clamp((" .. num(G.cold_t) .. " - cold) / " .. num(G.cold_span) .. ", 0, 1), clamp((hot - " ..
+      num(G.hot_t) .. ") / " .. num(G.hot_span) .. ", 0, 1), clamp(" .. BELT.wild ..
+      ", 0, 1)) * noise_layer_noise(" .. num(G.layer) .. ") * (1 + " .. num(GR.fray) .. " * " .. CG.high ..
+      ") * min(1, " .. num(RD_COLD.fit_scale) .. " / " .. K.scale .. ")",
+      {cold = "min(" .. T3 .. ", " .. CG.cap .. ")", hot = "min(" .. N.ab.temperature .. ", " .. CG.cap .. ")"})
+    -- The cap takes a share of the grain: whole, it reaches 18 at full highland, and on a slope of a quarter degree a
+    -- tile that scatters specks 75 tiles past the massif's edge.
+    def(G2.temperature, "min(t, " .. CG.cap .. " + " .. T2 .. " - " .. N.ab.temperature .. " + " ..
+      num(G.temperature * RD_COLD.cap_grain) .. " * " .. G2.field .. ")",
+      {t = "min(" .. T3 .. " + " .. num(G.temperature) .. " * " .. G2.field .. " + " .. BELT.t .. " * (1 - " ..
+         NN.belt .. "), max(" .. T3 .. ", " .. num(T.ab.max) .. "))"})
+    def(G2.veg, "if(" .. T3 .. " > " .. num(G.veg_zone_t) .. ", " .. G2.temperature .. ", min(" .. G2.temperature ..
+      " + " .. BELT.tv .. ", " .. num(G.veg_cap) .. "))")
+    def(G2.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. G2.field .. " + " .. BELT.m .. " - " ..
+      num(GR.moisture) .. " * " .. CG.high, cfg.tiles.marsh.edge))
+    -- Alien Biomes' white ground sits under aux 0.3, so where aux dips across that line the grey ground of the
+    -- wasteland and of a massif's flanks takes small pale islands: the floor keeps those two to the one grey family.
+    local GREY = "max(" .. NN.lead .. ", clamp(" .. num(F.aux_high) .. " * " .. CG.high .. ", 0, 1))"
+    def(G2.aux, "max(a, " .. num(F.aux_floor) .. " * " .. GREY .. ")",
+      {a = ab_aux(" + " .. num(G.aux) .. " * " .. G2.field, BELT.a .. " + ")})
+    local kept, kept_at = lifted(G2.moisture, " * (1 - " .. CG.high .. ")")
+    kept_at.kept = kept
+    -- The same ceiling on a massif's flanks: wet moisture there drew specks of Alien Biomes' wet dirt in the dark
+    -- grass.
+    if F.clear then
+      -- A cold spawn's clearing would be Alien Biomes' grey sand, as slow as its snow: where the clearing warmed the
+      -- ground, the tile moisture rises to clear.m, grey dirt's band. A warm start keeps its own.
+      kept_at.lifted = "kept - " .. GREY .. " * max(0, kept - " .. num(F.lead_top) .. ")"
+      kept_at.c = NN.clear
+      def(NN.moisture, "max(lifted, " .. num(F.clear.m) .. " * clamp(c + " .. num(F.clear.m_fray) .. " * " ..
+        NN.clear_warp .. " * c * (1 - c), 0, 1) * clamp((" .. num(F.clear.t) .. " - " .. T2 .. " + " .. NN.drop ..
+        ") / " .. num(F.clear.m_span) .. ", 0, 1))", kept_at)
+    else
+      def(NN.moisture, "kept - " .. GREY .. " * max(0, kept - " .. num(F.lead_top) .. ")", kept_at)
+    end
+  end
+  cold_north(NF)
+  cold_north(NF2)
 end
 
 data:extend(E)

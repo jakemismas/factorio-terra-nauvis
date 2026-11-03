@@ -155,11 +155,16 @@ end
 -- massif's snow.
 local FZ = cfg.tiles.frozen
 def(FZ.key, FZ.off)
-def(FZ.body, "if(elevation > 0, if(max(" .. cfg.climate.north.names.d .. " + " .. num(FZ.fray) ..
-  " * noise_layer_noise(" .. num(cfg.climate.grain.layer) .. ") * min(1, " .. num(cfg.ridges.cold.fit_scale) .. " / " ..
-  K.scale .. "), " ..
-  num(FZ.cold) .. " * (" .. cfg.ridges.names.cold.gated .. " - " .. num(cfg.ridges.cold.snow_at) .. ")) > 0, " ..
-  num(FZ.score) .. ", " .. FZ.off .. "), " .. FZ.off .. ")")
+local function frozen_body(name, d)
+  def(name, "if(elevation > 0, if(max(" .. d .. " + " .. num(FZ.fray) ..
+    " * noise_layer_noise(" .. num(cfg.climate.grain.layer) .. ") * min(1, " .. num(cfg.ridges.cold.fit_scale) ..
+    " / " .. K.scale .. "), " ..
+    num(FZ.cold) .. " * (" .. cfg.ridges.names.cold.gated .. " - " .. num(cfg.ridges.cold.snow_at) .. ")) > 0, " ..
+    num(FZ.score) .. ", " .. FZ.off .. "), " .. FZ.off .. ")")
+end
+frozen_body(FZ.body, cfg.climate.north.names.d)
+local N2 = cfg.climate.north2.names
+frozen_body(FZ.body2, N2.d .. " - " .. num(FZ.clear_deg) .. " * " .. N2.clear)
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut
 -- on about 3 percent of tiles, draft run pv-m1-s1-eu-11), the pool noise passes a cut that falls as
@@ -169,6 +174,21 @@ def(MS.water_mud.body, "if(elevation > 0, if(distance > " .. num(MS.start_clear_
   " > " .. num(V.marsh_cut) .. ", if(pool + " .. num(P.cut_per_weight) .. " * " .. MARSH_W .. " - " ..
   num(P.cut + P.cut_per_weight) .. " > 0, " .. num(MS.score) .. ", -inf), -inf), -inf), -inf)",
   {pool = P.name})
+-- body2: the same pools read at a point warped in tiles (config.lua tiles.marsh.fray), so no pool edge runs straight at
+-- scales 12 and 24. Only new worlds name it.
+local F = MS.fray
+local function warp(seed)
+  return "multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(seed) .. ", octaves = " ..
+    num(F.octaves) .. ", persistence = " .. num(F.persistence) .. ", input_scale = 1 / " .. num(F.wavelength_tiles) ..
+    ", output_scale = " .. num(F.amplitude_tiles) .. "}"
+end
+def(F.name, "multioctave_noise{x = x + " .. warp(F.seed1_x) .. ", y = y + " .. warp(F.seed1_y) ..
+  ", seed0 = map_seed, seed1 = " .. num(P.seed1) .. ", octaves = " .. num(P.octaves) .. ", persistence = " ..
+  num(P.persistence) .. ", input_scale = 1 / (" .. num(P.wavelength_px) .. " * " .. K.scale .. "), output_scale = 1}")
+def(MS.water_mud.body2, "if(elevation > 0, if(distance > " .. num(MS.start_clear_tiles) .. ", if(" .. MARSH_W ..
+  " > " .. num(V.marsh_cut) .. ", if(pool + " .. num(P.cut_per_weight) .. " * " .. MARSH_W .. " - " ..
+  num(P.cut + P.cut_per_weight) .. " > 0, " .. num(MS.score) .. ", -inf), -inf), -inf), -inf)",
+  {pool = F.name})
 def(MS.water_shallow.body, "if(" .. MARSH_W .. " > " .. num(V.marsh_cut) .. ", if(elevation < 0, if(elevation > " ..
   num(-MS.shallow_depth) .. ", " .. num(MS.shallow_score) .. ", -inf), -inf), -inf)")
 -- Without Alien Biomes: grass-1 between the pools (APPROVALS 8), +bonus on land inside marshes, 0

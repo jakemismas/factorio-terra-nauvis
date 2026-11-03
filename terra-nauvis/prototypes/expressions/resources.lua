@@ -124,7 +124,7 @@ end
 local RP = RS.ramp
 def(RP.name, "1 + " .. num(RP.gain) .. " * clamp((distance - " .. num(RP.from) .. ") / " .. num(RP.span) .. ", 0, 1)")
 
--- The random offshore-oil sea mask (FEAS-07; DECISIONS, resources-enemies): 1 where the coarse land
+-- The random offshore-oil sea mask (FEAS-07; design notes, resources-enemies): 1 where the coarse land
 -- field reads open sea past the threshold, which leaves inland rivers, canals, lakes and marshes out.
 def(RS.sea.name, K.land_coarse .. " < " .. num(-RS.sea.threshold_px))
 
@@ -187,7 +187,7 @@ end
 -- resource that share a region never draw on each other's target. A row's realised amount is then
 -- its amount times the share of its start disc the land gate passes (design rule 16, read in game
 -- through tn_land_coarse: design rule 8), at every scale and jitter; the table's share lists the discs
--- more than half sea (DECISIONS). A candidate's cone is held to the room the row leaves it, so no ore
+-- more than half sea. A candidate's cone is held to the room the row leaves it, so no ore
 -- leaves the row's disc or enters a rival's (config.lua hotspots.size note), and a candidate with
 -- no room or too little quantity for a cone of the bounded slope carries nothing.
 local function map_spot(h, rows, i, L, M)

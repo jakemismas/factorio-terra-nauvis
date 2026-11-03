@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Write tests/vanilla-raw.json, the base game's prototypes the offline data stage reads, from the installed game.
 
-  python tools/make_vanilla_raw.py                    dump through %FACTORIO_WS%/tools/fh.py, then reduce
+  python tools/make_vanilla_raw.py --harness FH_PY    dump through that fh.py, then reduce
+  python tools/make_vanilla_raw.py                    the same through %FACTORIO_WS%/tools/fh.py (FACTORIO_WS set)
   python tools/make_vanilla_raw.py --dump FILE        reduce a data-raw-dump.json made another way
   python tools/make_vanilla_raw.py --out FILE         write FILE instead of tests/vanilla-raw.json
 
@@ -71,12 +72,23 @@ def dump_text(data):
     return json.dumps(data, indent=1, sort_keys=True) + "\n"
 
 
-def fh_path():
-    ws = Path(os.path.abspath(os.environ.get("FACTORIO_WS") or REPO.parent))
-    fh = ws / "tools" / "fh.py"
+HOW = ("pass --harness <path to fh.py>, set FACTORIO_WS to the folder whose tools/fh.py runs the game, or pass "
+       "--dump with a base-only data-raw-dump.json")
+
+
+def fh_path(harness=None):
+    """The harness and the folder it runs from: --harness, else FACTORIO_WS's tools/fh.py. No folder is guessed: a
+    folder beside the checkout may hold another harness, or none."""
+    if harness:
+        fh = Path(os.path.abspath(harness))
+        ws = fh.parent.parent
+    elif os.environ.get("FACTORIO_WS"):
+        ws = Path(os.path.abspath(os.environ["FACTORIO_WS"]))
+        fh = ws / "tools" / "fh.py"
+    else:
+        raise MakeError(f"no harness named: {HOW}")
     if not fh.is_file():
-        raise MakeError(f"no harness at {fh}: set FACTORIO_WS to the folder whose tools/fh.py runs the game, "
-                        f"or pass --dump with a base-only data-raw-dump.json")
+        raise MakeError(f"no harness at {fh}: {HOW}")
     return ws, fh
 
 
@@ -87,9 +99,9 @@ def fh(ws, script, args):
     return lines[-1] if lines else "RESULT fail (no RESULT line) " + ((cp.stdout or "") + (cp.stderr or "")).strip()[-300:]
 
 
-def run_dump(instance, modset, work):
+def run_dump(instance, modset, work, harness=None):
     """The data-raw-dump.json of a base-only --dump-data run through fh.py, as a dict."""
-    ws, script = fh_path()
+    ws, script = fh_path(harness)
     res = fh(ws, script, ["modset", modset, "--expansion", "none"])
     print("fh:", res)
     if not res.startswith("RESULT ok") or " enabled=base " not in res + " ":
@@ -116,6 +128,7 @@ def main(argv=None):
     ap.add_argument("--instance", default=INSTANCE, help="fh.py instance for the dump run")
     ap.add_argument("--modset", default=INSTANCE, help="fh.py modset for the dump run, base alone")
     ap.add_argument("--work", help="a new folder for the dump run's evidence (default: a temporary one)")
+    ap.add_argument("--harness", help="the fh.py that runs the game (default: FACTORIO_WS's tools/fh.py)")
     a = ap.parse_args(argv)
     try:
         if a.dump:
@@ -124,10 +137,10 @@ def main(argv=None):
             work = Path(a.work).resolve()
             if work.exists() and any(work.iterdir()):
                 raise MakeError(f"{work} already holds files; give a new --work")
-            dump = run_dump(a.instance, a.modset, work)
+            dump = run_dump(a.instance, a.modset, work, a.harness)
         else:
             with tempfile.TemporaryDirectory(prefix="tn-vanilla-raw-") as td:
-                dump = run_dump(a.instance, a.modset, td)
+                dump = run_dump(a.instance, a.modset, td, a.harness)
         text = dump_text(reduce_dump(dump))
         out = Path(a.out)
         out.parent.mkdir(parents=True, exist_ok=True)

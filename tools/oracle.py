@@ -524,7 +524,7 @@ def cmd_plan(a):
 #, tagged "brief" so the climate builder never writes its own answers. Every other
 # expectation of an added row stays null until its layer ships.
 
-BRIEF = "notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9)"
+BRIEF = "project requirement D9"
 BRIEF_QUOTE = ("North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; "
                "the coldest biomes are far north")
 # Brief-sourced climate places (decision 14; T3 Places): band names the climate milestone maps to Earth

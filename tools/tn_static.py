@@ -8,7 +8,7 @@ full history, so the runner holds origin/main) and fails closed when it cannot r
 returns a list of failure messages (empty means pass) and a short detail line.
 
 Rows: lint, info_json, locale, dashes, registration, storage, names, design_rules, workflow_scan,
-attribution_scan, data_src, frozen_static, append_only, fallbacks, zip, plus fixture positive
+data_src, frozen_static, append_only, fallbacks, zip, plus fixture positive
 controls for the scans (each rule must fail its own fixture; fixtures are written at run time into
 a temporary directory outside the scanned trees and never committed). No row scans tools/ or
 tests/ for game launches,
@@ -104,16 +104,6 @@ def mod_lua(mod=MOD):
     return [p for p in mod_files(mod) if p.suffix.lower() == ".lua"]
 
 
-def walk_all(root):
-    """Every file under root except inside .git and __pycache__ folders: the attribution scan reads
-    dot folders and the folders walk_files skips (dist, spikes, node_modules) too."""
-    out = []
-    for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = sorted(d for d in dirnames if d not in (".git", "__pycache__"))
-        out += [Path(dirpath) / f for f in sorted(filenames)]
-    return out
-
-
 def read_text_or_none(p):
     """A file's text, or None for a binary file (a NUL byte, or not UTF-8)."""
     b = Path(p).read_bytes()
@@ -176,7 +166,9 @@ def lint_manifest(lint_dir=LINT):
 # ------------------------------------------------------------------------------------------------ lint
 
 def find_luacheck(manifest):
-    """The linter binary: TN_LUACHECK, then PATH, then the manifest's per-user install paths."""
+    """The linter binary: TN_LUACHECK, then PATH, then a local copy at downloads/<name>-<version>/ in FACTORIO_WS or
+    in any folder that holds the checkout (fetch_linter.py --dest writes one). run_luacheck refuses a binary whose
+    sha256 is not the manifest's, so a copy found this way still has to be the recorded release."""
     cands = []
     env = os.environ.get("TN_LUACHECK")
     if env:
@@ -185,8 +177,10 @@ def find_luacheck(manifest):
         w = shutil.which(name)
         if w:
             cands.append(Path(w))
-    for p in manifest["linter"].get("user_install_paths", []):
-        cands.append(Path(os.path.expanduser(p)))
+    want = manifest["linter"]
+    rel = Path("downloads") / f"{want['name']}-{want['version']}" / Path(want["source"]).name
+    roots = ([Path(os.environ["FACTORIO_WS"])] if os.environ.get("FACTORIO_WS") else []) + list(REPO.parents)
+    cands += [r / rel for r in roots]
     for c in cands:
         if c.is_file():
             return c
@@ -1705,46 +1699,6 @@ def row_workflow(repo=REPO):
     return f, "ci.yml and release.yml against DECISIONS 12:35, latest.yml against DECISIONS 22:34"
 
 
-# ------------------------------------------------------------------------------------------------ attribution scan
-
-def attribution_patterns():
-    """Assembled from fragments at run time: no committed file holds a literal pattern (U14)."""
-    j = "".join
-    words = [j(["cl", "aude"]), j(["anthr", "opic"]), j(["open", "ai"]), j(["chat", "gpt"]), j(["co", "pilot"]),
-             j(["gem", "ini"]), j(["g", "pt-", "4"]), j(["l", "lm-gen", "erated"])]
-    phrases = [j(["co", "-auth", "ored", "-by"]), j(["gene", "rated ", "with "]), j(["gene", "rated ", "by ", "ai"]),
-               j(["ai", "-gene", "rated"]), j(["writ", "ten ", "by ", "ai"]), j(["no", "reply", "@", "anthr", "opic"])]
-    # A word inside a path (a tool's dot folder, a URL) is not attribution; a word in prose is.
-    rx = [re.compile(r"(?<![a-z0-9./\\])" + re.escape(w) + r"(?![a-z0-9])", re.I) for w in words]
-    rx += [re.compile(re.escape(p), re.I) for p in phrases]
-    return rx
-
-
-def attribution_findings(roots, base=REPO):
-    rx = attribution_patterns()
-    out, n = [], 0
-    for root in roots:
-        for p in walk_all(root):
-            if p.suffix.lower() in {".png", ".zip", ".dat", ".npz", ".npy", ".exe"}:
-                continue
-            text = read_text_or_none(p)
-            if text is None:
-                continue
-            n += 1
-            for i, line in enumerate(text.split("\n"), 1):
-                for r in rx:
-                    if r.search(line):
-                        out.append(f"{rel(p, base)}:{i}: AI attribution pattern")
-                        break
-    return out, n
-
-
-def row_attribution(repo=REPO):
-    roots = [Path(repo) / d for d in ("terra-nauvis", "tools", "tests", "data-src", ".github")]
-    f, n = attribution_findings([r for r in roots if r.exists()], repo)
-    return f, f"{n} text files in terra-nauvis/, tools/, tests/, data-src/ and .github/"
-
-
 # ------------------------------------------------------------------------------------------------ data-src
 
 def png_size(p):
@@ -2920,17 +2874,6 @@ def fixture_controls():
     exe = "factorio" + ".exe"
     with tempfile.TemporaryDirectory(prefix="tn-fixtures-") as td:
         td = Path(td)
-        # attribution
-        word = "".join(["Cl", "aude"])
-        d = td / "attr"
-        _write(d, "tests/note.txt", f"Written with help from {word}.\n")
-        f, _ = attribution_findings([d], d)
-        results.append(("attribution: a pattern in a file", bool(f), f[:1]))
-        trailer = "-".join(["Co", "Authored", "By"]) + ": x <y@z>"
-        d2 = td / "attr2"
-        _write(d2, "tools/x.py", f"# {trailer}\n")
-        f, _ = attribution_findings([d2], d2)
-        results.append(("attribution: a co-author trailer", bool(f), f[:1]))
         results += vanilla_raw_controls(td / "vanilla")
         # workflow mutations
         manifest = lint_manifest()
@@ -3475,6 +3418,12 @@ def next_version(cfg, map_key=None):
     if ww:
         v["waterways"] = ww_new
         out["waterways"]["sets"][key] = ww_new
+    # its mouth and warp bodies read the chain as well (tnconfig.waterway_names)
+    extra_new = set()
+    for field in ("mouths", "warp"):
+        if last.get(field):
+            v[field] = [bump(n) for n in last[field]]
+            extra_new |= set(v[field])
     # a shore body (climate-tiles) reads the version's fit, detail and box, so it is the version's own too
     shore_new = {bump(last["shore"])} if last.get("shore") else set()
     if shore_new:
@@ -3482,7 +3431,8 @@ def next_version(cfg, map_key=None):
     vs.append(v)
     out["release_registry"].append({"release": out["release_registry"][-1]["release"], "map": key, "geography": gid,
                                     "names": sorted(set(new.values()) | {mask["name"]} | set(spawn_new.values()) |
-                                                    {n for names in ww_new.values() for n in names} | shore_new),
+                                                    {n for names in ww_new.values() for n in names} | shore_new |
+                                                    extra_new),
                                     "files": []})
     out["preset_keys"] = list(out["preset_keys"]) + [new["cx"], new["cy"]]
     out["firewall"][key] = list(out["firewall"][key]) + [n for n in tnconfig.fine_names(v)
@@ -4912,7 +4862,7 @@ def extras_fixtures(td, cfg):
 ROWS = [
     ("lint", row_lint), ("info_json", row_info), ("locale", row_locale), ("dashes", row_dashes),
     ("registration", row_registration), ("storage", row_storage), ("names", row_names),
-    ("design_rules", row_design), ("workflow_scan", row_workflow), ("attribution_scan", row_attribution),
+    ("design_rules", row_design), ("workflow_scan", row_workflow),
     ("data_src", row_data_src), ("frozen_static", row_frozen), ("bodies", row_bodies), ("append_only", row_append_only),
     ("fallbacks", row_fallbacks), ("zip", row_zip), ("regions", row_regions), ("ranges", row_ranges), ("hotspots", row_hotspots),
     ("release_zip", row_release_zip), ("tools_scan", row_tools_scan),

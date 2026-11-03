@@ -1,6 +1,6 @@
 -- Spawn expressions (ARCHITECTURE.md, "Expression inventory"; contracts 1 and 2).
 --
--- The start mask (design rule 8; DECISIONS 08:00): vanilla's starting_resources_lake_mask reads elevation
+-- The start mask (design rule 8): vanilla's starting_resources_lake_mask reads elevation
 -- in every starting-ore spot noise, which on an Earth preset would carry the fine coast into the
 -- Entity program. Earth presets point that key at a start mask version (config.lua's start_mask;
 -- each geography version names the one its preset bakes). Each version names its formula:
@@ -108,12 +108,17 @@ local function noise(seed1, wavelength, cx, cy)
     " / " .. num(wavelength) .. shift .. "}"
 end
 
--- One axis of a lake's domain warp (DECISIONS 2026-10-30, the rivers' natural course): amplitude times
--- one basis noise per octave row of config.lua, so a lake's shore wanders off the circle its distance draws.
+-- One axis of a lake's domain warp: amplitude times
+-- one basis noise per octave row of config.lua, so a lake's shore wanders off the circle its distance draws. A row
+-- with max_scale moves the shore only up to that scale.
 local function warp(octaves, axis, cx, cy)
   local parts = {}
   for i, o in ipairs(octaves) do
-    parts[i] = num(o.amplitude) .. " * " .. noise(o["seed1" .. axis], o.wavelength, cx, cy)
+    local amp = num(o.amplitude)
+    if o.max_scale then
+      amp = "if(" .. K.scale .. " <= " .. num(o.max_scale) .. ", " .. amp .. ", 0)"
+    end
+    parts[i] = amp .. " * " .. noise(o["seed1" .. axis], o.wavelength, cx, cy)
   end
   return table.concat(parts, " + ")
 end
@@ -235,12 +240,15 @@ local function spawn(map_key, v)
   end)
 
   -- The spawn lake: centre `distance` tiles out on the bearing; water where d + n is under
-  -- offset * divisor. A geography in config.lua's lake_shape takes its noise and warp rows in place of
-  -- lake's; the other versions keep lake's rows, so released bodies keep their text.
-  local LS = S.lake_shape
-  local shaped = false
-  for _, id in ipairs(LS and LS.geographies or {}) do
-    shaped = shaped or id == v.geo_id
+  -- offset * divisor. A geography in config.lua's lake_next, else in its lake_shape, takes that table's noise and
+  -- warp rows in place of lake's; the other versions keep lake's rows, so released bodies keep their text.
+  local LS, shaped = nil, false
+  for _, rows in ipairs({S.lake_next or {}, S.lake_shape or {}}) do
+    for _, id in ipairs(rows.geographies or {}) do
+      if not shaped and id == v.geo_id then
+        LS, shaped = rows, true
+      end
+    end
   end
   local lake_n = num(L.noise.amplitude) .. " * " .. noise(L.noise.seed1, L.noise.wavelength)
   local lake_wx, lake_wy = "x + " .. warp(L.warp, "x"), "y + " .. warp(L.warp, "y")
@@ -286,9 +294,11 @@ local function spawn(map_key, v)
     ", maximum_spot_basement_radius = " .. num(2 * I.radius) .. ", region_size = " .. num(I.region) ..
     ", candidate_spot_count = " .. num(I.candidates) .. ", suggested_minimum_candidate_point_spacing = " ..
     num(I.spacing) .. ", hard_region_target_quantity = " .. num(1) .. "}"
+  -- lake_floor: off every spot the term holds at least the floor (config.lua spawn.inland_lakes.floor)
+  local floor = sp.lake_floor and (", if(lake_spot > 0, -inf, " .. num(I.floor) .. ")") or ""
   def(sp.inland_lakes, "max(" .. num(I.gain) .. " * (" .. num(I.level) .. " + lake_size - lake_spot) + lake_shore, " ..
     num(I.coast_gain) .. " * (" .. num(I.coast_px) .. " - " .. v.geo .. "), (" .. num(I.start_radii) ..
-    " * starting_area_radius - " .. dist .. ") * " .. num(I.start_slope) .. ")", {
+    " * starting_area_radius - " .. dist .. ") * " .. num(I.start_slope) .. floor .. ")", {
       lake_spot = spots,
       lake_shore = num(I.shore.amplitude) .. " * " .. noise(I.shore.seed1, I.shore.wavelength, v.cx, v.cy),
       lake_size = num(I.size.amplitude) .. " * clamp(" .. noise(I.size.seed1, I.size.wavelength, v.cx, v.cy) ..

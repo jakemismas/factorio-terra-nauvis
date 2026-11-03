@@ -1,4 +1,53 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 2026-11-01
+  Changes:
+    - At map scale 12 on new Old World and Atlantic worlds, rivers bend more finely, so banks run
+      straight for shorter stretches, and the ends of river fords wander instead of crossing in a
+      straight line.
+    - New worlds use the next geography version of each map. Worlds made before keep theirs.
+    - Biter bases on new worlds stand scattered instead of in even rows, with about 60 percent of
+      the spawners. Nests keep off hotspot ore.
+    - On new worlds ore holds the same richness at map scales 12 and 24 as at 6, and hotspot ore is
+      at least as rich per tile as the regular ore round it.
+    - Trees thin out on hotspot ore, and hotspot field outlines wander. Batu Hijau's copper keeps
+      off Lombok.
+    - With Exact coastlines, coasts at scales 1 and 2 on new Old World and Atlantic worlds follow a
+      smoothed, wandering line instead of the map's square pixels: small square islets and slabs go
+      under, and straight runs are shorter.
+    - River banks at scales 1 and 2 take a wider noise, so each bank wanders on its own instead of
+      running parallel to the other.
+    - The spawn lake on new Old World and Atlantic worlds takes one more warp at scales 1 and 2, so
+      its shore bends more.
+    - The snow line runs north of Russia's main lowland, and a spawn in the cold north starts in a
+      clearing off the snow.
+    - Palms grow on warm Mediterranean shores. With Destroyed Europe on, palms outside the zone keep
+      to the same rules as with it off.
+    - With Space Age, the plants and decoratives Terra Nauvis re-lists keep the tiles of the other
+      planets that place them.
+    - Alien Biomes' blue and purple trees, plants and ground stay inside the Blue corrupted zone on
+      new worlds; outside it their tiles take green, brown or orange counterparts.
+    - Trees and plants beside hotspot ore thin out only where ore lies, not on the band a field's
+      wandering outline leaves bare.
+    - With Destroyed Europe on, great forests inside the zone stand as dead forests on new worlds.
+    - With Blue corrupted UK and Australia on, Alien Biomes' green and olive plants no longer grow
+      inside the blue zone on new worlds.
+    - Marsh pools on new worlds fray along their edges, so their shores run straight for shorter
+      stretches.
+    - Inland lakes leave no tiny water specks of one to a few tiles on the open land between them.
+    - With Destroyed Europe or Blue corrupted on beside Alien Biomes, the zone's own ground absorbs
+      pollution like grass and the zone's dead trees absorb like living trees, so pollution no longer
+      spreads further there. Saves made before take it too.
+    - With Destroyed Europe on beside Alien Biomes, biter and worm creep and the light brown mud
+      decals and dry plants inside the zone take a dark ember red; with Blue corrupted on, a
+      blue-purple. Creep of new nests on the zones' ground takes it on saves made before too.
+    - With Destroyed Europe on beside Alien Biomes, the zone's heat bands and sands walk at full
+      speed and slow vehicles no more than sand does. With Space Age, tree farms can plant on the
+      zones' ground. Saves made before take both.
+    - The tooltips of the optional layers give each one's map generation cost at Old World scale 12.
+    - With Space Age and Alien Biomes, tree farms can plant on the base game's grass, dirt, sand and
+      desert ground that Earth maps put back beside Alien Biomes.
+---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2026-11-01
   Features:

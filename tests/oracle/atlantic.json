@@ -10,7 +10,7 @@
   "approvals": "data-src/approvals/approvals-data.json",
   "hotspots": "docs/plan/research/R7a-hotspots.json via approvals-data.json",
   "rivers": "docs/plan/research/R1-earthmaps.md and data-src/earthmaps/europe.json",
-  "brief": "notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9)"
+  "brief": "project requirement D9"
  },
  "georeference": {
   "px_per_degree": 45.0,
@@ -28369,7 +28369,7 @@
    "kind": "climate",
    "lon": 10.7522,
    "lat": 59.9139,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: published city coordinate",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: published city coordinate",
    "ref_pixel": [
     8072,
     1226
@@ -28433,7 +28433,7 @@
    "kind": "climate",
    "lon": 18.0686,
    "lat": 59.3293,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: published city coordinate",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: published city coordinate",
    "ref_pixel": [
     8401,
     1252
@@ -28497,7 +28497,7 @@
    "kind": "climate",
    "lon": 24.9384,
    "lat": 60.1699,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: published city coordinate",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: published city coordinate",
    "ref_pixel": [
     8711,
     1215
@@ -28561,7 +28561,7 @@
    "kind": "climate",
    "lon": 37.6173,
    "lat": 55.7558,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: published city coordinate",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: published city coordinate",
    "ref_pixel": [
     9281,
     1413
@@ -28625,7 +28625,7 @@
    "kind": "climate",
    "lon": 29.0,
    "lat": 70.4,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: interior point north of 70 N where EarthMaps paints class d (ice and tundra) on every map",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: interior point north of 70 N where EarthMaps paints class d (ice and tundra) on every map",
    "ref_pixel": [
     8893,
     755
@@ -28689,7 +28689,7 @@
    "kind": "climate",
    "lon": 100.0,
    "lat": 75.0,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: interior point north of 70 N, class d, on the maps that reach it",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: interior point north of 70 N, class d, on the maps that reach it",
    "ref_pixel": [
     12088,
     548
@@ -28753,7 +28753,7 @@
    "kind": "climate",
    "lon": 8.78,
    "lat": 34.42,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: North African point inside Europe's extent, EarthMaps class S (sand-3)",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: North African point inside Europe's extent, EarthMaps class S (sand-3)",
    "ref_pixel": [
     7984,
     2374
@@ -28817,7 +28817,7 @@
    "kind": "climate",
    "lon": 2.0,
    "lat": 27.0,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Sahara interior point, class s",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Sahara interior point, class s",
    "ref_pixel": [
     7678,
     2708
@@ -28881,7 +28881,7 @@
    "kind": "climate",
    "lon": 15.0,
    "lat": 26.0,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Sahara interior point, class s",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Sahara interior point, class s",
    "ref_pixel": [
     8263,
     2753
@@ -28945,7 +28945,7 @@
    "kind": "climate",
    "lon": 28.0,
    "lat": 25.0,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Sahara interior point, class s",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Sahara interior point, class s",
    "ref_pixel": [
     8848,
     2798
@@ -29009,7 +29009,7 @@
    "kind": "climate",
    "lon": 44.0,
    "lat": 24.5,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Arabian interior point, class s",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Arabian interior point, class s",
    "ref_pixel": [
     9568,
     2820
@@ -29073,7 +29073,7 @@
    "kind": "climate",
    "lon": 50.0,
    "lat": 20.5,
-   "source": "brief notes/EARTH-MOD-PLANNER-PROMPT.md:164-166 (D9): \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Arabian interior point, class s",
+   "source": "brief project requirement D9: \"North Africa is hot and desert by default; Russia, Norway, Sweden and Finland are cold; the coldest biomes are far north\"; point: Arabian interior point, class s",
    "ref_pixel": [
     9838,
     3000

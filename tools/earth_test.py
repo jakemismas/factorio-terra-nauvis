@@ -11267,13 +11267,14 @@ def re_dump_facts(cfg, d1, frozen):
         pen = preset_pen(d1, p["name"])
         ac = preset_controls(d1, p["name"])
         for o in RS["ores"]:
-            if pen.get(o["probability"]) != o["p"] or pen.get(o["richness"]) != o["r"]:
+            want_p, want_r = o.get("p3") or o["p"], o.get("r2") or o["r"]
+            if pen.get(o["probability"]) != want_p or pen.get(o["richness"]) != want_r:
                 fails.append(f"{p['name']}: {o['resource']} names {pen.get(o['probability'])!r} and "
-                             f"{pen.get(o['richness'])!r}, want {o['p']} and {o['r']}")
+                             f"{pen.get(o['richness'])!r}, want {want_p} and {want_r}")
         for name in RS["controls"]:
             if (ac.get(name) or {}).get("frequency") != RS["frequency"]:
                 fails.append(f"{p['name']}: autoplace control {name} {ac.get(name)!r}, want frequency {RS['frequency']}")
-        want_enemy = cfg["hotspots_v2"]["nests"]["wrapper"]
+        want_enemy = (EN.get("scatter") or {}).get("wrapper") or cfg["hotspots_v2"]["nests"]["wrapper"]
         if pen.get(K["enemy"]) != want_enemy:
             fails.append(f"{p['name']}: {K['enemy']} names {pen.get(K['enemy'])!r}, want {want_enemy}")
         if pen.get(sw["preset_key"]) != sw["on"]:

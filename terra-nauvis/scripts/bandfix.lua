@@ -1,4 +1,4 @@
--- Exact coastlines (ARCHITECTURE.md, "Control stage"; contract 11; S12, S13-bandfix; DECISIONS
+-- Exact coastlines (ARCHITECTURE.md, "Control stage"; contract 11; S12, S13-bandfix; design notes
 -- 07:05, 12:35 and 13:45). The mod's only per-chunk handler. on_chunk_generated is registered only on a
 -- save whose Nauvis surface carries the band-fix key (config.lua bandfix.key set to bandfix.on; absent
 -- means off): on_init records the save's state once (storage.earth.bandfix) and both on_init and on_load
@@ -23,13 +23,13 @@
 --      reference on every shore, however far the coast fit strays, and the line where a write stops is a rounded,
 --      wobbling curve instead of the raster's stairs. A pixel whose band
 --      region holds no 2 x 2 block of tiles (an islet or a channel narrower than a pixel) is drawn as a blob
---      around its centre, whatever the blur reads there (DECISIONS 13:45); below smooth.min_scale the rule is
+--      around its centre, whatever the blur reads there; below smooth.min_scale the rule is
 --      S12's closed rule. Land of an open-sea pixel (no land around it) becomes deep water, and where the chunk
 --      writes anything, so do those pixels' shallow tiles; in a chunk left with no land, all shallow tiles reading
 --      open sea do; so a false island sinks without a pale patch or a ghost of its shallows;
 --   5. the classes of the written tiles' bounding box are read once: a written tile that would stand as a
 --      strip one tile wide takes its neighbour in the box along, when that neighbour belongs to the same
---      reference class (DECISIONS 13:45);
+--      reference class;
 --      From bandfix_next.from_geo on, at scales from smooth.min_scale, steps 3 and 4 read every tile of a K pixel
 --      instead: the reference, blurred the same way, is read at the tile moved by a smooth warp, as one field from
 --      land to water, and a tile takes the class that field holds past a small margin, in either class of pixel. The
@@ -137,6 +137,16 @@ local CORRECT = false
 local NEXT_RULE, WARPED = false, false
 local WARP_FINE, WARP_COARSE, COARSE, WARP_LIMIT, FIELD_MARGIN, STEPS = 0, 0, 1, 0, 0, 1
 local LAKE_NAME = nil
+-- Below smooth.min_scale on a geography from bandfix_low.from_geo on (config.lua bandfix_low): the field is the blurred
+-- reference between pixel centres, read in every K+ pixel. CLASS and BVAL are per-chunk caches of pure functions of
+-- the tables.
+local NL = cfg.bandfix_low
+local LOW = false
+local LOW_KERNEL, LOW_HALF, LOW_SUM = {}, 0, 1
+local CLASS, BVAL = {}, {}
+-- A smooth tile noise added to the field: the warp bends a coast, this roughens it within a tile or two.
+local ROUGH, RP, ROUGH_AT = {}, 1, 0
+local POND_TILES = NX.pond_tiles
 
 -- The table encoding (config.lua bandfix): digits, the symbol of each role, what a symbol means, and the K
 -- symbols as one pattern. A masked pixel keeps its class for the band but is never written.
@@ -421,6 +431,8 @@ end
 -- Per-chunk scratch, reused: marks stamped with the current chunk, so a new stamp clears them.
 local stamp = 0
 local WET, KEPT, WROTE, WLAND, WDEEP, PM_STAMP, PM_MASK = {}, {}, {}, {}, {}, {}, {}
+-- The tiles scan_warped read this chunk, for drop_islets.
+local SCAN = {}
 local SEA = {}
 local QX, QY = {}, {}
 local NWET, MARKS_WET, NW = 0, true, 0
@@ -581,7 +593,7 @@ local function warp_at(gx, gy)
   local dx = WARP_FINE * (WARP[gy % P * P + gx % P] + WOBBLE[(gy + SH.wy) % WP * WP + (gx + SH.wx) % WP])
   local dy = WARP_FINE * (WARP[(gy + SH.y) % P * P + (gx + SH.x) % P] +
                           WOBBLE[(gy + SH.ywy) % WP * WP + (gx + SH.ywx) % WP])
-  if COARSE > 1 then
+  if COARSE > 1 and WARP_COARSE ~= 0 then
     local u, v = gx / COARSE, gy / COARSE
     dx = dx + WARP_COARSE * (table_at(WARP, P, u, v) + table_at(WOBBLE, WP, u + SH.wx, v + SH.wy))
     dy = dy + WARP_COARSE * (table_at(WARP, P, u + SH.x, v + SH.y) + table_at(WOBBLE, WP, u + SH.ywx, v + SH.ywy))
@@ -640,6 +652,90 @@ local function want(gx, gy)
   return nil
 end
 
+-- Whether pixel (c, r) is land for the field, for any pixel: a pixel outside K+ holds the class of the nearest K+
+-- pixel, because K holds every pixel with a neighbour of the other class and K+ is K grown by one, so the first K+
+-- pixel on the nearest ring around it touches its own uniform area. Thin water counts as land: it is a river the
+-- waterways draw or leave out, and read as water it drew ponds along it. The area outside the raster is water.
+local function class_of(c, r)
+  local W = MAP.width_px
+  if c < 0 or r < 0 or c >= W or r >= MAP.height_px then
+    return false
+  end
+  local k = r * W + c
+  local v = CLASS[k]
+  if v ~= nil then
+    return v
+  end
+  local code = sym_in(row_at(r), c)
+  v = false
+  if code ~= NONE then
+    v = LANDISH[code] or code == BY.thin
+  else
+    local found = false
+    for d = 1, NL.search_px do
+      for dr = -d, d do
+        local row = row_at(r + dr)
+        if row then
+          local step = (dr == -d or dr == d) and 1 or 2 * d
+          for dc = -d, d, step do
+            local sc = sym_in(row, c + dc)
+            if sc ~= NONE then
+              v, found = LANDISH[sc] or false, true
+              break
+            end
+          end
+        end
+        if found then
+          break
+        end
+      end
+      if found then
+        break
+      end
+    end
+  end
+  CLASS[k] = v
+  return v
+end
+
+-- The reference blurred by bandfix_low.kernel at the centre of pixel (c, r): 1 where all of it is land, -1 water.
+local function blur_px(c, r)
+  local k = (r + LOW_HALF + 1) * (MAP.width_px + 2 * LOW_HALF + 2) + c + LOW_HALF + 1
+  local v = BVAL[k]
+  if v then
+    return v
+  end
+  local sum = 0
+  for j = -LOW_HALF, LOW_HALF do
+    local wj = LOW_KERNEL[j]
+    for i = -LOW_HALF, LOW_HALF do
+      sum = sum + (class_of(c + i, r + j) and wj or -wj) * LOW_KERNEL[i]
+    end
+  end
+  v = sum / LOW_SUM
+  BVAL[k] = v
+  return v
+end
+
+-- want() below smooth.min_scale: the blurred reference between pixel centres at the tile's centre moved by the warp.
+local function want_low(gx, gy)
+  local s = STATE.scale
+  local dx, dy = warp_at(gx, gy)
+  local u = (gx + 1 / 2 + dx) / s - 1 / 2 + MAP.wr
+  local v = (gy + 1 / 2 + dy) / s - 1 / 2 + MAP.hr
+  local c0, r0 = floor(u), floor(v)
+  local tx, ty = u - c0, v - r0
+  local a = blur_px(c0, r0) * (1 - tx) + blur_px(c0 + 1, r0) * tx
+  local b = blur_px(c0, r0 + 1) * (1 - tx) + blur_px(c0 + 1, r0 + 1) * tx
+  local f = a * (1 - ty) + b * ty + ROUGH_AT * ROUGH[gy % RP * RP + gx % RP]
+  if f >= FIELD_MARGIN then
+    return true
+  elseif f <= -FIELD_MARGIN then
+    return false
+  end
+  return nil
+end
+
 -- Step 2: the runs of K pixels of the window's columns C0..c1 and rows R0..r1 outside the edge band; returns
 -- false when there are none.
 local function collect_k(c1, r1)
@@ -670,6 +766,52 @@ local function collect_k(c1, r1)
           else
             open = false
           end
+        end
+      end
+    end
+  end
+  return NRUN > 0
+end
+
+-- Step 2 on the low rule: the runs of every open K+ pixel, since the field can move the coast past a K pixel; false
+-- when no K pixel lies within one pixel of the window.
+local function collect_open(c1, r1)
+  NRUN = 0
+  local any = false
+  for r = R0 - 1, r1 + 1 do
+    local row = row_at(r)
+    if row then
+      local a, b = max(C0 - row.first, 1), c1 + 2 - row.first
+      if b >= a and find(sub(row.text, a, b), KPAT) then
+        any = true
+        break
+      end
+    end
+  end
+  if not any then
+    return false
+  end
+  for r = R0, r1 do
+    local row = row_at(r)
+    if row then
+      local a, b = max(C0 - row.first + 1, 1), c1 - row.first + 1
+      local seg = b >= a and sub(row.text, a, b) or ""
+      local base = row.first + a - 2
+      local open = false
+      for k = 1, #seg do
+        local code = byte(seg, k)
+        local c = base + k
+        if OPEN[code] and not in_edge(c, r) then
+          local land = LANDISH[code] or false
+          if open and RL[NRUN] == land then
+            RB[NRUN] = c
+          else
+            NRUN = NRUN + 1
+            RR[NRUN], RA[NRUN], RB[NRUN], RL[NRUN] = r, c, c, land
+            open = true
+          end
+        else
+          open = false
         end
       end
     end
@@ -742,12 +884,18 @@ local function scan_warped()
       for lx = lx0, lx1 do
         local idx = ly * CT + lx
         if KEPT[idx] ~= stamp and not kept_by_spawn(lx, ly) then
+          SCAN[idx] = stamp
           local gx, gy = GX0 + lx, GY0 + ly
           local wet = generated_wet(idx)
           if not wet and not land and sea_at(gx, gy) then
             mark_write(idx, lx, ly, false, true)
           else
-            local w = want(gx, gy)
+            local w
+            if LOW then
+              w = want_low(gx, gy)
+            else
+              w = want(gx, gy)
+            end
             if w ~= nil and w == wet then
               mark_write(idx, lx, ly, w, false)
             end
@@ -871,7 +1019,7 @@ local function drop_ponds()
           end
         end
       end
-      if not joined and #body <= NX.pond_tiles then
+      if not joined and #body <= POND_TILES then
         for _, k in ipairs(body) do
           drop[k] = true
         end
@@ -879,6 +1027,71 @@ local function drop_ponds()
     end
   end
   drop_writes(drop)
+end
+
+-- drop_ponds for land, on the low rule: a body of land of at most bandfix_low.islet_tiles, written or generated, that
+-- the field read in full and that has no land to join, goes under: written land stays water, generated land is
+-- written water. The field's roughness leaves such specks off a coast, and the reference's own islets of a pixel or two
+-- stood as square islets and slabs. One that reaches the chunk's edge cannot see what it meets there, so it stays.
+local function land_after(m)
+  if WROTE[m] == stamp then
+    return WLAND[m]
+  end
+  return KEPT[m] ~= stamp and not generated_wet(m)
+end
+
+-- Whether chunk tile k lies on the chunk's edge.
+local function at_edge(k)
+  local lx, ly = k % CT, floor(k / CT)
+  return lx == 0 or lx == CT - 1 or ly == 0 or ly == CT - 1
+end
+
+local function drop_islets()
+  local seen, big, drop, sink = {}, {}, {}, {}
+  local cap = NL.islet_tiles
+  for k0 = 0, CT * CT - 1 do
+    if SCAN[k0] == stamp and not seen[k0] and land_after(k0) then
+      local stack, top, body, joined, visit = {k0}, 1, {}, false, {k0}
+      seen[k0] = true
+      while top > 0 and not joined do
+        local k = stack[top]
+        top = top - 1
+        body[#body + 1] = k
+        joined = #body > cap or SCAN[k] ~= stamp or at_edge(k)
+        for _, m in ipairs({k - 1, k + 1, k - CT, k + CT}) do
+          if land_after(m) then
+            if not seen[m] then
+              seen[m] = true
+              visit[#visit + 1] = m
+              top = top + 1
+              stack[top] = m
+            elseif big[m] then
+              -- a body an earlier fill stopped in is no islet, whatever part of it this fill reaches
+              joined = true
+            end
+          end
+        end
+      end
+      if joined then
+        for _, k in ipairs(visit) do
+          big[k] = true
+        end
+      else
+        for _, k in ipairs(body) do
+          if WROTE[k] == stamp then
+            drop[k] = true
+          else
+            sink[#sink + 1] = k
+          end
+        end
+      end
+    end
+  end
+  drop_writes(drop)
+  for _, k in ipairs(sink) do
+    local lx, ly = k % CT, floor(k / CT)
+    mark_write(k, lx, ly, false, sea_at(GX0 + lx, GY0 + ly))
+  end
 end
 
 -- The shallow tiles in AREA that read open sea go deep.
@@ -1160,7 +1373,12 @@ local function plan_chunk(surface, chx, chy)
   NW = 0
   stamp = stamp + 1
   WW = c1 - C0 + 1
-  if not collect_k(c1, r1) then
+  if LOW then
+    CLASS, BVAL = {}, {}
+    if not collect_open(c1, r1) then
+      return
+    end
+  elseif not collect_k(c1, r1) then
     return
   end
   SEA = {}
@@ -1177,6 +1395,9 @@ local function plan_chunk(surface, chx, chy)
     spare_lake(surface)
     drop_slits()
     drop_ponds()
+    if LOW then
+      drop_islets()
+    end
     close_kept()
     return
   end
@@ -1280,6 +1501,24 @@ local function tile_lists()
 end
 
 -- The warp's numbers and the spawn lake's noise name, for a save on the next rule.
+-- The low rule's numbers (config.lua bandfix_low) for the save's scale, over pick_warp's.
+local function pick_low(st)
+  for _, w in ipairs(NL.warp) do
+    if w.scale == st.scale then
+      WARP_FINE, WARP_COARSE, COARSE, WARP_LIMIT = w.fine, w.coarse, w.coarse_x, w.limit_tiles
+      ROUGH_AT, POND_TILES = w.rough, w.pond_tiles
+    end
+  end
+  FIELD_MARGIN = NL.margin
+  LOW_KERNEL, LOW_SUM = {}, 0
+  LOW_HALF = floor(#NL.kernel / 2)
+  for k, w in ipairs(NL.kernel) do
+    LOW_KERNEL[k - 1 - LOW_HALF] = w
+    LOW_SUM = LOW_SUM + w
+  end
+  LOW_SUM = LOW_SUM * LOW_SUM
+end
+
 local function pick_warp(st)
   local fine = min(st.scale, NX.warp.fine_scale)
   WARP_FINE = NX.warp.px * fine / 2
@@ -1288,9 +1527,17 @@ local function pick_warp(st)
   WARP_LIMIT = NX.warp.limit_px * st.scale
   FIELD_MARGIN = NX.warp.margin
   STEPS = max(NX.warp.steps, st.scale)
+  if LOW then
+    pick_low(st)
+  end
   local gv = guards.geography_of(st.geo)
   local spawn = gv and gv.version and gv.version.spawn
   LAKE_NAME = spawn and spawn.spawn_lake or nil
+end
+
+-- Whether the save's geography and scale take the low rule (config.lua bandfix_low).
+local function low_rule(st)
+  return (st.geo or 0) >= NL.from_geo and st.scale < SM.min_scale
 end
 
 -- The write rule of the save's own geography: a save keeps it for life, so no world made before it changes.
@@ -1303,8 +1550,10 @@ local function pick_rule(st)
   CORNERS = (SM.corners.maps[st.map] or next_rule) and SM.corners or nil
   CORRECT = next_rule and NX.correct_tiles or false
   NEXT_RULE = next_rule
-  WARPED = next_rule and st.scale >= SM.min_scale
+  LOW = next_rule and low_rule(st)
+  WARPED = next_rule and (st.scale >= SM.min_scale or LOW)
   LAKE_NAME = nil
+  POND_TILES = NX.pond_tiles
   if next_rule then
     pick_warp(st)
   end
@@ -1338,6 +1587,8 @@ local function prepare(st)
   SMOOTH, THIN_CENTRE, WOBBLE = {}, {}, wobble_table()
   BLUR = {}
   WARP = NEXT_RULE and noise_table(NX.warp.period_tiles, NX.warp.octaves) or {}
+  RP = NL.rough.period_tiles
+  ROUGH = LOW and noise_table(RP, NL.rough.octaves) or {}
   tile_lists()
   coastcover.prepare()
   return true

@@ -14,7 +14,7 @@
 -- keeps the gate's prototype (off), so it has no fords (ARCHITECTURE.md, "Map type entries"). A
 -- preset's geography version (its elevation entry, start mask, coarse field, city offset and tn_geo)
 -- is chosen in one place, geography() below, so climate-tiles can give Alien Biomes worlds a cheaper
--- geography without touching base worlds (DECISIONS 10:20).
+-- geography without touching base worlds.
 --
 -- A Map type pick sets only elevation, so every other per-save name a geography version's entry
 -- reads gets a prototype-level fallback valued as that version's preset bakes it under the current
@@ -26,17 +26,17 @@
 -- A preset is not defined while a mod of its withheld_with list is loaded: from europe-coast to
 -- region-layer Alien Biomes' palms read elevation in the Entity program, so beside them a preset
 -- would have carried its fine field there (constraint S-3). climate-tiles ships the palm switch
--- (plan reconciliation 9) and empties the lists. Its fallbacks stay defined, so the map's Map type
+-- (design note 9) and empties the lists. Its fallbacks stay defined, so the map's Map type
 -- entry still works there. Withholding reached new worlds only: scripts/guards.lua warned a preset
 -- world that later loaded beside such a mod, and a save made before the switch keeps its palms on
--- its fine field for life (ARCHITECTURE.md, "Alien Biomes"; DECISIONS 2026-10-29 18:40).
+-- its fine field for life (ARCHITECTURE.md, "Alien Biomes"; design notes 2026-10-29 18:40).
 --
 -- From climate-tiles each preset also redirects temperature, moisture and aux to the Earth climate,
 -- the Alien Biomes variant when alien-biomes is loaded and the fallback otherwise (climate.lua), and
 -- points the marsh keys at their bodies and each palm's probability and richness keys at its Earth
 -- copy (trees.lua, built from the frozen Alien Biomes table on every load, so the name is never
 -- dangling), which reads the palm constant where AB reads elevation and closes the palm leak
--- (ARCHITECTURE.md, constraint S-3; plan reconciliation 9), with or without Alien Biomes, so a
+-- (ARCHITECTURE.md, constraint S-3; design note 9), with or without Alien Biomes, so a
 -- world that gains it later meets the switch too; with Alien Biomes it also points the 19 vanilla
 -- tile keys at the shared bonus body and the exclusion key at its body, and data-final-fixes.lua
 -- points a palm's keys at the neutral body when the installed palm differs from the table. Every
@@ -118,11 +118,11 @@ local function climate_names()
     temperature = variant.temperature,
     moisture = variant.moisture,
     aux = variant.aux,
-    [TL.marsh.water_mud.key] = TL.marsh.water_mud.body,
+    [TL.marsh.water_mud.key] = TL.marsh.water_mud.body2,
     [TL.marsh.water_shallow.key] = TL.marsh.water_shallow.body,
   }
   -- The palm keys with Alien Biomes loaded or not: a world made without it that gains it later
-  -- places its palms from the copies too, never from the fine field (DECISIONS 2026-10-29 18:40).
+  -- places its palms from the copies too, never from the fine field.
   for _, c in ipairs(TL.palm.copies) do
     out[c.key] = c.body
   end
@@ -133,7 +133,7 @@ local function climate_names()
     out[TL.exclude.key] = TL.exclude.body
   else
     out[TL.marsh.grass.key] = TL.marsh.grass.body
-    out[TL.frozen.key] = TL.frozen.body
+    out[TL.frozen.key] = TL.frozen.body2
   end
   return out
 end
@@ -158,8 +158,10 @@ local function tree_names()
       out[key] = R.deco_body
     end
     for _, p in ipairs(TR.palm) do
-      out[p.key] = p.next
+      out[p.key] = p.next3 or p.next2
     end
+    out[cfg.blue.no_blue.key] = cfg.neutral.one
+    out[cfg.blue.plants2.key] = cfg.neutral.one
   end
   return out
 end
@@ -226,10 +228,12 @@ local function destroyed_values(map_key, v, names)
   if AB and names[sw.preset_key] == sw.on then
     out[D.names.heat] = D.barrier.names.heat
     out[D.chaos.names.class] = D.barrier.names.class
+    -- Great forests in the zone stand as dead forests: the dead trees' copies read the first body by name.
+    out[D.barrier.names.dead] = D.barrier.names.dead2
     -- The exclusion (config.lua destroyed.exclusion): a palm's key names the masked body, the rest read the key.
     out[D.exclusion.key] = cfg.neutral.one
     for _, p in ipairs(D.exclusion.palms) do
-      out[p.key] = p.body
+      out[p.key] = p.next.body
     end
   end
   return out
@@ -267,7 +271,7 @@ local function grain_values(map_key)
 end
 
 -- The six base resources a little sparser (D20): frequency 0.75 in the preset, planet entries left
--- neutral (planet values multiply preset values; noise skill gotcha). A control another mod removed
+-- neutral (planet values multiply preset values; known noise gotcha). A control another mod removed
 -- is left out.
 local function controls()
   local out = {}

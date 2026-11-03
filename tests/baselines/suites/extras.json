@@ -55,6 +55,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_aux_ab_v4": {
+    "type": "noise-expression",
+    "sha256": "1f4f8b637f7c2612187ca8c93a189980a1975683eff88b72f7ca97aedf861780",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_aux_fb_v1": {
     "type": "noise-expression",
     "sha256": "243773cfb9ffa03d2c6541f5219597c629bf538804099ba4a20b96df385b61e8",
@@ -335,6 +342,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_canals_atlantic_s12_v7": {
+    "type": "noise-expression",
+    "sha256": "c409b8c4ca78e0a578842b1114c9fe8fa1045cf3e6d4da1999813ad1ed561a2e",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_atlantic_s1_v5": {
     "type": "noise-expression",
     "sha256": "4ad55681a686b2b08f19ae87f11d20b01da4c3fb8de40cbe087cb9f000ca3d72",
@@ -349,9 +363,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_canals_atlantic_s1_v7": {
+    "type": "noise-expression",
+    "sha256": "8bc6fb5f5a359de67063f8fd239c0cb9b4ae023d70d66efe5230b88c50103291",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_atlantic_s24_v6": {
     "type": "noise-expression",
     "sha256": "c6d0316285a67002efa1fd62543a8567aa757d3cf84fd858cc48c7ddcda18757",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_canals_atlantic_s24_v7": {
+    "type": "noise-expression",
+    "sha256": "8baba8764a2d1950a8bcb873d37128918b673f87f1e2ce3d9b62d0d62770618d",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -370,6 +398,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_canals_atlantic_s2_v7": {
+    "type": "noise-expression",
+    "sha256": "ccab910df5480dfbb74b375880f824c02f3e2c1e999bbb578b038cb96b6518c8",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_atlantic_s3_v5": {
     "type": "noise-expression",
     "sha256": "e5ab049be980f42b1d690340e876540db12bee51214d8f03176014f5a804e54b",
@@ -383,6 +418,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_canals_atlantic_s3_v7": {
+    "type": "noise-expression",
+    "sha256": "9395c2c8e4a0d0aad59c3427119f6a81293029b044b25f83310fc4a2ebdae072",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_canals_atlantic_s4_v5": {
     "type": "noise-expression",
@@ -398,6 +440,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_canals_atlantic_s4_v7": {
+    "type": "noise-expression",
+    "sha256": "6d01fe8e64caa9e6b2a190c19fd81f68662301f80e45ca901926002551ddc120",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_atlantic_s5_v5": {
     "type": "noise-expression",
     "sha256": "9d19a6e364196bfd1f80aafff92c67b213051357af58d2ab2762cc3812d2495a",
@@ -411,6 +460,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_canals_atlantic_s5_v7": {
+    "type": "noise-expression",
+    "sha256": "79d948da938bf13c4d722a476b95509babe3779120c7434d949cf7c144a7bb9d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_canals_atlantic_s6_v5": {
     "type": "noise-expression",
@@ -426,9 +482,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_canals_atlantic_s6_v7": {
+    "type": "noise-expression",
+    "sha256": "0eec4298c24d96b6c325defbabface87eee38f849fddb3f64b89020dea305264",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_europe_s12_v4": {
     "type": "noise-expression",
     "sha256": "16d0646863ba7d8555522607fbd3e9d68371d53559bc2d911f766f4daf6c4561",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_canals_europe_s12_v5": {
+    "type": "noise-expression",
+    "sha256": "d10d8a2463723bfdde0a2f9761d953a00dfa8e3a7ba9b96109af7687a38f4e77",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -440,9 +510,23 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_canals_europe_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "25eb6254cc61329322a471a5671b56f3acaba0f20aec690bff41e0029dd4f925",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_europe_s24_v4": {
     "type": "noise-expression",
     "sha256": "7604bb6db8a40ae0947efc6e76d92cd51dbcca1c4368dc72da7ecbd7068c3d1d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_canals_europe_s24_v5": {
+    "type": "noise-expression",
+    "sha256": "b4728a4f41e342e3b35d6dfe650fee4d407a718e3fbcef349b5e5a351b11349a",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -454,12 +538,26 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_canals_europe_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "0da34c16b2b13ea3aea91069a0b1a43d4658ad00478b800d4466d3df49bd9200",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_europe_s3_v4": {
     "type": "noise-expression",
     "sha256": "fe1e310072de6f835761215afc7a68ebc56058ed3fcb77a0c1ae1216022f319a",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_canals_europe_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "a440a57500aeb6ebc087965a15c3b5855c8c0fa9d63df820068bce5cc550029f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_canals_europe_s4_v4": {
     "type": "noise-expression",
@@ -468,12 +566,26 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_canals_europe_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "400b37c3dec79e85e37b0d9079572e0671eb36b62c719208812913f55b7a1751",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_europe_s5_v4": {
     "type": "noise-expression",
     "sha256": "c6c90cded3d0522bb3a5b5dcf5fca52a0ca96e806340e2385178325fa9b256b8",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_canals_europe_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "94cb3e2614f2ec9bb3a9496e27048cde9fe426582360a40ae2466f9046e0a275",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_canals_europe_s6_v4": {
     "type": "noise-expression",
@@ -482,9 +594,23 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_canals_europe_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "d51fe6f164d5714fb4ef5744aad0eb830feb00198e981d62e79f78ab8871f5ff",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_olde_world_s12_v6": {
     "type": "noise-expression",
     "sha256": "dfca57ada5e8bb93830af84988c492d70796d4c1d093f3bc7aad852a74a828fb",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_canals_olde_world_s12_v7": {
+    "type": "noise-expression",
+    "sha256": "d8436bc4b1d671082ef69c66bde0f9b5a66bf339b939834e368efacdd89759f2",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -503,9 +629,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_canals_olde_world_s1_v7": {
+    "type": "noise-expression",
+    "sha256": "a05c3225e2a7ec10c282f31a566d2ae4e05cfef8aec8bafa197c7f514e45e322",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_olde_world_s24_v6": {
     "type": "noise-expression",
     "sha256": "b216074f5a875f9ff06b2ba3a5373a069508765e1cf44c0a1e4dbef7121539e1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_canals_olde_world_s24_v7": {
+    "type": "noise-expression",
+    "sha256": "25cb05e13b5a1da97c4b68ec773b12438cbb1d25293158d36361b189a41e4291",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -524,6 +664,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_canals_olde_world_s2_v7": {
+    "type": "noise-expression",
+    "sha256": "43be95f5faa8197ea38ce03e2dfd3569c82efd0778ebc0ef385cdc3400d157f9",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_olde_world_s3_v5": {
     "type": "noise-expression",
     "sha256": "113067321fb947ed19b7d2b863786b03d788e3cf5621fb58f6c21ab43c85967b",
@@ -537,6 +684,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_canals_olde_world_s3_v7": {
+    "type": "noise-expression",
+    "sha256": "4ab3ebb66d0cfafae454dd4cd26b8ca8a07b80ef1a6a7ff6ef82ba994e9b9fc3",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_canals_olde_world_s4_v5": {
     "type": "noise-expression",
@@ -552,6 +706,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_canals_olde_world_s4_v7": {
+    "type": "noise-expression",
+    "sha256": "0ca560606dd752139928375df011a245a72500344c3b66abd12d584ddd798431",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_olde_world_s5_v5": {
     "type": "noise-expression",
     "sha256": "3134fe42169f315c5256b977875c45bdbfe40669ac0d6edc9f928456dc2c8ac4",
@@ -566,6 +727,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_canals_olde_world_s5_v7": {
+    "type": "noise-expression",
+    "sha256": "b7134dba8003d5b45d69f1c8faa308e6a1112e76da5d89a8574cdbe333872545",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_canals_olde_world_s6_v5": {
     "type": "noise-expression",
     "sha256": "8547b34aba63725fcc6dd3fc925ed95654932bf042f2ddae0278984662fe46a0",
@@ -579,6 +747,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_canals_olde_world_s6_v7": {
+    "type": "noise-expression",
+    "sha256": "d5d2657c26fa431a26357edf181315cdb0c1b232da7ce1aebfb5b760a6b7aa20",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_chaos_black_dirt_v1": {
     "type": "noise-expression",
@@ -741,6 +916,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_climate_grain_v3": {
+    "type": "noise-expression",
+    "sha256": "7f317ccd4b2796d224f525a03c4c7665f5a67cf3444695cb58fa8550b8689558",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_climate_meander_v1": {
     "type": "noise-expression",
     "sha256": "61a0f3978c581507082a68db61f2873bd3f7addc8a855095925eef5452c89f80",
@@ -811,12 +993,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_cx_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "afe1d4c2ee1935da04e158e61c553b11539455f3a95a8d2041e40706a926d844",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_cx_europe_v6": {
     "type": "noise-expression",
     "sha256": "ca9e1d31a5df2f514e1594f407032d25b912c979d70795e8604254f2e6a05327",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-29"
+   },
+   "tn_cx_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "01280e0119d10a732d780bd7a2b2343c01a3d0be815624b4f867fd86bbcde100",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_cx_olde_world_v6": {
     "type": "noise-expression",
@@ -832,6 +1028,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_cx_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "234da92ff49b7ac5e621b8247288baa5c199d3e3d4604f6d844c0b55ebc09ff5",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_cy_atlantic_v6": {
     "type": "noise-expression",
     "sha256": "8893cf4ef216643bed1a9c87c668ef476256452a4f3999429353aaf1a090c084",
@@ -846,12 +1049,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_cy_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "5d442511cc4ad5caacfe59956427ea7aaf86c58225ee6053a05ca4d0af4c7449",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_cy_europe_v6": {
     "type": "noise-expression",
     "sha256": "588ddc176f8a0cebc227c2255cc84db479ef5f93277cf467651affb052cc828b",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-29"
+   },
+   "tn_cy_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "5bb2a8e9fdf680be270f991a718f11eabad32bb4b4d8cacce25c6954d0f25145",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_cy_olde_world_v6": {
     "type": "noise-expression",
@@ -867,9 +1084,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_cy_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "810d14b9e9b1961c96c577b6c48b001c019bceabfd4f2db87a776db0cd9f82f0",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_atlantic_s12_v6": {
     "type": "noise-expression",
     "sha256": "ecacc1af0b7e61b02257ae162ebb014256be447d60e775ea41cabab73ce6498a",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_dams_atlantic_s12_v7": {
+    "type": "noise-expression",
+    "sha256": "33b331f36d732f3940015264dbb9adef552c5487eb5c8de8bd56946d27555cb8",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -888,9 +1119,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_dams_atlantic_s1_v7": {
+    "type": "noise-expression",
+    "sha256": "c4f497d44a1bb23217699b508754eb720d05029a0f4abe4b934b65ec645a0ab7",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_atlantic_s24_v6": {
     "type": "noise-expression",
     "sha256": "81a003430f85136513c7609928e87e85c58ce1a3d74967d0ba78d321e2c4d6f7",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_dams_atlantic_s24_v7": {
+    "type": "noise-expression",
+    "sha256": "8e6eeb4c0d12455f5bdf424c6b57c4737835c925501609fa7f4d9b5d1716cfae",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -909,6 +1154,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_dams_atlantic_s2_v7": {
+    "type": "noise-expression",
+    "sha256": "586269d5d0e49e29661d1658f270e3a8e380d16041b6b48e9b08c94ffe17ac4d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_atlantic_s3_v5": {
     "type": "noise-expression",
     "sha256": "3c3e62784b327ac35e58dc9fd6457bd5b5d0a9b8f6887ea78c85561667256279",
@@ -922,6 +1174,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_dams_atlantic_s3_v7": {
+    "type": "noise-expression",
+    "sha256": "24038a6c34b2ca03eb3bab57f12035ca12fed8a0408b1b5a976d5e1516a3044f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_dams_atlantic_s4_v5": {
     "type": "noise-expression",
@@ -937,6 +1196,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_dams_atlantic_s4_v7": {
+    "type": "noise-expression",
+    "sha256": "7dd7ff336ea9ea07b3d0867f26a0613cab7c2d53a23f9c1daba61db2b1a298b3",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_atlantic_s5_v5": {
     "type": "noise-expression",
     "sha256": "f595a66acea11c829fbf0c638ccd00e64f17872ce74a3dc6c62444de3341abaf",
@@ -950,6 +1216,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_dams_atlantic_s5_v7": {
+    "type": "noise-expression",
+    "sha256": "bdb10411f8ec9c5629ab48fc9f61360b815fbe502998fd63bd474c2c7032cca1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_dams_atlantic_s6_v5": {
     "type": "noise-expression",
@@ -965,9 +1238,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_dams_atlantic_s6_v7": {
+    "type": "noise-expression",
+    "sha256": "ea739e56812484bd91d3afd087c14a764e792272c20d4d0ea26b99330e626911",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_europe_s12_v4": {
     "type": "noise-expression",
     "sha256": "e80d4026622ce2c09b4271190e28bcc439c684fe43e692e65d6c3d454a48a6e1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_dams_europe_s12_v5": {
+    "type": "noise-expression",
+    "sha256": "948d7e39bf4bd49e724bb0506f9caffb441cefe6cfc07ffaaa5b16ca39a13145",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -979,9 +1266,23 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_dams_europe_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "aa479e6df24e1664ce7e206832a693fae15c72b9a69b24cb433594ccb51f9008",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_europe_s24_v4": {
     "type": "noise-expression",
     "sha256": "16f564f793ec18201a3b4e4e6d09f407e1cc8f12e22bfb3f603a06859ea02640",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_dams_europe_s24_v5": {
+    "type": "noise-expression",
+    "sha256": "a75e22b18e2bc8cdc6154d31cbebab5aaf4e67787e836a49aacbced08f9a30bd",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -993,12 +1294,26 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_dams_europe_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "886f52eb3841ea23556cbef1b80bd63f84e64c8b50e3d3800cf6364d6995cce1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_europe_s3_v4": {
     "type": "noise-expression",
     "sha256": "7fcf74058f432070445b1d29658eaee995b0f8f1e2a8f3a4d3cb892b6333c798",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_dams_europe_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "e64f8653f889462ff792c20c5f63a054f06d0f6eeda8c8e8af67a8c71e17c0cd",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_dams_europe_s4_v4": {
     "type": "noise-expression",
@@ -1007,12 +1322,26 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_dams_europe_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "4cdaae1e9c5a4dad89aea76163a3069fa89ee6aa729b05d189e8ab685f29e7b7",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_europe_s5_v4": {
     "type": "noise-expression",
     "sha256": "ca402cae1de1b5d5b2fe433e5441782036408522e985c7a7bbde6785075514fa",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_dams_europe_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "e9f8922c6b237a924ad2206d3b02f51890fb450792b29d34bd2258cada2061a1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_dams_europe_s6_v4": {
     "type": "noise-expression",
@@ -1021,9 +1350,23 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_dams_europe_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "82990c92b3b0c29b57e826cb3a8eb110c19471706667d09057d51dbebbb20c5f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_olde_world_s12_v6": {
     "type": "noise-expression",
     "sha256": "0acde20d6b846a64e07754841cbaa295f2e3736cb831a18d844b314aa683fb3f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_dams_olde_world_s12_v7": {
+    "type": "noise-expression",
+    "sha256": "cfdb17ea057a94a612f213824557e04d24b67b5c4908ef3f1f4b9e772c87d783",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -1042,9 +1385,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_dams_olde_world_s1_v7": {
+    "type": "noise-expression",
+    "sha256": "157d59cb9d9e195dcc44cbec864a6dc3a34d471e9a75f8fe2d571579f170ed6c",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_olde_world_s24_v6": {
     "type": "noise-expression",
     "sha256": "99866473f2f35624c1c6e47087a0ffeb2062c1265eb9ee3a0ad618d1594fa942",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_dams_olde_world_s24_v7": {
+    "type": "noise-expression",
+    "sha256": "3ad8f97c5e5208f202f0c428a2d80c7cd5908f55c3caf6a18916d37153aea85d",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -1063,6 +1420,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_dams_olde_world_s2_v7": {
+    "type": "noise-expression",
+    "sha256": "1356352383d5516ed72a6946d19c183e4bc38468c99a5440e413122f188c8306",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_olde_world_s3_v5": {
     "type": "noise-expression",
     "sha256": "54b53e42060587cfa8181aa5ae5d6e41833d9c772fc3185425d8155117485412",
@@ -1076,6 +1440,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_dams_olde_world_s3_v7": {
+    "type": "noise-expression",
+    "sha256": "72252e18bdc09fbfda2068153a16015a48ee5c3fba9a6ea8fc58d349d50f07aa",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_dams_olde_world_s4_v5": {
     "type": "noise-expression",
@@ -1091,6 +1462,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_dams_olde_world_s4_v7": {
+    "type": "noise-expression",
+    "sha256": "a69ee4c1343496db1b8478ee65f7df085ef13420a579374bdab34fc9b250d30d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_olde_world_s5_v5": {
     "type": "noise-expression",
     "sha256": "ec9d174d65d900376e409e24efa9235fdbeef5fe1623cc28a860e72a6954ec27",
@@ -1105,6 +1483,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_dams_olde_world_s5_v7": {
+    "type": "noise-expression",
+    "sha256": "09812d667a886e3149fc5d3c3f3a96643a6a727cbeeeec4d7dc9d71dedcb4e4c",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_dams_olde_world_s6_v5": {
     "type": "noise-expression",
     "sha256": "8349eea59bce5da2e8a77a3a5dad1e8732eb8b924bb580faa1973980be375494",
@@ -1118,6 +1503,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_dams_olde_world_s6_v7": {
+    "type": "noise-expression",
+    "sha256": "033c8ea227415985f27992f0294a806afe89df280166408b09c9a1c23f873227",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_depth_amazon_v1": {
     "type": "noise-expression",
@@ -2680,6 +3072,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_destroyed_dead_v2": {
+    "type": "noise-expression",
+    "sha256": "a9c944184df3b8adf8f3521d621f01159bc1d9a9cd44643b346d82b03ef04e5b",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_destroyed_depth_v1": {
     "type": "noise-expression",
     "sha256": "8c4fbc49eb12768f7e451385ab1b4cfd0ff8f0cc147be575ae8c91bfe5397625",
@@ -2820,9 +3219,23 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_destroyed_palm_a_v2": {
+    "type": "noise-expression",
+    "sha256": "8ef415f4a06d6e9776528125f6057ec9fe2ff19f10f95d9d5959b33c336ad80a",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_destroyed_palm_b_v1": {
     "type": "noise-expression",
     "sha256": "97dee6eb21346f1a5a5d23119082ff6d68f11ce2c569f133c528242d25ea5d2a",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_destroyed_palm_b_v2": {
+    "type": "noise-expression",
+    "sha256": "0ab2b0b652be6e7cdb18c30efc9f4023d72f6c5cb7f70528583fe2a6f0b4bb59",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -2883,12 +3296,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_detail_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "b76c878559654de7fa157d624b3505acc31e183b37a50e2214508cc4feba5c61",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_detail_europe_v6": {
     "type": "noise-expression",
     "sha256": "c3ece207d2ce93eae337ac89e9670ba928a798c0b511d7b65b081f5212fed1d5",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_detail_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "3abba1ae29d04556bd716dcb86e3c90d11069b2666ba72b2d5f15445d5ea2ccd",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_detail_olde_world_v6": {
     "type": "noise-expression",
@@ -2903,6 +3330,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_detail_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "018c31fe3e313b80d4c227796eb828702dc0c817f0d442af9989ece36cc3a233",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_distance_v1": {
     "type": "noise-expression",
@@ -2932,12 +3366,26 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_elevation_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "3a80a27998b8b2cba47554cb5db6635bfd02333f68c2fb25627850e3c6bc4e3d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_elevation_europe_v6": {
     "type": "noise-expression",
     "sha256": "71764fc260174ea096fee85c01e838365aa1155c2683bff0f563674429edffb7",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_elevation_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "13935eb3bf34c2c46aab6ae77b6423bffdb2ec31e65e215f02cbf14e8c5dd274",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_elevation_europe_x_v1": {
     "type": "noise-expression",
@@ -2956,6 +3404,13 @@
    "tn_elevation_olde_world_v7": {
     "type": "noise-expression",
     "sha256": "11ce1eb518f27ace3a56f24476215341142b1c0d4647c78090ff5070000bf3af",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_elevation_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "536650c9ea52491af3c8c1ca07ea83092beec62e57cc6b449f1c97558270d825",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -2995,6 +3450,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_enemy_v3": {
+    "type": "noise-expression",
+    "sha256": "57c4285d3db26bbafc9635595471af4eb7d9fb735adee54d2c340abb9e5c7b1f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_far_atlantic_v6": {
     "type": "noise-expression",
     "sha256": "00de905bd5434e6e86f1093932f7e548ab80d7b537ff7db855dfc2cfc0aee47f",
@@ -3009,12 +3471,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_far_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "df4ea0d6a85270b48fde060cb9cd2712b5706b1998825badd4f438b53721323b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_far_europe_v6": {
     "type": "noise-expression",
     "sha256": "ee28d30daf7eec4f8cf29fd136c265e6f5de01c35ae3075e7cd510c2a3db8b6c",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_far_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "0f85f8c8d49adfcc776c4893184900be8689ee5be738ef36ab86f759d025a3ba",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_far_olde_world_v6": {
     "type": "noise-expression",
@@ -3029,6 +3505,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_far_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "1b644186a92b7ce4264f6f7faeb72d5fda373c1df6521132a8ab668cd4a88285",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_fields_atlantic_v1": {
     "type": "noise-expression",
@@ -3065,6 +3548,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_fords_atlantic_s12_v7": {
+    "type": "noise-expression",
+    "sha256": "aae7df48bd5f91f57ea3fb21d2fa533a20ce52a1cbd0649cfc315cd15a1e5187",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_atlantic_s1_v5": {
     "type": "noise-expression",
     "sha256": "f8f7998a9f4e24c7bf54bb9fdc5ee1b74210a57ea143b6d81dfa4f9a19e266fd",
@@ -3079,9 +3569,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_fords_atlantic_s1_v7": {
+    "type": "noise-expression",
+    "sha256": "6c2d9d9c26130a850a50e50a86fbf7f17a8125a81f2fc45417e0230bbe781f3f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_atlantic_s24_v6": {
     "type": "noise-expression",
     "sha256": "e86a021ed36eca60647827de561413e58a97b32b2652008f3b1026d2c43ae1a4",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_fords_atlantic_s24_v7": {
+    "type": "noise-expression",
+    "sha256": "ac34b6d772bf114dc52eac1ba35d4b66af18523b9591cdf83692c37871b730b7",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -3100,6 +3604,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_fords_atlantic_s2_v7": {
+    "type": "noise-expression",
+    "sha256": "5f655e78a72fc3b55cd4bb89bee3979c9ffcb716bdeff083bbec20c0b873059a",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_atlantic_s3_v5": {
     "type": "noise-expression",
     "sha256": "26d32270693ba2f01bd0b6154f3eaa3d5b6eb4a78ce5f4f6e8bc58faf78945e7",
@@ -3113,6 +3624,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_fords_atlantic_s3_v7": {
+    "type": "noise-expression",
+    "sha256": "565da5088ad1bf1b2d213c76d8683566e753d58dc03609e319fa0433fb20d9ea",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_fords_atlantic_s4_v5": {
     "type": "noise-expression",
@@ -3128,6 +3646,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_fords_atlantic_s4_v7": {
+    "type": "noise-expression",
+    "sha256": "1a969e3a13a83b3300f8b0d9626cfac73bcfb87f261c39aa387517de633a8202",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_atlantic_s5_v5": {
     "type": "noise-expression",
     "sha256": "25451070f4745cda4bcf9f8d57fbb9c6328091da7f8c2391adb8ca66c7ed242e",
@@ -3141,6 +3666,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_fords_atlantic_s5_v7": {
+    "type": "noise-expression",
+    "sha256": "e5026063c7a43d07bd71da5665e42455460509ac269c3d65cc4d19e7717b25f5",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_fords_atlantic_s6_v5": {
     "type": "noise-expression",
@@ -3156,9 +3688,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_fords_atlantic_s6_v7": {
+    "type": "noise-expression",
+    "sha256": "d99c289c2f9952fbcd5dd8eb14c610b30801768f6b5caf5d2bec651305588548",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_europe_s12_v4": {
     "type": "noise-expression",
     "sha256": "648381f80141086c5c6a3b393fdf21a2868c24954595fc3d649f03c3a27b806a",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_fords_europe_s12_v5": {
+    "type": "noise-expression",
+    "sha256": "579945c796d3f23c6d174aee77ea1ed1ce1a1cd948e2950ad9b8743c6b6b3343",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -3170,9 +3716,23 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_fords_europe_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "b25a5b9c0dc7b7aac675003bbb49c2be56421ddcd2312f1bd6dbaaa0ef99fc7e",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_europe_s24_v4": {
     "type": "noise-expression",
     "sha256": "06a6b352d37cb861bf6ce044033eaae5eac01a9523ef1323c20d6f96b80887e9",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_fords_europe_s24_v5": {
+    "type": "noise-expression",
+    "sha256": "647d4f70073817f3a02059987391e327abfba06dbde8ebf0b87cab5495ee531e",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -3184,12 +3744,26 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_fords_europe_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "18045bd14ebb52de969348e6e08fefdc812411be3b8ba526b31b6a71abc4eed1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_europe_s3_v4": {
     "type": "noise-expression",
     "sha256": "7f19c92e70bfdb19987824816bca709e5b1fa94de75569775366554600b42387",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_fords_europe_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "5699a3440e32797a0b2e6cfdfae70a5e91bd2d926d609d560d286321e3340193",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_fords_europe_s4_v4": {
     "type": "noise-expression",
@@ -3198,12 +3772,26 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_fords_europe_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "1223739a0128b07b9618687c065b4c2e64fc240f69349bd78cb57adbe7fbbddc",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_europe_s5_v4": {
     "type": "noise-expression",
     "sha256": "6ee51c76d7000423c23ee0f9bfa503f2ad61d1b85a00a462d8aca8a76ce7c45e",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_fords_europe_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "630c4f59c8c0e62a7162c81858ce1a512fa2f3bd7d67fb7b8dcd30525d547f4f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_fords_europe_s6_v4": {
     "type": "noise-expression",
@@ -3212,9 +3800,23 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_fords_europe_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "d69b1b5f46d64b5dcffc6669dace53fbf35a480ed85229e6cf51219fb42cd40b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_olde_world_s12_v6": {
     "type": "noise-expression",
     "sha256": "d01758e8a881972581f19087300ce6b512118c72464730aedbb38e5bb19d4184",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_fords_olde_world_s12_v7": {
+    "type": "noise-expression",
+    "sha256": "b723f31f7583a071635ed8d35139167558d32ad786bd98afc425c10a3317a64f",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -3233,9 +3835,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_fords_olde_world_s1_v7": {
+    "type": "noise-expression",
+    "sha256": "e80cb78f5d7e443125757807fd5c9d36c8cd7b465df2a46ca6838e4bc8b98585",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_olde_world_s24_v6": {
     "type": "noise-expression",
     "sha256": "c41215be097c1dea21e71d15cc487bba6dd8a8a115d150eba02d6b1146dc2aea",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_fords_olde_world_s24_v7": {
+    "type": "noise-expression",
+    "sha256": "f0b00ef2ac2e7649afa52609f73370d17ada2c99a9aa3a1482f73434b63ac518",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -3254,6 +3870,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_fords_olde_world_s2_v7": {
+    "type": "noise-expression",
+    "sha256": "db6b9db151e410247526e0d06d35bc534feb46769c4debd0ed39024eae6a45ba",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_olde_world_s3_v5": {
     "type": "noise-expression",
     "sha256": "5a257dcd0b65c8d99a512fb31dafb920b4f208de262b7aa4fbf826dc99e73bb7",
@@ -3267,6 +3890,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_fords_olde_world_s3_v7": {
+    "type": "noise-expression",
+    "sha256": "b78fc9baeb7f09f76c9458fa0a7e5df6ab19b340731ed9ebe985d974129e9e06",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_fords_olde_world_s4_v5": {
     "type": "noise-expression",
@@ -3282,6 +3912,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_fords_olde_world_s4_v7": {
+    "type": "noise-expression",
+    "sha256": "f745ad3d5464c610c87db276bdf95378f88522838455a362cfa9c40df209b9de",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_olde_world_s5_v5": {
     "type": "noise-expression",
     "sha256": "eb6d8a1994b9321e048319211e7601246d17714eb93fee894142e88b9830730c",
@@ -3296,6 +3933,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_fords_olde_world_s5_v7": {
+    "type": "noise-expression",
+    "sha256": "acfdaeb128e8fc28b4a4a5091feae50b7f487e0940d88d1df387d83bfbdcc01b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_fords_olde_world_s6_v5": {
     "type": "noise-expression",
     "sha256": "2d5e0d203dee0845de9562b6a736c5f53f5da842f289ce92de0117330e939e99",
@@ -3309,6 +3953,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_fords_olde_world_s6_v7": {
+    "type": "noise-expression",
+    "sha256": "30abafe657ca647a121d70d0fd272f7e3410a45d6241983027c5f66f5d59ee0a",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_forest_sum_v1": {
     "type": "noise-expression",
@@ -3345,6 +3996,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_frozen_ground_v2": {
+    "type": "noise-expression",
+    "sha256": "b7bbe61dba901f0a41c6f6bfd325d81ba4554531b8b8c8145f11754a1a078ce9",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_geo_atlantic_v6": {
     "type": "noise-expression",
     "sha256": "ae7b137e6f0cdc912e3788cfc27e1c097c153b4ff2bd0c9ed90567004a93a8b4",
@@ -3359,12 +4017,26 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_geo_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "246e1ec3e5767c40f24446963dd6a2f82332a70f87eb3fd79582ee1bb0b1cf5c",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_geo_europe_v6": {
     "type": "noise-expression",
     "sha256": "4a2276471884ed1e9eb8405b55aefc343793470d351e5aeb1965e4ee337b5fa4",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_geo_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "a04e33ea2090d6b14438d0396b66db8f10df733fdbb988623e06b5f12be241ae",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_geo_olde_world_v6": {
     "type": "noise-expression",
@@ -3376,6 +4048,13 @@
    "tn_geo_olde_world_v7": {
     "type": "noise-expression",
     "sha256": "20e01acf1084d6657ef8803474d05f08a7860a9dce2ef01e23f2f757bb87fac2",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_geo_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "092cb544833e290de50db65d0bcd3a0eaa4f1a044ab43ac23267aa64db35b653",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -3401,12 +4080,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_gx_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "1f32db1d3be3eba4de93159b6bfafed7bbf17ee138ad4d1b500399f833ae131b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_gx_europe_v6": {
     "type": "noise-expression",
     "sha256": "1c2cc2be57c49ff8e1fab26e69bf46ff35acd1fd0a3d1ecfb86beb0aa5d15ba1",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-29"
+   },
+   "tn_gx_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "459fb922c48d9b7bea1b255aacf67dc72007a01f7ca6ad7500d43e2f2f3cfbef",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_gx_olde_world_v6": {
     "type": "noise-expression",
@@ -3422,6 +4115,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_gx_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "440380f38697707ff4fa046c53d8e78b08df62d62dedfe5c0e5e0fd043eade1f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_gy_atlantic_v6": {
     "type": "noise-expression",
     "sha256": "e6b58427aaa1753afdbe5ca77f36f23b02169582b560ea9b9cb2b9bd38847a1c",
@@ -3436,12 +4136,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_gy_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "70e00b763f94407e5b7e7054d5654c630ac787bc3fcee46dd259dce3af618847",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_gy_europe_v6": {
     "type": "noise-expression",
     "sha256": "7a828a0f4f2ecc18f9f2ecef8b55b726af8199ea1740dc82bab12abac5e90e37",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-29"
+   },
+   "tn_gy_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "83fbc5aa99b8b12d8f93765f32d81f40081ce06598f971d77af38d255e686f5d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_gy_olde_world_v6": {
     "type": "noise-expression",
@@ -3456,6 +4170,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_gy_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "2b6a12403889e02cd587f9c41336277703d50d67f07a61e0d608fc6882445030",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_high_tile": {
     "type": "noise-expression",
@@ -6586,12 +7307,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_land_coarse_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "928301135396f9d5db0ef2bbbbf40778b3fd0867f1c17121df41b7399e985fc8",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_land_coarse_europe_v6": {
     "type": "noise-expression",
     "sha256": "83cc7b69bdf440396a376f6f14006f4772f915f21e981549335748b8792280e7",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-29"
+   },
+   "tn_land_coarse_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "6c31984ac3e2efa9d05a9a59202172ae12b930ca847eb6bc3416dbddbed99208",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_land_coarse_olde_world_v6": {
     "type": "noise-expression",
@@ -6606,6 +7341,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_land_coarse_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "be93db2a396bd926d5eabf44e85f45d0e6b403d20dbabe38832bf767081759cc",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_lat_v1": {
     "type": "noise-expression",
@@ -6761,6 +7503,13 @@
     "slice": "climate-tiles",
     "registered": "2026-10-30"
    },
+   "tn_marsh_pool_fray_v1": {
+    "type": "noise-expression",
+    "sha256": "e9a79467791dc85a0eebf7e8ec4b7bac82e6656f4f8f2d2b924f9d3906b8529a",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_marsh_pool_v1": {
     "type": "noise-expression",
     "sha256": "dec7938d61d90f4cb9b6460a05b3774b0f236aef4c1d2ca88ae76013ee16c306",
@@ -6788,6 +7537,13 @@
     "dump": "m1",
     "slice": "climate-tiles",
     "registered": "2026-10-30"
+   },
+   "tn_marsh_water_mud_v2": {
+    "type": "noise-expression",
+    "sha256": "f7eb200628c92800e7ccc9fb6022dca211af9f288854d344043d98ae79bae187",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_marsh_water_shallow": {
     "type": "noise-expression",
@@ -6845,6 +7601,20 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_moisture_ab_v7": {
+    "type": "noise-expression",
+    "sha256": "c71a006eb27e565a722e55347ca6933c3f1c0a75cec6bcc2c36bd4d94b04c42c",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_moisture_ab_v8": {
+    "type": "noise-expression",
+    "sha256": "c0cc75ec4ba039cb13434ec01e62ee92cf9e7bde4431d8f85aa0ae856e8f0a96",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_moisture_fb_v1": {
     "type": "noise-expression",
     "sha256": "8877790f62149a48709636187e074c72414c9102471ad934265df21cb0671f43",
@@ -6859,6 +7629,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_mouth_atlantic_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "89ef53b165bce47d9739b1f522e093780fda0433e4e49bce1abcdd2cedaea317",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_mouth_atlantic_s1_v1": {
     "type": "noise-expression",
     "sha256": "dbbf5c2df021d5dfdce2935b3057a7208d5a3d80738a6f66f0132ae288025de7",
@@ -6866,9 +7643,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_mouth_atlantic_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "0abd1227043997631a57aa31e83e3206317f6d12a5671779865298907866baef",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_mouth_atlantic_s24_v1": {
     "type": "noise-expression",
     "sha256": "51e1119b3f50ea32b243f0ee37dd062857516e7c24c78feef3778a49912af48d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_mouth_atlantic_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "1c8cb74e9f25a49a3ecf95e7b177356c658844bdb15ed08a962ca0102eef0605",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -6880,12 +7671,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_mouth_atlantic_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "cae6c286d955a63984ab6784685ff6dec01ac01a5d791713802302e84ec3063c",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_mouth_atlantic_s3_v1": {
     "type": "noise-expression",
     "sha256": "8d1e8facdfc63799786f421f456f8cbdd7e6e307062c3664f666e106ba4d091b",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_mouth_atlantic_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "9f58085bdc470aa7b70a80444eb16dc334ab382924c052f6a160db82229a4792",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_mouth_atlantic_s4_v1": {
     "type": "noise-expression",
@@ -6894,12 +7699,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_mouth_atlantic_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "1977ea84f4e1fba744e8ca78a2905c23505db5087585cef29229c3dae982e776",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_mouth_atlantic_s5_v1": {
     "type": "noise-expression",
     "sha256": "e7904d3c109379dafc8fde0d1b4c207eee0f1457dab00ceaa5da7cfab3e6bbda",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_mouth_atlantic_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "a3b002a2bc81b4a9928b4e98d01a5b9fa2554da486956f527894be02f518ec43",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_mouth_atlantic_s6_v1": {
     "type": "noise-expression",
@@ -6908,9 +7727,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_mouth_atlantic_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "c716f26c5de9c331396c02a6f9c148a1fa50be9d597bf13b581f0223b1528f2b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_mouth_olde_world_s12_v1": {
     "type": "noise-expression",
     "sha256": "e9bff58dc238bbbf9e5fd6a3456c3ea0cc1993d668be0ae9d4d706f768bb8144",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_mouth_olde_world_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "3854047ad4f3c7d11bc4f14fb71a134d6236d937e5a1bf752d8cf3da5d3671bd",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -6922,9 +7755,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_mouth_olde_world_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "038aae91b92d97905c8c739a4cc26f6430a7ed6cf481a3be18b24ad42a193548",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_mouth_olde_world_s24_v1": {
     "type": "noise-expression",
     "sha256": "8c688141e0f014144989d1d60f6f975c8e2edd74fd44f81277dc8e78e2850122",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_mouth_olde_world_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "66cefd0137ab7409f1ca0d149eaf12cb3328609ef9d06459dc43fb7e8e74eba0",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -6936,12 +7783,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_mouth_olde_world_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "4a2f290919c24daebeea431be85ec38785bb32ad1753bcc5dc8fd66defa5649d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_mouth_olde_world_s3_v1": {
     "type": "noise-expression",
     "sha256": "a2523958ab80fc358d90b490b5745efcd5fcea3ad8019424d0b3c8b3040b469a",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_mouth_olde_world_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "a3da0917d53b218b61fca7a7eec2cb8661d2631391aaed9eb030d30da93e721a",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_mouth_olde_world_s4_v1": {
     "type": "noise-expression",
@@ -6950,12 +7811,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_mouth_olde_world_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "198f27621d31e17eb422eed0015abea93c645b6e32140a41ec0d2c844f759528",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_mouth_olde_world_s5_v1": {
     "type": "noise-expression",
     "sha256": "cc8d08a02334b3486e406caf74b045c7fc20a1975ff3c41d7ee202db885b6cc2",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_mouth_olde_world_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "4d86a74ec272cbbf7957f7320ff6578aed89cd3c8fd0c48e3dde914499d3eecb",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_mouth_olde_world_s6_v1": {
     "type": "noise-expression",
@@ -6964,6 +7839,41 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_mouth_olde_world_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "9ce96e4bddb1197121a0ce7e110380b5d863484fb323a157570ddd878cd7a2c4",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_no_blue": {
+    "type": "noise-expression",
+    "sha256": "b4ab14e5266b0eb47e05fb7a13d282b4d30381f5d568188c550b9597884df9e3",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_no_blue_open_v1": {
+    "type": "noise-expression",
+    "sha256": "4ef613cfaa83c782504847f05e979b28c6508a5045094fbca76f096a8ec4cc63",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_no_blue_out_v1": {
+    "type": "noise-expression",
+    "sha256": "13dcc561e30415c71877e4ebac0ca30fe1ee21e28d9262b4ce773f2855bf556e",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_no_blue_tile_v1": {
+    "type": "noise-expression",
+    "sha256": "d5d90ea5ffcf9620990adef122f8c86d75693b9fcaffa1d28a8c7a5298808c4b",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_north_belt_v1": {
     "type": "noise-expression",
     "sha256": "54eaea16d0fb4a0854d7e1f1de17c7903f444ad8edd1853e1d7fd470318a8a78",
@@ -6971,9 +7881,37 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_north_belt_v2": {
+    "type": "noise-expression",
+    "sha256": "8bdbf958e15d5a855a56da9931edeabd279e804e68a727a4e58fc61bb512c82b",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_north_clear_v1": {
+    "type": "noise-expression",
+    "sha256": "9bc3e2b8bc83bdbc41ea6d999a223321dd7444aa6769a618244386832fa47422",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_north_clear_warp_v1": {
+    "type": "noise-expression",
+    "sha256": "7b05eda126ec12d6d45c32f016092d9f406b57feb29cabc528bcb4ff3f7677fd",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_north_d_v1": {
     "type": "noise-expression",
     "sha256": "708961c23cdfc26ebca24e0efb4b0ddf9db32eea22958ae3d5b57a29d837ebd3",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_north_d_v2": {
+    "type": "noise-expression",
+    "sha256": "45601896d9529bd58f1ad7d4ebbd6708b5d17aa278093d9628ac2472a57f93a2",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -6985,9 +7923,23 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_north_drop_v2": {
+    "type": "noise-expression",
+    "sha256": "0881a2f86b14f0d6b2bfb50d831c8862d29bec9d63484427e009eaa4e22336be",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_north_lead_v1": {
     "type": "noise-expression",
     "sha256": "d2f13bc21fc9603ca4b1379708560315706cd418293ca95757066df517147169",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_north_lead_v2": {
+    "type": "noise-expression",
+    "sha256": "fb79898b8f0a805257e2f47a5aa2029c3c27f1d8597487693f2f634e81af8019",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -7085,6 +8037,13 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
+   "tn_ore_coal_p_v3": {
+    "type": "noise-expression",
+    "sha256": "73f9720b8a72277025724153c22b8f7bd71a017d28b471a8d3c3dec1be7406c6",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ore_coal_patches_v1": {
     "type": "noise-expression",
     "sha256": "f950ee02c541b0596eabb71517f4f8379e7585126fc00adc3f46ce145c5e2755",
@@ -7098,6 +8057,13 @@
     "dump": "m1",
     "slice": "resources-enemies",
     "registered": "2026-10-29"
+   },
+   "tn_ore_coal_r_v2": {
+    "type": "noise-expression",
+    "sha256": "eb5b79ed20e28a27005178b973e524e457bd2013218da4fc48a44e4b65350405",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ore_copper_ore_p_v1": {
     "type": "noise-expression",
@@ -7113,6 +8079,13 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
+   "tn_ore_copper_ore_p_v3": {
+    "type": "noise-expression",
+    "sha256": "abb59d4cbe9af731b5355ba8400a326a0c5b641e4d319d53e5e3ccc175bf91ae",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ore_copper_ore_patches_v1": {
     "type": "noise-expression",
     "sha256": "f9b20738d65c871eb7905f0b0d02964be25a4afa408791f4ff34ef6e549f68fc",
@@ -7126,6 +8099,13 @@
     "dump": "m1",
     "slice": "resources-enemies",
     "registered": "2026-10-29"
+   },
+   "tn_ore_copper_ore_r_v2": {
+    "type": "noise-expression",
+    "sha256": "8f8119437e1a79510e67271a83b154df4fb5045a5a293eca43b0c46b85cedd0b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ore_crude_oil_p_v1": {
     "type": "noise-expression",
@@ -7155,6 +8135,13 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
+   "tn_ore_crude_oil_r_v2": {
+    "type": "noise-expression",
+    "sha256": "6719018109fd6e69462af79ccb0b4481050da2450e9054bf38e602b43739958b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ore_gap_v1": {
     "type": "noise-expression",
     "sha256": "0e3cebaca68d866646d1a43388086802e60f6d244102b820a7ae38a648240d5e",
@@ -7183,6 +8170,13 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
+   "tn_ore_iron_ore_p_v3": {
+    "type": "noise-expression",
+    "sha256": "5f707d87618ed8a510b9192af3e4c96f0cb576548a686cf225d91979da2b5391",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ore_iron_ore_patches_v1": {
     "type": "noise-expression",
     "sha256": "febfcd656fca65d797b77e0ea232e2faf24eb5c1ced56d3f9e9fdcfa8675fe49",
@@ -7197,12 +8191,47 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
+   "tn_ore_iron_ore_r_v2": {
+    "type": "noise-expression",
+    "sha256": "09c21ae0ea9914d3cd41d0cc797211e8439fd0b6426cfed37625be7ea6471a60",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ore_offshore_oil_patches_v1": {
     "type": "noise-expression",
     "sha256": "89cfc3803c8653f1aeae7c853b900b09a99186f7c69ad2abbf20e4aab7cdb39f",
     "dump": "m3",
     "slice": "extras",
     "registered": "2026-10-30"
+   },
+   "tn_ore_open_plants_v1": {
+    "type": "noise-expression",
+    "sha256": "b3f85fcc2b39237b40fa180256a747ab9141380261e40d3ff1c251514d07aae6",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ore_open_plants_v2": {
+    "type": "noise-expression",
+    "sha256": "fb4c487edd7202d3271a1decb8c16d6487ae6fec50c367b273394433584fc3bc",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ore_open_v1": {
+    "type": "noise-expression",
+    "sha256": "a21ee4426dc09f3b30ce57c6df449d13d4872554b948b51849a824cc8928b735",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ore_open_v2": {
+    "type": "noise-expression",
+    "sha256": "c183bbeeddeeac268566ba8cd6123ffc6b2c3c2e83dd1120cc6030cece227e9c",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ore_ramp_v1": {
     "type": "noise-expression",
@@ -7225,6 +8254,13 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
+   "tn_ore_stone_p_v3": {
+    "type": "noise-expression",
+    "sha256": "87b57b854c098f38c75ab3838ae49171130c498d0e8a44a88861462ec7baeefc",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ore_stone_patches_v1": {
     "type": "noise-expression",
     "sha256": "8a626723fc90e53772059b7f38428f99c3cb93476e79f5c2f5bfc7693d57fe3c",
@@ -7238,6 +8274,20 @@
     "dump": "m1",
     "slice": "resources-enemies",
     "registered": "2026-10-29"
+   },
+   "tn_ore_stone_r_v2": {
+    "type": "noise-expression",
+    "sha256": "d065267dd1a64502b7c89df417d84a1b49963aefe7f4213fae0e1349bdb26230",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ore_trees": {
+    "type": "noise-expression",
+    "sha256": "cd1f5be615780196393b9aabfb243bd6583c4845e7b8d70f3cb4acf696107247",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ore_uranium_ore_p_v1": {
     "type": "noise-expression",
@@ -7253,6 +8303,13 @@
     "slice": "resources-enemies",
     "registered": "2026-10-29"
    },
+   "tn_ore_uranium_ore_p_v3": {
+    "type": "noise-expression",
+    "sha256": "6cc4946be28b459ee65457708682ba8a109b3b94ceaa3f9f1d27ed1157fe5e4a",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ore_uranium_ore_patches_v1": {
     "type": "noise-expression",
     "sha256": "ab4893fc107001518878cafc37d2940b25450965ff853e5fb73dedf636f70c91",
@@ -7266,6 +8323,20 @@
     "dump": "m1",
     "slice": "resources-enemies",
     "registered": "2026-10-29"
+   },
+   "tn_ore_uranium_ore_r_v2": {
+    "type": "noise-expression",
+    "sha256": "62dc3682b86660dd6447177054fdf19565b3e3176ae8fe33068b8a987dc2e69e",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ore_wobble_v1": {
+    "type": "noise-expression",
+    "sha256": "b12cff3c91757ca3b37dd287f8258487f4b612697605aec4e6e1537abec26d73",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_palm_a_p_v1": {
     "type": "noise-expression",
@@ -7288,6 +8359,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_palm_a_p_v4": {
+    "type": "noise-expression",
+    "sha256": "ddcfb6d11bd681f2507ec1f4ad8cdfa539cdf2e8149e3e838c07a4ae8175aae0",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_palm_a_r_v1": {
     "type": "noise-expression",
     "sha256": "b0a19f530a0084c15c7544102cfcb6e201175de7008ea471a43fb219d6117c2c",
@@ -7298,6 +8376,13 @@
    "tn_palm_allow_v1": {
     "type": "noise-expression",
     "sha256": "a9a971ad874e6d283dda3507e3ebc7aac9cf1b79b3ee8d8d113a6033aea6da63",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_palm_allow_v2": {
+    "type": "noise-expression",
+    "sha256": "6d0d70bcca95c8a5d896d0cc75c7779a53ed02862e2bdc8011e836c0eb71ff62",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -7323,6 +8408,20 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_palm_b_p_v4": {
+    "type": "noise-expression",
+    "sha256": "6feef8885fdc085c3072b9f15b7d24a71bbe82f2d6f8219364652e15d253316b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_palm_b_p_v5": {
+    "type": "noise-expression",
+    "sha256": "c8d4fa9af5fe92d138156b979d9719835763620e0298cc6cf0ad99bb0a3f2630",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_palm_b_r_v1": {
     "type": "noise-expression",
     "sha256": "878779cd1ad83307db469308bc5b4660b1ffc1366b35d7ffdaa186702b2c2d8f",
@@ -7336,6 +8435,20 @@
     "dump": "m1",
     "slice": "climate-tiles",
     "registered": "2026-10-29"
+   },
+   "tn_palm_med_v1": {
+    "type": "noise-expression",
+    "sha256": "e04447935f5a3f41c35d2b08520cfc1d1a2ae960b074c48c763b9140c877abdc",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_palm_shore_v1": {
+    "type": "noise-expression",
+    "sha256": "98c7c7f88b38f347c18e78c4632acf1b1b0386a101d232ff8e2a6132b50ea658",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_passes_atlantic_v1": {
     "type": "noise-expression",
@@ -10487,12 +11600,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_shore_atlantic_v6": {
+    "type": "noise-expression",
+    "sha256": "06ffa40782b896be3192b561cdde02efbed669343902aa9b72bf8c043943d417",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_shore_europe_v3": {
     "type": "noise-expression",
     "sha256": "124a57e910ebe4f33411fa0bc662abad16bb32b719a1699f80c4e37d063e1b6f",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_shore_europe_v4": {
+    "type": "noise-expression",
+    "sha256": "5714a6f354b865f109df74ba421eb65cb3ec7a7d19477a9186b44efd25c50bc0",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_shore_olde_world_v4": {
     "type": "noise-expression",
@@ -10508,6 +11635,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_shore_olde_world_v6": {
+    "type": "noise-expression",
+    "sha256": "7d94dec0ddacf860105c00e071590c61192fa47fa868e8ec4081bf44dcf2546f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_spawn_bias_atlantic_v1": {
     "type": "noise-expression",
     "sha256": "ad6a929c4afa46564218570e31bde57c3a48338627fd8595acd667125c6aa106",
@@ -10522,12 +11656,26 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_spawn_bias_atlantic_v3": {
+    "type": "noise-expression",
+    "sha256": "dc86c716bc4b480c42e3a9e0bd14ab2d290387eef93d944931d80c0c604aebfb",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_spawn_bias_europe_v1": {
     "type": "noise-expression",
     "sha256": "6804f3fdb181538ea0f411f34dfb977082772a34e1c3189a020bf149b9f9f421",
     "dump": "m1",
     "slice": "spawn-cities",
     "registered": "2026-10-29"
+   },
+   "tn_spawn_bias_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "bb30e04ccf91eba421a25b18d163d2a3bf1fecb8d0f678592e9fcf2d45d547f2",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_spawn_bias_olde_world_v1": {
     "type": "noise-expression",
@@ -10539,6 +11687,13 @@
    "tn_spawn_bias_olde_world_v2": {
     "type": "noise-expression",
     "sha256": "1207a85b41ca609c4351bc1e5bd6f2e24377db412274051d847e6cbeaba07e99",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_spawn_bias_olde_world_v3": {
+    "type": "noise-expression",
+    "sha256": "1deca086c85517d337a40601cebcf96f44d7d2d53e9a478983b3b8190daa8641",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -10557,12 +11712,26 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_spawn_lake_atlantic_v3": {
+    "type": "noise-expression",
+    "sha256": "8ce7d552e3a283dd7d82d61021bd70342dc1b7827755c67343b573341be9ec22",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_spawn_lake_europe_v1": {
     "type": "noise-expression",
     "sha256": "a835304783de04ad052d1715f121b8cbaebf1e3e728f8706b8bbdf00ecd44444",
     "dump": "m1",
     "slice": "spawn-cities",
     "registered": "2026-10-30"
+   },
+   "tn_spawn_lake_europe_v2": {
+    "type": "noise-expression",
+    "sha256": "11dc2394177a75900cec7cf8d5015ae8d8628cd549f08a246a1f623513006174",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_spawn_lake_olde_world_v1": {
     "type": "noise-expression",
@@ -10574,6 +11743,13 @@
    "tn_spawn_lake_olde_world_v2": {
     "type": "noise-expression",
     "sha256": "3a508d795691e6fef02f6a9fe880593db6993189aefff399d87e6d36824dc2fa",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_spawn_lake_olde_world_v3": {
+    "type": "noise-expression",
+    "sha256": "db90deebfc748ed5a6503b7d33064860c2857818cedb42a0c061ef7dcbdee2d4",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -10634,6 +11810,20 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_temperature_ab_v6": {
+    "type": "noise-expression",
+    "sha256": "54ebd2458ea99bc16f21b78fd4091ee2bed7fe4b18e55c917672cc26b70cd0c6",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_temperature_ab_v7": {
+    "type": "noise-expression",
+    "sha256": "ca4d9a1aa22c5f123ef10ba21052ff0ac49d1356d1088d4f760582cd201cfb6d",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_temperature_fb_v1": {
     "type": "noise-expression",
     "sha256": "5ea2ab9aac16d59900ef6ac3d5d81931a8072d796b4ce4f84711f29f315e4614",
@@ -10658,6 +11848,13 @@
    "tn_temperature_veg_v2": {
     "type": "noise-expression",
     "sha256": "d21a04de54e34719164f017a523e6990abc6e8796d4c048076c32c0437133081",
+    "dump": "m2",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_temperature_veg_v3": {
+    "type": "noise-expression",
+    "sha256": "4a703afc480ab45482a8edfc43ed789e4c2e77dc6f024a318051aab88fb667d6",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -10942,12 +12139,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_u_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "adc76a6eb2fdb403de028bfbc59e8ad3312561cd159fdb3c995af04540ccbe95",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_u_europe_v6": {
     "type": "noise-expression",
     "sha256": "3f81deb71c30170d5b420254fb6bb8ee189a45c737e8ea6769f81d0cbbed89ba",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-29"
+   },
+   "tn_u_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "26a3d859fba58377c702e6c11bdd9e15051b9594a56f463105a04a88c1ddef15",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_u_olde_world_v6": {
     "type": "noise-expression",
@@ -10963,6 +12174,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_u_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "3046f767271ebe8fa9617834f24c2c533508a83c6f376e85af822742e035a137",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_v_atlantic_v6": {
     "type": "noise-expression",
     "sha256": "dcf1927db66e6b00baa638979685d941e99434efd270304743a0c7b50e06e450",
@@ -10977,12 +12195,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_v_atlantic_v8": {
+    "type": "noise-expression",
+    "sha256": "ef921b0bb701b45e81b098b8a0ace108ba928b7d3efdb1e62e64343b7394cc65",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_v_europe_v6": {
     "type": "noise-expression",
     "sha256": "affc8ba354d2eb22e8c4bf50d1b4d7cd29a19afafae5b221eed66375c7b0d1a0",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-29"
+   },
+   "tn_v_europe_v7": {
+    "type": "noise-expression",
+    "sha256": "dccdba9595fae0fac0a9167f59be812b80f2066c45a5b1f05288138c4e2e3eca",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_v_olde_world_v6": {
     "type": "noise-expression",
@@ -10997,6 +12229,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_v_olde_world_v8": {
+    "type": "noise-expression",
+    "sha256": "d679ca596811715a3f47ecb434f2987771bd13b742c460beb6383aaab84b7242",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_vdeco_green_asterisk": {
     "type": "noise-expression",
@@ -11124,6 +12363,20 @@
     "slice": "extras",
     "registered": "2026-10-30"
    },
+   "tn_vrock_big_sand_rock_v3": {
+    "type": "noise-expression",
+    "sha256": "6073da4d9580cfbdd376e45c7491ade6cd3077f72b57aa8d24a231c43bb1ecd9",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_vrock_big_sand_rock_v4": {
+    "type": "noise-expression",
+    "sha256": "f8ed003e5fd1ce992f88d288ddfa17d578ee0244f3a35b3a1df4a6000fdca7e1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_vrock_huge_rock": {
     "type": "noise-expression",
     "sha256": "f5048307afa00a415b67d2f8aee545347e98b874085cf104af4caa21026c7a8d",
@@ -11173,6 +12426,13 @@
     "slice": "trees-forests",
     "registered": "2026-10-29"
    },
+   "tn_vrock_medium_sand_rock_v2": {
+    "type": "noise-expression",
+    "sha256": "5f7f857c94712f7ce5621b0e822feff330ce6ff15befc1ae017fba0a1e98bfe3",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_vrock_red_desert_decal": {
     "type": "noise-expression",
     "sha256": "29feda58067139ba13853c6e5066febeee00ff0495a4ce00d69a4cedc0471f2b",
@@ -11186,6 +12446,13 @@
     "dump": "m1",
     "slice": "trees-forests",
     "registered": "2026-10-29"
+   },
+   "tn_vrock_red_desert_decal_v2": {
+    "type": "noise-expression",
+    "sha256": "441f58b133975282f9881ddc163a32523a0c88521d5c3cfde764b006fd87e569",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_vrock_sand_decal": {
     "type": "noise-expression",
@@ -11201,6 +12468,13 @@
     "slice": "trees-forests",
     "registered": "2026-10-29"
    },
+   "tn_vrock_sand_decal_v2": {
+    "type": "noise-expression",
+    "sha256": "a0aab90ccc439905e0f9f5f5eedc45715af2af811392eccd253422e2e9276005",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_vrock_sand_dune_decal": {
     "type": "noise-expression",
     "sha256": "1037a19c5e3b6af5c5e9270b037c0f75ee223b427096f866adcec7b48d1bbc71",
@@ -11214,6 +12488,13 @@
     "dump": "m1",
     "slice": "trees-forests",
     "registered": "2026-10-29"
+   },
+   "tn_vrock_sand_dune_decal_v2": {
+    "type": "noise-expression",
+    "sha256": "3516cd3207f67f14c13ecffef947485989b4187ca9acc4a250a2edcade848de9",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_vrock_small_rock": {
     "type": "noise-expression",
@@ -11242,6 +12523,13 @@
     "dump": "m1",
     "slice": "trees-forests",
     "registered": "2026-10-29"
+   },
+   "tn_vrock_small_sand_rock_v2": {
+    "type": "noise-expression",
+    "sha256": "f31041f67baafd7cd9685dc51faea182d658f8039237a23e225420aed31e36dc",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_vrock_tiny_rock": {
     "type": "noise-expression",
@@ -12524,6 +13812,13 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_warp_x_atlantic_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "17de86307d86b1d2fc8ae13b0f95095a2fadd00c328d0752a14180377de64b4b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_x_atlantic_s1_v1": {
     "type": "noise-expression",
     "sha256": "5c879e9742e840e854cfcad91dba6879435456ea2d8d95362429293a7d10a29c",
@@ -12531,9 +13826,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_x_atlantic_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "5fc57985f07a95896a84e706dc9088533d30712abb86f88fa4cc64de195d5c29",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_x_atlantic_s24_v1": {
     "type": "noise-expression",
     "sha256": "74d3030957c7eaf56175b4ec629b8d7be132ea058af81885154a9c88182dd135",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_atlantic_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "30cf98d9051d4410f6c7c65976e1c3a84f069de8e97df47a1dc4e9857a0c7cda",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12545,12 +13854,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_x_atlantic_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "3b7bdbe0370cf97e0a413d8a5df326c5c784fa40f1045405467c744b091a8872",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_x_atlantic_s3_v1": {
     "type": "noise-expression",
     "sha256": "8d95bd683e885a82a7daee68381d7b51bded14b4c94d940f017d70fed9c6df89",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_x_atlantic_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "efce4b001aa5366ba696b27dfa4b4988373768aea7cb306c58fb862748f284c0",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_x_atlantic_s4_v1": {
     "type": "noise-expression",
@@ -12559,12 +13882,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_x_atlantic_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "b68ecf9ca2798fe6325da62c9fce1a66570b13dbcf3ac5f210841ef7282dba0f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_x_atlantic_s5_v1": {
     "type": "noise-expression",
     "sha256": "300f98e32d2a9dca6acc84e87a0ce0eaa168729999b11e5f06bb293ae66e6b34",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_x_atlantic_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "ed51cae225f075093783586bee4af9788ebd0c15ffe2b90e62bc6d35517ee840",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_x_atlantic_s6_v1": {
     "type": "noise-expression",
@@ -12573,9 +13910,30 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_x_atlantic_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "df8e9191d832e4e8b271378c12221ada49b707542dcc5cc25e41b354615858bf",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_x_europe_s12_v1": {
     "type": "noise-expression",
     "sha256": "cca385cdb21930794b49ba39fd06a56cd3569a46ccf7e46a9087367b64e5db15",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_europe_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "21c065e0f233d230b967f935a779225f62a255596a0f599ac0d4224a1c8f77c0",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_europe_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "38c0da08b5304f026375f6f9946d1e0602934f233b0e4b55a8a7469d5336fc57",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12587,9 +13945,58 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_warp_x_europe_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "85c9045ec282322a4ba218c1486d19f87d5208a40aa294b9d66438d23e03f299",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_europe_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "382438180acbab6f7e1c4722f406c7978c0ae09d0c62ef52bd53e32d81792159",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_europe_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "895f80ea6a69939694f8d38e8e7737ab6c26ea0f697937963828c26de2bdfbc6",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_europe_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "2b7a65e47a9a2ed2e04dea6d6021ed872e4b290c945149f166c713cfff0e4ff1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_europe_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "3a3e5b8031e0c9d88ade5140536ab936b6cbf050139a5338f104098b630dda82",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_europe_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "b89bc524cb49c18e2462db25a656e5c047773966e056afa6039f8e3a2f3ea9e7",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_x_olde_world_s12_v1": {
     "type": "noise-expression",
     "sha256": "b221c460c9a428898bdea163e91e599032825ad3ff172b3fe8ecbd7701def0ac",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_olde_world_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "bf66fda8a20ad1e4bc0cdaed68cb75ba79990ade24aa5c832afbdd91fc2955b1",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12601,9 +14008,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_x_olde_world_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "9478f21a3efef38ebbfab0b6c1303f943b386f666c9e2ef085e45e5892f5f12d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_x_olde_world_s24_v1": {
     "type": "noise-expression",
     "sha256": "0c68025d956f4ee9756d55f47e7d1ac3f86d3b85a16614143a8ae9eb30a5de68",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_x_olde_world_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "bc8addfa9d1e31ab32c0bc5d7b46da1f3d5302f698cb5924c6865d0660d486d0",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12615,12 +14036,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_x_olde_world_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "8489ecb843e59d98fa64ffe27da3095a7fcec8f475054d4653f5578c818174bd",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_x_olde_world_s3_v1": {
     "type": "noise-expression",
     "sha256": "8a723466d20720dc9136d1ac2fc101012cf11a1338240c3262ba7e50f1717921",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_x_olde_world_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "6c9010396684530aa8881e1ff3d522f0708f84dfb5b613f185bbd56cd1025bf4",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_x_olde_world_s4_v1": {
     "type": "noise-expression",
@@ -12629,12 +14064,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_x_olde_world_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "709f2ff156d4efe185ba9f1463ee77875d7820c4663ad426298f343d6a246056",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_x_olde_world_s5_v1": {
     "type": "noise-expression",
     "sha256": "5d4560496c7541d43699c1749c405d3e9486fe1d05eada1566c6348af0557ce9",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_x_olde_world_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "48189bd3a8c3ee91a96032f393c55878406f62dcbdc42213ea5d110147c5ebd5",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_x_olde_world_s6_v1": {
     "type": "noise-expression",
@@ -12643,9 +14092,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_x_olde_world_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "62dafc84a3b6c795dc8f8ec2e5ec883ea512ab19e13a334e65b61155f44acf56",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_xp_atlantic_s12_v1": {
     "type": "noise-expression",
     "sha256": "097f1deb0fc9922f19c7e8ed067a9fd60b1bf4b32d3c4103ca4a0b00726252ba",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_atlantic_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "a3eae34967897f95dffb62a46921d9cfb3b4de8e662bd42f0259e48cecf5ebdd",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12657,9 +14120,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_xp_atlantic_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "90906a521d871330c0d102e8971cce8337cbd9187fc9b630f51d26f8b1403128",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_xp_atlantic_s24_v1": {
     "type": "noise-expression",
     "sha256": "92362f5d273a256bac38612d3452ea6db002249706d600d262618dde7a9b521b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_atlantic_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "8cd8acdff1e8cf1100a5e8159f286306c1f48edffcd011f3452d66296f2f1f02",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12671,12 +14148,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_xp_atlantic_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "534dd455341bedf05c7ec96a6dedf5fa545db685cd91dbec3414cc5efa336d4c",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_xp_atlantic_s3_v1": {
     "type": "noise-expression",
     "sha256": "bf1eca610392d058caa71c8f837ecfe38281fa03591857791d446252aeebde25",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_xp_atlantic_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "928667bbac483950c9cbb39667ab43822e6fe12145906f2cbd311fd164855fd3",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_xp_atlantic_s4_v1": {
     "type": "noise-expression",
@@ -12685,12 +14176,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_xp_atlantic_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "c4b279c1c13159501893c62881dcaa92b6ed49c6b0d05e3f233b2057936c8deb",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_xp_atlantic_s5_v1": {
     "type": "noise-expression",
     "sha256": "8367862c19d7ccf6f86dae15ff1934854478576377fd6889c74ac0960fb43ecb",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_xp_atlantic_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "0fc5217a6b069281e546168a82eed50b90e8305db59278326c104c554594eb04",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_xp_atlantic_s6_v1": {
     "type": "noise-expression",
@@ -12699,9 +14204,30 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_xp_atlantic_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "7a8c285a069c63ece66a9ef9a57893788122ee6547c677461332569a8ac0f685",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_xp_europe_s12_v1": {
     "type": "noise-expression",
     "sha256": "05fc658b32063a74d59aeea0e7f706ec3fb79a5df5741539316be3b672006511",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_europe_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "71dd9a179ee5af89d7b3939de6fc6f3f3c1406618387509ebafb3eaad042f406",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_europe_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "96cb003ad0a3a110f55fe4806fd9e9fab1a2107cf1ce78a52cff0fbb8799b036",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12713,9 +14239,58 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_warp_xp_europe_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "43cfcbe6bf8323d1a167c5f3d287faaeea75d87be4efcba8f1205fca50b8951b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_europe_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "2f532fb24f94797aec3f68171bc2e353d074d5aee860df291427b10f33ef0e8d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_europe_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "4f8e25fa60095e87d564da221cde44de79251fab922e8a7be093cf1f6557e398",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_europe_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "201c071e1fca28e6baff2569296d397e7421d67cdad766df6b829bad5b4d12e3",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_europe_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "355131c485c0d9e4130e6626916832de8b35138f35401b220b1b87510f02b919",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_europe_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "656c618085dae3bf15afc77662aba0eee709c91bcc95d94581409672f3466cde",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_xp_olde_world_s12_v1": {
     "type": "noise-expression",
     "sha256": "f924c803dad629fa5bf323a2321d960fec4decbff3955e2fb45c1fcd81efced4",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_olde_world_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "bc13269bca3826e16aa04a949c393cb57e864b68947e415fa009a82312401c45",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12727,9 +14302,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_xp_olde_world_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "e5f8b698ea7c404b5ed1b3a6a8f3d0baf2cf2611158b8a3d466ab47f30ffaadd",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_xp_olde_world_s24_v1": {
     "type": "noise-expression",
     "sha256": "3f0179ec791ca18b700eb13306ebcbf56ad6feb2a7807eb904e65a380ae062af",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_xp_olde_world_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "a87901150d6edbcbb30eb84cf2fa39a5337fdf547fcf04f2a2b0b00b640b3633",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12741,12 +14330,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_xp_olde_world_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "13581c3ee4c3d4a12b9a3c505a214603dced72bda4bd251965b19db20530d905",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_xp_olde_world_s3_v1": {
     "type": "noise-expression",
     "sha256": "b7b268771645c239b1c53e2f333e05982165c8751ad4ab22bc40037d091a348d",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_xp_olde_world_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "28ee81513e0bc02a7b6a7f9623e43bab514074043c7475fa337f6e2e031b7f4f",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_xp_olde_world_s4_v1": {
     "type": "noise-expression",
@@ -12755,12 +14358,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_xp_olde_world_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "90ce252191fd73139454a0210fc96a10db67eb50370014e6cca41f35aa5ed2df",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_xp_olde_world_s5_v1": {
     "type": "noise-expression",
     "sha256": "b61d4420fc790ddaacdacacbfddf652c043aa240af80f4f95a585cfcce7d9270",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_xp_olde_world_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "f491fedd436e3c000fa9b1d7c5a8457e3c608ae3927179ed79adebc643aa4fe1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_xp_olde_world_s6_v1": {
     "type": "noise-expression",
@@ -12769,9 +14386,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_xp_olde_world_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "7effec8e439235c361e1657b5ebc2b128261c32482c6c971fff8df715cbd5cc7",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_y_atlantic_s12_v1": {
     "type": "noise-expression",
     "sha256": "2d73b0538b69790159211055efa2a732b28f1dff701edd94c9b748d97edaff54",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_atlantic_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "4a7cd8dc3f14954041b7815263e647db4b718e2aba8b9cd68bf3dbcc34797b44",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12783,9 +14414,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_y_atlantic_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "269e16630ec6e40ee29decd524219f6ff88004ccc0b3c5c45403061c8e7d9be8",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_y_atlantic_s24_v1": {
     "type": "noise-expression",
     "sha256": "089bf45eb02eb4992045138f660a1cc3db92f78114219ece4e2c75b0f63302da",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_atlantic_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "77b6c4f47b0689d8d276bbc9a3c3b97543acc29199a6ffef59e8b8aac38ca2e3",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12797,12 +14442,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_y_atlantic_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "bae362f51b0a2206a40fed9b1fd7e4b42dafd419fe61f211cee3b75e5859be34",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_y_atlantic_s3_v1": {
     "type": "noise-expression",
     "sha256": "c31d1c415dc42660a5afd74883f4cdf5e36b5d1e26eb2011758eadd850a1eee4",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_y_atlantic_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "c6669d0851f011f845b4899d94132d6c02d7defd2daf287b1ac45cb0013d6cb2",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_y_atlantic_s4_v1": {
     "type": "noise-expression",
@@ -12811,12 +14470,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_y_atlantic_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "411ced842013754e78384210ae1c535d872c1fd09e9bdbca5759040f6142ee1b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_y_atlantic_s5_v1": {
     "type": "noise-expression",
     "sha256": "f8216871bbce9c230c03bf2af71324430b1719b713111be23c1bd925c8bd836a",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_y_atlantic_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "03fcd8d3e7dc947e354403e07b4700320720e2e1004081438ad10f607ca82ea7",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_y_atlantic_s6_v1": {
     "type": "noise-expression",
@@ -12825,9 +14498,30 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_y_atlantic_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "839cc9390f0fdd6b86905e374d0d99b722f5b8bbd53470a362142dfc959c2094",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_y_europe_s12_v1": {
     "type": "noise-expression",
     "sha256": "95346a8ad946cf5eeec0dd3032791df3fc0c5255e4071aea4626a1c281c9a667",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_europe_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "84fbe27155ca0763e73bdc5718e8830f802c12c280bf108c900ad6e14a27eca2",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_europe_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "39a0e571d5e9d0d0fef0e8ad0a5497bbc6a0e97b65ccddd7430fd8b4163435a1",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12839,9 +14533,58 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_warp_y_europe_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "17496df066fff9bf30731be7f8391f2fd7976f0c0e368b94eef0237033c087f5",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_europe_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "2f4d52d13bb639fa86f4d7000e380a59dbd2157831f871ec6218a88d862ebab0",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_europe_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "8044cba9e873e24a023c05b6be9d1d94bd6ed01361c85e1b77f5cbe84a8f6058",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_europe_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "fd7740a7cd1136cca8ac93bf34c855bbd4489b1ff2f727a71fbf373e1cfe0b45",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_europe_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "6917b92ad0a403d11b2b87ad73941f39e62e6c063c905441133e79d37e4d70b6",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_europe_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "2d7707e65651f96961db49946e61160ae9fca214180f50ef86a424f19a1bcbbb",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_y_olde_world_s12_v1": {
     "type": "noise-expression",
     "sha256": "85aa666091f5bb725757e72370fde45d90414c4560be09a3cd818c1988fea767",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_olde_world_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "bffab00d27cf11ce0df6eae2f6acc00dc49f1b5c106e58f220ab69de4b13ab31",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12853,9 +14596,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_y_olde_world_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "8fc3c86a0682a3cf8d16a81cdacb8f5a7ac247880ad4a8fd5f6466850c58fa73",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_y_olde_world_s24_v1": {
     "type": "noise-expression",
     "sha256": "776b9ac87843c2402022626e39f4f0ffb9140272c3fe84b6872b1b06bddb62ee",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_y_olde_world_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "aab5357253fcac4ad9a0476a5fca964fd655fd886e99d83950b68dac7e686a3f",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12867,12 +14624,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_y_olde_world_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "8cea0e72194c24d660f9b71566330c23485ff7ec6d1f8464ab4592c0e81e2090",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_y_olde_world_s3_v1": {
     "type": "noise-expression",
     "sha256": "a74e7e64b6fb90a086cd8c2b6dc28df29fdfc037a65b91ca48b7b186393509d5",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_y_olde_world_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "95c460177a08e097da7f173bb251553675c2e2cc9098a94ece7aada8a3304716",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_y_olde_world_s4_v1": {
     "type": "noise-expression",
@@ -12881,12 +14652,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_y_olde_world_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "55a55995708e08f51f0e013e925086322719246a03219089ede23707d82a3671",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_y_olde_world_s5_v1": {
     "type": "noise-expression",
     "sha256": "210a8c2e82635f40ce3bf6d349f561875127b70c4ea3296977d5d804e9ecd3ed",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_y_olde_world_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "9153e8509edfc71e351b4cb284d82a85ed493fe3f81ea047b486995d6381eb34",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_y_olde_world_s6_v1": {
     "type": "noise-expression",
@@ -12895,9 +14680,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_y_olde_world_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "cc394553b078af772bb40cff606ef60b70994da2bae98746fad77531e499e0bd",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_yp_atlantic_s12_v1": {
     "type": "noise-expression",
     "sha256": "e3b1e7e393b265d3d2ddb74996fa2fe8c7c67d15b9a34cfc2e2eb1d7ef4e4cb7",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_atlantic_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "42307d036dc78c6dbff86af582a636a8e0a040e50dce165b1987826a61eea5d0",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12909,9 +14708,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_yp_atlantic_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "a89cc2be1ffc7fec9c5c10d71fb13e1a3d6ae06ab3dfa310fe54b34be3f5dce1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_yp_atlantic_s24_v1": {
     "type": "noise-expression",
     "sha256": "41e20f9445f90515675cf44fe362478a964d40aa1d2ed30b50355581514c1f9e",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_atlantic_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "639fd89c3c979bcae4146288cb4965c9a5887b7d49adf17d02e3c719ca6b6445",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12923,12 +14736,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_yp_atlantic_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "0a461b0e2bd56110f0011981d6efdc033c6601aee7999eb10c3905c6404a1820",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_yp_atlantic_s3_v1": {
     "type": "noise-expression",
     "sha256": "eb8164235e1e98ef42a890a0f9414f7427847323fa07dad1c4d14bf3048a959c",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_yp_atlantic_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "53a01cea9c64e0183177f34cecab85e5f8cf6368623407d317d04c19399cbb55",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_yp_atlantic_s4_v1": {
     "type": "noise-expression",
@@ -12937,12 +14764,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_yp_atlantic_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "483ff24ebcf4158720da61f9e20c969e8378419a1cfdb39d222cfa116a7f5e11",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_yp_atlantic_s5_v1": {
     "type": "noise-expression",
     "sha256": "8bed556cd589cc6b05e147c40e2c55fb5d630eca7e0e1ae90185dbd5d567726e",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_yp_atlantic_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "e2543b954b858832f70edaf3cd1fea1778e7118e205efb2b5f40f4e0bbe8d9a8",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_yp_atlantic_s6_v1": {
     "type": "noise-expression",
@@ -12951,9 +14792,30 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_yp_atlantic_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "c06d9f57914802f075d6dd94ccd29a024a7e36cef9c3856d929385acc7c68eb1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_yp_europe_s12_v1": {
     "type": "noise-expression",
     "sha256": "5ad24319faca72e32f266fffb3ca3df96d81e147f917f7519d5cb0a7bf382a2b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_europe_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "86039f2f00b53aefb81094c498ca105e0df3443bb99893d1910b46e6cdff68d1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_europe_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "d531a66a07bf438c701a91b1c9ed483356a0ceb30e200627989c75126630a855",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12965,9 +14827,58 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
+   "tn_warp_yp_europe_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "4cfb14c85c4c0b085f38c7c90af43e69c5dbeab3b3699bb991333b895f7cab6e",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_europe_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "59d1661455fb6624fe09abf133c06faf964c5707fddfa1088316b9c2de5f2dd7",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_europe_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "f76500d2079b8adeeea35355aa3eb1c3458f504126095a83345faf7e2cdb6795",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_europe_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "dcacf5b9d15694040a2831063332f2f8654e3753c6f94275a2f5aed9b5926dbb",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_europe_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "723dcacdbaec851ddd21fada544fa7b8bb8495508ee4d48a22e3bb4025120664",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_europe_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "2c6f7563dd9a00c953106a4e1e34e056c89642f116b95f8e5da64c262ffccccd",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_yp_olde_world_s12_v1": {
     "type": "noise-expression",
     "sha256": "04358ea0ba32802ee446cb5cd6679fbac0eba977e8dbe17ac5385ab325f77682",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_olde_world_s12_v2": {
+    "type": "noise-expression",
+    "sha256": "06b1fcd76b5ae4d5fd8161be5a765e0a11e8f312baf62247dee764ff4c0ddb7c",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12979,9 +14890,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_yp_olde_world_s1_v2": {
+    "type": "noise-expression",
+    "sha256": "5b7ce8cf4b94f0478127541fb9859aa71172d113ee770f093df047c3a9674a79",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_yp_olde_world_s24_v1": {
     "type": "noise-expression",
     "sha256": "a34f5b6b5b077de3db497a9d99f7c4bcfb9eef19dccfc651894c6c30bc3bdbf1",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_warp_yp_olde_world_s24_v2": {
+    "type": "noise-expression",
+    "sha256": "2760c778b9abd213a31291506b274ff668320f46a45068605a76566efeee030d",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -12993,12 +14918,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_yp_olde_world_s2_v2": {
+    "type": "noise-expression",
+    "sha256": "46d47e5ffeed8a5d1cc53ee01c8518ee21584d4554a961ab0a28254c4f974e94",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_yp_olde_world_s3_v1": {
     "type": "noise-expression",
     "sha256": "1abcb0173175f119f87413173ea7df2cfbcafecafdd9a63f41e3e2556e0e0523",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_yp_olde_world_s3_v2": {
+    "type": "noise-expression",
+    "sha256": "bf1458ca22eed2e69774cfbcc2e0b965bdfd097abfa15a9e6baa5e42e0557b66",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_yp_olde_world_s4_v1": {
     "type": "noise-expression",
@@ -13007,12 +14946,26 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_yp_olde_world_s4_v2": {
+    "type": "noise-expression",
+    "sha256": "fcace575df29ab3267a1b04fe34eedf3dd8b38bf13185722f563d0c06f28da96",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_warp_yp_olde_world_s5_v1": {
     "type": "noise-expression",
     "sha256": "0429c959edd1e9c1e722f85fcfa7978a4cd64fefb7043116977e873e98f97bfc",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_warp_yp_olde_world_s5_v2": {
+    "type": "noise-expression",
+    "sha256": "46383aa2260e6c33317cdc265bdc67e98670796de586683ca2c8d90cfea0b4a4",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_warp_yp_olde_world_s6_v1": {
     "type": "noise-expression",
@@ -13021,9 +14974,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_warp_yp_olde_world_s6_v2": {
+    "type": "noise-expression",
+    "sha256": "7ee0acc565d7ba1af8e1c6d1a7472cad1223a858a6e5463eea5b9ab0f1880688",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_atlantic_s12_v6": {
     "type": "noise-expression",
     "sha256": "301308154fba9759f2af90ee92238f65a3a6a9850af49b3a6b7659be3138e8c2",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ww_atlantic_s12_v7": {
+    "type": "noise-expression",
+    "sha256": "41e763876e7f950c7c5070e6fc75f9b419c5acefeeba2078a132a76ac2d8c3ce",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -13042,9 +15009,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_ww_atlantic_s1_v7": {
+    "type": "noise-expression",
+    "sha256": "59c9251b981a538f230c1f99834ddd1112b73715f701447d2f3e608e00a0b29b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_atlantic_s24_v6": {
     "type": "noise-expression",
     "sha256": "aded842c48ac23b3ec72d1fd6339d713d8d9e837b0f7ee2c868e691981143f37",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ww_atlantic_s24_v7": {
+    "type": "noise-expression",
+    "sha256": "756f48fb7de0fe27bc9f6cfbc6e1427bb08a69a92b585f3f278c4f3978ef0d5f",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -13063,6 +15044,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_ww_atlantic_s2_v7": {
+    "type": "noise-expression",
+    "sha256": "237bba89d5a334e4f4b01975514d53e198e06763f1083b18599564727025e2d2",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_atlantic_s3_v5": {
     "type": "noise-expression",
     "sha256": "60100df45e4a72c4ead7c96f2088f5241f47ef17eaa81297a4e225430fc5b3fd",
@@ -13076,6 +15064,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_ww_atlantic_s3_v7": {
+    "type": "noise-expression",
+    "sha256": "696ae4d34d60373dd504644f2ec294a89e5d5dd2b1dec40442ea07eaf34b72c4",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ww_atlantic_s4_v5": {
     "type": "noise-expression",
@@ -13091,6 +15086,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_ww_atlantic_s4_v7": {
+    "type": "noise-expression",
+    "sha256": "29c74d3933b30e80dcecd74c418a3461765830f7b8f0c0ef89fc80a338da7429",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_atlantic_s5_v5": {
     "type": "noise-expression",
     "sha256": "ea70e3b7b912dcc2a08c54b6e18077799871783c7809b28d20aae564f554b0ec",
@@ -13104,6 +15106,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_ww_atlantic_s5_v7": {
+    "type": "noise-expression",
+    "sha256": "49355fc77b3e4a682a205610b42626e594848ff2169874a82430094d32313844",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ww_atlantic_s6_v5": {
     "type": "noise-expression",
@@ -13119,9 +15128,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_ww_atlantic_s6_v7": {
+    "type": "noise-expression",
+    "sha256": "ca89c73c52cac80202abd0babbdefb0388a8b8303b6d4b06b960cd1ecb912dcf",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_europe_s12_v4": {
     "type": "noise-expression",
     "sha256": "dcfe6e3fbab63b30e1d01edb2c7288df4e3f2d74a40f4c614f96c1e1866d1f50",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ww_europe_s12_v5": {
+    "type": "noise-expression",
+    "sha256": "77e5c2a8e5db7f83ebf2ee7418e53b4445b2f7ccf51ee5d54b7ab78d643eaf1d",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -13133,9 +15156,23 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_ww_europe_s1_v5": {
+    "type": "noise-expression",
+    "sha256": "713106db5155a40caff195b27661eb52678c7c7dbdf2f88ad3d8bd05c539bacd",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_europe_s24_v4": {
     "type": "noise-expression",
     "sha256": "1b1a3fb2e82f208f9926d8499e6c1bc28d036450997596f75948d7feeaf44e83",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ww_europe_s24_v5": {
+    "type": "noise-expression",
+    "sha256": "fe4b459b32b61d8ee5aa96ca443d32548e3fbce8bd15ba278aa5a75861ea84ec",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -13147,12 +15184,26 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_ww_europe_s2_v5": {
+    "type": "noise-expression",
+    "sha256": "e94914258e6a8fcc3f4b724af0dc08e6706b07d97a524da001844bb0a941bc14",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_europe_s3_v4": {
     "type": "noise-expression",
     "sha256": "e937bf91f614119e6678401ff7a3bd3e073e04c7d649144583f6b240eab2a954",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_ww_europe_s3_v5": {
+    "type": "noise-expression",
+    "sha256": "96ef89d3ea40bf82b780299f84934a0e52a75992f562a4b9c0b5ad8eccccc636",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ww_europe_s4_v4": {
     "type": "noise-expression",
@@ -13161,12 +15212,26 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_ww_europe_s4_v5": {
+    "type": "noise-expression",
+    "sha256": "8ebb61edc3dc96ede62f18dce639d964fd92ad11532e1c6e1842979f72b5f972",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_europe_s5_v4": {
     "type": "noise-expression",
     "sha256": "13db7a77a818f9f1d968c5804ca6c018c38c67b97496a9f183265ce29d64cb15",
     "dump": "m1",
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
+   },
+   "tn_ww_europe_s5_v5": {
+    "type": "noise-expression",
+    "sha256": "d53b12d2777409fcb137f136c1956d1eba97daf85d7217bc94fc08016cb99874",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ww_europe_s6_v4": {
     "type": "noise-expression",
@@ -13175,9 +15240,23 @@
     "slice": "edge-and-lakes",
     "registered": "2026-10-30"
    },
+   "tn_ww_europe_s6_v5": {
+    "type": "noise-expression",
+    "sha256": "5f6b4e8c17b62e0610017bd675164f811084624a7109107b2f7c51415976bec6",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_olde_world_s12_v6": {
     "type": "noise-expression",
     "sha256": "ebb3520d12bdfb6a9f99c2311f97588b1988355d53f14be4f3476d8f2cc0583e",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ww_olde_world_s12_v7": {
+    "type": "noise-expression",
+    "sha256": "00e87e85a8f9f61e9005b3145d06eb15c9ca9938e29b92dc3092ff7d22c7fb89",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -13196,9 +15275,23 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_ww_olde_world_s1_v7": {
+    "type": "noise-expression",
+    "sha256": "56fae9433f774252a1dd04fdddc94d3b4dac9ed0473f14c78e79d962a8f147b2",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_olde_world_s24_v6": {
     "type": "noise-expression",
     "sha256": "48adb52b2c695c984746f59cb4d6fe9c13278b2611ce645470e47b032c09188b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
+   "tn_ww_olde_world_s24_v7": {
+    "type": "noise-expression",
+    "sha256": "8f4a8760c92b31bd9131c24c421e112f89e609308444a2ac04632c2106ba3d6e",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -13217,6 +15310,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_ww_olde_world_s2_v7": {
+    "type": "noise-expression",
+    "sha256": "9f580c17b05d6028f84a7ac8280eaa40752f26b8262bfd2090391801e866979b",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_olde_world_s3_v5": {
     "type": "noise-expression",
     "sha256": "69b8f0152f327091f2bd0009d0ecc651805720278c782792e28ac9ba4f7ea634",
@@ -13230,6 +15330,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_ww_olde_world_s3_v7": {
+    "type": "noise-expression",
+    "sha256": "1a5ea730bfc5bfb14c58efb9df6b38ab945b8d99e0600a4942dc2b0f093d343d",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ww_olde_world_s4_v5": {
     "type": "noise-expression",
@@ -13245,6 +15352,13 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_ww_olde_world_s4_v7": {
+    "type": "noise-expression",
+    "sha256": "01bc1cf410fd5a4e443063f4961a6df1d88427c9112a2bc1ee75cbd56eb8ef54",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_ww_olde_world_s5_v5": {
     "type": "noise-expression",
     "sha256": "533129bba5d4343282431cfa0f9391f21863b423b3929513edb3099f2433deb5",
@@ -13258,6 +15372,13 @@
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-10-31"
+   },
+   "tn_ww_olde_world_s5_v7": {
+    "type": "noise-expression",
+    "sha256": "f807578cffd186d73dbe19da320df116a2703b5d6e66f9fc14a81e38b59dd71c",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    },
    "tn_ww_olde_world_s6_v5": {
     "type": "noise-expression",
@@ -13273,14 +15394,28 @@
     "slice": "extras",
     "registered": "2026-10-31"
    },
+   "tn_ww_olde_world_s6_v7": {
+    "type": "noise-expression",
+    "sha256": "4e1253b4e64ef470bc1b73ba142307f080ac624ee27906c3c0f89530a42b3257",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
+   },
    "tn_zero": {
     "type": "noise-expression",
     "sha256": "1e499faa1e2c7a4720c7377284d1e2e4a339814e61a2a3cd45f99bada2b68ec9",
     "dump": "m1",
     "slice": "waterways",
     "registered": "2026-10-28"
+   },
+   "tn_zone_plants": {
+    "type": "noise-expression",
+    "sha256": "58e3a8778b6e723c277ad2600a9672559237cd692caa624ec7c1f1fdf90be130",
+    "dump": "m1",
+    "slice": "extras",
+    "registered": "2026-11-01"
    }
   },
-  "sha256": "9b1ad7f2aac825a088b91b5a12827f20d8d1f0ff2bed14ee9488ec25c08f51e4"
+  "sha256": "516ec1700b3cd63cf191275d22d256e24f689d8a307a41d835569562042ea894"
  }
 }

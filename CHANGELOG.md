@@ -4,6 +4,55 @@ All notable changes to terra-nauvis are documented in this file. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-11-01
+
+### Changed
+
+- Exact coastlines at scales 1 and 2 on new Old World and Atlantic worlds (tn_geo 21 and 22): a tile reads the
+  reference blurred and interpolated between pixel centres, moved by the warp tables plus a short tile noise, in every
+  K+ pixel. Specks and islets of up to 8 tiles with nothing to join go under. Worlds made before keep their coast.
+- River sets of tn_geo 21, 22 and 23 at scales 1 and 2 take a wider bank noise, so each bank wanders on its own.
+- The spawn lake of tn_geo 21 and 22 takes a third warp row up to scale 2.
+- New worlds (tn_geo 21 to 23): biter bases stand scattered instead of in even rows, ore holds the same richness
+  per tile at scales 12 and 24 as at 6, hotspot ore is at least as rich per tile as the ore round it, trees thin
+  out on hotspot ore, and Batu Hijau's copper keeps off Lombok.
+- New worlds: the snow line runs north of Russia's main lowland, a spawn in the cold north starts in a clearing off
+  the snow, and palms grow on warm Mediterranean shores (with Destroyed Europe on as well).
+- With Space Age, the plants and decoratives Terra Nauvis re-lists keep the tiles of the other planets that place them.
+- New worlds beside Alien Biomes keep its blue and purple trees, plants and ground inside the Blue corrupted zone;
+  outside it each blue tile takes a green, brown or orange counterpart.
+- At scale 12 on new Old World and Atlantic worlds (tn_geo 21, 22) rivers take a finer warp octave and ford ends a
+  finer noise, so banks run straight for shorter stretches; scales 1 to 6 and 24 keep their tiles.
+- New worlds: trees and plants beside hotspot ore thin out only where ore lies, not on the band a field's wandering
+  outline leaves bare (tn_ore_open_v2, tn_ore_open_plants_v2).
+- New worlds: with Destroyed Europe on, great forests inside the zone stand as dead forests (tn_destroyed_dead_v2);
+  with Blue corrupted on, Alien Biomes' green and olive plants no longer grow inside the blue zone (tn_zone_plants).
+- New worlds: marsh pools fray along their edges in tiles (tn_marsh_water_mud_v2), so their shores run straight for
+  shorter stretches.
+- Inland lakes of the 0.3.0 geography versions (tn_inland_lakes_europe_v6, _atlantic_v3, _olde_world_v3) hold a
+  floor off every lake spot, so the shore noise leaves no water specks between lakes (Old World 12 at Frankfurt, a
+  3,072 tile window: 1,157 water bodies of 1 to 4 tiles to 27).
+- With Destroyed Europe or Blue corrupted on beside Alien Biomes, the tiles only the zone places (Alien Biomes' orange
+  heat bands, black and red sand and dirt; the Blue zone's dirt) absorb pollution like grass-1 (7.5e-6 a second) and
+  the zone's dead tree copies like tree-01 (0.001 a second), in prototypes/zone_look.lua. Grey dirt 6, which also
+  lies outside the zone, keeps its value. A prototype change, so saves made before take it.
+- Zone recolour (prototypes/zone_look.lua): with a zone on beside Alien Biomes, each light brown or dirt-coloured decal
+  and plant of its list (config.lua zone_look.zones) gets a tinted copy, ember red for Destroyed Europe and blue-purple
+  for Blue corrupted, which takes the original's probability inside the zone behind the zone's key while the original
+  keeps it outside. Spawner and worm creep (zone_look.creep) gets a copy per zone in every spawn list, kept to the
+  zone's own ground by the collision layers tn_zone_ground and tn_off_zone_<id>. Biter Cleanup clears creep by name
+  and does not know the copies.
+- With a zone on beside Alien Biomes, its own ground walks at speed 1 and caps vehicle friction at 2 (Alien Biomes'
+  heat bands walked at 0.9 to 0.7 with friction 4 to 16; its black and red sand at 0.8), and with Space Age the tree
+  farm plant (tree-plant) lists the zones' ground among its plot tiles. Prototype changes, so saves made before take
+  them.
+- The tooltips of canals, great forests, ridges, hotspots, inland lakes and both zones give each layer's map generation
+  cost at Old World 12 beside Alien Biomes (noise program complexity, plan-perf section 3 row 4), and the Destroyed
+  Europe and Blue tooltips and README rows say what the zone does to speed, pollution and creep.
+- Beside Alien Biomes with Space Age, the tree farm plant (tree-plant) lists the vanilla land tiles again (Space Age's
+  own list, tiles.vanilla.tiles): Alien Biomes rewrites the list to its own tiles, and Earth presets restore vanilla
+  grass, dirt, sand and red desert, where agricultural towers planted nothing.
+
 ## [0.2.0] - 2026-11-01
 
 ### Added
