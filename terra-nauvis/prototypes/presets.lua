@@ -483,6 +483,16 @@ local function spawn_next_values(map_key, v, names)
   return out
 end
 
+-- The next geo body (config.lua coast.next): past its above_scale a new world names it over the version's own. Not part
+-- of baked(): no Map type fallback reads a geo body.
+local function geo_next_values(v)
+  local nx = cfg.coast.next and cfg.coast.next.versions[v.geo_id]
+  if nx and scale > nx.above_scale then
+    return {[v.geo] = nx.body}
+  end
+  return {}
+end
+
 local function withheld(p)
   for _, m in ipairs(p.withheld_with or {}) do
     if mods[m] then
@@ -500,6 +510,9 @@ for _, key in ipairs(cfg.preset_order) do
     local v = geography(p.map)
     local names = baked(p.map, v)
     for k, value in pairs(spawn_next_values(p.map, v, names)) do
+      names[k] = value
+    end
+    for k, value in pairs(geo_next_values(v)) do
       names[k] = value
     end
     presets[p.name] = {

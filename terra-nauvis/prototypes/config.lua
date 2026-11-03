@@ -674,6 +674,11 @@ local OAS = {
   -- The two fits OW8_GEO picks between by the folded scale (coast.geo_split).
   OW8_GEO_FINE = NOISE .. "geo_fine_olde_world_v1",
   OW8_GEO_LEAN = NOISE .. "geo_lean_olde_world_v1",
+  -- 0.3.1: Old World's geo body past scale 6, which a new world's preset names over OW8_GEO (coast.next): the fine
+  -- fit regrown in place boxes (data-src/fits/olde_world PROVENANCE, regrowth stage), bound to version 8's warped
+  -- chain.
+  OW9_GEO = NOISE .. "geo_olde_world_v9",
+  OW9_GEO_FILE = "prototypes/generated/geo_olde_world_v4.lua",
   OW8_LAND_COARSE = NOISE .. "land_coarse_olde_world_v8",
   OW8_DETAIL = NOISE .. "detail_olde_world_v8",
   OW8_FAR = NOISE .. "far_olde_world_v8",
@@ -1440,7 +1445,9 @@ return {
                  BFN.K,
                  -- 0.3.1: the spawn lake name Atlantic's entry reads, which a preset past the released folds' cities
                  -- points at the next one (spawn_next)
-                 OAS.AT8_SPAWN_LAKE},
+                 OAS.AT8_SPAWN_LAKE,
+                 -- 0.3.1: Old World's geo body, which a preset past scale 6 points at the next one (coast.next)
+                 OAS.OW8_GEO},
 
   -- The fine field per map (constraint S-3): map key -> {the map's elevation entry and every term
   -- only it reads}. The constant-coast twin turns each into a constant; no Entity,
@@ -1480,7 +1487,8 @@ return {
       OAS.AT_WARP2[27], OAS.AT_WARP2[28], OAS.AT_WARP2[29], OAS.AT_WARP2[30], OAS.AT_WARP2[31], OAS.AT_WARP2[32],
     },
     olde_world = {
-      REN.OW_FIELDS, START_LAND, OAS.OW8_ENTRY, OAS.OW8_GEO, OAS.OW8_DETAIL, OAS.OW8_FAR, OAS.OW8_LAKES,
+      REN.OW_FIELDS, START_LAND, OAS.OW8_ENTRY, OAS.OW8_GEO, OAS.OW9_GEO, OAS.OW8_DETAIL, OAS.OW8_FAR,
+      OAS.OW8_LAKES,
       OAS.OW8_SHORE, OAS.OW_WW7[1], OAS.OW_WW7[2], OAS.OW_WW7[3], OAS.OW_WW7[4], OAS.OW_WW7[5], OAS.OW_WW7[6],
       OAS.OW_WW7[7], OAS.OW_WW7[8], OAS.OW_CANALS7[1], OAS.OW_CANALS7[2], OAS.OW_CANALS7[3], OAS.OW_CANALS7[4],
       OAS.OW_CANALS7[5], OAS.OW_CANALS7[6], OAS.OW_CANALS7[7], OAS.OW_CANALS7[8], OAS.OW_DAMS7[1], OAS.OW_DAMS7[2],
@@ -1796,6 +1804,12 @@ return {
                OAS.OW7_WW_FILES[1], OAS.OW7_WW_FILES[2], OAS.OW7_WW_FILES[3], OAS.OW7_WW_FILES[4],
                OAS.OW7_WW_FILES[5], OAS.OW7_WW_FILES[6], OAS.OW7_WW_FILES[7], OAS.OW7_WW_FILES[8]},
     },
+    -- 0.3.1: Old World's next geo body (coast.next), which a new world's preset names over version 8's past scale 6.
+    {
+      release = "0.3.1",
+      names = {OAS.OW9_GEO},
+      files = {OAS.OW9_GEO_FILE},
+    },
     -- 0.3.1: Atlantic's next spawn folds (spawn_next) and the city table's version 2 they are built from. No
     -- geography: a new world names them over version 8's folds by preset.
     {
@@ -1914,6 +1928,12 @@ return {
     -- max_scale keep the fine fit, which the band fix's tables were built from.
     split = {max_scale = 6, versions = {
       [21] = {fine = OAS.OW8_GEO_FINE, lean = OAS.OW8_GEO_LEAN, lean_file = OAS.OW8_LEAN_FILE},
+    }},
+    -- next (0.3.1): per geography version, a geo body a new world's preset names over the version's own past
+    -- above_scale (presets.lua), so scales up to above_scale bake nothing new and the band fix's tables stay valid.
+    -- `file`: a generated fit bound to the version's warped chain, as its own fits are; `reads`: a fit it defines.
+    next = {versions = {
+      [21] = {body = OAS.OW9_GEO, file = OAS.OW9_GEO_FILE, above_scale = 6},
     }},
     transfer_offset = 0.1,
     transfer_clamp_px = 16,

@@ -18,6 +18,11 @@
    "checkpoint": "model-lean-5840.npz",
    "file": "geo_olde_world_v3.lua",
    "note": "Old World's lean coast fit, read past scale 6"
+  },
+  "geo_next": {
+   "checkpoint": "model-next-10100.npz",
+   "file": "geo_olde_world_v4.lua",
+   "note": "Old World's next coast fit, regrown in place boxes, read past scale 6"
   }
  }
 }

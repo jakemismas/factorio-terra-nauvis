@@ -989,6 +989,12 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
     if (bf and cfg["settings"][bf["setting"]]["default_value"] and map_key in (bf.get("maps") or [])
             and int(scale) in [int(s) for s in cfg["scales"]["exact_coast"]]):
         pen[bf["key"]] = bf["on"]
+    # the next geo body (presets.lua geo_next_values, after baked, config.lua coast.next): past above_scale it
+    # replaces the version's own
+    gn = ((cfg.get("coast") or {}).get("next") or {}).get("versions") or {}
+    gn = gn.get(version["geo_id"]) or gn.get(str(version["geo_id"]))
+    if gn and int(scale) > gn["above_scale"]:
+        pen[version["geo"]] = gn["body"]
     # the next spawn folds (presets.lua spawn_next_values, after baked): a city number past the released folds'
     # cities names the next folds over the version's city offset, its map's frame, the spawn lake and the bias
     nx, sp = spawn_next_of(cfg, version), spawn_of(version)

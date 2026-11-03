@@ -76,8 +76,9 @@ def fit_spec(map_key):
 
 def spec_bodies(spec):
     """The bodies a fit.json emits: geo and land_coarse, plus geo_lean where the map has a lean fit (the coast fit
-    past scale 6, config.lua coast.split_max_scale)."""
-    return [b for b in ("geo", "land_coarse", "geo_lean") if b in spec["bodies"]]
+    past scale 6, config.lua coast.split_max_scale) and geo_next where it has a next geo body (config.lua coast.next,
+    0.3.1)."""
+    return [b for b in ("geo", "land_coarse", "geo_lean", "geo_next") if b in spec["bodies"]]
 
 
 # ------------------------------------------------------------------------------------------------ model
@@ -818,10 +819,15 @@ def footprint_pixels(map_key, mref, scale):
     return waterway_footprint(cfg, mref, map_key, scale, float(B["mask_margin_tiles"]))[0]
 
 
-def lost_islands(mref, land, older, current, box, margin=1):
+REFERENCE = "reference"   # --restore's older checkpoint standing for the reference (0.3.1)
+ISLAND_MIN_RESTORE = 3    # with it, the islands of this many px or more (the coast bar's island size)
+
+
+def lost_islands(mref, land, older, current, box, margin=1, min_px=1):
     """bool per pixel: the reference islands of 400 px or fewer inside a box (lon0, lon1, lat0, lat1) that the older
     checkpoint draws and the current one does not, grown by margin px. Both read a tiny island poorly, so the pruned
-    fit can lose a speck whose name a player knows while its pixel counts improve."""
+    fit can lose a speck whose name a player knows while its pixel counts improve. older "reference" (0.3.1) stands for
+    the reference itself, which draws every island: then the islands of min_px or more the current one does not draw."""
     import numpy as np
     from scipy import ndimage as ndi
     lab, n = ndi.label(land)
@@ -831,8 +837,9 @@ def lost_islands(mref, land, older, current, box, margin=1):
     objs = ndi.find_objects(lab)
     cy = np.array([(o[0].start + o[0].stop) / 2 for o in objs])
     cx = np.array([(o[1].start + o[1].stop) / 2 for o in objs])
-    drawn = [ndi.sum(pixel_values(*load_model(p)) > 0, lab, ids) / size > 0.5 for p in (older, current)]
-    lost = drawn[0] & ~drawn[1] & (size <= 400) & (cy >= r0) & (cy < r1) & (cx >= c0) & (cx < c1)
+    drawn = [np.ones(n, bool) if str(p) == REFERENCE else ndi.sum(pixel_values(*load_model(p)) > 0, lab, ids) / size > 0.5
+             for p in (older, current)]
+    lost = drawn[0] & ~drawn[1] & (size <= 400) & (size >= min_px) & (cy >= r0) & (cy < r1) & (cx >= c0) & (cx < c1)
     keep = np.zeros(n + 1, bool)
     keep[1:] = lost
     return ndi.binary_dilation(keep[lab], iterations=margin), int(lost.sum())
@@ -895,7 +902,9 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
     if thrift:
         P["thrift"] = True
     if restore:
-        P["restore"] = {"checkpoint": Path(restore[0]).name, "sha256": sha256_file(restore[0]),
+        ref = restore[0] == REFERENCE
+        P["restore"] = {"checkpoint": REFERENCE if ref else Path(restore[0]).name,
+                        "sha256": None if ref else sha256_file(restore[0]),
                         "box": [float(x) for x in restore[1:5]], "weight": float(restore[5])}
     if holds:
         P["hold_boxes"] = [[float(x) for x in h] for h in holds]
@@ -939,7 +948,8 @@ def fit(map_key, work, nmax, stop_agreement, extra_steps, max_steps=None, throug
         wgt[foot] = np.maximum(wgt[foot], np.float32(footprint[1]))
     gate = growth_gate(mref, valid, holds, foot, footprint[2] if footprint and len(footprint) > 2 else 1.0)
     if restore:
-        isles, count = lost_islands(mref, land, restore[0], start_from, [float(x) for x in restore[1:5]])
+        isles, count = lost_islands(mref, land, restore[0], start_from, [float(x) for x in restore[1:5]],
+                                    min_px=ISLAND_MIN_RESTORE if restore[0] == REFERENCE else 1)
         log(f"restoring {count} islands")
         wgt[isles & valid] = np.maximum(wgt[isles & valid], np.float32(restore[5]))
         gate = isles.astype(np.float32)
@@ -2251,7 +2261,8 @@ def main(argv=None):
     p.add_argument("--step-terms", help="extra growth steps, comma separated term counts")
     p.add_argument("--thrift", action="store_true", help="rank new terms by gain per Tile, not by gain")
     p.add_argument("--restore", help="older.npz,lon0,lon1,lat0,lat1,weight: grow only on the islands that checkpoint "
-                                     "draws inside the box and --start-from does not")
+                                     "draws inside the box and --start-from does not; older 'reference' takes the "
+                                     "reference's islands of 3 px or more")
     p = sub.add_parser("round")
     p.add_argument("--checkpoint", required=True)
     p.add_argument("--grid", type=float, default=0.125, help="the coefficient grid in reference px")

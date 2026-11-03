@@ -161,6 +161,28 @@ px, the Thames 1.57, Brittany 1.50, Jutland and the Danish straits 1.58, Venice 
 1.50, 1.58, 1.50). Components of the fit's class at pixel centres with no pixel of that class in the reference: 17
 islets of 206 px and 29 lakes of 304 px (`model-9360.npz`: 25 of 135 px and 26 of 209 px).
 
+## Regrowth stage (0.3.1, the coasts past scale 6; config.lua coast.next)
+
+Past scale 6 a new world reads `model-next-10100.npz`, the fine fit `model-9360.npz` grown on: first on Istria, the
+Kvarner islands and Dalmatia at weight 1,024, then a step on Europe's place boxes and the worst cells of the coast audit,
+then on Crozon and the Rade de Brest at weight 4,096, then only on the reference islands of 3 to 400 px in Europe that
+the fit drew under half of (`--restore=reference`, weight 256). Each stage keeps the fine fit's region weights and
+footprint. Scales 1 to 6 keep `model-9360.npz` (the band fix's tables), and spawn and waterway inputs still read it.
+Work folders outside the repo (`<work folder>/p31-c/fits`):
+
+```
+W7="--region=-12,45,35,72,16 --region=172,180,60,68,6 --region=95,150,-12,46,2 --region=-20,52,-36,35,2 --region=112,180,-50,-10,2 --region=45,95,0,35,2 --region=45,180,46,80,2"
+HR="--region=13.3,18.3,42.4,45.8,1024"
+python tools/build_geo.py fit --map olde_world --work ow-r1 --start-from data-src/fits/olde_world/model-9360.npz --nmax 9600 --through 9600 --stop-agreement 0.9999 --step-terms 9400,9440,9480,9520,9560 $W7 $HR --footprint 6,32,0.4 --thrift
+EXT="the 28 worst cells of the audit off the 180 E edge at 256, the place boxes Zeeland, the Wadden, Denmark, the Limfjord, the Aegean, Sognefjord and Hardangerfjord at 512, four islands of 65 px or more at 256 (fits/r3_boxes.txt)"
+python tools/build_geo.py fit --map olde_world --work ow-r3 --start-from ow-r1/model-9440.npz --nmax 9840 --through 9840 --stop-agreement 0.9999 --step-terms 9480,... $W7 $HR --region=-5.3,-4.0,47.9,48.7,1024 --region=-2.4,-2.0,49.6,49.8,1024 $EXT --footprint 6,32,0.4 --thrift
+python tools/build_geo.py fit --map olde_world --work ow-r7 --start-from ow-r3/model-9480.npz --nmax 9540 --through 9540 --stop-agreement 0.9999 --step-terms 9500,9520 $W7 $HR --region=-4.8,-4.0,48.0,48.6,4096 $EXT --footprint 6,32,0.4 --thrift
+python tools/build_geo.py fit --map olde_world --work ow-r8 --start-from ow-r7/model-9540.npz --nmax 10100 --through 10100 --stop-agreement 0.9999 --step-terms 9620,9700,9780,9860,9940,10020 $W7 $HR --region=-4.8,-4.0,48.0,48.6,4096 $EXT --footprint 6,32,0.4 --thrift --restore=reference,-12,45,35,72,256
+```
+
+ow-r1 ran through its 9,440-term step and ow-r3 through 9,480 (both stopped there). The emission adds
+`terra-nauvis/prototypes/generated/geo_olde_world_v4.lua` (the `geo_next` body of `fit.json`).
+
 ## Emission
 
 ```
@@ -186,5 +208,6 @@ arrays; the committed files are the inputs of record.
 | `model-4096.npz` | `bb0ab3adc7931212881690a2c97f1123d245817ea88485d1bee925685345b37a` | the base stage's growth step of 4,096 terms: the region stage's `--start-from` |
 | `model-256.npz` | `c0d42bdc216603a5c99a1f50fb0720b39fda91e2b249d9df765d82b9fb31d9f5` | the base stage's growth step of 256 terms: the coarse land field |
 | `model-lean-5840.npz` | `10b166e08a48297dfa765b70d3235671d2ac38b32567498473aa9f73283fc4e1` | the lean stage's last growth step (I), copied: the `geo_lean` body, read past scale 6 |
-| `fit.json` | `3f6b6e82d9112cc75e2a2f099619b044f52e1a5e4432ddcc2ace8ee75eeb2ab7` | `build_geo.py adopt --budget 9360 --file-version 2`: which checkpoint each body uses |
-| `manifest.json` | `e5ff23c650a1516d11bb8a3be876697baec804135e824841361555238a034670` | `build_geo.py emit` |
+| `model-next-10100.npz` | `a6268664795275bf06d86c71076767a4c9ece8596fb4c95e728c216c5529d667` | the regrowth stage's last growth step, copied: the `geo_next` body, read past scale 6 (0.3.1) |
+| `fit.json` | `6c49bb8145e0826ba79063fa2c4ebf3f17e6d249b6beddd3a59b4433df1f8b1d` | `build_geo.py adopt --budget 9360 --file-version 2`: which checkpoint each body uses |
+| `manifest.json` | `7ed63d472e1354cde3e461cf8b9c5e1d263d597ebc7923d8d9a1dd781f0c50d3` | `build_geo.py emit` |

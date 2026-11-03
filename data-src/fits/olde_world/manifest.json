@@ -33,6 +33,16 @@
    "file": "terra-nauvis/prototypes/generated/geo_olde_world_v3.lua",
    "sha256": "37927c4ddd395691e78f9408bcfbf9a26b70f3eaa16969326bd66a49f50d4977",
    "bytes": 345458
+  },
+  "geo_next": {
+   "terms": 10100,
+   "factors": 4247,
+   "row_groups": 1724,
+   "checkpoint": "data-src/fits/olde_world/model-next-10100.npz",
+   "checkpoint_sha256": "a6268664795275bf06d86c71076767a4c9ece8596fb4c95e728c216c5529d667",
+   "file": "terra-nauvis/prototypes/generated/geo_olde_world_v4.lua",
+   "sha256": "7e4bdf234d7edea40e93ef5c7f59611e51f9862a6021673ffa978598bd9449a8",
+   "bytes": 514674
   }
  }
 }
