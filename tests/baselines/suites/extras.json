@@ -55,13 +55,6 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
-   "tn_aux_ab_v4": {
-    "type": "noise-expression",
-    "sha256": "1f4f8b637f7c2612187ca8c93a189980a1975683eff88b72f7ca97aedf861780",
-    "dump": "m2",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_aux_fb_v1": {
     "type": "noise-expression",
     "sha256": "243773cfb9ffa03d2c6541f5219597c629bf538804099ba4a20b96df385b61e8",
@@ -912,13 +905,6 @@
    "tn_climate_grain_v2": {
     "type": "noise-expression",
     "sha256": "91ba99320df23e8c17c07d0530d522a24788a5640dffc8eb769561924a936c03",
-    "dump": "m2",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_climate_grain_v3": {
-    "type": "noise-expression",
-    "sha256": "7f317ccd4b2796d224f525a03c4c7665f5a67cf3444695cb58fa8550b8689558",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -3985,13 +3971,6 @@
    "tn_frozen_ground_v1": {
     "type": "noise-expression",
     "sha256": "75883715fb6af8248016c7d6670adcefe40e3068b527427f05c8ea53b7db3d86",
-    "dump": "m1",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_frozen_ground_v2": {
-    "type": "noise-expression",
-    "sha256": "b7bbe61dba901f0a41c6f6bfd325d81ba4554531b8b8c8145f11754a1a078ce9",
     "dump": "m1",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -7594,20 +7573,6 @@
     "slice": "extras",
     "registered": "2026-11-01"
    },
-   "tn_moisture_ab_v7": {
-    "type": "noise-expression",
-    "sha256": "c71a006eb27e565a722e55347ca6933c3f1c0a75cec6bcc2c36bd4d94b04c42c",
-    "dump": "m2",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_moisture_ab_v8": {
-    "type": "noise-expression",
-    "sha256": "c0cc75ec4ba039cb13434ec01e62ee92cf9e7bde4431d8f85aa0ae856e8f0a96",
-    "dump": "m2",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
    "tn_moisture_fb_v1": {
     "type": "noise-expression",
     "sha256": "8877790f62149a48709636187e074c72414c9102471ad934265df21cb0671f43",
@@ -7926,13 +7891,6 @@
    "tn_north_lead_v1": {
     "type": "noise-expression",
     "sha256": "d2f13bc21fc9603ca4b1379708560315706cd418293ca95757066df517147169",
-    "dump": "m2",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_north_lead_v2": {
-    "type": "noise-expression",
-    "sha256": "fb79898b8f0a805257e2f47a5aa2029c3c27f1d8597487693f2f634e81af8019",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-01"
@@ -11715,13 +11673,6 @@
    "tn_temperature_ab_v6": {
     "type": "noise-expression",
     "sha256": "54ebd2458ea99bc16f21b78fd4091ee2bed7fe4b18e55c917672cc26b70cd0c6",
-    "dump": "m2",
-    "slice": "extras",
-    "registered": "2026-11-01"
-   },
-   "tn_temperature_ab_v7": {
-    "type": "noise-expression",
-    "sha256": "ca4d9a1aa22c5f123ef10ba21052ff0ac49d1356d1088d4f760582cd201cfb6d",
     "dump": "m2",
     "slice": "extras",
     "registered": "2026-11-01"

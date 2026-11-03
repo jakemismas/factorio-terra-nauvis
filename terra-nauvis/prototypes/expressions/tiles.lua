@@ -155,16 +155,17 @@ end
 -- massif's snow.
 local FZ = cfg.tiles.frozen
 def(FZ.key, FZ.off)
-local function frozen_body(name, d)
+local function frozen_body(name, d, gated)
   def(name, "if(elevation > 0, if(max(" .. d .. " + " .. num(FZ.fray) ..
     " * noise_layer_noise(" .. num(cfg.climate.grain.layer) .. ") * min(1, " .. num(cfg.ridges.cold.fit_scale) ..
     " / " .. K.scale .. "), " ..
-    num(FZ.cold) .. " * (" .. cfg.ridges.names.cold.gated .. " - " .. num(cfg.ridges.cold.snow_at) .. ")) > 0, " ..
+    num(FZ.cold) .. " * (" .. gated .. " - " .. num(cfg.ridges.cold.snow_at) .. ")) > 0, " ..
     num(FZ.score) .. ", " .. FZ.off .. "), " .. FZ.off .. ")")
 end
-frozen_body(FZ.body, cfg.climate.north.names.d)
+frozen_body(FZ.body, cfg.climate.north.names.d, cfg.ridges.names.cold.gated)
 local N2 = cfg.climate.north2.names
-frozen_body(FZ.body2, N2.d .. " - " .. num(FZ.clear_deg) .. " * " .. N2.clear)
+-- 0.3.0: the second line, and the cold field's second version (the desert snow line, ridges.cold.dry_rise_m)
+frozen_body(FZ.body2, N2.d .. " - " .. num(FZ.clear_deg) .. " * " .. N2.clear, cfg.ridges.names.cold2.gated)
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut
 -- on about 3 percent of tiles, draft run pv-m1-s1-eu-11), the pool noise passes a cut that falls as

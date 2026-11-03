@@ -121,6 +121,10 @@ local function climate_names()
     [TL.marsh.water_mud.key] = TL.marsh.water_mud.body2,
     [TL.marsh.water_shallow.key] = TL.marsh.water_shallow.body,
   }
+  -- the biome size (config.lua climate.size): the spread's frequency sliders at 1 / factor
+  for _, key in ipairs(cfg.climate.size.keys) do
+    out[key] = 1 / cfg.climate.size.factor
+  end
   -- The palm keys with Alien Biomes loaded or not: a world made without it that gains it later
   -- places its palms from the copies too, never from the fine field.
   for _, c in ipairs(TL.palm.copies) do
@@ -278,6 +282,12 @@ local function controls()
   for _, name in ipairs(cfg.resources.controls) do
     if data.raw["autoplace-control"] and data.raw["autoplace-control"][name] then
       out[name] = {frequency = cfg.resources.preset_frequency, size = 1, richness = 1}
+    end
+  end
+  -- the biome size: Alien Biomes' hot and cold frequency, which its temperature spread averages (climate.size)
+  for _, name in ipairs(cfg.climate.size.ab_controls) do
+    if AB and data.raw["autoplace-control"] and data.raw["autoplace-control"][name] then
+      out[name] = {frequency = 1 / cfg.climate.size.factor, size = 1, richness = 1}
     end
   end
   return out

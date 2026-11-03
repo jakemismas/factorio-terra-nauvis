@@ -153,24 +153,33 @@ local function belt_weight(b)
   return ramp_in("belt_lat", b.lat[1], b.lat[2], b.ramp[1]) .. " * " ..
     ramp_in("belt_lon", b.lon[1], b.lon[2], b.ramp[2])
 end
-local function belt_list(X, field, belts)
+-- A row with `since` ships after its table's first bodies: the released bodies leave it out, and only the next
+-- version (names.belts2, names.lift2) sums it.
+local function belt_list(X, field, belts, next)
   local out = {}
   for _, b in ipairs(belts or C.tile_belts) do
-    if b[field] and overlaps(b.lat, X.lat) and overlaps(b.lon, X.lon) then
+    if b[field] and overlaps(b.lat, X.lat) and overlaps(b.lon, X.lon) and (next or not b.since) then
       out[#out + 1] = b
     end
   end
   return out
 end
-for _, field in ipairs({"t", "tv", "m", "a"}) do
-  def(BELT[field], by_map(function(X)
+local function belt_sum(field, next)
+  return by_map(function(X)
     local parts = {}
-    for _, b in ipairs(belt_list(X, field)) do
+    for _, b in ipairs(belt_list(X, field, nil, next)) do
       parts[#parts + 1] = num(b[field]) .. " * " .. belt_weight(b)
     end
     return #parts == 0 and "0" or table.concat(parts, " + ")
-  end), BELT_AT)
+  end)
 end
+for _, field in ipairs({"t", "tv", "m", "a"}) do
+  def(BELT[field], belt_sum(field), BELT_AT)
+end
+-- 0.3.0: the moisture belts with the rows since the release (the cold north's second line reads it). A row with
+-- since and t, tv, a or wild needs that field's next body the same way, read by cold_north below.
+local BELT2 = N.belts2
+def(BELT2.m, belt_sum("m", true), BELT_AT)
 def(BELT.wild, by_map(function(X)
   local parts = {}
   for _, b in ipairs(belt_list(X, "wild")) do
@@ -272,6 +281,13 @@ def(NF2.names.clear_warp, "multioctave_noise{x = x, y = y, seed0 = map_seed, see
   num(CL.wave_tiles) .. ", output_scale = 1}")
 def(NF2.names.clear, "clamp((" .. num(CL.outer_tiles) .. " - distance * (1 + " .. num(CL.warp) .. " * " ..
   NF2.names.clear_warp .. ")) / " .. num(CL.outer_tiles - CL.inner_tiles) .. ", 0, 1)")
+-- The ragged factor (config.lua climate.ragged): the grey rims' width multiplier, at the massif's snow (ridges.lua's
+-- cap) and the cold north's lead. Worlds without Alien Biomes read it through the cap too.
+local RG = C.ragged
+def(RG.name, "clamp(" .. num(RG.mean) .. " + " .. num(RG.amplitude) .. " * multioctave_noise{x = x, y = y, " ..
+  "seed0 = map_seed, seed1 = " .. num(RG.seed1) .. ", octaves = " .. num(RG.octaves) .. ", persistence = " ..
+  num(RG.persistence) .. ", input_scale = 1 / " .. num(RG.wavelength_tiles) .. ", output_scale = 1}, 0, " ..
+  num(RG.max) .. ")")
 
 if AB then
   -- Alien Biomes' hot and cold sliders: their size shifts the temperature as AB's own average does, their
@@ -294,10 +310,10 @@ if AB then
   def(N.ab.moisture, ab_moisture("", MARSH_W))
   -- The lifts (config.lua climate.lifts): a belt's sum, as the tile belts' are, on top of a released moisture:
   -- under the natural top, and no field falls for it. The jitter reaches only what trees and decoratives read.
-  local function lift_sum(field)
+  local function lift_sum(field, next)
     return by_map(function(X)
       local parts = {}
-      for _, b in ipairs(belt_list(X, field, C.lifts)) do
+      for _, b in ipairs(belt_list(X, field, C.lifts, next)) do
         if not b.maps or b.maps[X.key] then
           parts[#parts + 1] = num(b[field]) .. " * " .. belt_weight(b)
         end
@@ -308,8 +324,9 @@ if AB then
   def(N.lift.m, lift_sum("m"), BELT_AT)
   def(N.lift.bare, lift_sum("bare"), BELT_AT)
   def(N.lift.j, lift_sum("j"), BELT_AT)
-  local function lifted(base, rest)
-    return "max(m, min(" .. num(M.ab_top) .. ", m + " .. N.lift.m .. rest .. "))", {m = base}
+  def(N.lift2.m, lift_sum("m", true), BELT_AT)
+  local function lifted(base, rest, lift)
+    return "max(m, min(" .. num(M.ab_top) .. ", m + " .. (lift or N.lift.m) .. rest .. "))", {m = base}
   end
   -- Vanilla tiles score this field too, so scan's 0 keeps their whole lift, as it keeps them from the shake.
   local SCAN = cfg.tiles.scan.body
@@ -366,15 +383,29 @@ if AB then
   -- names over the bodies above (climate.points). d is degrees north of the snow line. The fall lowers the core to the
   -- line's cap and keeps the temperature's noise, so the edge frays as any climate edge does, and it reads no zone: the
   -- zone's lift stays on top. The zone's lift also stands on the highland's cap, so no zone tile turns cold on a range.
-  local CG, RD_COLD = RN.cold, cfg.ridges.cold
+  local RD_COLD = cfg.ridges.cold
   local function cold_north(F)
     local NN = F.names
     local G2 = NN.grain
+    -- 0.3.0 (north2, ragged): the cold field's next versions, the moisture belts and lift with their new rows
+    local CG = F.ragged and RN.cold2 or RN.cold
+    local BELT_M = F.ragged and BELT2.m or BELT.m
     def(NN.drop, "max(0, " .. N.core .. " - (" .. num(F.south_per_degree) .. " * max(0, -" .. NN.d .. ") - " ..
       num(F.near_per_degree) .. " * clamp(" .. NN.d .. ", 0, " .. num(F.near_degrees) .. ") - " ..
       num(F.far_per_degree) .. " * max(0, " .. NN.d .. " - " .. num(F.near_degrees) .. ")))")
     def(NN.belt, "clamp((" .. NN.d .. " + " .. num(F.belt_from) .. ") / " .. num(F.belt_ramp) .. ", 0, 1)")
-    def(NN.lead, "clamp((" .. NN.d .. " + " .. num(F.lead_degrees) .. ") / " .. num(F.lead_ramp) .. ", 0, 1)")
+    if F.ragged then
+      -- 0.3.0: a rim that hugs the snow's own frayed edge: ground up to lead_t times the factor over 0 (the
+      -- temperature, noise included, rises about 8 per degree south of the line), so it follows the edge where the
+      -- noise pushes it, breaks where the factor is 0, and a warm patch north of the line takes a rim, not a grey blob
+      -- (a degree-wide band drew grey and green blotches 500 tiles across, apart from the snow).
+      -- The grain the tile temperature takes (G2.field) frays it as it frays the snow's edge: on the plain, smooth
+      -- temperature the rim's outline ran along a latitude line where the factor sat at its max.
+      def(NN.lead, "clamp((" .. num(F.lead_t) .. " * w - t - " .. num(G.temperature) .. " * " .. G2.field .. ") / " ..
+        num(F.lead_t_ramp) .. ", 0, 1)", {w = RG.name, t = NN.temperature})
+    else
+      def(NN.lead, "clamp((" .. NN.d .. " + " .. num(F.lead_degrees) .. ") / " .. num(F.lead_ramp) .. ", 0, 1)")
+    end
     if F.clear then
       -- In the clearing the temperature rises to clear.t where it is colder, and only there, so a warm start keeps
       -- its own climate.
@@ -397,27 +428,54 @@ if AB then
          NN.belt .. "), max(" .. T3 .. ", " .. num(T.ab.max) .. "))"})
     def(G2.veg, "if(" .. T3 .. " > " .. num(G.veg_zone_t) .. ", " .. G2.temperature .. ", min(" .. G2.temperature ..
       " + " .. BELT.tv .. ", " .. num(G.veg_cap) .. "))")
-    def(G2.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. G2.field .. " + " .. BELT.m .. " - " ..
-      num(GR.moisture) .. " * " .. CG.high, cfg.tiles.marsh.edge))
+    -- 0.3.0 (north2, ragged): a massif's dry flank is its rim and snow alone, where the cap cools the ground under
+    -- top_t (ridges.cold): over the whole reach, the moisture's fall and the lift's stop drew a wide grey or dirt ring.
+    -- Where the ragged factor is under grey_w the rim thins out to none, the snow's frayed edge included, so the snow
+    -- meets the ground beside it; deep in the snow (the cap under -snow_deep) it holds whatever the factor.
+    local HIGH = CG.high
+    if F.ragged then
+      HIGH = "max(clamp((" .. num(-RD_COLD.snow_deep) .. " - " .. CG.cap .. ") / " .. num(RD_COLD.snow_deep) ..
+        ", 0, 1), clamp((" .. num(RD_COLD.top_t) .. " - " .. CG.cap .. ") / " .. num(RD_COLD.top_t - RD_COLD.grey_t) ..
+        ", 0, 1) * min(1, " .. C.ragged.name .. " / " .. num(RD_COLD.grey_w) .. "))"
+    end
+    def(G2.moisture, ab_moisture(" + " .. num(G.moisture) .. " * " .. G2.field .. " + " .. BELT_M .. " - " ..
+      num(GR.moisture) .. " * " .. HIGH, cfg.tiles.marsh.edge))
     -- Alien Biomes' white ground sits under aux 0.3, so where aux dips across that line the grey ground of the
     -- wasteland and of a massif's flanks takes small pale islands: the floor keeps those two to the one grey family.
     local GREY = "max(" .. NN.lead .. ", clamp(" .. num(F.aux_high) .. " * " .. CG.high .. ", 0, 1))"
+    if F.ragged then
+      GREY = "max(" .. NN.lead .. ", " .. HIGH .. ")"
+    end
     def(G2.aux, "max(a, " .. num(F.aux_floor) .. " * " .. GREY .. ")",
       {a = ab_aux(" + " .. num(G.aux) .. " * " .. G2.field, BELT.a .. " + ")})
-    local kept, kept_at = lifted(G2.moisture, " * (1 - " .. CG.high .. ")")
+    local kept, kept_at = lifted(G2.moisture, " * (1 - " .. HIGH .. ")", F.ragged and N.lift2.m or nil)
     kept_at.kept = kept
+    -- 0.3.0 (north2, ragged): the desert edge (config.lua climate.desert_edge). In the dry belts the tile moisture is
+    -- pulled away from the dirt band's middle by a gain over the ragged factor, so the dry dirt between sand and grass
+    -- narrows by that gain, breaks where the factor is 0 and widens where it is high; the wet side rises no further
+    -- than into the grass. Before the grey's cap, so a cold rim keeps its grey dirt.
+    local K2 = "kept"
+    if F.ragged then
+      local DE2 = C.desert_edge
+      kept_at.dz = "clamp(" .. num(DE2.dry_gain) .. " * (" .. N.dry .. " - " .. num(DE2.dry_from) .. "), 0, 1)"
+      kept_at.dk = "min(" .. num(DE2.max) .. ", " .. num(DE2.gain) .. " / max(" .. num(DE2.floor) .. ", " ..
+        RG.name .. "))"
+      kept_at.sharp = "kept + dz * (clamp(" .. num(DE2.mid) .. " + (kept - " .. num(DE2.mid) .. ") * dk, min(kept, " ..
+        num(DE2.bottom) .. "), max(kept, " .. num(DE2.top) .. ")) - kept)"
+      K2 = "sharp"
+    end
     -- The same ceiling on a massif's flanks: wet moisture there drew specks of Alien Biomes' wet dirt in the dark
     -- grass.
     if F.clear then
       -- A cold spawn's clearing would be Alien Biomes' grey sand, as slow as its snow: where the clearing warmed the
       -- ground, the tile moisture rises to clear.m, grey dirt's band. A warm start keeps its own.
-      kept_at.lifted = "kept - " .. GREY .. " * max(0, kept - " .. num(F.lead_top) .. ")"
+      kept_at.lifted = K2 .. " - " .. GREY .. " * max(0, " .. K2 .. " - " .. num(F.lead_top) .. ")"
       kept_at.c = NN.clear
       def(NN.moisture, "max(lifted, " .. num(F.clear.m) .. " * clamp(c + " .. num(F.clear.m_fray) .. " * " ..
         NN.clear_warp .. " * c * (1 - c), 0, 1) * clamp((" .. num(F.clear.t) .. " - " .. T2 .. " + " .. NN.drop ..
         ") / " .. num(F.clear.m_span) .. ", 0, 1))", kept_at)
     else
-      def(NN.moisture, "kept - " .. GREY .. " * max(0, kept - " .. num(F.lead_top) .. ")", kept_at)
+      def(NN.moisture, K2 .. " - " .. GREY .. " * max(0, " .. K2 .. " - " .. num(F.lead_top) .. ")", kept_at)
     end
   end
   cold_north(NF)

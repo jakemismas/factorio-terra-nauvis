@@ -173,6 +173,9 @@ local CT = {
   CL_M_AB_G3 = NOISE .. "moisture_ab_v7",
   CL_M_AB_N2 = NOISE .. "moisture_ab_v8",
   CL_A_AB_G3 = NOISE .. "aux_ab_v4",
+  CL_RAGGED = NOISE .. "band_ragged_v1",
+  CL_BELT_M2 = NOISE .. "tile_belt_m_v2",
+  CL_LIFT_M2 = NOISE .. "lift_m_v2",
   TM_1 = NOISE .. "tile_mix_1_v1",
   TM_2 = NOISE .. "tile_mix_2_v1",
   TM_3 = NOISE .. "tile_mix_3_v1",
@@ -391,6 +394,14 @@ local RDN = {
   EU_COLD = NOISE .. "highland_cold_europe_v1",
   AT_COLD = NOISE .. "highland_cold_atlantic_v1",
   OW_COLD = NOISE .. "highland_cold_olde_world_v1",
+  -- 0.3.0: the cold field's next versions (the desert snow line) and the rim's cap (ridges.cold)
+  RD_COLD_F2 = NOISE .. "highland_cold_v2",
+  RD_COLD_GATED2 = NOISE .. "highland_cold_gated_v2",
+  RD_COLD_HIGH2 = NOISE .. "highland_cold_high_v2",
+  RD_COLD_CAP2 = NOISE .. "highland_cold_cap_v2",
+  EU_COLD2 = NOISE .. "highland_cold_europe_v2",
+  AT_COLD2 = NOISE .. "highland_cold_atlantic_v2",
+  OW_COLD2 = NOISE .. "highland_cold_olde_world_v2",
   EU_CREST = NOISE .. "crest_europe" .. RD_V,
   AT_CREST = NOISE .. "crest_atlantic" .. RD_V,
   OW_CREST = NOISE .. "crest_olde_world" .. RD_V,
@@ -1612,6 +1623,8 @@ return {
                  "water_level", "segmentation_multiplier", "nauvis_segmentation_multiplier",
                  "distance", EU_CITY, K_SPAWN_LAKE, K_SPAWN_BIAS, K_ON, K_FORDS, K_CANALS,
                  "temperature", "moisture", "aux", CT.MARSH_MUD, CT.MARSH_SHALLOW, CT.MARSH_GRASS,
+                 -- 0.3.0: the spread's frequency sliders at the biome size (climate.size)
+                 "control:moisture:frequency", "control:aux:frequency",
                  CT.VT_GRASS_1, CT.VT_GRASS_2, CT.VT_GRASS_3, CT.VT_GRASS_4, CT.VT_DRY_DIRT, CT.VT_DIRT_1,
                  CT.VT_DIRT_2, CT.VT_DIRT_3,
                  CT.VT_DIRT_4, CT.VT_DIRT_5, CT.VT_DIRT_6, CT.VT_DIRT_7, CT.VT_SAND_1, CT.VT_SAND_2, CT.VT_SAND_3,
@@ -1839,7 +1852,9 @@ return {
       release = "0.3.0",
       names = {CT.CL_N_D2, CT.CL_N_DROP2, CT.CL_N_LEAD2, CT.CL_N_BELT2, CT.CL_N_CLEAR, CT.CL_N_CLEAR_W, CT.CL_T_AB_N2,
                CT.CL_T_AB_G3,
-               CT.CL_T_AB_GV3, CT.CL_GRAIN3, CT.CL_M_AB_G3, CT.CL_M_AB_N2, CT.CL_A_AB_G3, CT.FROZEN_BODY2,
+               CT.CL_T_AB_GV3, CT.CL_GRAIN3, CT.CL_M_AB_G3, CT.CL_M_AB_N2, CT.CL_A_AB_G3, CT.FROZEN_BODY2, CT.CL_RAGGED,
+               CT.CL_BELT_M2, CT.CL_LIFT_M2, RDN.RD_COLD_F2, RDN.RD_COLD_GATED2, RDN.RD_COLD_HIGH2, RDN.RD_COLD_CAP2,
+               RDN.EU_COLD2, RDN.AT_COLD2, RDN.OW_COLD2,
                TFN.PALM_A_P4, TFN.PALM_B_P4, TFN.PALM_ALLOW2, TFN.PALM_MED, TFN.PALM_SHORE, DE.palm_a2, DE.palm_b2,
                TFN.PALM_B_P5, DE.dead2, TFN.ZP_KEY, TFN.NB_KEY, TFN.NB_OPEN, TFN.NB_TILE, TFN.NB_OUT,
                TF_ROCKS["big-sand-rock"].cold, TF_ROCKS["big-sand-rock"].cold_high, TF_ROCKS["medium-sand-rock"].cold,
@@ -2696,10 +2711,22 @@ return {
     -- cool ranges match. The grain's noise is 6 to 48 tiles at every scale, and past fit_scale a field's slope per tile
     -- falls, so its fray would widen with the scale: the fray takes min(1, fit_scale / scale) and keeps its width in
     -- tiles.
+    -- The grey rim (0.3.0, the grey round every range was far too wide, Italy's Apennines and southern
+    -- Scandinavia read grey): inside the snow the cap falls as before (top_t at field 0, snow_t at snow_at, so 0 at the
+    -- snow edge, field snow_at * top_t / (top_t - snow_t)), but outside it the cap reaches top_t only band times the
+    -- ragged factor (climate.ragged) short of that edge and stops binding past it, so the grey ground (Alien Biomes'
+    -- T 0 to 30) is a rim of band in field units on average, breaking where the factor is 0 and up to its max times
+    -- wider, instead of the whole reach. band_min keeps the division finite. The tile moisture is held in grey dirt's
+    -- band only where the cap is under top_t, fully from grey_t, and in proportion to the factor under grey_w, so the
+    -- snow's frayed edge meets the ground beside it where the rim breaks (and inside the snow the cap falls up to steep
+    -- times faster there, so that fray thins too); under -snow_deep (deep snow) always
+    -- (climate.lua). A piece's snow line rises dry_rise_m times the dry weight at the piece (climate.dry_belts): the
+    -- Atlas and the Zagros, short of a desert line, had snow islands in a grey sea.
     cold = {fit_scale = 6, fit_power = 0.15, snow_m = 5200, snow_lat = 25, snow_per_degree = 105, snow_min_m = 1200,
             grey_m = 1300, grey_top = 0.3, grey_reach = 0.7, snow_at = 0.66, top_t = 30, snow_t = -8, floor_t = -24,
             fray_warp = 0.012, fray_marsh = 0.12, fray_rough = 0.03, massif = 0.045, high_at = 0.6, off = 1000,
-            cap_grain = 0.35, start_fall = 2.2},
+            cap_grain = 0.35, start_fall = 2.2, band = 0.08, band_min = 0.002, grey_t = 20, dry_rise_m = 1500,
+            grey_w = 0.3, snow_deep = 3, steep = 5},
     rocks = {gain = 1, gain_ab = 0.4, clear_tiles = 36, fade_tiles = 24, short_px = 40,
              clear_kinds = {pass = true},
              ab_prefixes = {"huge-rock-", "big-rock-", "sand-big-rock-"},
@@ -2711,6 +2738,9 @@ return {
       cold = {field = RDN.RD_COLD_F, gated = RDN.RD_COLD_GATED, reach = RDN.RD_COLD_REACH, high = RDN.RD_COLD_HIGH,
               cap = RDN.RD_COLD_CAP,
               map = {europe = RDN.EU_COLD, atlantic = RDN.AT_COLD, olde_world = RDN.OW_COLD}},
+      -- 0.3.0 (the cold north's second line reads these): the dry pieces' risen snow line and the ragged rim's cap
+      cold2 = {field = RDN.RD_COLD_F2, gated = RDN.RD_COLD_GATED2, high = RDN.RD_COLD_HIGH2, cap = RDN.RD_COLD_CAP2,
+               map = {europe = RDN.EU_COLD2, atlantic = RDN.AT_COLD2, olde_world = RDN.OW_COLD2}},
       high_tile_map = {europe = RDN.EU_HIGH_TILE, atlantic = RDN.AT_HIGH_TILE, olde_world = RDN.OW_HIGH_TILE},
       rock_density = RDN.RD_ROCK_DENSITY,
       high_map = {europe = RDN.EU_HIGH, atlantic = RDN.AT_HIGH, olde_world = RDN.OW_HIGH},
@@ -3864,6 +3894,23 @@ return {
     tile_belts = {
       {id = "hot", lat = {-36, 36}, lon = {-180, 180}, ramp = {4, 1}, a = -0.16},
       {id = "sahara_arabia", lat = {15, 35.5}, lon = {-20, 62}, ramp = {3, 4}, a = -0.03},
+      -- maghreb (0.3.0): the Tell coast from Morocco to Tunisia is Mediterranean ground, which the Atlas's grey covered
+      -- until its snow line rose in the dry belt (ridges.cold.dry_rise_m); without it the Sahara ran to the sea.
+      {id = "maghreb", since = "0.3.0", lat = {33, 37.4}, lon = {-10, 11.5}, ramp = {1.2, 2}, m = 0.3},
+      -- namib (0.3.0, the maintainer: the true deserts read as desert): the coast from Namibe to the Orange is the driest
+      -- ground in Africa, but the southern Africa dry belt fades out toward its sea edge; this takes the grass off it.
+      {id = "namib", since = "0.3.0", lat = {-29, -16}, lon = {11, 16.5}, ramp = {1.5, 1.5}, m = -0.35},
+      -- The sanity pass (0.3.0, the maintainer: nothing out of place): the dry belts' boxes reach rainforest and humid ground,
+      -- where the spread's lows drew desert or tan dry dirt: the Pacific coast from San Francisco to Puget Sound,
+      -- Chile's Valdivian south, Japan and Korea north of the japan belt, and Madagascar's rainforest east.
+      {id = "pacific_nw", since = "0.3.0", lat = {37.5, 50}, lon = {-126, -121.2}, ramp = {2, 1.2}, m = 0.35},
+      {id = "valdivia", since = "0.3.0", lat = {-56, -37.5}, lon = {-76.5, -72}, ramp = {2, 1.2}, m = 0.4},
+      {id = "east_asia_wet", since = "0.3.0", lat = {30, 46}, lon = {124, 146}, ramp = {2, 2}, m = 0.18},
+      {id = "madagascar_east", since = "0.3.0", lat = {-25.5, -12}, lon = {47.4, 51}, ramp = {1, 1}, m = 0.3},
+      -- The Sahara belt's meander reaches 38 N and more, so Greece, Crete and Sicily read as Saharan sand (Sicily was
+      -- spared only while Etna's cap held it temperate): the Mediterranean's northern shores take the moisture of a dry
+      -- scrub, dirt and grass, not dunes.
+      {id = "mediterranean", since = "0.3.0", lat = {33.5, 41.5}, lon = {-10, 36}, ramp = {1.5, 3}, m = 0.4},
       {id = "sahel", lat = {9, 18}, lon = {-18, 42}, ramp = {3, 4}, m = 0.5},
       {id = "congo", lat = {-12, 8}, lon = {6, 34}, ramp = {2, 3}, tv = -40, m = 0.2},
       {id = "guinea", lat = {3, 10}, lon = {-15, 10}, ramp = {2, 3}, tv = -40, m = 0.2},
@@ -3901,6 +3948,32 @@ return {
       {id = "australia", lat = {-31, -18}, lon = {118, 142}, ramp = {3, 4}, a = 0.2},
     },
     tile_belts_wander = {lat = 1.5, lon = 2},
+    -- The biome size (0.3.0, "I like the bigger biomes"): every new world's preset sets the spread's
+    -- frequency controls, which climate.lua multiplies into each noise's input scale, to 1 / factor, so each
+    -- wavelength above is factor times longer: the Moisture and Terrain type scale sliders (the properties under
+    -- keys) and, beside Alien Biomes, its hot and cold frequency (the controls under ab_controls), which the
+    -- temperature spread averages. No body changes: a world made before keeps its own values.
+    size = {factor = 1.5, keys = {"control:moisture:frequency", "control:aux:frequency"},
+            ab_controls = {"hot", "cold"}},
+    -- The desert edge (0.3.0, "a lot of wasteland, not a lot of desert"): the dry dirt between a
+    -- desert's sand and the grass round it ran about 600 tiles wide at scale 12 along the Sahel, an even brown ribbon.
+    -- Where the dry weight passes dry_from (fully dry_from + 1 / dry_gain on: the belts' outer ramps, Sicily and
+    -- Andalusia, keep their scrub of dirt and grass), the 0.3.0 tile moisture is pulled away from mid, the middle of
+    -- Alien Biomes' dirt band (0.4 to 0.6), by min(max, gain / max(floor, ragged factor)), so the dirt narrows by about
+    -- gain, breaks where the factor is 0 and widens where it is high; the wet side rises no further than top, into the
+    -- grass.
+    -- bottom: the dry side falls no further than this, inside the sand's box, where sand still outscores Alien Biomes'
+    -- water-mud (at moisture 0 the sand's fit is 0 and water-mud specks covered 3 percent of the Sahara).
+    desert_edge = {dry_from = 0.2, dry_gain = 6, gain = 3.5, max = 30, floor = 0.05, mid = 0.5, top = 0.66,
+                   bottom = 0.1},
+    -- The ragged factor (0.3.0, no perfect bands): the width of the grey rim at a range's snow
+    -- (ridges.cold.band), of the cold north's lead (north2) and of the desert edge's dirt (desert_edge) times
+    -- clamp(mean + amplitude * noise, 0, max), one named noise of octaves from wavelength_tiles up (about 0.7 sd; in
+    -- tiles, so the outline is ragged at player zoom at every scale), so a band varies along its length, is missing
+    -- where the factor is 0 (about a fifth of it) and runs up to max times its mean width elsewhere (rarely: a factor
+    -- held at a low max sat flat over wide patches and drew a band of one width there).
+    ragged = {name = CT.CL_RAGGED, wavelength_tiles = 12, octaves = 6, persistence = 0.7, seed1 = 7621, mean = 1,
+              amplitude = 1.6, max = 3},
     -- The lifts: tile_belts' boxes for what shipped after the first release, whose own table is an input of
     -- registered bodies. A lift adds to the moisture both a tree and a tile reads, under the natural top.
     -- russian_plain (2026-10-30: Moscow reads as a weak start): the spread's dry lows sat in Alien
@@ -3918,6 +3991,10 @@ return {
     -- A longer shake is no cure: at 32 tiles it draws its own contours as worms of forest.
     lifts = {
       {id = "russian_plain", lat = {49, 62}, lon = {24, 60}, ramp = {3, 5}, m = 0.22, bare = 0.22},
+      -- nordic (0.3.0, southern Norway, Sweden and Finland should read green and lush): south of the
+      -- snow line the ground is Alien Biomes' cold T 0 to 30, where the spread's lows below moisture 0.6 are its grey
+      -- dirt and sand; lifted, those lows reach the cold grasses and the grey keeps to the deepest of them.
+      {id = "nordic", since = "0.3.0", lat = {54, 65}, lon = {0, 33}, ramp = {2, 4}, m = 0.3},
       {id = "boreal", lat = {50, 74}, lon = {22, 180}, ramp = {4, 8}, j = 0.04},
       -- central_europe (the four start cities by eye): the spread's lows drew flat tan dirt across a third of
       -- Frankfurt's window and grey patches round Prague, in land that reads green; a smaller lift keeps
@@ -3972,6 +4049,11 @@ return {
                {45, 62.5}, {55, 62}, {60, 61}, {75, 60}, {90, 60}, {105, 59}, {120, 58}, {135, 56.5}, {150, 56},
                {165, 56.5}, {180, 57}},
       meander = 1, south_per_degree = 8,
+      -- The lead (0.3.0, the grey band south of the line covered southern Scandinavia, the Baltic,
+      -- Russia at 55 to 60 N, Siberia and Canada): the ground whose temperature is under lead_t times the ragged factor
+      -- (climate.ragged), over lead_t_ramp, a rim on the snow's edge that breaks and widens along it, instead of
+      -- north's even 5 degrees south of the line and everything north of it.
+      lead_t = 4, lead_t_ramp = 1, ragged = true,
       clear = {inner_tiles = 96, outer_tiles = 224, t = 8, warp = 0.3, wave_tiles = 40, octaves = 3, persistence = 0.5,
                seed1 = 7609, m = 0.48, m_span = 4, m_fray = 3.2},
       names = {d = CT.CL_N_D2, drop = CT.CL_N_DROP2, lead = CT.CL_N_LEAD2, belt = CT.CL_N_BELT2,
@@ -4004,6 +4086,7 @@ return {
              ab = {temperature = CT.CL_T_AB, moisture = CT.CL_M_AB, aux = CT.CL_A_AB},
              grain = {field = CT.CL_GRAIN, temperature = CT.CL_T_AB_G, moisture = CT.CL_M_AB_G, aux = CT.CL_A_AB_G,
                       veg = CT.CL_T_AB_GV},
+             belts2 = {m = CT.CL_BELT_M2}, lift2 = {m = CT.CL_LIFT_M2},
              belts = {t = CT.CL_BELT_T, tv = CT.CL_BELT_TV, m = CT.CL_BELT_M, a = CT.CL_BELT_A,
                       wild = CT.CL_BELT_WILD},
              lift = {m = CT.CL_LIFT_M, bare = CT.CL_LIFT_BARE, j = CT.CL_LIFT_J, ab = CT.CL_M_AB_L,
