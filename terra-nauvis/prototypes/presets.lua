@@ -102,6 +102,17 @@ if not scarcity then
   error("config.lua resources.scarcity.levels has no level for the setting's value")
 end
 
+-- The North snow level (climate.north_snow): the setting's value as the level's index.
+local north_snow
+for _, level in ipairs(cfg.climate.north_snow.levels) do
+  if level.value == settings.startup[cfg.settings[cfg.climate.north_snow.setting].name].value then
+    north_snow = level.index
+  end
+end
+if not north_snow then
+  error("config.lua climate.north_snow.levels has no level for the setting's value")
+end
+
 -- The per-save city number a spawn-city setting stands for: its value's position in the setting's
 -- allowed values, less one, so random (the first) is 0 and the first city 1.
 local function city_number(setting_key)
@@ -142,7 +153,7 @@ local function climate_names()
     out[TL.exclude.key] = TL.exclude.body
   else
     out[TL.marsh.grass.key] = TL.marsh.grass.body
-    out[TL.frozen.key] = TL.frozen.body2
+    out[TL.frozen.key] = TL.frozen.body3
   end
   return out
 end
@@ -408,6 +419,7 @@ local function baked(map_key, v)
     [K.scale] = scale,
     [K.hotspot_amount] = hotspot_amount,
     [K.scarcity] = scarcity,
+    [K.north_snow] = north_snow,
     [K.geo] = v.geo_id,
     [v.cx] = v.city_offset[1],
     [v.cy] = v.city_offset[2],

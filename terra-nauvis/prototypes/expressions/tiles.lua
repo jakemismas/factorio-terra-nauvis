@@ -177,6 +177,9 @@ frozen_body(FZ.body, cfg.climate.north.names.d, cfg.ridges.names.cold.gated)
 local N2 = cfg.climate.north2.names
 -- 0.3.0: the second line, and the cold field's second version (the desert snow line, ridges.cold.dry_rise_m)
 frozen_body(FZ.body2, N2.d .. " - " .. num(FZ.clear_deg) .. " * " .. N2.clear, cfg.ridges.names.cold2.gated)
+-- 0.3.1: the same on the North snow level's line (climate.north3)
+frozen_body(FZ.body3, cfg.climate.north3.names.d .. " - " .. num(FZ.clear_deg) .. " * " .. N2.clear,
+  cfg.ridges.names.cold2.gated)
 
 -- Marsh pools: inside a marsh (weight above marsh_cut; normalized noise alone passes the weight-0 cut
 -- on about 3 percent of tiles, draft run pv-m1-s1-eu-11), the pool noise passes a cut that falls as

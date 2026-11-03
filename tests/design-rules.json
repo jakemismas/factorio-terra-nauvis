@@ -97,6 +97,13 @@
    "setting_type": "startup",
    "default_value": false
   },
+  "north_snow": {
+   "source": "Jake 2026-11-03 (0.3.1): North snow, startup, a dropdown of low, medium and high, default medium",
+   "type": "string-setting",
+   "setting_type": "startup",
+   "default_value": "medium",
+   "allowed_values": ["low", "medium", "high"]
+  },
   "exact_coast": {
    "source": "SPRINT-1-PLAN.md section 13, slice coast-band-fix: terra-nauvis-exact-coast (startup, bool, default on: the order of 2026-10-30 for Old World and Atlantic flips DECISIONS 2026-10-27 13:45's default off, a data edit)",
    "type": "bool-setting",

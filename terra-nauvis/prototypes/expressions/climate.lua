@@ -84,7 +84,7 @@ end
 -- The city offset of the world's map folded into one constant added to each noise's seed1, so each
 -- spawn city gets a climate texture of its own: the world shifts to put the city at the origin, so a
 -- noise of plain x and y would repeat around every city of a seed. A seed folds at compile time; x + cx
--- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (design notes
+-- would leave the engine's fast path, and multioctave_noise's offsets are no shifts (DECISIONS
 -- 2026-10-30 11:10).
 local SH = C.city_shift
 def(N.shift, by_map(function(X)
@@ -273,6 +273,30 @@ end
 for k, v in pairs(C.north2) do
   NF2[k] = v
 end
+-- climate.north3 is north2 with the North snow level's shift (config.lua climate.north_snow) and its own names.
+local NS = C.north_snow
+local NF3 = {}
+for k, v in pairs(NF2) do
+  NF3[k] = v
+end
+for k, v in pairs(C.north3) do
+  NF3[k] = v
+end
+-- The level's shift in degrees, from the baked key: the nested if() folds to one constant per world. Each level's index
+-- is a whole number, so the cut sits half way to the level below.
+local function level_shift()
+  local rows = {}
+  for _, l in ipairs(NS.levels) do
+    rows[#rows + 1] = l
+  end
+  table.sort(rows, function(a, b) return a.index < b.index end)
+  local out = num(rows[1].shift_deg)
+  for i = 2, #rows do
+    out = "if(" .. NS.key .. " > " .. num((rows[i].index + rows[i - 1].index) / 2) .. ", " .. num(rows[i].shift_deg) ..
+      ", " .. out .. ")"
+  end
+  return out
+end
 local function north_d(F)
   local front = {}
   for i = 2, #F.front do
@@ -280,13 +304,22 @@ local function north_d(F)
     front[#front + 1] = num((b[2] - a[2]) / (b[1] - a[1])) .. " * (clamp(north_lon, " .. num(a[1]) .. ", " ..
       num(b[1]) .. ") - " .. num(a[1]) .. ")"
   end
+  local shift = ""
+  if F == NF3 then
+    -- 0.3.1: the front lies shift degrees further south over Eurasia (the taiga's longitude gate), so d is that much
+    -- greater; level low adds exactly 0.
+    local TGN = F.taiga
+    shift = " + (" .. level_shift() .. ") * clamp((north_lon - " .. num(TGN.lon_from) .. ") / " .. num(TGN.lon_ramp) ..
+      ", 0, 1)"
+  end
   def(F.names.d, N.lat .. " + " .. num(F.meander) .. " * " .. MD.name .. " + " .. num(F.wave.amplitude) ..
     " * basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(F.wave.seed1) .. ", input_scale = 1 / (" ..
     num(F.wave.wave_px) .. " * " .. K.scale .. "), output_scale = 1} - (" .. num(F.front[1][2]) .. " + " ..
-    table.concat(front, " + ") .. ")", {north_lon = N.lon})
+    table.concat(front, " + ") .. ")" .. shift, {north_lon = N.lon})
 end
 north_d(NF)
 north_d(NF2)
+north_d(NF3)
 -- The clearing round the spawn: 1 within inner_tiles of it, 0 past outer_tiles, on a distance the warp stretches by up
 -- to warp of itself, so the edge is no circle.
 local CL = NF2.clear
@@ -295,6 +328,13 @@ def(NF2.names.clear_warp, "multioctave_noise{x = x, y = y, seed0 = map_seed, see
   num(CL.wave_tiles) .. ", output_scale = 1}")
 def(NF2.names.clear, "clamp((" .. num(CL.outer_tiles) .. " - distance * (1 + " .. num(CL.warp) .. " * " ..
   NF2.names.clear_warp .. ")) / " .. num(CL.outer_tiles - CL.inner_tiles) .. ", 0, 1)")
+-- 0.3.1: the snow weight of the world's level, 1 north of its line and 0 south of it over ramp degrees, the frozen
+-- tile's edge (the grain's fray, the spawn's clearing); and the rim's keep, the constant a zone may redirect.
+local FZN = cfg.tiles.frozen
+def(NS.names.w, "clamp((" .. NF3.names.d .. " - " .. num(FZN.clear_deg) .. " * " .. NF2.names.clear .. " + " ..
+  num(NS.fray) .. " * noise_layer_noise(" .. num(C.grain.layer) .. ") * min(1, " .. num(cfg.ridges.cold.fit_scale) ..
+  " / " .. K.scale .. ")) / " .. num(NS.ramp) .. ", 0, 1)")
+def(NS.names.rim_keep, "1")
 -- The ragged factor (config.lua climate.ragged): the grey rims' width multiplier, at the massif's snow (ridges.lua's
 -- cap) and the cold north's lead. Worlds without Alien Biomes read it through the cap too.
 local RG = C.ragged
@@ -398,6 +438,47 @@ if AB then
   -- line's cap and keeps the temperature's noise, so the edge frays as any climate edge does, and it reads no zone: the
   -- zone's lift stays on top. The zone's lift also stands on the highland's cap, so no zone tile turns cold on a range.
   local RD_COLD = cfg.ridges.cold
+-- 0.3.1: the lead's factor for the rim's keep (config.lua climate.north3.rim_keep), empty for the earlier lines.
+  local function rim_keep_factor(F)
+    if not F.rim_keep then
+      return ""
+    end
+    return " * " .. F.rim_keep
+  end
+  -- 0.3.1: the Valdai square (config.lua climate.north3.valdai): inside a soft box with a warped edge the tile moisture
+  -- is held at a floor above the grey dirt and the aux at a floor above the white ground, and nowhere else. The box
+  -- weight and its two warped coordinates are local expressions of both bodies.
+  local function valdai_locals(F)
+    local V = F.valdai
+    if not V then
+      return {}
+    end
+    local function wave(seed, per)
+      return "basis_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(seed) .. ", input_scale = 1 / " ..
+        num(V.wave_tiles) .. ", output_scale = " .. num(per) .. "}"
+    end
+    return {v_lon = N.lon .. " + " .. wave(V.seed1_warp, V.warp_deg),
+            v_lat = N.lat .. " + " .. wave(V.seed1_warp + 1, V.warp_deg),
+            v_w = ramp_in("v_lon", V.lon[1], V.lon[2], V.ramp) .. " * " .. ramp_in("v_lat", V.lat[1], V.lat[2], V.ramp),
+            v_floor = num(V.floor) .. " + " .. wave(V.seed1, V.amp)}
+  end
+  local function add_valdai(F, kept_at)
+    if not F.valdai then
+      return
+    end
+    for k, v in pairs(valdai_locals(F)) do
+      kept_at[k] = v
+    end
+    kept_at.kept1 = kept_at.kept
+    kept_at.kept = "max(kept1, v_w * v_floor)"
+  end
+  -- the aux's floor term: empty for the earlier lines
+  local function valdai_aux(F)
+    if not F.valdai then
+      return ""
+    end
+    return ", " .. num(F.valdai.aux) .. " * v_w"
+  end
   local function cold_north(F, zone_ranges)
     local NN = F.names
     local G2 = NN.grain
@@ -433,8 +514,9 @@ if AB then
           ", 0, 1) * max(0, " .. num(TG2.per_degree) .. " * -" .. NN.d .. " - max(" .. N.core .. ", " .. num(TG2.t) ..
           "))"
       end
+      -- 0.3.1: times the rim's keep (config.lua climate.north3.rim_keep), 1 unless a zone redirects it
       def(NN.lead, "clamp((" .. num(F.lead_t) .. " * w - t - " .. num(G.temperature) .. " * " .. G2.field .. ") / " ..
-        num(F.lead_t_ramp) .. ", 0, 1)", {w = RG.name, t = t_lead})
+        num(F.lead_t_ramp) .. ", 0, 1)" .. rim_keep_factor(F), {w = RG.name, t = t_lead})
     else
       def(NN.lead, "clamp((" .. NN.d .. " + " .. num(F.lead_degrees) .. ") / " .. num(F.lead_ramp) .. ", 0, 1)")
     end
@@ -513,8 +595,9 @@ if AB then
     if TW then
       BA = "(" .. BELT.a .. " + " .. TW .. " * max(0, -" .. BELT.a .. "))"
     end
-    def(G2.aux, "max(a, " .. num(F.aux_floor) .. " * " .. GREY .. ")",
-      {a = ab_aux(" + " .. num(G.aux) .. " * " .. G2.field, BA .. " + ")})
+    local aux_at = valdai_locals(F)
+    aux_at.a = ab_aux(" + " .. num(G.aux) .. " * " .. G2.field, BA .. " + ")
+    def(G2.aux, "max(a, " .. num(F.aux_floor) .. " * " .. GREY .. valdai_aux(F) .. ")", aux_at)
     local kept, kept_at = lifted(G2.moisture, " * (1 - " .. HIGH .. ")", F.ragged and N.lift2.m or nil)
     kept_at.kept = kept
     if F.taiga then
@@ -524,6 +607,7 @@ if AB then
       kept_at.kept = "max(kept0, min(" .. num(TG2.m_top) .. ", kept0 + " .. num(TG2.m) .. " * " .. TW .. " * (1 - " ..
         HIGH .. ")))"
     end
+    add_valdai(F, kept_at)
     -- 0.3.0 (north2, ragged): the desert edge (config.lua climate.desert_edge). In the dry belts the tile moisture is
     -- pulled away from the dirt band's middle by a gain over the ragged factor, so the dry dirt between sand and grass
     -- narrows by that gain, breaks where the factor is 0 and widens where it is high; the wet side rises no further
@@ -555,6 +639,14 @@ if AB then
   end
   cold_north(NF)
   cold_north(NF2, true)
+  cold_north(NF3, true)
+  -- 0.3.1: the Valdai floor on the properties Alien Biomes' tiles and trees read (config.lua climate.north3.valdai),
+  -- over the released bodies it reads by name: where the box weight is 0 they are the released bodies exactly.
+  local VD = NF3.valdai
+  local vm, va = valdai_locals(NF3), valdai_locals(NF3)
+  vm.m, va.a = N.lift.ab, N.ab.aux
+  def(VD.names.moisture, "max(m, v_w * v_floor)", vm)
+  def(VD.names.aux, "max(a, " .. num(VD.aux) .. " * v_w)", va)
 end
 
 data:extend(E)

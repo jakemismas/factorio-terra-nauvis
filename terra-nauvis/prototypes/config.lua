@@ -157,6 +157,23 @@ local CT = {
   CL_M_AB_G3 = NOISE .. "moisture_ab_v7",
   CL_M_AB_N2 = NOISE .. "moisture_ab_v8",
   CL_A_AB_G3 = NOISE .. "aux_ab_v4",
+  K_NORTH_SNOW = NOISE .. "north_snow",
+  CL_N_SNOW_W = NOISE .. "north_snow_w_v1",
+  CL_N_RIM_KEEP = NOISE .. "north_rim_keep_v1",
+  CL_N_D3 = NOISE .. "north_d_v3",
+  CL_N_DROP3 = NOISE .. "north_drop_v3",
+  CL_N_LEAD3 = NOISE .. "north_lead_v3",
+  CL_N_BELT3 = NOISE .. "north_belt_v3",
+  CL_T_AB_N3 = NOISE .. "temperature_ab_v8",
+  CL_T_AB_G4 = NOISE .. "temperature_ab_v9",
+  CL_T_AB_GV4 = NOISE .. "temperature_veg_v4",
+  CL_GRAIN4 = NOISE .. "climate_grain_v4",
+  CL_M_AB_G4 = NOISE .. "moisture_ab_v9",
+  CL_M_AB_N3 = NOISE .. "moisture_ab_v10",
+  CL_A_AB_G4 = NOISE .. "aux_ab_v5",
+  CL_M_AB_V = NOISE .. "moisture_ab_v11",
+  CL_A_AB_V = NOISE .. "aux_ab_v6",
+  FROZEN_BODY3 = NOISE .. "frozen_ground_v3",
   CL_RAGGED = NOISE .. "band_ragged_v1",
   CL_BELT_M2 = NOISE .. "tile_belt_m_v2",
   CL_BELT_EDGE2 = NOISE .. "tile_belt_edge_v1",
@@ -1087,6 +1104,13 @@ return {
       name = ID .. "-blue-corrupted", type = "bool-setting", setting_type = "startup", default_value = false,
       order = "c-fa",
     },
+    -- North snow (0.3.1, default medium): how far south the snow line of Eurasia lies, low the 0.3.0 line, medium about
+    -- twice its depth, high about three times. Baked per save through tn_north_snow (the level's index,
+    -- climate.north_snow).
+    north_snow = {
+      name = ID .. "-north-snow", type = "string-setting", setting_type = "startup", default_value = "medium",
+      allowed_values = {"low", "medium", "high"}, order = "c-fc",
+    },
     -- Exact coastlines (design notes 12:35; on by default since 2026-10-30:
     -- Old World's and Atlantic's coasts need it to reach Europe's): a new world's preset bakes the band-fix
     -- key from it, for the maps bandfix.maps lists.
@@ -1104,7 +1128,7 @@ return {
   setting_order = {"scale", "spawn_city_europe", "spawn_city_atlantic", "spawn_city_olde_world", "canals",
                    "great_forests", "ridges", "hotspots", "hotspot_amount", "regional_scarcity",
                    "inland_lakes",
-                   "destroyed_europe", "blue_corrupted", "exact_coast", "city_markers"},
+                   "destroyed_europe", "blue_corrupted", "north_snow", "exact_coast", "city_markers"},
 
   -- Map-gen presets, sorted right after Default ("a") and before Rich resources ("b") (S13).
   -- withheld_with lists the mods whose presence withholds a preset (presets.lua defines no such
@@ -1146,7 +1170,7 @@ return {
     cliff_elevation = "cliff_elevation", cliffiness = "cliffiness",
     -- resources-enemies: the hotspots toggle, each map's offshore stamp key and the enemy property
     hotspots = REN.K_HOTSPOTS, enemy = "enemy_base_probability", hotspot_amount = REN.K_HS_AMOUNT,
-    scarcity = REN.K_SCARCITY,
+    scarcity = REN.K_SCARCITY, north_snow = CT.K_NORTH_SNOW,
     fields = {europe = REN.EU_FIELDS_KEY, atlantic = REN.AT_FIELDS_KEY, olde_world = REN.OW_FIELDS_KEY},
     -- edge-and-lakes: the inland lakes switch (a toggle)
     inland_lakes = ELN.K_INLAND_LAKES,
@@ -1431,6 +1455,8 @@ return {
                  "default-offshore-oil-patches", REN.K_HS_AMOUNT,
                  -- 0.3.0: the regional scarcity level
                  REN.K_SCARCITY,
+                 -- 0.3.1: the north snow level
+                 CT.K_NORTH_SNOW,
                  -- edge-and-lakes: the inland lakes switch and the new versions' city offset names
                  ELN.K_INLAND_LAKES, ELN.EU6_CX, ELN.EU6_CY,
                  -- the Old World and Atlantic spawn city: the maps' city numbers and the new versions' offset names
@@ -1580,6 +1606,14 @@ return {
                TF_ROCKS["small-sand-rock"].cold, TF_ROCKS["red-desert-decal"].cold, TF_ROCKS["sand-decal"].cold,
                TF_ROCKS["sand-dune-decal"].cold},
       files = {"prototypes/tables/palm_coast.lua"},
+    },
+    -- The cold north of 0.3.1 (climate.north3, climate.north_snow): the line shifted by the North snow level, the snow
+    -- weight and the rim's keep. No geography; defined on every load, as the second line is.
+    {
+      release = "0.3.1",
+      names = {CT.CL_N_D3, CT.CL_N_SNOW_W, CT.CL_N_RIM_KEEP, CT.CL_N_DROP3, CT.CL_N_LEAD3, CT.CL_N_BELT3, CT.CL_T_AB_N3,
+               CT.CL_T_AB_G4, CT.CL_T_AB_GV4, CT.CL_GRAIN4, CT.CL_M_AB_G4, CT.CL_M_AB_N3, CT.CL_A_AB_G4,
+               CT.FROZEN_BODY3, CT.CL_M_AB_V, CT.CL_A_AB_V},
     },
     -- The second region table (0.3.0, Earth mods recommendation 3): under files its table, which releases the row names
     -- regions.lua composes from it, and the forest and marsh aggregates over both tables, which a preset names over the
@@ -4071,6 +4105,37 @@ return {
                grain = {field = CT.CL_GRAIN3, temperature = CT.CL_T_AB_G3, veg = CT.CL_T_AB_GV3,
                         moisture = CT.CL_M_AB_G3, aux = CT.CL_A_AB_G3}},
     },
+    -- The North snow setting (0.3.1): one row per level, {value, index, shift_deg}. index is what a save bakes under
+    -- key (tn_north_snow); shift_deg is how many degrees south the Eurasian line (north2.front) lies, in full
+    -- where north2.taiga's longitude gate is 1 (from lon_from + lon_ramp), so Iceland, Greenland and the Americas
+    -- keep the 0.3.0 line at every level. Another level is one more row. w is the snow weight for the zones that meet
+    -- the snow: tn_north_snow_w_v1 is 1 north of the world's line (ragged as the frozen tile's edge is) and 0
+    -- south of it, over ramp degrees; tn_north_rim_keep_v1 is a constant 1 that the grey rim is multiplied by and
+    -- a zone may redirect.
+    north_snow = {
+      setting = "north_snow", key = CT.K_NORTH_SNOW,
+      levels = {{value = "low", index = 0, shift_deg = 0}, {value = "medium", index = 1, shift_deg = 6},
+                {value = "high", index = 2, shift_deg = 9}},
+      ramp = 0.4, fray = 0.5,
+      names = {w = CT.CL_N_SNOW_W, rim_keep = CT.CL_N_RIM_KEEP},
+    },
+    -- The cold north of 0.3.1, every other value as in north2: the line shifted by the world's level
+    -- (north_snow), and the bodies that read it under names of their own.
+    -- The Valdai square (valdai): a low of the released moisture spread (150 to 600 tiles of grey dirt in a square) in
+    -- Russia's forest. In a soft box of lon and lat, its edge warped by up to warp_deg degrees of a noise of
+    -- wave_tiles, the tile moisture is held at floor plus amp times a noise of wave_tiles at least, above Alien
+    -- Biomes' grey dirt, and nowhere else.
+    north3 = {
+      rim_keep = CT.CL_N_RIM_KEEP,
+      valdai = {lon = {29.5, 38}, lat = {54.5, 62}, ramp = 1.5, floor = 0.86, amp = 0.03, aux = 0.55,
+                wave_tiles = 320, warp_deg = 0.4, seed1 = 7621, seed1_warp = 7622,
+                names = {moisture = CT.CL_M_AB_V, aux = CT.CL_A_AB_V}},
+      names = {d = CT.CL_N_D3, drop = CT.CL_N_DROP3, lead = CT.CL_N_LEAD3, belt = CT.CL_N_BELT3,
+               temperature = CT.CL_T_AB_N3, moisture = CT.CL_M_AB_N3, clear = CT.CL_N_CLEAR,
+               clear_warp = CT.CL_N_CLEAR_W,
+               grain = {field = CT.CL_GRAIN4, temperature = CT.CL_T_AB_G4, veg = CT.CL_T_AB_GV4,
+                        moisture = CT.CL_M_AB_G4, aux = CT.CL_A_AB_G4}},
+    },
     -- the coldness the fallback's pulls and spread read: 0 at core cold.t and warmer, 1 at
     -- cold.t - cold.span and colder
     cold = {t = 10, span = 30},
@@ -4103,10 +4168,10 @@ return {
              fallback = {temperature = CT.CL_T_FB, moisture = CT.CL_M_FB, aux = CT.CL_A_FB}},
     -- What a new world's preset points the climate properties and keys at. names above holds every body by its
     -- role and the bodies read one another through it, so it can never move; a re-point is one line here.
-    points = {ab = {temperature = CT.CL_T_AB, moisture = CT.CL_M_AB_L, aux = CT.CL_A_AB},
-              grain = {temperature = CT.CL_T_AB_G3, moisture = CT.CL_M_AB_N2, aux = CT.CL_A_AB_G3,
-                       veg = CT.CL_T_AB_GV3},
-              north = CT.CL_T_AB_N2,
+    points = {ab = {temperature = CT.CL_T_AB, moisture = CT.CL_M_AB_V, aux = CT.CL_A_AB_V},
+              grain = {temperature = CT.CL_T_AB_G4, moisture = CT.CL_M_AB_N3, aux = CT.CL_A_AB_G4,
+                       veg = CT.CL_T_AB_GV4},
+              north = CT.CL_T_AB_N3,
               fallback = {temperature = CT.CL_T_FB, moisture = CT.CL_M_FB, aux = CT.CL_A_FB}},
     -- The climate bands the T3 oracle and the D11 row read, in Alien Biomes units (R3 4.1).
     bands = {frozen_below = 0, cold_below = 25, hot_from = 65, dry_below = 0.4},
@@ -4324,7 +4389,8 @@ return {
     -- body2 reads climate.north2's line and its clearing, clear_deg degrees south per unit of clearing, and a new
     -- world's preset names it.
     frozen = {tile = ID .. "-frozen-ground", copy = "dirt-4", picture = "__" .. ID .. "__/graphics/frozen-ground.png",
-              key = CT.FROZEN_KEY, body = CT.FROZEN_BODY, body2 = CT.FROZEN_BODY2, clear_deg = 30,
+              key = CT.FROZEN_KEY, body = CT.FROZEN_BODY, body2 = CT.FROZEN_BODY2, body3 = CT.FROZEN_BODY3,
+              clear_deg = 30,
               off = "-inf", score = 100, fray = 0.5, cold = 8,
               art_scale = 2,
               -- Base decoratives list no tiles, so grass tufts covered this ground. They collide with doodad, and

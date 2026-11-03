@@ -902,7 +902,7 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
                 pen[mix["key"]] = mix["amount"]
         else:
             pen[tl["marsh"]["grass"]["key"]] = tl["marsh"]["grass"]["body"]
-            pen[tl["frozen"]["key"]] = tl["frozen"].get("body2") or tl["frozen"]["body"]
+            pen[tl["frozen"]["key"]] = tl["frozen"].get("body3") or tl["frozen"].get("body2") or tl["frozen"]["body"]
     # the tree keys (trees-forests; presets.lua tree_names), after the climate keys: the multiplier key at
     # the region layer's multiplier, and with ab=True every restored tree's, rock's and decorative's key
     # at its body and each palm's probability key at its second version
@@ -970,6 +970,11 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
             if rs["offshore"]["resource"] not in b["live"]:
                 # 0.3.0: vanilla's function with the footprint gap (resources.natural.fn2)
                 pen[b["live"]] = b.get("name2") or b["name"]
+    # 0.3.1: the North snow level at the setting's default (climate.north_snow)
+    ns = (cfg.get("climate") or {}).get("north_snow")
+    if ns:
+        default = cfg["settings"][ns["setting"]]["default_value"]
+        pen[ns["key"]] = next(l["index"] for l in ns["levels"] if l["value"] == default)
     if version.get("fields"):
         tg = cfg["toggles"]["hotspots"]
         on = cfg["settings"][tg["setting"]]["default_value"]
