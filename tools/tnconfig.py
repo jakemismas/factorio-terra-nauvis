@@ -1011,6 +1011,17 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
             pen[fr["cx"]], pen[fr["cy"]] = nx["city_offset"][0], nx["city_offset"][1]
         pen[K["spawn_lake"]] = pen[sp["spawn_lake"]] = nx["spawn_lake"]
         pen[K["spawn_bias"]] = nx["spawn_bias"]
+    # 0.3.1: the Moscow zone (presets.lua baked): its level at the setting's default and the Europe and UK keys, on only
+    # with their settings on beside Alien Biomes (both default off)
+    mz = cfg.get("moscow")
+    if mz:
+        lv = {r["value"]: r["index"] for r in mz["levels"]}
+        default = cfg["settings"][mz["setting"]]["default_value"]
+        pen[K["moscow"]] = lv[default] if ab else mz["levels"][0]["index"]
+        de_on = ab and cfg["settings"]["destroyed_europe"]["default_value"]
+        bl_on = ab and cfg["settings"]["blue_corrupted"]["default_value"]
+        pen[mz["europe"]["key"]] = mz["europe"]["on"] if de_on else mz["europe"]["off"]
+        pen[mz["uk"]["key"]] = mz["uk"]["on"] if bl_on else mz["uk"]["off"]
     # the second hotspot table: presets.lua baked names it over the first table's
     pen.update((cfg.get("hotspots_v2") or {}).get("points") or {})
     # the second region table: presets.lua baked names its forest and marsh aggregates over the first table's

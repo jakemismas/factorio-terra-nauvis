@@ -31,6 +31,9 @@ local function def(name, expression, locals)
 end
 
 def(K.blue, "0")
+-- 0.3.1: the UK key (config.lua moscow.uk), on by default: a world made before never names the bodies that read it.
+local MZ = cfg.moscow
+def(MZ.uk.key, num(MZ.uk.on))
 -- Blue only in the zone (config.lua blue.no_blue): the gate key, at its off value on every load.
 local NB = B.no_blue
 def(NB.key, "0")
@@ -57,6 +60,23 @@ if AB then
   def(N.kind, floored(B.kind))
   def(N.dry, floored(B.dry))
   def(N.field, N.macro .. " + " .. num(B.kind_share) .. " * " .. N.kind)
+
+  -- 0.3.1: the Moscow zone when Corrupted (config.lua moscow.corrupt). Its depth is the outline's, kept gap pixels
+  -- clear of the Chaos zone's wasteland (the devastation field's reach, in tiles); the depth this zone reads is the
+  -- larger of the UK's and Moscow's, each behind its key.
+  local MC = MZ.corrupt
+  local G = MC.gap
+  def(G.name, "clamp(" .. num(G.mid) .. " + " .. num(G.amp) .. " * multioctave_noise{x = x, y = y, " ..
+    "seed0 = map_seed, seed1 = " .. num(G.seed1) .. ", octaves = " .. num(G.octaves) .. ", persistence = " ..
+    num(G.persistence) .. ", input_scale = 1 / (" .. num(G.wavelength_px) .. " * " .. K.scale ..
+    "), output_scale = 1}, " .. num(G.low) .. ", " .. num(G.top) .. ")")
+  -- The outline's depth takes the devastation field's tile fray (fray tiles of it, in pixels), so the zone's edge, a
+  -- direct join, bends at tile level and runs no straighter than ordinary ground's edges.
+  def(MC.depth, "min(" .. MZ.outline.names.depth .. " + " .. num(MC.fray) .. " * " .. cfg.destroyed.dev.names.fray ..
+    " / " .. K.scale .. ", -" .. cfg.destroyed.dev.names.reach .. " / " .. K.scale .. " - " .. G.name .. ")")
+  def(MC.union, "max(if(" .. MZ.uk.key .. " > " .. num(MZ.match) .. ", " .. B.outline.next.depth .. ", -" ..
+    num(MC.big_px) .. "), if(abs(" .. MZ.key .. " - " .. num(MZ.corrupted) .. ") < " .. num(MZ.match) .. ", " ..
+    MC.depth .. ", -" .. num(MC.big_px) .. "))")
   def(N.reach, O.depth .. " - " .. num(B.feather_in) .. " + " .. swing(B.feather_px) .. " * " .. FINE .. " + " ..
     num(B.feather_kind) .. " * " .. N.kind .. " + " .. swing(B.feather_grain) .. " * " .. GRAIN)
   def(N.open, "if(" .. N.reach .. " + " .. swing(B.open_px) .. " > 0, 0, 1)")
@@ -69,15 +89,52 @@ if AB then
   local function pair(first, second)
     return "if(side > " .. num(B.side_at) .. ", " .. L[first] .. ", " .. L[second] .. ")"
   end
-  def(N.class, "if(" .. N.reach .. " <= 0, 0, if(" .. O.depth .. " - " .. num(B.rim_px) .. " - " .. num(B.rim_mac) ..
-    " * " .. N.kind .. " + " .. swing(B.rim_grain) .. " * " .. GRAIN .. " < 0, " .. L[T.aubergine_rim] .. ", if(" ..
-    N.dry .. " + edge < " .. num(B.dirt_at) .. ", " .. pair(T.purple_dirt, T.aubergine_dirt) ..
-    ", if(z < " .. num(B.lo) .. ", " .. pair(T.blue_1, T.blue_2) .. ", if(z > " .. num(B.hi) .. ", " ..
-    pair(T.purple_1, T.purple_2) .. ", " .. pair(T.mauve_1, T.mauve_2) .. ")))))", {
-      edge = num(B.edge_fine) .. " * " .. FINE .. " + " .. num(B.edge_grain) .. " * " .. GRAIN,
-      z = N.field .. " + edge",
-      side = FINE .. " + " .. num(B.side_grain) .. " * " .. GRAIN,
-    })
+  local class_locals = {
+    edge = num(B.edge_fine) .. " * " .. FINE .. " + " .. num(B.edge_grain) .. " * " .. GRAIN,
+    z = N.field .. " + edge",
+    side = FINE .. " + " .. num(B.side_grain) .. " * " .. GRAIN,
+  }
+  local grass = "if(z < " .. num(B.lo) .. ", " .. pair(T.blue_1, T.blue_2) .. ", if(z > " .. num(B.hi) .. ", " ..
+    pair(T.purple_1, T.purple_2) .. ", " .. pair(T.mauve_1, T.mauve_2) .. "))"
+  local class_text = "if(" .. N.reach .. " <= 0, 0, if(" .. O.depth .. " - " .. num(B.rim_px) .. " - " ..
+    num(B.rim_mac) .. " * " .. N.kind .. " + " .. swing(B.rim_grain) .. " * " .. GRAIN .. " < 0, " ..
+    L[T.aubergine_rim] .. ", if(" .. N.dry .. " + edge < " .. num(B.dirt_at) .. ", " ..
+    pair(T.purple_dirt, T.aubergine_dirt) .. ", " .. grass .. ")))"
+  def(N.class, class_text, class_locals)
+  -- 0.3.1 (config.lua moscow.snow): the same class under a second name, since a preset points the first at the next
+  -- one; and the next: within strip_tiles inside the Moscow zone's outline, grass classes only, and past its edge,
+  -- where the snow weight is over at, the snow fringe, so the zone runs straight from blue and purple into snow.
+  local MS = MZ.snow
+  local under_locals = {}
+  for k, v in pairs(class_locals) do
+    under_locals[k] = v
+  end
+  def(MS.under, class_text, under_locals)
+  local fray_n = "multioctave_noise{x = x, y = y, seed0 = map_seed, seed1 = " .. num(MS.fray.seed1) .. ", octaves = " ..
+    num(MS.fray.octaves) .. ", persistence = " .. num(MS.fray.persistence) .. ", input_scale = 1 / " ..
+    num(MS.fray.tiles) .. ", output_scale = 1}"
+  local fray_t = num(MS.fray.amp) .. " * " .. fray_n
+  local snow_pair = "if(side > " .. num(B.side_at) .. ", " .. num(MS.tiles[1].class) .. ", " ..
+    num(MS.tiles[2].class) .. ")"
+  -- the next class's locals: the first's (a copy, so the released class keeps its own) and the reach in tiles
+  local next_locals = {r = N.reach .. " * " .. K.scale}
+  for k, v in pairs(class_locals) do
+    next_locals[k] = v
+  end
+  next_locals.md = MC.depth .. " * " .. K.scale
+  def(MS.class, "if(md < " .. num(MS.strip_tiles) .. ", if(md > -" .. num(MS.outer_tiles) .. ", if(r <= 0, if(" ..
+    MS.w .. " > " .. num(MS.at) .. ", if(r + " .. num(MS.fringe_tiles) .. " + " .. num(MS.fringe_fray) .. " / " ..
+    num(MS.fray.amp) .. " * " .. fray_t .. " > 0, " .. snow_pair .. ", 0), 0), " .. grass .. "), " .. MS.under ..
+    "), " .. MS.under .. ")", next_locals)
+  -- the fringe's snow tiles, scored like the zone's own
+  for _, t in ipairs(MS.tiles) do
+    def(t.body, "if(" .. K.blue .. " > " .. num(cfg.destroyed.switch_threshold) .. ", if(elevation > 0, if(" ..
+      N.class .. " == " .. num(t.class) .. ", " .. num(B.score) .. ", -inf), -inf), -inf)")
+  end
+  -- The grey rim's keep where the zone meets the north snow: 0 inside the zone and keep_tiles past its edge, frayed,
+  -- rising to 1 over ramp_tiles. A preset with the zone on names it over the north rim's keep.
+  def(MS.rim_keep, "clamp((-" .. O.depth .. " * " .. K.scale .. " - " .. num(MS.keep_tiles) .. " + " .. fray_t ..
+    ") / " .. num(MS.ramp_tiles) .. ", 0, 1)")
   for _, t in ipairs(B.tiles) do
     def(t.body, "if(" .. K.blue .. " > " .. num(cfg.destroyed.switch_threshold) .. ", if(elevation > 0, if(" ..
       N.class .. " == " .. num(t.class) .. ", " .. num(B.score) .. ", -inf), -inf), -inf)")

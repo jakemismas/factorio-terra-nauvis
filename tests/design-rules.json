@@ -91,6 +91,13 @@
    "setting_type": "startup",
    "default_value": false
   },
+  "moscow_zone": {
+   "source": "Terra Nauvis 0.3.1 item 3: startup, a dropdown of normal, chaos and corrupted, default normal, needs Alien Biomes",
+   "type": "string-setting",
+   "setting_type": "startup",
+   "default_value": "normal",
+   "allowed_values": ["normal", "chaos", "corrupted"]
+  },
   "blue_corrupted": {
    "source": "Blue corrupted UK and Australia, issue 66: startup, bool, default off, needs Alien Biomes",
    "type": "bool-setting",
@@ -98,7 +105,7 @@
    "default_value": false
   },
   "north_snow": {
-   "source": "Jake 2026-11-03 (0.3.1): North snow, startup, a dropdown of low, medium and high, default medium",
+   "source": "Terra Nauvis 0.3.1 item 8: North snow, startup, a dropdown of low, medium and high, default medium",
    "type": "string-setting",
    "setting_type": "startup",
    "default_value": "medium",

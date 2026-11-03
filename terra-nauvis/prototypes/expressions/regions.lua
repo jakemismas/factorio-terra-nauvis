@@ -1,4 +1,4 @@
--- The region layer (ARCHITECTURE.md, "Region layer"; S10 design (d), design notes 07:45; contract 5).
+-- The region layer (ARCHITECTURE.md, "Region layer"; S10 design (d), DECISIONS 07:45; contract 5).
 --
 -- Every row of prototypes/tables/regions.lua becomes three named expressions, in reference pixels of
 -- the region frame (config.lua regions.frame):
@@ -34,7 +34,7 @@
 -- condition). The layer reads only x, y, map_seed and per-save constants through the chain, so it is
 -- firewall-clean (S10 1.6) and the Entity program may read it. With no consumer nothing here compiles
 -- (unreferenced expressions are free, R6 Q4). tn_map has no prototype: consumers are preset-only
---.
+-- (DECISIONS 2026-10-28 03:40).
 --
 -- One named expression per quantity (A-7; S10: a copy under another name costs about +646): every
 -- consumer reads these names, and a T16 static row fails any region formula outside this file.
@@ -47,6 +47,7 @@ local TC = require("prototypes.tables.zone_outline")
 local TC2 = require("prototypes.tables.zone_outline_v2")
 local TB = require("prototypes.tables.zone_blue")
 local TB2 = require("prototypes.tables.zone_blue_v2")
+local TM = require("prototypes.tables.zone_moscow")
 
 local R = cfg.regions
 local N = R.names
@@ -459,6 +460,20 @@ def(N.destroyed_depth, N.destroyed_sd .. " * " .. K.scale)
 -- by the whole outline, so a sea edge that lands on an island still frays. A vertex's locals repeat per body, and
 -- each folds per save. OT is the table, O the names it builds: the first release's, then 0.3.0's next outline
 -- (prototypes/tables/zone_outline_v2.lua), which adds the fixed cuts.
+-- A later presence and depth over the same outline (NP): every term the same, but a land cut NP.cuts names opens where
+-- its function says, so the zone may cross the cut's line there.
+local function next_outline(NP, present, opened, depth, deep)
+  local parts, dparts = {}, {}
+  for i, t in ipairs(present) do
+    parts[i] = opened[i] or t
+  end
+  for i, t in ipairs(depth) do
+    dparts[i] = deep[i] or t
+  end
+  def(NP.present, joined("min", parts))
+  def(NP.depth, joined("min", dparts))
+end
+
 local function outline(OT, O, NP)
   local Q = cfg.destroyed.outline
   local verts = OT.vertices
@@ -526,7 +541,10 @@ local function outline(OT, O, NP)
     def(O.isles, text, isles)
   end
 
-  local present, opened, deep = {O.sd, "-" .. O.isles}, {}, {}
+  local present, opened, deep = {O.sd}, {}, {}
+  if O.isles then
+    present[2] = "-" .. O.isles
+  end
   local function fray(FR, per_tile)
     -- in tiles: size tiles, but never more than cap reference pixels (at scale 1 a tile is a reference pixel)
     return (per_tile and ("min(" .. num(FR.cap) .. ", " .. num(FR.size) .. " / " .. K.scale .. ")") or num(FR.size)) ..
@@ -543,7 +561,7 @@ local function outline(OT, O, NP)
     present[1] = O.sd .. " + " .. fray(EF.px) .. " + " .. fray(EF.tiles, true)
   end
   local depth = {sign .. " * sqrt(" .. O.land .. ") + " .. N.rough, num(Q.squeeze) .. " * " .. O.sd}
-  for _, id in ipairs(OT.land_keeps) do
+  for _, id in ipairs(OT.land_keeps or {}) do
     local keep = "-" .. N.row.sd .. id .. SUF
     present[#present + 1] = keep
     depth[#depth + 1] = keep
@@ -599,18 +617,8 @@ local function outline(OT, O, NP)
   end
   def(O.present, joined("min", present))
   def(O.depth, joined("min", depth))
-  -- A later presence over the same outline (NP): every term the same, but a land cut NP.cuts names opens where its
-  -- function says, so the zone may cross the cut's line there.
   if NP then
-    local parts, dparts = {}, {}
-    for i, t in ipairs(present) do
-      parts[i] = opened[i] or t
-    end
-    for i, t in ipairs(depth) do
-      dparts[i] = deep[i] or t
-    end
-    def(NP.present, joined("min", parts))
-    def(NP.depth, joined("min", dparts))
+    next_outline(NP, present, opened, depth, deep)
   end
 end
 outline(TC, cfg.destroyed.outline.names)
@@ -624,6 +632,10 @@ outline(TC2, cfg.destroyed.outline.next, {present = DV.names.present, depth = DV
                                           cuts = {iberia = function(name)
   return num(PY.strip_px) .. " - " .. name
 end}})
+
+-- 0.3.1: the Moscow zone's outline (config.lua moscow; prototypes/tables/zone_moscow.lua), the same formulas: no isles
+-- line, keep rows or cuts.
+outline(TM, cfg.moscow.outline.names)
 
 -- The shapes of Blue corrupted (config.lua blue; prototypes/tables/zone_blue.lua). A sea shape needs its crossing
 -- count alone, so it costs a fraction of a distance to every edge, and a map skips the shapes it does not hold. BT is

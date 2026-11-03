@@ -4,6 +4,33 @@ All notable changes to terra-nauvis are documented in this file. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.3.1] - 2026-11-03
+
+### Added
+
+- North snow setting (Low, Medium, High; Medium by default): on new worlds the snow of northern Eurasia reaches
+  about 61 to 64 N at Medium and about 57 to 60 N at High; Low keeps the 0.3.0 line. Iceland, Greenland and the
+  Americas keep the 0.3.0 line. The grey square in western Russia near the Valdai Hills is gone.
+- Moscow zone setting (Normal, Chaos, Corrupted; Normal by default; needs Alien Biomes): Chaos turns the region from
+  the Baltic states and southern Finland to the Volga bend and the Black Sea into a Destroyed Europe wasteland that
+  fades through ordered bands into normal ground; Corrupted makes it Alien Biomes' blue and purple lands like Blue
+  corrupted UK, running straight into the north snow.
+
+### Changed
+
+- Atlantic: Frankfurt and Moscow join the spawn cities (pick them in Spawn city: Atlantic; random still picks among
+  the other 50, so a random world keeps its city).
+- Old World past scale 6, on new worlds made from a Terra Nauvis preset: coasts from the detailed fit again, regrown
+  in Croatia (Krk, Cres, Hvar, Brac and the other islands), at Europe's small islands and at Crozon. Scales 1 to 6
+  keep theirs, and a world made from the Map type entry alone keeps the lean fit.
+- Hotspots on new worlds: Marmara, Portland, Sumbawa, Aswan and Collahuasi stand on land now, the small stone discs
+  hold their design total and Shuitou moved inland.
+- Destroyed Europe on new worlds fades into ordinary ground through ordered, ragged bands: dry dirt, scorched red
+  grass and black ash, then heat ground from heat 1 inward; at the Pyrenees it runs up to the massif's snow.
+- Blue corrupted covers the United Kingdom only on new worlds (setting renamed Blue corrupted UK); Australia keeps
+  its own climate.
+- Worlds made on 0.3.0 keep loading unchanged; the new terrain and settings apply to new worlds only.
+
 ## [0.3.0] - 2026-11-01
 
 ### Changed

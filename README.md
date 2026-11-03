@@ -5,13 +5,13 @@ Terra Nauvis turns Nauvis into Earth. You pick one of three maps and start at a 
 Asia and Australia). Coasts, rivers, climate, mountain ranges and the big ore fields come from a map
 of the real world. Great rivers have walkable fords, the Kiel, Corinth, Suez and Panama canals are
 open to ships on the maps that hold them, and the start has a lake, the base game's starting ore
-and no biters. Biomes are about 1.5 times the size of the base game's. Version 0.3.0 needs Factorio
+and no biters. Biomes are about 1.5 times the size of the base game's. Version 0.3.1 needs Factorio
 2.1.24 or newer. Alien Biomes and Space Age are optional.
 
 ![The Old World map at map scale 12](docs/images/old-world-s12.jpg)
 
-*Old World at map scale 12: 107,556 x 70,164 tiles. Seed 1000, with Alien Biomes, Destroyed Europe
-and Blue corrupted UK and Australia on.*
+*Old World at map scale 12: 107,556 x 70,164 tiles. Seed 1000 on version 0.3.0, with Alien Biomes,
+Destroyed Europe and Blue corrupted (then the UK and Australia) on.*
 
 ## Pictures
 
@@ -48,13 +48,13 @@ large mod pack, and two are crops of the map above.
 ## Install
 
 1. Download `terra-nauvis_<version>.zip` from the
-   [Releases page](https://github.com/jakemismas/factorio-terra-nauvis/releases/tag/v0.3.0).
+   [Releases page](https://github.com/jakemismas/factorio-terra-nauvis/releases/tag/v0.3.1).
 2. Put the zip in your mods folder. Do not unzip it.
    - Windows: `%APPDATA%\Factorio\mods`
    - Linux: `~/.factorio/mods`
    - macOS: `~/Library/Application Support/factorio/mods`
-3. Install Alien Biomes from the mod portal if you want Destroyed Europe or Blue corrupted UK and
-   Australia. Both need it.
+3. Install Alien Biomes from the mod portal if you want Destroyed Europe, Blue corrupted UK or the
+   Moscow zone. All three need it.
 
 Terra Nauvis is not on the mod portal. In multiplayer every player needs the same zip in their mods
 folder, because Factorio's mod sync only fetches mods from the portal. When another player joins, Factorio
@@ -63,7 +63,8 @@ downloads the host's other mods, such as Alien Biomes, from the portal.
 To start a world, set the startup settings below under **Settings > Mod settings > Startup**, then
 pick **Terra Nauvis: Old World**, Europe or Atlantic in the preset list on the new-game screen. A
 world keeps its startup settings for life, so set them before you press Play. Worlds made before
-0.3.0 do not load.
+0.3.0 do not load. Worlds made on 0.3.0 keep loading unchanged; the new terrain and settings of
+0.3.1 apply to new worlds.
 
 Large scales mean long trips. Moscow is about 7,960 tiles from Frankfurt at scale 6 and about 15,900
 at scale 12, roughly 15 and 30 minutes on foot.
@@ -73,7 +74,7 @@ at scale 12, roughly 15 and 30 minutes on foot.
 | Setting | Default | What it does |
 |---|---|---|
 | Map scale | 6 | Tiles per pixel of the reference map: 1 to 6, 12 or 24. Old World is 53,778 x 35,082 tiles at 6. |
-| Spawn city (one per map) | Random | Start at one of 40 cities on Europe, 50 on Atlantic or 33 on Old World. |
+| Spawn city (one per map) | Random | Start at one of 40 cities on Europe, 52 on Atlantic or 33 on Old World. Frankfurt and Moscow joined Atlantic in 0.3.1; Random there still picks among the other 50. |
 | Canals | On | Opens the Kiel, Corinth, Suez and Panama canals where the map has them, at least 7 tiles wide. |
 | Great forests | On | The 22 great forests of Earth get about twice the trees of the land around them, more in the taiga. |
 | Ridges | On | Cliff ridges along the real mountain ranges (10 on Europe, 21 on Old World, 26 on Atlantic), with passes. They are the only cliffs. |
@@ -82,7 +83,9 @@ at scale 12, roughly 15 and 30 minutes on foot.
 | Regional scarcity | Medium | Off, Medium or Strong. Past about 1,500 tiles from your spawn at scale 12 (half that at scale 6), whole regular ore patches drop out away from the regions that really have them: uranium and oil most, stone least. The patches that remain keep their size, and hotspots are unchanged. |
 | Inland lakes | Off | Small random lakes, about eight in every 1,024 x 1,024 tiles. |
 | Destroyed Europe | Off | Needs Alien Biomes. Volcanic wasteland from France to Poland and down to about Rome, with Jutland and the north German coast inside and Britain and the Danish islands outside, with lava pools and dead forests. You can walk and build on all of it. |
-| Blue corrupted UK and Australia | Off | Needs Alien Biomes. Turns the UK and Australia blue and purple. |
+| Blue corrupted UK | Off | Needs Alien Biomes. Turns the UK into blue and purple lands with violet, white and blue trees. Since 0.3.1 Australia keeps its own climate. |
+| Moscow zone | Normal | Needs Alien Biomes. Chaos turns the Baltic states, southern Finland, Belarus, Ukraine and western Russia to the Volga bend into a wasteland like Destroyed Europe's; Corrupted turns them blue and purple like Blue corrupted UK, running straight into the north snow. |
+| North snow | Medium | Low, Medium or High: how far south the snow of northern Eurasia reaches. Low is the 0.3.0 line; Medium takes it to about 61 to 64 N, High to about 57 to 60 N. Iceland, Greenland and the Americas keep the Low line. |
 | Exact coastlines | On | Holds the coast to the reference map on Old World and Atlantic at scales 1 to 6. |
 | City markers | Off | Names the map's cities on the map view. You can switch it in a running game. |
 
@@ -106,7 +109,7 @@ and keeps a large footprint at any distance, so it is worth the trip.
 
 ## Compatibility
 
-- **Alien Biomes:** optional. With it the ground follows real regions, and the two zones need it.
+- **Alien Biomes:** optional. With it the ground follows real regions, and the three zone settings need it.
 - **Space Age:** works. Terra Nauvis changes Nauvis only.
 - **Cargo Ships and its Oil Rig:** canals and straits fit ships at every scale, rivers from scale 6. The Oil Rig adds offshore oil fields.
 - **RSO:** not supported. It replaces the map's ore with its own.

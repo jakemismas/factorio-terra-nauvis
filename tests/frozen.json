@@ -14214,6 +14214,839 @@
    "dump": "m3",
    "slice": "extras",
    "registered": "2026-11-02"
+  },
+  "tn_blue_outline_britain_v2": {
+   "type": "noise-expression",
+   "sha256": "be13a1e22d8731ea1fdd9d7058ab74d594abe8c12e952da2ae96291f9cfa27a3",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_blue_outline_depth_v2": {
+   "type": "noise-expression",
+   "sha256": "cc28a8fe11c62b1d8cc1de20976e73955348227a624a14c8aea51f0abc490c80",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_blue_outline_land_v2": {
+   "type": "noise-expression",
+   "sha256": "52a940ac9e76adb9689f4761afb0bffac086c6a311fa2aa2000d99a540a7478d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_blue_outline_sea_v2": {
+   "type": "noise-expression",
+   "sha256": "c98ef6547afd019e566e8c20ee4766e59599a7470d927a922df377985a695454",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_blue_outline_ulster_v2": {
+   "type": "noise-expression",
+   "sha256": "cca1815a2814957b71f5ffc7d7e974492a6addca91fdd4420accd5541b9f0e30",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_blue_uk": {
+   "type": "noise-expression",
+   "sha256": "68fc354520146d82899b075c59bf083796394fb1dfe31583097025c4976aaa2d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_city_cx_atlantic_v2": {
+   "type": "noise-expression",
+   "sha256": "6a4cc38fcb561d5c38354ec5128d8dd35fa31acc6ee860b2c61a17042eed6783",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_city_cy_atlantic_v2": {
+   "type": "noise-expression",
+   "sha256": "61b938a1aaa5bdbb9a9381ba5d2b7c3b3eacddb51b78686f93c62a3396e5277f",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_depth_copper_collahuasi_3_v1": {
+   "type": "noise-expression",
+   "sha256": "4443d448ca62784ea835321191a3c60feb18e25db2a56df5613cc7e6d249e1f3",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_depth_copper_sumbawa_3_v1": {
+   "type": "noise-expression",
+   "sha256": "2aa6a0d4653ea16445f7fa6ca0f237d66d4a19f625e97cbc38bde880e681a0de",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_depth_stone_aswan_3_v1": {
+   "type": "noise-expression",
+   "sha256": "cbc144d89c1e2dfd26617c1efdfdb2ff193d5bf5e5fd7d2ba9da64f63d021e4b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_depth_stone_estremoz_3_v1": {
+   "type": "noise-expression",
+   "sha256": "4f4d6f1df98c21249caa3c2c0069cb3982ab6136be0f6aea88c88a55c51da42a",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_depth_stone_marmara_island_3_v1": {
+   "type": "noise-expression",
+   "sha256": "3aa0176e3728871ccdfcce24f9ca0df0b4dc941d262a135f6c7bc31399fb6d9a",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_depth_stone_portland_3_v1": {
+   "type": "noise-expression",
+   "sha256": "c1d01b044fbcf55e60968748d0b98796bb29b7f6c9ebda07910050b12cecba6d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_depth_stone_shuitou_3_v1": {
+   "type": "noise-expression",
+   "sha256": "08734c62d13886830b37baaaa7fead104a569a46308eb0e282616b644433b209",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_europe": {
+   "type": "noise-expression",
+   "sha256": "f90a2badb7fa37f2945cc8b6256660426c24a99971e12d7fa5be40ceb8ff9d9e",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_outline_depth_v3": {
+   "type": "noise-expression",
+   "sha256": "7c76ffa1922f6d9b10ba8747abb6083e4e042f3e43cf785c5acd93695416bfda",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_outline_present_v3": {
+   "type": "noise-expression",
+   "sha256": "4656ad9c1e57f54951733a758c2a3fee57fdbdb46eac1b1066656ce8e080658d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_enemy_layer_v3": {
+   "type": "noise-expression",
+   "sha256": "7c32b8a572604b9c25b70271725c376a9bc91a17d760d8e2ba6b65d76cf32445",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_enemy_v4": {
+   "type": "noise-expression",
+   "sha256": "485a6f660d10896b854bb53336717a2a0501ebb78bed020552d02398c05ff11f",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_enemy_v5": {
+   "type": "noise-expression",
+   "sha256": "8a6c8f37152bdc5da7f853ae272ed2d024e783f57ac2748128591aa6d3894837",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_frozen_ground_v3": {
+   "type": "noise-expression",
+   "sha256": "2fe25eb79c4e9572cf9aeab2ac5a715540cdd08f6077766f3c362778f6dcfb3e",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_geo_olde_world_v9": {
+   "type": "noise-expression",
+   "sha256": "f92fcb223859e707923a56166a76b5e0c210be2b5daa6276191646bab5ff50a2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_coal_qty_v4": {
+   "type": "noise-expression",
+   "sha256": "93504d9fefd5e05ff31b3585c665b542ae2363d49e79a535ed59057984dc7a8b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_coal_v4": {
+   "type": "noise-expression",
+   "sha256": "b33f80fe816ebca9cef3e601e63d723602a6928dd24f9980cde69d2904d7dc7d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_copper_ore_qty_v4": {
+   "type": "noise-expression",
+   "sha256": "27ab721d9ee8cb936056fbed75c17961503e7ee4982981d6b5624227034d7f68",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_copper_ore_v4": {
+   "type": "noise-expression",
+   "sha256": "361c6be5ce76e8750b16cf967965489b6cceb28be87ccee2177837f9ac6145c6",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_iron_ore_qty_v4": {
+   "type": "noise-expression",
+   "sha256": "0a44db05bfe47cd0df03708ffbfe052fee08e9d6f4007ea1a978f879d3f3a19e",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_iron_ore_v4": {
+   "type": "noise-expression",
+   "sha256": "eadf5fbfe83404d0730e879e35cef11cb982ced88be40e3ab258c8bcc6731004",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_stone_qty_v4": {
+   "type": "noise-expression",
+   "sha256": "5829b0431e833cb9d8265dca6165cd91300161dae3ef2c450a6f603f7dbd6ae4",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_stone_rich_v1": {
+   "type": "noise-expression",
+   "sha256": "61623fd595dd86555c8087d327ca5266a0a26fd428449ce769898d6a59c42c01",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_stone_v4": {
+   "type": "noise-expression",
+   "sha256": "a75789a0d1d1e56d2f6f85a450dec8925a7f27a4fed71cc4ddcba343698d9a6c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_uranium_ore_qty_v4": {
+   "type": "noise-expression",
+   "sha256": "070f61fefa02f794a1ffa370bd59866732bbabd86f5339c732e57618453dfb50",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hs_uranium_ore_v4": {
+   "type": "noise-expression",
+   "sha256": "e2e965fa13d06595251280da0e6a795fb85c68a3c210166bcc7e36422bb6ac00",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hu_copper_collahuasi_3_v1": {
+   "type": "noise-expression",
+   "sha256": "fe39e66157c8a9c6cc958485e3b2b16c3d006b078fb108c98a2488cfab72e1d5",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hu_copper_sumbawa_3_v1": {
+   "type": "noise-expression",
+   "sha256": "b1e8d3f661f9f52f180af9eb40c2861321856f5e1ecfc0f7139a715fd3cc3d00",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hu_stone_aswan_3_v1": {
+   "type": "noise-expression",
+   "sha256": "24404de862427fb4dab055b6487d80fc9f41435c386aad7c6c61754a85aad4fd",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hu_stone_estremoz_3_v1": {
+   "type": "noise-expression",
+   "sha256": "e95fc58a448abbf95bffe1b8459e377399bbf635df65ba7e4e67ac06b812cf82",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hu_stone_marmara_island_3_v1": {
+   "type": "noise-expression",
+   "sha256": "710ce4fab11826d13a4428358756199b9304d605868f4992113bc44b1486e9a7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hu_stone_portland_3_v1": {
+   "type": "noise-expression",
+   "sha256": "24326c4f6942feba1ffbe079668e48b3404dc89b291883cc421e110a930af88b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hu_stone_shuitou_3_v1": {
+   "type": "noise-expression",
+   "sha256": "9977ca38f5b0a702e412bddba8123903ed8ea00bba22be123a53d5c406e46036",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hv_copper_collahuasi_3_v1": {
+   "type": "noise-expression",
+   "sha256": "63c9d3b78001923c22031a8e806919e61606301ce55139d5b604eee70174ddc5",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hv_copper_sumbawa_3_v1": {
+   "type": "noise-expression",
+   "sha256": "2c8001ab2f07ad2bba9cea8edbb389005a36937e79aff53eb16e3e7e8e33f403",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hv_stone_aswan_3_v1": {
+   "type": "noise-expression",
+   "sha256": "54de9f0b65cb39a5fe5ce4219e01c4a384f4b8166b94ad79cd7747a5cb69969c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hv_stone_estremoz_3_v1": {
+   "type": "noise-expression",
+   "sha256": "c42c62baee1fee8a671533826d6f45a6334d2374c4ea8e434baedd71e3f986ec",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hv_stone_marmara_island_3_v1": {
+   "type": "noise-expression",
+   "sha256": "ab917428b0295348e003d1f106e6d5f7d73cf2c441a1f4edb2e5722ff4d1d4b2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hv_stone_portland_3_v1": {
+   "type": "noise-expression",
+   "sha256": "8943e824527df49762d0dadd48ccc066de4fc62dd66df4a8b97d648ac5149332",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_hv_stone_shuitou_3_v1": {
+   "type": "noise-expression",
+   "sha256": "8fe2ce6dfc1b72b193d8b6b4aa9da8910647af2bf372f5fdcdd46c2b306e08f4",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow": {
+   "type": "noise-expression",
+   "sha256": "d8b47439c2ce926963442a24bfcb177d2d963b43cd20abbc66c5a9759ab7d98a",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_outline_depth_v1": {
+   "type": "noise-expression",
+   "sha256": "2264cd32ebb70d53052ecdccf5d30e4d39087b6c00965e395542387ff2239ec7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_outline_inside_v1": {
+   "type": "noise-expression",
+   "sha256": "37c55b1d5e7beae5011cee85917dd1356abebf5bfaa6e0ce607c8c2a80be5764",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_outline_land_v1": {
+   "type": "noise-expression",
+   "sha256": "8b53b58ebf6ced1839b08cca9ca75e69c0f5c4bcfe22ef79dad017fb78836703",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_outline_present_v1": {
+   "type": "noise-expression",
+   "sha256": "171bd1a44ad01cc43b9ca31963501769d180453db1cbf94125cc160446782097",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_outline_sd_v1": {
+   "type": "noise-expression",
+   "sha256": "fc5c6d4bd6057a437a1c9d5a3bed39e693e5607fb3965977381efc588487a426",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_outline_sea_v1": {
+   "type": "noise-expression",
+   "sha256": "0bd2d19d12f0f8149685818bc46f5ac9da3389c392121a347e8d5afd9c846ef5",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_north_d_v3": {
+   "type": "noise-expression",
+   "sha256": "e9fb4960c888da9064cf842d895cd5fe94dcfd46a60a7fd194b3f7509bb53308",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_north_rim_keep_v1": {
+   "type": "noise-expression",
+   "sha256": "cd6cbb44add9335056ce0d7ea69635d7a2ae497435042f464281846578a1e5e7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_north_snow_w_v1": {
+   "type": "noise-expression",
+   "sha256": "b3fc301cdc4cd4aa7a0694bdb5ec07752c000785c4b2a4a94a04dc6352e39015",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_coal_p_v4": {
+   "type": "noise-expression",
+   "sha256": "f5e1668311661347814edda17e07611ff3de79b447f4efe86c9500ad71089d29",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_coal_r_v3": {
+   "type": "noise-expression",
+   "sha256": "241a322a4b72c494db69234ec074b1cf11f79c8954bc4548cbb5df68b6dcbecc",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_copper_ore_p_v4": {
+   "type": "noise-expression",
+   "sha256": "467aa095dc6fa6770fca7a27c5502d501bfd459ee8d933cd27d3f48a2431c6f5",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_copper_ore_r_v3": {
+   "type": "noise-expression",
+   "sha256": "3312e4d777c9d8916116d928546b3773a7edcbb03c103da161672ddc252e3bec",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_gap_v3": {
+   "type": "noise-expression",
+   "sha256": "38ab5d1266a479192f970523006167ed75206388db806925c02927b168d8c4ca",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_iron_ore_p_v4": {
+   "type": "noise-expression",
+   "sha256": "129d908b59ab9d1369508fe77fd75ac045a1c61485791077d7eba8f7d7d7cc23",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_iron_ore_r_v3": {
+   "type": "noise-expression",
+   "sha256": "0718204def888d64d4d892561f6b88576f2a91e5f3c208da94b0042535ef97a1",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_open_plants_v3": {
+   "type": "noise-expression",
+   "sha256": "d11790d11b64362b5b4a59f43f7e8f9c0c40f0aaa3a9d7aedd5c10d791a7f99b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_open_v3": {
+   "type": "noise-expression",
+   "sha256": "05663c7fcd963f885b382c6231b6bdbd6bf3bdfe616afe38c190550757c18544",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_stone_p_v4": {
+   "type": "noise-expression",
+   "sha256": "0566a5de19fb048ed909ab24939bb98014f37462e7e4e58fa97291153d19724c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_stone_r_v3": {
+   "type": "noise-expression",
+   "sha256": "9e0e4e6889ac5f4d70d351f5f7d8788bc3a46434cb3ecf7e4a31dd83c8d342f3",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_uranium_ore_p_v4": {
+   "type": "noise-expression",
+   "sha256": "c52ece5f21e092f213d13b5a7994d78eb46ae0915643f9383a3177d23ac4768b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_ore_uranium_ore_r_v3": {
+   "type": "noise-expression",
+   "sha256": "42a452ca7f201e76ab2e285240c54b3aa553d1260478b73b6d08c4efaa3d3247",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_pd_copper_collahuasi_3_v1": {
+   "type": "noise-expression",
+   "sha256": "bc34c333208b6c5d0aa54e26a66321738f189ee9b731d60e41fdd83096f1e831",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_pd_copper_sumbawa_3_v1": {
+   "type": "noise-expression",
+   "sha256": "5b790acee7e6f2653fc1ba164b602223c1a653d8214971eecf1932d9dfebaaf2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_pd_stone_aswan_3_v1": {
+   "type": "noise-expression",
+   "sha256": "475b179001743e660b6fc39b8d568ec258c95b5235cdbdae564bd0fdfa6d3790",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_pd_stone_estremoz_3_v1": {
+   "type": "noise-expression",
+   "sha256": "9102a249dc4e96f4c1a6bf5f37af20415769bc318652313f5ea9c5db654c42b5",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_pd_stone_marmara_island_3_v1": {
+   "type": "noise-expression",
+   "sha256": "38d6c33f0a6dc3b237f78c40c43e6587a808258a1afe9ae444e96444bff8f766",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_pd_stone_portland_3_v1": {
+   "type": "noise-expression",
+   "sha256": "e7de93c236771fe0e3a48629f05cd9c341c7881c985e5c74bea1ade0ec3d204f",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_pd_stone_shuitou_3_v1": {
+   "type": "noise-expression",
+   "sha256": "6b897270b2246d2f667b82074ad6752a05d961350d0f9946622c2da5e4ff1fb7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_sd_copper_collahuasi_3_v1": {
+   "type": "noise-expression",
+   "sha256": "73381644e7f7b58a1016e14d0665030b10ddc977516c9cb39166917b82df6a90",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_sd_copper_sumbawa_3_v1": {
+   "type": "noise-expression",
+   "sha256": "5438b4b98ba1d7909ab6049979dd372e3d8244b14e2423181d68c1cd51466eaf",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_sd_stone_aswan_3_v1": {
+   "type": "noise-expression",
+   "sha256": "9f72f7dac2889edcc6e251270b92adafdad613129a5fcedc01970ff29868b92f",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_sd_stone_estremoz_3_v1": {
+   "type": "noise-expression",
+   "sha256": "00435a8a4e123938e9d8e507b5ceafe295f201eebd1e77b6fa3c11855b7d63cd",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_sd_stone_marmara_island_3_v1": {
+   "type": "noise-expression",
+   "sha256": "12a0235e713da53887bdaafc091041d4f6b1b66a789da84c2cc1522f63c65061",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_sd_stone_portland_3_v1": {
+   "type": "noise-expression",
+   "sha256": "b33398b1eb55fe983ca9b8815c4eb53561813ded215459a4119f487745a3c97b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_sd_stone_shuitou_3_v1": {
+   "type": "noise-expression",
+   "sha256": "8da38b93080247adde34209faa44bbf9b72c68e0e8ca43787d08b85a2e84cb3f",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_spawn_bias_atlantic_v4": {
+   "type": "noise-expression",
+   "sha256": "788863c4630c3f194c481232cb0f23f6b627e78ef77782b43bd42a472f3bd2cf",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_spawn_lake_atlantic_v4": {
+   "type": "noise-expression",
+   "sha256": "05c03b7b3bf6c62e0c478b1c7e0d9aa354f2f846e77203db2c0bacea1f2991ac",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_aux_ab_v5": {
+   "type": "noise-expression",
+   "sha256": "1c4bae46d8bfe91a5ac3e70c82a11241b52c08eb3271363b8fcf754b04c723ec",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_aux_ab_v6": {
+   "type": "noise-expression",
+   "sha256": "7f769a742ba6a14d8956965efa326010d19a99239fc65cce623b49ca797a18c4",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_blue_class_under_v1": {
+   "type": "noise-expression",
+   "sha256": "41b32834a9ace54b017ed916c32fa39dbce44445e1416a1e469bdfce5b4ea9ba",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_blue_class_v2": {
+   "type": "noise-expression",
+   "sha256": "38936ca7f8b7957eca3f14b2b0ef00b4ad8e0ef07c6f9de7183f7ee641c11401",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_blue_outline_depth_v3": {
+   "type": "noise-expression",
+   "sha256": "925863f661f92e5214b23261097b777cef6586faf0a9a5436b4367904036ff8b",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_chaos_brown_dirt_v1": {
+   "type": "noise-expression",
+   "sha256": "b67111b09902ee5dd4b80cfd856e0302c34aa50890b06017caf323a22aef48b4",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_climate_grain_v4": {
+   "type": "noise-expression",
+   "sha256": "43f4ffc97014c25d51a5de5f704c490c642e9063307e99c3cf1ff6ff73f69d67",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_corrupt_rim_keep_v1": {
+   "type": "noise-expression",
+   "sha256": "f00d1fe74c2bc806da29ca3290a7f5fbb0f8c62beadeee51e50f412fb14a8241",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_class_v4": {
+   "type": "noise-expression",
+   "sha256": "774efced78a96334121b0aebe66d9c58bf1a6579ed438f3b07e233556a0c4332",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_dev_fray_v1": {
+   "type": "noise-expression",
+   "sha256": "2f32a7f9c15b446f856d3cc7f661380bfdc92f056badc0434b185dff14c4e2dd",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_dev_ragged_v1": {
+   "type": "noise-expression",
+   "sha256": "a6ebd5d24bf3fe0dddbca2b49e46f3ec9e6698c31b8b46a77901c1a0dbec2964",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_dev_v1": {
+   "type": "noise-expression",
+   "sha256": "0bef20ff8310eaee8b634bb70a4e55148e82a67f3efc4500ce1e0394d747d930",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_dev_width_v1": {
+   "type": "noise-expression",
+   "sha256": "ee9cf8eb3653ed7aafb25dfed5b913a8c4503ea41275a4a4af72a713c16f2867",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_dev_wobble_a_v1": {
+   "type": "noise-expression",
+   "sha256": "c36f02131de83466aa803e33a7ac651190c7a9b92889fb09614cc1bcd8776747",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_dev_wobble_b_v1": {
+   "type": "noise-expression",
+   "sha256": "4e3500340b680ccc44fc4d8aef1df24b3d52a2b45f2f5a8d5ce0127f332eeefc",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_heat_v4": {
+   "type": "noise-expression",
+   "sha256": "a5e09dcb87aee2a89601fed4297ed8da80b4f9557d9dd23ad15ce1efb96f1d35",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_open_v2": {
+   "type": "noise-expression",
+   "sha256": "12b5f2067cf8710def2728451d8713e2bb8a2b4bdf9eb5c317b494ab6efb28ad",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_destroyed_reach_v2": {
+   "type": "noise-expression",
+   "sha256": "a8f70b33f3fbf4a621e55425fec8e50722c484b751785197973a70b96a1ae5c8",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moisture_ab_v10": {
+   "type": "noise-expression",
+   "sha256": "018c3c770b11022d7e8994c2e5b707c7a9a40d4a26bad271460767bac10dbf96",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moisture_ab_v11": {
+   "type": "noise-expression",
+   "sha256": "c0d1721cb22c37cb90706c405daaa7b6166dbc1fe264782c640839a217009d83",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moisture_ab_v9": {
+   "type": "noise-expression",
+   "sha256": "b39046ffd2fc964521a0c9d999e078cc9f34c5cda20008499fd803f9356f1ed9",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_corrupt_depth_v1": {
+   "type": "noise-expression",
+   "sha256": "2982dc827a9958f8780d21a66ff4c5ffffe9f02c58f66606d99488696f5e5386",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_corrupt_gap_v1": {
+   "type": "noise-expression",
+   "sha256": "ce28e559a2f49e416ba06747237c95afff1bdc3753496d66cf6ee42de77782ce",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_dev_v1": {
+   "type": "noise-expression",
+   "sha256": "164f5f7c73c883310e3802120f7677d4a0da75fb366c97d2b2eebe7dc80c9842",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_snow_0_v1": {
+   "type": "noise-expression",
+   "sha256": "67d046b332fac6fabf01985d6b0fd269b1c17b40b7b5f440dd897e1a3052b4e5",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_moscow_snow_2_v1": {
+   "type": "noise-expression",
+   "sha256": "1b1e3ca2a0ac5516d7aee7ec365ac0f05709824f2cbb88c915f5067651515e08",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_north_belt_v3": {
+   "type": "noise-expression",
+   "sha256": "71111670e974f5cf06e6875266f5c95041fb2ee38b7e8e035cc3d92260166681",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_north_drop_v3": {
+   "type": "noise-expression",
+   "sha256": "3ced5f47e6656cf37642f53dd563090c451283c148c829c80a30c7309dc44207",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_north_lead_v3": {
+   "type": "noise-expression",
+   "sha256": "49520d71541b5d0f9600a7332dfde743f42667551a13f4b72819777601e6b7a2",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_temperature_ab_v8": {
+   "type": "noise-expression",
+   "sha256": "9c90dfd9b4e8b68b44cb33333ed62bd420ce6e96388ab3f467acd02ff527e1d3",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_temperature_ab_v9": {
+   "type": "noise-expression",
+   "sha256": "e19328e6a475be047de7d917471c748ce969b43055ec8728f0ac9f4dcb333fd3",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
+  },
+  "tn_temperature_veg_v4": {
+   "type": "noise-expression",
+   "sha256": "86e104d554e72fc1ab3b601ab07cf513cba6559edaa5b4c100afdb79ce4c6d8f",
+   "dump": "m2",
+   "slice": "extras",
+   "registered": "2026-11-03"
   }
  }
 }

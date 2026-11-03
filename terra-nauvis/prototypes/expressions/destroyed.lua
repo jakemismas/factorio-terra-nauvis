@@ -4,7 +4,7 @@
 -- The zone reads one region-layer interface name, tn_destroyed_depth: the outline of
 -- data-src/approvals/destroyed-zone.json less its keep rows (Britain, Denmark and the Carpathians), in tiles.
 -- Each seed moves the outline's vertices and warps its edges harder than the shared warp, the same way on
--- every map. No region formula lives here (the static
+-- every map (DECISIONS 2026-10-30 10:05). No region formula lives here (the static
 -- regions row fails one outside regions.lua). The zone is cut by the start disc around the spawn, which the
 -- spawn shift keeps at the origin on every map, so every spawn city, the zone's included, starts on normal
 -- ground with normal trees (T7). Its heat climbs from a heat-1 rim to a core that mixes Alien Biomes' four
@@ -63,6 +63,12 @@ local function heat_over(zone)
     "), -inf)"
 end
 def(N.heat, heat_over(N.zone))
+
+-- 0.3.1: the Moscow zone's level and the Europe key (config.lua moscow), at a world's off values on every load: a
+-- world made before never names the bodies that read them.
+local MZ = cfg.moscow
+def(MZ.key, "0")
+def(MZ.europe.key, num(MZ.europe.on))
 
 -- The Alien Biomes temperature's next version (design rule 21: climate-tiles' first stays defined, unchanged):
 -- the zone's heat where it is hotter, with the toggle on. It reads AB's controls through the first
@@ -235,8 +241,15 @@ if AB then
   -- takes the yield off from gate_px north of the cut, so no other range in the zone takes snow back.
   local cut = D.outline.next.cuts.iberia
   local cold = cfg.ridges.names.cold2.gated
-  def(DN.dev, "if(" .. DN.present .. " > 0, min(" .. K.scale .. " * (" .. DN.depth .. " - " .. num(DV.start_px) ..
-    " + " .. DN.ragged .. "), " .. K.scale .. " * snow), " .. num(DV.outside_tiles) .. ")", {
+  -- The Moscow zone's position (config.lua moscow.dev), the same formula on its own outline. The field is the larger
+  -- of Europe's, with the Europe key on, and Moscow's, with the level at chaos.
+  local MO = MZ.outline.names
+  def(MZ.dev, "if(" .. MO.present .. " > 0, " .. K.scale .. " * (" .. MO.depth .. " - " .. num(MZ.start_px) .. " + " ..
+    num(MZ.ragged_share) .. " * " .. DN.ragged .. "), " .. num(DV.outside_tiles) .. ")")
+  def(DN.dev, "max(if(" .. MZ.europe.key .. " > " .. num(MZ.match) .. ", if(" .. DN.present .. " > 0, min(" ..
+    K.scale .. " * (" .. DN.depth .. " - " .. num(DV.start_px) .. " + " .. DN.ragged .. "), " .. K.scale ..
+    " * snow), " .. num(DV.outside_tiles) .. "), " .. num(DV.outside_tiles) .. "), if(abs(" .. MZ.key .. " - " ..
+    num(MZ.chaos) .. ") < " .. num(MZ.match) .. ", " .. MZ.dev .. ", " .. num(DV.outside_tiles) .. "))", {
       snow = num(PY.snow_px) .. " * (" .. num(PY.snow_at) .. " - " .. cold .. ") - " .. num(PY.south) .. " * " .. cut ..
         " + " .. num(PY.gate_per_px) .. " * max(0, -" .. cut .. " - " .. num(PY.gate_px) .. ")",
     })

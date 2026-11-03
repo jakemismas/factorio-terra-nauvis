@@ -14,7 +14,7 @@
 -- keeps the gate's prototype (off), so it has no fords (ARCHITECTURE.md, "Map type entries"). A
 -- preset's geography version (its elevation entry, start mask, coarse field, city offset and tn_geo)
 -- is chosen in one place, geography() below, so climate-tiles can give Alien Biomes worlds a cheaper
--- geography without touching base worlds.
+-- geography without touching base worlds (DECISIONS 10:20).
 --
 -- A Map type pick sets only elevation, so every other per-save name a geography version's entry
 -- reads gets a prototype-level fallback valued as that version's preset bakes it under the current
@@ -26,17 +26,17 @@
 -- A preset is not defined while a mod of its withheld_with list is loaded: from europe-coast to
 -- region-layer Alien Biomes' palms read elevation in the Entity program, so beside them a preset
 -- would have carried its fine field there (constraint S-3). climate-tiles ships the palm switch
--- (design note 9) and empties the lists. Its fallbacks stay defined, so the map's Map type
+-- (plan reconciliation 9) and empties the lists. Its fallbacks stay defined, so the map's Map type
 -- entry still works there. Withholding reached new worlds only: scripts/guards.lua warned a preset
 -- world that later loaded beside such a mod, and a save made before the switch keeps its palms on
--- its fine field for life (ARCHITECTURE.md, "Alien Biomes"; design notes 2026-10-29 18:40).
+-- its fine field for life (ARCHITECTURE.md, "Alien Biomes"; DECISIONS 2026-10-29 18:40).
 --
 -- From climate-tiles each preset also redirects temperature, moisture and aux to the Earth climate,
 -- the Alien Biomes variant when alien-biomes is loaded and the fallback otherwise (climate.lua), and
 -- points the marsh keys at their bodies and each palm's probability and richness keys at its Earth
 -- copy (trees.lua, built from the frozen Alien Biomes table on every load, so the name is never
 -- dangling), which reads the palm constant where AB reads elevation and closes the palm leak
--- (ARCHITECTURE.md, constraint S-3; design note 9), with or without Alien Biomes, so a
+-- (ARCHITECTURE.md, constraint S-3; plan reconciliation 9), with or without Alien Biomes, so a
 -- world that gains it later meets the switch too; with Alien Biomes it also points the 19 vanilla
 -- tile keys at the shared bonus body and the exclusion key at its body, and data-final-fixes.lua
 -- points a palm's keys at the neutral body when the installed palm differs from the table. Every
@@ -102,16 +102,27 @@ if not scarcity then
   error("config.lua resources.scarcity.levels has no level for the setting's value")
 end
 
--- The North snow level (climate.north_snow): the setting's value as the level's index.
-local north_snow
-for _, level in ipairs(cfg.climate.north_snow.levels) do
-  if level.value == settings.startup[cfg.settings[cfg.climate.north_snow.setting].name].value then
-    north_snow = level.index
+-- The Moscow zone's level (config.lua moscow): the setting's value as the level's index, normal without Alien Biomes
+-- (it needs it, as Destroyed Europe does).
+-- A picklist setting's level index (levels of {value, index}); `what` names the levels in the error.
+local function level_index(levels, setting_key, what)
+  local value = settings.startup[cfg.settings[setting_key].name].value
+  for _, level in ipairs(levels) do
+    if level.value == value then
+      return level.index
+    end
   end
+  error("config.lua " .. what .. " has no level for the setting's value")
 end
-if not north_snow then
-  error("config.lua climate.north_snow.levels has no level for the setting's value")
+
+local moscow = level_index(cfg.moscow.levels, cfg.moscow.setting, "moscow.levels")
+if not mods[cfg.moscow.requires] then
+  moscow = cfg.moscow.levels[1].index
 end
+
+-- The North snow level (climate.north_snow): the setting's value as the level's index.
+local north_snow = level_index(cfg.climate.north_snow.levels, cfg.climate.north_snow.setting,
+  "climate.north_snow.levels")
 
 -- The per-save city number a spawn-city setting stands for: its value's position in the setting's
 -- allowed values, less one, so random (the first) is 0 and the first city 1.
@@ -142,7 +153,7 @@ local function climate_names()
     out[key] = 1 / cfg.climate.size.factor
   end
   -- The palm keys with Alien Biomes loaded or not: a world made without it that gains it later
-  -- places its palms from the copies too, never from the fine field.
+  -- places its palms from the copies too, never from the fine field (DECISIONS 2026-10-29 18:40).
   for _, c in ipairs(TL.palm.copies) do
     out[c.key] = c.body
   end
@@ -243,7 +254,9 @@ local function destroyed_values(map_key, v, names)
     out.temperature = D.names.temperature
   end
   local pool, sp = D.pools[map_key], v.spawn
-  if sp and pool and names[sw.preset_key] == sw.on and names[sp.city] == 0 then
+  -- the random pool skips Destroyed Europe's cities: with the Moscow zone alone at chaos the Europe key is off
+  local europe = names[cfg.moscow.europe.key] == nil or names[cfg.moscow.europe.key] == cfg.moscow.europe.on
+  if sp and pool and names[sw.preset_key] == sw.on and europe and names[sp.city] == 0 then
     out[sp.city] = pool
   end
   -- The barrier (config.lua destroyed.barrier): a new world with the zone on names the next heat and class in place
@@ -305,7 +318,7 @@ local function grain_values(map_key)
 end
 
 -- The six base resources at preset_frequency in the preset (0.3.0: 1, vanilla's; D20 set 0.75), planet entries left
--- neutral (planet values multiply preset values; known noise gotcha). A control another mod removed
+-- neutral (planet values multiply preset values; noise skill gotcha). A control another mod removed
 -- is left out.
 local function controls()
   local out = {}
@@ -378,8 +391,11 @@ local function blue_values(names)
       out[p.key] = p.body
     end
     out[cfg.tiles.scan.body] = B.names.keep
-    -- 0.3.1: the next outline's depth (blue.outline.next), the United Kingdom alone
-    out[B.outline.names.depth] = B.outline.next.depth
+    -- 0.3.1: the next outline's depth (blue.outline.next), the United Kingdom alone, as the union with the Moscow zone
+    -- (moscow.corrupt.union), each behind its key; the class with the snow join, and the north rim's keep
+    out[B.outline.names.depth] = cfg.moscow.corrupt.union
+    out[B.names.class] = cfg.moscow.snow.class
+    out[cfg.moscow.snow.north_keep] = cfg.moscow.snow.rim_keep
   end
   return out
 end
@@ -394,6 +410,22 @@ local function second_tables()
     end
   end
   return out
+end
+
+-- 0.3.1: the Moscow zone (config.lua moscow), after the toggles: its level, whether each zone's own outline is on, and
+-- the zone's machinery switched on for it: chaos runs Destroyed Europe's, corrupted Blue corrupted's.
+local function moscow_values(names)
+  local MZ, TG = cfg.moscow, cfg.toggles
+  local de, bl = TG.destroyed_europe, TG.blue_corrupted
+  names[K.moscow] = moscow
+  names[MZ.europe.key] = names[de.preset_key] == de.on and MZ.europe.on or MZ.europe.off
+  names[MZ.uk.key] = names[bl.preset_key] == bl.on and MZ.uk.on or MZ.uk.off
+  if moscow == MZ.chaos and names[de.preset_key] ~= nil then
+    names[de.preset_key] = de.on
+  end
+  if moscow == MZ.corrupted and names[bl.preset_key] ~= nil then
+    names[bl.preset_key] = bl.on
+  end
 end
 
 -- The property_expression_names one geography version's preset bakes under the current startup
@@ -450,6 +482,7 @@ local function baked(map_key, v)
   for k, value in pairs(toggle_values(map_key)) do
     names[k] = value
   end
+  moscow_values(names)
   for k, value in pairs(climate_names()) do
     names[k] = value
   end
@@ -524,17 +557,20 @@ end
 
 local presets = data.raw["map-gen-presets"]["default"]
 
+-- Copies every pair of `extra` into `names`, extra's value winning.
+local function merge_into(names, extra)
+  for k, value in pairs(extra) do
+    names[k] = value
+  end
+end
+
 for _, key in ipairs(cfg.preset_order) do
   local p = cfg.presets[key]
   if not withheld(p) then
     local v = geography(p.map)
     local names = baked(p.map, v)
-    for k, value in pairs(spawn_next_values(p.map, v, names)) do
-      names[k] = value
-    end
-    for k, value in pairs(geo_next_values(v)) do
-      names[k] = value
-    end
+    merge_into(names, spawn_next_values(p.map, v, names))
+    merge_into(names, geo_next_values(v))
     presets[p.name] = {
       order = p.order,
       basic_settings = {property_expression_names = names, autoplace_controls = controls()},

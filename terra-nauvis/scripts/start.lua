@@ -114,6 +114,15 @@ local function value_at_origin(surface, name)
   return got and got[1]
 end
 
+-- 0.3.1: the Moscow zone needs Alien Biomes as Destroyed Europe does (config.lua moscow).
+local function warn_moscow()
+  local mz = cfg.moscow
+  local level = settings.startup[cfg.settings[mz.setting].name].value
+  if level ~= mz.values.normal and not script.active_mods[mz.requires] then
+    guards.record_warning("moscow_no_ab", {})
+  end
+end
+
 function M.on_init()
   local surface = game.surfaces["nauvis"]
   if not surface then
@@ -155,6 +164,7 @@ function M.on_init()
     if settings.startup[cfg.settings[de.setting].name].value and not script.active_mods[de.requires] then
       guards.record_warning("destroyed_no_ab", {})
     end
+    warn_moscow()
   end
 end
 
