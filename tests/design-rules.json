@@ -21,7 +21,7 @@
     "ankara", "kyiv", "london"]
   },
   "spawn_city_atlantic": {
-   "source": "terra-nauvis-spawn-city-atlantic: random plus all 50 EarthMaps cities (EarthMaps settings.lua:92-105), default random; none is left out on this map (data-src/approvals/approvals-data.json cities.atlantic.dropdown); 0.3.1 appends frankfurt and moscow, so every earlier value keeps its number",
+   "source": "terra-nauvis-spawn-city-atlantic: random plus all 50 EarthMaps cities (EarthMaps settings.lua:92-105), default random; none is left out on this map (data-src/approvals/approvals-data.json cities.atlantic.dropdown); appended values (frankfurt, moscow, null) keep every earlier value's number",
    "type": "string-setting",
    "setting_type": "startup",
    "default_value": "random",
@@ -30,7 +30,7 @@
     "nanchang", "songling", "delhi", "hampi", "bam", "aktobe", "semey", "moron", "bangkok", "mexico-city",
     "ellesmere-island", "fort-liard", "hearst", "mid-baffin", "okak", "saskatoon", "yellowknife", "qaanaaq",
     "summit-camp", "uranienborg", "albany", "boise", "minneapolis", "el-paso", "hughes", "montgomery", "cordoba",
-    "palmas", "iquitos", "griffith", "newman", "frankfurt", "moscow"]
+    "palmas", "iquitos", "griffith", "newman", "frankfurt", "moscow", "null"]
   },
   "spawn_city_olde_world": {
    "source": "terra-nauvis-spawn-city-old-world: random plus all 30 EarthMaps cities (EarthMaps settings.lua:124-137), default random; none is left out on this map (data-src/approvals/approvals-data.json cities.olde_world.dropdown); frankfurt, aachen and moscow are appended, so every earlier value keeps its number",

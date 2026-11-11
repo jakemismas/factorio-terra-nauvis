@@ -1241,8 +1241,8 @@ return {
         "ellesmere-island", "fort-liard", "hearst", "mid-baffin", "okak", "saskatoon", "yellowknife", "qaanaaq",
         "summit-camp", "uranienborg", "albany", "boise", "minneapolis", "el-paso", "hughes", "montgomery", "cordoba",
         "palmas", "iquitos", "griffith", "newman",
-        -- 0.3.1: appended with the city table's version 2, so every earlier value keeps its number (spawn_next)
-        "frankfurt", "moscow",
+        -- Appended values (spawn_next): every earlier value keeps its number.
+        "frankfurt", "moscow", "null",
       },
       order = "b-b",
     },

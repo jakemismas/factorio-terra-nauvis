@@ -64,6 +64,7 @@ return {
       newman = {name = "Newman", country = "Australia", lon = 118.033, lat = -23.944},
       frankfurt = {name = "Frankfurt", country = "Germany", lon = 8.678, lat = 50.1},
       moscow = {name = "Moscow", country = "Russia", lon = 37.611, lat = 55.767},
+      ["null"] = {name = "Null Island", country = "Atlantic Ocean", lon = 0.0, lat = 0.0},
     },
   },
 }
