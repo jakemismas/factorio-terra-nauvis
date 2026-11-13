@@ -1,4 +1,27 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.0
+Date: 2026-11-12
+  Features:
+    - Lean ore, a new startup option, on by default. Ordinary ore patches hold about 500 thousand
+      ore within 1,000 tiles of the spawn and at most 5 million anywhere. These amounts are at the
+      default ore sliders and follow each ore's size and richness sliders. The starting patches
+      stay the base game's. On new worlds.
+  Changes:
+    - Ore hotspots start small near the spawn and grow to their full size from 1,000 to 3,000
+      tiles out, their extra nests with them. Both distances follow the Starting area slider. With
+      Lean ore a hotspot within 1,000 tiles is one field of up to 1 million and none stands within
+      150 tiles of the spawn. With Lean ore off it holds no more than the base game's large patch
+      at its distance. On new worlds.
+    - Full ore hotspots hold up to 50 million at map scale 6, 71 million at 12 and 100 million at
+      24 with Lean ore, at the default ore sliders. With Lean ore off they hold their 1.1.0 size
+      times 1.4 at scale 12 and twice at scale 24. On new worlds.
+    - Oil hotspots on land follow the same rules as the ore hotspots, with wells as far apart as
+      the base game's. They no longer grow with the square of the map scale. Offshore oil fields
+      keep their rule. On new worlds.
+    - With Lean ore, hotspot fields that touch share one field instead of stacking into one
+      oversized field. On new worlds.
+    - Worlds made with earlier versions keep loading unchanged, their ore included.
+---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 2026-11-10
   Features:

@@ -1007,6 +1007,10 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         sc = rs.get("scarcity")
         if sc:
             pen[sc["key"]] = sc["levels"][cfg["settings"][sc["setting"]]["default_value"]]
+        # 1.2.0: the lean ore option, 1 or 0 (resources.lean)
+        le = rs.get("lean")
+        if le:
+            pen[le["key"]] = 1 if cfg["settings"][le["setting"]]["default_value"] else 0
         for b in rs["natural"]["bodies"]:
             if rs["offshore"]["resource"] not in b["live"]:
                 # 0.3.0: vanilla's function with the footprint gap (resources.natural.fn2)
@@ -1172,6 +1176,32 @@ def baked_names(cfg, map_key, version, scale, city=None, ab=False):
         if rs.get("ore_trees") and rs["ore_trees"].get("open_v3"):
             pen[rs["ore_trees"]["open"]] = rs["ore_trees"]["open_v3"]
             pen[rs["ore_trees"]["plants"]["open"]] = rs["ore_trees"]["plants"]["open_v3"]
+    # 1.2.0: the start fade's bodies, wrappers, nests and tree shares over the third table's (hotspots_v4)
+    h4 = cfg.get("hotspots_v4")
+    if rs and h4:
+        pen.update(h4["points"])
+        for o in rs["ores"]:
+            if o.get("r5"):
+                pen[o["richness"]] = o["r5"]
+                # the fourth set's probability: p6 for the solids, crude oil's p5 (its p6 is the lean wrapper)
+                pen[o["probability"]] = o["p6"] if o.get("p7") else o["p5"]
+        pen[K["enemy"]] = h4["scatter"]
+        if rs.get("ore_trees") and rs["ore_trees"].get("open_v5"):
+            pen[rs["ore_trees"]["open"]] = rs["ore_trees"]["open_v5"]
+            pen[rs["ore_trees"]["plants"]["open"]] = rs["ore_trees"]["plants"]["open_v5"]
+    # 1.2.0: lean ore (resources.lean, hotspots_v5) at the option's default
+    h5 = cfg.get("hotspots_v5")
+    le = rs and rs.get("lean")
+    if h5 and le and cfg["settings"][le["setting"]]["default_value"]:
+        pen.update(h5["points"])
+        for o in rs["ores"]:
+            if o.get("r6"):
+                pen[o["richness"]] = o["r6"]
+                pen[o["probability"]] = o.get("p7") or o["p6"]
+        pen[K["enemy"]] = h5["scatter"]
+        if rs.get("ore_trees") and rs["ore_trees"].get("open_v6"):
+            pen[rs["ore_trees"]["open"]] = rs["ore_trees"]["open_v6"]
+            pen[rs["ore_trees"]["plants"]["open"]] = rs["ore_trees"]["plants"]["open_v6"]
     # Koppen biomes (0.4.0; presets.lua koppen_names, last): with the toggle on beside Alien Biomes the
     # preset points temperature/moisture/aux and the grain tile keys (tn_tile_* and the vegetation
     # tn_tile_*_veg) at the Koppen bodies: temperature and the vegetation at the cold-north/spawn-aware

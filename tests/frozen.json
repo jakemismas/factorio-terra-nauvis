@@ -15943,6 +15943,594 @@
    "dump": "m2",
    "slice": "extras",
    "registered": "2026-11-10"
+  },
+  "tn_enemy_layer_v5": {
+   "type": "noise-expression",
+   "sha256": "4a9192d1d8d7017cec0c749bc02b72a28148b291439a0f8977268d5f93021467",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_enemy_layer_v6": {
+   "type": "noise-expression",
+   "sha256": "941477bb102da57e08de67f8cac0fe157ee5ea7415b879288e8981f1737a4fb5",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_enemy_v10": {
+   "type": "noise-expression",
+   "sha256": "740ac26af2bd7b015a703b3a01edf3dd8ea0db9bb38f87a51817d4f1da935d40",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_enemy_v11": {
+   "type": "noise-expression",
+   "sha256": "0ac196c9a47558b9b39184b33f8530612edf7ef4d3b3668611c871f45baaa792",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_enemy_v8": {
+   "type": "noise-expression",
+   "sha256": "89f6f37764d1d7e3e1dc0e3ec0a163cd05eca13a64a1d5c8006317f1a800449c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_enemy_v9": {
+   "type": "noise-expression",
+   "sha256": "05062cb3579addcc3aa96d2e54b024d99f9499fed5a8e4d51ba982bb282cb086",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_coal_large_v1": {
+   "type": "noise-expression",
+   "sha256": "12513c002b8ae22f72fb4614c741c67c2bd709289bc4941166d425c09da23d19",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_coal_near_v1": {
+   "type": "noise-expression",
+   "sha256": "eee1ac57d58cccbcdefd5ee53d0aae9e28e9bcaf972755876784dc347c5caa89",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_coal_qty_v6": {
+   "type": "noise-expression",
+   "sha256": "461a943d7d3e872c44795029d5cdb336f0522f4e22d51b283e1e119f3fe8eb69",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_coal_qty_v7": {
+   "type": "noise-expression",
+   "sha256": "0e227325a319af254ee987959d3b70a46af25da7820b2c33652450ad46bb6372",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_coal_unit_v1": {
+   "type": "noise-expression",
+   "sha256": "44bc4aac5629240bd69dfd76e37b204ebe1a9991faa9b3626e0d445a869e8b1d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_coal_unit_v2": {
+   "type": "noise-expression",
+   "sha256": "1b21308cc66e0c0ee230347efff42f1c7deae3438994407c906bb9b196cb0ab6",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_coal_v6": {
+   "type": "noise-expression",
+   "sha256": "51e865c54bac894d1b671d0c0fa83d16becddb390903642971b94c3f304a4aed",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_coal_v7": {
+   "type": "noise-expression",
+   "sha256": "2aa50fdd9008245a20edbcadab3e209d7fdd0f662f7948d8ce3fd98a6e40fe5c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_copper_ore_large_v1": {
+   "type": "noise-expression",
+   "sha256": "470be2d2b1625c56bc153a9296b004024a68dc1a5dc484647be370d917f37263",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_copper_ore_near_v1": {
+   "type": "noise-expression",
+   "sha256": "44752635605987625a7ae75b16b44c5312e7208eb21f8766731ef921bc55881a",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_copper_ore_qty_v6": {
+   "type": "noise-expression",
+   "sha256": "b707c098071b362d1feef2e39a043b855c91edef6879a4baae4b4d057135cad0",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_copper_ore_qty_v7": {
+   "type": "noise-expression",
+   "sha256": "b5294618ed1df8c074188580e7031e7832d8029d1585c90432351f9481b3a5a4",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_copper_ore_unit_v1": {
+   "type": "noise-expression",
+   "sha256": "6075afc9dab0a6fd9ab97eeefc4749f96bc1b8d99255d6fd5d097535b8c3d437",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_copper_ore_unit_v2": {
+   "type": "noise-expression",
+   "sha256": "4ea6a9a06ba49a172f2b2f2e846fe1aa04b5c703c7b242bda4ab9e1269aa72a4",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_copper_ore_v6": {
+   "type": "noise-expression",
+   "sha256": "9b63599884464a384e29f096ab8f5be150c278d1594b6337f7bc4331f0e0263d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_copper_ore_v7": {
+   "type": "noise-expression",
+   "sha256": "1775f11a4e091ecd9acd4d02fbba70d5387dcadd0835847a814f7e4b675e69e8",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_crude_oil_large_v1": {
+   "type": "noise-expression",
+   "sha256": "83c2223eb6d037a6b60e775a795b109bcdbc3503a99a9527a2f6b848292d5660",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_crude_oil_near_v1": {
+   "type": "noise-expression",
+   "sha256": "a40ed24c2174f6822020eb0fa960bdc3950d84e454dc6da8871a067beceecac4",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_crude_oil_qty_v5": {
+   "type": "noise-expression",
+   "sha256": "2d3c0cb555a93a2b86caecaba0589410d29de6f37d7cea6fda54273d67d733c3",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_crude_oil_qty_v6": {
+   "type": "noise-expression",
+   "sha256": "9987ec7a7c4921a323acb035aef5564acffe93ef4dbfdeb6bcc79b1183c3509f",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_crude_oil_unit_v1": {
+   "type": "noise-expression",
+   "sha256": "ef7b4d4d4fb2494bc1d3138b75e4630df7b8f726494c9bec30cbb119981b9842",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_crude_oil_unit_v2": {
+   "type": "noise-expression",
+   "sha256": "0727714f831722723e4df6659914c3dc01486a9472e02ebc61f8ebde8b6dd13b",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_crude_oil_v5": {
+   "type": "noise-expression",
+   "sha256": "77abe29e54b56d745ece59114f1f86984ab7b5ab3b3210293f9eed16042dcd77",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_crude_oil_v6": {
+   "type": "noise-expression",
+   "sha256": "0635431bce0abaecbe9e890a1bbba743d7399e35aedd77d4e1f4d46d550baa6e",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_fade_v1": {
+   "type": "noise-expression",
+   "sha256": "955fb82308007eb5c297d887baf2e87dcd44db1a93769ce46e4d11cfaf7fb1dd",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_iron_ore_large_v1": {
+   "type": "noise-expression",
+   "sha256": "e434f2c5ca5b0ceff2d62ef382a4ae0f499966dbb259cfedfb250b43c53c355c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_iron_ore_near_v1": {
+   "type": "noise-expression",
+   "sha256": "4678c7fb6088c30d19dd25e5fc78dbe43cbcf07103951ba852dfec99ac1c023c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_iron_ore_qty_v6": {
+   "type": "noise-expression",
+   "sha256": "aa25804942cc4123514fb83eed480c31c74f21f5d121228b05e306b453142a1d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_iron_ore_qty_v7": {
+   "type": "noise-expression",
+   "sha256": "f0df127d12df4eddd95c6833349dc0bbb3cd93dbb2342ea1efb737bf4b42b96c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_iron_ore_unit_v1": {
+   "type": "noise-expression",
+   "sha256": "3cce373cf8ac31ca1b159017364e02f8716d8e41b09bc221a16ac8b1db938ac4",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_iron_ore_unit_v2": {
+   "type": "noise-expression",
+   "sha256": "60ef9b18f18036eb1ae4b56678e37eb1f5c3cba14381abdf16a142b66e7185f3",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_iron_ore_v6": {
+   "type": "noise-expression",
+   "sha256": "5f3b041279961834aaf4d3ba004898a34452fbf5a96df3d52e8bd10fc6dc4b04",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_iron_ore_v7": {
+   "type": "noise-expression",
+   "sha256": "65b429eaa5c0fab8eaeb1e5dd6fe1279ad4d8049c973f96ea5370b0e8728f8f9",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_stone_large_v1": {
+   "type": "noise-expression",
+   "sha256": "d0917ce483e744f9a7d1bb7c6bcd3055523428b3ece57362e30e8b8da6b3317d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_stone_near_v1": {
+   "type": "noise-expression",
+   "sha256": "0817b220531b1c1fdf2e23a611223ad99c3fb1ff58e0562c1a10aa33c24f5cbf",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_stone_qty_v6": {
+   "type": "noise-expression",
+   "sha256": "3249c93daa83e7ae0eb0ecf6c6ff35c968f2c93cabf5ec1610b39fa25bb5e757",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_stone_qty_v7": {
+   "type": "noise-expression",
+   "sha256": "8dc3603020c2a049d2ed9119f3808144bae4ea6f4c4231eccd094487735e6663",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_stone_rich_v2": {
+   "type": "noise-expression",
+   "sha256": "1e3fbbc8cb221373129c596dce30a79caa74ce4da0d67d4820b0a592f3314ae2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_stone_unit_v1": {
+   "type": "noise-expression",
+   "sha256": "97f5f8bb5bb10ba9338049ebdd22d4573a184ff4da0b1ef22cd75918ca9f35b7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_stone_unit_v2": {
+   "type": "noise-expression",
+   "sha256": "8bde9a54b17fbe89d0e8f552b2039190d3c1a063da8ff64846b2798bd1c5b036",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_stone_v6": {
+   "type": "noise-expression",
+   "sha256": "ff308c9515f99e0d3ac0ef8249a97cf10fea47aa36bed3ef7c2e5cc7266d420e",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_stone_v7": {
+   "type": "noise-expression",
+   "sha256": "5b677d1372905881c3a7badd82257a2be0df68eb5b6df2a908485e46fd57f9f2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_uranium_ore_large_v1": {
+   "type": "noise-expression",
+   "sha256": "4fdcd724025df38a66f88073727edfb968921f09b6bf4f06cde2f0a75b9d3f7d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_uranium_ore_near_v1": {
+   "type": "noise-expression",
+   "sha256": "321df0a9732aaa00068517333c568bb0267335de4ed89d309e928b13f76244ea",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_uranium_ore_qty_v6": {
+   "type": "noise-expression",
+   "sha256": "3ee46166fe5d7bc8fc73405b3741528adbaebc6a1b068bdd228fe3ccaee54358",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_uranium_ore_qty_v7": {
+   "type": "noise-expression",
+   "sha256": "5cf8ffb3d9032cfb370241afb3fd0d5e8e46092112a17754675735f32fc3ef98",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_uranium_ore_unit_v1": {
+   "type": "noise-expression",
+   "sha256": "a44361e564d9749b3a1af1418a2eb72b309b049dbab1dd61ac40d05f4fd6b10c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_uranium_ore_unit_v2": {
+   "type": "noise-expression",
+   "sha256": "84ae9d4a0a8e7414e246bf251e68720443eca7385778c65595ddd637e09873b5",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_uranium_ore_v6": {
+   "type": "noise-expression",
+   "sha256": "36ff5418f5daa94fad1962b10f8d459ad4acf7cbfe5dcd3db773ad3c30dc95bf",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_hs_uranium_ore_v7": {
+   "type": "noise-expression",
+   "sha256": "ed66550fb51486e64438203af3582ccdde8666a39e46e8f4b242baf40b375599",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_coal_p_v6": {
+   "type": "noise-expression",
+   "sha256": "34d7575e9a4253816546c4d419f62e92735355c7011c149b4fcddfda205756fa",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_coal_p_v7": {
+   "type": "noise-expression",
+   "sha256": "340c44e557c05ac8ed104a10a3876363aa20bc25fbc495cbde80a1dee785ed73",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_coal_r_v5": {
+   "type": "noise-expression",
+   "sha256": "8b85c20ffb024ff6ee301272806deda657c3ef291e6ee157cae68c027682fe32",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_coal_r_v6": {
+   "type": "noise-expression",
+   "sha256": "2ba0f6fcae0a3e5aaeec4ed44003e76319aa246436a27d28643c7bcace045454",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_copper_ore_p_v6": {
+   "type": "noise-expression",
+   "sha256": "0c30ad2d3abfc4d1afff73229664c23091c71583cd46bfee96759056e3033b64",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_copper_ore_p_v7": {
+   "type": "noise-expression",
+   "sha256": "b732cd66f9ba244a6c22427880494d5bd63e8be7820e6cb5ba63c7d67147dc85",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_copper_ore_r_v5": {
+   "type": "noise-expression",
+   "sha256": "0373b8b222a8b06f164e859d67e32999c432bb371d5c5525bba939c6ce64c8ed",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_copper_ore_r_v6": {
+   "type": "noise-expression",
+   "sha256": "6c44abce302d7147ad09bcc0491cefd16068af2c0670392ad203c8d636f1be10",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_crude_oil_p_v5": {
+   "type": "noise-expression",
+   "sha256": "8c0a53ed5cafc5fa44aabe46a711cdef44a8750a119b6e9082970a494dc99ac7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_crude_oil_p_v6": {
+   "type": "noise-expression",
+   "sha256": "5a26a818fd1b770fc6b4aefaced7a7837122140e84c21c5ef6e3b53aebf50660",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_crude_oil_r_v5": {
+   "type": "noise-expression",
+   "sha256": "dbf70b3e9fa0d272b690eb39864756ce90ac20738050be42ed10f75f5d14e515",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_crude_oil_r_v6": {
+   "type": "noise-expression",
+   "sha256": "057d7530d580117d7591d9de383d83a00a910d0ec4e8daa523e7c26c8a31d22c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_iron_ore_p_v6": {
+   "type": "noise-expression",
+   "sha256": "d273a34c3bae96c6ab2920e19b440b6061f97e86ea77b957b7e4dbd1f31da5e7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_iron_ore_p_v7": {
+   "type": "noise-expression",
+   "sha256": "53907483f50d94a2c95ad07d8f3708e466e8ab34434dadbf57f6ddbfb3f6135c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_iron_ore_r_v5": {
+   "type": "noise-expression",
+   "sha256": "303b0b9ecf20bb70021d12e4e3caf41e7d05b3dfec525f49fe0345a9b67d46c7",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_iron_ore_r_v6": {
+   "type": "noise-expression",
+   "sha256": "3c6f3d3c05985df509a0e34087a8cce70ace94371b4dc73f359fe07fbdad86b1",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_open_plants_v5": {
+   "type": "noise-expression",
+   "sha256": "c6549187052810c67d6252e4f308fd07ea3d4e655e44f1f1e1a0c07439c45e1d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_open_plants_v6": {
+   "type": "noise-expression",
+   "sha256": "dc656a53b587bb5b332f1c8b24e868ca310bf86888cd8b138a78454112cfa2d2",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_open_v5": {
+   "type": "noise-expression",
+   "sha256": "5cab5d8eec5ee3500d1206b6bb75c74478ea2d77287b76041b0db0e105ce4d2d",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_open_v6": {
+   "type": "noise-expression",
+   "sha256": "1e13f2f0f22510dbf9b45d125b546a6099b5538af52cb897bedc3b7e33cf3a7c",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_stone_p_v6": {
+   "type": "noise-expression",
+   "sha256": "3237aa528c854283955783a5b39342084284656f23b4cc718227583bdf3eb5a4",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_stone_p_v7": {
+   "type": "noise-expression",
+   "sha256": "a45e0e175eb31d1c07f8d7971fd55bb856419f430daea57a1287e42dd5550110",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_stone_r_v5": {
+   "type": "noise-expression",
+   "sha256": "125e7c59e0cf22448bee935608b0c3a96e30945001606cab78475e2db1f02558",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_stone_r_v6": {
+   "type": "noise-expression",
+   "sha256": "1fbf89e72fb79c4fbf4e45c84ac93361841670a0fec52bdaf46234bcf1d13a0f",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_uranium_ore_p_v6": {
+   "type": "noise-expression",
+   "sha256": "779f0e5c472cf6df02cfc7452a0883f1f20dfc337fe6dcc7fd2f075dc1152fce",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_uranium_ore_p_v7": {
+   "type": "noise-expression",
+   "sha256": "74fcfd759f2643280d9f7377b783aa86c17f25d0e7110f9fa051723bdc558f68",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_uranium_ore_r_v5": {
+   "type": "noise-expression",
+   "sha256": "7b81706fdda922da452250b83b07dae9a4ecf6a46792a1b4e04bbd6c6aa32238",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
+  },
+  "tn_ore_uranium_ore_r_v6": {
+   "type": "noise-expression",
+   "sha256": "f22d845f78fae0e9e77b55bf80c5d44c9b100a1fc0dea9a7e7287bd45b285faa",
+   "dump": "m1",
+   "slice": "extras",
+   "registered": "2026-11-12"
   }
  }
 }

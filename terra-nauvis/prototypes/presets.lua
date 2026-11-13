@@ -99,6 +99,9 @@ local scale = tonumber(settings.startup[cfg.settings.scale.name].value)
 local hotspot_amount = tonumber(settings.startup[cfg.settings.hotspot_amount.name].value) / cfg.hotspots.amount_percent
 -- The regional scarcity level (resources.scarcity): the setting's value as a number.
 local scarcity = cfg.resources.scarcity.levels[settings.startup[cfg.settings.regional_scarcity.name].value]
+-- Lean ore (resources.lean, 1.2.0): the option, baked as 1 or 0.
+local lean = settings.startup[cfg.settings[cfg.resources.lean.setting].name].value
+local lean_value = lean and 1 or 0
 if not scarcity then
   error("config.lua resources.scarcity.levels has no level for the setting's value")
 end
@@ -547,8 +550,15 @@ end
 -- table's forest and marsh aggregates, each under the first table's name.
 local function second_tables(map_key)
   local out = {}
-  for _, points in ipairs({cfg.hotspots_v2.points, cfg.regions_v2.points, cfg.hotspots_v3.points}) do
+  for _, points in ipairs({cfg.hotspots_v2.points, cfg.regions_v2.points, cfg.hotspots_v3.points,
+                           cfg.hotspots_v4.points}) do
     for k, value in pairs(points) do
+      out[k] = value
+    end
+  end
+  -- 1.2.0: lean ore (hotspots_v5) over the fourth set when the option is on
+  if lean then
+    for k, value in pairs(cfg.hotspots_v5.points) do
       out[k] = value
     end
   end
@@ -609,6 +619,7 @@ local function baked(map_key, v)
     [K.scale] = scale,
     [K.hotspot_amount] = hotspot_amount,
     [K.scarcity] = scarcity,
+    [K.lean] = lean_value,
     [K.north_snow] = north_snow,
     [K.geo] = v.geo_id,
     [v.cx] = v.city_offset[1],

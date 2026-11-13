@@ -1200,6 +1200,81 @@ end
 -- richness round it. Up to ref_scale the regular branch folds to the first wrapper's text.
 local RV = RS.richness_v2
 local ORE_CURVES = require("prototypes.ore_curves")
+-- The solid hotspot ore's richness term of a richness wrapper (richness_v2 below): hot and the height scale.
+local function solid_hot(gen, o)
+  local V3 = cfg.hotspots_v2.v3
+  local hot
+  -- the third table (hotspots_v2.v3): per_tile times vanilla's mean regular ore per tile here, times the body's
+  -- height (held to peak_cap of a body_tiles cone's mean, where bodies crowd) over that mean, times the richness
+  -- slider
+  local h = HROW[o.resource]
+  -- a far field's smaller bodies (ore_curves.lua body_scale) stand f ^ 0.5 as high: the mean height reads that
+  local lead = num(V3.rich_fit * V3.per_tile / ORE_CURVES.body_height(h))
+  if gen.fade then
+    -- 1.2.0 (config.lua hotspots_v4.fade): per_tile fades to 1 toward the spawn, by the start fade at the tile
+    lead = num(V3.rich_fit / ORE_CURVES.body_height(h)) .. " * " .. ORE_CURVES.faded_per_tile("rv_t")
+  end
+  local cap = num(V3.peak_cap * ORE_CURVES.body_height(h))
+  if gen.peak then
+    -- 1.2.0 (config.lua hotspots_v4.fade.peak): the peak cap fades with t to peak near the spawn, and peak_fit
+    -- gives a lone faded cone back the ore the lower cap takes, fading to 1 with t
+    local FD = cfg.hotspots_v4.fade
+    cap = num(ORE_CURVES.body_height(h)) .. " * (" .. num(FD.peak) .. " + " .. num(V3.peak_cap - FD.peak) ..
+      " * rv_t)"
+    lead = lead .. " * (" .. num(FD.peak_fit) .. " - " .. num(FD.peak_fit - 1) .. " * rv_t)"
+  end
+  local per = ORE_CURVES.per_tile(h)
+  if gen.lean then
+    -- lean ore (config.lua hotspots_v5): near_per_tile a tile inside r_in, per_tile times vanilla's (and a small
+    -- stone disc's factor) past r_out, in place of the faded multiple
+    local H5 = cfg.hotspots_v5
+    local far = num(V3.per_tile) .. " * " .. per .. (gen.rich_body and gen.rich_body[o.resource] and
+      (" * " .. gen.rich_body[o.resource]) or "")
+    lead = num(V3.rich_fit / ORE_CURVES.body_height(h)) .. " * (" .. num(cfg.hotspots_v4.fade.peak_fit) .. " - " ..
+      num(cfg.hotspots_v4.fade.peak_fit - 1) .. " * rv_t)"
+    local near = num(H5.near_per_tile) .. " * " .. ORE_CURVES.size_root(o.resource)
+    per = "(" .. near .. " + (" .. far .. " - " .. near .. ") * rv_t)"
+  end
+  -- (lean ore: a near body is no far field's smaller body, so its height reads whole inside r_in, where L is too
+  -- small for body_scale to read 1, blending to the far bodies' with t)
+  local fh = gen.lean and "(1 + (rv_fh - 1) * rv_t)" or "rv_fh"
+  hot = lead .. " / " .. fh .. " * " .. per ..
+    " * var('control:" .. o.resource .. ":richness') * min(" .. gen.bodies[o.resource] .. ", " ..
+    cap .. " * " .. fh .. ")"
+  -- the third table's factor on a small row's ore per tile (hotspots_v3 rich), 1 off its footprint
+  if gen.rich_body and gen.rich_body[o.resource] and not gen.lean then
+    hot = hot .. " * " .. gen.rich_body[o.resource]
+  end
+  return hot, ORE_CURVES.height_scale(h)
+end
+
+-- The crude oil hotspot's richness term of a richness wrapper (1.2.0, config.lua hotspots_v4.oil).
+local function oil_hot(gen, o)
+  local V3 = cfg.hotspots_v2.v3
+  local hot
+  -- 1.2.0 (config.lua hotspots_v4.oil): a well's yield, (1 + (per_tile - 1) * t) times vanilla's well here with
+  -- its height term read from the body's height over a body_tiles cone's mean (held as the solids' peak), times
+  -- the held richness factor and the richness slider
+  local h = HROW[o.resource]
+  local P = cfg.hotspots_v4.fade.peak
+  local bh = ORE_CURVES.body_height(h)
+  local ratio = num(gen.oil.rich_fit / bh) .. " * min(" .. gen.oil.body .. ", " .. num(bh) .. " * (" .. num(P) ..
+    " + " .. num(V3.peak_cap - P) .. " * rv_t))"
+  if gen.lean then
+    -- lean ore (config.lua hotspots_v5): near_well a well inside r_in, per_tile times vanilla's well past r_out,
+    -- the body's height over the mean on the whole
+    local H5 = cfg.hotspots_v5
+    local near = num(H5.near_well) .. " * " .. ORE_CURVES.size_root(o.resource)
+    hot = "var('control:" .. o.resource .. ":richness') * " .. ratio .. " * (" .. near .. " + (" ..
+      num(V3.per_tile) .. " * " .. ORE_CURVES.oil_well_base(h) .. " * " .. ORE_CURVES.oil_factor() .. " - " ..
+      near .. ") * rv_t)"
+  else
+    hot = ORE_CURVES.faded_per_tile("rv_t") .. " * " .. ORE_CURVES.oil_factor() .. " * var('control:" ..
+      o.resource .. ":richness') * " .. ORE_CURVES.oil_well_base(h, ratio)
+  end
+  return hot
+end
+
 local function richness_v2(W, keys, o, ap, rich, hs, gen)
   gen = gen or {name = o.r2, bodies = cfg.hotspots_v2.v3.bodies}
   local S = cfg.keys.scale
@@ -1226,24 +1301,28 @@ local function richness_v2(W, keys, o, ap, rich, hs, gen)
   end
   local hot = hs.r
   local fh
-  local V3 = cfg.hotspots_v2.v3
+  local LE = RS.lean
+  if gen.lean then
+    -- Lean ore (config.lua resources.lean): past the starting area the ordinary ore reads factor times the live
+    -- richness (the flattening kept), held between the floor and the cap per tile (crude oil per well), blended in
+    -- over half a starting radius more so vanilla's start patches stay as they are
+    -- (0 where the live richness is 0, so a hotspot's tiles read the hotspot's own)
+    -- (the floor and the cap follow the ore's richness and size sliders as vanilla's ore per tile does)
+    local sl = ORE_CURVES.per_tile_sliders(o.resource)
+    local lean = FLUID[o.resource] and
+      ("clamp(" .. num(LE.oil.factor) .. " * " .. base .. ", " .. num(LE.oil.floor) .. " * " .. sl .. ", " ..
+       num(LE.oil.cap) .. " * " .. sl .. ") * (live_value > 0)") or
+      ("clamp(" .. num(LE.factor) .. " * " .. base .. ", " .. num(LE.floor[o.resource]) .. " * " .. sl .. ", " ..
+       num(LE.cap) .. " * " .. sl .. ") * (live_value > 0)")
+    base = "(" .. base .. " + (" .. lean .. " - (" .. base .. ")) * rv_u)"
+  end
   if not FLUID[o.resource] and gen.bodies[o.resource] then
-    -- the third table (hotspots_v2.v3): per_tile times vanilla's mean regular ore per tile here, times the body's
-    -- height (held to peak_cap of a body_tiles cone's mean, where bodies crowd) over that mean, times the richness
-    -- slider
-    local h = HROW[o.resource]
-    -- a far field's smaller bodies (ore_curves.lua body_scale) stand f ^ 0.5 as high: the mean height reads that
-    hot = num(V3.rich_fit * V3.per_tile / ORE_CURVES.body_height(h)) .. " / rv_fh * " .. ORE_CURVES.per_tile(h) ..
-      " * var('control:" .. o.resource .. ":richness') * min(" .. gen.bodies[o.resource] .. ", " ..
-      num(V3.peak_cap * ORE_CURVES.body_height(h)) .. " * rv_fh)"
-    -- the third table's factor on a small row's ore per tile (hotspots_v3 rich), 1 off its footprint
-    if gen.rich_body and gen.rich_body[o.resource] then
-      hot = hot .. " * " .. gen.rich_body[o.resource]
-    end
-    fh = ORE_CURVES.height_scale(h)
+    hot, fh = solid_hot(gen, o)
   elseif not FLUID[o.resource] then
     hot = hs.r .. " * max(1, " .. num(RV.lift) .. " * " .. F("rv_d") .. " / (" .. F("distance") .. ") ^ " ..
       num(RV.cube_root) .. ")"
+  elseif gen.oil then
+    hot = oil_hot(gen, o)
   end
   local w = wrapper(gen.name, rich, ap, "if(" .. on .. ", max(rv_base, " .. hot .. "), rv_base)")
   if string.find(base .. " " .. hot, "rv_d", 1, true) then
@@ -1255,6 +1334,12 @@ local function richness_v2(W, keys, o, ap, rich, hs, gen)
   end
   if fh then
     w.local_expressions.rv_fh = fh
+  end
+  if gen.fade then
+    w.local_expressions.rv_t = ORE_CURVES.fade("distance")
+  end
+  if gen.lean then
+    w.local_expressions.rv_u = "clamp(2 * distance / " .. num(RS.lean.start_tiles) .. " - 2, 0, 1)"
   end
   W[#W + 1] = w
   keys[o.richness] = gen.name
@@ -1302,6 +1387,19 @@ local function probability_v3(W, keys, o, gen)
   keys[o.probability] = gen.name
 end
 
+-- 1.2.0's crude oil probability wrapper (config.lua hotspots_v4.oil): its fifth body's wells by the same random
+-- penalty the first table's oil body takes, with the ridge clearance.
+local function oil_probability(W, keys, o, body, name)
+  local F = HROW[o.resource].fluid
+  W[#W + 1] = {type = "noise-expression", name = name, expression = "if(" .. on .. ", max(" .. o.p_v1 .. ", clamp(" ..
+               body .. ", 0, 1) * random_penalty{x = x, y = y, source = 1, amplitude = " .. num(F.penalty) ..
+               ", seed = " .. num(F.seed) .. "} * " .. clear .. "), " .. o.p_v1 .. ")"}
+  keys[o.probability] = name
+end
+
+-- Lean ore (config.lua resources.lean): whether the option is on, read in the data stage as the presets read it.
+local LEAN_ON = settings.startup[cfg.settings[RS.lean.setting].name].value
+
 -- Each Earth ore: the probability wrapper's next version and the richness wrapper.
 local function ore_wrappers(W, keys)
   for _, o in ipairs(RS.ores) do
@@ -1328,6 +1426,40 @@ local function ore_wrappers(W, keys)
         local H3 = cfg.hotspots_v3
         richness_v2(W, keys, o, ap, rich, hs, {name = o.r3, bodies = H3.bodies, rich_body = H3.rich_body})
         probability_v3(W, keys, o, {name = o.p4, bodies = H3.bodies, lombok_row = RV.lombok.row3})
+      end
+      -- 1.2.0: the same over the sixth solid bodies, with the start fade's ore per tile and the faded peak, and crude
+      -- oil on the solid rule over its fifth body (config.lua hotspots_v4)
+      if o.r5 then
+        local H4 = cfg.hotspots_v4
+        if FLUID[o.resource] then
+          local O = H4.oil
+          richness_v2(W, keys, o, ap, rich, hs, {name = o.r5, bodies = {}, fade = true, oil = O})
+          oil_probability(W, keys, o, O.body, o.p5)
+        else
+          richness_v2(W, keys, o, ap, rich, hs, {name = o.r5, bodies = H4.bodies, rich_body = H4.rich_body,
+                                                  fade = true, peak = true})
+          probability_v3(W, keys, o, {name = o.p6, bodies = H4.bodies, lombok_row = RV.lombok.row3})
+        end
+      end
+      -- 1.2.0: lean ore (config.lua resources.lean, hotspots_v5), the keys named only with the option on
+      if o.r6 then
+        local H4, H5 = cfg.hotspots_v4, cfg.hotspots_v5
+        local lean_keys = {}
+        if FLUID[o.resource] then
+          local O = H4.oil
+          richness_v2(W, lean_keys, o, ap, rich, hs, {name = o.r6, bodies = {}, fade = true, lean = true,
+                                                       oil = {rich_fit = O.rich_fit, body = H5.oil.body}})
+          oil_probability(W, lean_keys, o, H5.oil.body, o.p6)
+        else
+          richness_v2(W, lean_keys, o, ap, rich, hs, {name = o.r6, bodies = H5.bodies, rich_body = H5.rich_body,
+                                                       fade = true, peak = true, lean = true})
+          probability_v3(W, lean_keys, o, {name = o.p7, bodies = H5.bodies, lombok_row = RV.lombok.row3})
+        end
+        if LEAN_ON then
+          for k, v in pairs(lean_keys) do
+            keys[k] = v
+          end
+        end
       end
     elseif ap then
       log(cfg.identity.title .. ": " .. o.resource .. " has no wrapper this version builds; its ore keeps no " ..
@@ -1399,6 +1531,49 @@ local function enemy_wrapper(W, keys)
     W[#W + 1] = {type = "noise-expression", name = H3.scatter, expression = W[#W - 1].expression,
                  local_expressions = L3}
     keys[cfg.keys.enemy] = H3.scatter
+    -- 1.2.0: the nests over the faded layer, and the scatter off the sixth solid bodies (config.lua hotspots_v4)
+    local H4 = cfg.hotspots_v4
+    local scatter3 = W[#W]
+    W[#W + 1] = wrapper(H4.nests, live, ebp, "if(" .. on .. ", if(" .. H4.enemy_layer ..
+      " > " .. num(H2.nests.outside) .. ", " .. H4.enemy_layer .. ", live_value), live_value)")
+    local solid4 = {}
+    for _, resource in ipairs(RS.ramped) do
+      solid4[#solid4 + 1] = H4.bodies[resource]
+    end
+    solid4[#solid4 + 1] = H4.bodies["uranium-ore"]
+    local L4 = {}
+    for k, v in pairs(scatter3.local_expressions) do
+      L4[k] = v
+    end
+    L4.base = H4.nests
+    L4.fit = "if(" .. on .. ", if(" .. H4.enemy_layer .. " > " .. num(H2.nests.outside) .. ", " ..
+      num(SC.footprint_share) .. ", 1), 1)"
+    L4.ore = "if(" .. on .. ", max(" .. table.concat(solid4, ", ") .. ") > " .. num(-SC.ore_margin) .. ", 0)"
+    W[#W + 1] = {type = "noise-expression", name = H4.scatter, expression = scatter3.expression,
+                 local_expressions = L4}
+    keys[cfg.keys.enemy] = H4.scatter
+    -- 1.2.0: lean ore (config.lua hotspots_v5): the nests over its layer, the scatter off its solid bodies
+    local H5 = cfg.hotspots_v5
+    W[#W + 1] = wrapper(H5.nests, live, ebp, "if(" .. on .. ", if(" .. H5.enemy_layer ..
+      " > " .. num(H2.nests.outside) .. ", " .. H5.enemy_layer .. ", live_value), live_value)")
+    local solid5 = {}
+    for _, resource in ipairs(RS.ramped) do
+      solid5[#solid5 + 1] = H5.bodies[resource]
+    end
+    solid5[#solid5 + 1] = H5.bodies["uranium-ore"]
+    local L5 = {}
+    for k, v in pairs(L4) do
+      L5[k] = v
+    end
+    L5.base = H5.nests
+    L5.fit = "if(" .. on .. ", if(" .. H5.enemy_layer .. " > " .. num(H2.nests.outside) .. ", " ..
+      num(SC.footprint_share) .. ", 1), 1)"
+    L5.ore = "if(" .. on .. ", max(" .. table.concat(solid5, ", ") .. ") > " .. num(-SC.ore_margin) .. ", 0)"
+    W[#W + 1] = {type = "noise-expression", name = H5.scatter, expression = scatter3.expression,
+                 local_expressions = L5}
+    if LEAN_ON then
+      keys[cfg.keys.enemy] = H5.scatter
+    end
   end
 end
 
@@ -1458,6 +1633,13 @@ keys[RS.ore_trees.plants.open] = RS.ore_trees.plants.open_v2
 -- 0.3.1: the shares follow the third table's bodies
 keys[RS.ore_trees.open] = RS.ore_trees.open_v3
 keys[RS.ore_trees.plants.open] = RS.ore_trees.plants.open_v3
+-- 1.2.0: the shares follow the sixth solid bodies, with lean ore the lean ones
+keys[RS.ore_trees.open] = RS.ore_trees.open_v5
+keys[RS.ore_trees.plants.open] = RS.ore_trees.plants.open_v5
+if LEAN_ON then
+  keys[RS.ore_trees.open] = RS.ore_trees.open_v6
+  keys[RS.ore_trees.plants.open] = RS.ore_trees.plants.open_v6
+end
 if #W > 0 then
   data:extend(W)
 end

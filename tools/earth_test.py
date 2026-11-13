@@ -11304,7 +11304,13 @@ def re_dump_facts(cfg, d1, frozen):
         pen = preset_pen(d1, p["name"])
         ac = preset_controls(d1, p["name"])
         for o in RS["ores"]:
-            want_p, want_r = o.get("p4") or o.get("p3") or o["p"], o.get("r3") or o.get("r2") or o["r"]
+            lean = (RS.get("lean") and cfg["settings"][RS["lean"]["setting"]]["default_value"]) and o.get("r6")
+            # the lean wrapper is p7 for the solids and p6 for crude oil, which bakes p5 with the option off
+            lean_p = o.get("p7") or (o.get("p6") if o.get("p5") else None)
+            off_p = (o.get("p6") if o.get("p7") else None) or o.get("p5") or o.get("p6") or o.get("p4") or \
+                o.get("p3") or o["p"]
+            want_p = (lean and lean_p) or off_p
+            want_r = (lean and o["r6"]) or o.get("r5") or o.get("r3") or o.get("r2") or o["r"]
             if pen.get(o["probability"]) != want_p or pen.get(o["richness"]) != want_r:
                 fails.append(f"{p['name']}: {o['resource']} names {pen.get(o['probability'])!r} and "
                              f"{pen.get(o['richness'])!r}, want {want_p} and {want_r}")

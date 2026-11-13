@@ -644,6 +644,7 @@ local REN = {
   OFFSHORE_R = NOISE .. "offshore_r" .. RE_V,
   K_HS_AMOUNT = NOISE .. "hotspot_amount",
   K_SCARCITY = NOISE .. "scarcity",
+  K_LEAN = NOISE .. "lean_ore",
   ORE_FN = ORE .. "all_patches" .. RE_V,
   ORE_GAP = ORE .. "gap" .. RE_V,
   ORE_PATCH_IRON = ORE .. "iron_ore_patches" .. RE_V,
@@ -1139,7 +1140,7 @@ return {
     -- 1.0.0: the name the mod list and the mod portal show (info.json title, locale mod-name). `title` above
     -- stays the short name that starts every log and chat line.
     mod_title = "Terra Nauvis: Earth Maps",
-    version = "1.1.0",
+    version = "1.2.0",
     author = "Jake Mismas",
     homepage = "https://github.com/jakemismas/factorio-terra-nauvis",
     factorio_version = "2.1",
@@ -1299,12 +1300,18 @@ return {
       name = ID .. "-hotspot-amount", type = "string-setting", setting_type = "startup", default_value = "100",
       allowed_values = {"100"}, order = "c-aa", hidden = true,
     },
+    -- Lean ore (1.2.0, default on): ordinary patches hold about 500 k within 1,000 tiles of the spawn and at most
+    -- 5 M anywhere, hotspots up to ten times that (resources.lean, hotspots_v5). Read in the data stage: the presets
+    -- name the lean wrappers and bodies over the 1.2.0 ones, and bake the choice through tn_lean_ore (1 on, 0 off).
+    lean_ore = {
+      name = ID .. "-lean-ore", type = "bool-setting", setting_type = "startup", default_value = true, order = "c-ab",
+    },
     -- Regional scarcity (0.3.0, default medium): past about 1,500 tiles from the spawn at scale
     -- 12, regular ore outside each resource's provinces keeps a share of its patches (resources.scarcity). Baked
     -- per save through tn_scarcity (0 off, 1 medium, 2 strong).
     regional_scarcity = {
       name = ID .. "-regional-scarcity", type = "string-setting", setting_type = "startup", default_value = "medium",
-      allowed_values = {"off", "medium", "strong"}, order = "c-ab",
+      allowed_values = {"off", "medium", "strong"}, order = "c-ac",
     },
     -- Inland lakes (default off): spawn-cities'
     -- sparse random inland lakes. Off leaves the spawn lake at the chosen city, the rivers and the real
@@ -1372,7 +1379,7 @@ return {
     },
   },
   setting_order = {"scale", "koppen", "spawn_city_europe", "spawn_city_atlantic", "spawn_city_olde_world", "canals",
-                   "great_forests", "ridges", "hotspots", "hotspot_amount", "regional_scarcity",
+                   "great_forests", "ridges", "hotspots", "hotspot_amount", "lean_ore", "regional_scarcity",
                    "inland_lakes",
                    "destroyed_europe", "blue_corrupted", "moscow_zone", "north_snow", "exact_coast", "city_markers"},
 
@@ -1430,7 +1437,7 @@ return {
     cliff_elevation = "cliff_elevation", cliffiness = "cliffiness",
     -- resources-enemies: the hotspots toggle, each map's offshore stamp key and the enemy property
     hotspots = REN.K_HOTSPOTS, enemy = "enemy_base_probability", hotspot_amount = REN.K_HS_AMOUNT,
-    scarcity = REN.K_SCARCITY, north_snow = CT.K_NORTH_SNOW,
+    scarcity = REN.K_SCARCITY, north_snow = CT.K_NORTH_SNOW, lean = REN.K_LEAN,
     fields = {europe = REN.EU_FIELDS_KEY, atlantic = REN.AT_FIELDS_KEY, olde_world = REN.OW_FIELDS_KEY},
     -- edge-and-lakes: the inland lakes switch (a toggle)
     inland_lakes = ELN.K_INLAND_LAKES,
@@ -1817,6 +1824,8 @@ return {
                  "default-offshore-oil-patches", REN.K_HS_AMOUNT,
                  -- 0.3.0: the regional scarcity level
                  REN.K_SCARCITY,
+                 -- 1.2.0: the lean ore option (1 on, 0 off)
+                 REN.K_LEAN,
                  -- 0.3.1: the north snow level
                  CT.K_NORTH_SNOW,
                  -- edge-and-lakes: the inland lakes switch and the new versions' city offset names
@@ -2163,6 +2172,40 @@ return {
                ORE .. "copper_ore_p_v4", ORE .. "coal_p_v4", ORE .. "stone_p_v4", ORE .. "uranium_ore_p_v4",
                NOISE .. "ore_open_v3", NOISE .. "ore_open_plants_v3"},
       files = {"prototypes/tables/hotspots_v3.lua"},
+    },
+    -- The start fade and the scale bonus (1.2.0, hotspots_v4): the solid ores' sixth bodies and crude oil's fifth over
+    -- the third table's rows, the named terms they read, the enemy layer and nests that fade with them, the trees'
+    -- shares and the wrappers. No geography: 1.2.0's presets name them over the third table's.
+    {
+      release = "1.2.0",
+      names = {HS .. "iron_ore_v6", HS .. "copper_ore_v6", HS .. "coal_v6", HS .. "stone_v6", HS .. "uranium_ore_v6",
+               HS .. "crude_oil_v5", HS .. "iron_ore_qty_v6", HS .. "copper_ore_qty_v6", HS .. "coal_qty_v6",
+               HS .. "stone_qty_v6", HS .. "uranium_ore_qty_v6", HS .. "crude_oil_qty_v5", HS .. "fade_v1",
+               HS .. "iron_ore_large_v1", HS .. "copper_ore_large_v1", HS .. "coal_large_v1", HS .. "stone_large_v1",
+               HS .. "uranium_ore_large_v1", HS .. "crude_oil_large_v1", HS .. "iron_ore_unit_v1",
+               HS .. "copper_ore_unit_v1", HS .. "coal_unit_v1", HS .. "stone_unit_v1", HS .. "uranium_ore_unit_v1",
+               HS .. "crude_oil_unit_v1", NOISE .. "enemy_layer_v5", NOISE .. "enemy_v8", NOISE .. "enemy_v9",
+               ORE .. "iron_ore_r_v5", ORE .. "copper_ore_r_v5", ORE .. "coal_r_v5", ORE .. "stone_r_v5",
+               ORE .. "uranium_ore_r_v5", ORE .. "crude_oil_r_v5", ORE .. "iron_ore_p_v6", ORE .. "copper_ore_p_v6",
+               ORE .. "coal_p_v6", ORE .. "stone_p_v6", ORE .. "uranium_ore_p_v6", ORE .. "crude_oil_p_v5",
+               NOISE .. "ore_open_v5", NOISE .. "ore_open_plants_v5"},
+    },
+    -- Lean ore (1.2.0, resources.lean and hotspots_v5): the ordinary ore's lean richness wrappers, the lean hotspot
+    -- bodies, their quantities and unit terms, the faded stone factor, the enemy layer and nests, the trees' shares
+    -- and the probability wrappers. No geography: presets with the option on name them.
+    {
+      release = "1.2.0",
+      names = {ORE .. "iron_ore_r_v6", ORE .. "copper_ore_r_v6", ORE .. "coal_r_v6", ORE .. "stone_r_v6",
+               ORE .. "uranium_ore_r_v6", ORE .. "crude_oil_r_v6", ORE .. "iron_ore_p_v7", ORE .. "copper_ore_p_v7",
+               ORE .. "coal_p_v7", ORE .. "stone_p_v7", ORE .. "uranium_ore_p_v7", ORE .. "crude_oil_p_v6",
+               HS .. "iron_ore_v7", HS .. "copper_ore_v7", HS .. "coal_v7", HS .. "stone_v7", HS .. "uranium_ore_v7",
+               HS .. "crude_oil_v6", HS .. "iron_ore_qty_v7", HS .. "copper_ore_qty_v7", HS .. "coal_qty_v7",
+               HS .. "stone_qty_v7", HS .. "uranium_ore_qty_v7", HS .. "crude_oil_qty_v6", HS .. "iron_ore_unit_v2",
+               HS .. "copper_ore_unit_v2", HS .. "coal_unit_v2", HS .. "stone_unit_v2", HS .. "uranium_ore_unit_v2",
+               HS .. "crude_oil_unit_v2", HS .. "stone_rich_v2", NOISE .. "enemy_layer_v6", NOISE .. "enemy_v10",
+               NOISE .. "enemy_v11", NOISE .. "ore_open_v6", NOISE .. "ore_open_plants_v6", HS .. "iron_ore_near_v1",
+               HS .. "copper_ore_near_v1", HS .. "coal_near_v1", HS .. "stone_near_v1", HS .. "uranium_ore_near_v1",
+               HS .. "crude_oil_near_v1"},
     },
     -- Ore at vanilla's measure: regular patches on vanilla's function with the footprint gap,
     -- and the solid hotspots' third version (resources.natural.fn2, hotspots_v2.v3); 0.3.0's presets name them.
@@ -3156,26 +3199,37 @@ return {
     ramped = {"iron-ore", "copper-ore", "coal", "stone"},
     -- r2: 0.3.0's richness wrapper (richness_v2), and p3 its probability wrapper of a solid ore (edge_v1, lombok).
     -- r3 and p4: 0.3.1's, which read the fourth solid bodies (hotspots_v3.bodies) of the third hotspot table.
+    -- p6 and r5: 1.2.0's, which read the sixth solid bodies (hotspots_v4.bodies), the start fade's ore per tile and
+    -- the faded peak, and crude oil's p5 and r5 over its fifth body (hotspots_v4.oil).
+    -- p7 and r6 (crude oil p6 and r6): 1.2.0's lean ore (resources.lean, hotspots_v5), named with the option on.
     ores = {
       {resource = "iron-ore", probability = "entity:iron-ore:probability", richness = "entity:iron-ore:richness",
        p_v1 = RDN.ORE_IRON, p = REN.ORE_IRON_P2, r = REN.ORE_IRON_R, r2 = ORE .. "iron_ore_r_v2",
-       p3 = ORE .. "iron_ore_p_v3", r3 = ORE .. "iron_ore_r_v3", p4 = ORE .. "iron_ore_p_v4"},
+       p3 = ORE .. "iron_ore_p_v3", r3 = ORE .. "iron_ore_r_v3", p4 = ORE .. "iron_ore_p_v4",
+       p6 = ORE .. "iron_ore_p_v6", r5 = ORE .. "iron_ore_r_v5", p7 = ORE .. "iron_ore_p_v7",
+       r6 = ORE .. "iron_ore_r_v6"},
       {resource = "copper-ore", probability = "entity:copper-ore:probability",
        richness = "entity:copper-ore:richness", p_v1 = RDN.ORE_COPPER, p = REN.ORE_COPPER_P2, r = REN.ORE_COPPER_R,
        r2 = ORE .. "copper_ore_r_v2", p3 = ORE .. "copper_ore_p_v3", r3 = ORE .. "copper_ore_r_v3",
-       p4 = ORE .. "copper_ore_p_v4"},
+       p4 = ORE .. "copper_ore_p_v4", p6 = ORE .. "copper_ore_p_v6", r5 = ORE .. "copper_ore_r_v5",
+       p7 = ORE .. "copper_ore_p_v7", r6 = ORE .. "copper_ore_r_v6"},
       {resource = "coal", probability = "entity:coal:probability", richness = "entity:coal:richness",
        p_v1 = RDN.ORE_COAL, p = REN.ORE_COAL_P2, r = REN.ORE_COAL_R, r2 = ORE .. "coal_r_v2", p3 = ORE .. "coal_p_v3",
-       r3 = ORE .. "coal_r_v3", p4 = ORE .. "coal_p_v4"},
+       r3 = ORE .. "coal_r_v3", p4 = ORE .. "coal_p_v4", p6 = ORE .. "coal_p_v6", r5 = ORE .. "coal_r_v5",
+       p7 = ORE .. "coal_p_v7", r6 = ORE .. "coal_r_v6"},
       {resource = "stone", probability = "entity:stone:probability", richness = "entity:stone:richness",
        p_v1 = RDN.ORE_STONE, p = REN.ORE_STONE_P2, r = REN.ORE_STONE_R, r2 = ORE .. "stone_r_v2",
-       p3 = ORE .. "stone_p_v3", r3 = ORE .. "stone_r_v3", p4 = ORE .. "stone_p_v4"},
+       p3 = ORE .. "stone_p_v3", r3 = ORE .. "stone_r_v3", p4 = ORE .. "stone_p_v4", p6 = ORE .. "stone_p_v6",
+       r5 = ORE .. "stone_r_v5", p7 = ORE .. "stone_p_v7", r6 = ORE .. "stone_r_v6"},
       {resource = "uranium-ore", probability = "entity:uranium-ore:probability",
        richness = "entity:uranium-ore:richness", p_v1 = RDN.ORE_URANIUM, p = REN.ORE_URANIUM_P2, r = REN.ORE_URANIUM_R,
        r2 = ORE .. "uranium_ore_r_v2", p3 = ORE .. "uranium_ore_p_v3", r3 = ORE .. "uranium_ore_r_v3",
-       p4 = ORE .. "uranium_ore_p_v4"},
+       p4 = ORE .. "uranium_ore_p_v4", p6 = ORE .. "uranium_ore_p_v6", r5 = ORE .. "uranium_ore_r_v5",
+       p7 = ORE .. "uranium_ore_p_v7", r6 = ORE .. "uranium_ore_r_v6"},
       {resource = "crude-oil", probability = "entity:crude-oil:probability", richness = "entity:crude-oil:richness",
-       p_v1 = RDN.ORE_OIL, p = REN.ORE_OIL_P2, r = REN.ORE_OIL_R, r2 = ORE .. "crude_oil_r_v2"},
+       p_v1 = RDN.ORE_OIL, p = REN.ORE_OIL_P2, r = REN.ORE_OIL_R, r2 = ORE .. "crude_oil_r_v2",
+       p5 = ORE .. "crude_oil_p_v5", r5 = ORE .. "crude_oil_r_v5", p6 = ORE .. "crude_oil_p_v6",
+       r6 = ORE .. "crude_oil_r_v6"},
     },
     -- 0.3.0's richness (new worlds; data-final-fixes.lua ore_wrappers). The game's richness grows with the tiles to the
     -- spawn, (rich_offset + d) / rich_span, with no cap, so past ref_scale a place read ref_scale / scale times as rich
@@ -3217,11 +3271,32 @@ return {
     -- place, so a world made with v1 keeps it.
     ore_trees = {key = NOISE .. "ore_trees", open = NOISE .. "ore_open_v1", open_v2 = NOISE .. "ore_open_v2",
                  margin = 2500, floor = 0.08,
-                 open_v3 = NOISE .. "ore_open_v3",
+                 open_v3 = NOISE .. "ore_open_v3", open_v5 = NOISE .. "ore_open_v5", open_v6 = NOISE .. "ore_open_v6",
                  plants = {open = NOISE .. "ore_open_plants_v1", open_v2 = NOISE .. "ore_open_plants_v2",
-                           open_v3 = NOISE .. "ore_open_plants_v3", margin = 300,
+                           open_v3 = NOISE .. "ore_open_plants_v3", open_v5 = NOISE .. "ore_open_plants_v5",
+                           open_v6 = NOISE .. "ore_open_plants_v6",
+                           margin = 300,
                            floor = 0.35,
                            keep = {"rock", "decal", "crater", "puddle", "stone"}, drop = {}}},
+    -- Lean ore (1.2.0, the lean_ore option, default on): ordinary ore holds a fraction of vanilla's. Past the
+    -- starting resources (start_tiles, blended in over half that radius more, so vanilla's start patches stay as they
+    -- are) the richness wrappers' next versions read factor times the live richness (the far flattening kept), held
+    -- between floor and cap per tile where the live richness places ore: the floor per ore is what a typical patch
+    -- within 1,000 tiles (its tiles as vanilla's, since the outlines are vanilla's own and do not move) holds about
+    -- 500 k over (the clamp is per tile, so a patch's mean sits a little over its floor), and cap times the widest
+    -- vanilla patch (2,800 tiles over 15 seeds) stays under 5 M. Crude oil the same in yield per well, its floor
+    -- the game's 20 percent. Regional scarcity and the hotspot gap stay. Hotspots under the option: hotspots_v5.
+    lean = {
+      key = REN.K_LEAN,
+      setting = "lean_ore",
+      factor = 0.1,
+      floor = {["iron-ore"] = 700, ["copper-ore"] = 700, coal = 750, stone = 1000, ["uranium-ore"] = 1000},
+      cap = 1500,
+      oil = {factor = 0.1, floor = 60000, cap = 280000},
+      -- vanilla's starting resource radius, fixed whatever the starting area slider (the base game's noise
+      -- functions place the starting patches inside it): the lean blend starts here, and no near body stands inside
+      start_tiles = 150,
+    },
     offshore = {resource = "offshore-oil", probability = "entity:offshore-oil:probability",
                 richness = "entity:offshore-oil:richness", p = REN.OFFSHORE_P, r = REN.OFFSHORE_R},
     sea = {name = REN.SEA, threshold_px = 7},
@@ -3658,6 +3733,179 @@ return {
               [REN.HS_COAL] = HS .. "coal_v4", [REN.HS_STONE] = HS .. "stone_v4",
               [REN.HS_URANIUM] = HS .. "uranium_ore_v4", [REN.ORE_GAP] = NOISE .. "ore_gap_v3",
               [REN.ENEMY_LAYER] = NOISE .. "enemy_layer_v3"},
+  },
+
+  -- The start fade and the scale bonus (1.2.0, new worlds, release versioning rule 14). A field the third table
+  -- places next to the spawn held its full design a minute's walk away, and at scales over 6 the fields stand farther
+  -- apart. Here the third table's rows and solid method (hotspots_v2.v3) stay as they are, with two terms more, d the
+  -- distance at a candidate or a tile and L(d) vanilla's large patch there (ore_curves.lua large):
+  --   bonus  the design H = min(K * L(d), total_cap[K]) * b, b = max(1, sqrt(scale / from_scale)): 1.41 at 12, 2 at
+  --          24, 1 at 6 and below, so a far field keeps its worth on the wider map, its cap included
+  --   fade   t = s * s * (3 - 2 * s), s = clamp((d - r_in * R) / ((r_out - r_in) * R), 0, 1), R the game's
+  --          starting_area_radius (150 tiles at the default Starting area slider, so 1,000 and 3,000 tiles there):
+  --          a field holds amount * (min(H, near * L) + max(H - near * L, 0) * t) and its ore per tile is
+  --          (1 + (per_tile - 1) * t) times P(d), so inside r_in it is a normal regular patch of its distance at
+  --          vanilla's ore per tile, and past r_out the design times the bonus. A field's measured total scatters
+  --          round its design with its draws, land and blob (the third version's own fields at scale 6 held 0.45 to
+  --          1.62 of theirs, and a faded field's few bodies lose less to overlap than many do): near holds the
+  --          highest measured faded field at about L, the most a field there may hold, and the typical one at about
+  --          0.7 L, between vanilla's typical and large patch. A faded field's start disc shrinks toward the disc of
+  --          per_cone candidates a cone as t falls (to the third version's at t = 1), so its few bodies stand
+  --          together as one field, as the full field's many do, and not strewn over the whole footprint.
+  --          Its extra nests fade by t (expressions/enemies.lua, the layer's density), so inside r_in the live bases
+  --          alone stand on it.
+  --   peak   a faded tile reads at most (peak + (peak_cap - peak) * t) times a body_tiles cone's mean height
+  --          (hotspots_v2.v3 peak_cap at t = 1), so bodies crowded in a small disc near the spawn (scale 1) do not
+  --          stack into ore much richer than pt * P. The lower cap took a fifth of a lone faded field's ore per tile
+  --          (the blob lifts most of a body past 1.5 heights), which peak_fit, fading to 1 with t, gives back.
+  --   oil    crude oil fields on the same rule (the second table's area rule grew them with the square of the
+  --          scale), under names of their own: L is vanilla's large oil field, large * Q(min(d, cap_distance)) *
+  --          f(min(d, cap_distance)), Q vanilla's regular crude oil spot quantity and f its richness factor (vanilla
+  --          measured over 10 to 45 seeds a band: within 4 percent of the p90 field from 1,000 tiles out, under it
+  --          nearer). A well yields (1 + (per_tile - 1) * t) times vanilla's mean well there, (penalty / (pi rq^2) *
+  --          Q(d)^(1/3) + additional) * f(d), held to flat_ratio / per_tile times the regular well at the flattened
+  --          distance, as the solids' ore per tile is held. Wells stand `density` a tile inside a body (vanilla's
+  --          random penalty, so vanilla's spacing, the well's box keeping them 3 tiles apart). K, total_cap (oil's K *
+  --          L stays under it), the fade, the start disc and the bonus are the solids', the size draw the far
+  --          fields' (hotspots_v2.v3.far.size: a field of one or two cones read 0.2 to 1.5 of its design on the
+  --          near one, as its draws fell). area_fit and rich_fit take
+  --          back what the room and the wells' draw take (measured, fields held 0.74 to 1.46 of their design with
+  --          area_fit 1.2), near is the faded share (0.6, as the solids', for that scatter), and blob 0 leaves
+  --          the cones plain (with the shared blob the Volga-Ural field at scale 6 held 0.4 of its design, its
+  --          bodies half their area, so the wells' count, which follows area, rode on the blob). The nests' layer
+  --          clears round the oil body's wells. Offshore rows keep their rule.
+  -- Footprints, rows, rivals, the blob, the grain, the lobes, the gap and the stone factor are the third table's (gap
+  -- and rich_body name its bodies, which read footprints alone), and a far field's body size (ore_curves.lua
+  -- body_scale) is the third version's. The solid ores' sixth bodies, crude oil's fifth, the enemy layer and nests,
+  -- the trees' shares and the probability and richness wrappers stand under new names, which 1.2.0's presets name
+  -- in their place.
+  hotspots_v4 = {
+    fade = {r_in = 1000 / 150, r_out = 3000 / 150, near = 0.6, per_cone = 4, peak = 1.5, peak_fit = 1.2},
+    bonus = {from_scale = 6},
+    enemy_layer = NOISE .. "enemy_layer_v5",
+    gap = NOISE .. "ore_gap_v3",
+    nests = NOISE .. "enemy_v8",
+    scatter = NOISE .. "enemy_v9",
+    bodies = {["iron-ore"] = HS .. "iron_ore_v6", ["copper-ore"] = HS .. "copper_ore_v6", coal = HS .. "coal_v6",
+              stone = HS .. "stone_v6", ["uranium-ore"] = HS .. "uranium_ore_v6"},
+    parts = {["iron-ore"] = {qty = HS .. "iron_ore_qty_v6"}, ["copper-ore"] = {qty = HS .. "copper_ore_qty_v6"},
+             coal = {qty = HS .. "coal_qty_v6"}, stone = {qty = HS .. "stone_qty_v6"},
+             ["uranium-ore"] = {qty = HS .. "uranium_ore_qty_v6"}},
+    rich_body = {stone = HS .. "stone_rich_v1"},
+    oil = {body = HS .. "crude_oil_v5", qty = HS .. "crude_oil_qty_v5", large = 1.056, density = 1 / 96,
+           area_fit = 1.2, rich_fit = 1, near = 0.6, blob = 0},
+    -- terms every row of a body reads, named so the game, which copies a local at every read, reads each once:
+    -- the start fade t, and per resource L and the cones one L asks for at the faded ore per tile (`unit`)
+    terms = {fade = HS .. "fade_v1",
+             large = {["iron-ore"] = HS .. "iron_ore_large_v1", ["copper-ore"] = HS .. "copper_ore_large_v1",
+                      coal = HS .. "coal_large_v1", stone = HS .. "stone_large_v1",
+                      ["uranium-ore"] = HS .. "uranium_ore_large_v1", ["crude-oil"] = HS .. "crude_oil_large_v1"},
+             unit = {["iron-ore"] = HS .. "iron_ore_unit_v1", ["copper-ore"] = HS .. "copper_ore_unit_v1",
+                     coal = HS .. "coal_unit_v1", stone = HS .. "stone_unit_v1",
+                     ["uranium-ore"] = HS .. "uranium_ore_unit_v1", ["crude-oil"] = HS .. "crude_oil_unit_v1"}},
+    points = {[REN.HS_IRON] = HS .. "iron_ore_v6", [REN.HS_COPPER] = HS .. "copper_ore_v6",
+              [REN.HS_COAL] = HS .. "coal_v6", [REN.HS_STONE] = HS .. "stone_v6",
+              [REN.HS_URANIUM] = HS .. "uranium_ore_v6", [REN.HS_OIL] = HS .. "crude_oil_v5",
+              [REN.ORE_GAP] = NOISE .. "ore_gap_v3", [REN.ENEMY_LAYER] = NOISE .. "enemy_layer_v5"},
+  },
+
+  -- Lean hotspots (1.2.0, the lean_ore option, resources.lean): the fourth set's method with the design and the faded
+  -- field set in ore, not in multiples of L. A field's full design is C[K] * b (caps by K, the scale bonus b) and
+  -- its spots carry t of it. Its near field is one body at the row's jittered centre (near), a cone of
+  -- near_plateau times the peak cap's height, so its middle reads the capped ore per tile, sized to hold
+  -- near_total (crude oil oil_near_total, wells at random in it), fading out with t and in from vanilla's starting
+  -- resource radius to twice it (resources.lean.start_tiles). A spot region pools the targets of every row in it,
+  -- so spots near a start could deal one row a neighbour's share: the near body cannot. Pairs: a row lists every
+  -- stronger row of its ore or a declared rival it can touch at any scale and size slider (footprints and `touch`
+  -- tiles at the fine scale, or near bodies at size_max moved together by both jitter radii), from its site (sites
+  -- for the first table's rows); it holds no near body where a listed row touches it at the save's scale and size,
+  -- and no full field where a listed row of its ore touches its footprint, so fields never read as one over the
+  -- design. A near body stays inside its footprint. The blob keeps near_blob of its height on a near field (its low
+  -- octave lifts or sinks a lone body whole), blending to all of it with t. Every amount follows the ore's size and
+  -- richness sliders as vanilla's ore does. A small stone disc's per tile factor (hotspots_v3 rich) fades in with t
+  -- too (rich_body). Everything else (the peak, the nests, the wells' spacing) is the fourth set's, under names of
+  -- their own.
+  hotspots_v5 = {
+    near_total = 800000,
+    oil_near_total = 450000,
+    near_per_tile = 1000,
+    near_well = 100000,
+    near_plateau = 2,
+    near = {["iron-ore"] = HS .. "iron_ore_near_v1", ["copper-ore"] = HS .. "copper_ore_near_v1",
+            coal = HS .. "coal_near_v1", stone = HS .. "stone_near_v1", ["uranium-ore"] = HS .. "uranium_ore_near_v1",
+            ["crude-oil"] = HS .. "crude_oil_near_v1"},
+    near_blob = 0.25,
+    -- the spots' area fit between r_in and the full fields' (the fourth set's 1.65 was fitted on full fields, and a
+    -- field of a cone or two held 1.0 to 1.8 times its tiles under it, the blob's fringe round one cone), blending
+    -- to the full fit with t, and the lean oil fields' own (the far ones held 1.0 to 1.8 of their design at 1.5)
+    near_fit = 0.8,
+    oil_near_fit = 0.35,
+    oil_area_fit = 1.2,
+    touch = 48,
+    -- the size slider's largest setting (600 percent), the near bodies' pairs are listed at
+    size_max = 6,
+    -- the first hotspot table's rows' sites (latitude, longitude, jitter km), which its rows do not carry, for the
+    -- carriers' touch test, and the reference pixels a km of jitter moves a centre (regions.lua: its hotspot_share
+    -- of jitter_km over km_per_px)
+    jitter_px_per_km = 0.5 / 2.471,
+    sites = {iron_kiruna_malmberget = {67.5086, 20.4299, 25}, iron_lorraine_minette = {49.3731, 5.9604, 20},
+             iron_kryvbas = {48, 33.417, 25}, iron_kursk_magnetic_anomaly = {51.2536, 37.6694, 50},
+             iron_kediet_ej_jill = {22.6511, -12.5742, 20}, iron_gara_djebilet = {26.7352, -7.4678, 20},
+             iron_simandou = {8.533, -8.9, 27.5}, iron_sishen = {-27.75, 23, 20},
+             iron_carajas = {-6.0586, -50.1769, 25}, iron_labrador_trough = {56, -67.5, 75},
+             iron_mesabi_range = {47.5, -93.0667, 35}, iron_anshan = {41.108, 122.994, 20},
+             iron_barbil = {22.12, 85.4, 25}, copper_iberian_pyrite_belt = {37.628, -7.2769, 45},
+             copper_legnica_glogow = {51.5015, 16.1073, 15}, copper_bor = {44.0764, 22.1103, 15},
+             copper_sarcheshmeh = {29.9847, 55.8539, 15},
+             copper_central_african_copperbelt = {-11.7667, 26.8333, 100}, copper_zhezkazgan = {47.7833, 67.7, 20},
+             copper_norilsk = {69.333, 88.217, 20}, copper_oyu_tolgoi = {43.0083, 106.8431, 12.5},
+             copper_atacama = {-23.2877, -68.9861, 60}, coal_ruhr = {51.5, 7.25, 20},
+             coal_upper_silesia = {50.25, 19, 22.5}, coal_donbas = {48.0158, 37.8028, 55},
+             coal_south_wales = {51.6159, -3.4175, 20}, coal_nord_pas_de_calais = {50.4625, 3.5461, 17.5},
+             coal_kuzbass = {55.3544, 86.0886, 45}, coal_ekibastuz = {51.6667, 75.3667, 15},
+             coal_ordos = {39.604, 109.785, 75}, coal_jharia_damodar = {23.7516, 86.4203, 20},
+             coal_witbank_highveld = {-25.877, 29.201, 30}, coal_pocahontas = {37.3, -81.3333, 50},
+             stone_carrara = {44.0792, 10.1, 7.5}, stone_portland = {50.55, -2.44, 5},
+             stone_pentelicus = {38.0808, 23.8997, 5}, stone_marmara_island = {40.62, 27.63, 7.5},
+             stone_aswan = {24.0769, 32.8954, 7.5}, stone_makrana = {27.05, 74.72, 7.5},
+             stone_indiana_limestone = {39.0147, -86.5135, 12.5}, uranium_athabasca_basin = {57.9149, -104.7961, 35},
+             uranium_chu_sarysu = {45.12, 68.64, 55}, uranium_erongo = {-22.4842, 15.0489, 20},
+             uranium_arlit = {18.733, 7.383, 20}, uranium_kyzylkum = {41.1206, 64.4674, 70},
+             uranium_ore_mountains = {50.6155, 12.5903, 22.5}, uranium_krasnokamensk = {50.1, 118.0333, 15},
+             oil_ghawar = {25.2, 49.3167, 50}, oil_basra_kuwait = {29.6335, 47.6872, 40},
+             oil_ahvaz = {31.3203, 48.6692, 40}, oil_kirkuk = {35.5329, 44.3357, 20},
+             oil_samotlor = {61.117, 76.75, 75}, oil_volga_ural = {54.5729, 52.37, 30},
+             oil_baku_absheron = {40.439478, 49.742222, 20}, oil_hassi_messaoud = {30.4763, 5.2401, 25},
+             oil_sirte_basin = {28.22, 19.13, 75}, oil_niger_delta = {5.3167, 6.4667, 50},
+             oil_tengiz = {46.1528, 53.3833, 15}, oil_daqing = {46.6, 124.9, 30},
+             oil_orinoco_belt = {8.8861, -64.2611, 65}, oil_athabasca_oil_sands = {57.02, -111.65, 75},
+             oil_permian_basin = {32.5, -103, 100}, offshore_ekofisk = {56.5492, 3.21, 20},
+             offshore_forties = {57.7167, 1.0167, 20}, offshore_utsira_high = {59.22, 2.49, 20},
+             offshore_tampen_east_shetland = {61.0778, 1.8269, 25}, offshore_caspian_acg = {40.0178, 51.2661, 15},
+             offshore_kashagan = {46.1667, 51.5833, 20}, offshore_safaniya = {28.28, 48.75, 20},
+             offshore_upper_zakum = {24.853, 53.662, 15}, offshore_mumbai_high = {19.4167, 71.3333, 20},
+             offshore_nigeria_deepwater = {3.9932, 5.0832, 50}, offshore_angola_block_17 = {-7.6554, 11.7143, 25},
+             offshore_gulf_of_mexico_deepwater = {28.1091, -88.4944, 75},
+             offshore_cantarell = {19.7525, -92.5161, 20}, offshore_guyana_stabroek = {8.111, -56.928, 45},
+             offshore_tupi_presalt = {-25.5, -43.5, 75}},
+    caps = {[3] = 32000000, [4] = 36000000, [5] = 45000000, [6] = 50000000},
+    enemy_layer = NOISE .. "enemy_layer_v6",
+    nests = NOISE .. "enemy_v10",
+    scatter = NOISE .. "enemy_v11",
+    bodies = {["iron-ore"] = HS .. "iron_ore_v7", ["copper-ore"] = HS .. "copper_ore_v7", coal = HS .. "coal_v7",
+              stone = HS .. "stone_v7", ["uranium-ore"] = HS .. "uranium_ore_v7"},
+    parts = {["iron-ore"] = {qty = HS .. "iron_ore_qty_v7"}, ["copper-ore"] = {qty = HS .. "copper_ore_qty_v7"},
+             coal = {qty = HS .. "coal_qty_v7"}, stone = {qty = HS .. "stone_qty_v7"},
+             ["uranium-ore"] = {qty = HS .. "uranium_ore_qty_v7"}},
+    rich_body = {stone = HS .. "stone_rich_v2"},
+    oil = {body = HS .. "crude_oil_v6", qty = HS .. "crude_oil_qty_v6"},
+    unit = {["iron-ore"] = HS .. "iron_ore_unit_v2", ["copper-ore"] = HS .. "copper_ore_unit_v2",
+            coal = HS .. "coal_unit_v2", stone = HS .. "stone_unit_v2", ["uranium-ore"] = HS .. "uranium_ore_unit_v2",
+            ["crude-oil"] = HS .. "crude_oil_unit_v2"},
+    points = {[REN.HS_IRON] = HS .. "iron_ore_v7", [REN.HS_COPPER] = HS .. "copper_ore_v7",
+              [REN.HS_COAL] = HS .. "coal_v7", [REN.HS_STONE] = HS .. "stone_v7",
+              [REN.HS_URANIUM] = HS .. "uranium_ore_v7", [REN.HS_OIL] = HS .. "crude_oil_v6",
+              [REN.ORE_GAP] = NOISE .. "ore_gap_v3", [REN.ENEMY_LAYER] = NOISE .. "enemy_layer_v6"},
   },
 
   -- The offshore field stamps: each map's body is

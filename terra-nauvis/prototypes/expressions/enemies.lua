@@ -78,7 +78,7 @@ local LAND = "(" .. K.land_coarse .. " > " .. num(HC.land_px) .. ")"
 -- One map's layer spot over `rows`, or nothing where it adopts none. With `shared`, a row's core is a local of the
 -- layer that every map reads, so its text stands once. With `clusters`, cones cover a footprint and only say where
 -- clusters may stand.
-local function map_spot(map_key, rows, shared, clusters)
+local function map_spot(map_key, rows, shared, clusters, fade)
   local mults, cores = {}, {}
   for j, r in ipairs(rows) do
     local on = false
@@ -101,16 +101,21 @@ local function map_spot(map_key, rows, shared, clusters)
   local any = "(" .. table.concat(cores, " + ") .. ")"
   local more = clusters and ("(1 + " .. num(N2.spots) .. " * clamp((distance - " .. num(N2.spots_from) .. ") / " ..
     num(N2.spots_span) .. ", 0, 1)) * ") or ""
+  -- 1.2.0 (config.lua hotspots_v4): the density times the start fade's t at the candidate, and no cone where t is 0
+  local faded, gate = "", ""
+  if fade then
+    faded, gate = "fade_t * ", " * (fade_t > 0)"
+  end
   -- the installed spot call with the layer's density, quantity, favourability and seed
   return installed.render(BASE.spot, {
     [EB.args.density] = function(live)
-      return more .. "(" .. table.concat(mults, " + ") .. ") * " .. live
+      return faded .. more .. "(" .. table.concat(mults, " + ") .. ") * " .. live
     end,
     [EB.args.quantity] = function(live)
-      return live .. " * " .. any .. " * " .. LAND
+      return live .. " * " .. any .. " * " .. LAND .. gate
     end,
     [EB.args.favorability] = function()
-      return any .. " * (1 + " .. LAND .. ")"
+      return any .. " * (1 + " .. LAND .. ")" .. gate
     end,
     [EB.own] = function()
       return num(EN.seed1)
@@ -119,7 +124,7 @@ local function map_spot(map_key, rows, shared, clusters)
 end
 
 -- The second table's height: see the file's head and config.lua hotspots_v2.nests.
-local function cluster_height()
+local function cluster_height(oil)
   local scaled = "min(1, " .. S .. " / " .. num(N2.full_scale) .. ")"
   local parts = {"min(spot, " .. num(N2.level) .. ")", num(N2.lobe) .. " * " .. scaled .. " * " .. H2.lobe.name}
   for i, scale in ipairs(BASE.scales) do
@@ -131,7 +136,7 @@ local function cluster_height()
   parts[#parts + 1] = num(N2.capped) .. " * (spot_radius_expression / (" .. num(RD.base) .. " + " .. num(RD.gain) ..
     " * clamp(distance, 0, " .. num(N2.full_distance) .. ") / " .. num(RD.span) .. ") - 1)"
   return "if(0 < " .. table.concat(parts, " + ") .. " - " .. num(N2.offset) .. ", " .. num(N2.height) .. ", -1) - " ..
-    num(N2.clear) .. " * (" .. H2.bodies["crude-oil"] .. " > 0)" .. BASE.start
+    num(N2.clear) .. " * (" .. (oil or H2.bodies["crude-oil"]) .. " > 0)" .. BASE.start
 end
 
 local E = {}
@@ -151,7 +156,7 @@ local function adopted(rows)
 end
 
 -- The layer over `rows`, under `name`.
-local function layer(name, rows, shared, clusters)
+local function layer(name, rows, shared, clusters, fade, oil)
   if not BASE then
     if adopted(rows) then
       E[#E + 1] = {type = "noise-expression", name = name, expression = EB.neutral}
@@ -160,7 +165,7 @@ local function layer(name, rows, shared, clusters)
   end
   local branch, any_map = {}, false
   for i, M in ipairs(MAPS) do
-    branch[i] = map_spot(M.key, rows, shared, clusters)
+    branch[i] = map_spot(M.key, rows, shared, clusters, fade)
     any_map = any_map or branch[i] ~= nil
   end
   if not any_map then
@@ -175,11 +180,14 @@ local function layer(name, rows, shared, clusters)
   locals[EB.radius] = BASE.radius
   locals[EB.quantity] = BASE.quantity
   locals.spot = fold
+  if fade then
+    locals.fade_t = require("prototypes.ore_curves").fade("distance")
+  end
   E[#E + 1] = {
     type = "noise-expression",
     name = name,
     expression = "if((spot > 0) * (distance > " .. num(EN.start_factor) .. " * starting_area_radius) > 0, " ..
-      (clusters and cluster_height() or ("spot + " .. BASE.texture)) .. ", -inf)",
+      (clusters and cluster_height(oil) or ("spot + " .. BASE.texture)) .. ", -inf)",
     local_expressions = locals,
     local_functions = {
       [EB.texture] = {
@@ -198,6 +206,12 @@ layer(EN.layer, T.rows)
 layer(H2.enemy_layer, require("prototypes.hotspot_rows_v2").rows, {}, true)
 -- The third table's rows (config.lua hotspots_v3, 0.3.1): the same layer over the rows with the moved discs.
 layer(cfg.hotspots_v3.enemy_layer, require("prototypes.hotspot_rows_v3").rows, {}, true)
+-- The start fade (config.lua hotspots_v4, 1.2.0): the third table's layer with its density times t, so a field's extra
+-- nests fade toward the spawn with its ore. Where t is 0 no cone stands and the wrapper keeps the live bases, and past
+-- r_out the layer is the third table's, its clusters kept clear of the fifth oil body's wells.
+layer(cfg.hotspots_v4.enemy_layer, require("prototypes.hotspot_rows_v3").rows, {}, true, true, cfg.hotspots_v4.oil.body)
+-- Lean ore (config.lua hotspots_v5): the same layer, its clusters kept clear of the lean oil body's wells.
+layer(cfg.hotspots_v5.enemy_layer, require("prototypes.hotspot_rows_v3").rows, {}, true, true, cfg.hotspots_v5.oil.body)
 
 if #E > 0 then
   data:extend(E)

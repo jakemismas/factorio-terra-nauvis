@@ -85,6 +85,12 @@
    "allowed_values": ["100"],
    "hidden": true
   },
+  "lean_ore": {
+   "source": "terra-nauvis-lean-ore (1.2.0): ordinary patches about 500 k within 1,000 tiles and at most 5 M anywhere, hotspots up to ten times that. Startup, bool, default on",
+   "type": "bool-setting",
+   "setting_type": "startup",
+   "default_value": true
+  },
   "regional_scarcity": {
    "source": "terra-nauvis-regional-scarcity (0.3.0): regional scarcity of regular ore past about 1,500 tiles at scale 12; startup, a dropdown of off, medium and strong, default medium",
    "type": "string-setting",

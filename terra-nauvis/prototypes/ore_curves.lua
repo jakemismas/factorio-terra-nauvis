@@ -85,12 +85,66 @@ function M.flat_distance()
     ", 0, " .. num(FL.stop - FL.knee) .. "))"
 end
 
+-- The start fade (config.lua hotspots_v4.fade): t(d) = s * s * (3 - 2 * s), s = clamp((d - r_in R) / ((r_out -
+-- r_in) R), 0, 1), R the game's starting_area_radius, written out as s * s * (1 + 2 * (1 - s)) (the language has no
+-- smoothstep)
+function M.fade(d)
+  local F = cfg.hotspots_v4.fade
+  local s = "clamp((" .. d .. " - " .. num(F.r_in) .. " * starting_area_radius) / (" .. num(F.r_out - F.r_in) ..
+    " * starting_area_radius), 0, 1)"
+  return "(" .. s .. " * " .. s .. " * (1 + 2 * (1 - " .. s .. ")))"
+end
+
+-- the faded ore per tile, as a multiple of P(d), at fade value t: 1 inside r_in, per_tile past r_out
+function M.faded_per_tile(t)
+  return "(1 + " .. num(V3.per_tile - 1) .. " * " .. t .. ")"
+end
+
+-- the scale bonus (config.lua hotspots_v4.bonus): max(1, sqrt(scale / from_scale)), a per-save constant
+function M.bonus()
+  return "max(1, sqrt(" .. cfg.keys.scale .. " / " .. num(cfg.hotspots_v4.bonus.from_scale) .. "))"
+end
+
+-- Crude oil (config.lua hotspots_v4.oil). L for oil: vanilla's large oil field, its distance held at cap_distance.
+function M.oil_large(h)
+  local dc = "min(distance, " .. num(V3.cap_distance) .. ")"
+  return num(cfg.hotspots_v4.oil.large) .. " * " .. quantity(h, dc) .. " * " .. factor(dc)
+end
+
+-- vanilla's mean well at the real distance without its richness factor: a spot cone's mean height over the random
+-- penalty, penalty / (pi rq^2) * Q^(1/3), plus the well's additional richness. With `ratio`, the height term times it
+-- (a well's own height over the mean)
+function M.oil_well_base(h, ratio)
+  return "(" .. num(h.fluid.penalty / (math.pi * h.rq * h.rq)) .. " * " .. quantity(h, "distance") .. " ^ " ..
+    num(V3.cube_root) .. (ratio and (" * " .. ratio) or "") .. " + " .. num(h.fluid.additional) .. ")"
+end
+
+-- the richness factor a hotspot well takes: vanilla's at the real distance, held to flat_ratio / per_tile times the
+-- regular wells' (which read it at the flattened distance), as per_tile holds the solids
+function M.oil_factor()
+  return "min(" .. factor("distance") .. ", " .. num(V3.flat_ratio / V3.per_tile) .. " * " ..
+    factor(M.flat_distance()) .. ")"
+end
+
 -- the quantity of a body_tiles cone, and that cone's mean height
 function M.body_quantity(h)
   return (V3.body_tiles / (math.pi * h.rq * h.rq)) ^ V3.body_power
 end
 function M.body_height(h)
   return M.body_quantity(h) ^ V3.cube_root / (math.pi * h.rq * h.rq)
+end
+
+-- The map's own sliders on an ore, as lean ore's caps and floors follow them (vanilla's own response): the size
+-- slider multiplies a patch's quantity, and its radius and its ore per tile each by the cube root of it, and the
+-- richness slider its ore per tile. Each is 1 at the default sliders.
+function M.size_root(resource)
+  return "var('control:" .. resource .. ":size') ^ " .. num(V3.cube_root)
+end
+function M.size(resource)
+  return "var('control:" .. resource .. ":size')"
+end
+function M.per_tile_sliders(resource)
+  return "(var('control:" .. resource .. ":richness') * " .. M.size_root(resource) .. ")"
 end
 
 return M
